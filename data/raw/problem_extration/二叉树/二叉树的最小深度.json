@@ -1,0 +1,450 @@
+{
+  "id": "AP_d51b7bbd",
+  "title": "二叉树的最小深度",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/minimum-depth-of-binary-tree/",
+  "description": "一个二叉树，找出其最小深度。\n\n最小深度是从根节点到最近叶子节点的最短路径上的节点数量。\n\n说明: 叶子节点是指没有子节点的节点。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "递归",
+    "迭代"
+  ],
+  "data_structure_tags": [
+    "二叉树"
+  ],
+  "technique_tags": [
+    "深度优先搜索(DFS)",
+    "广度优先搜索(BFS)"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过递归或迭代方法遍历二叉树来计算最小深度。递归时采用后序遍历（左右中）方式来确保可以正确处理只有单侧子树的情况；前序遍历则直接跟踪当前路径长度并在遇到叶子节点时更新最短路径。迭代法使用层序遍历来逐层检查直到找到第一个叶子节点。",
+  "key_insights": [
+    {
+      "content": "最小深度被定义为从根节点到最近叶子节点的距离。叶子节点特指没有子节点的节点。"
+    },
+    {
+      "content": "在求解过程中，要注意区分二叉树的深度和高度的概念差异：深度是从根节点到该节点的最长简单路径边数，而高度是从该节点到叶子节点的最长简单路径边数。本题利用后序遍历求的是高度，但此高度也代表了所需的最小深度。"
+    },
+    {
+      "content": "当某节点仅有一侧有子树时，不能简单地取两侧子树中的最小值作为结果，因为此时的‘非叶子’节点将导致错误答案。正确的做法是单独考虑这些特殊情况。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "递归法",
+      "text": "来来来，一起递归三部曲：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "int getDepth(TreeNode* node) {\n    if (node == NULL) return 0;\n    int leftDepth = getDepth(node->left);           // 左\n    int rightDepth = getDepth(node->right);         // 右\n                                                    // 中\n    // 当一个左子树为空，右不为空，这时并不是最低点\n    if (node->left == NULL && node->right != NULL) { \n        return 1 + rightDepth;\n    }   \n    // 当一个右子树为空，左不为空，这时并不是最低点\n    if (node->left != NULL && node->right == NULL) { \n        return 1 + leftDepth;\n    }\n    int result = 1 + min(leftDepth, rightDepth);\n    return result;\n}\n\nint minDepth(TreeNode* root) {\n    return getDepth(root);\n}",
+          "description": "递归法求二叉树最小深度"
+        },
+        {
+          "language": "cpp",
+          "code": "int minDepth(TreeNode* root) {\n    if (root == NULL) return 0;\n    if (root->left == NULL && root->right != NULL) {\n        return 1 + minDepth(root->right);\n    }\n    if (root->left != NULL && root->right == NULL) {\n        return 1 + minDepth(root->left);\n    }\n    return 1 + min(minDepth(root->left), minDepth(root->right));\n}",
+          "description": "精简后的递归法求二叉树最小深度"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    int result;\n    void getdepth(TreeNode* node, int depth) {\n        if (node == nullptr) {\n            return;\n        }\n        if (node -> left == nullptr && node->right == nullptr) {\n            result = min(result, depth);\n        }\n        if (node->left) { \n            getdepth(node->left, depth + 1);\n        }\n        if (node->right) { \n            getdepth(node->right, depth + 1);\n        }\n        return ;\n    }\n\npublic:\n    int minDepth(TreeNode* root) {\n        if (root == nullptr) {\n            return 0;\n        }\n        result = INT_MAX;\n        getdepth(root, 1);\n        return result;\n    }\n};",
+          "description": "前序遍历方式求二叉树最小深度"
+        },
+        {
+          "language": "cpp",
+          "code": "int minDepth(TreeNode* root) {\n    if (root == NULL) return 0;\n    int depth = 0;\n    queue<TreeNode*> que;\n    que.push(root);\n    while(!que.empty()) {\n        int size = que.size();\n        depth++;\n        for (int i = 0; i < size; i++) {\n            TreeNode* node = que.front();\n            que.pop();\n            if (node->left) que.push(node->left);\n            if (node->right) que.push(node->right);\n            if (!node->left && !node->right) { \n                return depth;\n            }\n        }\n    }\n    return depth;\n}",
+          "description": "迭代法（层序遍历）求二叉树最小深度"
+        },
+        {
+          "language": "java",
+          "code": "public int minDepth(TreeNode root) {\n    if (root == null) {\n        return 0;\n    }\n    int leftDepth = minDepth(root.left);\n    int rightDepth = minDepth(root.right);\n    if (root.left == null) {\n        return rightDepth + 1;\n    }\n    if (root.right == null) {\n        return leftDepth + 1;\n    }\n    return Math.min(leftDepth, rightDepth) + 1;\n}",
+          "description": "Java递归法求二叉树最小深度"
+        },
+        {
+          "language": "java",
+          "code": "int depth = 0;\n// 定义最小深度，初始化最大值\nint minDepth = Integer.MAX_VALUE;\npublic int minDepth(TreeNode root) {\n    dep(root);\n    return minDepth == Integer.MAX_VALUE ? 0 : minDepth;\n}\nvoid dep(TreeNode root){\n    if(root == null) return ;\n    depth++;\n    dep(root.left);\n    dep(root.right);\n    if(root.left == null && root.right == null)\n        minDepth = Math.min(minDepth , depth);\n    depth--;\n}",
+          "description": "Java递归法（通过更新最小深度）求二叉树最小深度"
+        },
+        {
+          "language": "java",
+          "code": "public int minDepth(TreeNode root) {\n    if (root == null) {\n        return 0;\n    }\n    Deque<TreeNode> deque = new LinkedList<>();\n    deque.offer(root);\n    int depth = 0;\n    while (!deque.isEmpty()) {\n        int size = deque.size();\n        depth++;\n        for (int i = 0; i < size; i++) {\n            TreeNode poll = deque.poll();\n            if (poll.left == null && poll.right == null) {\n                return depth;\n            }\n            if (poll.left != null) {\n                deque.offer(poll.left);\n            }\n            if (poll.right != null) {\n                deque.offer(poll.right);\n            }\n        }\n    }\n    return depth;\n}",
+          "description": "Java迭代法（层序遍历）求二叉树最小深度"
+        },
+        {
+          "language": "python",
+          "code": "def getDepth(self, node):\n    if node is None:\n        return 0\n    leftDepth = self.getDepth(node.left)  # 左\n    rightDepth = self.getDepth(node.right)  # 右\n    if node.left is None and node.right is not None:\n        return 1 + rightDepth\n    if node.left is not None and node.right is None:\n        return 1 + leftDepth\n    result = 1 + min(leftDepth, rightDepth)\n    return result\n\ndef minDepth(self, root):\n    return self.getDepth(root)",
+          "description": "Python递归法（版本一）求二叉树最小深度"
+        },
+        {
+          "language": "python",
+          "code": "def minDepth(self, root):\n    if root is None:\n        return 0\n    if root.left is None and root.right is not None:\n        return 1 + self.minDepth(root.right)\n    if root.left is not None and root.right is None:\n        return 1 + self.minDepth(root.left)\n    return 1 + min(self.minDepth(root.left), self.minDepth(root.right))",
+          "description": "Python递归法（版本二）求二叉树最小深度"
+        },
+        {
+          "language": "python",
+          "code": "def __init__(self):\n    self.result = float('inf')\n\ndef getDepth(self, node, depth):\n    if node is None:\n        return\n    if node.left is None and node.right is None:\n        self.result = min(self.result, depth)\n    if node.left:\n        self.getDepth(node.left, depth + 1)\n    if node.right:\n        self.getDepth(node.right, depth + 1)\n\ndef minDepth(self, root):\n    if root is None:\n        return 0\n    self.getDepth(root, 1)\n    return self.result",
+          "description": "Python递归法（版本三）前序遍历求二叉树最小深度"
+        },
+        {
+          "language": "python",
+          "code": "def minDepth(self, root: TreeNode) -> int:\n    if not root:\n        return 0\n    depth = 0\n    queue = collections.deque([root])\n    while queue:\n        depth += 1 \n        for _ in range(len(queue)):\n            node = queue.popleft()\n            if not node.left and not node.right:\n                return depth\n            if node.left:\n                queue.append(node.left)\n            if node.right:\n                queue.append(node.right)\n    return depth",
+          "description": "Python迭代法（层序遍历）求二叉树最小深度"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "迭代法",
+      "text": "相对于104.二叉树的最大深度 (opens new window)，本题还可以使用层序遍历的方式来解决，思路是一样的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int getDepth(TreeNode* node) {\n        if (node == NULL) return 0;\n        int leftDepth = getDepth(node->left);           // 左\n        int rightDepth = getDepth(node->right);         // 右\n                                                        // 中\n        // 当一个左子树为空，右不为空，这时并不是最低点\n        if (node->left == NULL && node->right != NULL) { \n            return 1 + rightDepth;\n        }   \n        // 当一个右子树为空，左不为空，这时并不是最低点\n        if (node->left != NULL && node->right == NULL) { \n            return 1 + leftDepth;\n        }\n        int result = 1 + min(leftDepth, rightDepth);\n        return result;\n    }\n\n    int minDepth(TreeNode* root) {\n        return getDepth(root);\n    }\n};",
+          "description": null
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int minDepth(TreeNode* root) {\n        if (root == NULL) return 0;\n        if (root->left == NULL && root->right != NULL) {\n            return 1 + minDepth(root->right);\n        }\n        if (root->left != NULL && root->right == NULL) {\n            return 1 + minDepth(root->left);\n        }\n        return 1 + min(minDepth(root->left), minDepth(root->right));\n    }\n};",
+          "description": null
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    int result;\n    void getdepth(TreeNode* node, int depth) {\n        // 函数递归终止条件\n        if (node == nullptr) {\n            return;\n        }\n        // 中，处理逻辑：判断是不是叶子结点\n        if (node -> left == nullptr && node->right == nullptr) {\n            result = min(result, depth);\n        }\n        if (node->left) { // 左\n            getdepth(node->left, depth + 1);\n        }\n        if (node->right) { // 右\n            getdepth(node->right, depth + 1);\n        }\n        return ;\n    }\n\npublic:\n    int minDepth(TreeNode* root) {\n        if (root == nullptr) {\n            return 0;\n        }\n        result = INT_MAX;\n        getdepth(root, 1);\n        return result;\n    }\n};",
+          "description": null
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n\n    int minDepth(TreeNode* root) {\n        if (root == NULL) return 0;\n        int depth = 0;\n        queue<TreeNode*> que;\n        que.push(root);\n        while(!que.empty()) {\n            int size = que.size();\n            depth++; // 记录最小深度\n            for (int i = 0; i < size; i++) {\n                TreeNode* node = que.front();\n                que.pop();\n                if (node->left) que.push(node->left);\n                if (node->right) que.push(node->right);\n                if (!node->left && !node->right) { // 当左右孩子都为空的时候，说明是最低点的一层了，退出\n                    return depth;\n                }\n            }\n        }\n        return depth;\n    }\n};",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int minDepth(TreeNode root) {\n        if (root == null) {\n            return 0;\n        }\n        int leftDepth = minDepth(root.left);\n        int rightDepth = minDepth(root.right);\n        if (root.left == null) {\n            return rightDepth + 1;\n        }\n        if (root.right == null) {\n            return leftDepth + 1;\n        }\n        // 左右结点都不为null\n        return Math.min(leftDepth, rightDepth) + 1;\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    int depth = 0;\n    // 定义最小深度，初始化最大值\n    int minDepth = Integer.MAX_VALUE;\n    public int minDepth(TreeNode root) {\n        dep(root);\n        return minDepth == Integer.MAX_VALUE ? 0 : minDepth;\n    }\n    void dep(TreeNode root){\n        if(root == null) return ;\n        // 递归开始，深度增加\n        depth++;\n        dep(root.left);\n        dep(root.right);\n        // 该位置表示递归到叶子节点了，需要更新最小深度minDepth\n        if(root.left == null && root.right == null)\n            minDepth = Math.min(minDepth , depth);\n        // 递归结束，深度减小\n        depth--;\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n   public int minDepth(TreeNode root) {\n        if (root == null) {\n            return 0;\n        }\n        Deque<TreeNode> deque = new LinkedList<>();\n        deque.offer(root);\n        int depth = 0;\n        while (!deque.isEmpty()) {\n            int size = deque.size();\n            depth++;\n            for (int i = 0; i < size; i++) {\n                TreeNode poll = deque.poll();\n                if (poll.left == null && poll.right == null) {\n                    // 是叶子结点，直接返回depth，因为从上往下遍历，所以该值就是最小值\n                    return depth;\n                }\n                if (poll.left != null) {\n                    deque.offer(poll.left);\n                }\n                if (poll.right != null) {\n                    deque.offer(poll.right);\n                }\n            }\n        }\n        return depth;\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def getDepth(self, node):\n        if node is None:\n            return 0\n        leftDepth = self.getDepth(node.left)  # 左\n        rightDepth = self.getDepth(node.right)  # 右\n        if node.left is None and node.right is not None:\n            return 1 + rightDepth\n        if node.left is not None and node.right is None:\n            return 1 + leftDepth\n        result = 1 + min(leftDepth, rightDepth)\n        return result\n\n    def minDepth(self, root):\n        return self.getDepth(root)",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def minDepth(self, root):\n        if root is None:\n            return 0\n        if root.left is None and root.right is not None:\n            return 1 + self.minDepth(root.right)\n        if root.left is not None and root.right is None:\n            return 1 + self.minDepth(root.left)\n        return 1 + min(self.minDepth(root.left), self.minDepth(root.right))",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.result = float('inf')\n\n    def getDepth(self, node, depth):\n        if node is None:\n            return\n        if node.left is None and node.right is None:\n            self.result = min(self.result, depth)\n        if node.left:\n            self.getDepth(node.left, depth + 1)\n        if node.right:\n            self.getDepth(node.right, depth + 1)\n\n    def minDepth(self, root):\n        if root is None:\n            return 0\n        self.getDepth(root, 1)\n        return self.result",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def minDepth(self, root: TreeNode) -> int:\n        if not root:\n            return 0\n        depth = 0\n        queue = collections.deque([root])\n        while queue:\n            depth += 1 \n            for _ in range(len(queue)):\n                node = queue.popleft()\n                if not node.left and not node.right:\n                    return depth\n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n        return depth",
+          "description": null
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int getDepth(TreeNode* node) {if (node == NULL) return 0;int leftDepth = getDepth(node->left);int rightDepth = getDepth(node->right);if (node->left == NULL && node->right != NULL) {return 1 + rightDepth;}if (node->left != NULL && node->right == NULL) {return 1 + leftDepth;}int result = 1 + min(leftDepth, rightDepth);return result;}int minDepth(TreeNode* root) {return getDepth(root);}};",
+          "description": "C++递归法求二叉树最小深度"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minDepth(TreeNode* root) {if (root == NULL) return 0;if (root->left == NULL && root->right != NULL) {return 1 + minDepth(root->right);}if (root->left != NULL && root->right == NULL) {return 1 + minDepth(root->left);}return 1 + min(minDepth(root->left), minDepth(root->right));}};",
+          "description": "C++精简版递归法求二叉树最小深度"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: int result; void getdepth(TreeNode* node, int depth) {if (node == nullptr) {return;}if (node -> left == nullptr && node->right == nullptr) {result = min(result, depth);}if (node->left) {getdepth(node->left, depth + 1);}if (node->right) {getdepth(node->right, depth + 1);}return ;}public: int minDepth(TreeNode* root) {if (root == nullptr) {return 0;}result = INT_MAX;getdepth(root, 1);return result;}};",
+          "description": "C++前序遍历求二叉树最小深度"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minDepth(TreeNode* root) {if (root == NULL) return 0;int depth = 0;queue<TreeNode*> que;que.push(root);while(!que.empty()) {int size = que.size();depth++;for (int i = 0; i < size; i++) {TreeNode* node = que.front();que.pop();if (node->left) que.push(node->left);if (node->right) que.push(node->right);if (!node->left && !node->right) {return depth;}}}return depth;}};",
+          "description": "C++迭代法（层序遍历）求二叉树最小深度"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int minDepth(TreeNode root) {if (root == null) {return 0;}int leftDepth = minDepth(root.left);int rightDepth = minDepth(root.right);if (root.left == null) {return rightDepth + 1;}if (root.right == null) {return leftDepth + 1;}return Math.min(leftDepth, rightDepth) + 1;}}",
+          "description": "Java递归法求二叉树最小深度"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {int depth = 0;int minDepth = Integer.MAX_VALUE;public int minDepth(TreeNode root) {dep(root);return minDepth == Integer.MAX_VALUE ? 0 : minDepth;}void dep(TreeNode root){if(root == null) return ;depth++;dep(root.left);dep(root.right);if(root.left == null && root.right == null)minDepth = Math.min(minDepth , depth);depth--;}}",
+          "description": "Java递归法（基于最大深度的思路）求二叉树最小深度"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int minDepth(TreeNode root) {if (root == null) {return 0;}Deque<TreeNode> deque = new LinkedList<>();deque.offer(root);int depth = 0;while (!deque.isEmpty()) {int size = deque.size();depth++;for (int i = 0; i < size; i++) {TreeNode poll = deque.poll();if (poll.left == null && poll.right == null) {return depth;}if (poll.left != null) {deque.offer(poll.left);}if (poll.right != null) {deque.offer(poll.right);}}}return depth;}}",
+          "description": "Java迭代法（层序遍历）求二叉树最小深度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def getDepth(self, node): if node is None: return 0 leftDepth = self.getDepth(node.left) rightDepth = self.getDepth(node.right) if node.left is None and node.right is not None: return 1 + rightDepth if node.left is not None and node.right is None: return 1 + leftDepth result = 1 + min(leftDepth, rightDepth) return result def minDepth(self, root): return self.getDepth(root)",
+          "description": "Python递归法版本一求二叉树最小深度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def minDepth(self, root): if root is None: return 0 if root.left is None and root.right is not None: return 1 + self.minDepth(root.right) if root.left is not None and root.right is None: return 1 + self.minDepth(root.left) return 1 + min(self.minDepth(root.left), self.minDepth(root.right))",
+          "description": "Python递归法版本二求二叉树最小深度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.result = float('inf') def getDepth(self, node, depth): if node is None: return if node.left is None and node.right is None: self.result = min(self.result, depth) if node.left: self.getDepth(node.left, depth + 1) if node.right: self.getDepth(node.right, depth + 1) def minDepth(self, root): if root is None: return 0 self.getDepth(root, 1) return self.result",
+          "description": "Python递归法（前序遍历）版本三求二叉树最小深度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def minDepth(self, root: TreeNode) -> int: if not root: return 0 depth = 0 queue = collections.deque([root]) while queue: depth += 1 for _ in range(len(queue)): node = queue.popleft() if not node.left and not node.right: return depth if node.left: queue.append(node.left) if node.right: queue.append(node.right) return depth",
+          "description": "Python迭代法求二叉树最小深度"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java:",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int getDepth(TreeNode* node) {\n        if (node == NULL) return 0;\n        int leftDepth = getDepth(node->left);           // 左\n        int rightDepth = getDepth(node->right);         // 右\n                                                        // 中\n        // 当一个左子树为空，右不为空，这时并不是最低点\n        if (node->left == NULL && node->right != NULL) { \n            return 1 + rightDepth;\n        }   \n        // 当一个右子树为空，左不为空，这时并不是最低点\n        if (node->left != NULL && node->right == NULL) { \n            return 1 + leftDepth;\n        }\n        int result = 1 + min(leftDepth, rightDepth);\n        return result;\n    }\n\n    int minDepth(TreeNode* root) {\n        return getDepth(root);\n    }\n};",
+          "description": "C++递归法求二叉树的最小深度"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int minDepth(TreeNode* root) {\n        if (root == NULL) return 0;\n        if (root->left == NULL && root->right != NULL) {\n            return 1 + minDepth(root->right);\n        }\n        if (root->left != NULL && root->right == NULL) {\n            return 1 + minDepth(root->left);\n        }\n        return 1 + min(minDepth(root->left), minDepth(root->right));\n    }\n};",
+          "description": "C++精简递归法求二叉树的最小深度"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    int result;\n    void getdepth(TreeNode* node, int depth) {\n        if (node == nullptr) {\n            return;\n        }\n        if (node -> left == nullptr && node->right == nullptr) {\n            result = min(result, depth);\n        }\n        if (node->left) { \n            getdepth(node->left, depth + 1);\n        }\n        if (node->right) { \n            getdepth(node->right, depth + 1);\n        }\n        return ;\n    }\n\npublic:\n    int minDepth(TreeNode* root) {\n        if (root == nullptr) {\n            return 0;\n        }\n        result = INT_MAX;\n        getdepth(root, 1);\n        return result;\n    }\n};",
+          "description": "C++前序遍历方式求二叉树的最小深度"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n\n    int minDepth(TreeNode* root) {\n        if (root == NULL) return 0;\n        int depth = 0;\n        queue<TreeNode*> que;\n        que.push(root);\n        while(!que.empty()) {\n            int size = que.size();\n            depth++; // 记录最小深度\n            for (int i = 0; i < size; i++) {\n                TreeNode* node = que.front();\n                que.pop();\n                if (node->left) que.push(node->left);\n                if (node->right) que.push(node->right);\n                if (!node->left && !node->right) { // 当左右孩子都为空的时候，说明是最低点的一层了，退出\n                    return depth;\n                }\n            }\n        }\n        return depth;\n    }\n};",
+          "description": "C++迭代法（层序遍历）求二叉树的最小深度"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int minDepth(TreeNode root) {\n        if (root == null) {\n            return 0;\n        }\n        int leftDepth = minDepth(root.left);\n        int rightDepth = minDepth(root.right);\n        if (root.left == null) {\n            return rightDepth + 1;\n        }\n        if (root.right == null) {\n            return leftDepth + 1;\n        }\n        // 左右结点都不为null\n        return Math.min(leftDepth, rightDepth) + 1;\n    }\n}",
+          "description": "Java递归法求二叉树的最小深度"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    int depth = 0;\n    // 定义最小深度，初始化最大值\n    int minDepth = Integer.MAX_VALUE;\n    public int minDepth(TreeNode root) {\n        dep(root);\n        return minDepth == Integer.MAX_VALUE ? 0 : minDepth;\n    }\n    void dep(TreeNode root){\n        if(root == null) return ;\n        // 递归开始，深度增加\n        depth++;\n        dep(root.left);\n        dep(root.right);\n        // 该位置表示递归到叶子节点了，需要更新最小深度minDepth\n        if(root.left == null && root.right == null)\n            minDepth = Math.min(minDepth , depth);\n        // 递归结束，深度减小\n        depth--;\n    }\n}",
+          "description": "Java递归法（通过记录每次递归时的深度来求解）求二叉树的最小深度"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n   public int minDepth(TreeNode root) {\n        if (root == null) {\n            return 0;\n        }\n        Deque<TreeNode> deque = new LinkedList<>();\n        deque.offer(root);\n        int depth = 0;\n        while (!deque.isEmpty()) {\n            int size = deque.size();\n            depth++;\n            for (int i = 0; i < size; i++) {\n                TreeNode poll = deque.poll();\n                if (poll.left == null && poll.right == null) {\n                    // 是叶子结点，直接返回depth，因为从上往下遍历，所以该值就是最小值\n                    return depth;\n                }\n                if (poll.left != null) {\n                    deque.offer(poll.left);\n                }\n                if (poll.right != null) {\n                    deque.offer(poll.right);\n                }\n            }\n        }\n        return depth;\n    }\n}",
+          "description": "Java迭代法（层序遍历）求二叉树的最小深度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def getDepth(self, node):\n        if node is None:\n            return 0\n        leftDepth = self.getDepth(node.left)  # 左\n        rightDepth = self.getDepth(node.right)  # 右\n        if node.left is None and node.right is not None:\n            return 1 + rightDepth\n        if node.left is not None and node.right is None:\n            return 1 + leftDepth\n        result = 1 + min(leftDepth, rightDepth)\n        return result\n\n    def minDepth(self, root):\n        return self.getDepth(root)",
+          "description": "Python递归法（版本一）求二叉树的最小深度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def minDepth(self, root):\n        if root is None:\n            return 0\n        if root.left is None and root.right is not None:\n            return 1 + self.minDepth(root.right)\n        if root.left is not None and root.right is None:\n            return 1 + self.minDepth(root.left)\n        return 1 + min(self.minDepth(root.left), self.minDepth(root.right))",
+          "description": "Python递归法（版本二）求二叉树的最小深度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.result = float('inf')\n\n    def getDepth(self, node, depth):\n        if node is None:\n            return\n        if node.left is None and node.right is None:\n            self.result = min(self.result, depth)\n        if node.left:\n            self.getDepth(node.left, depth + 1)\n        if node.right:\n            self.getDepth(node.right, depth + 1)\n\n    def minDepth(self, root):\n        if root is None:\n            return 0\n        self.getDepth(root, 1)\n        return self.result",
+          "description": "Python递归法（版本三，前序遍历）求二叉树的最小深度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def minDepth(self, root: TreeNode) -> int:\n        if not root:\n            return 0\n        depth = 0\n        queue = collections.deque([root])\n        while queue:\n            depth += 1 \n            for _ in range(len(queue)):\n                node = queue.popleft()\n                if not node.left and not node.right:\n                    return depth\n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n        return depth",
+          "description": "Python迭代法（层序遍历）求二叉树的最小深度"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python :",
+      "text": "递归法（版本一）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "int getDepth(TreeNode* node) {\n    if (node == NULL) return 0;\n    int leftDepth = getDepth(node->left);           // 左\n    int rightDepth = getDepth(node->right);         // 右\n                                                    // 中\n    // 当一个左子树为空，右不为空，这时并不是最低点\n    if (node->left == NULL && node->right != NULL) { \n        return 1 + rightDepth;\n    }   \n    // 当一个右子树为空，左不为空，这时并不是最低点\n    if (node->left != NULL && node->right == NULL) { \n        return 1 + leftDepth;\n    }\n    int result = 1 + min(leftDepth, rightDepth);\n    return result;\n}\n\nint minDepth(TreeNode* root) {\n    return getDepth(root);\n}",
+          "description": "递归法求二叉树的最小深度"
+        },
+        {
+          "language": "cpp",
+          "code": "int minDepth(TreeNode* root) {\n    if (root == NULL) return 0;\n    if (root->left == NULL && root->right != NULL) {\n        return 1 + minDepth(root->right);\n    }\n    if (root->left != NULL && root->right == NULL) {\n        return 1 + minDepth(root->left);\n    }\n    return 1 + min(minDepth(root->left), minDepth(root->right));\n}",
+          "description": "精简后的递归法求二叉树的最小深度"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    int result;\n    void getdepth(TreeNode* node, int depth) {\n        // 函数递归终止条件\n        if (node == nullptr) {\n            return;\n        }\n        // 中，处理逻辑：判断是不是叶子结点\n        if (node -> left == nullptr && node->right == nullptr) {\n            result = min(result, depth);\n        }\n        if (node->left) { // 左\n            getdepth(node->left, depth + 1);\n        }\n        if (node->right) { // 右\n            getdepth(node->right, depth + 1);\n        }\n        return ;\n    }\n\npublic:\n    int minDepth(TreeNode* root) {\n        if (root == nullptr) {\n            return 0;\n        }\n        result = INT_MAX;\n        getdepth(root, 1);\n        return result;\n    }\n};",
+          "description": "前序遍历方式求二叉树的最小深度"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int minDepth(TreeNode* root) {\n        if (root == NULL) return 0;\n        int depth = 0;\n        queue<TreeNode*> que;\n        que.push(root);\n        while(!que.empty()) {\n            int size = que.size();\n            depth++; // 记录最小深度\n            for (int i = 0; i < size; i++) {\n                TreeNode* node = que.front();\n                que.pop();\n                if (node->left) que.push(node->left);\n                if (node->right) que.push(node->right);\n                if (!node->left && !node->right) { // 当左右孩子都为空的时候，说明是最低点的一层了，退出\n                    return depth;\n                }\n            }\n        }\n        return depth;\n    }\n};",
+          "description": "迭代法（层序遍历）求二叉树的最小深度"
+        },
+        {
+          "language": "java",
+          "code": "public int minDepth(TreeNode root) {\n    if (root == null) {\n        return 0;\n    }\n    int leftDepth = minDepth(root.left);\n    int rightDepth = minDepth(root.right);\n    if (root.left == null) {\n        return rightDepth + 1;\n    }\n    if (root.right == null) {\n        return leftDepth + 1;\n    }\n    // 左右结点都不为null\n    return Math.min(leftDepth, rightDepth) + 1;\n}",
+          "description": "Java版本递归法求二叉树的最小深度"
+        },
+        {
+          "language": "java",
+          "code": "int depth = 0;\n// 定义最小深度，初始化最大值\nint minDepth = Integer.MAX_VALUE;\npublic int minDepth(TreeNode root) {\n    dep(root);\n    return minDepth == Integer.MAX_VALUE ? 0 : minDepth;\n}\nvoid dep(TreeNode root){\n    if(root == null) return ;\n    // 递归开始，深度增加\n    depth++;\n    dep(root.left);\n    dep(root.right);\n    // 该位置表示递归到叶子节点了，需要更新最小深度minDepth\n    if(root.left == null && root.right == null)\n        minDepth = Math.min(minDepth , depth);\n    // 递归结束，深度减小\n    depth--;\n}",
+          "description": "Java版本另一种递归法求二叉树的最小深度"
+        },
+        {
+          "language": "java",
+          "code": "public int minDepth(TreeNode root) {\n    if (root == null) {\n        return 0;\n    }\n    Deque<TreeNode> deque = new LinkedList<>();\n    deque.offer(root);\n    int depth = 0;\n    while (!deque.isEmpty()) {\n        int size = deque.size();\n        depth++;\n        for (int i = 0; i < size; i++) {\n            TreeNode poll = deque.poll();\n            if (poll.left == null && poll.right == null) {\n                // 是叶子结点，直接返回depth，因为从上往下遍历，所以该值就是最小值\n                return depth;\n            }\n            if (poll.left != null) {\n                deque.offer(poll.left);\n            }\n            if (poll.right != null) {\n                deque.offer(poll.right);\n            }\n        }\n    }\n    return depth;\n}",
+          "description": "Java版本迭代法（层序遍历）求二叉树的最小深度"
+        },
+        {
+          "language": "python",
+          "code": "def getDepth(self, node):\n    if node is None:\n        return 0\n    leftDepth = self.getDepth(node.left)  # 左\n    rightDepth = self.getDepth(node.right)  # 右\n    \n    # 当一个左子树为空，右不为空，这时并不是最低点\n    if node.left is None and node.right is not None:\n        return 1 + rightDepth\n    \n    # 当一个右子树为空，左不为空，这时并不是最低点\n    if node.left is not None and node.right is None:\n        return 1 + leftDepth\n    \n    result = 1 + min(leftDepth, rightDepth)\n    return result\n\ndef minDepth(self, root):\n    return self.getDepth(root)",
+          "description": "Python版本递归法求二叉树的最小深度"
+        },
+        {
+          "language": "python",
+          "code": "def minDepth(self, root):\n    if root is None:\n        return 0\n    if root.left is None and root.right is not None:\n        return 1 + self.minDepth(root.right)\n    if root.left is not None and root.right is None:\n        return 1 + self.minDepth(root.left)\n    return 1 + min(self.minDepth(root.left), self.minDepth(root.right))",
+          "description": "Python版本精简后的递归法求二叉树的最小深度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.result = float('inf')\n\n    def getDepth(self, node, depth):\n        if node is None:\n            return\n        if node.left is None and node.right is None:\n            self.result = min(self.result, depth)\n        if node.left:\n            self.getDepth(node.left, depth + 1)\n        if node.right:\n            self.getDepth(node.right, depth + 1)\n\n    def minDepth(self, root):\n        if root is None:\n            return 0\n        self.getDepth(root, 1)\n        return self.result",
+          "description": "Python版本前序遍历方式求二叉树的最小深度"
+        },
+        {
+          "language": "python",
+          "code": "def minDepth(self, root: TreeNode) -> int:\n    if not root:\n        return 0\n    depth = 0\n    queue = collections.deque([root])\n    \n    while queue:\n        depth += 1 \n        for _ in range(len(queue)):\n            node = queue.popleft()\n            \n            if not node.left and not node.right:\n                return depth\n        \n            if node.left:\n                queue.append(node.left)\n                \n            if node.right:\n                queue.append(node.right)\n\n    return depth",
+          "description": "Python版本迭代法（层序遍历）求二叉树的最小深度"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "int getDepth(TreeNode* node) {\n    if (node == NULL) return 0;\n    int leftDepth = getDepth(node->left);           // 左\n    int rightDepth = getDepth(node->right);         // 右\n                                                    // 中\n    // 当一个左子树为空，右不为空，这时并不是最低点\n    if (node->left == NULL && node->right != NULL) { \n        return 1 + rightDepth;\n    }   \n    // 当一个右子树为空，左不为空，这时并不是最低点\n    if (node->left != NULL && node->right == NULL) { \n        return 1 + leftDepth;\n    }\n    int result = 1 + min(leftDepth, rightDepth);\n    return result;\n}\n\nint minDepth(TreeNode* root) {\n    return getDepth(root);\n}",
+      "description": null
+    },
+    {
+      "language": "cpp",
+      "code": "int minDepth(TreeNode* root) {\n    if (root == NULL) return 0;\n    if (root->left == NULL && root->right != NULL) {\n        return 1 + minDepth(root->right);\n    }\n    if (root->left != NULL && root->right == NULL) {\n        return 1 + minDepth(root->left);\n    }\n    return 1 + min(minDepth(root->left), minDepth(root->right));\n}",
+      "description": null
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {\nprivate:\n    int result;\n    void getdepth(TreeNode* node, int depth) {\n        if (node == nullptr) {\n            return;\n        }\n        if (node -> left == nullptr && node->right == nullptr) {\n            result = min(result, depth);\n        }\n        if (node->left) {\n            getdepth(node->left, depth + 1);\n        }\n        if (node->right) {\n            getdepth(node->right, depth + 1);\n        }\n    }\n\npublic:\n    int minDepth(TreeNode* root) {\n        if (root == nullptr) {\n            return 0;\n        }\n        result = INT_MAX;\n        getdepth(root, 1);\n        return result;\n    }\n};",
+      "description": null
+    },
+    {
+      "language": "cpp",
+      "code": "int minDepth(TreeNode* root) {\n    if (root == NULL) return 0;\n    int depth = 0;\n    queue<TreeNode*> que;\n    que.push(root);\n    while(!que.empty()) {\n        int size = que.size();\n        depth++;\n        for (int i = 0; i < size; i++) {\n            TreeNode* node = que.front();\n            que.pop();\n            if (node->left) que.push(node->left);\n            if (node->right) que.push(node->right);\n            if (!node->left && !node->right) {\n                return depth;\n            }\n        }\n    }\n    return depth;\n}",
+      "description": null
+    },
+    {
+      "language": "java",
+      "code": "public int minDepth(TreeNode root) {\n    if (root == null) {\n        return 0;\n    }\n    int leftDepth = minDepth(root.left);\n    int rightDepth = minDepth(root.right);\n    if (root.left == null) {\n        return rightDepth + 1;\n    }\n    if (root.right == null) {\n        return leftDepth + 1;\n    }\n    return Math.min(leftDepth, rightDepth) + 1;\n}",
+      "description": null
+    },
+    {
+      "language": "java",
+      "code": "int depth = 0;\nint minDepth = Integer.MAX_VALUE;\npublic int minDepth(TreeNode root) {\n    dep(root);\n    return minDepth == Integer.MAX_VALUE ? 0 : minDepth;\n}\nvoid dep(TreeNode root){\n    if(root == null) return ;\n    depth++;\n    dep(root.left);\n    dep(root.right);\n    if(root.left == null && root.right == null)\n        minDepth = Math.min(minDepth , depth);\n    depth--;\n}",
+      "description": null
+    },
+    {
+      "language": "java",
+      "code": "public int minDepth(TreeNode root) {\n    if (root == null) {\n        return 0;\n    }\n    Deque<TreeNode> deque = new LinkedList<>();\n    deque.offer(root);\n    int depth = 0;\n    while (!deque.isEmpty()) {\n        int size = deque.size();\n        depth++;\n        for (int i = 0; i < size; i++) {\n            TreeNode poll = deque.poll();\n            if (poll.left == null && poll.right == null) {\n                return depth;\n            }\n            if (poll.left != null) {\n                deque.offer(poll.left);\n            }\n            if (poll.right != null) {\n                deque.offer(poll.right);\n            }\n        }\n    }\n    return depth;\n}",
+      "description": null
+    },
+    {
+      "language": "python",
+      "code": "def getDepth(self, node):\n    if node is None:\n        return 0\n    leftDepth = self.getDepth(node.left)  # 左\n    rightDepth = self.getDepth(node.right)  # 右\n    if node.left is None and node.right is not None:\n        return 1 + rightDepth\n    if node.left is not None and node.right is None:\n        return 1 + leftDepth\n    result = 1 + min(leftDepth, rightDepth)\n    return result\n\ndef minDepth(self, root):\n    return self.getDepth(root)",
+      "description": null
+    },
+    {
+      "language": "python",
+      "code": "def minDepth(self, root):\n    if root is None:\n        return 0\n    if root.left is None and root.right is not None:\n        return 1 + self.minDepth(root.right)\n    if root.left is not None and root.right is None:\n        return 1 + self.minDepth(root.left)\n    return 1 + min(self.minDepth(root.left), self.minDepth(root.right))",
+      "description": null
+    },
+    {
+      "language": "python",
+      "code": "def __init__(self):\n    self.result = float('inf')\ndef getDepth(self, node, depth):\n    if node is None:\n        return\n    if node.left is None and node.right is None:\n        self.result = min(self.result, depth)\n    if node.left:\n        self.getDepth(node.left, depth + 1)\n    if node.right:\n        self.getDepth(node.right, depth + 1)\ndef minDepth(self, root):\n    if root is None:\n        return 0\n    self.getDepth(root, 1)\n    return self.result",
+      "description": null
+    },
+    {
+      "language": "python",
+      "code": "def minDepth(self, root: TreeNode) -> int:\n    if not root:\n        return 0\n    depth = 0\n    queue = collections.deque([root])\n    while queue:\n        depth += 1 \n        for _ in range(len(queue)):\n            node = queue.popleft()\n            if not node.left and not node.right:\n                return depth\n            if node.left:\n                queue.append(node.left)\n            if node.right:\n                queue.append(node.right)\n    return depth",
+      "description": null
+    }
+  ],
+  "common_mistakes": [
+    "忽略叶子节点的具体定义，即认为只要有一个子节点为空就算作叶子节点。",
+    "在递归算法中，对于只有一侧子树存在的节点处理不当，直接返回了min(leftDepth, rightDepth)+1，这会导致输出错误的结果。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/2021020315582586.png",
+      "description": "这是一棵二叉树的示意图，根节点为3，左子节点为9，右子节点为20（其左子节点为15，右子节点为7）。",
+      "context": "该图片展示了一个具体的二叉树示例，用于说明如何计算给定二叉树的最小深度。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/111.%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E6%B7%B1%E5%BA%A6.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/111.%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E6%B7%B1%E5%BA%A6.png",
+      "context": "该图片展示了二叉树中寻找最小深度时可能遇到的情形，帮助理解为何仅考虑到达叶子节点的路径才符合题目要求。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/111.%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E6%B7%B1%E5%BA%A6.png",
+      "description": "这张图片展示了一棵二叉树，并通过红色箭头和标注解释了最小深度的计算方法，指出从根节点到最近叶子节点的路径长度（此处为3）才是最小深度。",
+      "context": "该图片展示了二叉树结构，用以帮助理解最小深度的计算方法，特别是说明了只有左右孩子都为空的节点才被视为叶子节点。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/2021020315582586.png",
+      "description": "GIF展示了通过前序遍历计算给定二叉树最小深度的过程。",
+      "context": "该GIF动画展示了给定二叉树的结构，帮助理解如何计算从根节点到最近叶子节点的最短路径上的节点数量。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/111.%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E6%B7%B1%E5%BA%A6.png",
+      "description": "GIF展示了二叉树最小深度计算过程中后序遍历的递归调用与节点访问顺序。",
+      "context": "该GIF动画展示了如何通过后序遍历来寻找二叉树的最小深度，强调了只有当节点的左右孩子都为空时，才认为是到达了一个叶子节点。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\二叉树的最小深度.txt",
+  "extracted_at": "2025-07-19T17:31:24.173083",
+  "raw_content": "二叉树的最小深度\n力扣题目链接(https://leetcode.cn/problems/minimum-depth-of-binary-tree/)\n\n给定一个二叉树，找出其最小深度。\n\n最小深度是从根节点到最近叶子节点的最短路径上的节点数量。\n\n说明: 叶子节点是指没有子节点的节点。\n\n示例:\n\n给定二叉树 [3,9,20,null,null,15,7],\n\nhttps://file1.kamacoder.com/i/algo/2021020315582586.png\n\n返回它的最小深度 2\n\n思路\n看完了这篇104.二叉树的最大深度 (https://programmercarl.com/0104.%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%A4%A7%E6%B7%B1%E5%BA%A6.html)，再来看看如何求最小深度。\n\n直觉上好像和求最大深度差不多，其实还是差不少的。\n\n本题依然是前序遍历和后序遍历都可以，前序求的是深度，后序求的是高度。\n\n二叉树节点的深度：指从根节点到该节点的最长简单路径边的条数或者节点数（取决于深度从0开始还是从1开始）\n二叉树节点的高度：指从该节点到叶子节点的最长简单路径边的条数或者节点数（取决于高度从0开始还是从1开始）\n那么使用后序遍历，其实求的是根节点到叶子节点的最小距离，就是求高度的过程，不过这个最小距离 也同样是最小深度。\n\n以下讲解中遍历顺序上依然采用后序遍历（因为要比较递归返回之后的结果，本文我也给出前序遍历的写法）。\n\n本题还有一个误区，在处理节点的过程中，最大深度很容易理解，最小深度就不那么好理解，如图：\n\nhttps://file1.kamacoder.com/i/algo/111.%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E6%B7%B1%E5%BA%A6.png\n\n这就重新审题了，题目中说的是：最小深度是从根节点到最近叶子节点的最短路径上的节点数量。注意是叶子节点。\n\n什么是叶子节点，左右孩子都为空的节点才是叶子节点！\n\n#递归法\n来来来，一起递归三部曲：\n\n确定递归函数的参数和返回值\n参数为要传入的二叉树根节点，返回的是int类型的深度。\n\n代码如下：\n\nint getDepth(TreeNode* node)\n确定终止条件\n终止条件也是遇到空节点返回0，表示当前节点的高度为0。\n\n代码如下：\n\nif (node == NULL) return 0;\n确定单层递归的逻辑\n这块和求最大深度可就不一样了，一些同学可能会写如下代码：\n\nint leftDepth = getDepth(node->left);\nint rightDepth = getDepth(node->right);\nint result = 1 + min(leftDepth, rightDepth);\nreturn result;\n这个代码就犯了此图中的误区：\n\nhttps://file1.kamacoder.com/i/algo/111.%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E6%B7%B1%E5%BA%A6.png\n\n如果这么求的话，没有左孩子的分支会算为最短深度。\n\n所以，如果左子树为空，右子树不为空，说明最小深度是 1 + 右子树的深度。\n\n反之，右子树为空，左子树不为空，最小深度是 1 + 左子树的深度。 最后如果左右子树都不为空，返回左右子树深度最小值 + 1 。\n\n代码如下：\n\nint leftDepth = getDepth(node->left);           // 左\nint rightDepth = getDepth(node->right);         // 右\n                                                // 中\n// 当一个左子树为空，右不为空，这时并不是最低点\nif (node->left == NULL && node->right != NULL) { \n    return 1 + rightDepth;\n}   \n// 当一个右子树为空，左不为空，这时并不是最低点\nif (node->left != NULL && node->right == NULL) { \n    return 1 + leftDepth;\n}\nint result = 1 + min(leftDepth, rightDepth);\nreturn result;\n遍历的顺序为后序（左右中），可以看出：求二叉树的最小深度和求二叉树的最大深度的差别主要在于处理左右孩子不为空的逻辑。\n\n整体递归代码如下：\n\nclass Solution {\npublic:\n    int getDepth(TreeNode* node) {\n        if (node == NULL) return 0;\n        int leftDepth = getDepth(node->left);           // 左\n        int rightDepth = getDepth(node->right);         // 右\n                                                        // 中\n        // 当一个左子树为空，右不为空，这时并不是最低点\n        if (node->left == NULL && node->right != NULL) { \n            return 1 + rightDepth;\n        }   \n        // 当一个右子树为空，左不为空，这时并不是最低点\n        if (node->left != NULL && node->right == NULL) { \n            return 1 + leftDepth;\n        }\n        int result = 1 + min(leftDepth, rightDepth);\n        return result;\n    }\n\n    int minDepth(TreeNode* root) {\n        return getDepth(root);\n    }\n};\n精简之后代码如下：\n\nclass Solution {\npublic:\n    int minDepth(TreeNode* root) {\n        if (root == NULL) return 0;\n        if (root->left == NULL && root->right != NULL) {\n            return 1 + minDepth(root->right);\n        }\n        if (root->left != NULL && root->right == NULL) {\n            return 1 + minDepth(root->left);\n        }\n        return 1 + min(minDepth(root->left), minDepth(root->right));\n    }\n};\n精简之后的代码根本看不出是哪种遍历方式，所以依然还要强调一波：如果对二叉树的操作还不熟练，尽量不要直接照着精简代码来学。\n\n前序遍历的方式：\n\nclass Solution {\nprivate:\n    int result;\n    void getdepth(TreeNode* node, int depth) {\n        // 函数递归终止条件\n        if (node == nullptr) {\n            return;\n        }\n        // 中，处理逻辑：判断是不是叶子结点\n        if (node -> left == nullptr && node->right == nullptr) {\n            result = min(result, depth);\n        }\n        if (node->left) { // 左\n            getdepth(node->left, depth + 1);\n        }\n        if (node->right) { // 右\n            getdepth(node->right, depth + 1);\n        }\n        return ;\n    }\n\npublic:\n    int minDepth(TreeNode* root) {\n        if (root == nullptr) {\n            return 0;\n        }\n        result = INT_MAX;\n        getdepth(root, 1);\n        return result;\n    }\n};\n#迭代法\n相对于104.二叉树的最大深度 (opens new window)，本题还可以使用层序遍历的方式来解决，思路是一样的。\n\n如果对层序遍历还不清楚的话，可以看这篇：二叉树：层序遍历登场！(opens new window)\n\n需要注意的是，只有当左右孩子都为空的时候，才说明遍历到最低点了。如果其中一个孩子不为空则不是最低点\n\n代码如下：（详细注释）\n\nclass Solution {\npublic:\n\n    int minDepth(TreeNode* root) {\n        if (root == NULL) return 0;\n        int depth = 0;\n        queue<TreeNode*> que;\n        que.push(root);\n        while(!que.empty()) {\n            int size = que.size();\n            depth++; // 记录最小深度\n            for (int i = 0; i < size; i++) {\n                TreeNode* node = que.front();\n                que.pop();\n                if (node->left) que.push(node->left);\n                if (node->right) que.push(node->right);\n                if (!node->left && !node->right) { // 当左右孩子都为空的时候，说明是最低点的一层了，退出\n                    return depth;\n                }\n            }\n        }\n        return depth;\n    }\n};\n#其他语言版本\n#Java:\nclass Solution {\n    /**\n     * 递归法，相比求MaxDepth要复杂点\n     * 因为最小深度是从根节点到最近**叶子节点**的最短路径上的节点数量\n     */\n    public int minDepth(TreeNode root) {\n        if (root == null) {\n            return 0;\n        }\n        int leftDepth = minDepth(root.left);\n        int rightDepth = minDepth(root.right);\n        if (root.left == null) {\n            return rightDepth + 1;\n        }\n        if (root.right == null) {\n            return leftDepth + 1;\n        }\n        // 左右结点都不为null\n        return Math.min(leftDepth, rightDepth) + 1;\n    }\n}\nclass Solution {\n    /**\n     * 递归法（思路来自二叉树最大深度的递归法）\n     * 该题求最小深度，最小深度为根节点到叶子节点的深度，所以在迭代到每个叶子节点时更新最小值。\n     */\n    int depth = 0;\n    // 定义最小深度，初始化最大值\n    int minDepth = Integer.MAX_VALUE;\n    public int minDepth(TreeNode root) {\n        dep(root);\n        return minDepth == Integer.MAX_VALUE ? 0 : minDepth;\n    }\n    void dep(TreeNode root){\n        if(root == null) return ;\n        // 递归开始，深度增加\n        depth++;\n        dep(root.left);\n        dep(root.right);\n        // 该位置表示递归到叶子节点了，需要更新最小深度minDepth\n        if(root.left == null && root.right == null)\n            minDepth = Math.min(minDepth , depth);\n        // 递归结束，深度减小\n        depth--;\n    }\n}\nclass Solution {\n   /**\n     * 迭代法，层序遍历\n     */\n    public int minDepth(TreeNode root) {\n        if (root == null) {\n            return 0;\n        }\n        Deque<TreeNode> deque = new LinkedList<>();\n        deque.offer(root);\n        int depth = 0;\n        while (!deque.isEmpty()) {\n            int size = deque.size();\n            depth++;\n            for (int i = 0; i < size; i++) {\n                TreeNode poll = deque.poll();\n                if (poll.left == null && poll.right == null) {\n                    // 是叶子结点，直接返回depth，因为从上往下遍历，所以该值就是最小值\n                    return depth;\n                }\n                if (poll.left != null) {\n                    deque.offer(poll.left);\n                }\n                if (poll.right != null) {\n                    deque.offer(poll.right);\n                }\n            }\n        }\n        return depth;\n    }\n}\n#Python :\n递归法（版本一）\n\nclass Solution:\n    def getDepth(self, node):\n        if node is None:\n            return 0\n        leftDepth = self.getDepth(node.left)  # 左\n        rightDepth = self.getDepth(node.right)  # 右\n        \n        # 当一个左子树为空，右不为空，这时并不是最低点\n        if node.left is None and node.right is not None:\n            return 1 + rightDepth\n        \n        # 当一个右子树为空，左不为空，这时并不是最低点\n        if node.left is not None and node.right is None:\n            return 1 + leftDepth\n        \n        result = 1 + min(leftDepth, rightDepth)\n        return result\n\n    def minDepth(self, root):\n        return self.getDepth(root)\n\n递归法（版本二）\n\nclass Solution:\n    def minDepth(self, root):\n        if root is None:\n            return 0\n        if root.left is None and root.right is not None:\n            return 1 + self.minDepth(root.right)\n        if root.left is not None and root.right is None:\n            return 1 + self.minDepth(root.left)\n        return 1 + min(self.minDepth(root.left), self.minDepth(root.right))\n\n\n递归法（版本三）前序\n\nclass Solution:\n    def __init__(self):\n        self.result = float('inf')\n\n    def getDepth(self, node, depth):\n        if node is None:\n            return\n        if node.left is None and node.right is None:\n            self.result = min(self.result, depth)\n        if node.left:\n            self.getDepth(node.left, depth + 1)\n        if node.right:\n            self.getDepth(node.right, depth + 1)\n\n    def minDepth(self, root):\n        if root is None:\n            return 0\n        self.getDepth(root, 1)\n        return self.result\n\n\n迭代法\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def minDepth(self, root: TreeNode) -> int:\n        if not root:\n            return 0\n        depth = 0\n        queue = collections.deque([root])\n        \n        while queue:\n            depth += 1 \n            for _ in range(len(queue)):\n                node = queue.popleft()\n                \n                if not node.left and not node.right:\n                    return depth\n            \n                if node.left:\n                    queue.append(node.left)\n                    \n                if node.right:\n                    queue.append(node.right)\n\n        return depth"
+}

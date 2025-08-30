@@ -1,0 +1,221 @@
+{
+  "id": "AP_593aa70f",
+  "title": "二叉树的递归遍历",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/binary-tree-preorder-traversal/",
+  "description": "",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "递归",
+    "深度优先搜索"
+  ],
+  "data_structure_tags": [
+    "二叉树",
+    "数组"
+  ],
+  "technique_tags": [
+    "分治法"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过明确递归函数的参数与返回值、终止条件及单层递归逻辑这三要素来实现二叉树的前序、中序和后序遍历。",
+  "key_insights": [
+    {
+      "content": "确定递归函数的参数和返回值、设置合适的终止条件以及定义每一层递归的具体操作逻辑是编写正确且有效的递归算法的关键。"
+    },
+    {
+      "content": "对于不同的遍历方式（前序、中序、后序），调整对节点处理的位置即可改变遍历顺序，但核心的递归框架保持一致。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    void traversal(TreeNode* cur, vector<int>& vec) {\n        if (cur == NULL) return;\n        vec.push_back(cur->val);    // 中\n        traversal(cur->left, vec);  // 左\n        traversal(cur->right, vec); // 右\n    }\n    vector<int> preorderTraversal(TreeNode* root) {\n        vector<int> result;\n        traversal(root, result);\n        return result;\n    }\n};\nvoid traversal(TreeNode* cur, vector<int>& vec) {\n    if (cur == NULL) return;\n    traversal(cur->left, vec);  // 左\n    vec.push_back(cur->val);    // 中\n    traversal(cur->right, vec); // 右\n}\nvoid traversal(TreeNode* cur, vector<int>& vec) {\n    if (cur == NULL) return;\n    traversal(cur->left, vec);  // 左\n    traversal(cur->right, vec); // 右\n    vec.push_back(cur->val);    // 中\n}",
+          "description": "C++实现的二叉树前序、中序、后序递归遍历"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public List<Integer> preorderTraversal(TreeNode root) {\n        List<Integer> result = new ArrayList<Integer>();\n        preorder(root, result);\n        return result;\n    }\n\n    public void preorder(TreeNode root, List<Integer> result) {\n        if (root == null) {\n            return;\n        }\n        result.add(root.val);\n        preorder(root.left, result);\n        preorder(root.right, result);\n    }\n}\nclass Solution {\n    public List<Integer> inorderTraversal(TreeNode root) {\n        List<Integer> res = new ArrayList<>();\n        inorder(root, res);\n        return res;\n    }\n\n    void inorder(TreeNode root, List<Integer> list) {\n        if (root == null) {\n            return;\n        }\n        inorder(root.left, list);\n        list.add(root.val);             \n        inorder(root.right, list);\n    }\n}\nclass Solution {\n    public List<Integer> postorderTraversal(TreeNode root) {\n        List<Integer> res = new ArrayList<>();\n        postorder(root, res);\n        return res;\n    }\n\n    void postorder(TreeNode root, List<Integer> list) {\n        if (root == null) {\n            return;\n        }\n        postorder(root.left, list);\n        postorder(root.right, list);\n        list.add(root.val);              \n    }\n}",
+          "description": "Java实现的二叉树前序、中序、后序递归遍历"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def preorderTraversal(self, root: TreeNode) -> List[int]:\n        res = []\n        def dfs(node):\n            if node is None:\n                return\n            res.append(node.val)\n            dfs(node.left)\n            dfs(node.right)\n        dfs(root)\n        return res\nclass Solution:\n    def inorderTraversal(self, root: TreeNode) -> List[int]:\n        res = []\n        def dfs(node):\n            if node is None:\n                return\n            dfs(node.left)\n            res.append(node.val)\n            dfs(node.right)\n        dfs(root)\n        return res\nclass Solution:\n    def postorderTraversal(self, root: TreeNode) -> List[int]:\n        res = []\n        def dfs(node):\n            if node is None:\n                return\n            dfs(node.left)\n            dfs(node.right)\n            res.append(node.val)\n        dfs(root)\n        return res",
+          "description": "Python实现的二叉树前序、中序、后序递归遍历"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "// 前序遍历·递归·LC144_二叉树的前序遍历",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    void traversal(TreeNode* cur, vector<int>& vec) {\n        if (cur == NULL) return;\n        vec.push_back(cur->val);    // 中\n        traversal(cur->left, vec);  // 左\n        traversal(cur->right, vec); // 右\n    }\n    vector<int> preorderTraversal(TreeNode* root) {\n        vector<int> result;\n        traversal(root, result);\n        return result;\n    }\n};",
+          "description": "C++实现的二叉树前序遍历"
+        },
+        {
+          "language": "cpp",
+          "code": "void traversal(TreeNode* cur, vector<int>& vec) {\n    if (cur == NULL) return;\n    traversal(cur->left, vec);  // 左\n    vec.push_back(cur->val);    // 中\n    traversal(cur->right, vec); // 右\n}",
+          "description": "C++实现的二叉树中序遍历"
+        },
+        {
+          "language": "cpp",
+          "code": "void traversal(TreeNode* cur, vector<int>& vec) {\n    if (cur == NULL) return;\n    traversal(cur->left, vec);  // 左\n    traversal(cur->right, vec); // 右\n    vec.push_back(cur->val);    // 中\n}",
+          "description": "C++实现的二叉树后序遍历"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public List<Integer> preorderTraversal(TreeNode root) {\n        List<Integer> result = new ArrayList<Integer>();\n        preorder(root, result);\n        return result;\n    }\n\n    public void preorder(TreeNode root, List<Integer> result) {\n        if (root == null) {\n            return;\n        }\n        result.add(root.val);\n        preorder(root.left, result);\n        preorder(root.right, result);\n    }\n}",
+          "description": "Java实现的二叉树前序遍历"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public List<Integer> inorderTraversal(TreeNode root) {\n        List<Integer> res = new ArrayList<>();\n        inorder(root, res);\n        return res;\n    }\n\n    void inorder(TreeNode root, List<Integer> list) {\n        if (root == null) {\n            return;\n        }\n        inorder(root.left, list);\n        list.add(root.val);\n        inorder(root.right, list);\n    }\n}",
+          "description": "Java实现的二叉树中序遍历"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public List<Integer> postorderTraversal(TreeNode root) {\n        List<Integer> res = new ArrayList<>();\n        postorder(root, res);\n        return res;\n    }\n\n    void postorder(TreeNode root, List<Integer> list) {\n        if (root == null) {\n            return;\n        }\n        postorder(root.left, list);\n        postorder(root.right, list);\n        list.add(root.val);\n    }\n}",
+          "description": "Java实现的二叉树后序遍历"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def preorderTraversal(self, root: TreeNode) -> List[int]:\n        res = []\n\n        def dfs(node):\n            if node is None:\n                return\n\n            res.append(node.val)\n            dfs(node.left)\n            dfs(node.right)\n        dfs(root)\n        return res",
+          "description": "Python实现的二叉树前序遍历"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def inorderTraversal(self, root: TreeNode) -> List[int]:\n        res = []\n\n        def dfs(node):\n            if node is None:\n                return\n\n            dfs(node.left)\n            res.append(node.val)\n            dfs(node.right)\n        dfs(root)\n        return res",
+          "description": "Python实现的二叉树中序遍历"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def postorderTraversal(self, root: TreeNode) -> List[int]:\n        res = []\n\n        def dfs(node):\n            if node is None:\n                return\n\n            dfs(node.left)\n            dfs(node.right)\n            res.append(node.val)\n\n        dfs(root)\n        return res",
+          "description": "Python实现的二叉树后序遍历"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "# 前序遍历-递归-LC144_二叉树的前序遍历",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void traversal(TreeNode* cur, vector<int>& vec) { if (cur == NULL) return; vec.push_back(cur->val);    // 中 traversal(cur->left, vec);  // 左 traversal(cur->right, vec); // 右 } vector<int> preorderTraversal(TreeNode* root) { vector<int> result; traversal(root, result); return result; }};",
+          "description": "C++实现二叉树的前序遍历"
+        },
+        {
+          "language": "cpp",
+          "code": "void traversal(TreeNode* cur, vector<int>& vec) { if (cur == NULL) return; traversal(cur->left, vec);  // 左 vec.push_back(cur->val);    // 中 traversal(cur->right, vec); // 右 }",
+          "description": "C++实现二叉树的中序遍历"
+        },
+        {
+          "language": "cpp",
+          "code": "void traversal(TreeNode* cur, vector<int>& vec) { if (cur == NULL) return; traversal(cur->left, vec);  // 左 traversal(cur->right, vec); // 右 vec.push_back(cur->val);    // 中 }",
+          "description": "C++实现二叉树的后序遍历"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<Integer> preorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<Integer>(); preorder(root, result); return result; } public void preorder(TreeNode root, List<Integer> result) { if (root == null) { return; } result.add(root.val); preorder(root.left, result); preorder(root.right, result); }}",
+          "description": "Java实现二叉树的前序遍历"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<Integer> inorderTraversal(TreeNode root) { List<Integer> res = new ArrayList<>(); inorder(root, res); return res; } void inorder(TreeNode root, List<Integer> list) { if (root == null) { return; } inorder(root.left, list); list.add(root.val);             // 注意这一句 inorder(root.right, list); }}",
+          "description": "Java实现二叉树的中序遍历"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<Integer> postorderTraversal(TreeNode root) { List<Integer> res = new ArrayList<>(); postorder(root, res); return res; } void postorder(TreeNode root, List<Integer> list) { if (root == null) { return; } postorder(root.left, list); postorder(root.right, list); list.add(root.val);             // 注意这一句 }}",
+          "description": "Java实现二叉树的后序遍历"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def preorderTraversal(self, root: TreeNode) -> List[int]: res = [] def dfs(node): if node is None: return res.append(node.val) dfs(node.left) dfs(node.right) dfs(root) return res",
+          "description": "Python实现二叉树的前序遍历"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def inorderTraversal(self, root: TreeNode) -> List[int]: res = [] def dfs(node): if node is None: return dfs(node.left) res.append(node.val) dfs(node.right) dfs(root) return res",
+          "description": "Python实现二叉树的中序遍历"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def postorderTraversal(self, root: TreeNode) -> List[int]: res = [] def dfs(node): if node is None: return dfs(node.left) dfs(node.right) res.append(node.val) dfs(root) return res",
+          "description": "Python实现二叉树的后序遍历"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: void traversal(TreeNode* cur, vector<int>& vec) { if (cur == NULL) return; vec.push_back(cur->val); traversal(cur->left, vec); traversal(cur->right, vec);} vector<int> preorderTraversal(TreeNode* root) { vector<int> result; traversal(root, result); return result;}};",
+      "description": "C++实现的二叉树前序遍历"
+    },
+    {
+      "language": "cpp",
+      "code": "void traversal(TreeNode* cur, vector<int>& vec) { if (cur == NULL) return; traversal(cur->left, vec); vec.push_back(cur->val); traversal(cur->right, vec);}",
+      "description": "C++实现的二叉树中序遍历"
+    },
+    {
+      "language": "cpp",
+      "code": "void traversal(TreeNode* cur, vector<int>& vec) { if (cur == NULL) return; traversal(cur->left, vec); traversal(cur->right, vec); vec.push_back(cur->val);}",
+      "description": "C++实现的二叉树后序遍历"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public List<Integer> preorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<Integer>(); preorder(root, result); return result; } public void preorder(TreeNode root, List<Integer> result) { if (root == null) { return; } result.add(root.val); preorder(root.left, result); preorder(root.right, result); }}",
+      "description": "Java实现的二叉树前序遍历"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public List<Integer> inorderTraversal(TreeNode root) { List<Integer> res = new ArrayList<>(); inorder(root, res); return res; } void inorder(TreeNode root, List<Integer> list) { if (root == null) { return; } inorder(root.left, list); list.add(root.val); inorder(root.right, list); }}",
+      "description": "Java实现的二叉树中序遍历"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public List<Integer> postorderTraversal(TreeNode root) { List<Integer> res = new ArrayList<>(); postorder(root, res); return res; } void postorder(TreeNode root, List<Integer> list) { if (root == null) { return; } postorder(root.left, list); postorder(root.right, list); list.add(root.val); }}",
+      "description": "Java实现的二叉树后序遍历"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def preorderTraversal(self, root: TreeNode) -> List[int]: res = [] def dfs(node): if node is None: return res.append(node.val) dfs(node.left) dfs(node.right) dfs(root) return res",
+      "description": "Python实现的二叉树前序遍历"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def inorderTraversal(self, root: TreeNode) -> List[int]: res = [] def dfs(node): if node is None: return dfs(node.left) res.append(node.val) dfs(node.right) dfs(root) return res",
+      "description": "Python实现的二叉树中序遍历"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def postorderTraversal(self, root: TreeNode) -> List[int]: res = [] def dfs(node): if node is None: return dfs(node.left) dfs(node.right) res.append(node.val) dfs(root) return res",
+      "description": "Python实现的二叉树后序遍历"
+    }
+  ],
+  "common_mistakes": [
+    "忘记设置或错误地设置递归终止条件，导致栈溢出。",
+    "混淆不同遍历方法中的节点访问顺序。",
+    "在递归过程中没有正确传递所有必要的参数，导致数据丢失或不完整。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\二叉树的递归遍历.txt",
+  "extracted_at": "2025-07-19T18:14:12.295340",
+  "raw_content": "二叉树的递归遍历\n\n思路\n这次我们要好好谈一谈递归，为什么很多同学看递归算法都是“一看就会，一写就废”。\n\n主要是对递归不成体系，没有方法论，每次写递归算法 ，都是靠玄学来写代码，代码能不能编过都靠运气。\n\n本篇将介绍前后中序的递归写法，一些同学可能会感觉很简单，其实不然，我们要通过简单题目把方法论确定下来，有了方法论，后面才能应付复杂的递归。\n\n这里帮助大家确定下来递归算法的三个要素。每次写递归，都按照这三要素来写，可以保证大家写出正确的递归算法！\n\n确定递归函数的参数和返回值： 确定哪些参数是递归的过程中需要处理的，那么就在递归函数里加上这个参数， 并且还要明确每次递归的返回值是什么进而确定递归函数的返回类型。\n\n确定终止条件： 写完了递归算法, 运行的时候，经常会遇到栈溢出的错误，就是没写终止条件或者终止条件写的不对，操作系统也是用一个栈的结构来保存每一层递归的信息，如果递归没有终止，操作系统的内存栈必然就会溢出。\n\n确定单层递归的逻辑： 确定每一层递归需要处理的信息。在这里也就会重复调用自己来实现递归的过程。\n\n好了，我们确认了递归的三要素，接下来就来练练手：\n\n以下以前序遍历为例：\n\n确定递归函数的参数和返回值：因为要打印出前序遍历节点的数值，所以参数里需要传入vector来放节点的数值，除了这一点就不需要再处理什么数据了也不需要有返回值，所以递归函数返回类型就是void，代码如下：\nvoid traversal(TreeNode* cur, vector<int>& vec)\n确定终止条件：在递归的过程中，如何算是递归结束了呢，当然是当前遍历的节点是空了，那么本层递归就要结束了，所以如果当前遍历的这个节点是空，就直接return，代码如下：\nif (cur == NULL) return;\n确定单层递归的逻辑：前序遍历是中左右的顺序，所以在单层递归的逻辑，是要先取中节点的数值，代码如下：\nvec.push_back(cur->val);    // 中\ntraversal(cur->left, vec);  // 左\ntraversal(cur->right, vec); // 右\n单层递归的逻辑就是按照中左右的顺序来处理的，这样二叉树的前序遍历，基本就写完了，再看一下完整代码：\n\n前序遍历：\n\nclass Solution {\npublic:\n    void traversal(TreeNode* cur, vector<int>& vec) {\n        if (cur == NULL) return;\n        vec.push_back(cur->val);    // 中\n        traversal(cur->left, vec);  // 左\n        traversal(cur->right, vec); // 右\n    }\n    vector<int> preorderTraversal(TreeNode* root) {\n        vector<int> result;\n        traversal(root, result);\n        return result;\n    }\n};\n那么前序遍历写出来之后，中序和后序遍历就不难理解了，代码如下：\n\n中序遍历：\n\nvoid traversal(TreeNode* cur, vector<int>& vec) {\n    if (cur == NULL) return;\n    traversal(cur->left, vec);  // 左\n    vec.push_back(cur->val);    // 中\n    traversal(cur->right, vec); // 右\n}\n后序遍历：\n\nvoid traversal(TreeNode* cur, vector<int>& vec) {\n    if (cur == NULL) return;\n    traversal(cur->left, vec);  // 左\n    traversal(cur->right, vec); // 右\n    vec.push_back(cur->val);    // 中\n}\n此时大家可以做一做leetcode上三道题目，分别是：\n\n144.二叉树的前序遍历(https://leetcode.cn/problems/binary-tree-preorder-traversal/)\n145.二叉树的后序遍历(https://leetcode.cn/problems/binary-tree-postorder-traversal/)\n94.二叉树的中序遍历(https://leetcode.cn/problems/binary-tree-inorder-traversal/)\n可能有同学感觉前后中序遍历的递归太简单了，要打迭代法（非递归），别急，我们明天打迭代法，打个通透！\n\n#其他语言版本\n#Java：\n// 前序遍历·递归·LC144_二叉树的前序遍历\nclass Solution {\n    public List<Integer> preorderTraversal(TreeNode root) {\n        List<Integer> result = new ArrayList<Integer>();\n        preorder(root, result);\n        return result;\n    }\n\n    public void preorder(TreeNode root, List<Integer> result) {\n        if (root == null) {\n            return;\n        }\n        result.add(root.val);\n        preorder(root.left, result);\n        preorder(root.right, result);\n    }\n}\n// 中序遍历·递归·LC94_二叉树的中序遍历\nclass Solution {\n    public List<Integer> inorderTraversal(TreeNode root) {\n        List<Integer> res = new ArrayList<>();\n        inorder(root, res);\n        return res;\n    }\n\n    void inorder(TreeNode root, List<Integer> list) {\n        if (root == null) {\n            return;\n        }\n        inorder(root.left, list);\n        list.add(root.val);             // 注意这一句\n        inorder(root.right, list);\n    }\n}\n// 后序遍历·递归·LC145_二叉树的后序遍历\nclass Solution {\n    public List<Integer> postorderTraversal(TreeNode root) {\n        List<Integer> res = new ArrayList<>();\n        postorder(root, res);\n        return res;\n    }\n\n    void postorder(TreeNode root, List<Integer> list) {\n        if (root == null) {\n            return;\n        }\n        postorder(root.left, list);\n        postorder(root.right, list);\n        list.add(root.val);             // 注意这一句\n    }\n}\n#Python：\n# 前序遍历-递归-LC144_二叉树的前序遍历\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\n\nclass Solution:\n    def preorderTraversal(self, root: TreeNode) -> List[int]:\n        res = []\n        \n        def dfs(node):\n            if node is None:\n                return\n            \n            res.append(node.val)\n            dfs(node.left)\n            dfs(node.right)\n        dfs(root)\n        return res\n\n# 中序遍历-递归-LC94_二叉树的中序遍历\nclass Solution:\n    def inorderTraversal(self, root: TreeNode) -> List[int]:\n        res = []\n        \n        def dfs(node):\n            if node is None:\n                return\n            \n            dfs(node.left)\n            res.append(node.val)\n            dfs(node.right)\n        dfs(root)\n        return res\n\n\n# 后序遍历-递归-LC145_二叉树的后序遍历\nclass Solution:\n    def postorderTraversal(self, root: TreeNode) -> List[int]:\n        res = []\n        \n        def dfs(node):\n            if node is None:\n                return\n            \n            dfs(node.left)\n            dfs(node.right)\n            res.append(node.val)\n\n        dfs(root)\n        return res"
+}

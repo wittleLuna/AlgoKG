@@ -1,0 +1,232 @@
+{
+  "id": "AP_d732f27f",
+  "title": "翻转字符串里的单词",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/reverse-words-in-a-string/",
+  "description": "一个字符串，逐个翻转字符串中的每个单词。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "双指针",
+    "字符串操作"
+  ],
+  "data_structure_tags": [
+    "字符串"
+  ],
+  "technique_tags": [
+    "原地算法",
+    "两次反转"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过移除多余空格、反转整个字符串以及再单独反转每个单词来实现将给定字符串中的单词顺序翻转。",
+  "key_insights": [
+    {
+      "content": "采用双指针方法有效地移除字符串中多余的空格，并且在原地调整字符串大小以达到O(1)的空间复杂度。"
+    },
+    {
+      "content": "先对整个字符串进行反转，使得单词顺序颠倒但单词内部也颠倒了；然后再次反转每个单词使其恢复正确顺序，从而实现题目要求。这种方法避免了使用额外的数据结构存储单词。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目可以说是综合考察了字符串的多种操作。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "void removeExtraSpaces(string& s) {\n    int slow = 0;   \n    for (int i = 0; i < s.size(); ++i) { \n        if (s[i] != ' ') { \n            if (slow != 0) s[slow++] = ' '; \n            while (i < s.size() && s[i] != ' ') { \n                s[slow++] = s[i++];\n            }\n        }\n    }\n    s.resize(slow); \n}\n\nvoid reverse(string& s, int start, int end) {\n    for (int i = start, j = end; i < j; i++, j--) {\n        swap(s[i], s[j]);\n    }\n}\n\nclass Solution {\npublic:\n    string reverseWords(string s) {\n        removeExtraSpaces(s);\n        reverse(s, 0, s.size() - 1);\n        int start = 0;\n        for (int i = 0; i <= s.size(); ++i) {\n            if (i == s.size() || s[i] == ' ') {\n                reverse(s, start, i - 1);\n                start = i + 1;\n            }\n        }\n        return s;\n    }\n};",
+          "description": "C++实现移除多余空格、反转整个字符串以及逐个单词反转功能。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public String reverseWords(String s) {\n        StringBuilder sb = removeSpace(s);\n        reverseString(sb, 0, sb.length() - 1);\n        reverseEachWord(sb);\n        return sb.toString();\n    }\n\n    private StringBuilder removeSpace(String s) {\n        int start = 0, end = s.length() - 1;\n        while (s.charAt(start) == ' ') start++;\n        while (s.charAt(end) == ' ') end--;\n        StringBuilder sb = new StringBuilder();\n        while (start <= end) {\n            char c = s.charAt(start);\n            if (c != ' ' || sb.charAt(sb.length() - 1) != ' ') {\n                sb.append(c);\n            }\n            start++;\n        }\n        return sb;\n    }\n\n    public void reverseString(StringBuilder sb, int start, int end) {\n        while (start < end) {\n            char temp = sb.charAt(start);\n            sb.setCharAt(start, sb.charAt(end));\n            sb.setCharAt(end, temp);\n            start++;\n            end--;\n        }\n    }\n\n    private void reverseEachWord(StringBuilder sb) {\n        int start = 0, end = 1, n = sb.length();\n        while (start < n) {\n            while (end < n && sb.charAt(end) != ' ') end++;\n            reverseString(sb, start, end - 1);\n            start = end + 1;\n            end = start + 1;\n        }\n    }\n}",
+          "description": "Java实现移除多余空格、反转整个字符串以及逐个单词反转功能。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def reverseWords(self, s: str) -> str:\n        s = s[::-1]\n        s = ' '.join(word[::-1] for word in s.split())\n        return s",
+          "description": "Python版本一：先删除空白，然后整个反转，最后单词反转。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def reverseWords(self, s: str) -> str:\n        words = s.split()\n        left, right = 0, len(words) - 1\n        while left < right:\n            words[left], words[right] = words[right], words[left]\n            left += 1\n            right -= 1\n        return ' '.join(words)",
+          "description": "Python版本二：使用双指针反转列表中的单词顺序。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution {\n   public String reverseWords(String s) {\n        StringBuilder sb = removeSpace(s);\n        reverseString(sb, 0, sb.length() - 1);\n        reverseEachWord(sb);\n        return sb.toString();\n    }\n\n    private StringBuilder removeSpace(String s) {\n        int start = 0;\n        int end = s.length() - 1;\n        while (s.charAt(start) == ' ') start++;\n        while (s.charAt(end) == ' ') end--;\n        StringBuilder sb = new StringBuilder();\n        while (start <= end) {\n            char c = s.charAt(start);\n            if (c != ' ' || sb.charAt(sb.length() - 1) != ' ') {\n                sb.append(c);\n            }\n            start++;\n        }\n        return sb;\n    }\n\n    public void reverseString(StringBuilder sb, int start, int end) {\n        while (start < end) {\n            char temp = sb.charAt(start);\n            sb.setCharAt(start, sb.charAt(end));\n            sb.setCharAt(end, temp);\n            start++;\n            end--;\n        }\n    }\n\n    private void reverseEachWord(StringBuilder sb) {\n        int start = 0;\n        int end = 1;\n        int n = sb.length();\n        while (start < n) {\n            while (end < n && sb.charAt(end) != ' ') {\n                end++;\n            }\n            reverseString(sb, start, end - 1);\n            start = end + 1;\n            end = start + 1;\n        }\n    }\n}",
+          "description": "Java实现移除空格，反转整个字符串及其中的每个单词"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public String reverseWords(String s) {\n        char[] initialArr = s.toCharArray();\n        char[] newArr = new char[initialArr.length+1];\n        int newArrPos = 0;\n        int i = initialArr.length-1;\n        while(i>=0){\n            while(i>=0 && initialArr[i] == ' '){i--;}\n            int right = i;\n            while(i>=0 && initialArr[i] != ' '){i--;}\n            for (int j = i+1; j <= right; j++) {\n                newArr[newArrPos++] = initialArr[j];\n                if(j == right){\n                    newArr[newArrPos++] = ' ';\n                }\n            }\n        }\n        if(newArrPos == 0){\n            return \"\";\n        }else{\n            return new String(newArr,0,newArrPos-1);\n        }\n    }\n}",
+          "description": "Java使用新字符数组填充实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public String reverseWords(String s) {\n        char[] initialArr = s.toCharArray();\n        reverse(initialArr, 0, s.length() - 1);\n        int k = 0;\n        for (int i = 0; i < initialArr.length; i++) {\n            if (initialArr[i] == ' ') {\n                continue;\n            }\n            int tempCur = i;\n            while (i < initialArr.length && initialArr[i] != ' ') {\n                i++;\n            }\n            for (int j = tempCur; j < i; j++) {\n                if (j == tempCur) {\n                    reverse(initialArr, tempCur, i - 1);\n                }\n                initialArr[k++] = initialArr[j];\n                if (j == i - 1) {\n                    if (k < initialArr.length) {\n                        initialArr[k++] = ' ';\n                    }\n                }\n            }\n        }\n        if (k == 0) {\n            return \"\";\n        } else {\n            return new String(initialArr, 0, (k == initialArr.length) && (initialArr[k - 1] != ' ') ? k : k - 1);\n        }\n    }\n\n    public void reverse(char[] chars, int begin, int end) {\n        for (int i = begin, j = end; i < j; i++, j--) {\n            chars[i] ^= chars[j];\n            chars[j] ^= chars[i];\n            chars[i] ^= chars[j];\n        }\n    }\n}",
+          "description": "Java通过双反转加移位实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public String reverseWords(String s) {\n        char[] chars = s.toCharArray();\n        chars = removeExtraSpaces(chars);\n        reverse(chars, 0, chars.length - 1);\n        reverseEachWord(chars);\n        return new String(chars);\n    }\n\n    public char[] removeExtraSpaces(char[] chars) {\n        int slow = 0;\n        for (int fast = 0; fast < chars.length; fast++) {\n            if (chars[fast] != ' ') {\n                if (slow != 0)\n                    chars[slow++] = ' ';\n                while (fast < chars.length && chars[fast] != ' ')\n                    chars[slow++] = chars[fast++];\n            }\n        }\n        char[] newChars = new char[slow];\n        System.arraycopy(chars, 0, newChars, 0, slow);\n        return newChars;\n    }\n\n    public void reverse(char[] chars, int left, int right) {\n        if (right >= chars.length) {\n            return;\n        }\n        while (left < right) {\n            chars[left] ^= chars[right];\n            chars[right] ^= chars[left];\n            chars[left] ^= chars[right];\n            left++;\n            right--;\n        }\n    }\n\n    public void reverseEachWord(char[] chars) {\n        int start = 0;\n        for (int end = 0; end <= chars.length; end++) {\n            if (end == chars.length || chars[end] == ' ') {\n                reverse(chars, start, end - 1);\n                start = end + 1;\n            }\n        }\n    }\n}",
+          "description": "Java使用char数组操作实现移除多余空格、反转整个字符串和单词逐个反转"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def reverseWords(self, s: str) -> str:\n        s = s[::-1]\n        s = ' '.join(word[::-1] for word in s.split())\n        return s",
+          "description": "Python版本一：先删除空白，然后整个反转，最后单词反转"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def reverseWords(self, s: str) -> str:\n        words = s.split()\n        left, right = 0, len(words) - 1\n        while left < right:\n            words[left], words[right] = words[right], words[left]\n            left += 1\n            right -= 1\n        return \" \".join(words)",
+          "description": "Python版本二：使用双指针"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def reverseWords(self, s):\n        words = s.split()\n        words = words[::-1]\n        return ' '.join(words)",
+          "description": "Python版本三：拆分字符串 + 反转列表"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def single_reverse(self, s, start: int, end: int):\n        while start < end:\n            s[start], s[end] = s[end], s[start]\n            start += 1\n            end -= 1\n\n    def reverseWords(self, s: str) -> str:\n        s = list(s)\n        s.reverse()\n        result = \"\"\n        fast = 0\n        while fast < len(s):\n            if s[fast] != \" \":\n                if len(result) != 0:\n                    result += \" \"\n                while s[fast] != \" \" and fast < len(s):\n                    result += s[fast]\n                    fast += 1\n            else:\n                fast += 1\n        result = list(result)\n        slow = 0\n        fast = 0\n        while fast <= len(result):\n            if fast == len(result) or result[fast] == \" \":\n                self.single_reverse(result, slow, fast - 1)\n                slow = fast + 1\n                fast += 1\n            else:\n                fast += 1\n        return ''.join(result)",
+          "description": "Python版本四：将字符串转换为列表后，使用双指针去除空格"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def reverseWords(self, s: str) -> str:\n        words = []\n        word = ''\n        s += ' '\n        for char in s:\n            if char == ' ':\n                if word != '':\n                    words.append(word)\n                    word = ''\n                continue\n            word += char\n        words.reverse()\n        return ' '.join(words)",
+          "description": "Python版本五：遇到空格就说明前面的是一个单词，把它加入到一个数组中"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void reverse(string& s, int start, int end){ for (int i = start, j = end; i < j; i++, j--) { swap(s[i], s[j]); }} void removeExtraSpaces(string& s) { int slow = 0; for (int i = 0; i < s.size(); ++i) { if (s[i] != ' ') { if (slow != 0) s[slow++] = ' '; while (i < s.size() && s[i] != ' ') { s[slow++] = s[i++]; } } } s.resize(slow); } string reverseWords(string s) { removeExtraSpaces(s); reverse(s, 0, s.size() - 1); int start = 0; for (int i = 0; i <= s.size(); ++i) { if (i == s.size() || s[i] == ' ') { reverse(s, start, i - 1); start = i + 1; } } return s; }};",
+          "description": "C++实现翻转字符串里的单词"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public String reverseWords(String s) { StringBuilder sb = removeSpace(s); reverseString(sb, 0, sb.length() - 1); reverseEachWord(sb); return sb.toString(); } private StringBuilder removeSpace(String s) { int start = 0, end = s.length() - 1; while (s.charAt(start) == ' ') start++; while (s.charAt(end) == ' ') end--; StringBuilder sb = new StringBuilder(); while (start <= end) { char c = s.charAt(start); if (c != ' ' || sb.charAt(sb.length() - 1) != ' ') { sb.append(c); } start++; } return sb; } public void reverseString(StringBuilder sb, int start, int end) { while (start < end) { char temp = sb.charAt(start); sb.setCharAt(start, sb.charAt(end)); sb.setCharAt(end, temp); start++; end--; } } private void reverseEachWord(StringBuilder sb) { int start = 0, end = 1, n = sb.length(); while (start < n) { while (end < n && sb.charAt(end) != ' ') { end++; } reverseString(sb, start, end - 1); start = end + 1; end = start + 1; } }}",
+          "description": "Java实现翻转字符串里的单词"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseWords(self, s: str) -> str: s = s[::-1] s = ' '.join(word[::-1] for word in s.split()) return s",
+          "description": "Python版本一实现翻转字符串里的单词"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseWords(self, s: str) -> str: words = s.split() left, right = 0, len(words) - 1 while left < right: words[left], words[right] = words[right], words[left] left += 1 right -= 1 return ' '.join(words)",
+          "description": "Python版本二实现翻转字符串里的单词"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseWords(self, s): words = s.split() words = words[::-1] return ' '.join(words)",
+          "description": "Python版本三实现翻转字符串里的单词"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def single_reverse(self, s, start, end): while start < end: s[start], s[end] = s[end], s[start] start += 1 end -= 1 def reverseWords(self, s: str) -> str: result = '' fast = 0 s = list(s) s.reverse() while fast < len(s): if s[fast] != ' ': if len(result) != 0: result += ' ' while s[fast] != ' ' and fast < len(s): result += s[fast] fast += 1 else: fast += 1 slow = 0 fast = 0 result = list(result) while fast <= len(result): if fast == len(result) or result[fast] == ' ': self.single_reverse(result, slow, fast - 1) slow = fast + 1 fast += 1 else: fast += 1 return ''.join(result)",
+          "description": "Python版本四实现翻转字符串里的单词"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseWords(self, s: str) -> str: words = [] word = '' s += ' ' for char in s: if char == ' ': if word != '': words.append(word) word = '' continue word += char words.reverse() return ' '.join(words)",
+          "description": "Python版本五实现翻转字符串里的单词"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python:",
+      "text": "（版本一）先删除空白，然后整个反转，最后单词反转。 因为字符串是不可变类型，所以反转单词的时候，需要将其转换成列表，然后通过join函数再将其转换成列表，所以空间复杂度不是O(1)",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void reverse(string& s, int start, int end){ for (int i = start, j = end; i < j; i++, j--) { swap(s[i], s[j]); }} void removeExtraSpaces(string& s) {int slow = 0; for (int i = 0; i < s.size(); ++i) { if (s[i] != ' ') { if (slow != 0) s[slow++] = ' '; while (i < s.size() && s[i] != ' ') { s[slow++] = s[i++]; } } } s.resize(slow); } string reverseWords(string s) { removeExtraSpaces(s); reverse(s, 0, s.size() - 1); int start = 0; for (int i = 0; i <= s.size(); ++i) { if (i == s.size() || s[i] == ' ') { reverse(s, start, i - 1); start = i + 1; } } return s; }};",
+          "description": "C++实现的反转字符串中单词的功能"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public String reverseWords(String s) { StringBuilder sb = removeSpace(s); reverseString(sb, 0, sb.length() - 1); reverseEachWord(sb); return sb.toString(); } private StringBuilder removeSpace(String s) { int start = 0; int end = s.length() - 1; while (s.charAt(start) == ' ') start++; while (s.charAt(end) == ' ') end--; StringBuilder sb = new StringBuilder(); while (start <= end) { char c = s.charAt(start); if (c != ' ' || sb.charAt(sb.length() - 1) != ' ') { sb.append(c); } start++; } return sb; } public void reverseString(StringBuilder sb, int start, int end) { while (start < end) { char temp = sb.charAt(start); sb.setCharAt(start, sb.charAt(end)); sb.setCharAt(end, temp); start++; end--; } } private void reverseEachWord(StringBuilder sb) { int start = 0; int end = 1; int n = sb.length(); while (start < n) { while (end < n && sb.charAt(end) != ' ') { end++; } reverseString(sb, start, end - 1); start = end + 1; end = start + 1; } }}",
+          "description": "Java实现的反转字符串中单词的功能"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseWords(self, s: str) -> str: s = s[::-1] s = ' '.join(word[::-1] for word in s.split()) return s",
+          "description": "Python版本一实现的反转字符串中单词的功能"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseWords(self, s: str) -> str: words = s.split() left, right = 0, len(words) - 1 while left < right: words[left], words[right] = words[right], words[left] left += 1 right -= 1 return \" \".join(words)",
+          "description": "Python版本二使用双指针实现的反转字符串中单词的功能"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseWords(self, s): words = s.split() words = words[::-1] return ' '.join(words)",
+          "description": "Python版本三通过拆分字符串和反转列表实现的反转字符串中单词的功能"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def single_reverse(self, s, start: int, end: int): while start < end: s[start], s[end] = s[end], s[start] start += 1 end -= 1 def reverseWords(self, s: str) -> str: result = \"\" fast = 0 s = list(s) s.reverse() while fast < len(s): if s[fast] != \" \": if len(result) != 0: result += \" \" while s[fast] != \" \" and fast < len(s): result += s[fast] fast += 1 else: fast += 1 slow = 0 fast = 0 result = list(result) while fast <= len(result): if fast == len(result) or result[fast] == \" \": self.single_reverse(result, slow, fast - 1) slow = fast + 1 fast += 1 else: fast += 1 return ''.join(result)",
+          "description": "Python版本四将字符串转换为列表后，使用双指针去除空格实现的反转字符串中单词的功能"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseWords(self, s: str) -> str: words = [] word = '' s += ' ' for char in s: if char == ' ': if word != '': words.append(word) word = '' continue word += char words.reverse() return ' '.join(words)",
+          "description": "Python版本五遇到空格就说明前面的是一个单词，把它加入到一个数组中实现的反转字符串中单词的功能"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "explanation": "还以为以上的代码是O(n)的时间复杂度呢。"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "void removeExtraSpaces(string& s) {\nint slowIndex = 0, fastIndex = 0; \nwhile (s.size() > 0 && fastIndex < s.size() && s[fastIndex] == ' ') {\n    fastIndex++;\n}\nfor (; fastIndex < s.size(); fastIndex++) {\n    if (fastIndex - 1 > 0\n            && s[fastIndex - 1] == s[fastIndex]\n            && s[fastIndex] == ' ') {\n        continue;\n    } else {\n        s[slowIndex++] = s[fastIndex];\n    }\n}\nif (slowIndex - 1 > 0 && s[slowIndex - 1] == ' ') { \ns.resize(slowIndex - 1);\n} else {\ns.resize(slowIndex); \n}\n}\nvoid reverse(string& s, int start, int end) {\nfor (int i = start, j = end; i < j; i++, j--) {\n    swap(s[i], s[j]);\n}\n}",
+      "description": "移除多余空格并反转字符串"
+    },
+    {
+      "language": "java",
+      "code": "public String reverseWords(String s) {\nStringBuilder sb = removeSpace(s);\nreverseString(sb, 0, sb.length() - 1);\nreverseEachWord(sb);\nreturn sb.toString();\n}\nprivate StringBuilder removeSpace(String s) {\nint start = 0, end = s.length() - 1;\nwhile (s.charAt(start) == ' ') start++;\nwhile (s.charAt(end) == ' ') end--;\nStringBuilder sb = new StringBuilder();\nwhile (start <= end) {\nchar c = s.charAt(start);\nif (c != ' ' || sb.charAt(sb.length() - 1) != ' ') {\nsb.append(c);\n}\nstart++;\n}\nreturn sb;\n}\npublic void reverseString(StringBuilder sb, int start, int end) {\nwhile (start < end) {\nchar temp = sb.charAt(start);\nsb.setCharAt(start, sb.charAt(end));\nsb.setCharAt(end, temp);\nstart++;\nend--;\n}\n}\nprivate void reverseEachWord(StringBuilder sb) {\nint start = 0, end = 1, n = sb.length();\nwhile (start < n) {\nwhile (end < n && sb.charAt(end) != ' ') {\nend++;\n}\nreverseString(sb, start, end - 1);\nstart = end + 1;\nend = start + 1;\n}\n}",
+      "description": "去除多余空格，反转整个字符串及每个单词"
+    },
+    {
+      "language": "python",
+      "code": "def reverseWords(self, s: str) -> str:\ns = s[::-1]\ns = ' '.join(word[::-1] for word in s.split())\nreturn s",
+      "description": "先反转整个字符串再反转每个单词"
+    }
+  ],
+  "common_mistakes": [
+    "忽视了erase()函数的时间复杂度导致效率低下。",
+    "未能充分考虑边界条件如字符串前后可能存在的空白字符。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\双指针\\翻转字符串里的单词.txt",
+  "extracted_at": "2025-07-21T02:53:27.250828",
+  "raw_content": "翻转字符串里的单词\n力扣题目链接(https://leetcode.cn/problems/reverse-words-in-a-string/)\n\n给定一个字符串，逐个翻转字符串中的每个单词。\n\n示例 1：\n输入: \"the sky is blue\"\n输出: \"blue is sky the\"\n\n示例 2：\n输入: \"  hello world!  \"\n输出: \"world! hello\"\n解释: 输入字符串可以在前面或者后面包含多余的空格，但是反转后的字符不能包括。\n\n示例 3：\n输入: \"a good   example\"\n输出: \"example good a\"\n解释: 如果两个单词间有多余的空格，将反转后单词间的空格减少到只含一个。\n\n\n\n#思路\n这道题目可以说是综合考察了字符串的多种操作。\n\n一些同学会使用split库函数，分隔单词，然后定义一个新的string字符串，最后再把单词倒序相加，那么这道题题目就是一道水题了，失去了它的意义。\n\n所以这里我还是提高一下本题的难度：不要使用辅助空间，空间复杂度要求为O(1)。\n\n不能使用辅助空间之后，那么只能在原字符串上下功夫了。\n\n想一下，我们将整个字符串都反转过来，那么单词的顺序指定是倒序了，只不过单词本身也倒序了，那么再把单词反转一下，单词不就正过来了。\n\n所以解题思路如下：\n\n移除多余空格\n将整个字符串反转\n将每个单词反转\n举个例子，源字符串为：\"the sky is blue \"\n\n移除多余空格 : \"the sky is blue\"\n字符串反转：\"eulb si yks eht\"\n单词反转：\"blue is sky the\"\n这样我们就完成了翻转字符串里的单词。\n\n思路很明确了，我们说一说代码的实现细节，就拿移除多余空格来说，一些同学会上来写如下代码：\n\nvoid removeExtraSpaces(string& s) {\n    for (int i = s.size() - 1; i > 0; i--) {\n        if (s[i] == s[i - 1] && s[i] == ' ') {\n            s.erase(s.begin() + i);\n        }\n    }\n    // 删除字符串最后面的空格\n    if (s.size() > 0 && s[s.size() - 1] == ' ') {\n        s.erase(s.begin() + s.size() - 1);\n    }\n    // 删除字符串最前面的空格\n    if (s.size() > 0 && s[0] == ' ') {\n        s.erase(s.begin());\n    }\n}\n逻辑很简单，从前向后遍历，遇到空格了就erase。\n\n如果不仔细琢磨一下erase的时间复杂度，还以为以上的代码是O(n)的时间复杂度呢。\n\n想一下真正的时间复杂度是多少，一个erase本来就是O(n)的操作。\n\nerase操作上面还套了一个for循环，那么以上代码移除冗余空格的代码时间复杂度为O(n^2)。\n\n那么使用双指针法来去移除空格，最后resize（重新设置）一下字符串的大小，就可以做到O(n)的时间复杂度。\n\n//版本一 \nvoid removeExtraSpaces(string& s) {\n    int slowIndex = 0, fastIndex = 0; // 定义快指针，慢指针\n    // 去掉字符串前面的空格\n    while (s.size() > 0 && fastIndex < s.size() && s[fastIndex] == ' ') {\n        fastIndex++;\n    }\n    for (; fastIndex < s.size(); fastIndex++) {\n        // 去掉字符串中间部分的冗余空格\n        if (fastIndex - 1 > 0\n                && s[fastIndex - 1] == s[fastIndex]\n                && s[fastIndex] == ' ') {\n            continue;\n        } else {\n            s[slowIndex++] = s[fastIndex];\n        }\n    }\n    if (slowIndex - 1 > 0 && s[slowIndex - 1] == ' ') { // 去掉字符串末尾的空格\n        s.resize(slowIndex - 1);\n    } else {\n        s.resize(slowIndex); // 重新设置字符串大小\n    }\n}\n有的同学可能发现用erase来移除空格，在leetcode上性能也还行。主要是以下几点；：\n\nleetcode上的测试集里，字符串的长度不够长，如果足够长，性能差距会非常明显。\nleetcode的测程序耗时不是很准确的。\n版本一的代码是一般的思考过程，就是 先移除字符串前的空格，再移除中间的，再移除后面部分。\n\n不过其实还可以优化，这部分和27.移除元素 (opens new window)的逻辑是一样一样的，本题是移除空格，而 27.移除元素 就是移除元素。\n\n所以代码可以写的很精简，大家可以看 如下 代码 removeExtraSpaces 函数的实现：\n\n// 版本二 \nvoid removeExtraSpaces(string& s) {//去除所有空格并在相邻单词之间添加空格, 快慢指针。\n    int slow = 0;   //整体思想参考https://programmercarl.com/0027.移除元素.html\n    for (int i = 0; i < s.size(); ++i) { //\n        if (s[i] != ' ') { //遇到非空格就处理，即删除所有空格。\n            if (slow != 0) s[slow++] = ' '; //手动控制空格，给单词之间添加空格。slow != 0说明不是第一个单词，需要在单词前添加空格。\n            while (i < s.size() && s[i] != ' ') { //补上该单词，遇到空格说明单词结束。\n                s[slow++] = s[i++];\n            }\n        }\n    }\n    s.resize(slow); //slow的大小即为去除多余空格后的大小。\n}\n如果以上代码看不懂，建议先把 27.移除元素 (opens new window)这道题目做了，或者看视频讲解：数组中移除元素并不容易！LeetCode：27. 移除元素 (opens new window)。\n\n此时我们已经实现了removeExtraSpaces函数来移除冗余空格。\n\n还要实现反转字符串的功能，支持反转字符串子区间，这个实现我们分别在344.反转字符串 (opens new window)和541.反转字符串II (opens new window)里已经讲过了。\n\n代码如下：\n\n// 反转字符串s中左闭右闭的区间[start, end]\nvoid reverse(string& s, int start, int end) {\n    for (int i = start, j = end; i < j; i++, j--) {\n        swap(s[i], s[j]);\n    }\n}\n整体代码如下：\n\nclass Solution {\npublic:\n    void reverse(string& s, int start, int end){ //翻转，区间写法：左闭右闭 []\n        for (int i = start, j = end; i < j; i++, j--) {\n            swap(s[i], s[j]);\n        }\n    }\n\n    void removeExtraSpaces(string& s) {//去除所有空格并在相邻单词之间添加空格, 快慢指针。\n        int slow = 0;   //整体思想参考https://programmercarl.com/0027.移除元素.html\n        for (int i = 0; i < s.size(); ++i) { //\n            if (s[i] != ' ') { //遇到非空格就处理，即删除所有空格。\n                if (slow != 0) s[slow++] = ' '; //手动控制空格，给单词之间添加空格。slow != 0说明不是第一个单词，需要在单词前添加空格。\n                while (i < s.size() && s[i] != ' ') { //补上该单词，遇到空格说明单词结束。\n                    s[slow++] = s[i++];\n                }\n            }\n        }\n        s.resize(slow); //slow的大小即为去除多余空格后的大小。\n    }\n\n    string reverseWords(string s) {\n        removeExtraSpaces(s); //去除多余空格，保证单词之间之只有一个空格，且字符串首尾没空格。\n        reverse(s, 0, s.size() - 1);\n        int start = 0; //removeExtraSpaces后保证第一个单词的开始下标一定是0。\n        for (int i = 0; i <= s.size(); ++i) {\n            if (i == s.size() || s[i] == ' ') { //到达空格或者串尾，说明一个单词结束。进行翻转。\n                reverse(s, start, i - 1); //翻转，注意是左闭右闭 []的翻转。\n                start = i + 1; //更新下一个单词的开始下标start\n            }\n        }\n        return s;\n    }\n};\n时间复杂度: O(n)\n空间复杂度: O(1) 或 O(n)，取决于语言中字符串是否可变\n#其他语言版本\n#Java：\nclass Solution {\n   /**\n     * 不使用Java内置方法实现\n     * <p>\n     * 1.去除首尾以及中间多余空格\n     * 2.反转整个字符串\n     * 3.反转各个单词\n     */\n    public String reverseWords(String s) {\n        // System.out.println(\"ReverseWords.reverseWords2() called with: s = [\" + s + \"]\");\n        // 1.去除首尾以及中间多余空格\n        StringBuilder sb = removeSpace(s);\n        // 2.反转整个字符串\n        reverseString(sb, 0, sb.length() - 1);\n        // 3.反转各个单词\n        reverseEachWord(sb);\n        return sb.toString();\n    }\n\n    private StringBuilder removeSpace(String s) {\n        // System.out.println(\"ReverseWords.removeSpace() called with: s = [\" + s + \"]\");\n        int start = 0;\n        int end = s.length() - 1;\n        while (s.charAt(start) == ' ') start++;\n        while (s.charAt(end) == ' ') end--;\n        StringBuilder sb = new StringBuilder();\n        while (start <= end) {\n            char c = s.charAt(start);\n            if (c != ' ' || sb.charAt(sb.length() - 1) != ' ') {\n                sb.append(c);\n            }\n            start++;\n        }\n        // System.out.println(\"ReverseWords.removeSpace returned: sb = [\" + sb + \"]\");\n        return sb;\n    }\n\n    /**\n     * 反转字符串指定区间[start, end]的字符\n     */\n    public void reverseString(StringBuilder sb, int start, int end) {\n        // System.out.println(\"ReverseWords.reverseString() called with: sb = [\" + sb + \"], start = [\" + start + \"], end = [\" + end + \"]\");\n        while (start < end) {\n            char temp = sb.charAt(start);\n            sb.setCharAt(start, sb.charAt(end));\n            sb.setCharAt(end, temp);\n            start++;\n            end--;\n        }\n        // System.out.println(\"ReverseWords.reverseString returned: sb = [\" + sb + \"]\");\n    }\n\n    private void reverseEachWord(StringBuilder sb) {\n        int start = 0;\n        int end = 1;\n        int n = sb.length();\n        while (start < n) {\n            while (end < n && sb.charAt(end) != ' ') {\n                end++;\n            }\n            reverseString(sb, start, end - 1);\n            start = end + 1;\n            end = start + 1;\n        }\n    }\n}\n//解法二：创建新字符数组填充。时间复杂度O(n)\nclass Solution {\n    public String reverseWords(String s) {\n        //源字符数组\n        char[] initialArr = s.toCharArray();\n        //新字符数组\n        char[] newArr = new char[initialArr.length+1];//下面循环添加\"单词 \"，最终末尾的空格不会返回\n        int newArrPos = 0;\n        //i来进行整体对源字符数组从后往前遍历\n        int i = initialArr.length-1;\n        while(i>=0){\n            while(i>=0 && initialArr[i] == ' '){i--;}  //跳过空格\n            //此时i位置是边界或!=空格，先记录当前索引，之后的while用来确定单词的首字母的位置\n            int right = i;\n            while(i>=0 && initialArr[i] != ' '){i--;} \n            //指定区间单词取出(由于i为首字母的前一位，所以这里+1,)，取出的每组末尾都带有一个空格\n            for (int j = i+1; j <= right; j++) {\n                newArr[newArrPos++] = initialArr[j];\n                if(j == right){\n                    newArr[newArrPos++] = ' ';//空格\n                }\n            }\n        }\n        //若是原始字符串没有单词，直接返回空字符串；若是有单词，返回0-末尾空格索引前范围的字符数组(转成String返回)\n        if(newArrPos == 0){\n            return \"\";\n        }else{\n            return new String(newArr,0,newArrPos-1);\n        }\n    }\n}\n//解法三：双反转+移位，String 的 toCharArray() 方法底层会 new 一个和原字符串相同大小的 char 数组，空间复杂度：O(n)\nclass Solution {\n    /**\n     * 思路：\n     *\t①反转字符串  \"the sky is blue \" => \" eulb si yks eht\"\n     *\t②遍历 \" eulb si yks eht\"，每次先对某个单词进行反转再移位\n     *\t   这里以第一个单词进行为演示：\" eulb si yks eht\" ==反转=> \" blue si yks eht\" ==移位=> \"blue si yks eht\"\n     */\n    public String reverseWords(String s) {\n        //步骤1：字符串整体反转（此时其中的单词也都反转了）\n        char[] initialArr = s.toCharArray();\n        reverse(initialArr, 0, s.length() - 1);\n        int k = 0;\n        for (int i = 0; i < initialArr.length; i++) {\n            if (initialArr[i] == ' ') {\n                continue;\n            }\n            int tempCur = i;\n            while (i < initialArr.length && initialArr[i] != ' ') {\n                i++;\n            }\n            for (int j = tempCur; j < i; j++) {\n                if (j == tempCur) { //步骤二：二次反转\n                    reverse(initialArr, tempCur, i - 1);//对指定范围字符串进行反转，不反转从后往前遍历一个个填充有问题\n                }\n                //步骤三：移动操作\n                initialArr[k++] = initialArr[j];\n                if (j == i - 1) { //遍历结束\n                    //避免越界情况，例如=> \"asdasd df f\"，不加判断最后就会数组越界\n                    if (k < initialArr.length) {\n                        initialArr[k++] = ' ';\n                    }\n                }\n            }\n        }\n        if (k == 0) {\n            return \"\";\n        } else {\n            //参数三：以防出现如\"asdasd df f\"=>\"f df asdasd\"正好凑满不需要省略空格情况\n            return new String(initialArr, 0, (k == initialArr.length) && (initialArr[k - 1] != ' ') ? k : k - 1);\n        }\n    }\n\n    public void reverse(char[] chars, int begin, int end) {\n        for (int i = begin, j = end; i < j; i++, j--) {\n            chars[i] ^= chars[j];\n            chars[j] ^= chars[i];\n            chars[i] ^= chars[j];\n        }\n    }\n}\n/*\n * 解法四：时间复杂度 O(n)\n * 参考卡哥 c++ 代码的三步骤：先移除多余空格，再将整个字符串反转，最后把单词逐个反转\n * 有别于解法一 ：没有用 StringBuilder  实现，而是对 String 的 char[] 数组操作来实现以上三个步骤\n */\nclass Solution {\n    //用 char[] 来实现 String 的 removeExtraSpaces，reverse 操作\n    public String reverseWords(String s) {\n        char[] chars = s.toCharArray();\n        //1.去除首尾以及中间多余空格\n        chars = removeExtraSpaces(chars);\n        //2.整个字符串反转\n        reverse(chars, 0, chars.length - 1);\n        //3.单词反转\n        reverseEachWord(chars);\n        return new String(chars);\n    }\n\n    //1.用 快慢指针 去除首尾以及中间多余空格，可参考数组元素移除的题解\n    public char[] removeExtraSpaces(char[] chars) {\n        int slow = 0;\n        for (int fast = 0; fast < chars.length; fast++) {\n            //先用 fast 移除所有空格\n            if (chars[fast] != ' ') {\n                //在用 slow 加空格。 除第一个单词外，单词末尾要加空格\n                if (slow != 0)\n                    chars[slow++] = ' ';\n                //fast 遇到空格或遍历到字符串末尾，就证明遍历完一个单词了\n                while (fast < chars.length && chars[fast] != ' ')\n                    chars[slow++] = chars[fast++];\n            }\n        }\n        //相当于 c++ 里的 resize()\n        char[] newChars = new char[slow];\n        System.arraycopy(chars, 0, newChars, 0, slow); \n        return newChars;\n    }\n\n    //双指针实现指定范围内字符串反转，可参考字符串反转题解\n    public void reverse(char[] chars, int left, int right) {\n        if (right >= chars.length) {\n            System.out.println(\"set a wrong right\");\n            return;\n        }\n        while (left < right) {\n            chars[left] ^= chars[right];\n            chars[right] ^= chars[left];\n            chars[left] ^= chars[right];\n            left++;\n            right--;\n        }\n    }\n\n    //3.单词反转\n    public void reverseEachWord(char[] chars) {\n        int start = 0;\n        //end <= s.length() 这里的 = ，是为了让 end 永远指向单词末尾后一个位置，这样 reverse 的实参更好设置\n        for (int end = 0; end <= chars.length; end++) {\n            // end 每次到单词末尾后的空格或串尾,开始反转单词\n            if (end == chars.length || chars[end] == ' ') {\n                reverse(chars, start, end - 1);\n                start = end + 1;\n            }\n        }\n    }\n}\n#Python:\n（版本一）先删除空白，然后整个反转，最后单词反转。 因为字符串是不可变类型，所以反转单词的时候，需要将其转换成列表，然后通过join函数再将其转换成列表，所以空间复杂度不是O(1)\n\nclass Solution:\n    def reverseWords(self, s: str) -> str:\n        # 反转整个字符串\n        s = s[::-1]\n        # 将字符串拆分为单词，并反转每个单词\n        # split()函数能够自动忽略多余的空白字符\n        s = ' '.join(word[::-1] for word in s.split())\n        return s\n\n（版本二）使用双指针\n\nclass Solution:\n    def reverseWords(self, s: str) -> str:\n        # 将字符串拆分为单词，即转换成列表类型\n        words = s.split()\n\n        # 反转单词\n        left, right = 0, len(words) - 1\n        while left < right:\n            words[left], words[right] = words[right], words[left]\n            left += 1\n            right -= 1\n\n        # 将列表转换成字符串\n        return \" \".join(words)\n(版本三) 拆分字符串 + 反转列表\n\nclass Solution:\n    def reverseWords(self, s):\n        words = s.split() #type(words) --- list\n        words = words[::-1] # 反转单词\n        return ' '.join(words) #列表转换成字符串\n(版本四) 将字符串转换为列表后，使用双指针去除空格\n\nclass Solution:\n    def single_reverse(self, s, start: int, end: int):\n        while start < end:\n            s[start], s[end] = s[end], s[start]\n            start += 1\n            end -= 1\n\n    def reverseWords(self, s: str) -> str:\n        result = \"\"\n        fast = 0\n        # 1. 首先将原字符串反转并且除掉空格, 并且加入到新的字符串当中\n        # 由于Python字符串的不可变性，因此只能转换为列表进行处理\n        s = list(s)\n        s.reverse()\n        while fast < len(s):\n            if s[fast] != \" \":\n                if len(result) != 0:\n                    result += \" \"\n                while s[fast] != \" \" and fast < len(s):\n                    result += s[fast]\n                    fast += 1\n            else:\n                fast += 1\n        # 2.其次将每个单词进行翻转操作\n        slow = 0\n        fast = 0\n        result = list(result)\n        while fast <= len(result):\n            if fast == len(result) or result[fast] == \" \":\n                self.single_reverse(result, slow, fast - 1)\n                slow = fast + 1\n                fast += 1\n            else:\n                fast += 1\n\n        return \"\".join(result)\n(版本五) 遇到空格就说明前面的是一个单词，把它加入到一个数组中。\n\nclass Solution:\n    def reverseWords(self, s: str) -> str:\n        words = []\n        word = ''\n        s += ' ' # 帮助处理最后一个字词\n\n        for char in s:\n            if char == ' ': # 遇到空格就说明前面的可能是一个单词\n                if word != '': # 确认是单词，把它加入到一个数组中\n                    words.append(word)\n                    word = '' # 清空当前单词\n                continue\n            \n            word += char # 收集单词的字母\n        \n        words.reverse()\n        return ' '.join(words)"
+}

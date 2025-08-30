@@ -1,0 +1,219 @@
+{
+  "id": "AP_08d0fd29",
+  "title": "下一个更大元素II",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/next-greater-element-ii/",
+  "description": "一个循环数组（最后一个元素的下一个元素是数组的第一个元素），输出每个元素的下一个更大元素。数字 x 的下一个更大的元素是按数组遍历顺序，这个数字之后的第一个比它更大的数，这意味着你应该循环地搜索它的下一个更大的数。如果不存在，则输出 -1。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "单调栈",
+    "数组遍历"
+  ],
+  "data_structure_tags": [
+    "栈"
+  ],
+  "technique_tags": [
+    "循环数组处理",
+    "取模运算"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过模拟两次遍历数组或使用取模运算来处理循环数组，并利用单调栈记录当前元素的索引。当遇到比栈顶元素大的值时，更新结果数组并弹出栈顶元素直到条件不再满足。这种方法有效避免了直接修改原数组。",
+  "key_insights": [
+    {
+      "content": "使用单调递增栈可以高效地找到每个元素的下一个更大值。"
+    },
+    {
+      "content": "通过将数组逻辑上视为两倍长度或者运用取模操作，可以在不改变原数组结构的情况下处理循环数组问题。"
+    },
+    {
+      "content": "在第二次遍历过程中仅对还未找到更大值的元素继续搜索，从而减少不必要的计算。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "做本题之前建议先做739. 每日温度 (https://programmercarl.com/0739.%E6%AF%8F%E6%97%A5%E6%B8%A9%E5%BA%A6.html)和 496.下一个更大元素 I (https://programmercarl.com/0496.%E4%B8%8B%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%A4%A7%E5%85%83%E7%B4%A0I.html)。",
+      "resources": [
+        {
+          "type": "image",
+          "content": "https://programmercarl.com/0739.%E6%AF%8F%E6%97%A5%E6%B8%A9%E5%BA%A6.html",
+          "description": "图片链接: https://programmercarl.com/0739.%E6%AF%8F%E6%97%A5%E6%B8%A9%E5%BA%A6.html",
+          "context": "该图片链接指向了关于“每日温度”问题的详细解析页面，与当前讨论的问题解决思路有关联。"
+        },
+        {
+          "type": "image",
+          "content": "https://programmercarl.com/0496.%E4%B8%8B%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%A4%A7%E5%85%83%E7%B4%A0I.html",
+          "description": "图片链接: https://programmercarl.com/0496.%E4%B8%8B%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%A4%A7%E5%85%83%E7%B4%A0I.html",
+          "context": "该图片链接指向了题目“下一个更大元素 I”的详细解析页面，与当前讨论的循环数组寻找下一个更大元素的问题直接相关。"
+        }
+      ],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> nextGreaterElements(vector<int>& nums) {vector<int> result(nums.size(), -1); if (nums.size() == 0) return result; stack<int> st; st.push(0); for (int i = 1; i < nums.size() * 2; i++) { if (nums[i % nums.size()] < nums[st.top()]) st.push(i % nums.size()); else if (nums[i % nums.size()] == nums[st.top()]) st.push(i % nums.size()); else { while (!st.empty() && nums[i % nums.size()] > nums[st.top()]) {result[st.top()] = nums[i % nums.size()]; st.pop();} st.push(i % nums.size());}} return result;}};",
+          "description": "C++版本，使用单调栈解决循环数组中下一个更大元素的问题。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] nextGreaterElements(int[] nums) {if(nums == null || nums.length <= 1) {return new int[]{-1};} int size = nums.length; int[] result = new int[size]; Arrays.fill(result,-1); Stack<Integer> st= new Stack<>(); for(int i = 0; i < 2*size; i++) {while(!st.empty() && nums[i % size] > nums[st.peek()]) {result[st.peek()] = nums[i % size]; st.pop();} st.push(i % size);} return result;}}",
+          "description": "Java版本，同样使用单调栈来处理循环数组寻找下一个更大元素的问题。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def nextGreaterElements(self, nums: List[int]) -> List[int]: res = [-1] * len(nums) stack = [] for i, num in enumerate(nums): while stack and num > nums[stack[-1]]: res[stack[-1]] = num stack.pop() stack.append(i) for num in nums: if not stack: return res while stack and num > nums[stack[-1]]: res[stack[-1]] = num stack.pop() return res",
+          "description": "Python版本，通过两次遍历和单调栈技术找到每个元素的下一个更大值。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> nextGreaterElements(vector<int>& nums) {vector<int> result(nums.size(), -1); if (nums.size() == 0) return result; stack<int> st; st.push(0); for (int i = 1; i < nums.size(); i++) { if (nums[i] < nums[st.top()]) st.push(i); else if (nums[i] == nums[st.top()]) st.push(i); else { while (!st.empty() && nums[i] > nums[st.top()]) {result[st.top()] = nums[i]; st.pop();} st.push(i);}} result.resize(nums.size() / 2); return result;}};",
+          "description": "版本一：使用单调栈解决循环数组的下一个更大元素问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> nextGreaterElements(vector<int>& nums) {vector<int> result(nums.size(), -1); if (nums.size() == 0) return result; stack<int> st; st.push(0); for (int i = 1; i < nums.size() * 2; i++) { if (nums[i % nums.size()] < nums[st.top()]) st.push(i % nums.size()); else if (nums[i % nums.size()] == nums[st.top()]) st.push(i % nums.size()); else { while (!st.empty() && nums[i % nums.size()] > nums[st.top()]) {result[st.top()] = nums[i % nums.size()]; st.pop();} st.push(i % nums.size());}} return result;}};",
+          "description": "版本二：模拟遍历两边数组，不修改原数组"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> nextGreaterElements(vector<int>& nums) {vector<int> result(nums.size(), -1); if (nums.size() == 0) return result; stack<int> st; for (int i = 0; i < nums.size() * 2; i++) { while (!st.empty() && nums[i % nums.size()] > nums[st.top()]) {result[st.top()] = nums[i % nums.size()]; st.pop();} st.push(i % nums.size());} return result;}};",
+          "description": "精简版本：合并处理三种情况"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] nextGreaterElements(int[] nums) {if(nums == null || nums.length <= 1) {return new int[]{-1};} int size = nums.length; int[] result = new int[size]; Arrays.fill(result,-1); Stack<Integer> st= new Stack<>(); for(int i = 0; i < 2*size; i++) {while(!st.empty() && nums[i % size] > nums[st.peek()]) {result[st.peek()] = nums[i % size]; st.pop();} st.push(i % size);} return result;}}",
+          "description": "Java版本：使用单调栈寻找循环数组中的下一个更大元素"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def nextGreaterElements(self, nums: List[int]) -> List[int]: dp = [-1] * len(nums) stack = [] for i in range(len(nums)*2): while(len(stack) != 0 and nums[i%len(nums)] > nums[stack[-1]]): dp[stack[-1]] = nums[i%len(nums)] stack.pop() stack.append(i%len(nums)) return dp",
+          "description": "Python版本一：使用单调栈解决循环数组的下一个更大元素问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def nextGreaterElements(self, nums: List[int]) -> List[int]: res = [-1] * len(nums) stack = [] for i, num in enumerate(nums): while stack and num > nums[stack[-1]]: res[stack[-1]] = num stack.pop() stack.append(i) for num in nums: if not stack: return res while stack and num > nums[stack[-1]]: res[stack[-1]] = num stack.pop() return res",
+          "description": "Python版本二：优化后的单调栈实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java:",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> nextGreaterElements(vector<int>& nums) {vector<int> result(nums.size(), -1);if (nums.size() == 0) return result;stack<int> st;st.push(0);for (int i = 1; i < nums.size() * 2; i++) { if (nums[i % nums.size()] < nums[st.top()]) st.push(i % nums.size()); else if (nums[i % nums.size()] == nums[st.top()]) st.push(i % nums.size()); else { while (!st.empty() && nums[i % nums.size()] > nums[st.top()]) {result[st.top()] = nums[i % nums.size()];st.pop();}st.push(i % nums.size());}}return result;}};",
+          "description": "使用单调栈解决循环数组中的下一个更大元素问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] nextGreaterElements(int[] nums) {if(nums == null || nums.length <= 1) {return new int[]{-1};}int size = nums.length;int[] result = new int[size];Arrays.fill(result,-1);Stack<Integer> st= new Stack<>();for(int i = 0; i < 2*size; i++) {while(!st.empty() && nums[i % size] > nums[st.peek()]) {result[st.peek()] = nums[i % size];st.pop();}st.push(i % size);}return result;}}",
+          "description": "Java版本的使用单调栈解决循环数组中下一个更大元素的问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def nextGreaterElements(self, nums: List[int]) -> List[int]: res = [-1] * len(nums) stack = [] for i, num in enumerate(nums): while stack and num > nums[stack[-1]]: res[stack[-1]] = num stack.pop() stack.append(i) for num in nums: if not stack: return res while stack and num > nums[stack[-1]]: res[stack[-1]] = num stack.pop() return res",
+          "description": "Python版本使用单调栈来找到循环数组中每个元素的下一个更大元素"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python:",
+      "text": "版本一：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> nextGreaterElements(vector<int>& nums) {vector<int> nums1(nums.begin(), nums.end()); nums.insert(nums.end(), nums1.begin(), nums1.end());vector<int> result(nums.size(), -1); if (nums.size() == 0) return result;stack<int> st;st.push(0);for (int i = 1; i < nums.size(); i++) { if (nums[i] < nums[st.top()]) st.push(i); else if (nums[i] == nums[st.top()]) st.push(i);else { while (!st.empty() && nums[i] > nums[st.top()]) {result[st.top()] = nums[i];st.pop();}st.push(i);} }result.resize(nums.size() / 2);return result;}};",
+          "description": "版本一：使用单调栈求解循环数组的下一个更大元素，通过拼接原数组两倍来实现循环。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> nextGreaterElements(vector<int>& nums) {vector<int> result(nums.size(), -1); if (nums.size() == 0) return result;stack<int> st;st.push(0);for (int i = 1; i < nums.size() * 2; i++) {if (nums[i % nums.size()] < nums[st.top()]) st.push(i % nums.size());else if (nums[i % nums.size()] == nums[st.top()]) st.push(i % nums.size());else {while (!st.empty() && nums[i % nums.size()] > nums[st.top()]) {result[st.top()] = nums[i % nums.size()];st.pop();}st.push(i % nums.size());}}return result;}};",
+          "description": "版本二：优化后的版本，不修改原数组，而是模拟遍历两倍长度的数组来实现循环。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> nextGreaterElements(vector<int>& nums) {vector<int> result(nums.size(), -1); if (nums.size() == 0) return result;stack<int> st;for (int i = 0; i < nums.size() * 2; i++) {while (!st.empty() && nums[i % nums.size()] > nums[st.top()]) {result[st.top()] = nums[i % nums.size()];st.pop();}st.push(i % nums.size());}return result;}};",
+          "description": "版本三：进一步精简的单调栈实现，将所有情况合并处理。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] nextGreaterElements(int[] nums) {if(nums == null || nums.length <= 1) {return new int[]{-1};}int size = nums.length;int[] result = new int[size];Arrays.fill(result,-1);Stack<Integer> st= new Stack<>();for(int i = 0; i < 2*size; i++) {while(!st.empty() && nums[i % size] > nums[st.peek()]) {result[st.peek()] = nums[i % size];st.pop();}st.push(i % size);}return result;}}",
+          "description": "Java版本：使用单调栈求解循环数组的下一个更大元素，通过模拟遍历两倍长度的数组来实现循环。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def nextGreaterElements(self, nums: List[int]) -> List[int]: dp = [-1] * len(nums) stack = [] for i in range(len(nums)*2): while(len(stack) != 0 and nums[i%len(nums)] > nums[stack[-1]]): dp[stack[-1]] = nums[i%len(nums)] stack.pop() stack.append(i%len(nums)) return dp",
+          "description": "Python版本一：使用单调栈求解循环数组的下一个更大元素，通过模拟遍历两倍长度的数组来实现循环。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def nextGreaterElements(self, nums: List[int]) -> List[int]: res = [-1] * len(nums) stack = [] for i, num in enumerate(nums): while stack and num > nums[stack[-1]]: res[stack[-1]] = num stack.pop() stack.append(i) for num in nums: if not stack: return res while stack and num > nums[stack[-1]]: res[stack[-1]] = num stack.pop() return res",
+          "description": "Python版本二：优化后的版本，避免了重复赋值的问题，通过两次遍历来寻找下一个更大元素。"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: vector<int> nextGreaterElements(vector<int>& nums) {vector<int> result(nums.size(), -1); if (nums.size() == 0) return result; stack<int> st; st.push(0); for (int i = 1; i < nums.size() * 2; i++) { if (nums[i % nums.size()] < nums[st.top()]) st.push(i % nums.size()); else if (nums[i % nums.size()] == nums[st.top()]) st.push(i % nums.size()); else { while (!st.empty() && nums[i % nums.size()] > nums[st.top()]) {result[st.top()] = nums[i % nums.size()]; st.pop();} st.push(i % nums.size());}} return result;}};",
+      "description": "使用单调栈解决循环数组中下一个更大元素的问题"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public int[] nextGreaterElements(int[] nums) { if(nums == null || nums.length <= 1) { return new int[]{-1}; } int size = nums.length; int[] result = new int[size]; Arrays.fill(result,-1); Stack<Integer> st= new Stack<>(); for(int i = 0; i < 2*size; i++) { while(!st.empty() && nums[i % size] > nums[st.peek()]) { result[st.peek()] = nums[i % size]; st.pop();} st.push(i % size);} return result; }}",
+      "description": "Java版本的单调栈解法，处理循环数组以找到每个元素之后的第一个更大的值"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def nextGreaterElements(self, nums: List[int]) -> List[int]: res = [-1] * len(nums) stack = [] for i, num in enumerate(nums): while stack and num > nums[stack[-1]]: res[stack[-1]] = num stack.pop() stack.append(i) for num in nums: if not stack: return res while stack and num > nums[stack[-1]]: res[stack[-1]] = num stack.pop() return res",
+      "description": "Python实现的算法，利用两次遍历和单调栈来找出每个元素在其后的第一个更大的值"
+    }
+  ],
+  "common_mistakes": [
+    "直接修改原始输入数组可能引入不必要的复杂性。",
+    "忘记处理边界情况（如空数组）可能导致程序错误。",
+    "未正确理解题目要求的‘循环’概念，仅进行一次遍历而忽略需要跨越数组两端的情况。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://leetcode.cn/problems/next-greater-element-ii/",
+      "description": "图片链接: https://leetcode.cn/problems/next-greater-element-ii/",
+      "context": "图片展示了题目“下一个更大元素II”的示例输入输出，帮助理解循环数组中每个元素寻找其后第一个更大值的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://programmercarl.com/0739.%E6%AF%8F%E6%97%A5%E6%B8%A9%E5%BA%A6.html",
+      "description": "图片链接: https://programmercarl.com/0739.%E6%AF%8F%E6%97%A5%E6%B8%A9%E5%BA%A6.html",
+      "context": "该图片链接指向了关于“每日温度”问题的详细解析页面，与当前讨论的问题解决思路有关联。"
+    },
+    {
+      "type": "image",
+      "content": "https://programmercarl.com/0496.%E4%B8%8B%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%A4%A7%E5%85%83%E7%B4%A0I.html",
+      "description": "图片链接: https://programmercarl.com/0496.%E4%B8%8B%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%A4%A7%E5%85%83%E7%B4%A0I.html",
+      "context": "该图片链接指向了题目“下一个更大元素 I”的详细解析页面，与当前讨论的循环数组寻找下一个更大元素的问题直接相关。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\单调栈\\下一个更大元素II.txt",
+  "extracted_at": "2025-07-21T00:43:11.379712",
+  "raw_content": "下一个更大元素II\n力扣题目链接(https://leetcode.cn/problems/next-greater-element-ii/)\n\n给定一个循环数组（最后一个元素的下一个元素是数组的第一个元素），输出每个元素的下一个更大元素。数字 x 的下一个更大的元素是按数组遍历顺序，这个数字之后的第一个比它更大的数，这意味着你应该循环地搜索它的下一个更大的数。如果不存在，则输出 -1。\n\n示例 1:\n\n输入: [1,2,1]\n输出: [2,-1,2]\n解释: 第一个 1 的下一个更大的数是 2；数字 2 找不到下一个更大的数；第二个 1 的下一个最大的数需要循环搜索，结果也是 2。\n提示:\n\n1 <= nums.length <= 10^4\n-10^9 <= nums[i] <= 10^9\n\n#思路\n做本题之前建议先做739. 每日温度 (https://programmercarl.com/0739.%E6%AF%8F%E6%97%A5%E6%B8%A9%E5%BA%A6.html)和 496.下一个更大元素 I (https://programmercarl.com/0496.%E4%B8%8B%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%A4%A7%E5%85%83%E7%B4%A0I.html)。\n\n这道题和739. 每日温度 (https://programmercarl.com/0739.%E6%AF%8F%E6%97%A5%E6%B8%A9%E5%BA%A6.html)也几乎如出一辙。\n\n不过，本题要循环数组了。\n\n关于单调栈的讲解我在题解739. 每日温度 (https://programmercarl.com/0739.%E6%AF%8F%E6%97%A5%E6%B8%A9%E5%BA%A6.html)中已经详细讲解了。\n\n本篇我侧重与说一说，如何处理循环数组。\n\n相信不少同学看到这道题，就想那我直接把两个数组拼接在一起，然后使用单调栈求下一个最大值不就行了！\n\n确实可以！\n\n将两个nums数组拼接在一起，使用单调栈计算出每一个元素的下一个最大值，最后再把结果集即result数组resize到原数组大小就可以了。\n\n代码如下：\n\n// 版本一\nclass Solution {\npublic:\n    vector<int> nextGreaterElements(vector<int>& nums) {\n        // 拼接一个新的nums\n        vector<int> nums1(nums.begin(), nums.end());\n        nums.insert(nums.end(), nums1.begin(), nums1.end());\n        // 用新的nums大小来初始化result\n        vector<int> result(nums.size(), -1);\n        if (nums.size() == 0) return result;\n\n        // 开始单调栈\n        stack<int> st;\n        st.push(0);\n        for (int i = 1; i < nums.size(); i++) { \n            if (nums[i] < nums[st.top()]) st.push(i); \n            else if (nums[i] == nums[st.top()]) st.push(i);\n            else { \n                while (!st.empty() && nums[i] > nums[st.top()]) {\n                    result[st.top()] = nums[i];\n                    st.pop();\n                }\n                st.push(i);\n            }\n        }\n        // 最后再把结果集即result数组resize到原数组大小\n        result.resize(nums.size() / 2);\n        return result;\n    }\n};\n\n这种写法确实比较直观，但做了很多无用操作，例如修改了nums数组，而且最后还要把result数组resize回去。\n\nresize倒是不费时间，是O(1)的操作，但扩充nums数组相当于多了一个O(n)的操作。\n\n其实也可以不扩充nums，而是在遍历的过程中模拟走了两边nums。\n\n代码如下：\n\n// 版本二\nclass Solution {\npublic:\n    vector<int> nextGreaterElements(vector<int>& nums) {\n        vector<int> result(nums.size(), -1);\n        if (nums.size() == 0) return result;\n        stack<int> st;\n        st.push(0);\n        for (int i = 1; i < nums.size() * 2; i++) { \n            // 模拟遍历两边nums，注意一下都是用i % nums.size()来操作\n            if (nums[i % nums.size()] < nums[st.top()]) st.push(i % nums.size());\n            else if (nums[i % nums.size()] == nums[st.top()]) st.push(i % nums.size()); \n            else {\n                while (!st.empty() && nums[i % nums.size()] > nums[st.top()]) {\n                    result[st.top()] = nums[i % nums.size()];\n                    st.pop();\n                }\n                st.push(i % nums.size());\n            }\n        }\n        return result;\n    }\n};\n可以版本二不仅代码精简了，也比版本一少做了无用功！\n\n最后在给出 单调栈的精简版本，即三种情况都做了合并的操作。\n\n// 版本二\nclass Solution {\npublic:\n    vector<int> nextGreaterElements(vector<int>& nums) {\n        vector<int> result(nums.size(), -1);\n        if (nums.size() == 0) return result;\n        stack<int> st;\n        for (int i = 0; i < nums.size() * 2; i++) {\n            // 模拟遍历两边nums，注意一下都是用i % nums.size()来操作\n            while (!st.empty() && nums[i % nums.size()] > nums[st.top()]) {\n                result[st.top()] = nums[i % nums.size()];\n                st.pop();\n            }\n            st.push(i % nums.size());\n        }\n        return result;\n    }\n};\n#其他语言版本\n#Java:\nclass Solution {\n    public int[] nextGreaterElements(int[] nums) {\n        //边界判断\n        if(nums == null || nums.length <= 1) {\n            return new int[]{-1};\n        }\n        int size = nums.length;\n        int[] result = new int[size];//存放结果\n        Arrays.fill(result,-1);//默认全部初始化为-1\n        Stack<Integer> st= new Stack<>();//栈中存放的是nums中的元素下标\n        for(int i = 0; i < 2*size; i++) {\n            while(!st.empty() && nums[i % size] > nums[st.peek()]) {\n                result[st.peek()] = nums[i % size];//更新result\n                st.pop();//弹出栈顶\n            }\n            st.push(i % size);\n        }\n        return result;\n    }\n}\n#Python:\n版本一：\n\nclass Solution:\n    def nextGreaterElements(self, nums: List[int]) -> List[int]:\n        dp = [-1] * len(nums)\n        stack = []\n        for i in range(len(nums)*2):\n            while(len(stack) != 0 and nums[i%len(nums)] > nums[stack[-1]]):\n                    dp[stack[-1]] = nums[i%len(nums)]\n                    stack.pop()\n            stack.append(i%len(nums))\n        return dp\n版本二：针对版本一的优化\n\nclass Solution:\n    def nextGreaterElements(self, nums: List[int]) -> List[int]:\n        res = [-1] * len(nums)\n        stack = []\n        #第一次遍历nums\n        for i, num in enumerate(nums):   \n            while stack and num > nums[stack[-1]]:\n                res[stack[-1]] = num\n                stack.pop()\n            stack.append(i)\n        #此时stack仍有剩余，有部分数‘无下一个更大元素’待修正\n        #第二次遍历nums\n        for num in nums:\n            #一旦stack为空，就表明所有数都有下一个更大元素，可以返回结果    \n            if not stack:   \n                return res\n            while stack and num > nums[stack[-1]]:\n                res[stack[-1]] = num\n                stack.pop()\n            #不要将已经有下一个更大元素的数加入栈，这样会重复赋值，只需对第一次遍历剩余的数再尝试寻找下一个更大元素即可\n        #最后仍有部分最大数无法有下一个更大元素，返回结果\n        return res"
+}

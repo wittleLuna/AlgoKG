@@ -1,0 +1,166 @@
+{
+  "id": "AP_bfaa6b11",
+  "title": "不同路径 II",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/unique-paths-ii/",
+  "description": "一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。\n\n机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。\n\n现在考虑网格中有障碍物。那么从左上角到右下角将会有多少条不同的路径？\n\nhttps://file1.kamacoder.com/i/algo/20210111204901338.png\n\n网格中的障碍物和空位置分别用 1 和 0 来表示。",
+  "examples": [
+    {
+      "input": "见图",
+      "output": "见图",
+      "explanation": null,
+      "image": "https://file1.kamacoder.com/i/algo/20210111204939971.png"
+    },
+    {
+      "input": "见图",
+      "output": "见图",
+      "explanation": null,
+      "image": "https://file1.kamacoder.com/i/algo/20210111205857918.png"
+    }
+  ],
+  "constraints": [],
+  "algorithm_tags": [
+    "动态规划"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [],
+  "difficulty": null,
+  "solution_approach": "使用动态规划计算从起点到终点的不同路径数。定义一个二维dp数组，其中dp[i][j]表示从起点(0,0)到(i,j)的路径数。如果(i,j)是障碍物，则dp[i][j]保持为0。递推公式为dp[i][j] = dp[i-1][j] + dp[i][j-1]。",
+  "key_insights": [
+    {
+      "content": "遇到障碍物时，dp[i][j]保持为0"
+    },
+    {
+      "content": "初始化时，需要考虑起始点或终点有障碍物的情况"
+    },
+    {
+      "content": "遍历顺序是从左到右，从上到下，确保每个位置的dp值都基于已经计算好的值"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题相对于62.不同路径 (https://programmercarl.com/0062.%E4%B8%8D%E5%90%8C%E8%B7%AF%E5%BE%84.html)就是有了障碍。",
+      "resources": [],
+      "code_snippets": [],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "本题是62.不同路径 (https://programmercarl.com/0062.%E4%B8%8D%E5%90%8C%E8%B7%AF%E5%BE%84.html)的障碍版，整体思路大体一致。",
+      "resources": [],
+      "code_snippets": [],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "动态规划（版本一）",
+      "resources": [],
+      "code_snippets": [],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n × m)",
+    "space_complexity": "O(n × m)",
+    "explanation": "n、m 分别为obstacleGrid 长度和宽度"
+  },
+  "code_solutions": [],
+  "common_mistakes": [],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210111204901338.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20210111204901338.png",
+      "context": "{}"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210111204939971.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20210111204939971.png",
+      "context": "{}"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210111205857918.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20210111205857918.png",
+      "context": "{}"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210104114513928.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20210104114513928.png",
+      "context": "{}"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210104114548983.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20210104114548983.png",
+      "context": "{}"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210104114610256.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20210104114610256.png",
+      "context": "{}"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210111204901338.png",
+      "description": "{}",
+      "context": "{}"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210111204939971.png",
+      "description": "{}",
+      "context": "{}"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210111205857918.png",
+      "description": "{}",
+      "context": "{}"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210104114513928.png",
+      "description": "{}",
+      "context": "{}"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210104114548983.png",
+      "description": "{}",
+      "context": "{}"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210104114610256.png",
+      "description": "GIF展示了动态规划算法填充dp数组的过程，以寻找无障碍物网格中从起点到终点的路径数量。",
+      "context": "该GIF动画展示了如何根据给定的障碍网格推导出动态规划表（dp table）的过程，帮助理解从起点到终点不碰到障碍物的所有可能路径数量是如何计算出来的。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\动态规划\\不同路径 II.txt",
+  "extracted_at": "2025-07-20T12:16:21.389573",
+  "raw_content": "不同路径 II\n力扣题目链接(https://leetcode.cn/problems/unique-paths-ii/)\n\n一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。\n\n机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。\n\n现在考虑网格中有障碍物。那么从左上角到右下角将会有多少条不同的路径？\n\nhttps://file1.kamacoder.com/i/algo/20210111204901338.png\n\n网格中的障碍物和空位置分别用 1 和 0 来表示。\n\n示例 1：\n\nhttps://file1.kamacoder.com/i/algo/20210111204939971.png\n\n输入：obstacleGrid = [[0,0,0],[0,1,0],[0,0,0]]\n输出：2 解释：\n3x3 网格的正中间有一个障碍物。\n从左上角到右下角一共有 2 条不同的路径：\n向右 -> 向右 -> 向下 -> 向下\n向下 -> 向下 -> 向右 -> 向右\n示例 2：\n\nhttps://file1.kamacoder.com/i/algo/20210111205857918.png\n\n输入：obstacleGrid = [[0,1],[0,0]]\n输出：1\n提示：\n\nm == obstacleGrid.length\nn == obstacleGrid[i].length\n1 <= m, n <= 100\nobstacleGrid[i][j] 为 0 或 1\n\n#思路\n这道题相对于62.不同路径 (https://programmercarl.com/0062.%E4%B8%8D%E5%90%8C%E8%B7%AF%E5%BE%84.html)就是有了障碍。\n\n第一次接触这种题目的同学可能会有点懵，这有障碍了，应该怎么算呢？\n\n62.不同路径 (https://programmercarl.com/0062.%E4%B8%8D%E5%90%8C%E8%B7%AF%E5%BE%84.html)中我们已经详细分析了没有障碍的情况，有障碍的话，其实就是标记对应的dp table（dp数组）保持初始值(0)就可以了。\n\n动规五部曲：\n\n确定dp数组（dp table）以及下标的含义\ndp[i][j] ：表示从（0 ，0）出发，到(i, j) 有dp[i][j]条不同的路径。\n\n确定递推公式\n递推公式和62.不同路径一样，dp[i][j] = dp[i - 1][j] + dp[i][j - 1]。\n\n但这里需要注意一点，因为有了障碍，(i, j)如果就是障碍的话应该就保持初始状态（初始状态为0）。\n\n所以代码为：\n\nif (obstacleGrid[i][j] == 0) { // 当(i, j)没有障碍的时候，再推导dp[i][j]\n    dp[i][j] = dp[i - 1][j] + dp[i][j - 1];\n}\ndp数组如何初始化\n在62.不同路径 (https://programmercarl.com/0062.%E4%B8%8D%E5%90%8C%E8%B7%AF%E5%BE%84.html)不同路径中我们给出如下的初始化：\n\nvector<vector<int>> dp(m, vector<int>(n, 0)); // 初始值为0\nfor (int i = 0; i < m; i++) dp[i][0] = 1;\nfor (int j = 0; j < n; j++) dp[0][j] = 1;\n因为从(0, 0)的位置到(i, 0)的路径只有一条，所以dp[i][0]一定为1，dp[0][j]也同理。\n\n但如果(i, 0) 这条边有了障碍之后，障碍之后（包括障碍）都是走不到的位置了，所以障碍之后的dp[i][0]应该还是初始值0。\n\n如图：\n\nhttps://file1.kamacoder.com/i/algo/20210104114513928.png\n\n下标(0, j)的初始化情况同理。\n\n所以本题初始化代码为：\n\nvector<vector<int>> dp(m, vector<int>(n, 0));\nfor (int i = 0; i < m && obstacleGrid[i][0] == 0; i++) dp[i][0] = 1;\nfor (int j = 0; j < n && obstacleGrid[0][j] == 0; j++) dp[0][j] = 1;\n注意代码里for循环的终止条件，一旦遇到obstacleGrid[i][0] == 1的情况就停止dp[i][0]的赋值1的操作，dp[0][j]同理\n\n确定遍历顺序\n从递归公式dp[i][j] = dp[i - 1][j] + dp[i][j - 1] 中可以看出，一定是从左到右一层一层遍历，这样保证推导dp[i][j]的时候，dp[i - 1][j] 和 dp[i][j - 1]一定是有数值。\n\n代码如下：\n\nfor (int i = 1; i < m; i++) {\n    for (int j = 1; j < n; j++) {\n        if (obstacleGrid[i][j] == 1) continue;\n        dp[i][j] = dp[i - 1][j] + dp[i][j - 1];\n    }\n}\n举例推导dp数组\n拿示例1来举例如题：\n\nhttps://file1.kamacoder.com/i/algo/20210104114548983.png\n\n对应的dp table 如图：\n\nhttps://file1.kamacoder.com/i/algo/20210104114610256.png\n\n如果这个图看不懂，建议再理解一下递归公式，然后照着文章中说的遍历顺序，自己推导一下！\n\n动规五部分分析完毕，对应C++代码如下：\n\nclass Solution {\npublic:\n    int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {\n        int m = obstacleGrid.size();\n        int n = obstacleGrid[0].size();\n        if (obstacleGrid[m - 1][n - 1] == 1 || obstacleGrid[0][0] == 1) //如果在起点或终点出现了障碍，直接返回0\n            return 0;\n        vector<vector<int>> dp(m, vector<int>(n, 0));\n        for (int i = 0; i < m && obstacleGrid[i][0] == 0; i++) dp[i][0] = 1;\n        for (int j = 0; j < n && obstacleGrid[0][j] == 0; j++) dp[0][j] = 1;\n        for (int i = 1; i < m; i++) {\n            for (int j = 1; j < n; j++) {\n                if (obstacleGrid[i][j] == 1) continue;\n                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];\n            }\n        }\n        return dp[m - 1][n - 1];\n    }\n};\n时间复杂度：O(n × m)，n、m 分别为obstacleGrid 长度和宽度\n空间复杂度：O(n × m)\n同样我们给出空间优化版本：\n\nclass Solution {\npublic:\n    int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {\n        if (obstacleGrid[0][0] == 1)\n            return 0;\n        vector<int> dp(obstacleGrid[0].size());\n        for (int j = 0; j < dp.size(); ++j)\n            if (obstacleGrid[0][j] == 1)\n                dp[j] = 0;\n            else if (j == 0)\n                dp[j] = 1;\n            else\n                dp[j] = dp[j-1];\n\n        for (int i = 1; i < obstacleGrid.size(); ++i)\n            for (int j = 0; j < dp.size(); ++j){\n                if (obstacleGrid[i][j] == 1)\n                    dp[j] = 0;\n                else if (j != 0)\n                    dp[j] = dp[j] + dp[j-1];\n            }\n        return dp.back();\n    }\n};\n时间复杂度：O(n × m)，n、m 分别为obstacleGrid 长度和宽度\n空间复杂度：O(m)\n#总结\n本题是62.不同路径 (https://programmercarl.com/0062.%E4%B8%8D%E5%90%8C%E8%B7%AF%E5%BE%84.html)的障碍版，整体思路大体一致。\n\n但就算是做过62.不同路径，在做本题也会有感觉遇到障碍无从下手。\n\n其实只要考虑到，遇到障碍dp[i][j]保持0就可以了。\n\n也有一些小细节，例如：初始化的部分，很容易忽略了障碍之后应该都是0的情况。\n\n#其他语言版本\n#Java\nclass Solution {\n    public int uniquePathsWithObstacles(int[][] obstacleGrid) {\n        int m = obstacleGrid.length;\n        int n = obstacleGrid[0].length;\n        int[][] dp = new int[m][n];\n\n        //如果在起点或终点出现了障碍，直接返回0\n        if (obstacleGrid[m - 1][n - 1] == 1 || obstacleGrid[0][0] == 1) {\n            return 0;\n        }\n\n        for (int i = 0; i < m && obstacleGrid[i][0] == 0; i++) {\n            dp[i][0] = 1;\n        }\n        for (int j = 0; j < n && obstacleGrid[0][j] == 0; j++) {\n            dp[0][j] = 1;\n        }\n\n        for (int i = 1; i < m; i++) {\n            for (int j = 1; j < n; j++) {\n                dp[i][j] = (obstacleGrid[i][j] == 0) ? dp[i - 1][j] + dp[i][j - 1] : 0;\n            }\n        }\n        return dp[m - 1][n - 1];\n    }\n}\n// 空间优化版本\nclass Solution {\n    public int uniquePathsWithObstacles(int[][] obstacleGrid) {\n        int m = obstacleGrid.length;\n        int n = obstacleGrid[0].length;\n        int[] dp = new int[n];\n\n        for (int j = 0; j < n && obstacleGrid[0][j] == 0; j++) {\n            dp[j] = 1;\n        }\n\n        for (int i = 1; i < m; i++) {\n            for (int j = 0; j < n; j++) {\n                if (obstacleGrid[i][j] == 1) {\n                    dp[j] = 0;\n                } else if (j != 0) {\n                    dp[j] += dp[j - 1];\n                }\n            }\n        }\n        return dp[n - 1];\n    }\n}\n#Python\n动态规划（版本一）\n\nclass Solution:\n    def uniquePathsWithObstacles(self, obstacleGrid):\n        m = len(obstacleGrid)\n        n = len(obstacleGrid[0])\n        if obstacleGrid[m - 1][n - 1] == 1 or obstacleGrid[0][0] == 1:\n            return 0\n        dp = [[0] * n for _ in range(m)]\n        for i in range(m):\n            if obstacleGrid[i][0] == 0:  # 遇到障碍物时，直接退出循环，后面默认都是0\n                dp[i][0] = 1\n            else:\n                break\n        for j in range(n):\n            if obstacleGrid[0][j] == 0:\n                dp[0][j] = 1\n            else:\n                break\n        for i in range(1, m):\n            for j in range(1, n):\n                if obstacleGrid[i][j] == 1:\n                    continue\n                dp[i][j] = dp[i - 1][j] + dp[i][j - 1]\n        return dp[m - 1][n - 1]\n\n动态规划（版本二）\n\nclass Solution:\n    def uniquePathsWithObstacles(self, obstacleGrid):\n        m = len(obstacleGrid)  # 网格的行数\n        n = len(obstacleGrid[0])  # 网格的列数\n        \n        if obstacleGrid[m - 1][n - 1] == 1 or obstacleGrid[0][0] == 1:\n            # 如果起点或终点有障碍物，直接返回0\n            return 0\n        \n        dp = [[0] * n for _ in range(m)]  # 创建一个二维列表用于存储路径数\n        \n        # 设置起点的路径数为1\n        dp[0][0] = 1 if obstacleGrid[0][0] == 0 else 0\n        \n        # 计算第一列的路径数\n        for i in range(1, m):\n            if obstacleGrid[i][0] == 0:\n                dp[i][0] = dp[i - 1][0]\n        \n        # 计算第一行的路径数\n        for j in range(1, n):\n            if obstacleGrid[0][j] == 0:\n                dp[0][j] = dp[0][j - 1]\n        \n        # 计算其他位置的路径数\n        for i in range(1, m):\n            for j in range(1, n):\n                if obstacleGrid[i][j] == 1:\n                    continue\n                dp[i][j] = dp[i - 1][j] + dp[i][j - 1]\n        \n        return dp[m - 1][n - 1]  # 返回终点的路径数\n\n\n动态规划（版本三）\n\nclass Solution:\n    def uniquePathsWithObstacles(self, obstacleGrid):\n        if obstacleGrid[0][0] == 1:\n            return 0\n        \n        dp = [0] * len(obstacleGrid[0])  # 创建一个一维列表用于存储路径数\n        \n        # 初始化第一行的路径数\n        for j in range(len(dp)):\n            if obstacleGrid[0][j] == 1:\n                dp[j] = 0\n            elif j == 0:\n                dp[j] = 1\n            else:\n                dp[j] = dp[j - 1]\n\n        # 计算其他行的路径数\n        for i in range(1, len(obstacleGrid)):\n            for j in range(len(dp)):\n                if obstacleGrid[i][j] == 1:\n                    dp[j] = 0\n                elif j != 0:\n                    dp[j] = dp[j] + dp[j - 1]\n        \n        return dp[-1]  # 返回最后一个元素，即终点的路径数\n\n动态规划（版本四）\n\nclass Solution:\n    def uniquePathsWithObstacles(self, obstacleGrid):\n        if obstacleGrid[0][0] == 1:\n            return 0\n        \n        m, n = len(obstacleGrid), len(obstacleGrid[0])\n        \n        dp = [0] * n  # 创建一个一维列表用于存储路径数\n        \n        # 初始化第一行的路径数\n        for j in range(n):\n            if obstacleGrid[0][j] == 1:\n                break\n            dp[j] = 1\n\n        # 计算其他行的路径数\n        for i in range(1, m):\n            if obstacleGrid[i][0] == 1:\n                dp[0] = 0\n            for j in range(1, n):\n                if obstacleGrid[i][j] == 1:\n                    dp[j] = 0\n                else:\n                    dp[j] += dp[j - 1]\n        \n        return dp[-1]  # 返回最后一个元素，即终点的路径数\n\n动态规划（版本五）\n\nclass Solution:\n    def uniquePathsWithObstacles(self, obstacleGrid):\n        if obstacleGrid[0][0] == 1:\n            return 0\n        \n        m, n = len(obstacleGrid), len(obstacleGrid[0])\n        \n        dp = [0] * n  # 创建一个一维列表用于存储路径数\n        \n        # 初始化第一行的路径数\n        for j in range(n):\n            if obstacleGrid[0][j] == 1:\n                break\n            dp[j] = 1\n\n        # 计算其他行的路径数\n        for i in range(1, m):\n            if obstacleGrid[i][0] == 1:\n                dp[0] = 0\n            for j in range(1, n):\n                if obstacleGrid[i][j] == 1:\n                    dp[j] = 0\n                    continue\n                \n                dp[j] += dp[j - 1]\n        \n        return dp[-1]  # 返回最后一个元素，即终点的路径数"
+}

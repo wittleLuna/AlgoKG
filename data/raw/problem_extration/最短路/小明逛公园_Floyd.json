@@ -1,0 +1,506 @@
+{
+  "id": "AP_65dd3768",
+  "title": "Floyd 算法精讲",
+  "alternative_titles": [],
+  "platform": "kamacoder",
+  "url": "https://kamacoder.com/problempage.php?pid=1155",
+  "description": "一个公园景点图，图中有 N 个景点（编号为 1 到 N），以及 M 条双向道路连接着这些景点。每条道路上行走的距离都是已知的。\n\n小明有 Q 个观景计划，每个计划都有一个起点 start 和一个终点 end，表示他想从景点 start 前往景点 end。由于小明希望节省体力，他想知道每个观景计划中从起点到终点的最短路径长度。 请你帮助小明计算出每个观景计划的最短路径长度。\n\n【输入描述】\n\n第一行包含两个整数 N, M, 分别表示景点的数量和道路的数量。\n\n接下来的 M 行，每行包含三个整数 u, v, w，表示景点 u 和景点 v 之间有一条长度为 w 的双向道路。\n\n接下里的一行包含一个整数 Q，表示观景计划的数量。\n\n接下来的 Q 行，每行包含两个整数 start, end，表示一个观景计划的起点和终点。\n\n【输出描述】\n\n对于每个观景计划，输出一行表示从起点到终点的最短路径长度。如果两个景点之间不存在路径，则输出 -1。\n\n【输入",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "Dynamic Programming",
+    "Graph Theory"
+  ],
+  "data_structure_tags": [
+    "3D Array",
+    "2D Array"
+  ],
+  "technique_tags": [
+    "Memoization",
+    "Path Finding"
+  ],
+  "difficulty": null,
+  "solution_approach": "采用Floyd算法解决多源最短路径问题。通过动态规划的思想，逐步计算并更新从任意节点i到节点j的最短路径长度，最终得到所有查询的最短路径。",
+  "key_insights": [
+    {
+      "content": "利用动态规划的方法，定义dp数组grid[i][j][k]表示从节点i到节点j以[1...k]集合中的一个节点为中间节点的最短距离。通过不断更新这个值来找到最短路径。"
+    },
+    {
+      "content": "基于是否经过特定节点k，将最短路径分为两种情况：经过k和不经过k，并据此得出递推公式grid[i][j][k] = min(grid[i][k][k - 1] + grid[k][j][k - 1], grid[i][j][k - 1])。"
+    },
+    {
+      "content": "遍历顺序至关重要，k必须放在最外层循环中，以便正确地使用上一轮计算的结果。"
+    },
+    {
+      "content": "可以进行空间优化，将三维数组简化为二维数组，因为每次计算只依赖于前一层的状态。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "本题是经典的多源最短路问题。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<vector<int>>> grid(n + 1, vector<vector<int>>(n + 1, vector<int>(n + 1, 10005)));\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2][0] = val;\n        grid[p2][p1][0] = val;\n    }\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1]);\n            }\n        }\n    }\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end][n] == 10005) cout << -1 << endl;\n        else cout << grid[start][end][n] << endl;\n    }\n}",
+          "description": "基于三维数组的Floyd算法实现"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid(n + 1, vector<int>(n + 1, 10005));\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2] = val;\n        grid[p2][p1] = val;\n    }\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j]);\n            }\n        }\n    }\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end] == 10005) cout << -1 << endl;\n        else cout << grid[start][end] << endl;\n    }\n}",
+          "description": "基于二维数组的Floyd算法实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class FloydBase {\n    public static int MAX_VAL = 10005;\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        int[][][] grid = new int[n + 1][n + 1][n + 1];\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                for (int k = 0; k <= n; k++) {\n                    grid[i][j][k] = grid[j][i][k] = MAX_VAL;\n                }\n            }\n        }\n        while (m-- > 0) {\n            int u = sc.nextInt();\n            int v = sc.nextInt();\n            int weight = sc.nextInt();\n            grid[u][v][0] = grid[v][u][0] = weight;\n        }\n        for (int k = 1; k <= n; k++) {\n            for (int i = 1; i <= n; i++) {\n                for (int j = 1; j <= n; j++) {\n                    grid[i][j][k] = Math.min(grid[i][k][k - 1] + grid[k][j][k - 1], grid[i][j][k - 1]);\n                }\n            }\n        }\n        int x = sc.nextInt();\n        while (x-- > 0) {\n            int src = sc.nextInt();\n            int dst = sc.nextInt();\n            if (grid[src][dst][n] == MAX_VAL) {\n                System.out.println(\"-1\");\n            } else {\n                System.out.println(grid[src][dst][n]);\n            }\n        }\n    }\n}",
+          "description": "基于三维数组的Floyd算法实现(Java版本)"
+        },
+        {
+          "language": "python",
+          "code": "if __name__ == '__main__':\n    max_int = 10005\n    n, m = map(int, input().split())\n    grid = [[[max_int] * (n+1) for _ in range(n+1)] for _ in range(n+1)]\n    for _ in range(m):\n        p1, p2, w = map(int, input().split())\n        grid[p1][p2][0] = w\n        grid[p2][p1][0] = w\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1])\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end][n] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end][n])",
+          "description": "基于三维数组的Floyd算法实现(Python版本)"
+        },
+        {
+          "language": "python",
+          "code": "if __name__ == '__main__':\n    max_int = 10005\n    n, m = map(int, input().split())\n    grid = [[max_int]*(n+1) for _ in range(n+1)]\n    for _ in range(m):\n        p1, p2, val = map(int, input().split())\n        grid[p1][p2] = val\n        grid[p2][p1] = val\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j])\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end])",
+          "description": "基于二维数组的Floyd算法实现(Python版本)"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "代码如下",
+      "text": "以上分析完毕，最后代码如下：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<vector<int>>> grid(n + 1, vector<vector<int>>(n + 1, vector<int>(n + 1, 10005)));  // 因为边的最大距离是10^4\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2][0] = val;\n        grid[p2][p1][0] = val; // 注意这里是双向图\n\n    }\n    // 开始 floyd\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1]);\n            }\n        }\n    }\n    // 输出结果\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end][n] == 10005) cout << -1 << endl;\n        else cout << grid[start][end][n] << endl;\n    }\n}",
+          "description": "C++实现的Floyd算法求解多源最短路径问题"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid(n + 1, vector<int>(n + 1, 10005));  // 因为边的最大距离是10^4\n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2] = val;\n        grid[p2][p1] = val; // 注意这里是双向图\n\n    }\n    // 开始 floyd\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j]);\n            }\n        }\n    }\n    // 输出结果\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end] == 10005) cout << -1 << endl;\n        else cout << grid[start][end] << endl;\n    }\n}",
+          "description": "C++空间优化后的Floyd算法求解多源最短路径问题"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class FloydBase {\n\n    public static int MAX_VAL = 10005; // 边的最大距离是10^4(不选用Integer.MAX_VALUE是为了避免相加导致数值溢出)\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        System.out.println(\"1.输入N M\");\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n\n        System.out.println(\"2.输入M条边\");\n\n        int[][][] grid = new int[n + 1][n + 1][n + 1];\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                for (int k = 0; k <= n; k++) {\n                    grid[i][j][k] = grid[j][i][k] = MAX_VAL; \n                }\n            }\n        }\n\n        while (m-- > 0) {\n            int u = sc.nextInt();\n            int v = sc.nextInt();\n            int weight = sc.nextInt();\n            grid[u][v][0] = grid[v][u][0] = weight; \n        }\n\n        for (int k = 1; k <= n; k++) {\n            for (int i = 1; i <= n; i++) {\n                for (int j = 1; j <= n; j++) {\n                    grid[i][j][k] = Math.min(grid[i][k][k - 1] + grid[k][j][k - 1], grid[i][j][k - 1]);\n                }\n            }\n        }\n\n        System.out.println(\"3.输入[起点-终点]计划个数\");\n        int x = sc.nextInt();\n\n        System.out.println(\"4.输入每个起点src 终点dst\");\n\n        while (x-- > 0) {\n            int src = sc.nextInt();\n            int dst = sc.nextInt();\n            if (grid[src][dst][n] == MAX_VAL) {\n                System.out.println(\"-1\");\n            } else {\n                System.out.println(grid[src][dst][n]);\n            }\n        }\n    }\n}",
+          "description": "Java基于三维数组实现的Floyd算法求解多源最短路径问题"
+        },
+        {
+          "language": "python",
+          "code": "if __name__ == '__main__':\n    max_int = 10005  # 设置最大路径，因为边最大距离为10^4\n\n    n, m = map(int, input().split())\n\n    grid = [[[max_int] * (n+1) for _ in range(n+1)] for _ in range(n+1)]  # 初始化三维dp数组\n\n    for _ in range(m):\n        p1, p2, w = map(int, input().split())\n        grid[p1][p2][0] = w\n        grid[p2][p1][0] = w\n\n    # 开始floyd\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1])\n\n    # 输出结果\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end][n] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end][n])",
+          "description": "Python基于三维数组实现的Floyd算法求解多源最短路径问题"
+        },
+        {
+          "language": "python",
+          "code": "if __name__ == '__main__':\n    max_int = 10005  # 设置最大路径，因为边最大距离为10^4\n\n    n, m = map(int, input().split())\n\n    grid = [[max_int]*(n+1) for _ in range(n+1)]  # 初始化二维dp数组\n\n    for _ in range(m):\n        p1, p2, val = map(int, input().split())\n        grid[p1][p2] = val\n        grid[p2][p1] = val\n\n    # 开始floyd\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j])\n\n    # 输出结果\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end])",
+          "description": "Python基于二维数组实现的空间优化版Floyd算法求解多源最短路径问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid(n + 1, vector<int>(n + 1, 10005));  // 因为边的最大距离是10^4\n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2] = val;\n        grid[p2][p1] = val; // 注意这里是双向图\n\n    }\n    // 开始 floyd\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j]);\n            }\n        }\n    }\n    // 输出结果\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end] == 10005) cout << -1 << endl;\n        else cout << grid[start][end] << endl;\n    }\n}",
+          "description": "C++实现的Floyd算法求多源最短路径问题。"
+        },
+        {
+          "language": "python",
+          "code": "if __name__ == '__main__':\n    max_int = 10005  # 设置最大路径，因为边最大距离为10^4\n\n    n, m = map(int, input().split())\n\n    grid = [[max_int]*(n+1) for _ in range(n+1)]  # 初始化二维dp数组\n\n    for _ in range(m):\n        p1, p2, val = map(int, input().split())\n        grid[p1][p2] = val\n        grid[p2][p1] = val\n\n    # 开始floyd\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j])\n\n    # 输出结果\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end])",
+          "description": "Python实现的Floyd算法求解多源最短路径问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class FloydBase {\n    public static int MAX_VAL = 10005; \n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n\n        int[][][] grid = new int[n + 1][n + 1][n + 1];\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                for (int k = 0; k <= n; k++) {\n                    grid[i][j][k] = grid[j][i][k] = MAX_VAL; \n                }\n            }\n        }\n\n        while (m-- > 0) {\n            int u = sc.nextInt();\n            int v = sc.nextInt();\n            int weight = sc.nextInt();\n            grid[u][v][0] = grid[v][u][0] = weight; \n        }\n\n        for (int k = 1; k <= n; k++) {\n            for (int i = 1; i <= n; i++) {\n                for (int j = 1; j <= n; j++) {\n                    grid[i][j][k] = Math.min(grid[i][k][k - 1] + grid[k][j][k - 1], grid[i][j][k - 1]);\n                }\n            }\n        }\n\n        int x = sc.nextInt();\n\n        while (x-- > 0) {\n            int src = sc.nextInt();\n            int dst = sc.nextInt();\n            if (grid[src][dst][n] == MAX_VAL) {\n                System.out.println(-1);\n            } else {\n                System.out.println(grid[src][dst][n]);\n            }\n        }\n    }\n}",
+          "description": "Java实现的基于三维数组的Floyd算法求解多源最短路径问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "#include <list>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<vector<int>>> grid(n + 1, vector<vector<int>>(n + 1, vector<int>(n + 1, 10005)));  \n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2][0] = val;\n        grid[p2][p1][0] = val; \n    }\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1]);\n            }\n        }\n    }\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end][n] == 10005) cout << -1 << endl;\n        else cout << grid[start][end][n] << endl;\n    }\n}",
+          "description": "C++实现的基于三维数组的Floyd算法"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid(n + 1, vector<int>(n + 1, 10005));  \n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2] = val;\n        grid[p2][p1] = val; \n    }\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j]);\n            }\n        }\n    }\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end] == 10005) cout << -1 << endl;\n        else cout << grid[start][end] << endl;\n    }\n}",
+          "description": "C++实现的基于二维数组的Floyd算法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class FloydBase {\n    public static int MAX_VAL = 10005; \n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        int[][][] grid = new int[n + 1][n + 1][n + 1];\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                for (int k = 0; k <= n; k++) {\n                    grid[i][j][k] = grid[j][i][k] = MAX_VAL; \n                }\n            }\n        }\n        while (m-- > 0) {\n            int u = sc.nextInt();\n            int v = sc.nextInt();\n            int weight = sc.nextInt();\n            grid[u][v][0] = grid[v][u][0] = weight; \n        }\n        for (int k = 1; k <= n; k++) {\n            for (int i = 1; i <= n; i++) {\n                for (int j = 1; j <= n; j++) {\n                    grid[i][j][k] = Math.min(grid[i][k][k - 1] + grid[k][j][k - 1], grid[i][j][k - 1]);\n                }\n            }\n        }\n        int x = sc.nextInt();\n        while (x-- > 0) {\n            int src = sc.nextInt();\n            int dst = sc.nextInt();\n            if (grid[src][dst][n] == MAX_VAL) {\n                System.out.println(-1);\n            } else {\n                System.out.println(grid[src][dst][n]);\n            }\n        }\n    }\n}",
+          "description": "Java实现的基于三维数组的Floyd算法"
+        },
+        {
+          "language": "python",
+          "code": "if __name__ == '__main__':\n    max_int = 10005  \n    n, m = map(int, input().split())\n    grid = [[[max_int] * (n+1) for _ in range(n+1)] for _ in range(n+1)]  \n    for _ in range(m):\n        p1, p2, w = map(int, input().split())\n        grid[p1][p2][0] = w\n        grid[p2][p1][0] = w\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1])\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end][n] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end][n])",
+          "description": "Python实现的基于三维数组的Floyd算法"
+        },
+        {
+          "language": "python",
+          "code": "if __name__ == '__main__':\n    max_int = 10005  \n    n, m = map(int, input().split())\n    grid = [[max_int]*(n+1) for _ in range(n+1)]  \n    for _ in range(m):\n        p1, p2, val = map(int, input().split())\n        grid[p1][p2] = val\n        grid[p2][p1] = val\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j])\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end])",
+          "description": "Python实现的基于二维数组的Floyd算法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <list>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<vector<int>>> grid(n + 1, vector<vector<int>>(n + 1, vector<int>(n + 1, 10005)));  // 因为边的最大距离是10^4\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2][0] = val;\n        grid[p2][p1][0] = val; // 注意这里是双向图\n\n    }\n    // 开始 floyd\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1]);\n            }\n        }\n    }\n    // 输出结果\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end][n] == 10005) cout << -1 << endl;\n        else cout << grid[start][end][n] << endl;\n    }\n}",
+          "description": "基于三维数组的Floyd算法C++实现"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid(n + 1, vector<int>(n + 1, 10005));  // 因为边的最大距离是10^4\n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2] = val;\n        grid[p2][p1] = val; // 注意这里是双向图\n\n    }\n    // 开始 floyd\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j]);\n            }\n        }\n    }\n    // 输出结果\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end] == 10005) cout << -1 << endl;\n        else cout << grid[start][end] << endl;\n    }\n}",
+          "description": "基于二维数组的Floyd算法C++实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class FloydBase {\n    public static int MAX_VAL = 10005; // 边的最大距离是10^4\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        System.out.println(\"1.输入N M\");\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n\n        System.out.println(\"2.输入M条边\");\n\n        int[][][] grid = new int[n + 1][n + 1][n + 1];\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                for (int k = 0; k <= n; k++) {\n                    grid[i][j][k] = grid[j][i][k] = MAX_VAL; // 其余设置为最大值\n                }\n            }\n        }\n\n        while (m-- > 0) {\n            int u = sc.nextInt();\n            int v = sc.nextInt();\n            int weight = sc.nextInt();\n            grid[u][v][0] = grid[v][u][0] = weight; // 初始化（处理k=0的情况）\n        }\n\n        for (int k = 1; k <= n; k++) {\n            for (int i = 1; i <= n; i++) {\n                for (int j = 1; j <= n; j++) {\n                    grid[i][j][k] = Math.min(grid[i][k][k - 1] + grid[k][j][k - 1], grid[i][j][k - 1]);\n                }\n            }\n        }\n\n        System.out.println(\"3.输入[起点-终点]计划个数\");\n        int x = sc.nextInt();\n\n        System.out.println(\"4.输入每个起点src 终点dst\");\n\n        while (x-- > 0) {\n            int src = sc.nextInt();\n            int dst = sc.nextInt();\n            if (grid[src][dst][n] == MAX_VAL) {\n                System.out.println(\"-1\");\n            } else {\n                System.out.println(grid[src][dst][n]);\n            }\n        }\n    }\n}",
+          "description": "基于三维数组的Floyd算法Java实现"
+        },
+        {
+          "language": "python",
+          "code": "if __name__ == '__main__':\n    max_int = 10005  # 设置最大路径，因为边最大距离为10^4\n\n    n, m = map(int, input().split())\n\n    grid = [[[max_int] * (n+1) for _ in range(n+1)] for _ in range(n+1)]  # 初始化三维dp数组\n\n    for _ in range(m):\n        p1, p2, w = map(int, input().split())\n        grid[p1][p2][0] = w\n        grid[p2][p1][0] = w\n\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1])\n\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end][n] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end][n])",
+          "description": "基于三维数组的Floyd算法Python实现"
+        },
+        {
+          "language": "python",
+          "code": "if __name__ == '__main__':\n    max_int = 10005  # 设置最大路径，因为边最大距离为10^4\n\n    n, m = map(int, input().split())\n\n    grid = [[max_int]*(n+1) for _ in range(n+1)]  # 初始化二维dp数组\n\n    for _ in range(m):\n        p1, p2, val = map(int, input().split())\n        grid[p1][p2] = val\n        grid[p2][p1] = val\n\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j])\n\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end])",
+          "description": "基于二维数组的Floyd算法Python实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "空间优化",
+      "text": "这里 我们可以做一下 空间上的优化，从滚动数组的角度来看，我们定义一个 grid[n + 1][ n + 1][2] 这么大的数组就可以，因为k 只是依赖于 k-1的状态，并不需要记录k-2，k-3，k-4 等等这些状态。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "int main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<vector<int>>> grid(n + 1, vector<vector<int>>(n + 1, vector<int>(n + 1, 10005)));  // 因为边的最大距离是10^4\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2][0] = val;\n        grid[p2][p1][0] = val; // 注意这里是双向图\n\n    }\n    // 开始 floyd\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1]);\n            }\n        }\n    }\n    // 输出结果\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end][n] == 10005) cout << -1 << endl;\n        else cout << grid[start][end][n] << endl;\n    }\n}",
+          "description": "使用三维数组实现Floyd算法求解多源最短路径问题"
+        },
+        {
+          "language": "cpp",
+          "code": "int main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid(n + 1, vector<int>(n + 1, 10005));  // 因为边的最大距离是10^4\n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2] = val;\n        grid[p2][p1] = val; // 注意这里是双向图\n\n    }\n    // 开始 floyd\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j]);\n            }\n        }\n    }\n    // 输出结果\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end] == 10005) cout << -1 << endl;\n        else cout << grid[start][end] << endl;\n    }\n}",
+          "description": "使用二维数组实现空间优化后的Floyd算法求解多源最短路径问题"
+        },
+        {
+          "language": "java",
+          "code": "public class FloydBase {\n\n    public static int MAX_VAL = 10005; // 边的最大距离是10^4(不选用Integer.MAX_VALUE是为了避免相加导致数值溢出)\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        System.out.println(\"1.输入N M\");\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n\n        System.out.println(\"2.输入M条边\");\n\n        int[][][] grid = new int[n + 1][n + 1][n + 1];\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                for (int k = 0; k <= n; k++) {\n                    grid[i][j][k] = grid[j][i][k] = MAX_VAL; // 其余设置为最大值\n                }\n            }\n        }\n\n        while (m-- > 0) {\n            int u = sc.nextInt();\n            int v = sc.nextInt();\n            int weight = sc.nextInt();\n            grid[u][v][0] = grid[v][u][0] = weight; // 初始化（处理k=0的情况）\n        }\n\n        for (int k = 1; k <= n; k++) {\n            for (int i = 1; i <= n; i++) {\n                for (int j = 1; j <= n; j++) {\n                    grid[i][j][k] = Math.min(grid[i][k][k - 1] + grid[k][j][k - 1], grid[i][j][k - 1]);\n                }\n            }\n        }\n\n        System.out.println(\"3.输入[起点-终点]计划个数\");\n        int x = sc.nextInt();\n\n        System.out.println(\"4.输入每个起点src 终点dst\");\n\n        while (x-- > 0) {\n            int src = sc.nextInt();\n            int dst = sc.nextInt();\n            if (grid[src][dst][n] == MAX_VAL) {\n                System.out.println(\"-1\");\n            } else {\n                System.out.println(grid[src][dst][n]);\n            }\n        }\n    }\n}",
+          "description": "Java版本基于三维数组的Floyd算法求解多源最短路径问题"
+        },
+        {
+          "language": "python",
+          "code": "if __name__ == '__main__':\n    max_int = 10005  # 设置最大路径，因为边最大距离为10^4\n\n    n, m = map(int, input().split())\n\n    grid = [[[max_int] * (n+1) for _ in range(n+1)] for _ in range(n+1)]  # 初始化三维dp数组\n\n    for _ in range(m):\n        p1, p2, w = map(int, input().split())\n        grid[p1][p2][0] = w\n        grid[p2][p1][0] = w\n\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1])\n\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end][n] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end][n])",
+          "description": "Python版本基于三维数组的Floyd算法求解多源最短路径问题"
+        },
+        {
+          "language": "python",
+          "code": "if __name__ == '__main__':\n    max_int = 10005  # 设置最大路径，因为边最大距离为10^4\n\n    n, m = map(int, input().split())\n\n    grid = [[max_int]*(n+1) for _ in range(n+1)]  # 初始化二维dp数组\n\n    for _ in range(m):\n        p1, p2, val = map(int, input().split())\n        grid[p1][p2] = val\n        grid[p2][p1] = val\n\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j])\n\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end])",
+          "description": "Python版本基于二维数组的空间优化Floyd算法求解多源最短路径问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid(n + 1, vector<int>(n + 1, 10005));\n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2] = val;\n        grid[p2][p1] = val;\n    }\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j]);\n            }\n        }\n    }\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end] == 10005) cout << -1 << endl;\n        else cout << grid[start][end] << endl;\n    }\n}",
+          "description": "C++版本的Floyd算法实现，用于解决多源最短路径问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class FloydBase {\n    public static int MAX_VAL = 10005;\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        int[][][] grid = new int[n + 1][n + 1][n + 1];\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                for (int k = 0; k <= n; k++) {\n                    grid[i][j][k] = grid[j][i][k] = MAX_VAL;\n                }\n            }\n        }\n        while (m-- > 0) {\n            int u = sc.nextInt();\n            int v = sc.nextInt();\n            int weight = sc.nextInt();\n            grid[u][v][0] = grid[v][u][0] = weight;\n        }\n        for (int k = 1; k <= n; k++) {\n            for (int i = 1; i <= n; i++) {\n                for (int j = 1; j <= n; j++) {\n                    grid[i][j][k] = Math.min(grid[i][k][k - 1] + grid[k][j][k - 1], grid[i][j][k - 1]);\n                }\n            }\n        }\n        int x = sc.nextInt();\n        while (x-- > 0) {\n            int src = sc.nextInt();\n            int dst = sc.nextInt();\n            if (grid[src][dst][n] == MAX_VAL) {\n                System.out.println(\"-1\");\n            } else {\n                System.out.println(grid[src][dst][n]);\n            }\n        }\n    }\n}",
+          "description": "Java版本的Floyd算法实现，使用三维数组存储图的信息。"
+        },
+        {
+          "language": "python",
+          "code": "if __name__ == '__main__':\n    max_int = 10005\n    n, m = map(int, input().split())\n    grid = [[max_int]*(n+1) for _ in range(n+1)]\n    for _ in range(m):\n        p1, p2, val = map(int, input().split())\n        grid[p1][p2] = val\n        grid[p2][p1] = val\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j])\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end])",
+          "description": "Python版本的Floyd算法实现，采用二维列表来简化空间复杂度。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "#include <list>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<vector<int>>> grid(n + 1, vector<vector<int>>(n + 1, vector<int>(n + 1, 10005)));  // 因为边的最大距离是10^4\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2][0] = val;\n        grid[p2][p1][0] = val; // 注意这里是双向图\n\n    }\n    // 开始 floyd\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1]);\n            }\n        }\n    }\n    // 输出结果\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end][n] == 10005) cout << -1 << endl;\n        else cout << grid[start][end][n] << endl;\n    }\n}",
+          "description": "C++实现的基于三维数组的Floyd算法"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid(n + 1, vector<int>(n + 1, 10005));  // 因为边的最大距离是10^4\n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2] = val;\n        grid[p2][p1] = val; // 注意这里是双向图\n\n    }\n    // 开始 floyd\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j]);\n            }\n        }\n    }\n    // 输出结果\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end] == 10005) cout << -1 << endl;\n        else cout << grid[start][end] << endl;\n    }\n}",
+          "description": "C++实现的基于二维数组的Floyd算法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class FloydBase {\n    public static int MAX_VAL = 10005; // 边的最大距离是10^4\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        System.out.println(\"1.输入N M\");\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n\n        System.out.println(\"2.输入M条边\");\n\n        int[][][] grid = new int[n + 1][n + 1][n + 1];\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                for (int k = 0; k <= n; k++) {\n                    grid[i][j][k] = grid[j][i][k] = MAX_VAL;\n                }\n            }\n        }\n\n        while (m-- > 0) {\n            int u = sc.nextInt();\n            int v = sc.nextInt();\n            int weight = sc.nextInt();\n            grid[u][v][0] = grid[v][u][0] = weight;\n        }\n\n        for (int k = 1; k <= n; k++) {\n            for (int i = 1; i <= n; i++) {\n                for (int j = 1; j <= n; j++) {\n                    grid[i][j][k] = Math.min(grid[i][k][k - 1] + grid[k][j][k - 1], grid[i][j][k - 1]);\n                }\n            }\n        }\n\n        System.out.println(\"3.输入[起点-终点]计划个数\");\n        int x = sc.nextInt();\n\n        System.out.println(\"4.输入每个起点src 终点dst\");\n\n        while (x-- > 0) {\n            int src = sc.nextInt();\n            int dst = sc.nextInt();\n            if (grid[src][dst][n] == MAX_VAL) {\n                System.out.println(\"-1\");\n            } else {\n                System.out.println(grid[src][dst][n]);\n            }\n        }\n    }\n}",
+          "description": "Java实现的基于三维数组的Floyd算法"
+        },
+        {
+          "language": "python",
+          "code": "if __name__ == '__main__':\n    max_int = 10005  # 设置最大路径，因为边最大距离为10^4\n\n    n, m = map(int, input().split())\n\n    grid = [[[max_int] * (n+1) for _ in range(n+1)] for _ in range(n+1)]  # 初始化三维dp数组\n\n    for _ in range(m):\n        p1, p2, w = map(int, input().split())\n        grid[p1][p2][0] = w\n        grid[p2][p1][0] = w\n\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1])\n\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end][n] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end][n])",
+          "description": "Python实现的基于三维数组的Floyd算法"
+        },
+        {
+          "language": "python",
+          "code": "if __name__ == '__main__':\n    max_int = 10005  # 设置最大路径，因为边最大距离为10^4\n\n    n, m = map(int, input().split())\n\n    grid = [[max_int]*(n+1) for _ in range(n+1)]  # 初始化二维dp数组\n\n    for _ in range(m):\n        p1, p2, val = map(int, input().split())\n        grid[p1][p2] = val\n        grid[p2][p1] = val\n\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j])\n\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end])",
+          "description": "Python实现的基于二维数组的Floyd算法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "本期如果上来只用二维数组来讲的话，其实更容易，但遍历顺序那里用二维数组其实是讲不清楚的，所以我直接用三维数组来讲，目的是将遍历顺序这里讲清楚。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<vector<int>>> grid(n + 1, vector<vector<int>>(n + 1, vector<int>(n + 1, 10005)));  // 因为边的最大距离是10^4\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2][0] = val;\n        grid[p2][p1][0] = val; // 注意这里是双向图\n\n    }\n    // 开始 floyd\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1]);\n            }\n        }\n    }\n    // 输出结果\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end][n] == 10005) cout << -1 << endl;\n        else cout << grid[start][end][n] << endl;\n    }\n}",
+          "description": "基于三维数组的Floyd算法实现"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid(n + 1, vector<int>(n + 1, 10005));  // 因为边的最大距离是10^4\n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2] = val;\n        grid[p2][p1] = val; // 注意这里是双向图\n\n    }\n    // 开始 floyd\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j]);\n            }\n        }\n    }\n    // 输出结果\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end] == 10005) cout << -1 << endl;\n        else cout << grid[start][end] << endl;\n    }\n}",
+          "description": "基于二维数组的Floyd算法实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class FloydBase {\n\n    public static int MAX_VAL = 10005; // 边的最大距离是10^4(不选用Integer.MAX_VALUE是为了避免相加导致数值溢出)\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        System.out.println(\"1.输入N M\");\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n\n        System.out.println(\"2.输入M条边\");\n\n        int[][][] grid = new int[n + 1][n + 1][n + 1];\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                for (int k = 0; k <= n; k++) {\n                    grid[i][j][k] = grid[j][i][k] = MAX_VAL; // 其余设置为最大值\n                }\n            }\n        }\n\n        while (m-- > 0) {\n            int u = sc.nextInt();\n            int v = sc.nextInt();\n            int weight = sc.nextInt();\n            grid[u][v][0] = grid[v][u][0] = weight; // 初始化（处理k=0的情况）\n        }\n\n        for (int k = 1; k <= n; k++) {\n            for (int i = 1; i <= n; i++) {\n                for (int j = 1; j <= n; j++) {\n                    grid[i][j][k] = Math.min(grid[i][k][k - 1] + grid[k][j][k - 1], grid[i][j][k - 1]);\n                }\n            }\n        }\n\n        System.out.println(\"3.输入[起点-终点]计划个数\");\n        int x = sc.nextInt();\n\n        System.out.println(\"4.输入每个起点src 终点dst\");\n\n        while (x-- > 0) {\n            int src = sc.nextInt();\n            int dst = sc.nextInt();\n            if (grid[src][dst][n] == MAX_VAL) {\n                System.out.println(\"-1\");\n            } else {\n                System.out.println(grid[src][dst][n]);\n            }\n        }\n    }\n}",
+          "description": "Java版基于三维数组的Floyd算法实现"
+        },
+        {
+          "language": "python",
+          "code": "if __name__ == '__main__':\n    max_int = 10005  # 设置最大路径，因为边最大距离为10^4\n\n    n, m = map(int, input().split())\n\n    grid = [[[max_int] * (n+1) for _ in range(n+1)] for _ in range(n+1)]  # 初始化三维dp数组\n\n    for _ in range(m):\n        p1, p2, w = map(int, input().split())\n        grid[p1][p2][0] = w\n        grid[p2][p1][0] = w\n\n    # 开始floyd\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1])\n\n    # 输出结果\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end][n] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end][n])",
+          "description": "Python版基于三维数组的Floyd算法实现"
+        },
+        {
+          "language": "python",
+          "code": "if __name__ == '__main__':\n    max_int = 10005  # 设置最大路径，因为边最大距离为10^4\n\n    n, m = map(int, input().split())\n\n    grid = [[max_int]*(n+1) for _ in range(n+1)]  # 初始化二维dp数组\n\n    for _ in range(m):\n        p1, p2, val = map(int, input().split())\n        grid[p1][p2] = val\n        grid[p2][p1] = val\n\n    # 开始floyd\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j])\n\n    # 输出结果\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end])",
+          "description": "Python版基于二维数组的Floyd算法实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "public class FloydBase { public static int MAX_VAL = 10005; public static void main(String[] args) { Scanner sc = new Scanner(System.in); System.out.println(\"1.输入N M\"); int n = sc.nextInt(); int m = sc.nextInt(); System.out.println(\"2.输入M条边\"); int[][][] grid = new int[n + 1][n + 1][n + 1]; for (int i = 1; i <= n; i++) { for (int j = 1; j <= n; j++) { for (int k = 0; k <= n; k++) { grid[i][j][k] = grid[j][i][k] = MAX_VAL; } } } while (m-- > 0) { int u = sc.nextInt(); int v = sc.nextInt(); int weight = sc.nextInt(); grid[u][v][0] = grid[v][u][0] = weight; } for (int k = 1; k <= n; k++) { for (int i = 1; i <= n; i++) { for (int j = 1; j <= n; j++) { grid[i][j][k] = Math.min(grid[i][k][k - 1] + grid[k][j][k - 1], grid[i][j][k - 1]); } } } System.out.println(\"3.输入[起点-终点]计划个数\"); int x = sc.nextInt(); System.out.println(\"4.输入每个起点src 终点dst\"); while (x-- > 0) { int src = sc.nextInt(); int dst = sc.nextInt(); if (grid[src][dst][n] == MAX_VAL) { System.out.println(\"-1\"); } else { System.out.println(grid[src][dst][n]); } } }}",
+          "description": "基于三维数组的Floyd算法"
+        },
+        {
+          "language": "python",
+          "code": "if __name__ == '__main__': max_int = 10005 n, m = map(int, input().split()) grid = [[[max_int] * (n+1) for _ in range(n+1)] for _ in range(n+1)] for _ in range(m): p1, p2, w = map(int, input().split()) grid[p1][p2][0] = w grid[p2][p1][0] = w for k in range(1, n+1): for i in range(1, n+1): for j in range(1, n+1): grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1]) z = int(input()) for _ in range(z): start, end = map(int, input().split()) if grid[start][end][n] == max_int: print(-1) else: print(grid[start][end][n])",
+          "description": "基于三维数组的Floyd算法"
+        },
+        {
+          "language": "python",
+          "code": "if __name__ == '__main__': max_int = 10005 n, m = map(int, input().split()) grid = [[max_int]*(n+1) for _ in range(n+1)] for _ in range(m): p1, p2, val = map(int, input().split()) grid[p1][p2] = val grid[p2][p1] = val for k in range(1, n+1): for i in range(1, n+1): for j in range(1, n+1): grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j]) z = int(input()) for _ in range(z): start, end = map(int, input().split()) if grid[start][end] == max_int: print(-1) else: print(grid[start][end])",
+          "description": "基于二维数组的Floyd算法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "基于三维数组的Floyd算法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<vector<int>>> grid(n + 1, vector<vector<int>>(n + 1, vector<int>(n + 1, 10005)));  // 因为边的最大距离是10^4\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2][0] = val;\n        grid[p2][p1][0] = val; // 注意这里是双向图\n\n    }\n    // 开始 floyd\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1]);\n            }\n        }\n    }\n    // 输出结果\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end][n] == 10005) cout << -1 << endl;\n        else cout << grid[start][end][n] << endl;\n    }\n}",
+          "description": "基于三维数组的Floyd算法实现"
+        },
+        {
+          "language": "C++",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid(n + 1, vector<int>(n + 1, 10005));  // 因为边的最大距离是10^4\n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2] = val;\n        grid[p2][p1] = val; // 注意这里是双向图\n\n    }\n    // 开始 floyd\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j]);\n            }\n        }\n    }\n    // 输出结果\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end] == 10005) cout << -1 << endl;\n        else cout << grid[start][end] << endl;\n    }\n}",
+          "description": "基于二维数组的空间优化Floyd算法实现"
+        },
+        {
+          "language": "Java",
+          "code": "import java.util.Scanner;\n\npublic class FloydBase {\n    public static int MAX_VAL = 10005; // 边的最大距离是10^4\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        System.out.println(\"1.输入N M\");\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n\n        System.out.println(\"2.输入M条边\");\n\n        int[][][] grid = new int[n + 1][n + 1][n + 1];\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                for (int k = 0; k <= n; k++) {\n                    grid[i][j][k] = grid[j][i][k] = MAX_VAL; // 其余设置为最大值\n                }\n            }\n        }\n\n        while (m-- > 0) {\n            int u = sc.nextInt();\n            int v = sc.nextInt();\n            int weight = sc.nextInt();\n            grid[u][v][0] = grid[v][u][0] = weight; // 初始化（处理k=0的情况）\n        }\n\n        for (int k = 1; k <= n; k++) {\n            for (int i = 1; i <= n; i++) {\n                for (int j = 1; j <= n; j++) {\n                    grid[i][j][k] = Math.min(grid[i][k][k - 1] + grid[k][j][k - 1], grid[i][j][k - 1]);\n                }\n            }\n        }\n\n        System.out.println(\"3.输入[起点-终点]计划个数\");\n        int x = sc.nextInt();\n\n        System.out.println(\"4.输入每个起点src 终点dst\");\n\n        while (x-- > 0) {\n            int src = sc.nextInt();\n            int dst = sc.nextInt();\n            if (grid[src][dst][n] == MAX_VAL) {\n                System.out.println(\"-1\");\n            } else {\n                System.out.println(grid[src][dst][n]);\n            }\n        }\n    }\n}",
+          "description": "基于三维数组的Floyd算法Java版本实现"
+        },
+        {
+          "language": "Python",
+          "code": "if __name__ == '__main__':\n    max_int = 10005  # 设置最大路径，因为边最大距离为10^4\n\n    n, m = map(int, input().split())\n\n    grid = [[[max_int] * (n+1) for _ in range(n+1)] for _ in range(n+1)]  # 初始化三维dp数组\n\n    for _ in range(m):\n        p1, p2, w = map(int, input().split())\n        grid[p1][p2][0] = w\n        grid[p2][p1][0] = w\n\n    # 开始floyd\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1])\n\n    # 输出结果\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end][n] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end][n])",
+          "description": "基于三维数组的Floyd算法Python版本实现"
+        },
+        {
+          "language": "Python",
+          "code": "if __name__ == '__main__':\n    max_int = 10005  # 设置最大路径，因为边最大距离为10^4\n\n    n, m = map(int, input().split())\n\n    grid = [[max_int]*(n+1) for _ in range(n+1)]  # 初始化二维dp数组\n\n    for _ in range(m):\n        p1, p2, val = map(int, input().split())\n        grid[p1][p2] = val\n        grid[p2][p1] = val\n\n    # 开始floyd\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j])\n\n    # 输出结果\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end])",
+          "description": "基于二维数组的空间优化Floyd算法Python版本实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "基于三维数组的Floyd",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<vector<int>>> grid(n + 1, vector<vector<int>>(n + 1, vector<int>(n + 1, 10005)));  // 因为边的最大距离是10^4\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2][0] = val;\n        grid[p2][p1][0] = val; // 注意这里是双向图\n\n    }\n    // 开始 floyd\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1]);\n            }\n        }\n    }\n    // 输出结果\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end][n] == 10005) cout << -1 << endl;\n        else cout << grid[start][end][n] << endl;\n    }\n}",
+          "description": "基于三维数组的Floyd算法实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class FloydBase {\n\n    public static int MAX_VAL = 10005; // 边的最大距离是10^4(不选用Integer.MAX_VALUE是为了避免相加导致数值溢出)\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        System.out.println(\"1.输入N M\");\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n\n        System.out.println(\"2.输入M条边\");\n\n        int[][][] grid = new int[n + 1][n + 1][n + 1];\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                for (int k = 0; k <= n; k++) {\n                    grid[i][j][k] = grid[j][i][k] = MAX_VAL; // 其余设置为最大值\n                }\n            }\n        }\n\n        while (m-- > 0) {\n            int u = sc.nextInt();\n            int v = sc.nextInt();\n            int weight = sc.nextInt();\n            grid[u][v][0] = grid[v][u][0] = weight; // 初始化（处理k=0的情况）\n        }\n\n        for (int k = 1; k <= n; k++) {\n            for (int i = 1; i <= n; i++) {\n                for (int j = 1; j <= n; j++) {\n                    grid[i][j][k] = Math.min(grid[i][k][k - 1] + grid[k][j][k - 1], grid[i][j][k - 1]);\n                }\n            }\n        }\n\n        System.out.println(\"3.输入[起点-终点]计划个数\");\n        int x = sc.nextInt();\n\n        System.out.println(\"4.输入每个起点src 终点dst\");\n\n        while (x-- > 0) {\n            int src = sc.nextInt();\n            int dst = sc.nextInt();\n            if (grid[src][dst][n] == MAX_VAL) {\n                System.out.println(\"-1\");\n            } else {\n                System.out.println(grid[src][dst][n]);\n            }\n        }\n    }\n}",
+          "description": "基于三维数组的Floyd算法实现"
+        },
+        {
+          "language": "python",
+          "code": "if __name__ == '__main__':\n    max_int = 10005  # 设置最大路径，因为边最大距离为10^4\n\n    n, m = map(int, input().split())\n\n    grid = [[[max_int] * (n+1) for _ in range(n+1)] for _ in range(n+1)]  # 初始化三维dp数组\n\n    for _ in range(m):\n        p1, p2, w = map(int, input().split())\n        grid[p1][p2][0] = w\n        grid[p2][p1][0] = w\n\n    # 开始floyd\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1])\n\n    # 输出结果\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end][n] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end][n])",
+          "description": "基于三维数组的Floyd算法实现"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n^3)",
+    "space_complexity": "O(n^2)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "C++",
+      "code": "int main() { int n, m, p1, p2, val; cin >> n >> m; vector<vector<vector<int>>> grid(n + 1, vector<vector<int>>(n + 1, vector<int>(n + 1, 10005))); for(int i = 0; i < m; i++){ cin >> p1 >> p2 >> val; grid[p1][p2][0] = val; grid[p2][p1][0] = val; } for (int k = 1; k <= n; k++) { for (int i = 1; i <= n; i++) { for (int j = 1; j <= n; j++) { grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1]); } } } int z, start, end; cin >> z; while (z--) { cin >> start >> end; if (grid[start][end][n] == 10005) cout << -1 << endl; else cout << grid[start][end][n] << endl; } }",
+      "description": "基于三维数组的Floyd算法"
+    },
+    {
+      "language": "C++",
+      "code": "int main() { int n, m, p1, p2, val; cin >> n >> m; vector<vector<int>> grid(n + 1, vector<int>(n + 1, 10005)); for(int i = 0; i < m; i++){ cin >> p1 >> p2 >> val; grid[p1][p2] = val; grid[p2][p1] = val; } for (int k = 1; k <= n; k++) { for (int i = 1; i <= n; i++) { for (int j = 1; j <= n; j++) { grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j]); } } } int z, start, end; cin >> z; while (z--) { cin >> start >> end; if (grid[start][end] == 10005) cout << -1 << endl; else cout << grid[start][end] << endl; } }",
+      "description": "基于二维数组的Floyd算法"
+    },
+    {
+      "language": "Java",
+      "code": "public class FloydBase { public static int MAX_VAL = 10005; public static void main(String[] args) { Scanner sc = new Scanner(System.in); int n = sc.nextInt(); int m = sc.nextInt(); int[][][] grid = new int[n + 1][n + 1][n + 1]; for (int i = 1; i <= n; i++) { for (int j = 1; j <= n; j++) { for (int k = 0; k <= n; k++) { grid[i][j][k] = grid[j][i][k] = MAX_VAL; } } } while (m-- > 0) { int u = sc.nextInt(); int v = sc.nextInt(); int weight = sc.nextInt(); grid[u][v][0] = grid[v][u][0] = weight; } for (int k = 1; k <= n; k++) { for (int i = 1; i <= n; i++) { for (int j = 1; j <= n; j++) { grid[i][j][k] = Math.min(grid[i][k][k - 1] + grid[k][j][k - 1], grid[i][j][k - 1]); } } } int x = sc.nextInt(); while (x-- > 0) { int src = sc.nextInt(); int dst = sc.nextInt(); if (grid[src][dst][n] == MAX_VAL) { System.out.println(\"-1\"); } else { System.out.println(grid[src][dst][n]); } } } }",
+      "description": "基于三维数组的Floyd算法"
+    },
+    {
+      "language": "Python",
+      "code": "if __name__ == '__main__': max_int = 10005 n, m = map(int, input().split()) grid = [[[max_int] * (n+1) for _ in range(n+1)] for _ in range(n+1)] for _ in range(m): p1, p2, w = map(int, input().split()) grid[p1][p2][0] = w grid[p2][p1][0] = w for k in range(1, n+1): for i in range(1, n+1): for j in range(1, n+1): grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1]) z = int(input()) for _ in range(z): start, end = map(int, input().split()) if grid[start][end][n] == max_int: print(-1) else: print(grid[start][end][n])",
+      "description": "基于三维数组的Floyd算法"
+    },
+    {
+      "language": "Python",
+      "code": "if __name__ == '__main__': max_int = 10005 n, m = map(int, input().split()) grid = [[max_int]*(n+1) for _ in range(n+1)] for _ in range(m): p1, p2, val = map(int, input().split()) grid[p1][p2] = val grid[p2][p1] = val for k in range(1, n+1): for i in range(1, n+1): for j in range(1, n+1): grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j]) z = int(input()) for _ in range(z): start, end = map(int, input().split()) if grid[start][end] == max_int: print(-1) else: print(grid[start][end])",
+      "description": "基于二维数组的Floyd算法"
+    }
+  ],
+  "common_mistakes": [
+    "未正确初始化grid数组导致错误的结果。",
+    "遍历顺序不当，影响了正确的状态转移。",
+    "忽略了题目中提到的边是双向的情况，仅考虑单向边。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240425104247.png",
+      "description": "这张图片展示了一个三维立方体网格，其中红色虚线表示特定路径或数据结构的遍历过程，可能用于解释多维数组或空间中的路径查找算法。",
+      "context": "该图片展示了grid数组的三维结构，其中红色底部一层表示已经初始化好的数据，帮助理解从节点i经过特定节点到达节点j的最短路径计算方式。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240424120109.png",
+      "description": "这张图片展示了一个三维坐标系中的立方体，通过红色箭头和标记（i, j, k）表示空间坐标轴，常用于算法和数据结构中的三维数组或空间问题分析。",
+      "context": "该图展示了三维数组遍历的顺序，形象地说明了k作为最外层循环变量从底向上逐层遍历的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240424115827.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20240424115827.png",
+      "context": "该图片展示了在三维数组grid中，通过固定i值后，j与k形成的平面如何被遍历的过程，以帮助理解算法中的动态规划步骤。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240424120942.png",
+      "description": "这张图片展示了一个加权无向图的数据结构，包含四个节点（1, 2, 3, 4）及其之间的边权重。",
+      "context": "该图展示了节点1到节点2之间通过其他节点连接的一个具体案例，用以说明当k作为最内层循环变量时导致的最短路径计算错误。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240424115827.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20240424115827.png",
+      "context": "该图展示了在三维数组grid中，当固定i值时，通过遍历j与k形成的平面来计算最短路径的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240425112636.png",
+      "description": "这张图片展示了一个链表结构，节点值分别为1、2和3，节点间的权重为1和10，涉及算法或数据结构的分析。",
+      "context": "该图展示了一个具体的例子，用以说明当遍历k的循环置于中间时，计算节点1到节点3的最短路径将无法正确得出结果。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240425104247.png",
+      "description": "GIF展示了三维数组grid初始化及更新的过程，特别是如何根据给定边的信息填充grid[i][j][0]层，并逐步计算出经过不同中间节点的最短路径值。",
+      "context": "GIF动画展示了grid数组的三维结构初始化过程，特别是底部一层的初始化数据，帮助理解从节点i经过节点k到达节点j的最短路径计算准备阶段。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240424120109.png",
+      "description": "GIF展示了三维数组遍历过程，按照从底向上的顺序逐层更新值。",
+      "context": "该GIF动画展示了在三维数组中，如何按照从底向上的顺序逐层遍历k、i和j的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240424115827.png",
+      "description": "GIF展示了在三维数组中，当k作为最内层循环变量时，i、j和k之间的遍历关系及数据更新过程。",
+      "context": "该GIF动画展示了在三维数组grid中，通过固定i值并遍历j与k来更新数组元素的过程，形象地演示了算法如何按层逐步计算最短路径。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240424120942.png",
+      "description": "GIF展示了在特定遍历顺序下，算法如何逐步更新节点间最短路径的过程。",
+      "context": "该GIF动画展示了在错误的遍历顺序下，算法无法正确更新节点间最短路径的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240425112636.png",
+      "description": "GIF展示了在三维立体坐标中，算法遍历节点的过程以及由于k循环位置不当导致无法正确利用初始化和上一层计算结果的情形。",
+      "context": "此GIF动画展示了在特定遍历顺序下，算法尝试寻找从节点1到节点3的最短路径但未能成功找到路径的情况。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\最短路\\小明逛公园_Floyd.txt",
+  "extracted_at": "2025-07-22T12:47:49.966524",
+  "raw_content": "Floyd 算法精讲\n卡码网：97. 小明逛公园(https://kamacoder.com/problempage.php?pid=1155)\n\n【题目描述】\n\n小明喜欢去公园散步，公园内布置了许多的景点，相互之间通过小路连接，小明希望在观看景点的同时，能够节省体力，走最短的路径。\n\n给定一个公园景点图，图中有 N 个景点（编号为 1 到 N），以及 M 条双向道路连接着这些景点。每条道路上行走的距离都是已知的。\n\n小明有 Q 个观景计划，每个计划都有一个起点 start 和一个终点 end，表示他想从景点 start 前往景点 end。由于小明希望节省体力，他想知道每个观景计划中从起点到终点的最短路径长度。 请你帮助小明计算出每个观景计划的最短路径长度。\n\n【输入描述】\n\n第一行包含两个整数 N, M, 分别表示景点的数量和道路的数量。\n\n接下来的 M 行，每行包含三个整数 u, v, w，表示景点 u 和景点 v 之间有一条长度为 w 的双向道路。\n\n接下里的一行包含一个整数 Q，表示观景计划的数量。\n\n接下来的 Q 行，每行包含两个整数 start, end，表示一个观景计划的起点和终点。\n\n【输出描述】\n\n对于每个观景计划，输出一行表示从起点到终点的最短路径长度。如果两个景点之间不存在路径，则输出 -1。\n\n【输入示例】\n\n7 3 1 2 4 2 5 6 3 6 8 2 1 2 2 3\n\n【输出示例】\n\n4 -1\n\n【提示信息】\n\n从 1 到 2 的路径长度为 4，2 到 3 之间并没有道路。\n\n1 <= N, M, Q <= 1000.\n\n#思路\n本题是经典的多源最短路问题。\n\n在这之前我们讲解过，dijkstra朴素版、dijkstra堆优化、Bellman算法、Bellman队列优化（SPFA） 都是单源最短路，即只能有一个起点。\n\n而本题是多源最短路，即 求多个起点到多个终点的多条最短路径。\n\n通过本题，我们来系统讲解一个新的最短路算法-Floyd 算法。\n\nFloyd 算法对边的权值正负没有要求，都可以处理。\n\nFloyd算法核心思想是动态规划。\n\n例如我们再求节点1 到 节点9 的最短距离，用二维数组来表示即：grid[1][9]，如果最短距离是10 ，那就是 grid[1][9] = 10。\n\n那 节点1 到 节点9 的最短距离 是不是可以由 节点1 到节点5的最短距离 + 节点5到节点9的最短距离组成呢？\n\n即 grid[1][9] = grid[1][5] + grid[5][9]\n\n节点1 到节点5的最短距离 是不是可以有 节点1 到 节点3的最短距离 + 节点3 到 节点5 的最短距离组成呢？\n\n即 grid[1][5] = grid[1][3] + grid[3][5]\n\n以此类推，节点1 到 节点3的最短距离 可以由更小的区间组成。\n\n那么这样我们是不是就找到了，子问题推导求出整体最优方案的递归关系呢。\n\n节点1 到 节点9 的最短距离 可以由 节点1 到节点5的最短距离 + 节点5到节点9的最短距离组成， 也可以有 节点1 到节点7的最短距离 + 节点7 到节点9的最短距离的距离组成。\n\n那么选哪个呢？\n\n是不是 要选一个最小的，毕竟是求最短路。\n\n此时我们已经接近明确递归公式了。\n\n之前在讲解动态规划的时候，给出过动规五部曲：\n\n确定dp数组（dp table）以及下标的含义\n确定递推公式\ndp数组如何初始化\n确定遍历顺序\n举例推导dp数组\n那么接下来我们还是用这五部来给大家讲解 Floyd。\n\n1、确定dp数组（dp table）以及下标的含义\n\n这里我们用 grid数组来存图，那就把dp数组命名为 grid。\n\ngrid[i][j][k] = m，表示 节点i 到 节点j 以[1...k] 集合中的一个节点为中间节点的最短距离为m。\n\n可能有录友会想，凭什么就这么定义呢？\n\n节点i 到 节点j 的最短距离为m，这句话可以理解，但 以[1...k]集合为中间节点就理解不辽了。\n\n节点i 到 节点j 的最短路径中 一定是经过很多节点，那么这个集合用[1...k] 来表示。\n\n你可以反过来想，节点i 到 节点j 中间一定经过很多节点，那么你能用什么方式来表述中间这么多节点呢？\n\n所以 这里的k不能单独指某个节点，k 一定要表示一个集合，即[1...k] ，表示节点1 到 节点k 一共k个节点的集合。\n\n2、确定递推公式\n\n在上面的分析中我们已经初步感受到了递推的关系。\n\n我们分两种情况：\n\n节点i 到 节点j 的最短路径经过节点k\n节点i 到 节点j 的最短路径不经过节点k\n对于第一种情况，grid[i][j][k] = grid[i][k][k - 1] + grid[k][j][k - 1]\n\n节点i 到 节点k 的最短距离 是不经过节点k，中间节点集合为[1...k-1]，所以 表示为grid[i][k][k - 1]\n\n节点k 到 节点j 的最短距离 也是不经过节点k，中间节点集合为[1...k-1]，所以表示为 grid[k][j][k - 1]\n\n第二种情况，grid[i][j][k] = grid[i][j][k - 1]\n\n如果节点i 到 节点j的最短距离 不经过节点k，那么 中间节点集合[1...k-1]，表示为 grid[i][j][k - 1]\n\n因为我们是求最短路，对于这两种情况自然是取最小值。\n\n即： grid[i][j][k] = min(grid[i][k][k - 1] + grid[k][j][k - 1]， grid[i][j][k - 1])\n\n3、dp数组如何初始化\n\ngrid[i][j][k] = m，表示 节点i 到 节点j 以[1...k] 集合为中间节点的最短距离为m。\n\n刚开始初始化k 是不确定的。\n\n例如题目中只是输入边（节点2 -> 节点6，权值为3），那么grid[2][6][k] = 3，k需要填什么呢？\n\n把k 填成1，那如何上来就知道 节点2 经过节点1 到达节点6的最短距离是多少 呢。\n\n所以 只能 把k 赋值为 0，本题 节点0 是无意义的，节点是从1 到 n。\n\n这样我们在下一轮计算的时候，就可以根据 grid[i][j][0] 来计算 grid[i][j][1]，此时的 grid[i][j][1] 就是 节点i 经过节点1 到达 节点j 的最小距离了。\n\ngrid数组是一个三维数组，那么我们初始化的数据在 i 与 j 构成的平层，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240425104247.png\n\n红色的 底部一层是我们初始化好的数据，注意：从三维角度去看初始化的数据很重要，下面我们在聊遍历顺序的时候还会再讲。\n\n所以初始化代码：\n\nvector<vector<vector<int>>> grid(n + 1, vector<vector<int>>(n + 1, vector<int>(n + 1, 10005)));  // C++定义了一个三位数组，10005是因为边的最大距离是10^4\n\nfor(int i = 0; i < m; i++){\n    cin >> p1 >> p2 >> val;\n    grid[p1][p2][0] = val;\n    grid[p2][p1][0] = val; // 注意这里是双向图\n} \n\ngrid数组中其他元素数值应该初始化多少呢？\n\n本题求的是最小值，所以输入数据没有涉及到的节点的情况都应该初始为一个最大数。\n\n这样才不会影响，每次计算去最小值的时候 初始值对计算结果的影响。\n\n所以grid数组的定义可以是：\n\n// C++写法，定义了一个三位数组，10005是因为边的最大距离是10^4\nvector<vector<vector<int>>> grid(n + 1, vector<vector<int>>(n + 1, vector<int>(n + 1, 10005)));  \n\n4、确定遍历顺序\n\n从递推公式：grid[i][j][k] = min(grid[i][k][k - 1] + grid[k][j][k - 1]， grid[i][j][k - 1]) 可以看出，我们需要三个for循环，分别遍历i，j 和k\n\n而 k 依赖于 k - 1， i 和j 的到 并不依赖与 i - 1 或者 j - 1 等等。\n\n那么这三个for的嵌套顺序应该是什么样的呢？\n\n我们来看初始化，我们是把 k =0 的 i 和j 对应的数值都初始化了，这样才能去计算 k = 1 的时候 i 和 j 对应的数值。\n\n这就好比是一个三维坐标，i 和j 是平层，而k 是 垂直向上 的。\n\n遍历的顺序是从底向上 一层一层去遍历。\n\n所以遍历k 的for循环一定是在最外面，这样才能一层一层去遍历。如图：\n\nhttps://file1.kamacoder.com/i/algo/20240424120109.png\n\n至于遍历 i 和 j 的话，for 循环的先后顺序无所谓。\n\n代码如下：\n\nfor (int k = 1; k <= n; k++) {\n    for (int i = 1; i <= n; i++) {\n        for (int j = 1; j <= n; j++) {\n            grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1]);\n        }\n    }\n}\n有录友可能想，难道 遍历k 放在最里层就不行吗？\n\nk 放在最里层，代码是这样：\n\nfor (int i = 1; i <= n; i++) {\n    for (int j = 1; j <= n; j++) {\n        for (int k = 1; k <= n; k++) {\n            grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1]);\n        }\n    }\n}\n此时就遍历了 j 与 k 形成一个平面，i 则是纵面，那遍历 就是这样的：\n\nhttps://file1.kamacoder.com/i/algo/20240424115827.png\n\n而我们初始化的数据 是 k 为0， i 和 j 形成的平面做初始化，如果以 k 和 j 形成的平面去一层一层遍历，就造成了 递推公式 用不上上一轮计算的结果，从而导致结果不对（初始化的部分是 i 与j 形成的平面，在初始部分有讲过）。\n\n我再给大家举一个测试用例\n\n5 4\n1 2 10\n1 3 1\n3 4 1\n4 2 1\n1\n1 2\n就是图：\n\nhttps://file1.kamacoder.com/i/algo/20240424120942.png\n\n求节点1 到 节点 2 的最短距离，运行结果是 10 ，但正确的结果很明显是3。\n\n为什么呢？\n\n因为 k 放在最里面，先就把 节点1 和 节点 2 的最短距离就确定了，后面再也不会计算节点 1 和 节点 2的距离，同时也不会基于 初始化或者之前计算过的结果来计算，即：不会考虑 节点1 到 节点3， 节点3 到节点 4，节点4到节点2 的距离。\n\n造成这一原因，是 在三维立体坐标中， 我们初始化的是 i 和 i 在k 为0 所构成的平面，但遍历的时候 是以 j 和 k构成的平面以 i 为垂直方向去层次遍历。\n\n而遍历k 的for循环如果放在中间呢，同样是 j 与k 行程一个平面，i 是纵面，遍历的也是这样：\n\nhttps://file1.kamacoder.com/i/algo/20240424115827.png\n\n同样不能完全用上初始化 和 上一层计算的结果。\n\n根据这个情况再举一个例子：\n\n5 2\n1 2 1\n2 3 10\n1\n1 3\n图：\n\nhttps://file1.kamacoder.com/i/algo/20240425112636.png\n\n求 节点1 到节点3 的最短距离，如果k循环放中间，程序的运行结果是 -1，也就是不能到达节点3。\n\n在计算 grid[i][j][k] 的时候，需要基于 grid[i][k][k-1] 和 grid[k][j][k-1]的数值。\n\n也就是 计算 grid[1][3][2] （表示节点1 到 节点3，经过节点2） 的时候，需要基于 grid[1][2][1] 和 grid[2][3][1]的数值，而 我们初始化，只初始化了 k为0 的那一层。\n\n造成这一原因 依然是 在三维立体坐标中， 我们初始化的是 i 和 j 在k 为0 所构成的平面，但遍历的时候 是以 j 和 k构成的平面以 i 为垂直方向去层次遍历。\n\n很多录友对于 floyd算法的遍历顺序搞不懂，其实 是没有从三维的角度去思考，同时我把三维立体图给大家画出来，遍历顺序标出来，大家就很容易想明白，为什么 k 放在最外层 才能用上 初始化和上一轮计算的结果了。\n\n5、举例推导dp数组\n\n这里涉及到 三维矩阵，可以一层一层打印出来去分析，例如k=0 的这一层，k = 1的这一层，但一起把三维带数据的图画出来其实不太好画。\n\n#代码如下\n以上分析完毕，最后代码如下：\n\n#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<vector<int>>> grid(n + 1, vector<vector<int>>(n + 1, vector<int>(n + 1, 10005)));  // 因为边的最大距离是10^4\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2][0] = val;\n        grid[p2][p1][0] = val; // 注意这里是双向图\n\n    }\n    // 开始 floyd\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1]);\n            }\n        }\n    }\n    // 输出结果\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end][n] == 10005) cout << -1 << endl;\n        else cout << grid[start][end][n] << endl;\n    }\n}\n\n#空间优化\n这里 我们可以做一下 空间上的优化，从滚动数组的角度来看，我们定义一个 grid[n + 1][ n + 1][2] 这么大的数组就可以，因为k 只是依赖于 k-1的状态，并不需要记录k-2，k-3，k-4 等等这些状态。\n\n那么我们只需要记录 grid[i][j][1] 和 grid[i][j][0] 就好，之后就是 grid[i][j][1] 和 grid[i][j][0] 交替滚动。\n\n在进一步想，如果本层计算（本层计算即k相同，从三维角度来讲） gird[i][j] 用到了 本层中刚计算好的 grid[i][k] 会有什么问题吗？\n\n如果 本层刚计算好的 grid[i][k] 比上一层 （即k-1层）计算的 grid[i][k] 小，说明确实有 i 到 k 的更短路径，那么基于 更小的 grid[i][k] 去计算 gird[i][j] 没有问题。\n\n如果 本层刚计算好的 grid[i][k] 比上一层 （即k-1层）计算的 grid[i][k] 大， 这不可能，因为这样也不会做更新 grid[i][k]的操作。\n\n所以本层计算中，使用了本层计算过的 grid[i][k] 和 grid[k][j] 是没问题的。\n\n那么就没必要区分，grid[i][k] 和 grid[k][j] 是 属于 k - 1 层的呢，还是 k 层的。\n\n所以递归公式可以为：\n\ngrid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j]);\n基于二维数组的本题代码为：\n\n#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid(n + 1, vector<int>(n + 1, 10005));  // 因为边的最大距离是10^4\n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1][p2] = val;\n        grid[p2][p1] = val; // 注意这里是双向图\n\n    }\n    // 开始 floyd\n    for (int k = 1; k <= n; k++) {\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j]);\n            }\n        }\n    }\n    // 输出结果\n    int z, start, end;\n    cin >> z;\n    while (z--) {\n        cin >> start >> end;\n        if (grid[start][end] == 10005) cout << -1 << endl;\n        else cout << grid[start][end] << endl;\n    }\n}\n\n时间复杂度： O(n^3)\n空间复杂度：O(n^2)\n#总结\n本期如果上来只用二维数组来讲的话，其实更容易，但遍历顺序那里用二维数组其实是讲不清楚的，所以我直接用三维数组来讲，目的是将遍历顺序这里讲清楚。\n\n理解了遍历顺序才是floyd算法最精髓的地方。\n\nfloyd算法的时间复杂度相对较高，适合 稠密图且源点较多的情况。\n\n如果是稀疏图，floyd是从节点的角度去计算了，例如 图中节点数量是 1000，就一条边，那 floyd的时间复杂度依然是 O(n^3) 。\n\n如果 源点少，其实可以 多次dijsktra 求源点到终点。\n\n#其他语言版本\n#Java\n基于三维数组的Floyd算法\npublic class FloydBase {\n\n    // public static int MAX_VAL = Integer.MAX_VALUE;\n    public static int MAX_VAL = 10005; // 边的最大距离是10^4(不选用Integer.MAX_VALUE是为了避免相加导致数值溢出)\n\n    public static void main(String[] args) {\n        // 输入控制\n        Scanner sc = new Scanner(System.in);\n        System.out.println(\"1.输入N M\");\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n\n        System.out.println(\"2.输入M条边\");\n\n        // ① dp定义（grid[i][j][k] 节点i到节点j 可能经过节点K（k∈[1,n]））的最短路径\n        int[][][] grid = new int[n + 1][n + 1][n + 1];\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= n; j++) {\n                for (int k = 0; k <= n; k++) {\n                    grid[i][j][k] = grid[j][i][k] = MAX_VAL; // 其余设置为最大值\n                }\n            }\n        }\n\n        // ② dp 推导：grid[i][j][k] = min{grid[i][k][k-1] + grid[k][j][k-1], grid[i][j][k-1]}\n        while (m-- > 0) {\n            int u = sc.nextInt();\n            int v = sc.nextInt();\n            int weight = sc.nextInt();\n            grid[u][v][0] = grid[v][u][0] = weight; // 初始化（处理k=0的情况） ③ dp初始化\n        }\n\n        // ④ dp推导：floyd 推导\n        for (int k = 1; k <= n; k++) {\n            for (int i = 1; i <= n; i++) {\n                for (int j = 1; j <= n; j++) {\n                    grid[i][j][k] = Math.min(grid[i][k][k - 1] + grid[k][j][k - 1], grid[i][j][k - 1]);\n                }\n            }\n        }\n\n        System.out.println(\"3.输入[起点-终点]计划个数\");\n        int x = sc.nextInt();\n\n        System.out.println(\"4.输入每个起点src 终点dst\");\n\n        while (x-- > 0) {\n            int src = sc.nextInt();\n            int dst = sc.nextInt();\n            // 根据floyd推导结果输出计划路径的最小距离\n            if (grid[src][dst][n] == MAX_VAL) {\n                System.out.println(\"-1\");\n            } else {\n                System.out.println(grid[src][dst][n]);\n            }\n        }\n    }\n}\n#Python\n基于三维数组的Floyd\n\nif __name__ == '__main__':\n    max_int = 10005  # 设置最大路径，因为边最大距离为10^4\n\n    n, m = map(int, input().split())\n\n    grid = [[[max_int] * (n+1) for _ in range(n+1)] for _ in range(n+1)]  # 初始化三维dp数组\n\n    for _ in range(m):\n        p1, p2, w = map(int, input().split())\n        grid[p1][p2][0] = w\n        grid[p2][p1][0] = w\n\n    # 开始floyd\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j][k] = min(grid[i][j][k-1], grid[i][k][k-1] + grid[k][j][k-1])\n\n    # 输出结果\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end][n] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end][n])\n基于二维数组的Floyd\n\nif __name__ == '__main__':\n    max_int = 10005  # 设置最大路径，因为边最大距离为10^4\n\n    n, m = map(int, input().split())\n\n    grid = [[max_int]*(n+1) for _ in range(n+1)]  # 初始化二维dp数组\n\n    for _ in range(m):\n        p1, p2, val = map(int, input().split())\n        grid[p1][p2] = val\n        grid[p2][p1] = val\n\n    # 开始floyd\n    for k in range(1, n+1):\n        for i in range(1, n+1):\n            for j in range(1, n+1):\n                grid[i][j] = min(grid[i][j], grid[i][k] + grid[k][j])\n\n    # 输出结果\n    z = int(input())\n    for _ in range(z):\n        start, end = map(int, input().split())\n        if grid[start][end] == max_int:\n            print(-1)\n        else:\n            print(grid[start][end])"
+}

@@ -1,0 +1,290 @@
+{
+  "id": "AP_7fd9e505",
+  "title": "冗余连接",
+  "alternative_titles": [],
+  "platform": "kamacoder",
+  "url": "https://kamacoder.com/problempage.php?pid=1181",
+  "description": "找出冗余边，删除后，使该图可以重新变成一棵树。\n\n输入描述\n\n第一行包含一个整数 N，表示图的节点个数和边的个数。\n\n后续 N 行，每行包含两个整数 s 和 t，表示图中 s 和 t 之间有一条边。\n\n输出描述\n\n输出一条可以删除的边。如果有多个答案，请删除标准输入中最后出现的那条边。\n\n输入",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "Union-Find",
+    "Graph"
+  ],
+  "data_structure_tags": [
+    "Array",
+    "Disjoint Set"
+  ],
+  "technique_tags": [
+    "Path Compression",
+    "Union by Rank"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用并查集来判断添加的边是否会导致环。遍历所有边，如果发现某条边连接的两个节点已经在同一个集合（即拥有相同的根节点），则该边为冗余边。题目要求删除最后出现的冗余边。",
+  "key_insights": [
+    {
+      "content": "题目保证初始图是一棵树，因此只有一条额外添加的边会使图形成环。通过并查集可以有效识别这条导致环形成的边。"
+    },
+    {
+      "content": "从前往后处理输入中的边，遇到的第一条使图形成环的边即为所求答案。这样确保了即使后续还有其他可能的冗余边，也能正确地返回最晚被读取的那个。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目也是并查集基础题目。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint n; // 节点数量\nvector<int> father(1001, 0); // 按照节点大小范围定义数组\n// 并查集初始化\nvoid init() {\n    for (int i = 0; i <= n; ++i) {\n        father[i] = i;\n    }\n}\n// 并查集里寻根的过程\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]);\n}\n// 判断 u 和 v是否找到同一个根\nbool isSame(int u, int v) {\n    u = find(u);\n    v = find(v);\n    return u == v;\n}\n// 将v->u 这条边加入并查集\nvoid join(int u, int v) {\n    u = find(u); // 寻找u的根\n    v = find(v); // 寻找v的根\n    if (u == v) return ; // 如果发现根相同，则说明在一个集合，不用两个节点相连直接返回\n    father[v] = u;\n}\nint main() {\n    int s, t;\n    cin >> n;\n    init();\n    for (int i = 0; i < n; i++) {\n        cin >> s >> t;\n        if (isSame(s, t)) {\n            cout << s << \" \" << t << endl;\n            return 0;\n        } else {\n            join(s, t);\n        }\n    }\n}",
+          "description": "使用C++实现的并查集算法来解决冗余连接问题"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    private static int[] father;\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int pointNum = scanner.nextInt();\n        father = new int[pointNum + 1];\n        init();\n        for (int i = 0; i < pointNum; i++) {\n            join(scanner.nextInt(), scanner.nextInt());\n        }\n    }\n    private static void init() {\n        for (int i = 1; i < father.length; i++) {\n            father[i] = i;\n        }\n    }\n    private static int find(int u) {\n        return u == father[u] ? u : (father[u] = find(father[u]));\n    }\n    private static boolean isSame(int u, int v) {\n        return find(u) == find(v);\n    }\n    private static void join(int u, int v) {\n        int uRoot = find(u);\n        int vRoot = find(v);\n        if (uRoot == vRoot) {\n            System.out.println(u + \" \" + v);\n            return;\n        }\n        father[vRoot] = uRoot;\n    }\n}",
+          "description": "使用Java实现的并查集算法来解决冗余连接问题"
+        },
+        {
+          "language": "python",
+          "code": "father = list()\ndef find(u):\n    if u == father[u]:\n        return u\n    else:\n        father[u] = find(father[u])\n        return father[u]\ndef is_same(u, v):\n    u = find(u)\n    v = find(v)\n    return u == v\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[u] = v\nif __name__ == \"__main__\":\n    n = int(input())\n    for i in range(n + 1):\n        father.append(i)\n    result = None\n    for i in range(n):\n        s, t = map(int, input().split())\n        if is_same(s, t):\n            result = str(s) + ' ' + str(t)\n        else:\n            join(s, t)\n    print(result)",
+          "description": "使用Python实现的并查集算法来解决冗余连接问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint n; // 节点数量\nvector<int> father(1001, 0); // 按照节点大小范围定义数组\n// 并查集初始化\nvoid init() {\n    for (int i = 0; i <= n; ++i) {\n        father[i] = i;\n    }\n}\n// 并查集里寻根的过程\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]);\n}\n// 判断 u 和 v是否找到同一个根\nbool isSame(int u, int v) {\n    u = find(u);\n    v = find(v);\n    return u == v;\n}\n// 将v->u 这条边加入并查集\nvoid join(int u, int v) {\n    u = find(u); // 寻找u的根\n    v = find(v); // 寻找v的根\n    if (u == v) return ; // 如果发现根相同，则说明在一个集合，不用两个节点相连直接返回\n    father[v] = u;\n}\nint main() {\n    int s, t;\n    cin >> n;\n    init();\n    for (int i = 0; i < n; i++) {\n        cin >> s >> t;\n        if (isSame(s, t)) {\n            cout << s << \" \" << t << endl;\n            return 0;\n        } else {\n            join(s, t);\n        }\n    }\n}",
+          "description": "使用C++实现的解决冗余连接问题的代码。该程序通过并查集来确定图中哪一条边是多余的，并按照题目要求输出最后出现的那条边。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    private static int[] father;\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int pointNum = scanner.nextInt();\n        father = new int[pointNum + 1];\n        init();\n        for (int i = 0; i < pointNum; i++) {\n            join(scanner.nextInt(), scanner.nextInt());\n        }\n    }\n\n    private static void init() {\n        for (int i = 1; i < father.length; i++) {\n            father[i] = i;\n        }\n    }\n\n    private static int find(int u) {\n        return u == father[u] ? u : (father[u] = find(father[u]));\n    }\n\n    private static boolean isSame(int u, int v) {\n        return find(u) == find(v);\n    }\n\n    private static void join(int u, int v) {\n        int uRoot = find(u);\n        int vRoot = find(v);\n        if (uRoot == vRoot) {\n            System.out.println(u + \" \" + v);\n            return;\n        }\n        father[vRoot] = uRoot;\n    }\n}",
+          "description": "使用Java实现的解决冗余连接问题的代码。此段代码同样利用并查集技术，识别出导致环形成的多余边，并依据输入顺序打印出最后遇到的那个多余边。"
+        },
+        {
+          "language": "python",
+          "code": "father = list()\n\ndef find(u):\n    if u == father[u]:\n        return u\n    else:\n        father[u] = find(father[u])\n        return father[u]\n\ndef is_same(u, v):\n    u = find(u)\n    v = find(v)\n    return u == v\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[u] = v\n\nif __name__ == \"__main__\":\n    n = int(input())\n    for i in range(n + 1):\n        father.append(i)\n    result = None\n    for i in range(n):\n        s, t = map(int, input().split())\n        if is_same(s, t):\n            result = str(s) + ' ' + str(t)\n        else:\n            join(s, t)\n    print(result)",
+          "description": "Python版本的解决方案，用于处理冗余连接问题。它采用并查集算法来检测和移除形成环路的额外边，并确保输出的是按照输入顺序最后一个被发现为冗余的边。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint n; // 节点数量\nvector<int> father(1001, 0); // 按照节点大小范围定义数组\n// 并查集初始化\nvoid init() {\n    for (int i = 0; i <= n; ++i) {\n        father[i] = i;\n    }\n}\n// 并查集里寻根的过程\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]);\n}\n// 判断 u 和 v是否找到同一个根\nbool isSame(int u, int v) {\n    u = find(u);\n    v = find(v);\n    return u == v;\n}\n// 将v->u 这条边加入并查集\nvoid join(int u, int v) {\n    u = find(u); // 寻找u的根\n    v = find(v); // 寻找v的根\n    if (u == v) return ; // 如果发现根相同，则说明在一个集合，不用两个节点相连直接返回\n    father[v] = u;\n}\nint main() {\n    int s, t;\n    cin >> n;\n    init();\n    for (int i = 0; i < n; i++) {\n        cin >> s >> t;\n        if (isSame(s, t)) {\n            cout << s << \" \" << t << endl;\n            return 0;\n        } else {\n            join(s, t);\n        }\n    }\n}",
+          "description": "C++实现的并查集算法解决冗余连接问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    private static int[] father;\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int pointNum = scanner.nextInt();\n        father = new int[pointNum + 1];\n        init();\n        for (int i = 0; i < pointNum; i++) {\n            join(scanner.nextInt(), scanner.nextInt());\n        }\n    }\n    private static void init() {\n        for (int i = 1; i < father.length; i++) {\n            father[i] = i;\n        }\n    }\n    private static int find(int u) {\n        return u == father[u] ? u : (father[u] = find(father[u]));\n    }\n    private static boolean isSame(int u, int v) {\n        return find(u) == find(v);\n    }\n    private static void join(int u, int v) {\n        int uRoot = find(u);\n        int vRoot = find(v);\n        if (uRoot == vRoot) {\n            System.out.println(u + \" \" + v);\n            return;\n        }\n        father[vRoot] = uRoot;\n    }\n}",
+          "description": "Java实现的并查集算法解决冗余连接问题。"
+        },
+        {
+          "language": "python",
+          "code": "father = list()\ndef find(u):\n    if u == father[u]:\n        return u\n    else:\n        father[u] = find(father[u])\n        return father[u]\n\ndef is_same(u, v):\n    u = find(u)\n    v = find(v)\n    return u == v\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[u] = v\nif __name__ == \"__main__\":\n    n = int(input())\n    for i in range(n + 1):\n        father.append(i)\n    result = None\n    for i in range(n):\n        s, t = map(int, input().split())\n        if is_same(s, t):\n            result = str(s) + ' ' + str(t)\n        else:\n            join(s, t)\n    print(result)",
+          "description": "Python实现的并查集算法解决冗余连接问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "拓展",
+      "text": "题目要求 “请删除标准输入中最后出现的那条边” ，不少录友疑惑，这代码分明是遇到在同一个根的两个节点立刻就返回了，怎么就求出 最后出现的那条边 了呢。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint n; // 节点数量\nvector<int> father(1001, 0); // 按照节点大小范围定义数组\n// 并查集初始化\nvoid init() {\n    for (int i = 0; i <= n; ++i) {\n        father[i] = i;\n    }\n}\n// 并查集里寻根的过程\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]);\n}\n// 判断 u 和 v是否找到同一个根\nbool isSame(int u, int v) {\n    u = find(u);\n    v = find(v);\n    return u == v;\n}\n// 将v->u 这条边加入并查集\nvoid join(int u, int v) {\n    u = find(u); // 寻找u的根\n    v = find(v); // 寻找v的根\n    if (u == v) return ; // 如果发现根相同，则说明在一个集合，不用两个节点相连直接返回\n    father[v] = u;\n}\nint main() {\n    int s, t;\n    cin >> n;\n    init();\n    for (int i = 0; i < n; i++) {\n        cin >> s >> t;\n        if (isSame(s, t)) {\n            cout << s << \" \" << t << endl;\n            return 0;\n        } else {\n            join(s, t);\n        }\n    }\n}",
+          "description": "C++实现的并查集算法来解决冗余连接问题"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    private static int[] father;\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int pointNum = scanner.nextInt();\n        father = new int[pointNum + 1];\n        init();\n        for (int i = 0; i < pointNum; i++) {\n            join(scanner.nextInt(), scanner.nextInt());\n        }\n    }\n    private static void init() {\n        for (int i = 1; i < father.length; i++) {\n            father[i] = i;\n        }\n    }\n    private static int find(int u) {\n        return u == father[u] ? u : (father[u] = find(father[u]));\n    }\n    private static boolean isSame(int u, int v) {\n        return find(u) == find(v);\n    }\n    private static void join(int u, int v) {\n        int uRoot = find(u);\n        int vRoot = find(v);\n        if (uRoot == vRoot) {\n            System.out.println(u + \" \" + v);\n            return;\n        }\n        father[vRoot] = uRoot;\n    }\n}",
+          "description": "Java实现的并查集算法来解决冗余连接问题"
+        },
+        {
+          "language": "python",
+          "code": "father = list()\ndef find(u):\n    if u == father[u]:\n        return u\n    else:\n        father[u] = find(father[u])\n        return father[u]\n\ndef is_same(u, v):\n    u = find(u)\n    v = find(v)\n    return u == v\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[u] = v\n\nif __name__ == \"__main__\":\n    n = int(input())\n    for i in range(n + 1):\n        father.append(i)\n    result = None\n    for i in range(n):\n        s, t = map(int, input().split())\n        if is_same(s, t):\n            result = str(s) + ' ' + str(t)\n        else:\n            join(s, t)\n    print(result)",
+          "description": "Python实现的并查集算法来解决冗余连接问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint n; // 节点数量\nvector<int> father(1001, 0); // 按照节点大小范围定义数组\n// 并查集初始化\nvoid init() {\n    for (int i = 0; i <= n; ++i) {\n        father[i] = i;\n    }\n}\n// 并查集里寻根的过程\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]);\n}\n// 判断 u 和 v是否找到同一个根\nbool isSame(int u, int v) {\n    u = find(u);\n    v = find(v);\n    return u == v;\n}\n// 将v->u 这条边加入并查集\nvoid join(int u, int v) {\n    u = find(u); // 寻找u的根\n    v = find(v); // 寻找v的根\n    if (u == v) return ; // 如果发现根相同，则说明在一个集合，不用两个节点相连直接返回\n    father[v] = u;\n}\nint main() {\n    int s, t;\n    cin >> n;\n    init();\n    for (int i = 0; i < n; i++) {\n        cin >> s >> t;\n        if (isSame(s, t)) {\n            cout << s << \" \" << t << endl;\n            return 0;\n        } else {\n            join(s, t);\n        }\n    }\n}",
+          "description": "C++实现的并查集算法用于解决冗余连接问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    private static int[] father;\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int pointNum = scanner.nextInt();\n        father = new int[pointNum + 1];\n        init();\n        for (int i = 0; i < pointNum; i++) {\n            join(scanner.nextInt(), scanner.nextInt());\n        }\n    }\n    private static void init() {\n        for (int i = 1; i < father.length; i++) {\n            father[i] = i;\n        }\n    }\n    private static int find(int u) {\n        return u == father[u] ? u : (father[u] = find(father[u]));\n    }\n    private static boolean isSame(int u, int v) {\n        return find(u) == find(v);\n    }\n    private static void join(int u, int v) {\n        int uRoot = find(u);\n        int vRoot = find(v);\n        if (uRoot == vRoot) {\n            System.out.println(u + \" \" + v);\n            return;\n        }\n        father[vRoot] = uRoot;\n    }\n}",
+          "description": "Java实现的并查集算法用于解决冗余连接问题。"
+        },
+        {
+          "language": "python",
+          "code": "father = list()\ndef find(u):\n    if u == father[u]:\n        return u\n    else:\n        father[u] = find(father[u])\n        return father[u]\n\ndef is_same(u, v):\n    u = find(u)\n    v = find(v)\n    return u == v\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[u] = v\nif __name__ == \"__main__\":\n    n = int(input())\n    for i in range(n + 1):\n        father.append(i)\n    result = None\n    for i in range(n):\n        s, t = map(int, input().split())\n        if is_same(s, t):\n            result = str(s) + ' ' + str(t)\n        else:\n            join(s, t)\n    print(result)",
+          "description": "Python实现的并查集算法用于解决冗余连接问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "import java.util.Scanner;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint n; // 节点数量\nvector<int> father(1001, 0); // 按照节点大小范围定义数组\n// 并查集初始化\nvoid init() {\n    for (int i = 0; i <= n; ++i) {\n        father[i] = i;\n    }\n}\n// 并查集里寻根的过程\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]);\n}\n// 判断 u 和 v是否找到同一个根\nbool isSame(int u, int v) {\n    u = find(u);\n    v = find(v);\n    return u == v;\n}\n// 将v->u 这条边加入并查集\nvoid join(int u, int v) {\n    u = find(u); // 寻找u的根\n    v = find(v); // 寻找v的根\n    if (u == v) return ; // 如果发现根相同，则说明在一个集合，不用两个节点相连直接返回\n    father[v] = u;\n}\nint main() {\n    int s, t;\n    cin >> n;\n    init();\n    for (int i = 0; i < n; i++) {\n        cin >> s >> t;\n        if (isSame(s, t)) {\n            cout << s << \" \" << t << endl;\n            return 0;\n        } else {\n            join(s, t);\n        }\n    }\n}",
+          "description": "使用C++实现的并查集算法解决冗余连接问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    private static int[] father;\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int pointNum = scanner.nextInt();\n        father = new int[pointNum + 1];\n        init();\n        for (int i = 0; i < pointNum; i++) {\n            join(scanner.nextInt(), scanner.nextInt());\n        }\n    }\n    private static void init() {\n        for (int i = 1; i < father.length; i++) {\n            father[i] = i;\n        }\n    }\n    private static int find(int u) {\n        return u == father[u] ? u : (father[u] = find(father[u]));\n    }\n    private static boolean isSame(int u, int v) {\n        return find(u) == find(v);\n    }\n    private static void join(int u, int v) {\n        int uRoot = find(u);\n        int vRoot = find(v);\n        if (uRoot == vRoot) {\n            System.out.println(u + \" \" + v);\n            return;\n        }\n        father[vRoot] = uRoot;\n    }\n}",
+          "description": "使用Java实现的并查集算法解决冗余连接问题。"
+        },
+        {
+          "language": "python",
+          "code": "father = list()\ndef find(u):\n    if u == father[u]:\n        return u\n    else:\n        father[u] = find(father[u])\n        return father[u]\n\ndef is_same(u, v):\n    u = find(u)\n    v = find(v)\n    return u == v\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[u] = v\n\nif __name__ == \"__main__\":\n    n = int(input())\n    for i in range(n + 1):\n        father.append(i)\n    result = None\n    for i in range(n):\n        s, t = map(int, input().split())\n        if is_same(s, t):\n            result = str(s) + ' ' + str(t)\n        else:\n            join(s, t)\n    print(result)",
+          "description": "使用Python实现的并查集算法解决冗余连接问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "father = list()",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint n; // 节点数量\nvector<int> father(1001, 0); // 按照节点大小范围定义数组\n// 并查集初始化\nvoid init() {\n    for (int i = 0; i <= n; ++i) {\n        father[i] = i;\n    }\n}\n// 并查集里寻根的过程\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]);\n}\n// 判断 u 和 v是否找到同一个根\nbool isSame(int u, int v) {\n    u = find(u);\n    v = find(v);\n    return u == v;\n}\n// 将v->u 这条边加入并查集\nvoid join(int u, int v) {\n    u = find(u); // 寻找u的根\n    v = find(v); // 寻找v的根\n    if (u == v) return ; // 如果发现根相同，则说明在一个集合，不用两个节点相连直接返回\n    father[v] = u;\n}\nint main() {\n    int s, t;\n    cin >> n;\n    init();\n    for (int i = 0; i < n; i++) {\n        cin >> s >> t;\n        if (isSame(s, t)) {\n            cout << s << \" \" << t << endl;\n            return 0;\n        } else {\n            join(s, t);\n        }\n    }\n}",
+          "description": "C++实现的通过并查集查找冗余连接"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    private static int[] father;\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int pointNum = scanner.nextInt();\n        father = new int[pointNum + 1];\n        init();\n        for (int i = 0; i < pointNum; i++) {\n            join(scanner.nextInt(), scanner.nextInt());\n        }\n    }\n    private static void init() {\n        for (int i = 1; i < father.length; i++) {\n            father[i] = i;\n        }\n    }\n    private static int find(int u) {\n        return u == father[u] ? u : (father[u] = find(father[u]));\n    }\n    private static boolean isSame(int u, int v) {\n        return find(u) == find(v);\n    }\n    private static void join(int u, int v) {\n        int uRoot = find(u);\n        int vRoot = find(v);\n        if (uRoot == vRoot) {\n            System.out.println(u + \" \" + v);\n            return;\n        }\n        father[vRoot] = uRoot;\n    }\n}",
+          "description": "Java实现的通过并查集查找冗余连接"
+        },
+        {
+          "language": "python",
+          "code": "father = list()\ndef find(u):\n    if u == father[u]:\n        return u\n    else:\n        father[u] = find(father[u])\n        return father[u]\n\ndef is_same(u, v):\n    u = find(u)\n    v = find(v)\n    return u == v\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[u] = v\nif __name__ == \"__main__\":\n    n = int(input())\n    for i in range(n + 1):\n        father.append(i)\n    result = None\n    for i in range(n):\n        s, t = map(int, input().split())\n        if is_same(s, t):\n            result = str(s) + ' ' + str(t)\n        else:\n            join(s, t)\n    print(result)",
+          "description": "Python实现的通过并查集查找冗余连接"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint n; // 节点数量\nvector<int> father(1001, 0); // 按照节点大小范围定义数组\n// 并查集初始化\nvoid init() {\n    for (int i = 0; i <= n; ++i) {\n        father[i] = i;\n    }\n}\n// 并查集里寻根的过程\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]);\n}\n// 判断 u 和 v是否找到同一个根\nbool isSame(int u, int v) {\n    u = find(u);\n    v = find(v);\n    return u == v;\n}\n// 将v->u 这条边加入并查集\nvoid join(int u, int v) {\n    u = find(u); // 寻找u的根\n    v = find(v); // 寻找v的根\n    if (u == v) return ; // 如果发现根相同，则说明在一个集合，不用两个节点相连直接返回\n    father[v] = u;\n}\nint main() {\n    int s, t;\n    cin >> n;\n    init();\n    for (int i = 0; i < n; i++) {\n        cin >> s >> t;\n        if (isSame(s, t)) {\n            cout << s << \" \" << t << endl;\n            return 0;\n        } else {\n            join(s, t);\n        }\n    }\n}",
+      "description": "C++实现的并查集算法来解决冗余连接问题。"
+    },
+    {
+      "language": "java",
+      "code": "import java.util.Scanner;\npublic class Main {\n    private static int[] father;\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int pointNum = scanner.nextInt();\n        father = new int[pointNum + 1];\n        init();\n        for (int i = 0; i < pointNum; i++) {\n            join(scanner.nextInt(), scanner.nextInt());\n        }\n    }\n    private static void init() {\n        for (int i = 1; i < father.length; i++) {\n            father[i] = i;\n        }\n    }\n    private static int find(int u) {\n        return u == father[u] ? u : (father[u] = find(father[u]));\n    }\n    private static boolean isSame(int u, int v) {\n        return find(u) == find(v);\n    }\n    private static void join(int u, int v) {\n        int uRoot = find(u);\n        int vRoot = find(v);\n        if (uRoot == vRoot) {\n            System.out.println(u + \" \" + v);\n            return;\n        }\n        father[vRoot] = uRoot;\n    }\n}",
+      "description": "Java实现的并查集算法来解决冗余连接问题。"
+    },
+    {
+      "language": "python",
+      "code": "father = list()\ndef find(u):\n    if u == father[u]:\n        return u\n    else:\n        father[u] = find(father[u])\n        return father[u]\n\ndef is_same(u, v):\n    u = find(u)\n    v = find(v)\n    return u == v\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[u] = v\nif __name__ == \"__main__\":\n    n = int(input())\n    for i in range(n + 1):\n        father.append(i)\n    result = None\n    for i in range(n):\n        s, t = map(int, input().split())\n        if is_same(s, t):\n            result = str(s) + ' ' + str(t)\n        else:\n            join(s, t)\n    print(result)",
+      "description": "Python实现的并查集算法来解决冗余连接问题。"
+    }
+  ],
+  "common_mistakes": [
+    "假设存在多于一条冗余边而未直接返回第一次检测到的环。",
+    "未理解题目仅需找到一条新增边即可构成环的情况，尝试寻找所有可能的环路径。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240905163122.png",
+      "description": "这张图片展示了一个包含五个节点（1, 2, 3, 4, 5）的无向图，可用于图论算法和数据结构的研究。",
+      "context": "该图片展示了初始状态下的树结构，即一个拥有n个节点和n-1条边的连通无环无向图。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240905164721.png",
+      "description": "该图展示了一个包含五个节点（1, 2, 3, 4, 5）的无向图，可用于图论算法如深度优先搜索（DFS）或广度优先搜索（BFS）的分析。",
+      "context": "该图片展示了在原树结构基础上添加一条边后形成的有环图，用于说明题目中要求找出并删除的冗余边。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240527110320.png",
+      "description": "这张图片展示了一个包含三个节点（1、2、3）的无向图，体现了图论中的基本数据结构。",
+      "context": "该图片展示了示例中的图结构，帮助理解如何通过删除冗余边使图重新变成一棵树。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230604104720.png",
+      "description": "这张图片展示了一个树形数据结构，其中节点“a”和“b”通过虚线连接，暗示了某种特定的算法路径或解题思路。",
+      "context": "该图展示了当两个节点不在同一个集合时，可以通过连接这两个节点来避免形成环，从而帮助构建一个无向树。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230604104330.png",
+      "description": "这张图片展示了一个简单的树结构，其中节点 `a` 和 `b` 通过虚线相连，暗示了算法中可能涉及的节点间关系或状态转换。",
+      "context": "该图展示了当节点A和节点B已经属于同一个集合时，尝试将它们直接相连会导致形成环的情况。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240527110320.png",
+      "description": "这张图片展示了一个包含三个节点（1、2、3）的无向图，体现了基本的图数据结构。",
+      "context": "该图片展示了由节点1、2、3及它们之间的边构成的图，用于说明如何通过删除冗余边（如1-3）来使图变为一棵树的问题示例。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240905163122.png",
+      "description": "GIF展示了从一棵树通过添加一条边形成环，再找到并移除这条冗余边使图恢复为树的过程。",
+      "context": "该GIF动画展示了初始状态下的树结构，即一个拥有n个节点和n-1条边的连通无环无向图。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240905164721.png",
+      "description": "GIF展示了通过添加一条边将一棵树转换成有环图的过程，并标识出最后添加的那条冗余边。",
+      "context": "该GIF动画展示了通过向一棵树添加一条额外边形成环的过程，直观地帮助理解如何识别并移除冗余边以恢复树结构。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240527110320.png",
+      "description": "GIF展示了通过并查集算法识别和删除有环图中冗余边的过程，使得图重新变为一棵树。",
+      "context": "GIF动画展示了如何通过识别并删除冗余边，将一个含有多余连接的图转换成一棵树的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230604104720.png",
+      "description": "GIF展示了在无向图中逐步添加边，并使用并查集检测是否形成环的过程。",
+      "context": "GIF动画展示了在无向图中，如何通过判断节点是否属于同一集合来决定是否连接两个节点，以避免形成环的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230604104330.png",
+      "description": "GIF展示了在无向图中尝试连接两个已处于同一集合的节点A和B时形成环的过程。",
+      "context": "此GIF展示了当尝试连接两个已经属于同一集合的节点A和B时，会形成环的情况。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\并查集\\冗余连接.txt",
+  "extracted_at": "2025-07-21T20:46:10.791527",
+  "raw_content": "冗余连接\n卡码网题目链接（ACM模式）(https://kamacoder.com/problempage.php?pid=1181)\n\n题目描述\n\n有一个图，它是一棵树，他是拥有 n 个节点（节点编号1到n）和 n - 1 条边的连通无环无向图（其实就是一个线形图），如图：\n\nhttps://file1.kamacoder.com/i/algo/20240905163122.png\n\n现在在这棵树上的基础上，添加一条边（依然是n个节点，但有n条边），使这个图变成了有环图，如图\n\nhttps://file1.kamacoder.com/i/algo/20240905164721.png\n\n先请你找出冗余边，删除后，使该图可以重新变成一棵树。\n\n输入描述\n\n第一行包含一个整数 N，表示图的节点个数和边的个数。\n\n后续 N 行，每行包含两个整数 s 和 t，表示图中 s 和 t 之间有一条边。\n\n输出描述\n\n输出一条可以删除的边。如果有多个答案，请删除标准输入中最后出现的那条边。\n\n输入示例\n\n3\n1 2\n2 3\n1 3\n输出示例\n\n1 3\n\n提示信息\n\nhttps://file1.kamacoder.com/i/algo/20240527110320.png\n\n图中的 1 2，2 3，1 3 等三条边在删除后都能使原图变为一棵合法的树。但是 1 3 由于是标准输入里最后出现的那条边，所以输出结果为 1 3\n\n数据范围：\n\n1 <= N <= 1000.\n\n#思路\n这道题目也是并查集基础题目。\n\n这里我依然降调一下，并查集可以解决什么问题：两个节点是否在一个集合，也可以将两个节点添加到一个集合中。\n\n如果还不了解并查集，可以看这里：并查集理论基础（https://programmercarl.com/kamacoder/%E5%9B%BE%E8%AE%BA%E5%B9%B6%E6%9F%A5%E9%9B%86%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html）\n\n我们再来看一下这道题目。\n\n题目说是无向图，返回一条可以删去的边，使得结果图是一个有着N个节点的树（即：只有一个根节点）。\n\n如果有多个答案，则返回二维数组中最后出现的边。\n\n那么我们就可以从前向后遍历每一条边（因为优先让前面的边连上），边的两个节点如果不在同一个集合，就加入集合（即：同一个根节点）。\n\n如图所示，节点A 和节点 B 不在同一个集合，那么就可以将两个 节点连在一起。\nhttps://file1.kamacoder.com/i/algo/20230604104720.png\n\n\n如果边的两个节点已经出现在同一个集合里，说明着边的两个节点已经连在一起了，再加入这条边一定就出现环了。\n\n如图所示：\n\nhttps://file1.kamacoder.com/i/algo/20230604104330.png\n\n已经判断 节点A 和 节点B 在在同一个集合（同一个根），如果将 节点A 和 节点B 连在一起就一定会出现环。\n\n这个思路清晰之后，代码就很好写了。\n\n并查集C++代码如下：\n\n#include <iostream>\n#include <vector>\nusing namespace std;\nint n; // 节点数量\nvector<int> father(1001, 0); // 按照节点大小范围定义数组\n\n// 并查集初始化\nvoid init() {\n    for (int i = 0; i <= n; ++i) {\n        father[i] = i;\n    }\n}\n// 并查集里寻根的过程\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]);\n}\n// 判断 u 和 v是否找到同一个根\nbool isSame(int u, int v) {\n    u = find(u);\n    v = find(v);\n    return u == v;\n}\n// 将v->u 这条边加入并查集\nvoid join(int u, int v) {\n    u = find(u); // 寻找u的根\n    v = find(v); // 寻找v的根\n    if (u == v) return ; // 如果发现根相同，则说明在一个集合，不用两个节点相连直接返回\n    father[v] = u;\n}\n\nint main() {\n    int s, t;\n    cin >> n;\n    init();\n    for (int i = 0; i < n; i++) {\n        cin >> s >> t;\n        if (isSame(s, t)) {\n            cout << s << \" \" << t << endl;\n            return 0;\n        } else {\n            join(s, t);\n        }\n    }\n}\n可以看出，主函数的代码很少，就判断一下边的两个节点在不在同一个集合就可以了。\n\n#拓展\n题目要求 “请删除标准输入中最后出现的那条边” ，不少录友疑惑，这代码分明是遇到在同一个根的两个节点立刻就返回了，怎么就求出 最后出现的那条边 了呢。\n\n有这种疑惑的录友是 认为发现一条冗余边后，后面还可能会有一条冗余边。\n\n其实并不会。\n\n题目是在 树的基础上 添加一条边，所以冗余边仅仅是一条。\n\n到这一条可能靠前出现，可能靠后出现。\n\n例如，题目输入示例：\n\n输入示例\n\n3\n1 2\n2 3\n1 3\n图：\n\nhttps://file1.kamacoder.com/i/algo/20240527110320.png\n\n输出示例\n\n1 3\n\n当我们从前向后遍历，优先让前面的边连上，最后判断冗余边就是 1 3。\n\n如果我们从后向前便利，优先让后面的边连上，最后判断的冗余边就是 1 2。\n\n题目要求“请删除标准输入中最后出现的那条边”，所以 1 3 这条边才是我们要求的。\n\n#其他语言版本\n#Java\nimport java.util.Scanner;\n\npublic class Main {\n    private static int[] father;\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int pointNum = scanner.nextInt();\n        father = new int[pointNum + 1];\n        init();\n        for (int i = 0; i < pointNum; i++) {\n            join(scanner.nextInt(), scanner.nextInt());\n        }\n    }\n\n    /**\n     * 并查集初始化\n     */\n    private static void init() {\n        for (int i = 1; i < father.length; i++) {\n            // 让每个元素指向自己\n            father[i] = i;\n        }\n    }\n\n    /**\n     * 并查集寻根\n     *\n     * @param u\n     * @return\n     */\n    private static int find(int u) {\n        // 判断 u 是否等于自己，如果是的话，直接返回自己\n        // 如果不等于自己，就寻找根，寻找的时候，反复进行路径压缩\n        return u == father[u] ? u : (father[u] = find(father[u]));\n    }\n\n    /**\n     * 判断 u 和 v 是否同根\n     *\n     * @param u\n     * @param v\n     * @return\n     */\n    private static boolean isSame(int u, int v) {\n        return find(u) == find(v);\n    }\n\n    /**\n     * 添加 边 到并查集，v 指向 u\n     *\n     * @param u\n     * @param v\n     */\n    private static void join(int u, int v) {\n        // --if-- 如果两个点已经同根，说明他们的信息已经存储到并查集中了，直接返回即可\n        // 寻找u的根\n        int uRoot = find(u);\n        // 寻找v的根\n        int vRoot = find(v);\n        if (uRoot == vRoot) {\n            // --if-- 如果u,v的根相同，说明两者已经连接了，直接输出\n            System.out.println(u + \" \" + v);\n            return;\n        }\n        // --if-- 将信息添加到并查集\n        father[vRoot] = uRoot;\n    }\n\n}\n#Python\nfather = list()\n\ndef find(u):\n    if u == father[u]:\n        return u\n    else:\n        father[u] = find(father[u])\n        return father[u]\n        \ndef is_same(u, v):\n    u = find(u)\n    v = find(v)\n    return u == v\n    \ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[u] = v\n        \nif __name__ == \"__main__\":\n    # 輸入\n    n = int(input())\n    for i in range(n + 1):\n        father.append(i)\n    # 尋找冗余邊    \n    result = None\n    for i in range(n):\n        s, t = map(int, input().split())\n        if is_same(s, t):\n            result = str(s) + ' ' + str(t)\n        else:\n            join(s, t)\n        \n    # 輸出\n    print(result)"
+}

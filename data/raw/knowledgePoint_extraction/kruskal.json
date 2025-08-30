@@ -1,0 +1,70 @@
+{
+  "id": "SA758",
+  "name": "Kruskal算法",
+  "alias": [
+    "kruskal",
+    "Kruskal"
+  ],
+  "type": "specific_algorithm",
+  "description": "Kruskal算法是一种用于求解最小生成树问题的贪心算法，通过按边的权值从小到大排序并逐步加入生成树来构建最小生成树。",
+  "key_concepts": [
+    "最小生成树",
+    "贪心算法",
+    "并查集",
+    "图的存储"
+  ],
+  "applications": [
+    "网络设计",
+    "电路布局",
+    "电路布线",
+    "交通规划"
+  ],
+  "created_at": "2025-07-19T12:54:16Z",
+  "updated_at": "2025-07-19T12:54:52Z",
+  "source_files": [
+    "kruskal_kama.txt",
+    "kruskal_wiki.txt"
+  ],
+  "spacy_entities": {
+    "COMPLEXITY": [
+      "O(n²)",
+      "O(n^2)",
+      "O(mlogm)"
+    ],
+    "SPECIFIC_ALGORITHM": [
+      "Kruskal算法",
+      "Kruskal",
+      "kruskal",
+      "prim",
+      "Prim",
+      "最小生成树算法"
+    ],
+    "DATA_STRUCTURE": [
+      "数组",
+      "集合",
+      "树",
+      "图",
+      "String",
+      "堆",
+      "graph",
+      "并查集"
+    ],
+    "TECHNIQUE": [
+      "并查集",
+      "路径压缩"
+    ],
+    "CORE_CONCEPT": [
+      "初始化",
+      "时间复杂度",
+      "顶点",
+      "路径"
+    ],
+    "PROBLEM_TYPE": [
+      "最小生成树问题"
+    ],
+    "ALGORITHM_PARADIGM": [
+      "贪心",
+      "贪心算法"
+    ]
+  }
+}

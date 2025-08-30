@@ -1,0 +1,644 @@
+{
+  "id": "AP_52513228",
+  "title": "有向图的完全联通",
+  "alternative_titles": [],
+  "platform": "kamacoder",
+  "url": "https://kamacoder.com/problempage.php?pid=1177",
+  "description": "一个有向图，包含 N 个节点，节点编号分别为 1，2，...，N。现从 1 号节点开始，如果可以从 1 号节点的边可以到达任何节点，则输出 1，否则输出 -1。\n\n【输入描述】\n\n第一行包含两个正整数，表示节点数量 N 和边的数量 K。 后续 K 行，每行两个正整数 s 和 t，表示从 s 节点有一条边单向连接到 t 节点。\n\n【输出描述】\n\n如果可以从 1 号节点的边可以到达任何节点，则输出 1，否则输出 -1。\n\n【输入",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "Depth-First Search (DFS)",
+    "Breadth-First Search (BFS)",
+    "Graph Traversal"
+  ],
+  "data_structure_tags": [
+    "Adjacency List",
+    "Boolean Array",
+    "Queue"
+  ],
+  "technique_tags": [
+    "Recursion",
+    "Marking Visited Nodes",
+    "Iterative Traversal"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过深度优先搜索(DFS)或广度优先搜索(BFS)从给定起点（1号节点）遍历整个有向图，判断是否可以从该起点访问到所有其他节点。使用邻接表表示图结构，并维护一个visited数组来记录已访问的节点。",
+  "key_insights": [
+    {
+      "content": "与无向图不同，即使在有向图中两个节点是连通的，也可能存在单方向可达的情况。因此需要特别注意边的方向性。"
+    },
+    {
+      "content": "利用visited数组有效地避免了重复访问同一节点导致的无限循环问题，并且可以用来最终判断是否所有节点都被访问过。"
+    },
+    {
+      "content": "对于DFS算法，可以根据实际处理逻辑选择不同的递归终止条件：一种是在进入递归前检查当前节点是否已被访问；另一种则是在递归过程中对即将访问的新节点进行检查。这两种方法都能达到目标，但体现了对递归过程的不同理解和控制。"
+    },
+    {
+      "content": "BFS和DFS都是解决此类问题的有效方法，但根据具体场景可以选择更合适的一种。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "本题给我们是一个有向图， 意识到这是有向图很重要！",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    if (visited[key]) {\n        return;\n    }\n    visited[key] = true;\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        dfs(graph, key, visited);\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    dfs(graph, 1, visited);\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++版本的DFS解法，处理当前访问的节点"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        if (visited[key] == false) {\n            visited[key] = true;\n            dfs(graph, key, visited);\n        }\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    visited[1] = true;\n    dfs(graph, 1, visited);\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++版本的DFS解法，处理下一个要访问的节点"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <queue>\nusing namespace std;\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    visited[1] = true;\n    queue<int> que;\n    que.push(1);\n    while (!que.empty()) {\n        int key = que.front(); que.pop();\n        list<int> keys = graph[key];\n        for (int key : keys) {\n            if (!visited[key]) {\n                que.push(key);\n                visited[key] = true;\n            }\n        }\n    }\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++版本的BFS解法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static List<List<Integer>> adjList = new ArrayList<>();\n    public static void dfs(boolean[] visited, int key) {\n        if (visited[key]) {\n            return;\n        }\n        visited[key] = true;\n        List<Integer> nextKeys = adjList.get(key);\n        for (int nextKey : nextKeys) {\n            dfs(visited, nextKey);\n        }\n    }\n    public static void bfs(boolean[] visited, int key) {\n        Queue<Integer> queue = new LinkedList<Integer>();\n        queue.add(key);\n        visited[key] = true;\n        while (!queue.isEmpty()) {\n            int curKey = queue.poll();\n            List<Integer> list = adjList.get(curKey);\n            for (int nextKey : list) {\n                if (!visited[nextKey]) {\n                    queue.add(nextKey);\n                    visited[nextKey] = true;\n                }\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int vertices_num = sc.nextInt();\n        int line_num = sc.nextInt();\n        for (int i = 0; i < vertices_num; i++) {\n            adjList.add(new LinkedList<>());\n        }\n        for (int i = 0; i < line_num; i++) {\n            int s = sc.nextInt();\n            int t = sc.nextInt();\n            adjList.get(s - 1).add(t - 1);\n        }\n        boolean[] visited = new boolean[vertices_num];\n        dfs(visited, 0);\n        for (int i = 0; i < vertices_num; i++) {\n            if (!visited[i]) {\n                System.out.println(-1);\n                return;\n            }\n        }\n        System.out.println(1);\n    }\n}",
+          "description": "Java版本的DFS和BFS解法"
+        },
+        {
+          "language": "python",
+          "code": "import collections\npath = set()\ndef bfs(root, graph):\n    global path\n    que = collections.deque([root])\n    while que:\n        cur = que.popleft()\n        path.add(cur)\n        for nei in graph[cur]:\n            que.append(nei)\n    return\ndef main():\n    N, K = map(int, input().strip().split())\n    graph = collections.defaultdict(list)\n    for _ in range(K):\n        src, dest = map(int, input().strip().split())\n        graph[src].append(dest)\n    bfs(1, graph)\n    if path == {i for i in range(1, N + 1)}:\n        return 1\n    return -1\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python版本的BFS解法"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, key, visited):\n    for neighbor in graph[key]:\n        if not visited[neighbor]:\n            visited[neighbor] = True\n            dfs(graph, neighbor, visited)\ndef main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    n = int(data[0])\n    m = int(data[1])\n    graph = [[] for _ in range(n + 1)]\n    index = 2\n    for _ in range(m):\n        s = int(data[index])\n        t = int(data[index + 1])\n        graph[s].append(t)\n        index += 2\n    visited = [False] * (n + 1)\n    visited[1] = True\n    dfs(graph, 1, visited)\n    for i in range(1, n + 1):\n        if not visited[i]:\n            print(-1)\n            return\n    print(1)\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本的DFS解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    if (visited[key]) {\n        return;\n    }\n    visited[key] = true;\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        // 深度优先搜索遍历\n        dfs(graph, key, visited);\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    // 节点编号从1到n，所以申请 n+1 这么大的数组\n    vector<list<int>> graph(n + 1); // 邻接表\n    while (m--) {\n        cin >> s >> t;\n        // 使用邻接表 ，表示 s -> t 是相连的\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    dfs(graph, 1, visited);\n    //检查是否都访问到了\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++实现的第一种DFS方法，处理当前访问的节点"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        if (visited[key] == false) { // 确认下一个是没访问过的节点\n            visited[key] = true;\n            dfs(graph, key, visited);\n        }\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n\n    visited[1] = true; // 节点1 预先处理\n    dfs(graph, 1, visited);\n\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++实现的第二种DFS方法，处理下一个要访问的节点"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <queue>\nusing namespace std;\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    visited[1] = true; //  1 号房间开始\n    queue<int> que;\n    que.push(1); //  1 号房间开始\n\n    // 广度优先搜索的过程\n    while (!que.empty()) {\n        int key = que.front(); que.pop();\n         list<int> keys = graph[key];\n         for (int key : keys) {\n             if (!visited[key]) {\n                 que.push(key);\n                 visited[key] = true;\n             }\n         }\n    }\n\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++实现的BFS方法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static List<List<Integer>> adjList = new ArrayList<>();\n\n    public static void dfs(boolean[] visited, int key) {\n        if (visited[key]) {\n            return;\n        }\n        visited[key] = true;\n        List<Integer> nextKeys = adjList.get(key);\n        for (int nextKey : nextKeys) {\n            dfs(visited, nextKey);\n        }\n    }\n\n    public static void bfs(boolean[] visited, int key) {\n        Queue<Integer> queue = new LinkedList<Integer>();\n        queue.add(key);\n        visited[key] = true;\n        while (!queue.isEmpty()) {\n            int curKey = queue.poll();\n            List<Integer> list = adjList.get(curKey);\n            for (int nextKey : list) {\n                if (!visited[nextKey]) {\n                    queue.add(nextKey);\n                    visited[nextKey] = true;\n                }\n            }\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int vertices_num = sc.nextInt();\n        int line_num = sc.nextInt();\n        for (int i = 0; i < vertices_num; i++) {\n            adjList.add(new LinkedList<>());\n        }//Initialization\n        for (int i = 0; i < line_num; i++) {\n            int s = sc.nextInt();\n            int t = sc.nextInt();\n            adjList.get(s - 1).add(t - 1);\n        }//构造邻接表\n        boolean[] visited = new boolean[vertices_num];\n        dfs(visited, 0);\n//        bfs(visited, 0);\n\n        for (int i = 0; i < vertices_num; i++) {\n            if (!visited[i]) {\n                System.out.println(-1);\n                return;\n            }\n        }\n        System.out.println(1);\n    }\n}",
+          "description": "Java实现的DFS和BFS方法"
+        },
+        {
+          "language": "python",
+          "code": "import collections\n\npath = set()  # 纪录 BFS 所经过之节点\n\ndef bfs(root, graph):\n    global path\n    \n    que = collections.deque([root])\n    while que:\n        cur = que.popleft()\n        path.add(cur)\n        \n        for nei in graph[cur]:\n            que.append(nei)\n        graph[cur] = []\n    return\n\ndef main():\n    N, K = map(int, input().strip().split())\n    graph = collections.defaultdict(list)\n    for _ in range(K):\n        src, dest = map(int, input().strip().split())\n        graph[src].append(dest)\n    \n    bfs(1, graph)\n    if path == {i for i in range(1, N + 1)}:\n        return 1\n    return -1\n    \nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python实现的BFS方法"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, key, visited):\n    for neighbor in graph[key]:\n        if not visited[neighbor]:  # Check if the next node is not visited\n            visited[neighbor] = True\n            dfs(graph, neighbor, visited)\n\ndef main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    n = int(data[0])\n    m = int(data[1])\n    \n    graph = [[] for _ in range(n + 1)]\n    index = 2\n    for _ in range(m):\n        s = int(data[index])\n        t = int(data[index + 1])\n        graph[s].append(t)\n        index += 2\n\n    visited = [False] * (n + 1)\n    visited[1] = True  # Process node 1 beforehand\n    dfs(graph, 1, visited)\n\n    for i in range(1, n + 1):\n        if not visited[i]:\n            print(-1)\n            return\n    \n    print(1)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python实现的DFS方法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "#include <list>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    if (visited[key]) {\n        return;\n    }\n    visited[key] = true;\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        dfs(graph, key, visited);\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    dfs(graph, 1, visited);\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++ DFS处理当前访问的节点"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        if (visited[key] == false) {\n            visited[key] = true;\n            dfs(graph, key, visited);\n        }\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    visited[1] = true;\n    dfs(graph, 1, visited);\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++ DFS处理下一个要访问的节点"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <queue>\nusing namespace std;\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    visited[1] = true;\n    queue<int> que;\n    que.push(1);\n    while (!que.empty()) {\n        int key = que.front(); que.pop();\n        list<int> keys = graph[key];\n        for (int key : keys) {\n            if (!visited[key]) {\n                que.push(key);\n                visited[key] = true;\n            }\n        }\n    }\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++ BFS实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static List<List<Integer>> adjList = new ArrayList<>();\n\n    public static void dfs(boolean[] visited, int key) {\n        if (visited[key]) {\n            return;\n        }\n        visited[key] = true;\n        List<Integer> nextKeys = adjList.get(key);\n        for (int nextKey : nextKeys) {\n            dfs(visited, nextKey);\n        }\n    }\n\n    public static void bfs(boolean[] visited, int key) {\n        Queue<Integer> queue = new LinkedList<Integer>();\n        queue.add(key);\n        visited[key] = true;\n        while (!queue.isEmpty()) {\n            int curKey = queue.poll();\n            List<Integer> list = adjList.get(curKey);\n            for (int nextKey : list) {\n                if (!visited[nextKey]) {\n                    queue.add(nextKey);\n                    visited[nextKey] = true;\n                }\n            }\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int vertices_num = sc.nextInt();\n        int line_num = sc.nextInt();\n        for (int i = 0; i < vertices_num; i++) {\n            adjList.add(new LinkedList<>());\n        }\n        for (int i = 0; i < line_num; i++) {\n            int s = sc.nextInt();\n            int t = sc.nextInt();\n            adjList.get(s - 1).add(t - 1);\n        }\n        boolean[] visited = new boolean[vertices_num];\n        dfs(visited, 0);\n        for (int i = 0; i < vertices_num; i++) {\n            if (!visited[i]) {\n                System.out.println(-1);\n                return;\n            }\n        }\n        System.out.println(1);\n    }\n}",
+          "description": "Java DFS和BFS实现"
+        },
+        {
+          "language": "python",
+          "code": "import collections\n\npath = set()\n\ndef bfs(root, graph):\n    global path\n    que = collections.deque([root])\n    while que:\n        cur = que.popleft()\n        path.add(cur)\n        for nei in graph[cur]:\n            que.append(nei)\n    return\n\ndef main():\n    N, K = map(int, input().strip().split())\n    graph = collections.defaultdict(list)\n    for _ in range(K):\n        src, dest = map(int, input().strip().split())\n        graph[src].append(dest)\n    bfs(1, graph)\n    if path == {i for i in range(1, N + 1)}:\n        return 1\n    return -1\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python BFS算法实现"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, key, visited):\n    for neighbor in graph[key]:\n        if not visited[neighbor]:\n            visited[neighbor] = True\n            dfs(graph, neighbor, visited)\n\ndef main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    n = int(data[0])\n    m = int(data[1])\n    graph = [[] for _ in range(n + 1)]\n    index = 2\n    for _ in range(m):\n        s = int(data[index])\n        t = int(data[index + 1])\n        graph[s].append(t)\n        index += 2\n    visited = [False] * (n + 1)\n    visited[1] = True\n    dfs(graph, 1, visited)\n    for i in range(1, n + 1):\n        if not visited[i]:\n            print(-1)\n            return\n    print(1)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python DFS算法实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <list>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "void dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) { if (visited[key]) { return; } visited[key] = true; list<int> keys = graph[key]; for (int key : keys) { dfs(graph, key, visited); } } int main() { int n, m, s, t; cin >> n >> m; vector<list<int>> graph(n + 1); while (m--) { cin >> s >> t; graph[s].push_back(t); } vector<bool> visited(n + 1, false); dfs(graph, 1, visited); for (int i = 1; i <= n; i++) { if (visited[i] == false) { cout << -1 << endl; return 0; } } cout << 1 << endl; }",
+          "description": "C++实现的DFS方法，处理当前访问节点"
+        },
+        {
+          "language": "cpp",
+          "code": "void dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) { list<int> keys = graph[key]; for (int key : keys) { if (visited[key] == false) { visited[key] = true; dfs(graph, key, visited); } } } int main() { int n, m, s, t; cin >> n >> m; vector<list<int>> graph(n + 1); while (m--) { cin >> s >> t; graph[s].push_back(t); } vector<bool> visited(n + 1, false); visited[1] = true; dfs(graph, 1, visited); for (int i = 1; i <= n; i++) { if (visited[i] == false) { cout << -1 << endl; return 0; } } cout << 1 << endl; }",
+          "description": "C++实现的DFS方法，处理下一个要访问的节点"
+        },
+        {
+          "language": "cpp",
+          "code": "int main() { int n, m, s, t; cin >> n >> m; vector<list<int>> graph(n + 1); while (m--) { cin >> s >> t; graph[s].push_back(t); } vector<bool> visited(n + 1, false); visited[1] = true; queue<int> que; que.push(1); while (!que.empty()) { int key = que.front(); que.pop(); list<int> keys = graph[key]; for (int key : keys) { if (!visited[key]) { que.push(key); visited[key] = true; } } } for (int i = 1; i <= n; i++) { if (visited[i] == false) { cout << -1 << endl; return 0; } } cout << 1 << endl; }",
+          "description": "C++实现的BFS方法"
+        },
+        {
+          "language": "java",
+          "code": "public static void dfs(boolean[] visited, int key) { if (visited[key]) { return; } visited[key] = true; List<Integer> nextKeys = adjList.get(key); for (int nextKey : nextKeys) { dfs(visited, nextKey); } } public static void bfs(boolean[] visited, int key) { Queue<Integer> queue = new LinkedList<Integer>(); queue.add(key); visited[key] = true; while (!queue.isEmpty()) { int curKey = queue.poll(); List<Integer> list = adjList.get(curKey); for (int nextKey : list) { if (!visited[nextKey]) { queue.add(nextKey); visited[nextKey] = true; } } } } public static void main(String[] args) { Scanner sc = new Scanner(System.in); int vertices_num = sc.nextInt(); int line_num = sc.nextInt(); for (int i = 0; i < vertices_num; i++) { adjList.add(new LinkedList<>()); } for (int i = 0; i < line_num; i++) { int s = sc.nextInt(); int t = sc.nextInt(); adjList.get(s - 1).add(t - 1); } boolean[] visited = new boolean[vertices_num]; dfs(visited, 0); for (int i = 0; i < vertices_num; i++) { if (!visited[i]) { System.out.println(-1); return; } } System.out.println(1); }",
+          "description": "Java实现的DFS和BFS方法"
+        },
+        {
+          "language": "python",
+          "code": "def bfs(root, graph): global path que = collections.deque([root]) while que: cur = que.popleft() path.add(cur) for nei in graph[cur]: que.append(nei) graph[cur] = [] def main(): N, K = map(int, input().strip().split()) graph = collections.defaultdict(list) for _ in range(K): src, dest = map(int, input().strip().split()) graph[src].append(dest) bfs(1, graph) if path == {i for i in range(1, N + 1)}: return 1 return -1 if __name__ == \"__main__\": print(main())",
+          "description": "Python实现的BFS方法"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, key, visited): for neighbor in graph[key]: if not visited[neighbor]: visited[neighbor] = True dfs(graph, neighbor, visited) def main(): import sys input = sys.stdin.read data = input().split() n = int(data[0]) m = int(data[1]) graph = [[] for _ in range(n + 1)] index = 2 for _ in range(m): s = int(data[index]) t = int(data[index + 1]) graph[s].append(t) index += 2 visited = [False] * (n + 1) visited[1] = True dfs(graph, 1, visited) for i in range(1, n + 1): if not visited[i]: print(-1) return print(1) if __name__ == \"__main__\": main()",
+          "description": "Python实现的DFS方法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    if (visited[key]) {\n        return;\n    }\n    visited[key] = true;\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        dfs(graph, key, visited);\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    dfs(graph, 1, visited);\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": null
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        if (visited[key] == false) {\n            visited[key] = true;\n            dfs(graph, key, visited);\n        }\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    visited[1] = true;\n    dfs(graph, 1, visited);\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": null
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <queue>\nusing namespace std;\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    visited[1] = true;\n    queue<int> que;\n    que.push(1);\n    while (!que.empty()) {\n        int key = que.front(); que.pop();\n        list<int> keys = graph[key];\n        for (int key : keys) {\n            if (!visited[key]) {\n                que.push(key);\n                visited[key] = true;\n            }\n        }\n    }\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static List<List<Integer>> adjList = new ArrayList<>();\n\n    public static void dfs(boolean[] visited, int key) {\n        if (visited[key]) {\n            return;\n        }\n        visited[key] = true;\n        List<Integer> nextKeys = adjList.get(key);\n        for (int nextKey : nextKeys) {\n            dfs(visited, nextKey);\n        }\n    }\n\n    public static void bfs(boolean[] visited, int key) {\n        Queue<Integer> queue = new LinkedList<Integer>();\n        queue.add(key);\n        visited[key] = true;\n        while (!queue.isEmpty()) {\n            int curKey = queue.poll();\n            List<Integer> list = adjList.get(curKey);\n            for (int nextKey : list) {\n                if (!visited[nextKey]) {\n                    queue.add(nextKey);\n                    visited[nextKey] = true;\n                }\n            }\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int vertices_num = sc.nextInt();\n        int line_num = sc.nextInt();\n        for (int i = 0; i < vertices_num; i++) {\n            adjList.add(new LinkedList<>());\n        }\n        for (int i = 0; i < line_num; i++) {\n            int s = sc.nextInt();\n            int t = sc.nextInt();\n            adjList.get(s - 1).add(t - 1);\n        }\n        boolean[] visited = new boolean[vertices_num];\n        dfs(visited, 0);\n        for (int i = 0; i < vertices_num; i++) {\n            if (!visited[i]) {\n                System.out.println(-1);\n                return;\n            }\n        }\n        System.out.println(1);\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "import collections\n\npath = set()\n\ndef bfs(root, graph):\n    global path\n    que = collections.deque([root])\n    while que:\n        cur = que.popleft()\n        path.add(cur)\n        for nei in graph[cur]:\n            que.append(nei)\n        graph[cur] = []\n    return\n\ndef main():\n    N, K = map(int, input().strip().split())\n    graph = collections.defaultdict(list)\n    for _ in range(K):\n        src, dest = map(int, input().strip().split())\n        graph[src].append(dest)\n    bfs(1, graph)\n    if path == {i for i in range(1, N + 1)}:\n        return 1\n    return -1\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, key, visited):\n    for neighbor in graph[key]:\n        if not visited[neighbor]:\n            visited[neighbor] = True\n            dfs(graph, neighbor, visited)\n\ndef main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    n = int(data[0])\n    m = int(data[1])\n    graph = [[] for _ in range(n + 1)]\n    index = 2\n    for _ in range(m):\n        s = int(data[index])\n        t = int(data[index + 1])\n        graph[s].append(t)\n        index += 2\n    visited = [False] * (n + 1)\n    visited[1] = True\n    dfs(graph, 1, visited)\n    for i in range(1, n + 1):\n        if not visited[i]:\n            print(-1)\n            return\n    print(1)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": null
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "#include <list>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    if (visited[key]) {\n        return;\n    }\n    visited[key] = true;\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        // 深度优先搜索遍历\n        dfs(graph, key, visited);\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    // 节点编号从1到n，所以申请 n+1 这么大的数组\n    vector<list<int>> graph(n + 1); // 邻接表\n    while (m--) {\n        cin >> s >> t;\n        // 使用邻接表 ，表示 s -> t 是相连的\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    dfs(graph, 1, visited);\n    //检查是否都访问到了\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++版本的DFS处理当前访问节点"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        if (visited[key] == false) { // 确认下一个是没访问过的节点\n            visited[key] = true;\n            dfs(graph, key, visited);\n        }\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n\n    visited[1] = true; // 节点1 预先处理\n    dfs(graph, 1, visited);\n\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++版本的DFS处理下一个要访问的节点"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <queue>\nusing namespace std;\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    visited[1] = true; //  1 号房间开始\n    queue<int> que;\n    que.push(1); //  1 号房间开始\n\n    // 广度优先搜索的过程\n    while (!que.empty()) {\n        int key = que.front(); que.pop();\n         list<int> keys = graph[key];\n         for (int key : keys) {\n             if (!visited[key]) {\n                 que.push(key);\n                 visited[key] = true;\n             }\n         }\n    }\n\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++版本的BFS"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static List<List<Integer>> adjList = new ArrayList<>();\n\n    public static void dfs(boolean[] visited, int key) {\n        if (visited[key]) {\n            return;\n        }\n        visited[key] = true;\n        List<Integer> nextKeys = adjList.get(key);\n        for (int nextKey : nextKeys) {\n            dfs(visited, nextKey);\n        }\n    }\n\n    public static void bfs(boolean[] visited, int key) {\n        Queue<Integer> queue = new LinkedList<Integer>();\n        queue.add(key);\n        visited[key] = true;\n        while (!queue.isEmpty()) {\n            int curKey = queue.poll();\n            List<Integer> list = adjList.get(curKey);\n            for (int nextKey : list) {\n                if (!visited[nextKey]) {\n                    queue.add(nextKey);\n                    visited[nextKey] = true;\n                }\n            }\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int vertices_num = sc.nextInt();\n        int line_num = sc.nextInt();\n        for (int i = 0; i < vertices_num; i++) {\n            adjList.add(new LinkedList<>());\n        }//Initialization\n        for (int i = 0; i < line_num; i++) {\n            int s = sc.nextInt();\n            int t = sc.nextInt();\n            adjList.get(s - 1).add(t - 1);\n        }//构造邻接表\n        boolean[] visited = new boolean[vertices_num];\n        dfs(visited, 0);\n//        bfs(visited, 0);\n\n        for (int i = 0; i < vertices_num; i++) {\n            if (!visited[i]) {\n                System.out.println(-1);\n                return;\n            }\n        }\n        System.out.println(1);\n    }\n}",
+          "description": "Java版本的DFS和BFS"
+        },
+        {
+          "language": "python",
+          "code": "import collections\n\npath = set()  # 纪录 BFS 所经过之节点\n\ndef bfs(root, graph):\n    global path\n    \n    que = collections.deque([root])\n    while que:\n        cur = que.popleft()\n        path.add(cur)\n        \n        for nei in graph[cur]:\n            que.append(nei)\n        graph[cur] = []\n    return\n\ndef main():\n    N, K = map(int, input().strip().split())\n    graph = collections.defaultdict(list)\n    for _ in range(K):\n        src, dest = map(int, input().strip().split())\n        graph[src].append(dest)\n    \n    bfs(1, graph)\n    if path == {i for i in range(1, N + 1)}:\n        return 1\n    return -1\n    \n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python版本的BFS"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, key, visited):\n    for neighbor in graph[key]:\n        if not visited[neighbor]:  # Check if the next node is not visited\n            visited[neighbor] = True\n            dfs(graph, neighbor, visited)\n\ndef main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    n = int(data[0])\n    m = int(data[1])\n    \n    graph = [[] for _ in range(n + 1)]\n    index = 2\n    for _ in range(m):\n        s = int(data[index])\n        t = int(data[index + 1])\n        graph[s].append(t)\n        index += 2\n\n    visited = [False] * (n + 1)\n    visited[1] = True  # Process node 1 beforehand\n    dfs(graph, 1, visited)\n\n    for i in range(1, n + 1):\n        if not visited[i]:\n            print(-1)\n            return\n    \n    print(1)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本的DFS"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <list>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    if (visited[key]) {\n        return;\n    }\n    visited[key] = true;\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        // 深度优先搜索遍历\n        dfs(graph, key, visited);\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    // 节点编号从1到n，所以申请 n+1 这么大的数组\n    vector<list<int>> graph(n + 1); // 邻接表\n    while (m--) {\n        cin >> s >> t;\n        // 使用邻接表 ，表示 s -> t 是相连的\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    dfs(graph, 1, visited);\n    //检查是否都访问到了\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++版本使用DFS处理当前访问的节点来解决有向图完全连通问题。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        if (visited[key] == false) { // 确认下一个是没访问过的节点\n            visited[key] = true;\n            dfs(graph, key, visited);\n        }\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n\n    visited[1] = true; // 节点1 预先处理\n    dfs(graph, 1, visited);\n\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++版本使用DFS处理下一个要访问的节点来解决有向图完全连通问题。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <queue>\nusing namespace std;\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    visited[1] = true; //  1 号房间开始\n    queue<int> que;\n    que.push(1); //  1 号房间开始\n\n    // 广度优先搜索的过程\n    while (!que.empty()) {\n        int key = que.front(); que.pop();\n         list<int> keys = graph[key];\n         for (int key : keys) {\n             if (!visited[key]) {\n                 que.push(key);\n                 visited[key] = true;\n             }\n         }\n    }\n\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++版本使用BFS解决有向图完全连通问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static List<List<Integer>> adjList = new ArrayList<>();\n\n    public static void dfs(boolean[] visited, int key) {\n        if (visited[key]) {\n            return;\n        }\n        visited[key] = true;\n        List<Integer> nextKeys = adjList.get(key);\n        for (int nextKey : nextKeys) {\n            dfs(visited, nextKey);\n        }\n    }\n\n    public static void bfs(boolean[] visited, int key) {\n        Queue<Integer> queue = new LinkedList<Integer>();\n        queue.add(key);\n        visited[key] = true;\n        while (!queue.isEmpty()) {\n            int curKey = queue.poll();\n            List<Integer> list = adjList.get(curKey);\n            for (int nextKey : list) {\n                if (!visited[nextKey]) {\n                    queue.add(nextKey);\n                    visited[nextKey] = true;\n                }\n            }\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int vertices_num = sc.nextInt();\n        int line_num = sc.nextInt();\n        for (int i = 0; i < vertices_num; i++) {\n            adjList.add(new LinkedList<>());\n        }//Initialization\n        for (int i = 0; i < line_num; i++) {\n            int s = sc.nextInt();\n            int t = sc.nextInt();\n            adjList.get(s - 1).add(t - 1);\n        }//构造邻接表\n        boolean[] visited = new boolean[vertices_num];\n        dfs(visited, 0);\n//        bfs(visited, 0);\n\n        for (int i = 0; i < vertices_num; i++) {\n            if (!visited[i]) {\n                System.out.println(-1);\n                return;\n            }\n        }\n        System.out.println(1);\n    }\n}",
+          "description": "Java版本使用DFS和BFS解决有向图完全连通问题。"
+        },
+        {
+          "language": "python",
+          "code": "import collections\n\npath = set()  # 纪录 BFS 所经过之节点\n\ndef bfs(root, graph):\n    global path\n    \n    que = collections.deque([root])\n    while que:\n        cur = que.popleft()\n        path.add(cur)\n        \n        for nei in graph[cur]:\n            que.append(nei)\n        graph[cur] = []\n    return\n\ndef main():\n    N, K = map(int, input().strip().split())\n    graph = collections.defaultdict(list)\n    for _ in range(K):\n        src, dest = map(int, input().strip().split())\n        graph[src].append(dest)\n    \n    bfs(1, graph)\n    if path == {i for i in range(1, N + 1)}:\n        return 1\n    return -1\n        \n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python版本使用BFS解决有向图完全连通问题。"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, key, visited):\n    for neighbor in graph[key]:\n        if not visited[neighbor]:  # Check if the next node is not visited\n            visited[neighbor] = True\n            dfs(graph, neighbor, visited)\n\ndef main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    n = int(data[0])\n    m = int(data[1])\n    \n    graph = [[] for _ in range(n + 1)]\n    index = 2\n    for _ in range(m):\n        s = int(data[index])\n        t = int(data[index + 1])\n        graph[s].append(t)\n        index += 2\n\n    visited = [False] * (n + 1)\n    visited[1] = True  # Process node 1 beforehand\n    dfs(graph, 1, visited)\n\n    for i in range(1, n + 1):\n        if not visited[i]:\n            print(-1)\n            return\n    \n    print(1)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本使用DFS解决有向图完全连通问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    if (visited[key]) {\n        return;\n    }\n    visited[key] = true;\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        dfs(graph, key, visited);\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    dfs(graph, 1, visited);\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": null
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        if (visited[key] == false) {\n            visited[key] = true;\n            dfs(graph, key, visited);\n        }\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    visited[1] = true;\n    dfs(graph, 1, visited);\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": null
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <queue>\nusing namespace std;\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    visited[1] = true;\n    queue<int> que;\n    que.push(1);\n    while (!que.empty()) {\n        int key = que.front(); que.pop();\n        list<int> keys = graph[key];\n        for (int key : keys) {\n            if (!visited[key]) {\n                que.push(key);\n                visited[key] = true;\n            }\n        }\n    }\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static List<List<Integer>> adjList = new ArrayList<>();\n\n    public static void dfs(boolean[] visited, int key) {\n        if (visited[key]) {\n            return;\n        }\n        visited[key] = true;\n        List<Integer> nextKeys = adjList.get(key);\n        for (int nextKey : nextKeys) {\n            dfs(visited, nextKey);\n        }\n    }\n\n    public static void bfs(boolean[] visited, int key) {\n        Queue<Integer> queue = new LinkedList<Integer>();\n        queue.add(key);\n        visited[key] = true;\n        while (!queue.isEmpty()) {\n            int curKey = queue.poll();\n            List<Integer> list = adjList.get(curKey);\n            for (int nextKey : list) {\n                if (!visited[nextKey]) {\n                    queue.add(nextKey);\n                    visited[nextKey] = true;\n                }\n            }\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int vertices_num = sc.nextInt();\n        int line_num = sc.nextInt();\n        for (int i = 0; i < vertices_num; i++) {\n            adjList.add(new LinkedList<>());\n        }\n        for (int i = 0; i < line_num; i++) {\n            int s = sc.nextInt();\n            int t = sc.nextInt();\n            adjList.get(s - 1).add(t - 1);\n        }\n        boolean[] visited = new boolean[vertices_num];\n        dfs(visited, 0);\n        for (int i = 0; i < vertices_num; i++) {\n            if (!visited[i]) {\n                System.out.println(-1);\n                return;\n            }\n        }\n        System.out.println(1);\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "import collections\n\npath = set()\n\ndef bfs(root, graph):\n    global path\n    que = collections.deque([root])\n    while que:\n        cur = que.popleft()\n        path.add(cur)\n        for nei in graph[cur]:\n            que.append(nei)\n        graph[cur] = []\n    return\n\ndef main():\n    N, K = map(int, input().strip().split())\n    graph = collections.defaultdict(list)\n    for _ in range(K):\n        src, dest = map(int, input().strip().split())\n        graph[src].append(dest)\n    bfs(1, graph)\n    if path == {i for i in range(1, N + 1)}:\n        return 1\n    return -1\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, key, visited):\n    for neighbor in graph[key]:\n        if not visited[neighbor]:\n            visited[neighbor] = True\n            dfs(graph, neighbor, visited)\n\ndef main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    n = int(data[0])\n    m = int(data[1])\n    graph = [[] for _ in range(n + 1)]\n    index = 2\n    for _ in range(m):\n        s = int(data[index])\n        t = int(data[index + 1])\n        graph[s].append(t)\n        index += 2\n    visited = [False] * (n + 1)\n    visited[1] = True\n    dfs(graph, 1, visited)\n    for i in range(1, n + 1):\n        if not visited[i]:\n            print(-1)\n            return\n    print(1)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": null
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "#include <list>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    if (visited[key]) {\n        return;\n    }\n    visited[key] = true;\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        // 深度优先搜索遍历\n        dfs(graph, key, visited);\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    // 节点编号从1到n，所以申请 n+1 这么大的数组\n    vector<list<int>> graph(n + 1); // 邻接表\n    while (m--) {\n        cin >> s >> t;\n        // 使用邻接表 ，表示 s -> t 是相连的\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    dfs(graph, 1, visited);\n    //检查是否都访问到了\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++代码实现使用DFS处理当前访问节点来解决有向图的完全连通问题。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        if (visited[key] == false) { // 确认下一个是没访问过的节点\n            visited[key] = true;\n            dfs(graph, key, visited);\n        }\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n\n    visited[1] = true; // 节点1 预先处理\n    dfs(graph, 1, visited);\n\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++代码实现使用DFS处理下一个要访问节点来解决有向图的完全连通问题。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <queue>\nusing namespace std;\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    visited[1] = true; //  1 号房间开始\n    queue<int> que;\n    que.push(1); //  1 号房间开始\n\n    // 广度优先搜索的过程\n    while (!que.empty()) {\n        int key = que.front(); que.pop();\n         list<int> keys = graph[key];\n         for (int key : keys) {\n             if (!visited[key]) {\n                 que.push(key);\n                 visited[key] = true;\n             }\n         }\n    }\n\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++代码实现使用BFS来解决有向图的完全连通问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static List<List<Integer>> adjList = new ArrayList<>();\n\n    public static void dfs(boolean[] visited, int key) {\n        if (visited[key]) {\n            return;\n        }\n        visited[key] = true;\n        List<Integer> nextKeys = adjList.get(key);\n        for (int nextKey : nextKeys) {\n            dfs(visited, nextKey);\n        }\n    }\n\n    public static void bfs(boolean[] visited, int key) {\n        Queue<Integer> queue = new LinkedList<Integer>();\n        queue.add(key);\n        visited[key] = true;\n        while (!queue.isEmpty()) {\n            int curKey = queue.poll();\n            List<Integer> list = adjList.get(curKey);\n            for (int nextKey : list) {\n                if (!visited[nextKey]) {\n                    queue.add(nextKey);\n                    visited[nextKey] = true;\n                }\n            }\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int vertices_num = sc.nextInt();\n        int line_num = sc.nextInt();\n        for (int i = 0; i < vertices_num; i++) {\n            adjList.add(new LinkedList<>());\n        }//Initialization\n        for (int i = 0; i < line_num; i++) {\n            int s = sc.nextInt();\n            int t = sc.nextInt();\n            adjList.get(s - 1).add(t - 1);\n        }//构造邻接表\n        boolean[] visited = new boolean[vertices_num];\n        dfs(visited, 0);\n//        bfs(visited, 0);\n\n        for (int i = 0; i < vertices_num; i++) {\n            if (!visited[i]) {\n                System.out.println(-1);\n                return;\n            }\n        }\n        System.out.println(1);\n    }\n}",
+          "description": "Java代码实现使用DFS或BFS来解决有向图的完全连通问题。"
+        },
+        {
+          "language": "python",
+          "code": "import collections\n\npath = set()  # 纪录 BFS 所经过之节点\n\ndef bfs(root, graph):\n    global path\n    \n    que = collections.deque([root])\n    while que:\n        cur = que.popleft()\n        path.add(cur)\n        \n        for nei in graph[cur]:\n            que.append(nei)\n        graph[cur] = []\n    return\n\ndef main():\n    N, K = map(int, input().strip().split())\n    graph = collections.defaultdict(list)\n    for _ in range(K):\n        src, dest = map(int, input().strip().split())\n        graph[src].append(dest)\n    \n    bfs(1, graph)\n    if path == {i for i in range(1, N + 1)}:\n        return 1\n    return -1\n    \n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python代码实现使用BFS来解决有向图的完全连通问题。"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, key, visited):\n    for neighbor in graph[key]:\n        if not visited[neighbor]:  # Check if the next node is not visited\n            visited[neighbor] = True\n            dfs(graph, neighbor, visited)\n\ndef main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    n = int(data[0])\n    m = int(data[1])\n    \n    graph = [[] for _ in range(n + 1)]\n    index = 2\n    for _ in range(m):\n        s = int(data[index])\n        t = int(data[index + 1])\n        graph[s].append(t)\n        index += 2\n\n    visited = [False] * (n + 1)\n    visited[1] = True  # Process node 1 beforehand\n    dfs(graph, 1, visited)\n\n    for i in range(1, n + 1):\n        if not visited[i]:\n            print(-1)\n            return\n    \n    print(1)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python代码实现使用DFS来解决有向图的完全连通问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <list>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "void dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    if (visited[key]) {\n        return;\n    }\n    visited[key] = true;\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        // 深度优先搜索遍历\n        dfs(graph, key, visited);\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    // 节点编号从1到n，所以申请 n+1 这么大的数组\n    vector<list<int>> graph(n + 1); // 邻接表\n    while (m--) {\n        cin >> s >> t;\n        // 使用邻接表 ，表示 s -> t 是相连的\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    dfs(graph, 1, visited);\n    //检查是否都访问到了\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++实现的DFS算法，用于判断从1号节点出发能否访问所有节点。"
+        },
+        {
+          "language": "cpp",
+          "code": "void dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        if (visited[key] == false) { // 确认下一个是没访问过的节点\n            visited[key] = true;\n            dfs(graph, key, visited);\n        }\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n\n    visited[1] = true; // 节点1 预先处理\n    dfs(graph, 1, visited);\n\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++实现的另一种DFS算法，同样用于判断从1号节点出发能否访问所有节点。"
+        },
+        {
+          "language": "cpp",
+          "code": "int main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    visited[1] = true; //  1 号房间开始\n    queue<int> que;\n    que.push(1); //  1 号房间开始\n\n    // 广度优先搜索的过程\n    while (!que.empty()) {\n        int key = que.front(); que.pop();\n         list<int> keys = graph[key];\n         for (int key : keys) {\n             if (!visited[key]) {\n                 que.push(key);\n                 visited[key] = true;\n             }\n         }\n    }\n\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++实现的BFS算法，用于判断从1号节点出发能否访问所有节点。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static List<List<Integer>> adjList = new ArrayList<>();\n\n    public static void dfs(boolean[] visited, int key) {\n        if (visited[key]) {\n            return;\n        }\n        visited[key] = true;\n        List<Integer> nextKeys = adjList.get(key);\n        for (int nextKey : nextKeys) {\n            dfs(visited, nextKey);\n        }\n    }\n\n    public static void bfs(boolean[] visited, int key) {\n        Queue<Integer> queue = new LinkedList<Integer>();\n        queue.add(key);\n        visited[key] = true;\n        while (!queue.isEmpty()) {\n            int curKey = queue.poll();\n            List<Integer> list = adjList.get(curKey);\n            for (int nextKey : list) {\n                if (!visited[nextKey]) {\n                    queue.add(nextKey);\n                    visited[nextKey] = true;\n                }\n            }\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int vertices_num = sc.nextInt();\n        int line_num = sc.nextInt();\n        for (int i = 0; i < vertices_num; i++) {\n            adjList.add(new LinkedList<>());\n        }//Initialization\n        for (int i = 0; i < line_num; i++) {\n            int s = sc.nextInt();\n            int t = sc.nextInt();\n            adjList.get(s - 1).add(t - 1);\n        }//构造邻接表\n        boolean[] visited = new boolean[vertices_num];\n        dfs(visited, 0);\n//        bfs(visited, 0);\n\n        for (int i = 0; i < vertices_num; i++) {\n            if (!visited[i]) {\n                System.out.println(-1);\n                return;\n            }\n        }\n        System.out.println(1);\n    }\n}",
+          "description": "Java实现的DFS和BFS算法，用于判断从1号节点出发能否访问所有节点。"
+        },
+        {
+          "language": "python",
+          "code": "import collections\n\npath = set()  # 纪录 BFS 所经过之节点\n\ndef bfs(root, graph):\n    global path\n    \n    que = collections.deque([root])\n    while que:\n        cur = que.popleft()\n        path.add(cur)\n        \n        for nei in graph[cur]:\n            que.append(nei)\n        graph[cur] = []\n    return\n\ndef main():\n    N, K = map(int, input().strip().split())\n    graph = collections.defaultdict(list)\n    for _ in range(K):\n        src, dest = map(int, input().strip().split())\n        graph[src].append(dest)\n    \n    bfs(1, graph)\n    if path == {i for i in range(1, N + 1)}:\n        return 1\n    return -1\n    \n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python实现的BFS算法，用于判断从1号节点出发能否访问所有节点。"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, key, visited):\n    for neighbor in graph[key]:\n        if not visited[neighbor]:  # Check if the next node is not visited\n            visited[neighbor] = True\n            dfs(graph, neighbor, visited)\n\ndef main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    n = int(data[0])\n    m = int(data[1])\n    \n    graph = [[] for _ in range(n + 1)]\n    index = 2\n    for _ in range(m):\n        s = int(data[index])\n        t = int(data[index + 1])\n        graph[s].append(t)\n        index += 2\n\n    visited = [False] * (n + 1)\n    visited[1] = True  # Process node 1 beforehand\n    dfs(graph, 1, visited)\n\n    for i in range(1, n + 1):\n        if not visited[i]:\n            print(-1)\n            return\n    \n    print(1)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python实现的DFS算法，用于判断从1号节点出发能否访问所有节点。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <queue>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "void dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) { if (visited[key]) { return; } visited[key] = true; list<int> keys = graph[key]; for (int key : keys) { dfs(graph, key, visited); } }\nint main() { int n, m, s, t; cin >> n >> m; vector<list<int>> graph(n + 1); while (m--) { cin >> s >> t; graph[s].push_back(t); } vector<bool> visited(n + 1, false); dfs(graph, 1, visited); for (int i = 1; i <= n; i++) { if (visited[i] == false) { cout << -1 << endl; return 0; } } cout << 1 << endl; }",
+          "description": "C++实现的DFS算法，处理当前访问的节点"
+        },
+        {
+          "language": "cpp",
+          "code": "void dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) { list<int> keys = graph[key]; for (int key : keys) { if (visited[key] == false) { visited[key] = true; dfs(graph, key, visited); } } }\nint main() { int n, m, s, t; cin >> n >> m; vector<list<int>> graph(n + 1); while (m--) { cin >> s >> t; graph[s].push_back(t); } vector<bool> visited(n + 1, false); visited[1] = true; dfs(graph, 1, visited); for (int i = 1; i <= n; i++) { if (visited[i] == false) { cout << -1 << endl; return 0; } } cout << 1 << endl; }",
+          "description": "C++实现的DFS算法，处理下一个要访问的节点"
+        },
+        {
+          "language": "cpp",
+          "code": "int main() { int n, m, s, t; cin >> n >> m; vector<list<int>> graph(n + 1); while (m--) { cin >> s >> t; graph[s].push_back(t); } vector<bool> visited(n + 1, false); visited[1] = true; queue<int> que; que.push(1); while (!que.empty()) { int key = que.front(); que.pop(); list<int> keys = graph[key]; for (int key : keys) { if (!visited[key]) { que.push(key); visited[key] = true; } } } for (int i = 1; i <= n; i++) { if (visited[i] == false) { cout << -1 << endl; return 0; } } cout << 1 << endl; }",
+          "description": "C++实现的BFS算法"
+        },
+        {
+          "language": "java",
+          "code": "public static void dfs(boolean[] visited, int key) { if (visited[key]) { return; } visited[key] = true; List<Integer> nextKeys = adjList.get(key); for (int nextKey : nextKeys) { dfs(visited, nextKey); } } public static void bfs(boolean[] visited, int key) { Queue<Integer> queue = new LinkedList<Integer>(); queue.add(key); visited[key] = true; while (!queue.isEmpty()) { int curKey = queue.poll(); List<Integer> list = adjList.get(curKey); for (int nextKey : list) { if (!visited[nextKey]) { queue.add(nextKey); visited[nextKey] = true; } } } } public static void main(String[] args) { Scanner sc = new Scanner(System.in); int vertices_num = sc.nextInt(); int line_num = sc.nextInt(); for (int i = 0; i < vertices_num; i++) { adjList.add(new LinkedList<>()); } for (int i = 0; i < line_num; i++) { int s = sc.nextInt(); int t = sc.nextInt(); adjList.get(s - 1).add(t - 1); } boolean[] visited = new boolean[vertices_num]; dfs(visited, 0); for (int i = 0; i < vertices_num; i++) { if (!visited[i]) { System.out.println(-1); return; } } System.out.println(1); }",
+          "description": "Java实现的DFS和BFS算法"
+        },
+        {
+          "language": "python",
+          "code": "def bfs(root, graph): global path que = collections.deque([root]) while que: cur = que.popleft() path.add(cur) for nei in graph[cur]: que.append(nei) graph[cur] = [] return def main(): N, K = map(int, input().strip().split()) graph = collections.defaultdict(list) for _ in range(K): src, dest = map(int, input().strip().split()) graph[src].append(dest) bfs(1, graph) if path == {i for i in range(1, N + 1)}: return 1 return -1 if __name__ == \"__main__\": print(main())",
+          "description": "Python实现的BFS算法"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, key, visited): for neighbor in graph[key]: if not visited[neighbor]: visited[neighbor] = True dfs(graph, neighbor, visited) def main(): import sys input = sys.stdin.read data = input().split() n = int(data[0]) m = int(data[1]) graph = [[] for _ in range(n + 1)] index = 2 for _ in range(m): s = int(data[index]) t = int(data[index + 1]) graph[s].append(t) index += 2 visited = [False] * (n + 1) visited[1] = True dfs(graph, 1, visited) for i in range(1, n + 1): if not visited[i]: print(-1) return print(1) if __name__ == \"__main__\": main()",
+          "description": "Python实现的DFS算法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    if (visited[key]) {\n        return;\n    }\n    visited[key] = true;\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        // 深度优先搜索遍历\n        dfs(graph, key, visited);\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    // 节点编号从1到n，所以申请 n+1 这么大的数组\n    vector<list<int>> graph(n + 1); // 邻接表\n    while (m--) {\n        cin >> s >> t;\n        // 使用邻接表 ，表示 s -> t 是相连的\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    dfs(graph, 1, visited);\n    //检查是否都访问到了\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++版本的DFS实现"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        if (visited[key] == false) { // 确认下一个是没访问过的节点\n            visited[key] = true;\n            dfs(graph, key, visited);\n        }\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n\n    visited[1] = true; // 节点1 预先处理\n    dfs(graph, 1, visited);\n\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++版本的另一种DFS实现"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <queue>\nusing namespace std;\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    visited[1] = true; //  1 号房间开始\n    queue<int> que;\n    que.push(1); //  1 号房间开始\n\n    // 广度优先搜索的过程\n    while (!que.empty()) {\n        int key = que.front(); que.pop();\n         list<int> keys = graph[key];\n         for (int key : keys) {\n             if (!visited[key]) {\n                 que.push(key);\n                 visited[key] = true;\n             }\n         }\n    }\n\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++版本的BFS实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static List<List<Integer>> adjList = new ArrayList<>();\n\n    public static void dfs(boolean[] visited, int key) {\n        if (visited[key]) {\n            return;\n        }\n        visited[key] = true;\n        List<Integer> nextKeys = adjList.get(key);\n        for (int nextKey : nextKeys) {\n            dfs(visited, nextKey);\n        }\n    }\n\n    public static void bfs(boolean[] visited, int key) {\n        Queue<Integer> queue = new LinkedList<Integer>();\n        queue.add(key);\n        visited[key] = true;\n        while (!queue.isEmpty()) {\n            int curKey = queue.poll();\n            List<Integer> list = adjList.get(curKey);\n            for (int nextKey : list) {\n                if (!visited[nextKey]) {\n                    queue.add(nextKey);\n                    visited[nextKey] = true;\n                }\n            }\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int vertices_num = sc.nextInt();\n        int line_num = sc.nextInt();\n        for (int i = 0; i < vertices_num; i++) {\n            adjList.add(new LinkedList<>());\n        }//Initialization\n        for (int i = 0; i < line_num; i++) {\n            int s = sc.nextInt();\n            int t = sc.nextInt();\n            adjList.get(s - 1).add(t - 1);\n        }//构造邻接表\n        boolean[] visited = new boolean[vertices_num];\n        dfs(visited, 0);\n//        bfs(visited, 0);\n\n        for (int i = 0; i < vertices_num; i++) {\n            if (!visited[i]) {\n                System.out.println(-1);\n                return;\n            }\n        }\n        System.out.println(1);\n    }\n}",
+          "description": "Java版本的DFS和BFS实现"
+        },
+        {
+          "language": "python",
+          "code": "import collections\n\npath = set()  # 纪录 BFS 所经过之节点\n\ndef bfs(root, graph):\n    global path\n    \n    que = collections.deque([root])\n    while que:\n        cur = que.popleft()\n        path.add(cur)\n        \n        for nei in graph[cur]:\n            que.append(nei)\n        graph[cur] = []\n    return\n\ndef main():\n    N, K = map(int, input().strip().split())\n    graph = collections.defaultdict(list)\n    for _ in range(K):\n        src, dest = map(int, input().strip().split())\n        graph[src].append(dest)\n    \n    bfs(1, graph)\n    if path == {i for i in range(1, N + 1)}:\n        return 1\n    return -1\n        \nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python版本的BFS实现"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, key, visited):\n    for neighbor in graph[key]:\n        if not visited[neighbor]:  # Check if the next node is not visited\n            visited[neighbor] = True\n            dfs(graph, neighbor, visited)\n\ndef main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    \n    n = int(data[0])\n    m = int(data[1])\n    \n    graph = [[] for _ in range(n + 1)]\n    index = 2\n    for _ in range(m):\n        s = int(data[index])\n        t = int(data[index + 1])\n        graph[s].append(t)\n        index += 2\n    \n    visited = [False] * (n + 1)\n    visited[1] = True  # Process node 1 beforehand\n    dfs(graph, 1, visited)\n    \n    for i in range(1, n + 1):\n        if not visited[i]:\n            print(-1)\n            return\n    \n    print(1)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本的DFS实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "import java.util.*;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    if (visited[key]) {\n        return;\n    }\n    visited[key] = true;\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        // 深度优先搜索遍历\n        dfs(graph, key, visited);\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    // 节点编号从1到n，所以申请 n+1 这么大的数组\n    vector<list<int>> graph(n + 1); // 邻接表\n    while (m--) {\n        cin >> s >> t;\n        // 使用邻接表 ，表示 s -> t 是相连的\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    dfs(graph, 1, visited);\n    //检查是否都访问到了\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "使用DFS处理当前访问的节点来解决有向图的完全连通问题。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        if (visited[key] == false) { // 确认下一个是没访问过的节点\n            visited[key] = true;\n            dfs(graph, key, visited);\n        }\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n\n    visited[1] = true; // 节点1 预先处理\n    dfs(graph, 1, visited);\n\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "使用DFS处理下一个要访问的节点来解决有向图的完全连通问题。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <queue>\nusing namespace std;\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    visited[1] = true; //  1 号房间开始\n    queue<int> que;\n    que.push(1); //  1 号房间开始\n\n    // 广度优先搜索的过程\n    while (!que.empty()) {\n        int key = que.front(); que.pop();\n         list<int> keys = graph[key];\n         for (int key : keys) {\n             if (!visited[key]) {\n                 que.push(key);\n                 visited[key] = true;\n             }\n         }\n    }\n\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "使用BFS解决有向图的完全连通问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static List<List<Integer>> adjList = new ArrayList<>();\n\n    public static void dfs(boolean[] visited, int key) {\n        if (visited[key]) {\n            return;\n        }\n        visited[key] = true;\n        List<Integer> nextKeys = adjList.get(key);\n        for (int nextKey : nextKeys) {\n            dfs(visited, nextKey);\n        }\n    }\n\n    public static void bfs(boolean[] visited, int key) {\n        Queue<Integer> queue = new LinkedList<Integer>();\n        queue.add(key);\n        visited[key] = true;\n        while (!queue.isEmpty()) {\n            int curKey = queue.poll();\n            List<Integer> list = adjList.get(curKey);\n            for (int nextKey : list) {\n                if (!visited[nextKey]) {\n                    queue.add(nextKey);\n                    visited[nextKey] = true;\n                }\n            }\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int vertices_num = sc.nextInt();\n        int line_num = sc.nextInt();\n        for (int i = 0; i < vertices_num; i++) {\n            adjList.add(new LinkedList<>());\n        }//Initialization\n        for (int i = 0; i < line_num; i++) {\n            int s = sc.nextInt();\n            int t = sc.nextInt();\n            adjList.get(s - 1).add(t - 1);\n        }//构造邻接表\n        boolean[] visited = new boolean[vertices_num];\n        dfs(visited, 0);\n//        bfs(visited, 0);\n\n        for (int i = 0; i < vertices_num; i++) {\n            if (!visited[i]) {\n                System.out.println(-1);\n                return;\n            }\n        }\n        System.out.println(1);\n    }\n}",
+          "description": "Java实现的DFS和BFS方法来解决有向图的完全连通问题。"
+        },
+        {
+          "language": "python",
+          "code": "import collections\n\npath = set()  # 纪录 BFS 所经过之节点\n\ndef bfs(root, graph):\n    global path\n    \n    que = collections.deque([root])\n    while que:\n        cur = que.popleft()\n        path.add(cur)\n        \n        for nei in graph[cur]:\n            que.append(nei)\n        graph[cur] = []\n    return\n\ndef main():\n    N, K = map(int, input().strip().split())\n    graph = collections.defaultdict(list)\n    for _ in range(K):\n        src, dest = map(int, input().strip().split())\n        graph[src].append(dest)\n    \n    bfs(1, graph)\n    if path == {i for i in range(1, N + 1)}:\n        return 1\n    return -1\n        \n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python中使用BFS解决有向图的完全连通问题。"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, key, visited):\n    for neighbor in graph[key]:\n        if not visited[neighbor]:  # Check if the next node is not visited\n            visited[neighbor] = True\n            dfs(graph, neighbor, visited)\n\ndef main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    n = int(data[0])\n    m = int(data[1])\n    \n    graph = [[] for _ in range(n + 1)]\n    index = 2\n    for _ in range(m):\n        s = int(data[index])\n        t = int(data[index + 1])\n        graph[s].append(t)\n        index += 2\n\n    visited = [False] * (n + 1)\n    visited[1] = True  # Process node 1 beforehand\n    dfs(graph, 1, visited)\n\n    for i in range(1, n + 1):\n        if not visited[i]:\n            print(-1)\n            return\n    \n    print(1)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python中使用DFS解决有向图的完全连通问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "BFS算法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    if (visited[key]) {\n        return;\n    }\n    visited[key] = true;\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        // 深度优先搜索遍历\n        dfs(graph, key, visited);\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    // 节点编号从1到n，所以申请 n+1 这么大的数组\n    vector<list<int>> graph(n + 1); // 邻接表\n    while (m--) {\n        cin >> s >> t;\n        // 使用邻接表 ，表示 s -> t 是相连的\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    dfs(graph, 1, visited);\n    //检查是否都访问到了\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++ DFS 实现，处理当前访问的节点"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        if (visited[key] == false) { // 确认下一个是没访问过的节点\n            visited[key] = true;\n            dfs(graph, key, visited);\n        }\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n\n    }\n    vector<bool> visited(n + 1, false);\n\n    visited[1] = true; // 节点1 预先处理\n    dfs(graph, 1, visited);\n\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++ DFS 实现，处理下一个要访问的节点"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <queue>\nusing namespace std;\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n\n    }\n    vector<bool> visited(n + 1, false);\n    visited[1] = true; //  1 号房间开始\n    queue<int> que;\n    que.push(1); //  1 号房间开始\n\n    // 广度优先搜索的过程\n    while (!que.empty()) {\n        int key = que.front(); que.pop();\n         list<int> keys = graph[key];\n         for (int key : keys) {\n             if (!visited[key]) {\n                 que.push(key);\n                 visited[key] = true;\n             }\n         }\n    }\n\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}",
+          "description": "C++ BFS 实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static List<List<Integer>> adjList = new ArrayList<>();\n\n    public static void dfs(boolean[] visited, int key) {\n        if (visited[key]) {\n            return;\n        }\n        visited[key] = true;\n        List<Integer> nextKeys = adjList.get(key);\n        for (int nextKey : nextKeys) {\n            dfs(visited, nextKey);\n        }\n    }\n\n    public static void bfs(boolean[] visited, int key) {\n        Queue<Integer> queue = new LinkedList<Integer>();\n        queue.add(key);\n        visited[key] = true;\n        while (!queue.isEmpty()) {\n            int curKey = queue.poll();\n            List<Integer> list = adjList.get(curKey);\n            for (int nextKey : list) {\n                if (!visited[nextKey]) {\n                    queue.add(nextKey);\n                    visited[nextKey] = true;\n                }\n            }\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int vertices_num = sc.nextInt();\n        int line_num = sc.nextInt();\n        for (int i = 0; i < vertices_num; i++) {\n            adjList.add(new LinkedList<>());\n        }//Initialization\n        for (int i = 0; i < line_num; i++) {\n            int s = sc.nextInt();\n            int t = sc.nextInt();\n            adjList.get(s - 1).add(t - 1);\n        }//构造邻接表\n        boolean[] visited = new boolean[vertices_num];\n        dfs(visited, 0);\n//        bfs(visited, 0);\n\n        for (int i = 0; i < vertices_num; i++) {\n            if (!visited[i]) {\n                System.out.println(-1);\n                return;\n            }\n        }\n        System.out.println(1);\n    }\n}",
+          "description": "Java DFS 和 BFS 实现"
+        },
+        {
+          "language": "python",
+          "code": "import collections\n\npath = set()  # 纪录 BFS 所经过之节点\n\ndef bfs(root, graph):\n    global path\n    \n    que = collections.deque([root])\n    while que:\n        cur = que.popleft()\n        path.add(cur)\n        \n        for nei in graph[cur]:\n            que.append(nei)\n        graph[cur] = []\n    return\n\ndef main():\n    N, K = map(int, input().strip().split())\n    graph = collections.defaultdict(list)\n    for _ in range(K):\n        src, dest = map(int, input().strip().split())\n        graph[src].append(dest)\n    \n    bfs(1, graph)\n    if path == {i for i in range(1, N + 1)}:\n        return 1\n    return -1\n    \n        \nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python BFS 实现"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, key, visited):\n    for neighbor in graph[key]:\n        if not visited[neighbor]:  # Check if the next node is not visited\n            visited[neighbor] = True\n            dfs(graph, neighbor, visited)\n\ndef main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    n = int(data[0])\n    m = int(data[1])\n    \n    graph = [[] for _ in range(n + 1)]\n    index = 2\n    for _ in range(m):\n        s = int(data[index])\n        t = int(data[index + 1])\n        graph[s].append(t)\n        index += 2\n\n    visited = [False] * (n + 1)\n    visited[1] = True  # Process node 1 beforehand\n    dfs(graph, 1, visited)\n\n    for i in range(1, n + 1):\n        if not visited[i]:\n            print(-1)\n            return\n    \n    print(1)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python DFS 实现"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "void dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) { if (visited[key]) { return; } visited[key] = true; list<int> keys = graph[key]; for (int key : keys) { dfs(graph, key, visited); } }\nint main() { int n, m, s, t; cin >> n >> m; vector<list<int>> graph(n + 1); while (m--) { cin >> s >> t; graph[s].push_back(t); } vector<bool> visited(n + 1, false); dfs(graph, 1, visited); for (int i = 1; i <= n; i++) { if (visited[i] == false) { cout << -1 << endl; return 0; } } cout << 1 << endl; }",
+      "description": null
+    },
+    {
+      "language": "cpp",
+      "code": "void dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) { list<int> keys = graph[key]; for (int key : keys) { if (visited[key] == false) { visited[key] = true; dfs(graph, key, visited); } } }\nint main() { int n, m, s, t; cin >> n >> m; vector<list<int>> graph(n + 1); while (m--) { cin >> s >> t; graph[s].push_back(t); } vector<bool> visited(n + 1, false); visited[1] = true; dfs(graph, 1, visited); for (int i = 1; i <= n; i++) { if (visited[i] == false) { cout << -1 << endl; return 0; } } cout << 1 << endl; }",
+      "description": null
+    },
+    {
+      "language": "cpp",
+      "code": "int main() { int n, m, s, t; cin >> n >> m; vector<list<int>> graph(n + 1); while (m--) { cin >> s >> t; graph[s].push_back(t); } vector<bool> visited(n + 1, false); visited[1] = true; queue<int> que; que.push(1); while (!que.empty()) { int key = que.front(); que.pop(); list<int> keys = graph[key]; for (int key : keys) { if (!visited[key]) { que.push(key); visited[key] = true; } } } for (int i = 1; i <= n; i++) { if (visited[i] == false) { cout << -1 << endl; return 0; } } cout << 1 << endl; }",
+      "description": null
+    },
+    {
+      "language": "java",
+      "code": "public static void dfs(boolean[] visited, int key) { if (visited[key]) { return; } visited[key] = true; List<Integer> nextKeys = adjList.get(key); for (int nextKey : nextKeys) { dfs(visited, nextKey); } }\npublic static void bfs(boolean[] visited, int key) { Queue<Integer> queue = new LinkedList<Integer>(); queue.add(key); visited[key] = true; while (!queue.isEmpty()) { int curKey = queue.poll(); List<Integer> list = adjList.get(curKey); for (int nextKey : list) { if (!visited[nextKey]) { queue.add(nextKey); visited[nextKey] = true; } } } }\npublic static void main(String[] args) { Scanner sc = new Scanner(System.in); int vertices_num = sc.nextInt(); int line_num = sc.nextInt(); for (int i = 0; i < vertices_num; i++) { adjList.add(new LinkedList<>()); } for (int i = 0; i < line_num; i++) { int s = sc.nextInt(); int t = sc.nextInt(); adjList.get(s - 1).add(t - 1); } boolean[] visited = new boolean[vertices_num]; dfs(visited, 0); for (int i = 0; i < vertices_num; i++) { if (!visited[i]) { System.out.println(-1); return; } } System.out.println(1); }",
+      "description": null
+    },
+    {
+      "language": "python",
+      "code": "def bfs(root, graph): global path que = collections.deque([root]) while que: cur = que.popleft() path.add(cur) for nei in graph[cur]: que.append(nei) graph[cur] = []\ndef main(): N, K = map(int, input().strip().split()) graph = collections.defaultdict(list) for _ in range(K): src, dest = map(int, input().strip().split()) graph[src].append(dest) bfs(1, graph) if path == {i for i in range(1, N + 1)}: return 1 return -1\nif __name__ == \"__main__\": print(main())",
+      "description": null
+    },
+    {
+      "language": "python",
+      "code": "def dfs(graph, key, visited): for neighbor in graph[key]: if not visited[neighbor]: visited[neighbor] = True dfs(graph, neighbor, visited)\ndef main(): import sys input = sys.stdin.read data = input().split() n = int(data[0]) m = int(data[1]) graph = [[] for _ in range(n + 1)] index = 2 for _ in range(m): s = int(data[index]) t = int(data[index + 1]) graph[s].append(t) index += 2 visited = [False] * (n + 1) visited[1] = True dfs(graph, 1, visited) for i in range(1, n + 1): if not visited[i]: print(-1) return print(1)\nif __name__ == \"__main__\": main()",
+      "description": null
+    }
+  ],
+  "common_mistakes": [
+    "忽略有向图的边方向，误将问题简化为无向图处理。",
+    "不正确地管理visited数组，可能导致重复访问或遗漏某些节点。",
+    "混淆了两种DFS实现方式的具体应用场景及其差异。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240522174707.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20240522174707.png",
+      "context": "该图片展示了从1号节点出发能够到达图中所有其他节点的情况，支持了文本中关于如果可以到达任何节点则输出1的说明。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240522175451.png",
+      "description": "这张图片展示了两个独立的有向图，涉及节点和边的连接关系，适用于图论算法和数据结构分析。",
+      "context": "该图片展示了一个有向图的例子，用于说明节点之间的可达性问题，特别是指出节点6不能到达节点1的情况。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240522174707.png",
+      "description": "GIF展示了从1号节点出发能否遍历到有向图中所有其他节点的过程。",
+      "context": "GIF动画展示了从1号节点出发能够访问到图中所有其他节点的过程，用以直观说明当可以从起始节点到达任意节点时输出1的情况。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240522175451.png",
+      "description": "GIF展示了在有向图中从1号节点出发，通过深搜（DFS）或广搜（BFS）遍历所有可达节点的过程。",
+      "context": "GIF动画展示了在有向图中从某个节点出发，使用DFS或BFS方法搜索可达节点的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\图论\\有向图的完全联通.txt",
+  "extracted_at": "2025-07-21T18:11:41.983200",
+  "raw_content": "有向图的完全联通\n卡码网题目链接（ACM模式）(https://kamacoder.com/problempage.php?pid=1177)\n\n【题目描述】\n\n给定一个有向图，包含 N 个节点，节点编号分别为 1，2，...，N。现从 1 号节点开始，如果可以从 1 号节点的边可以到达任何节点，则输出 1，否则输出 -1。\n\n【输入描述】\n\n第一行包含两个正整数，表示节点数量 N 和边的数量 K。 后续 K 行，每行两个正整数 s 和 t，表示从 s 节点有一条边单向连接到 t 节点。\n\n【输出描述】\n\n如果可以从 1 号节点的边可以到达任何节点，则输出 1，否则输出 -1。\n\n【输入示例】\n\n4 4\n1 2\n2 1\n1 3\n2 4\n【输出示例】\n\n1\n\n【提示信息】\n\nhttps://file1.kamacoder.com/i/algo/20240522174707.png\n\n从 1 号节点可以到达任意节点，输出 1。\n\n数据范围：\n\n1 <= N <= 100；\n1 <= K <= 2000。\n#思路\n\n本题给我们是一个有向图， 意识到这是有向图很重要！\n\n接下来我们再画一个图，从图里可以直观看出来，节点6 是 不能到达节点1 的\n\nhttps://file1.kamacoder.com/i/algo/20240522175451.png\n\n这就很容易让我们想起岛屿问题，只要发现独立的岛，就是不可到达的。\n\n但本题是有向图，在有向图中，即使所有节点都是链接的，但依然不可能从0出发遍历所有边。\n\n例如上图中，节点1 可以到达节点2，但节点2是不能到达节点1的。\n\n所以本题是一个有向图搜索全路径的问题。 只能用深搜（DFS）或者广搜（BFS）来搜。\n\n以下dfs分析 大家一定要仔细看，本题有两种dfs的解法，很多题解没有讲清楚。 看完之后 相信你对dfs会有更深的理解。\n\n深搜三部曲：\n\n确认递归函数，参数\n需要传入地图，需要知道当前我们拿到的key，以至于去下一个房间。\n\n同时还需要一个数组，用来记录我们都走过了哪些房间，这样好知道最后有没有把所有房间都遍历的，可以定义一个一维数组。\n\n所以 递归函数参数如下：\n\n// key 当前得到的可以 \n// visited 记录访问过的房间 \nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n确认终止条件\n遍历的时候，什么时候终止呢？\n\n这里有一个很重要的逻辑，就是在递归中，我们是处理当前访问的节点，还是处理下一个要访问的节点。\n\n这决定 终止条件怎么写。\n\n首先明确，本题中什么叫做处理，就是 visited数组来记录访问过的节点，该节点默认 数组里元素都是false，把元素标记为true就是处理 本节点了。\n\n如果我们是处理当前访问的节点，当前访问的节点如果是 true ，说明是访问过的节点，那就终止本层递归，如果不是true，我们就把它赋值为true，因为这是我们处理本层递归的节点。\n\n代码就是这样：\n\n// 写法一：处理当前访问的节点\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    if (visited[key]) {\n        return;\n    }\n    visited[key] = true;\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        // 深度优先搜索遍历\n        dfs(graph, key, visited);\n    }\n}\n如果我们是处理下一层访问的节点，而不是当前层。那么就要在 深搜三部曲中第三步：处理目前搜索节点出发的路径的时候对 节点进行处理。\n\n这样的话，就不需要终止条件，而是在 搜索下一个节点的时候，直接判断 下一个节点是否是我们要搜的节点。\n\n代码就是这样的：\n\n// 写法二：处理下一个要访问的节点\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        if (visited[key] == false) { // 确认下一个是没访问过的节点\n            visited[key] = true;\n            dfs(graph, key, visited);\n        }\n    }\n}\n可以看出，如何看待 我们要访问的节点，直接决定了两种不一样的写法，很多录友对这一块很模糊，可能做过这道题，但没有思考到这个维度上。\n\n处理目前搜索节点出发的路径\n其实在上面，深搜三部曲 第二部，就已经讲了，因为终止条件的两种写法， 直接决定了两种不一样的递归写法。\n\n这里还有细节：\n\n看上面两个版本的写法中， 好像没有发现回溯的逻辑。\n\n我们都知道，有递归就有回溯，回溯就在递归函数的下面， 那么之前我们做的dfs题目，都需要回溯操作，例如：0098.所有可达路径(https://programmercarl.com/kamacoder/0098.%E6%89%80%E6%9C%89%E5%8F%AF%E8%BE%BE%E8%B7%AF%E5%BE%84)， 为什么本题就没有回溯呢？\n\n代码中可以看到dfs函数下面并没有回溯的操作。\n\n此时就要在思考本题的要求了，本题是需要判断 1节点 是否能到所有节点，那么我们就没有必要回溯去撤销操作了，只要遍历过的节点一律都标记上。\n\n那什么时候需要回溯操作呢？\n\n当我们需要搜索一条可行路径的时候，就需要回溯操作了，因为没有回溯，就没法“调头”， 如果不理解的话，去看我写的 0098.所有可达路径(https://programmercarl.com/kamacoder/0098.%E6%89%80%E6%9C%89%E5%8F%AF%E8%BE%BE%E8%B7%AF%E5%BE%84) 的题解。\n\n以上分析完毕，DFS整体实现C++代码如下：\n\n// 写法一：dfs 处理当前访问的节点\n#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    if (visited[key]) {\n        return;\n    }\n    visited[key] = true;\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        // 深度优先搜索遍历\n        dfs(graph, key, visited);\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    // 节点编号从1到n，所以申请 n+1 这么大的数组\n    vector<list<int>> graph(n + 1); // 邻接表\n    while (m--) {\n        cin >> s >> t;\n        // 使用邻接表 ，表示 s -> t 是相连的\n        graph[s].push_back(t);\n    }\n    vector<bool> visited(n + 1, false);\n    dfs(graph, 1, visited);\n    //检查是否都访问到了\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}\n\n第二种写法注意有注释的地方是和写法一的区别\n\n写法二：dfs处理下一个要访问的节点\n#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvoid dfs(const vector<list<int>>& graph, int key, vector<bool>& visited) {\n    list<int> keys = graph[key];\n    for (int key : keys) {\n        if (visited[key] == false) { // 确认下一个是没访问过的节点\n            visited[key] = true;\n            dfs(graph, key, visited);\n        }\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n\n    }\n    vector<bool> visited(n + 1, false);\n\n    visited[1] = true; // 节点1 预先处理\n    dfs(graph, 1, visited);\n\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}\n\n本题我也给出 BFS C++代码，BFS理论基础 (opens new window)，代码如下：\n\n#include <iostream>\n#include <vector>\n#include <list>\n#include <queue>\nusing namespace std;\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n\n    }\n    vector<bool> visited(n + 1, false);\n    visited[1] = true; //  1 号房间开始\n    queue<int> que;\n    que.push(1); //  1 号房间开始\n\n    // 广度优先搜索的过程\n    while (!que.empty()) {\n        int key = que.front(); que.pop();\n         list<int> keys = graph[key];\n         for (int key : keys) {\n             if (!visited[key]) {\n                 que.push(key);\n                 visited[key] = true;\n             }\n         }\n    }\n\n    for (int i = 1; i <= n; i++) {\n        if (visited[i] == false) {\n            cout << -1 << endl;\n            return 0;\n        }\n    }\n    cout << 1 << endl;\n}\n\n#其他语言版本\n#Java\n\nimport java.util.*;\n\npublic class Main {\n    public static List<List<Integer>> adjList = new ArrayList<>();\n\n    public static void dfs(boolean[] visited, int key) {\n        if (visited[key]) {\n            return;\n        }\n        visited[key] = true;\n        List<Integer> nextKeys = adjList.get(key);\n        for (int nextKey : nextKeys) {\n            dfs(visited, nextKey);\n        }\n    }\n\n    public static void bfs(boolean[] visited, int key) {\n        Queue<Integer> queue = new LinkedList<Integer>();\n        queue.add(key);\n        visited[key] = true;\n        while (!queue.isEmpty()) {\n            int curKey = queue.poll();\n            List<Integer> list = adjList.get(curKey);\n            for (int nextKey : list) {\n                if (!visited[nextKey]) {\n                    queue.add(nextKey);\n                    visited[nextKey] = true;\n                }\n            }\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int vertices_num = sc.nextInt();\n        int line_num = sc.nextInt();\n        for (int i = 0; i < vertices_num; i++) {\n            adjList.add(new LinkedList<>());\n        }//Initialization\n        for (int i = 0; i < line_num; i++) {\n            int s = sc.nextInt();\n            int t = sc.nextInt();\n            adjList.get(s - 1).add(t - 1);\n        }//构造邻接表\n        boolean[] visited = new boolean[vertices_num];\n        dfs(visited, 0);\n//        bfs(visited, 0);\n\n        for (int i = 0; i < vertices_num; i++) {\n            if (!visited[i]) {\n                System.out.println(-1);\n                return;\n            }\n        }\n        System.out.println(1);\n    }\n}\n\n#Python\nBFS算法\n\nimport collections\n\npath = set()  # 纪录 BFS 所经过之节点\n\ndef bfs(root, graph):\n    global path\n    \n    que = collections.deque([root])\n    while que:\n        cur = que.popleft()\n        path.add(cur)\n        \n        for nei in graph[cur]:\n            que.append(nei)\n        graph[cur] = []\n    return\n\ndef main():\n    N, K = map(int, input().strip().split())\n    graph = collections.defaultdict(list)\n    for _ in range(K):\n        src, dest = map(int, input().strip().split())\n        graph[src].append(dest)\n    \n    bfs(1, graph)\n    if path == {i for i in range(1, N + 1)}:\n        return 1\n    return -1\n        \n\nif __name__ == \"__main__\":\n    print(main())\n\n\ndef dfs(graph, key, visited):\n    for neighbor in graph[key]:\n        if not visited[neighbor]:  # Check if the next node is not visited\n            visited[neighbor] = True\n            dfs(graph, neighbor, visited)\n\ndef main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    n = int(data[0])\n    m = int(data[1])\n    \n    graph = [[] for _ in range(n + 1)]\n    index = 2\n    for _ in range(m):\n        s = int(data[index])\n        t = int(data[index + 1])\n        graph[s].append(t)\n        index += 2\n\n    visited = [False] * (n + 1)\n    visited[1] = True  # Process node 1 beforehand\n    dfs(graph, 1, visited)\n\n    for i in range(1, n + 1):\n        if not visited[i]:\n            print(-1)\n            return\n    \n    print(1)\n\nif __name__ == \"__main__\":\n    main()"
+}

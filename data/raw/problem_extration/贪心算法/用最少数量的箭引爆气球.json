@@ -1,0 +1,224 @@
+{
+  "id": "AP_bf5c46f6",
+  "title": "用最少数量的箭引爆气球",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/minimum-number-of-arrows-to-burst-balloons/",
+  "description": "一个数组 points ，其中 points [i] = [xstart,xend] ，返回引爆所有气球所必须射出的最小弓箭数。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "贪心算法",
+    "排序"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "自定义排序条件",
+    "迭代更新边界"
+  ],
+  "difficulty": null,
+  "solution_approach": "采用贪心算法，首先对气球按照起始坐标进行排序。遍历排序后的气球列表，如果当前气球与前一个气球有重叠，则更新重叠部分的最小右边界；如果没有重叠，则需要额外的一支箭。通过这种方式来保证使用最少数量的箭射爆所有气球。",
+  "key_insights": [
+    {
+      "content": "当遇到重叠的气球时，一起射可以使得使用的箭最少。这是基于这样的假设：即使留下某些气球到后面去射也不会比直接射掉当前能射的所有气球更优。"
+    },
+    {
+      "content": "通过对气球按照它们的开始坐标进行排序，我们可以确保在遍历时能够有效判断哪些气球是连续或者重叠的，从而更好地利用每一只箭。"
+    },
+    {
+      "content": "两个气球只要接触就可以被同一支箭射爆，因此比较条件应该是严格大于而非大于等于。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "如何使用最少的弓箭呢？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: static bool cmp(const vector<int>& a, const vector<int>& b) { return a[0] < b[0]; }public: int findMinArrowShots(vector<vector<int>>& points) { if (points.size() == 0) return 0; sort(points.begin(), points.end(), cmp); int result = 1; for (int i = 1; i < points.size(); i++) { if (points[i][0] > points[i - 1][1]) { result++; } else { points[i][1] = min(points[i - 1][1], points[i][1]); } } return result; }};",
+          "description": "使用C++实现的寻找最小弓箭数来射爆所有气球的问题解决方法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int findMinArrowShots(int[][] points) { Arrays.sort(points, (a, b) -> Integer.compare(a[0], b[0])); int count = 1; for (int i = 1; i < points.length; i++) { if (points[i][0] > points[i - 1][1]) { count++; } else { points[i][1] = Math.min(points[i][1], points[i - 1][1]); } } return count; }}",
+          "description": "使用Java实现的寻找最小弓箭数来射爆所有气球的问题解决方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findMinArrowShots(self, points: List[List[int]]) -> int: if len(points) == 0: return 0 points.sort(key=lambda x: x[0]) result = 1 for i in range(1, len(points)): if points[i][0] > points[i - 1][1]: result += 1 else: points[i][1] = min(points[i - 1][1], points[i][1]) return result\nclass Solution: def findMinArrowShots(self, points: List[List[int]]) -> int: if len(points) == 0: return 0 points.sort(key = lambda x: x[0]) curr_min_right = points[0][1] count = 1 for i in points: if i[0] > curr_min_right: count += 1 curr_min_right = i[1] else: curr_min_right = min(curr_min_right, i[1]) return count",
+          "description": "使用Python实现的两个版本的寻找最小弓箭数来射爆所有气球的问题解决方法，一个修改原数组，另一个不修改。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "注意事项",
+      "text": "注意题目中说的是：满足 xstart ≤ x ≤ xend，则该气球会被引爆。那么说明两个气球挨在一起不重叠也可以一起射爆，",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: static bool cmp(const vector<int>& a, const vector<int>& b) { return a[0] < b[0]; }public: int findMinArrowShots(vector<vector<int>>& points) { if (points.size() == 0) return 0; sort(points.begin(), points.end(), cmp); int result = 1; for (int i = 1; i < points.size(); i++) { if (points[i][0] > points[i - 1][1]) { result++; } else { points[i][1] = min(points[i - 1][1], points[i][1]); } } return result; }};",
+          "description": "C++实现，使用贪心算法计算最少箭矢数量"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int findMinArrowShots(int[][] points) { Arrays.sort(points, (a, b) -> Integer.compare(a[0], b[0])); int count = 1; for (int i = 1; i < points.length; i++) { if (points[i][0] > points[i - 1][1]) { count++; } else { points[i][1] = Math.min(points[i][1], points[i - 1][1]); } } return count; }}",
+          "description": "Java实现，同样利用贪心策略求解最小箭矢数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findMinArrowShots(self, points: List[List[int]]) -> int: if len(points) == 0: return 0 points.sort(key=lambda x: x[0]) result = 1 for i in range(1, len(points)): if points[i][0] > points[i - 1][1]: result += 1 else: points[i][1] = min(points[i - 1][1], points[i][1]) return result class Solution: def findMinArrowShots(self, points: List[List[int]]) -> int: if len(points) == 0: return 0 points.sort(key=lambda x: x[0]) curr_min_right = points[0][1] count = 1 for i in points: if i[0] > curr_min_right: count += 1 curr_min_right = i[1] else: curr_min_right = min(curr_min_right, i[1]) return count",
+          "description": "Python版本，给出两种方法来解决最少箭矢问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "这道题目贪心的思路很简单也很直接，就是重复的一起射了，但本题我认为是有难度的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: static bool cmp(const vector<int>& a, const vector<int>& b) { return a[0] < b[0]; } public: int findMinArrowShots(vector<vector<int>>& points) { if (points.size() == 0) return 0; sort(points.begin(), points.end(), cmp); int result = 1; for (int i = 1; i < points.size(); i++) { if (points[i][0] > points[i - 1][1]) { result++; } else { points[i][1] = min(points[i - 1][1], points[i][1]); } } return result; }};",
+          "description": "C++版本的解决方案，通过排序和贪心算法找到最少数量的箭来引爆所有气球。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Arrays; class Solution { public int findMinArrowShots(int[][] points) { Arrays.sort(points, (a, b) -> Integer.compare(a[0], b[0])); int count = 1; for (int i = 1; i < points.length; i++) { if (points[i][0] > points[i - 1][1]) { count++; } else { points[i][1] = Math.min(points[i][1], points[i - 1][1]); } } return count; }}",
+          "description": "Java版本的解决方案，利用数组排序后，采用贪心策略计算所需的最小箭数。"
+        },
+        {
+          "language": "python",
+          "code": "from typing import List class Solution: def findMinArrowShots(self, points: List[List[int]]) -> int: if len(points) == 0: return 0 points.sort(key=lambda x: x[0]) result = 1 for i in range(1, len(points)): if points[i][0] > points[i - 1][1]: result += 1 else: points[i][1] = min(points[i - 1][1], points[i][1]) return result class Solution: def findMinArrowShots(self, points: List[List[int]]) -> int: if len(points) == 0: return 0 points.sort(key=lambda x: x[0]) curr_min_right = points[0][1] count = 1 for i in points: if i[0] > curr_min_right: count += 1 curr_min_right = i[1] else: curr_min_right = min(curr_min_right, i[1]) return count",
+          "description": "Python版本提供了两种方法来解决这个问题，都是基于排序后的贪心算法，但第二种方法不改变原数组。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "class Solution {private: static bool cmp(const vector<int>& a, const vector<int>& b) { return a[0] < b[0]; } public: int findMinArrowShots(vector<vector<int>>& points) { if (points.size() == 0) return 0; sort(points.begin(), points.end(), cmp); int result = 1; for (int i = 1; i < points.size(); i++) { if (points[i][0] > points[i - 1][1]) { result++; } else { points[i][1] = min(points[i - 1][1], points[i][1]); } } return result; }};",
+          "description": "使用贪心算法解决最少箭射爆气球问题"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public int findMinArrowShots(int[][] points) { Arrays.sort(points, (a, b) -> Integer.compare(a[0], b[0])); int count = 1; for (int i = 1; i < points.length; i++) { if (points[i][0] > points[i - 1][1]) { count++; } else { points[i][1] = Math.min(points[i][1], points[i - 1][1]); } } return count;}}",
+          "description": "Java版本的最少箭射爆气球解决方案"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def findMinArrowShots(self, points: List[List[int]]) -> int: if len(points) == 0: return 0 points.sort(key=lambda x: x[0]) result = 1 for i in range(1, len(points)): if points[i][0] > points[i - 1][1]: result += 1 else: points[i][1] = min(points[i - 1][1], points[i][1]) return result class Solution: def findMinArrowShots(self, points: List[List[int]]) -> int: if len(points) == 0: return 0 points.sort(key=lambda x: x[0]) curr_min_right = points[0][1] count = 1 for i in points: if i[0] > curr_min_right: count += 1 curr_min_right = i[1] else: curr_min_right = min(curr_min_right, i[1]) return count",
+          "description": "Python版本实现，包含两种方法来解决最少箭射爆气球问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "/**",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: static bool cmp(const vector<int>& a, const vector<int>& b) { return a[0] < b[0]; } public: int findMinArrowShots(vector<vector<int>>& points) { if (points.size() == 0) return 0; sort(points.begin(), points.end(), cmp); int result = 1; for (int i = 1; i < points.size(); i++) { if (points[i][0] > points[i - 1][1]) { result++; } else { points[i][1] = min(points[i - 1][1], points[i][1]); } } return result; }};",
+          "description": "C++实现的解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int findMinArrowShots(int[][] points) { Arrays.sort(points, (a, b) -> Integer.compare(a[0], b[0])); int count = 1; for (int i = 1; i < points.length; i++) { if (points[i][0] > points[i - 1][1]) { count++; } else { points[i][1] = Math.min(points[i][1], points[i - 1][1]); } } return count;}}",
+          "description": "Java实现的解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findMinArrowShots(self, points: List[List[int]]) -> int: if len(points) == 0: return 0 points.sort(key=lambda x: x[0]) result = 1 for i in range(1, len(points)): if points[i][0] > points[i - 1][1]: result += 1 else: points[i][1] = min(points[i - 1][1], points[i][1]) return result class Solution: def findMinArrowShots(self, points: List[List[int]]) -> int: if len(points) == 0: return 0 points.sort(key=lambda x: x[0]) curr_min_right = points[0][1] count = 1 for i in points: if i[0] > curr_min_right: count += 1 curr_min_right = i[1] else: curr_min_right = min(curr_min_right, i[1]) return count",
+          "description": "Python实现的解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "class Solution:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    static bool cmp(const vector<int>& a, const vector<int>& b) {\n        return a[0] < b[0];\n    }\npublic:\n    int findMinArrowShots(vector<vector<int>>& points) {\n        if (points.size() == 0) return 0;\n        sort(points.begin(), points.end(), cmp);\n\n        int result = 1; // points 不为空至少需要一支箭\n        for (int i = 1; i < points.size(); i++) {\n            if (points[i][0] > points[i - 1][1]) {  // 气球i和气球i-1不挨着，注意这里不是>=\n                result++; // 需要一支箭\n            }\n            else {  // 气球i和气球i-1挨着\n                points[i][1] = min(points[i - 1][1], points[i][1]); // 更新重叠气球最小右边界\n            }\n        }\n        return result;\n    }\n};",
+          "description": "C++解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int findMinArrowShots(int[][] points) {\n        // 根据气球直径的开始坐标从小到大排序\n        // 使用Integer内置比较方法，不会溢出\n        Arrays.sort(points, (a, b) -> Integer.compare(a[0], b[0]));\n\n        int count = 1;  // points 不为空至少需要一支箭\n        for (int i = 1; i < points.length; i++) {\n            if (points[i][0] > points[i - 1][1]) {  // 气球i和气球i-1不挨着，注意这里不是>=\n                count++; // 需要一支箭\n            } else {  // 气球i和气球i-1挨着\n                points[i][1] = Math.min(points[i][1], points[i - 1][1]); // 更新重叠气球最小右边界\n            }\n        }\n        return count;\n    }\n}",
+          "description": "Java解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def findMinArrowShots(self, points: List[List[int]]) -> int:\n        if len(points) == 0: return 0\n        points.sort(key=lambda x: x[0])\n        result = 1\n        for i in range(1, len(points)):\n            if points[i][0] > points[i - 1][1]: # 气球i和气球i-1不挨着，注意这里不是>=\n                result += 1     \n            else:\n                points[i][1] = min(points[i - 1][1], points[i][1]) # 更新重叠气球最小右边界\n        return result\nclass Solution: # 不改变原数组\n    def findMinArrowShots(self, points: List[List[int]]) -> int:\n        if len(points) == 0:\n            return 0\n\n        points.sort(key = lambda x: x[0])\n\n        # points已经按照第一个坐标正序排列，因此只需要设置一个变量，记录右侧坐标（阈值）\n        # 考虑一个气球范围包含两个不相交气球的情况：气球1: [1, 10], 气球2: [2, 5], 气球3: [6, 10]\n        curr_min_right = points[0][1]\n        count = 1\n\n        for i in points:\n            if i[0] > curr_min_right:\n                # 当气球左侧大于这个阈值，那么一定就需要在发射一只箭，并且将阈值更新为当前气球的右侧\n                count += 1\n                curr_min_right = i[1]\n            else:\n                # 否则的话，我们只需要求阈值和当前气球的右侧的较小值来更新阈值\n                curr_min_right = min(curr_min_right, i[1])\n        return count",
+          "description": "Python解决方案"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(nlog n)",
+    "space_complexity": "O(n)",
+    "explanation": "因为有一个快排"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {private: static bool cmp(const vector<int>& a, const vector<int>& b) { return a[0] < b[0]; }public: int findMinArrowShots(vector<vector<int>>& points) { if (points.size() == 0) return 0; sort(points.begin(), points.end(), cmp); int result = 1; for (int i = 1; i < points.size(); i++) { if (points[i][0] > points[i - 1][1]) { result++; } else { points[i][1] = min(points[i - 1][1], points[i][1]); } } return result; }};",
+      "description": "C++实现的气球引爆问题解法"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public int findMinArrowShots(int[][] points) { Arrays.sort(points, (a, b) -> Integer.compare(a[0], b[0])); int count = 1; for (int i = 1; i < points.length; i++) { if (points[i][0] > points[i - 1][1]) { count++; } else { points[i][1] = Math.min(points[i][1], points[i - 1][1]); } } return count; }}",
+      "description": "Java实现的气球引爆问题解法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def findMinArrowShots(self, points: List[List[int]]) -> int: if len(points) == 0: return 0 points.sort(key=lambda x: x[0]) result = 1 for i in range(1, len(points)): if points[i][0] > points[i - 1][1]: result += 1 else: points[i][1] = min(points[i - 1][1], points[i][1]) return result",
+      "description": "Python实现的气球引爆问题解法，改变原数组"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def findMinArrowShots(self, points: List[List[int]]) -> int: if len(points) == 0: return 0 points.sort(key = lambda x: x[0]) curr_min_right = points[0][1] count = 1 for i in points: if i[0] > curr_min_right: count += 1 curr_min_right = i[1] else: curr_min_right = min(curr_min_right, i[1]) return count",
+      "description": "Python实现的气球引爆问题解法，不改变原数组"
+    }
+  ],
+  "common_mistakes": [
+    "错误地将两个相邻但不完全重叠（即刚好挨着）的气球视为非重叠，导致多计算了箭的数量。",
+    "尝试从数据结构中移除已经‘射爆’的气球，这增加了代码复杂度而没有实际益处。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201123101929791.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20201123101929791.png",
+      "context": "该图片展示了按照气球起始位置排序后，通过分析重叠情况来确定最少需要多少支箭穿透所有气球的示例。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201123101929791.png",
+      "description": "GIF展示了按照气球起始位置排序后的数组，从前向后遍历过程中如何通过最少数量的箭来射爆所有重叠的气球。",
+      "context": "该GIF动画展示了按照气球的起始位置排序后，如何从前向后遍历数组并通过最小右边界确定所需弓箭数量的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\贪心算法\\用最少数量的箭引爆气球.txt",
+  "extracted_at": "2025-07-22T16:54:34.058511",
+  "raw_content": "用最少数量的箭引爆气球\n力扣题目链接(https://leetcode.cn/problems/minimum-number-of-arrows-to-burst-balloons/)\n\n在二维空间中有许多球形的气球。对于每个气球，提供的输入是水平方向上，气球直径的开始和结束坐标。由于它是水平的，所以纵坐标并不重要，因此只要知道开始和结束的横坐标就足够了。开始坐标总是小于结束坐标。\n\n一支弓箭可以沿着 x 轴从不同点完全垂直地射出。在坐标 x 处射出一支箭，若有一个气球的直径的开始和结束坐标为 xstart，xend， 且满足  xstart ≤ x ≤ xend，则该气球会被引爆。可以射出的弓箭的数量没有限制。 弓箭一旦被射出之后，可以无限地前进。我们想找到使得所有气球全部被引爆，所需的弓箭的最小数量。\n\n给你一个数组 points ，其中 points [i] = [xstart,xend] ，返回引爆所有气球所必须射出的最小弓箭数。\n\n示例 1：\n\n输入：points = [[10,16],[2,8],[1,6],[7,12]]\n输出：2\n解释：对于该样例，x = 6 可以射爆 [2,8],[1,6] 两个气球，以及 x = 11 射爆另外两个气球\n示例 2：\n\n输入：points = [[1,2],[3,4],[5,6],[7,8]]\n输出：4\n示例 3：\n\n输入：points = [[1,2],[2,3],[3,4],[4,5]]\n输出：2\n示例 4：\n\n输入：points = [[1,2]]\n输出：1\n示例 5：\n\n输入：points = [[2,3],[2,3]]\n输出：1\n提示：\n\n0 <= points.length <= 10^4\npoints[i].length == 2\n-2^31 <= xstart < xend <= 2^31 - 1\n\n#思路\n如何使用最少的弓箭呢？\n\n直觉上来看，貌似只射重叠最多的气球，用的弓箭一定最少，那么有没有当前重叠了三个气球，我射两个，留下一个和后面的一起射这样弓箭用的更少的情况呢？\n\n尝试一下举反例，发现没有这种情况。\n\n那么就试一试贪心吧！局部最优：当气球出现重叠，一起射，所用弓箭最少。全局最优：把所有气球射爆所用弓箭最少。\n\n算法确定下来了，那么如何模拟气球射爆的过程呢？是在数组中移除元素还是做标记呢？\n\n如果真实的模拟射气球的过程，应该射一个，气球数组就remove一个元素，这样最直观，毕竟气球被射了。\n\n但仔细思考一下就发现：如果把气球排序之后，从前到后遍历气球，被射过的气球仅仅跳过就行了，没有必要让气球数组remove气球，只要记录一下箭的数量就可以了。\n\n以上为思考过程，已经确定下来使用贪心了，那么开始解题。\n\n为了让气球尽可能的重叠，需要对数组进行排序。\n\n那么按照气球起始位置排序，还是按照气球终止位置排序呢？\n\n其实都可以！只不过对应的遍历顺序不同，我就按照气球的起始位置排序了。\n\n既然按照起始位置排序，那么就从前向后遍历气球数组，靠左尽可能让气球重复。\n\n从前向后遍历遇到重叠的气球了怎么办？\n\n如果气球重叠了，重叠气球中右边边界的最小值 之前的区间一定需要一个弓箭。\n\n以题目示例： [[10,16],[2,8],[1,6],[7,12]]为例，如图：（方便起见，已经排序）\n\nhttps://file1.kamacoder.com/i/algo/20201123101929791.png\n\n可以看出首先第一组重叠气球，一定是需要一个箭，气球3，的左边界大于了 第一组重叠气球的最小右边界，所以再需要一支箭来射气球3了。\n\nC++代码如下：\n\nclass Solution {\nprivate:\n    static bool cmp(const vector<int>& a, const vector<int>& b) {\n        return a[0] < b[0];\n    }\npublic:\n    int findMinArrowShots(vector<vector<int>>& points) {\n        if (points.size() == 0) return 0;\n        sort(points.begin(), points.end(), cmp);\n\n        int result = 1; // points 不为空至少需要一支箭\n        for (int i = 1; i < points.size(); i++) {\n            if (points[i][0] > points[i - 1][1]) {  // 气球i和气球i-1不挨着，注意这里不是>=\n                result++; // 需要一支箭\n            }\n            else {  // 气球i和气球i-1挨着\n                points[i][1] = min(points[i - 1][1], points[i][1]); // 更新重叠气球最小右边界\n            }\n        }\n        return result;\n    }\n};\n时间复杂度：O(nlog n)，因为有一个快排\n空间复杂度：O(n)，有一个快排，最差情况(倒序)时，需要n次递归调用。因此确实需要O(n)的栈空间\n可以看出代码并不复杂。\n\n#注意事项\n注意题目中说的是：满足 xstart ≤ x ≤ xend，则该气球会被引爆。那么说明两个气球挨在一起不重叠也可以一起射爆，\n\n所以代码中 if (points[i][0] > points[i - 1][1]) 不能是>=\n\n#总结\n这道题目贪心的思路很简单也很直接，就是重复的一起射了，但本题我认为是有难度的。\n\n就算思路都想好了，模拟射气球的过程，很多同学真的要去模拟了，实时把气球从数组中移走，这么写的话就复杂了。\n\n而且寻找重复的气球，寻找重叠气球最小右边界，其实都有代码技巧。\n\n贪心题目有时候就是这样，看起来很简单，思路很直接，但是一写代码就感觉贼复杂无从下手。\n\n这里其实是需要代码功底的，那代码功底怎么练？\n\n多看多写多总结！\n\n#其他语言版本\n#Java\n/**\n * 时间复杂度 : O(NlogN)  排序需要 O(NlogN) 的复杂度\n * 空间复杂度 : O(logN) java所使用的内置函数用的是快速排序需要 logN 的空间\n */\nclass Solution {\n    public int findMinArrowShots(int[][] points) {\n        // 根据气球直径的开始坐标从小到大排序\n        // 使用Integer内置比较方法，不会溢出\n        Arrays.sort(points, (a, b) -> Integer.compare(a[0], b[0]));\n\n        int count = 1;  // points 不为空至少需要一支箭\n        for (int i = 1; i < points.length; i++) {\n            if (points[i][0] > points[i - 1][1]) {  // 气球i和气球i-1不挨着，注意这里不是>=\n                count++; // 需要一支箭\n            } else {  // 气球i和气球i-1挨着\n                points[i][1] = Math.min(points[i][1], points[i - 1][1]); // 更新重叠气球最小右边界\n            }\n        }\n        return count;\n    }\n}\n#Python\nclass Solution:\n    def findMinArrowShots(self, points: List[List[int]]) -> int:\n        if len(points) == 0: return 0\n        points.sort(key=lambda x: x[0])\n        result = 1\n        for i in range(1, len(points)):\n            if points[i][0] > points[i - 1][1]: # 气球i和气球i-1不挨着，注意这里不是>=\n                result += 1     \n            else:\n                points[i][1] = min(points[i - 1][1], points[i][1]) # 更新重叠气球最小右边界\n        return result\nclass Solution: # 不改变原数组\n    def findMinArrowShots(self, points: List[List[int]]) -> int:\n        if len(points) == 0:\n            return 0\n            \n        points.sort(key = lambda x: x[0])\n\n        # points已经按照第一个坐标正序排列，因此只需要设置一个变量，记录右侧坐标（阈值）\n        # 考虑一个气球范围包含两个不相交气球的情况：气球1: [1, 10], 气球2: [2, 5], 气球3: [6, 10]\n        curr_min_right = points[0][1]\n        count = 1\n        \n        for i in points:\n            if i[0] > curr_min_right:\n                # 当气球左侧大于这个阈值，那么一定就需要在发射一只箭，并且将阈值更新为当前气球的右侧\n                count += 1\n                curr_min_right = i[1]\n            else:\n                # 否则的话，我们只需要求阈值和当前气球的右侧的较小值来更新阈值\n                curr_min_right = min(curr_min_right, i[1])\n        return count"
+}

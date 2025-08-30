@@ -1,0 +1,284 @@
+{
+  "id": "AP_771c5604",
+  "title": "两两交换链表中的节点",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/swap-nodes-in-pairs/",
+  "description": "给定一个链表，两两交换其中相邻的节点，并返回交换后的链表。\n\n你不能只是单纯的改变节点内部的值，而是需要实际的进行节点交换。\n\nhttps://file1.kamacoder.com/i/algo/24.%E4%B8%A4%E4%B8%A4%E4%BA%A4%E6%8D%A2%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B9-%E9%A2%98%E6%84%8F.jpg",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "模拟",
+    "链表操作"
+  ],
+  "data_structure_tags": [
+    "链表"
+  ],
+  "technique_tags": [
+    "双指针",
+    "递归"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过使用虚拟头结点简化操作，对链表进行两两节点交换。每次迭代中，调整当前节点及其后两个节点的链接关系，完成一对节点的交换。重复此过程直到链表结束。",
+  "key_insights": [
+    {
+      "content": "利用虚拟头结点可以统一处理头节点和其他节点的交换逻辑，避免了单独为头节点编写特殊处理代码。"
+    },
+    {
+      "content": "通过引入临时变量来保存关键指针位置，在执行多步操作时保持链表结构的完整性。"
+    },
+    {
+      "content": "无论是采用迭代还是递归的方式，基本思路都是将相邻两节点的位置互换，并正确处理好与前后节点的连接关系。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目正常模拟就可以了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* swapPairs(ListNode* head) {ListNode* dummyHead = new ListNode(0); dummyHead->next = head; ListNode* cur = dummyHead; while(cur->next != nullptr && cur->next->next != nullptr) {ListNode* tmp = cur->next; ListNode* tmp1 = cur->next->next->next; cur->next = cur->next->next; cur->next->next = tmp; cur->next->next->next = tmp1; cur = cur->next->next;} ListNode* result = dummyHead->next; delete dummyHead; return result;}};",
+          "description": "C++实现两两交换链表中的节点"
+        },
+        {
+          "language": "c",
+          "code": "struct ListNode* swapPairs(struct ListNode* head){if(!head || !head->next)return head;struct ListNode *newHead = head->next;head->next = swapPairs(newHead->next);newHead->next = head;return newHead;}struct ListNode* swapPairs(struct ListNode* head){typedef struct ListNode ListNode;ListNode *fakehead = (ListNode *)malloc(sizeof(ListNode));fakehead->next = head;ListNode* right = fakehead->next;ListNode* left = fakehead;while(left && right && right->next ){left->next = right->next;right->next = left->next->next;left->next->next = right;left = right;right = left->next;}return fakehead->next;}",
+          "description": "C语言递归和迭代版本实现两两交换链表中的节点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public ListNode swapPairs(ListNode head) {if(head == null || head.next == null) return head;ListNode next = head.next;ListNode newNode = swapPairs(next.next);next.next = head;head.next = newNode;return next;}} class Solution {public ListNode swapPairs(ListNode head) {ListNode dumyhead = new ListNode(-1); dumyhead.next = head; ListNode cur = dumyhead; ListNode temp, firstnode, secondnode; while (cur.next != null && cur.next.next != null) {temp = cur.next.next.next;firstnode = cur.next;secondnode = cur.next.next;cur.next = secondnode;secondnode.next = firstnode;firstnode.next = temp;cur = firstnode;}return dumyhead.next;}} public ListNode swapPairs(ListNode head) {ListNode dummy = new ListNode(0, head);ListNode cur = dummy;while (cur.next != null && cur.next.next != null) {ListNode node1 = cur.next;ListNode node2 = cur.next.next;cur.next = node2;node1.next = node2.next;node2.next = node1;cur = cur.next.next;}return dummy.next;}",
+          "description": "Java语言递归和迭代版本实现两两交换链表中的节点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def swapPairs(self, head: Optional[ListNode]) -> Optional[ListNode]: if head is None or head.next is None: return head pre = head cur = head.next next = head.next.next cur.next = pre pre.next = self.swapPairs(next) return cur class Solution: def swapPairs(self, head: ListNode) -> ListNode: dummy_head = ListNode(next=head) current = dummy_head while current.next and current.next.next: temp = current.next temp1 = current.next.next.next current.next = current.next.next current.next.next = temp temp.next = temp1 current = current.next.next return dummy_head.next",
+          "description": "Python语言递归和迭代版本实现两两交换链表中的节点"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "拓展",
+      "text": "这里还是说一下，大家不必太在意力扣上执行用时，打败多少多少用户，这个统计不准确的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* swapPairs(ListNode* head) {ListNode* dummyHead = new ListNode(0);dummyHead->next = head;ListNode* cur = dummyHead;while(cur->next != nullptr && cur->next->next != nullptr) {ListNode* tmp = cur->next;ListNode* tmp1 = cur->next->next->next;cur->next = cur->next->next;cur->next->next = tmp;cur->next->next->next = tmp1;cur = cur->next->next;}ListNode* result = dummyHead->next;delete dummyHead;return result;}};",
+          "description": "C++实现两两交换链表中的节点"
+        },
+        {
+          "language": "c",
+          "code": "struct ListNode* swapPairs(struct ListNode* head){if(!head || !head->next)return head;struct ListNode *newHead = head->next;head->next = swapPairs(newHead->next);newHead->next = head;return newHead;}struct ListNode* swapPairs(struct ListNode* head){typedef struct ListNode ListNode;ListNode *fakehead = (ListNode *)malloc(sizeof(ListNode));fakehead->next = head;ListNode* right = fakehead->next;ListNode* left = fakehead;while(left && right && right->next ){left->next = right->next;right->next = left->next->next;left->next->next = right;left = right;right = left->next;}return fakehead->next;}",
+          "description": "C语言实现两两交换链表中的节点，包括递归和迭代版本"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public ListNode swapPairs(ListNode head) {if(head == null || head.next == null) return head;ListNode next = head.next;ListNode newNode = swapPairs(next.next);next.next = head;head.next = newNode;return next;}} class Solution {public ListNode swapPairs(ListNode head) {ListNode dumyhead = new ListNode(-1);dumyhead.next = head;ListNode cur = dumyheader;ListNode temp, firstnode, secondnode;while (cur.next != null && cur.next.next != null) {temp = cur.next.next.next;firstnode = cur.next;secondnode = cur.next.next;cur.next = secondnode;secondnode.next = firstnode;firstnode.next = temp;cur = firstnode;}return dumyhead.next;}} public ListNode swapPairs(ListNode head) {ListNode dummy = new ListNode(0, head);ListNode cur = dummy;while (cur.next != null && cur.next.next != null) {ListNode node1 = cur.next;ListNode node2 = cur.next.next;cur.next = node2;node1.next = node2.next;node2.next = node1;cur = cur.next.next;}return dummy.next;}",
+          "description": "Java实现两两交换链表中的节点，包含多种方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def swapPairs(self, head: Optional[ListNode]) -> Optional[ListNode]: if head is None or head.next is None: return head pre = head cur = head.next next = head.next.next cur.next = pre pre.next = self.swapPairs(next) return cur class Solution: def swapPairs(self, head: ListNode) -> ListNode: dummy_head = ListNode(next=head) current = dummy_head while current.next and current.next.next: temp = current.next temp1 = current.next.next.next current.next = current.next.next current.next.next = temp temp.next = temp1 current = current.next.next return dummy_head.next",
+          "description": "Python实现两两交换链表中的节点，包括递归和迭代版本"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#C:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* swapPairs(ListNode* head) {ListNode* dummyHead = new ListNode(0); dummyHead->next = head; ListNode* cur = dummyHead; while(cur->next != nullptr && cur->next->next != nullptr) {ListNode* tmp = cur->next; ListNode* tmp1 = cur->next->next->next; cur->next = cur->next->next; cur->next->next = tmp; cur->next->next->next = tmp1; cur = cur->next->next;} ListNode* result = dummyHead->next; delete dummyHead; return result;}};",
+          "description": "C++实现两两交换链表中的节点"
+        },
+        {
+          "language": "c",
+          "code": "struct ListNode* swapPairs(struct ListNode* head){if(!head || !head->next)return head;struct ListNode *newHead = head->next;head->next = swapPairs(newHead->next);newHead->next = head;return newHead;}struct ListNode* swapPairs(struct ListNode* head){typedef struct ListNode ListNode;ListNode *fakehead = (ListNode *)malloc(sizeof(ListNode));fakehead->next = head;ListNode* right = fakehead->next;ListNode* left = fakehead;while(left && right && right->next ){left->next = right->next;right->next = left->next->next;left->next->next = right;left = right;right = left->next;}return fakehead->next;}",
+          "description": "C语言递归和迭代版本实现两两交换链表中的节点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution{public ListNode swapPairs(ListNode head){if(head == null || head.next == null)return head;ListNode next = head.next;ListNode newNode = swapPairs(next.next);next.next = head;head.next = newNode;return next;}}class Solution{public ListNode swapPairs(ListNode head){ListNode dumyhead = new ListNode(-1);dumyhead.next = head;ListNode cur = dumyhead;ListNode temp, firstnode, secondnode;while(cur.next != null && cur.next.next != null){temp = cur.next.next.next;firstnode = cur.next;secondnode = cur.next.next;cur.next = secondnode;secondnode.next = firstnode;firstnode.next = temp;cur = firstnode;}return dumyhead.next;}}public ListNode swapPairs(ListNode head){ListNode dummy = new ListNode(0, head);ListNode cur = dummy;while(cur.next != null && cur.next.next != null){ListNode node1 = cur.next;ListNode node2 = cur.next.next;cur.next = node2;node1.next = node2.next;node2.next = node1;cur = cur.next.next;}return dummy.next;}",
+          "description": "Java实现两两交换链表中的节点，包括递归和迭代两种方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def swapPairs(self, head: Optional[ListNode]) -> Optional[ListNode]:if head is None or head.next is None:return headpre = headcur = head.nextnext = head.next.nexcur.next = prepre.next = self.swapPairs(next)return curclass Solution:def swapPairs(self, head: ListNode) -> ListNode:dummy_head = ListNode(next=head)current = dummy_headwhile current.next and current.next.next:temp = current.nexttemp1 = current.next.next.nextcurrent.next = current.next.nextcurrent.next.next = temppre.next = temp1current = current.next.nextreturn dummy_head.next",
+          "description": "Python实现两两交换链表中的节点，包括递归和迭代两种方法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "C:",
+      "text": "/**",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* swapPairs(ListNode* head) {ListNode* dummyHead = new ListNode(0); dummyHead->next = head; ListNode* cur = dummyHead; while(cur->next != nullptr && cur->next->next != nullptr) {ListNode* tmp = cur->next; ListNode* tmp1 = cur->next->next->next; cur->next = cur->next->next; cur->next->next = tmp; cur->next->next->next = tmp1; cur = cur->next->next;} ListNode* result = dummyHead->next; delete dummyHead; return result;}};",
+          "description": "C++实现两两交换链表中的节点"
+        },
+        {
+          "language": "c",
+          "code": "struct ListNode* swapPairs(struct ListNode* head){if(!head || !head->next)return head;struct ListNode *newHead = head->next;head->next = swapPairs(newHead->next);newHead->next = head;return newHead;}struct ListNode* swapPairs(struct ListNode* head){typedef struct ListNode ListNode;ListNode *fakehead = (ListNode *)malloc(sizeof(ListNode));fakehead->next = head;ListNode* right = fakehead->next;ListNode* left = fakehead;while(left && right && right->next ){left->next = right->next;right->next = left->next->next;left->next->next = right;left = right;right = left->next;}return fakehead->next;}",
+          "description": "C语言递归和迭代版本实现两两交换链表中的节点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public ListNode swapPairs(ListNode head) {if(head == null || head.next == null) return head;ListNode next = head.next;ListNode newNode = swapPairs(next.next);next.next = head;head.next = newNode;return next;}} class Solution {public ListNode swapPairs(ListNode head) {ListNode dumyhead = new ListNode(-1); dumyhead.next = head; ListNode cur = dumyhead; ListNode temp, firstnode, secondnode; while (cur.next != null && cur.next.next != null) {temp = cur.next.next.next;firstnode = cur.next;secondnode = cur.next.next;cur.next = secondnode;secondnode.next = firstnode;firstnode.next = temp;cur = firstnode;}return dumyhead.next;}} public ListNode swapPairs(ListNode head) {ListNode dummy = new ListNode(0, head);ListNode cur = dummy;while (cur.next != null && cur.next.next != null) {ListNode node1 = cur.next;ListNode node2 = cur.next.next;cur.next = node2;node1.next = node2.next;node2.next = node1;cur = cur.next.next;}return dummy.next;}",
+          "description": "Java实现两两交换链表中的节点，包括递归和迭代版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def swapPairs(self, head: Optional[ListNode]) -> Optional[ListNode]: if head is None or head.next is None: return head pre = head cur = head.next next = head.next.next cur.next = pre pre.next = self.swapPairs(next) return cur class Solution: def swapPairs(self, head: ListNode) -> ListNode: dummy_head = ListNode(next=head) current = dummy_head while current.next and current.next.next: temp = current.next temp1 = current.next.next.next current.next = current.next.next current.next.next = temp temp.next = temp1 current = current.next.next return dummy_head.next",
+          "description": "Python实现两两交换链表中的节点，包括递归和迭代版本"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "// 递归版本",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* swapPairs(ListNode* head) {ListNode* dummyHead = new ListNode(0); dummyHead->next = head; ListNode* cur = dummyHead; while(cur->next != nullptr && cur->next->next != nullptr) {ListNode* tmp = cur->next; ListNode* tmp1 = cur->next->next->next; cur->next = cur->next->next; cur->next->next = tmp; cur->next->next->next = tmp1; cur = cur->next->next;} ListNode* result = dummyHead->next; delete dummyHead; return result;}};",
+          "description": "C++实现两两交换链表中的节点"
+        },
+        {
+          "language": "c",
+          "code": "struct ListNode* swapPairs(struct ListNode* head){ if(!head || !head->next) return head; struct ListNode *newHead = head->next; head->next = swapPairs(newHead->next); newHead->next = head; return newHead;}struct ListNode* swapPairs(struct ListNode* head){ typedef struct ListNode ListNode; ListNode *fakehead = (ListNode *)malloc(sizeof(ListNode)); fakehead->next = head; ListNode* right = fakehead->next; ListNode* left = fakehead; while(left && right && right->next ){ left->next = right->next; right->next = left->next->next; left->next->next = right; left = right; right = left->next;} return fakehead->next;}",
+          "description": "C语言递归与迭代版本实现两两交换链表中的节点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public ListNode swapPairs(ListNode head) { if(head == null || head.next == null) return head; ListNode next = head.next; ListNode newNode = swapPairs(next.next); next.next = head; head.next = newNode; return next; }} class Solution { public ListNode swapPairs(ListNode head) { ListNode dumyhead = new ListNode(-1); dumyhead.next = head; ListNode cur = dumyhead; ListNode temp, firstnode, secondnode; while (cur.next != null && cur.next.next != null) { temp = cur.next.next.next; firstnode = cur.next; secondnode = cur.next.next; cur.next = secondnode; secondnode.next = firstnode; firstnode.next = temp; cur = firstnode; } return dumyhead.next; }} public ListNode swapPairs(ListNode head) { ListNode dummy = new ListNode(0, head); ListNode cur = dummy; while (cur.next != null && cur.next.next != null) { ListNode node1 = cur.next; ListNode node2 = cur.next.next; cur.next = node2; node1.next = node2.next; node2.next = node1; cur = cur.next.next; } return dummy.next; }",
+          "description": "Java实现两两交换链表中的节点，包括递归和非递归版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def swapPairs(self, head: Optional[ListNode]) -> Optional[ListNode]: if head is None or head.next is None: return head pre = head cur = head.next next = head.next.next cur.next = pre pre.next = self.swapPairs(next) return cur class Solution: def swapPairs(self, head: ListNode) -> ListNode: dummy_head = ListNode(next=head) current = dummy_head while current.next and current.next.next: temp = current.next temp1 = current.next.next.next current.next = current.next.next current.next.next = temp temp.next = temp1 current = current.next.next return dummy_head.next",
+          "description": "Python实现两两交换链表中的节点，包含递归和迭代方法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "# 递归版本",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* swapPairs(ListNode* head) {ListNode* dummyHead = new ListNode(0); dummyHead->next = head; ListNode* cur = dummyHead; while(cur->next != nullptr && cur->next->next != nullptr) {ListNode* tmp = cur->next; ListNode* tmp1 = cur->next->next->next; cur->next = cur->next->next; cur->next->next = tmp; cur->next->next->next = tmp1; cur = cur->next->next;} ListNode* result = dummyHead->next; delete dummyHead; return result;}};",
+          "description": "C++版本的两两交换链表中的节点"
+        },
+        {
+          "language": "c",
+          "code": "struct ListNode* swapPairs(struct ListNode* head){ if(!head || !head->next) return head; struct ListNode *newHead = head->next; head->next = swapPairs(newHead->next); newHead->next = head; return newHead;} struct ListNode* swapPairs(struct ListNode* head){ typedef struct ListNode ListNode; ListNode *fakehead = (ListNode *)malloc(sizeof(ListNode)); fakehead->next = head; ListNode* right = fakehead->next; ListNode* left = fakehead; while(left && right && right->next ){ left->next = right->next; right->next = left->next->next; left->next->next = right; left = right; right = left->next;} return fakehead->next;}",
+          "description": "C语言版本的两两交换链表中的节点，包含递归和迭代两种方法。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public ListNode swapPairs(ListNode head) { if(head == null || head.next == null) return head; ListNode next = head.next; ListNode newNode = swapPairs(next.next); next.next = head; head.next = newNode; return next; }} class Solution { public ListNode swapPairs(ListNode head) { ListNode dumyhead = new ListNode(-1); dumyhead.next = head; ListNode cur = dumyhead; while (cur.next != null && cur.next.next != null) { ListNode temp = cur.next.next.next; ListNode firstnode = cur.next; ListNode secondnode = cur.next.next; cur.next = secondnode; secondnode.next = firstnode; firstnode.next = temp; cur = firstnode; } return dumyhead.next; }} public ListNode swapPairs(ListNode head) { ListNode dummy = new ListNode(0, head); ListNode cur = dummy; while (cur.next != null && cur.next.next != null) { ListNode node1 = cur.next; ListNode node2 = cur.next.next; cur.next = node2; node1.next = node2.next; node2.next = node1; cur = cur.next.next; } return dummy.next; }",
+          "description": "Java版本的两两交换链表中的节点，包括多种实现方式。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def swapPairs(self, head: Optional[ListNode]) -> Optional[ListNode]: if head is None or head.next is None: return head pre = head cur = head.next next = head.next.next cur.next = pre pre.next = self.swapPairs(next) return cur class Solution: def swapPairs(self, head: ListNode) -> ListNode: dummy_head = ListNode(next=head) current = dummy_head while current.next and current.next.next: temp = current.next temp1 = current.next.next.next current.next = current.next.next current.next.next = temp temp.next = temp1 current = current.next.next return dummy_head.next",
+          "description": "Python版本的两两交换链表中的节点，包括递归和迭代两种方法。"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "C++",
+      "code": "class Solution {public: ListNode* swapPairs(ListNode* head) {ListNode* dummyHead = new ListNode(0); dummyHead->next = head; ListNode* cur = dummyHead; while(cur->next != nullptr && cur->next->next != nullptr) {ListNode* tmp = cur->next; ListNode* tmp1 = cur->next->next->next; cur->next = cur->next->next; cur->next->next = tmp; cur->next->next->next = tmp1; cur = cur->next->next;} ListNode* result = dummyHead->next; delete dummyHead; return result;}};",
+      "description": "使用虚拟头结点交换链表中的相邻节点"
+    },
+    {
+      "language": "C",
+      "code": "struct ListNode* swapPairs(struct ListNode* head){if(!head || !head->next)return head;struct ListNode *newHead = head->next;head->next = swapPairs(newHead->next);newHead->next = head;return newHead;}struct ListNode* swapPairs(struct ListNode* head){typedef struct ListNode ListNode;ListNode *fakehead = (ListNode *)malloc(sizeof(ListNode));fakehead->next = head;ListNode* right = fakehead->next;ListNode* left = fakehead;while(left && right && right->next ){left->next = right->next;right->next = left->next->next;left->next->next = right;left = right;right = left->next;}return fakehead->next;}",
+      "description": "提供递归和迭代两种方法来交换链表中的相邻节点"
+    },
+    {
+      "language": "Java",
+      "code": "class Solution {public ListNode swapPairs(ListNode head) {if(head == null || head.next == null) return head;ListNode next = head.next;ListNode newNode = swapPairs(next.next);next.next = head;head.next = newNode;return next;}} class Solution {public ListNode swapPairs(ListNode head) {ListNode dumyhead = new ListNode(-1);dumyhead.next = head;ListNode cur = dumyhead;ListNode temp, firstnode, secondnode;while (cur.next != null && cur.next.next != null) {temp = cur.next.next.next;firstnode = cur.next;secondnode = cur.next.next;cur.next = secondnode;secondnode.next = firstnode;firstnode.next = temp;cur = firstnode;}return dumyhead.next;}} public ListNode swapPairs(ListNode head) {ListNode dummy = new ListNode(0, head);ListNode cur = dummy;while (cur.next != null && cur.next.next != null) {ListNode node1 = cur.next;ListNode node2 = cur.next.next;cur.next = node2;node1.next = node2.next;node2.next = node1;cur = cur.next.next;}return dummy.next;}",
+      "description": "提供了多种方法包括递归与非递归版本，用于交换链表中每对相邻节点的位置"
+    },
+    {
+      "language": "Python",
+      "code": "class Solution: def swapPairs(self, head: Optional[ListNode]) -> Optional[ListNode]: if head is None or head.next is None: return head pre = head cur = head.next next = head.next.next cur.next = pre pre.next = self.swapPairs(next) return cur class Solution: def swapPairs(self, head: ListNode) -> ListNode: dummy_head = ListNode(next=head) current = dummy_head while current.next and current.next.next: temp = current.next temp1 = current.next.next.next current.next = current.next.next current.next.next = temp temp.next = temp1 current = current.next.next return dummy_head.next",
+      "description": "通过递归和迭代方式实现链表中相邻节点的两两交换"
+    }
+  ],
+  "common_mistakes": [
+    "忘记处理边界情况（如仅有一个或零个元素）",
+    "在没有完全理解链表连接的情况下修改指针，导致链表断裂"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/24.%E4%B8%A4%E4%B8%A4%E4%BA%A4%E6%8D%A2%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B9-%E9%A2%98%E6%84%8F.jpg",
+      "description": "该图片展示了链表节点的两两交换算法，输入为链表节点序列，输出为每两个相邻节点交换位置后的链表序列。",
+      "context": "该图片展示了如何通过使用虚拟头节点来两两交换链表中相邻节点的过程，帮助理解具体操作步骤。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/24.%E4%B8%A4%E4%B8%A4%E4%BA%A4%E6%8D%A2%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B91.png",
+      "description": "这张图片展示了链表反转算法的三个关键步骤，通过调整节点指针的方向来实现链表的反转。",
+      "context": "该图展示了在使用虚拟头结点的情况下，交换链表中相邻两个节点前的初始状态。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/24.%E4%B8%A4%E4%B8%A4%E4%BA%A4%E6%8D%A2%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B92.png",
+      "description": "这张图片展示了链表反转算法的三个步骤，通过调整节点指针的方向来实现链表的反转。",
+      "context": "该图片展示了在链表节点交换操作之后，链表结构的变化情况。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/24.%E4%B8%A4%E4%B8%A4%E4%BA%A4%E6%8D%A2%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B93.png",
+      "description": "这张图片展示了链表数据结构中节点的遍历过程，通过“步骤一”、“步骤二”和“步骤三”依次指向链表中的每个节点（2、1、3、4），最终到达NULL。",
+      "context": "该图片直观展示了链表中节点两两交换后的最终结构，辅助理解代码实现效果。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/24.%E4%B8%A4%E4%B8%A4%E4%BA%A4%E6%8D%A2%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B91.png",
+      "description": "GIF展示了使用虚拟头结点交换链表中相邻节点的过程。",
+      "context": "该GIF动画展示了如何通过引入虚拟头结点来简化链表中相邻节点交换的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/24.%E4%B8%A4%E4%B8%A4%E4%BA%A4%E6%8D%A2%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B92.png",
+      "description": "GIF展示了链表中相邻节点两两交换的过程，通过指针操作实现。",
+      "context": "该GIF动画展示了如何通过操作多个指针来交换链表中的节点，直观地呈现了从初始状态到完成交换后的整个过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/24.%E4%B8%A4%E4%B8%A4%E4%BA%A4%E6%8D%A2%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B93.png",
+      "description": "GIF展示了链表中每两个相邻节点交换位置的过程。",
+      "context": "GIF动画展示了链表中两两交换节点的过程，帮助更直观地理解算法执行步骤。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\链表\\两两交换链表中的节点.txt",
+  "extracted_at": "2025-07-22T17:32:24.081466",
+  "raw_content": "两两交换链表中的节点\n力扣题目链接(https://leetcode.cn/problems/swap-nodes-in-pairs/)\n\n给定一个链表，两两交换其中相邻的节点，并返回交换后的链表。\n\n你不能只是单纯的改变节点内部的值，而是需要实际的进行节点交换。\n\nhttps://file1.kamacoder.com/i/algo/24.%E4%B8%A4%E4%B8%A4%E4%BA%A4%E6%8D%A2%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B9-%E9%A2%98%E6%84%8F.jpg\n\n\n#思路\n这道题目正常模拟就可以了。\n\n建议使用虚拟头结点，这样会方便很多，要不然每次针对头结点（没有前一个指针指向头结点），还要单独处理。\n\n对虚拟头结点的操作，还不熟悉的话，可以看这篇链表：听说用虚拟头节点会方便很多？ (opens new window)。\n\n接下来就是交换相邻两个元素了，此时一定要画图，不画图，操作多个指针很容易乱，而且要操作的先后顺序\n\n初始时，cur指向虚拟头结点，然后进行如下三步：\n\nhttps://file1.kamacoder.com/i/algo/24.%E4%B8%A4%E4%B8%A4%E4%BA%A4%E6%8D%A2%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B91.png\n\n操作之后，链表如下：\n\nhttps://file1.kamacoder.com/i/algo/24.%E4%B8%A4%E4%B8%A4%E4%BA%A4%E6%8D%A2%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B92.png\n\n看这个可能就更直观一些了：\n\nhttps://file1.kamacoder.com/i/algo/24.%E4%B8%A4%E4%B8%A4%E4%BA%A4%E6%8D%A2%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B93.png\n\n对应的C++代码实现如下： （注释中详细和如上图中的三步做对应）\n\nclass Solution {\npublic:\n    ListNode* swapPairs(ListNode* head) {\n        ListNode* dummyHead = new ListNode(0); // 设置一个虚拟头结点\n        dummyHead->next = head; // 将虚拟头结点指向head，这样方便后面做删除操作\n        ListNode* cur = dummyHead;\n        while(cur->next != nullptr && cur->next->next != nullptr) {\n            ListNode* tmp = cur->next; // 记录临时节点\n            ListNode* tmp1 = cur->next->next->next; // 记录临时节点\n\n            cur->next = cur->next->next;    // 步骤一\n            cur->next->next = tmp;          // 步骤二\n            cur->next->next->next = tmp1;   // 步骤三\n\n            cur = cur->next->next; // cur移动两位，准备下一轮交换\n        }\n        ListNode* result = dummyHead->next;\n        delete dummyHead;\n        return result;\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(1)\n#拓展\n这里还是说一下，大家不必太在意力扣上执行用时，打败多少多少用户，这个统计不准确的。\n\n做题的时候自己能分析出来时间复杂度就可以了，至于力扣上执行用时，大概看一下就行。\n\n上面的代码我第一次提交执行用时8ms，打败6.5%的用户，差点吓到我了。\n\n心想应该没有更好的方法了吧，也就 $O(n)$ 的时间复杂度，重复提交几次，这样了：\n\n24.两两交换链表中的节点\n\n力扣上的统计如果两份代码是 100ms 和 300ms的耗时，其实是需要注意的。\n\n如果一个是 4ms 一个是 12ms，看上去好像是一个打败了80%，一个打败了20%，其实是没有差别的。 只不过是力扣上统计的误差而已。\n\n#其他语言版本\n#C:\n/**\n * Definition for singly-linked list.\n * struct ListNode {\n *     int val;\n *     struct ListNode *next;\n * };\n */\n//递归版本\nstruct ListNode* swapPairs(struct ListNode* head){\n    //递归结束条件：头节点不存在或头节点的下一个节点不存在。此时不需要交换，直接返回head\n    if(!head || !head->next)\n        return head;\n    //创建一个节点指针类型保存头结点下一个节点\n    struct ListNode *newHead = head->next;\n    //更改头结点+2位节点后的值，并将头结点的next指针指向这个更改过的list\n    head->next = swapPairs(newHead->next);\n    //将新的头结点的next指针指向老的头节点\n    newHead->next = head;\n    return newHead;\n}\n//迭代版本\nstruct ListNode* swapPairs(struct ListNode* head){\n    //使用双指针避免使用中间变量\n    typedef struct ListNode ListNode;\n    ListNode *fakehead = (ListNode *)malloc(sizeof(ListNode));\n    fakehead->next = head;\n    ListNode* right = fakehead->next;\n    ListNode* left = fakehead;\n    while(left && right && right->next ){\n        left->next = right->next;\n        right->next = left->next->next;\n        left->next->next = right;\n        left = right;\n        right = left->next;\n    }\n    return fakehead->next;\n}\n#Java：\n// 递归版本\nclass Solution {\n    public ListNode swapPairs(ListNode head) {\n        // base case 退出提交\n        if(head == null || head.next == null) return head;\n        // 获取当前节点的下一个节点\n        ListNode next = head.next;\n        // 进行递归\n        ListNode newNode = swapPairs(next.next);\n        // 这里进行交换\n        next.next = head;\n        head.next = newNode;\n\n        return next;\n    }\n} \nclass Solution {\n  public ListNode swapPairs(ListNode head) {\n        ListNode dumyhead = new ListNode(-1); // 设置一个虚拟头结点\n        dumyhead.next = head; // 将虚拟头结点指向head，这样方便后面做删除操作\n        ListNode cur = dumyhead;\n        ListNode temp; // 临时节点，保存两个节点后面的节点\n        ListNode firstnode; // 临时节点，保存两个节点之中的第一个节点\n        ListNode secondnode; // 临时节点，保存两个节点之中的第二个节点\n        while (cur.next != null && cur.next.next != null) {\n            temp = cur.next.next.next;\n            firstnode = cur.next;\n            secondnode = cur.next.next;\n            cur.next = secondnode;       // 步骤一\n            secondnode.next = firstnode; // 步骤二\n            firstnode.next = temp;      // 步骤三\n            cur = firstnode; // cur移动，准备下一轮交换\n        }\n        return dumyhead.next;  \n    }\n}\n// 将步骤 2,3 交换顺序，这样不用定义 temp 节点\npublic ListNode swapPairs(ListNode head) {\n    ListNode dummy = new ListNode(0, head);\n    ListNode cur = dummy;\n    while (cur.next != null && cur.next.next != null) {\n        ListNode node1 = cur.next;// 第 1 个节点\n        ListNode node2 = cur.next.next;// 第 2 个节点\n        cur.next = node2; // 步骤 1\n        node1.next = node2.next;// 步骤 3\n        node2.next = node1;// 步骤 2\n        cur = cur.next.next;\n    }\n    return dummy.next;\n}\n#Python：\n# 递归版本\n# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\n\nclass Solution:\n    def swapPairs(self, head: Optional[ListNode]) -> Optional[ListNode]:\n        if head is None or head.next is None:\n            return head\n\n        # 待翻转的两个node分别是pre和cur\n        pre = head\n        cur = head.next\n        next = head.next.next\n        \n        cur.next = pre  # 交换\n        pre.next = self.swapPairs(next) # 将以next为head的后续链表两两交换\n         \n        return cur\n# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\n\nclass Solution:\n    def swapPairs(self, head: ListNode) -> ListNode:\n        dummy_head = ListNode(next=head)\n        current = dummy_head\n        \n        # 必须有cur的下一个和下下个才能交换，否则说明已经交换结束了\n        while current.next and current.next.next:\n            temp = current.next # 防止节点修改\n            temp1 = current.next.next.next\n            \n            current.next = current.next.next\n            current.next.next = temp\n            temp.next = temp1\n            current = current.next.next\n        return dummy_head.next"
+}

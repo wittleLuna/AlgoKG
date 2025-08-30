@@ -1,0 +1,239 @@
+{
+  "id": "AP_21150e0c",
+  "title": "不同的二叉搜索树",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/unique-binary-search-trees/",
+  "description": "一个整数 n，求以 1 ... n 为节点组成的二叉搜索树有多少种？",
+  "examples": [
+    {
+      "input": "见图",
+      "output": "见图",
+      "explanation": null,
+      "image": "https://file1.kamacoder.com/i/algo/20210113161941835.png"
+    }
+  ],
+  "constraints": [],
+  "algorithm_tags": [
+    "Dynamic Programming"
+  ],
+  "data_structure_tags": [
+    "Array"
+  ],
+  "technique_tags": [
+    "Memoization",
+    "Combinatorial Analysis"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过动态规划的方法，利用先前计算的结果来推导出更大问题的解。首先定义dp[i]为1到i个节点构成的不同二叉搜索树的数量。接着，基于每个可能的根节点j（从1到i），将问题分解为其左子树和右子树的问题，并使用已知的dp值进行递归计算。",
+  "key_insights": [
+    {
+      "content": "通过分析发现，当选择不同的元素作为头结点时，其左右子树的不同布局实际上对应于规模较小的相同问题。这揭示了可以通过更小规模问题的答案来构建更大规模问题答案的可能性。"
+    },
+    {
+      "content": "由于存在明显的重叠子问题特性以及能够通过较小子问题解决较大问题的特征，使得动态规划成为解决此问题的有效方法。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目描述很简短，但估计大部分同学看完都是懵懵的状态，这得怎么统计呢？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int numTrees(int n) {vector<int> dp(n + 1);dp[0] = 1;for (int i = 1; i <= n; i++) {for (int j = 1; j <= i; j++) {dp[i] += dp[j - 1] * dp[i - j];}}return dp[n];}};",
+          "description": "使用动态规划计算不同二叉搜索树的数量"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int numTrees(int n) {int[] dp = new int[n + 1];dp[0] = 1;dp[1] = 1;for (int i = 2; i <= n; i++) {for (int j = 1; j <= i; j++) {dp[i] += dp[j - 1] * dp[i - j];}}return dp[n];}}",
+          "description": "Java版本，使用动态规划计算不同二叉搜索树的数量"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def numTrees(self, n: int) -> int: dp = [0] * (n + 1) dp[0] = 1 for i in range(1, n + 1): for j in range(1, i + 1): dp[i] += dp[j - 1] * dp[i - j] return dp[n]",
+          "description": "Python版本，使用动态规划计算不同二叉搜索树的数量"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "这道题目虽然在力扣上标记是中等难度，但可以算是困难了！",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "class Solution {public: int numTrees(int n) {vector<int> dp(n + 1);dp[0] = 1;for (int i = 1; i <= n; i++) {for (int j = 1; j <= i; j++) {dp[i] += dp[j - 1] * dp[i - j];}}return dp[n];}};",
+          "description": "计算不同二叉搜索树的数量"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public int numTrees(int n) {int[] dp = new int[n + 1];dp[0] = 1;dp[1] = 1;for (int i = 2; i <= n; i++) {for (int j = 1; j <= i; j++) {dp[i] += dp[j - 1] * dp[i - j];}}return dp[n];}}",
+          "description": "计算不同二叉搜索树的数量"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def numTrees(self, n: int) -> int: dp = [0] * (n + 1) dp[0] = 1 for i in range(1, n + 1): for j in range(1, i + 1): dp[i] += dp[j - 1] * dp[i - j] return dp[n]",
+          "description": "计算不同二叉搜索树的数量"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution { public int numTrees(int n) { int[] dp = new int[n + 1]; dp[0] = 1; dp[1] = 1; for (int i = 2; i <= n; i++) { for (int j = 1; j <= i; j++) { dp[i] += dp[j - 1] * dp[i - j]; } } return dp[n]; } }",
+          "description": "使用动态规划计算不同二叉搜索树的数量"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def numTrees(self, n: int) -> int: dp = [0] * (n + 1) dp[0] = 1 for i in range(1, n + 1): for j in range(1, i + 1): dp[i] += dp[j - 1] * dp[i - j] return dp[n]",
+          "description": "使用动态规划计算不同二叉搜索树的数量"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int numTrees(int n) {vector<int> dp(n + 1);dp[0] = 1;for (int i = 1; i <= n; i++) {for (int j = 1; j <= i; j++) {dp[i] += dp[j - 1] * dp[i - j];}}return dp[n];}};",
+          "description": "C++实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int numTrees(int n) {int[] dp = new int[n + 1];dp[0] = 1;dp[1] = 1;for (int i = 2; i <= n; i++) {for (int j = 1; j <= i; j++) {dp[i] += dp[j - 1] * dp[i - j];}}return dp[n];}}",
+          "description": "Java实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def numTrees(self, n: int) -> int: dp = [0] * (n + 1) dp[0] = 1 for i in range(1, n + 1): for j in range(1, i + 1): dp[i] += dp[j - 1] * dp[i - j] return dp[n]",
+          "description": "Python实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "class Solution:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int numTrees(int n) {vector<int> dp(n + 1);dp[0] = 1;for (int i = 1; i <= n; i++) {for (int j = 1; j <= i; j++) {dp[i] += dp[j - 1] * dp[i - j];}}return dp[n];}};",
+          "description": "使用动态规划计算不同二叉搜索树的数量"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int numTrees(int n) {int[] dp = new int[n + 1];dp[0] = 1;dp[1] = 1;for (int i = 2; i <= n; i++) {for (int j = 1; j <= i; j++) {dp[i] += dp[j - 1] * dp[i - j];}}return dp[n];}}",
+          "description": "使用动态规划计算不同二叉搜索树的数量"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def numTrees(self, n: int) -> int: dp = [0] * (n + 1) dp[0] = 1 for i in range(1, n + 1): for j in range(1, i + 1): dp[i] += dp[j - 1] * dp[i - j] return dp[n]",
+          "description": "使用动态规划计算不同二叉搜索树的数量"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "C++",
+      "code": "class Solution {public: int numTrees(int n) {vector<int> dp(n + 1);dp[0] = 1;for (int i = 1; i <= n; i++) {for (int j = 1; j <= i; j++) {dp[i] += dp[j - 1] * dp[i - j];}}return dp[n];}};",
+      "description": "计算n个节点组成的二叉搜索树的数量"
+    },
+    {
+      "language": "Java",
+      "code": "class Solution {public int numTrees(int n) {int[] dp = new int[n + 1];dp[0] = 1;dp[1] = 1;for (int i = 2; i <= n; i++) {for (int j = 1; j <= i; j++) {dp[i] += dp[j - 1] * dp[i - j];}}return dp[n];}}",
+      "description": "计算n个节点组成的二叉搜索树的数量"
+    },
+    {
+      "language": "Python",
+      "code": "class Solution: def numTrees(self, n: int) -> int: dp = [0] * (n + 1) dp[0] = 1 for i in range(1, n + 1): for j in range(1, i + 1): dp[i] += dp[j - 1] * dp[i - j] return dp[n]",
+      "description": "计算n个节点组成的二叉搜索树的数量"
+    }
+  ],
+  "common_mistakes": [
+    "未能正确初始化基础案例，如dp[0]=1，这是所有后续计算的基础。",
+    "在实现过程中忽略了边界条件处理，比如循环变量的范围控制不当。",
+    "没有充分理解递推关系式背后的意义，导致直接套用公式而忽视了其逻辑基础。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210113161941835.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20210113161941835.png",
+      "context": "该图片展示了当n=3时，可以构建的不同二叉搜索树的具体形态，帮助理解题目要求。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210107093106367.png",
+      "description": "这张图片展示了当n为1和n为2时，构建二叉搜索树的不同情况，体现了二叉搜索树的结构特性。",
+      "context": "该图片展示了当n为1和2时，可以构建的不同二叉搜索树的形态，直观地呈现了随着节点数量增加，可能的二叉搜索树结构变化。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210107093129889.png",
+      "description": "这张图片展示了当 \\( n = 3 \\) 时，可以构建的五种不同的二叉搜索树结构，体现了组合算法和二叉树数据结构的应用。",
+      "context": "该图片展示了当节点数n为3时，构建不同二叉搜索树的几种可能情况，帮助理解随着节点数量增加，二叉搜索树结构的变化规律。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210107093226241.png",
+      "description": "这张图片展示了当 \\( n = 3 \\) 时，构建不同二叉搜索树的方法及其对应的动态规划（DP）状态转移方程。",
+      "context": "该图展示了如何通过将元素作为头结点，并结合左右子树的搜索树数量来计算总搜索树数量的过程，辅助说明了dp[3]的具体计算方式。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210107093253987.png",
+      "description": "这张图片展示了一个动态规划（DP）数组的构建过程，其中 `dp[i]` 表示当 `n=i` 时的解的数量，具体值为 `[1, 1, 2, 5, 14, 42]`。",
+      "context": "该图片展示了当n为5时，根据给定算法计算得到的dp数组状态，用于帮助理解和验证代码逻辑。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210113161941835.png",
+      "description": "GIF展示了通过递归方式构建不同二叉搜索树的过程。",
+      "context": "GIF动画展示了随着n值的不同，可以构建出的二叉搜索树形态的变化过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210107093106367.png",
+      "description": "GIF展示了不同节点数量下二叉搜索树的各种可能布局形态。",
+      "context": "该GIF动画展示了随着节点数量n从1增加到2时，二叉搜索树可能的结构变化，帮助理解不同节点数下二叉搜索树的数量和形态。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210107093129889.png",
+      "description": "GIF展示了n为3时二叉搜索树的不同布局情况。",
+      "context": "该GIF展示了当节点数n为3时，通过改变头结点来形成不同二叉搜索树的过程，帮助理解随着节点数量增加，不同布局的二叉搜索树是如何构成的。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210107093226241.png",
+      "description": "GIF展示了通过递归计算不同节点作为根时形成的二叉搜索树数量的过程。",
+      "context": "该GIF动画展示了如何通过计算左右子树的不同组合来确定具有3个节点的二叉搜索树数量的过程，直观地解释了递推公式的应用。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210107093253987.png",
+      "description": "GIF展示了随着节点数增加，动态规划数组dp的状态变化过程。",
+      "context": "GIF动画展示了当n为5时，动态规划数组dp的状态变化过程，帮助理解算法执行流程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\动态规划\\不同的二叉搜索树.txt",
+  "extracted_at": "2025-07-20T12:02:11.101963",
+  "raw_content": "不同的二叉搜索树\n力扣题目链接(https://leetcode.cn/problems/unique-binary-search-trees/)\n\n给定一个整数 n，求以 1 ... n 为节点组成的二叉搜索树有多少种？\n\n示例:\n\n\nhttps://file1.kamacoder.com/i/algo/20210113161941835.png\n\n#思路\n这道题目描述很简短，但估计大部分同学看完都是懵懵的状态，这得怎么统计呢？\n\n关于什么是二叉搜索树，我们之前在讲解二叉树专题的时候已经详细讲解过了，也可以看看这篇二叉树：二叉搜索树登场！ (https://programmercarl.com/0700.%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E6%90%9C%E7%B4%A2.html)再回顾一波。\n\n了解了二叉搜索树之后，我们应该先举几个例子，画画图，看看有没有什么规律，如图：\n\nhttps://file1.kamacoder.com/i/algo/20210107093106367.png\n\nn为1的时候有一棵树，n为2有两棵树，这个是很直观的。\n\nhttps://file1.kamacoder.com/i/algo/20210107093129889.png\n\n来看看n为3的时候，有哪几种情况。\n\n当1为头结点的时候，其右子树有两个节点，看这两个节点的布局，是不是和 n 为2的时候两棵树的布局是一样的啊！\n\n（可能有同学问了，这布局不一样啊，节点数值都不一样。别忘了我们就是求不同树的数量，并不用把搜索树都列出来，所以不用关心其具体数值的差异）\n\n当3为头结点的时候，其左子树有两个节点，看这两个节点的布局，是不是和n为2的时候两棵树的布局也是一样的啊！\n\n当2为头结点的时候，其左右子树都只有一个节点，布局是不是和n为1的时候只有一棵树的布局也是一样的啊！\n\n发现到这里，其实我们就找到了重叠子问题了，其实也就是发现可以通过dp[1] 和 dp[2] 来推导出来dp[3]的某种方式。\n\n思考到这里，这道题目就有眉目了。\n\ndp[3]，就是 元素1为头结点搜索树的数量 + 元素2为头结点搜索树的数量 + 元素3为头结点搜索树的数量\n\n元素1为头结点搜索树的数量 = 右子树有2个元素的搜索树数量 * 左子树有0个元素的搜索树数量\n\n元素2为头结点搜索树的数量 = 右子树有1个元素的搜索树数量 * 左子树有1个元素的搜索树数量\n\n元素3为头结点搜索树的数量 = 右子树有0个元素的搜索树数量 * 左子树有2个元素的搜索树数量\n\n有2个元素的搜索树数量就是dp[2]。\n\n有1个元素的搜索树数量就是dp[1]。\n\n有0个元素的搜索树数量就是dp[0]。\n\n所以dp[3] = dp[2] * dp[0] + dp[1] * dp[1] + dp[0] * dp[2]\n\n如图所示：\n\nhttps://file1.kamacoder.com/i/algo/20210107093226241.png\n\n此时我们已经找到递推关系了，那么可以用动规五部曲再系统分析一遍。\n\n确定dp数组（dp table）以及下标的含义\ndp[i] ： 1到i为节点组成的二叉搜索树的个数为dp[i]。\n\n也可以理解是i个不同元素节点组成的二叉搜索树的个数为dp[i] ，都是一样的。\n\n以下分析如果想不清楚，就来回想一下dp[i]的定义\n\n确定递推公式\n在上面的分析中，其实已经看出其递推关系， dp[i] += dp[以j为头结点左子树节点数量] * dp[以j为头结点右子树节点数量]\n\nj相当于是头结点的元素，从1遍历到i为止。\n\n所以递推公式：dp[i] += dp[j - 1] * dp[i - j]; ，j-1 为j为头结点左子树节点数量，i-j 为以j为头结点右子树节点数量\n\ndp数组如何初始化\n初始化，只需要初始化dp[0]就可以了，推导的基础，都是dp[0]。\n\n那么dp[0]应该是多少呢？\n\n从定义上来讲，空节点也是一棵二叉树，也是一棵二叉搜索树，这是可以说得通的。\n\n从递归公式上来讲，dp[以j为头结点左子树节点数量] * dp[以j为头结点右子树节点数量] 中以j为头结点左子树节点数量为0，也需要dp[以j为头结点左子树节点数量] = 1， 否则乘法的结果就都变成0了。\n\n所以初始化dp[0] = 1\n\n确定遍历顺序\n首先一定是遍历节点数，从递归公式：dp[i] += dp[j - 1] * dp[i - j]可以看出，节点数为i的状态是依靠 i之前节点数的状态。\n\n那么遍历i里面每一个数作为头结点的状态，用j来遍历。\n\n代码如下：\n\nfor (int i = 1; i <= n; i++) {\n    for (int j = 1; j <= i; j++) {\n        dp[i] += dp[j - 1] * dp[i - j];\n    }\n}\n举例推导dp数组\nn为5时候的dp数组状态如图：\n\nhttps://file1.kamacoder.com/i/algo/20210107093253987.png\n\n当然如果自己画图举例的话，基本举例到n为3就可以了，n为4的时候，画图已经比较麻烦了。\n\n我这里列到了n为5的情况，是为了方便大家 debug代码的时候，把dp数组打出来，看看哪里有问题。\n\n综上分析完毕，C++代码如下：\n\nclass Solution {\npublic:\n    int numTrees(int n) {\n        vector<int> dp(n + 1);\n        dp[0] = 1;\n        for (int i = 1; i <= n; i++) {\n            for (int j = 1; j <= i; j++) {\n                dp[i] += dp[j - 1] * dp[i - j];\n            }\n        }\n        return dp[n];\n    }\n};\n时间复杂度：$O(n^2)$\n空间复杂度：$O(n)$\n大家应该发现了，我们分析了这么多，最后代码却如此简单！\n\n#总结\n这道题目虽然在力扣上标记是中等难度，但可以算是困难了！\n\n首先这道题想到用动规的方法来解决，就不太好想，需要举例，画图，分析，才能找到递推的关系。\n\n然后难点就是确定递推公式了，如果把递推公式想清楚了，遍历顺序和初始化，就是自然而然的事情了。\n\n可以看出我依然还是用动规五部曲来进行分析，会把题目的方方面面都覆盖到！\n\n而且具体这五部分析是我自己平时总结的经验，找不出来第二个的，可能过一阵子 其他题解也会有动规五部曲了。\n\n当时我在用动规五部曲讲解斐波那契的时候，一些录友和我反应，感觉讲复杂了。\n\n其实当时我一直强调简单题是用来练习方法论的，并不能因为简单我就代码一甩，简单解释一下就完事了。\n\n可能当时一些同学不理解，现在大家应该感受方法论的重要性了，加油💪\n\n#其他语言版本\n#Java\nclass Solution {\n    public int numTrees(int n) {\n        //初始化 dp 数组\n        int[] dp = new int[n + 1];\n        //初始化0个节点和1个节点的情况\n        dp[0] = 1;\n        dp[1] = 1;\n        for (int i = 2; i <= n; i++) {\n            for (int j = 1; j <= i; j++) {\n                //对于第i个节点，需要考虑1作为根节点直到i作为根节点的情况，所以需要累加\n                //一共i个节点，对于根节点j时,左子树的节点个数为j-1，右子树的节点个数为i-j\n                dp[i] += dp[j - 1] * dp[i - j];\n            }\n        }\n        return dp[n];\n    }\n}\n#Python\nclass Solution:\n    def numTrees(self, n: int) -> int:\n        dp = [0] * (n + 1)  # 创建一个长度为n+1的数组，初始化为0\n        dp[0] = 1  # 当n为0时，只有一种情况，即空树，所以dp[0] = 1\n        for i in range(1, n + 1):  # 遍历从1到n的每个数字\n            for j in range(1, i + 1):  # 对于每个数字i，计算以i为根节点的二叉搜索树的数量\n                dp[i] += dp[j - 1] * dp[i - j]  # 利用动态规划的思想，累加左子树和右子树的组合数量\n        return dp[n]  # 返回以1到n为节点的二叉搜索树的总数量"
+}

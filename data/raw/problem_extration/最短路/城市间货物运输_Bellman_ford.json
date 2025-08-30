@@ -1,0 +1,584 @@
+{
+  "id": "AP_836348fb",
+  "title": "Bellman_ford 算法精讲",
+  "alternative_titles": [],
+  "platform": "kamacoder",
+  "url": "https://kamacoder.com/problempage.php?pid=1152",
+  "description": "找出从城市 1 到城市 n 的所有可能路径中，综合政府补贴后的最低运输成本。\n\n如果最低运输成本是一个负数，它表示在遵循最优路径的情况下，运输过程中反而能够实现盈利。\n\n城市 1 到城市 n 之间可能会出现没有路径的情况，同时保证道路网络中不存在任何负权回路。\n\n负权回路是指一系列道路的总权值为负，这样的回路使得通过反复经过回路中的道路，理论上可以无限地减少总成本或无限地增加总收益。\n\n输入描述\n\n第一行包含两个正整数，第一个正整数 n 表示该国一共有 n 个城市，第二个整数 m 表示这些城市中共有 m 条道路。\n\n接下来为 m 行，每行包括三个整数，s、t 和 v，表示 s 号城市运输货物到达 t 号城市，道路权值为 v（单向图）。\n\n输出描述\n\n如果能够从城市 1 到连通到城市 n， 请输出一个整数，表示运输成本。如果该整数是负数，则表示实现了盈利。如果从城市 1 没有路径可达城市 n，请输出 \"unconnected\"。\n\n输入",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "图论",
+    "单源最短路径"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "松弛操作",
+    "迭代优化",
+    "动态规划"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用Bellman_ford算法求解从城市1到城市n的最小运输成本。该算法通过遍历所有边并执行松弛操作n-1次来找到最短路径，特别适用于存在负权值的情况。",
+  "key_insights": [
+    {
+      "content": "松弛是指更新节点间的最短距离的过程。如果通过某条边可以得到更小的距离，则更新该节点的最短距离。这是Bellman_ford算法的核心思想。"
+    },
+    {
+      "content": "Bellman_ford算法利用了动态规划的思想，将寻找最短路径的问题分解为一系列决策步骤，逐步构建全局最优解。"
+    },
+    {
+      "content": "对所有边进行n-1次松弛操作能够确保找到起点到终点的最短路径，这是因为即使在最坏情况下，到达终点所需的最长路径也不会超过n-1条边。"
+    },
+    {
+      "content": "当图中不存在负权回路时，经过n-1次松弛后的结果即为最终答案；否则，可能需要额外的检查来确定是否存在负权回路。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "本题依然是单源最短路问题，求 从 节点1 到节点n 的最小费用。 但本题不同之处在于 边的权值是有负数了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <climits>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    // 将所有边保存起来\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        // p1 指向 p2，权值为 val\n        grid.push_back({p1, p2, val});\n\n    }\n    int start = 1;  // 起点\n    int end = n;    // 终点\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) { // 对所有边 松弛 n-1 次\n        for (vector<int> &side : grid) { // 每一次松弛，都是对所有边进行松弛\n            int from = side[0]; // 边的出发点\n            int to = side[1]; // 边的到达点\n            int price = side[2]; // 边的权值\n            // 松弛操作 \n            // minDist[from] != INT_MAX 防止从未计算过的节点出发\n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) { \n                minDist[to] = minDist[from] + price;  \n            }\n        }\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; // 不能到达终点\n    else cout << minDist[end] << endl; // 到达终点最短路径\n}",
+          "description": "C++实现的Bellman-Ford算法解决单源最短路径问题"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<Edge> edges = new ArrayList<>();\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            edges.add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        for (int i = 1; i < n; i++) {\n            for (Edge edge : edges) {\n                if (minDist[edge.from] != Integer.MAX_VALUE && (minDist[edge.from] + edge.val) < minDist[edge.to]) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java实现的Bellman-Ford算法解决单源最短路径问题"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    n, m = map(int, input().strip().split())\n    edges = []\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges.append([src, dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0  # 起点处距离为0\n    \n    for i in range(1, n):\n        updated = False\n        for src, dest, weight in edges:\n            if minDist[src] != float(\"inf\") and minDist[src] + weight < minDist[dest]:\n                minDist[dest] = minDist[src] + weight\n                updated = True\n        if not updated:  # 若边不再更新，即停止回圈\n            break\n    \n    if minDist[-1] == float(\"inf\"):  # 返还终点权重\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python实现的Bellman-Ford算法解决单源最短路径问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "什么叫做松弛",
+      "text": "看到这里，估计大家都比较晕了，为什么是 n-1 次，那“松弛”这两个字究竟是个啥意思？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <climits>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    // 将所有边保存起来\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        // p1 指向 p2，权值为 val\n        grid.push_back({p1, p2, val});\n\n    }\n    int start = 1;  // 起点\n    int end = n;    // 终点\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) { // 对所有边 松弛 n-1 次\n        for (vector<int> &side : grid) { // 每一次松弛，都是对所有边进行松弛\n            int from = side[0]; // 边的出发点\n            int to = side[1]; // 边的到达点\n            int price = side[2]; // 边的权值\n            // 松弛操作 \n            // minDist[from] != INT_MAX 防止从未计算过的节点出发\n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) { \n                minDist[to] = minDist[from] + price;  \n            }\n        }\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; // 不能到达终点\n    else cout << minDist[end] << endl; // 到达终点最短路径\n}",
+          "description": "C++实现Bellman-Ford算法解决单源最短路径问题"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<Edge> edges = new ArrayList<>();\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            edges.add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        for (int i = 1; i < n; i++) {\n            for (Edge edge : edges) {\n                if (minDist[edge.from] != Integer.MAX_VALUE && (minDist[edge.from] + edge.val) < minDist[edge.to]) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java实现Bellman-Ford算法解决单源最短路径问题"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    n, m = map(int, input().strip().split())\n    edges = []\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges.append([src, dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0  # 起点处距离为0\n    \n    for i in range(1, n):\n        updated = False\n        for src, dest, weight in edges:\n            if minDist[src] != float(\"inf\") and minDist[src] + weight < minDist[dest]:\n                minDist[dest] = minDist[src] + weight\n                updated = True\n        if not updated:  # 若边不再更新，即停止回圈\n            break\n    \n    if minDist[-1] == float(\"inf\"):  # 返还终点权重\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python实现Bellman-Ford算法解决单源最短路径问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "模拟过程",
+      "text": "初始化过程。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <climits>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    // 将所有边保存起来\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        // p1 指向 p2，权值为 val\n        grid.push_back({p1, p2, val});\n\n    }\n    int start = 1;  // 起点\n    int end = n;    // 终点\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) { // 对所有边 松弛 n-1 次\n        for (vector<int> &side : grid) { // 每一次松弛，都是对所有边进行松弛\n            int from = side[0]; // 边的出发点\n            int to = side[1]; // 边的到达点\n            int price = side[2]; // 边的权值\n            // 松弛操作 \n            // minDist[from] != INT_MAX 防止从未计算过的节点出发\n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) { \n                minDist[to] = minDist[from] + price;  \n            }\n        }\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; // 不能到达终点\n    else cout << minDist[end] << endl; // 到达终点最短路径\n}",
+          "description": "C++实现Bellman-Ford算法求解从城市1到城市n的最低运输成本。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<Edge> edges = new ArrayList<>();\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            edges.add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        for (int i = 1; i < n; i++) {\n            for (Edge edge : edges) {\n                if (minDist[edge.from] != Integer.MAX_VALUE && (minDist[edge.from] + edge.val) < minDist[edge.to]) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java实现Bellman-Ford算法求解从城市1到城市n的最低运输成本。"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    n, m = map(int, input().strip().split())\n    edges = []\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges.append([src, dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0  # 起点处距离为0\n    \n    for i in range(1, n):\n        updated = False\n        for src, dest, weight in edges:\n            if minDist[src] != float(\"inf\") and minDist[src] + weight < minDist[dest]:\n                minDist[dest] = minDist[src] + weight\n                updated = True\n        if not updated:  # 若边不再更新，即停止回圈\n            break\n    \n    if minDist[-1] == float(\"inf\"):  # 返还终点权重\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python实现Bellman-Ford算法求解从城市1到城市n的最低运输成本。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "代码",
+      "text": "理解上面讲解的内容，代码就更容易写了，本题代码如下：（详细注释）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <climits>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid.push_back({p1, p2, val});\n    }\n    int start = 1;  \n    int end = n;    \n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) { \n        for (vector<int> &side : grid) { \n            int from = side[0]; \n            int to = side[1]; \n            int price = side[2]; \n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) { \n                minDist[to] = minDist[from] + price;  \n            }\n        }\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; \n    else cout << minDist[end] << endl; \n}",
+          "description": "C++实现的Bellman-Ford算法用于解决单源最短路径问题，适用于存在负权边的情况。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<Edge> edges = new ArrayList<>();\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            edges.add(new Edge(from, to, val));\n        }\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n        for (int i = 1; i < n; i++) {\n            for (Edge edge : edges) {\n                if (minDist[edge.from] != Integer.MAX_VALUE && (minDist[edge.from] + edge.val) < minDist[edge.to]) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                }\n            }\n        }\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java版本的Bellman-Ford算法实现，利用内部类Edge存储图中的每条边信息，并通过迭代更新每个节点到起点的最短距离。"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    n, m = map(int, input().strip().split())\n    edges = []\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges.append([src, dest, weight])\n    minDist = [float('inf')] * (n + 1)\n    minDist[1] = 0  \n    for i in range(1, n):\n        updated = False\n        for src, dest, weight in edges:\n            if minDist[src] != float('inf') and minDist[src] + weight < minDist[dest]:\n                minDist[dest] = minDist[src] + weight\n                updated = True\n        if not updated:  \n            break\n    if minDist[-1] == float('inf'):\n        return 'unconnected'\n    return minDist[-1]\nif __name__ == '__main__':\n    print(main())",
+          "description": "Python版本的Bellman-Ford算法实现，使用列表来表示图结构，并通过循环和条件判断更新从起点到各点的最短路径。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <climits>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid.push_back({p1, p2, val});\n    }\n    int start = 1;\n    int end = n;\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) {\n        for (vector<int> &side : grid) {\n            int from = side[0];\n            int to = side[1];\n            int price = side[2];\n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) {\n                minDist[to] = minDist[from] + price;\n            }\n        }\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl;\n    else cout << minDist[end] << endl;\n}",
+          "description": "使用C++实现的Bellman-Ford算法解决单源最短路径问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<Edge> edges = new ArrayList<>();\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            edges.add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        for (int i = 1; i < n; i++) {\n            for (Edge edge : edges) {\n                if (minDist[edge.from] != Integer.MAX_VALUE && (minDist[edge.from] + edge.val) < minDist[edge.to]) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "使用Java实现的Bellman-Ford算法解决单源最短路径问题。"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    n, m = map(int, input().strip().split())\n    edges = []\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges.append([src, dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0\n    \n    for i in range(1, n):\n        updated = False\n        for src, dest, weight in edges:\n            if minDist[src] != float(\"inf\") and minDist[src] + weight < minDist[dest]:\n                minDist[dest] = minDist[src] + weight\n                updated = True\n        if not updated: break\n    \n    if minDist[-1] == float(\"inf\"):\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "使用Python实现的Bellman-Ford算法解决单源最短路径问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "#include <list>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <climits>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid.push_back({p1, p2, val});\n    }\n    int start = 1;  \n    int end = n;    \n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) { \n        for (vector<int> &side : grid) { \n            int from = side[0]; \n            int to = side[1]; \n            int price = side[2]; \n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) { \n                minDist[to] = minDist[from] + price;  \n            }\n        }\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; \n    else cout << minDist[end] << endl; \n}",
+          "description": "C++实现的Bellman-Ford算法求解城市间货物运输问题"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<Edge> edges = new ArrayList<>();\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            edges.add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        for (int i = 1; i < n; i++) {\n            for (Edge edge : edges) {\n                if (minDist[edge.from] != Integer.MAX_VALUE && (minDist[edge.from] + edge.val) < minDist[edge.to]) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java实现的Bellman-Ford算法求解城市间货物运输问题"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    n, m = map(int, input().strip().split())\n    edges = []\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges.append([src, dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0  \n    \n    for i in range(1, n):\n        updated = False\n        for src, dest, weight in edges:\n            if minDist[src] != float(\"inf\") and minDist[src] + weight < minDist[dest]:\n                minDist[dest] = minDist[src] + weight\n                updated = True\n        if not updated:  \n            break\n    \n    if minDist[-1] == float(\"inf\"):  \n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python实现的Bellman-Ford算法求解城市间货物运输问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <list>",
+      "text": "#include <climits>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <climits>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    // 将所有边保存起来\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        // p1 指向 p2，权值为 val\n        grid.push_back({p1, p2, val});\n\n    }\n    int start = 1;  // 起点\n    int end = n;    // 终点\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) { // 对所有边 松弛 n-1 次\n        for (vector<int> &side : grid) { // 每一次松弛，都是对所有边进行松弛\n            int from = side[0]; // 边的出发点\n            int to = side[1]; // 边的到达点\n            int price = side[2]; // 边的权值\n            // 松弛操作 \n            // minDist[from] != INT_MAX 防止从未计算过的节点出发\n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) { \n                minDist[to] = minDist[from] + price;  \n            }\n        }\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; // 不能到达终点\n    else cout << minDist[end] << endl; // 到达终点最短路径\n}",
+          "description": "使用C++实现Bellman-Ford算法求解从起点到终点的最小运输成本。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<Edge> edges = new ArrayList<>();\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            edges.add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        for (int i = 1; i < n; i++) {\n            for (Edge edge : edges) {\n                if (minDist[edge.from] != Integer.MAX_VALUE && (minDist[edge.from] + edge.val) < minDist[edge.to]) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "使用Java实现Bellman-Ford算法求解从起点到终点的最小运输成本。"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    n, m = map(int, input().strip().split())\n    edges = []\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges.append([src, dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0  # 起点处距离为0\n    \n    for i in range(1, n):\n        updated = False\n        for src, dest, weight in edges:\n            if minDist[src] != float(\"inf\") and minDist[src] + weight < minDist[dest]:\n                minDist[dest] = minDist[src] + weight\n                updated = True\n        if not updated:  # 若边不再更新，即停止循环\n            break\n    \n    if minDist[-1] == float(\"inf\"):  # 返回终点权重\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "使用Python实现Bellman-Ford算法求解从起点到终点的最小运输成本。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <climits>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <climits>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    // 将所有边保存起来\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        // p1 指向 p2，权值为 val\n        grid.push_back({p1, p2, val});\n\n    }\n    int start = 1;  // 起点\n    int end = n;    // 终点\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) { // 对所有边 松弛 n-1 次\n        for (vector<int> &side : grid) { // 每一次松弛，都是对所有边进行松弛\n            int from = side[0]; // 边的出发点\n            int to = side[1]; // 边的到达点\n            int price = side[2]; // 边的权值\n            // 松弛操作 \n            // minDist[from] != INT_MAX 防止从未计算过的节点出发\n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) { \n                minDist[to] = minDist[from] + price;  \n            }\n        }\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; // 不能到达终点\n    else cout << minDist[end] << endl; // 到达终点最短路径\n}",
+          "description": "C++实现Bellman_ford算法解决单源最短路问题"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n\n    // Define an inner class Edge\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<Edge> edges = new ArrayList<>();\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            edges.add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        for (int i = 1; i < n; i++) {\n            for (Edge edge : edges) {\n                if (minDist[edge.from] != Integer.MAX_VALUE && (minDist[edge.from] + edge.val) < minDist[edge.to]) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java实现Bellman_ford算法解决单源最短路问题"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    n, m = map(int, input().strip().split())\n    edges = []\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges.append([src, dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0  # 起点处距离为0\n    \n    for i in range(1, n):\n        updated = False\n        for src, dest, weight in edges:\n            if minDist[src] != float(\"inf\") and minDist[src] + weight < minDist[dest]:\n                minDist[dest] = minDist[src] + weight\n                updated = True\n        if not updated:  # 若边不再更新，即停止回圈\n            break\n    \n    if minDist[-1] == float(\"inf\"):  # 返还终点权重\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python实现Bellman_ford算法解决单源最短路问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "拓展",
+      "text": "有录友可能会想，那我 松弛 n 次，松弛 n + 1次，松弛 2 * n 次会怎么样？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <climits>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid.push_back({p1, p2, val});\n    }\n    int start = 1;\n    int end = n;\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) {\n        for (vector<int> &side : grid) {\n            int from = side[0];\n            int to = side[1];\n            int price = side[2];\n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) {\n                minDist[to] = minDist[from] + price;\n            }\n        }\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl;\n    else cout << minDist[end] << endl;\n}",
+          "description": "使用C++实现的Bellman-Ford算法解决单源最短路径问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<Edge> edges = new ArrayList<>();\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            edges.add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        for (int i = 1; i < n; i++) {\n            for (Edge edge : edges) {\n                if (minDist[edge.from] != Integer.MAX_VALUE && (minDist[edge.from] + edge.val) < minDist[edge.to]) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "使用Java实现的Bellman-Ford算法解决单源最短路径问题。"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    n, m = map(int, input().strip().split())\n    edges = []\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges.append([src, dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0\n    \n    for i in range(1, n):\n        updated = False\n        for src, dest, weight in edges:\n            if minDist[src] != float(\"inf\") and minDist[src] + weight < minDist[dest]:\n                minDist[dest] = minDist[src] + weight\n                updated = True\n        if not updated: break\n    \n    if minDist[-1] == float(\"inf\"):\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "使用Python实现的Bellman-Ford算法解决单源最短路径问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <climits>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    // 将所有边保存起来\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        // p1 指向 p2，权值为 val\n        grid.push_back({p1, p2, val});\n\n    }\n    int start = 1;  // 起点\n    int end = n;    // 终点\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) { // 对所有边 松弛 n-1 次\n        for (vector<int> &side : grid) { // 每一次松弛，都是对所有边进行松弛\n            int from = side[0]; // 边的出发点\n            int to = side[1]; // 边的到达点\n            int price = side[2]; // 边的权值\n            // 松弛操作 \n            // minDist[from] != INT_MAX 防止从未计算过的节点出发\n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) { \n                minDist[to] = minDist[from] + price;  \n            }\n        }\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; // 不能到达终点\n    else cout << minDist[end] << endl; // 到达终点最短路径\n}",
+          "description": "使用C++实现的Bellman_ford算法解决单源最短路径问题"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<Edge> edges = new ArrayList<>();\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            edges.add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        for (int i = 1; i < n; i++) {\n            for (Edge edge : edges) {\n                if (minDist[edge.from] != Integer.MAX_VALUE && (minDist[edge.from] + edge.val) < minDist[edge.to]) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "使用Java实现的Bellman_ford算法解决单源最短路径问题"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    n, m = map(int, input().strip().split())\n    edges = []\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges.append([src, dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0  # 起点处距离为0\n    \n    for i in range(1, n):\n        updated = False\n        for src, dest, weight in edges:\n            if minDist[src] != float(\"inf\") and minDist[src] + weight < minDist[dest]:\n                minDist[dest] = minDist[src] + weight\n                updated = True\n        if not updated:  # 若边不再更新，即停止回圈\n            break\n    \n    if minDist[-1] == float(\"inf\"):  # 返还终点权重\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "使用Python实现的Bellman_ford算法解决单源最短路径问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "#include <list>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <climits>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid.push_back({p1, p2, val});\n    }\n    int start = 1;\n    int end = n;\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) {\n        for (vector<int> &side : grid) {\n            int from = side[0];\n            int to = side[1];\n            int price = side[2];\n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) {\n                minDist[to] = minDist[from] + price;\n            }\n        }\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl;\n    else cout << minDist[end] << endl;\n}",
+          "description": "使用C++实现的Bellman-Ford算法求解单源最短路径问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<Edge> edges = new ArrayList<>();\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            edges.add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        for (int i = 1; i < n; i++) {\n            for (Edge edge : edges) {\n                if (minDist[edge.from] != Integer.MAX_VALUE && (minDist[edge.from] + edge.val) < minDist[edge.to]) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "使用Java实现的Bellman-Ford算法求解单源最短路径问题。"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    n, m = map(int, input().strip().split())\n    edges = []\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges.append([src, dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0\n    \n    for i in range(1, n):\n        updated = False\n        for src, dest, weight in edges:\n            if minDist[src] != float(\"inf\") and minDist[src] + weight < minDist[dest]:\n                minDist[dest] = minDist[src] + weight\n                updated = True\n        if not updated: break\n    \n    if minDist[-1] == float(\"inf\"):\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "使用Python实现的Bellman-Ford算法求解单源最短路径问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <list>",
+      "text": "#include <climits>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <climits>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    // 将所有边保存起来\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        // p1 指向 p2，权值为 val\n        grid.push_back({p1, p2, val});\n\n    }\n    int start = 1;  // 起点\n    int end = n;    // 终点\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) { // 对所有边 松弛 n-1 次\n        for (vector<int> &side : grid) { // 每一次松弛，都是对所有边进行松弛\n            int from = side[0]; // 边的出发点\n            int to = side[1]; // 边的到达点\n            int price = side[2]; // 边的权值\n            // 松弛操作 \n            // minDist[from] != INT_MAX 防止从未计算过的节点出发\n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) { \n                minDist[to] = minDist[from] + price;  \n            }\n        }\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; // 不能到达终点\n    else cout << minDist[end] << endl; // 到达终点最短路径\n}",
+          "description": "C++版本的Bellman-Ford算法实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n\n    // Define an inner class Edge\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<Edge> edges = new ArrayList<>();\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            edges.add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        for (int i = 1; i < n; i++) {\n            for (Edge edge : edges) {\n                if (minDist[edge.from] != Integer.MAX_VALUE && (minDist[edge.from] + edge.val) < minDist[edge.to]) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java版本的Bellman-Ford算法实现"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    n, m = map(int, input().strip().split())\n    edges = []\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges.append([src, dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0  # 起点处距离为0\n    \n    for i in range(1, n):\n        updated = False\n        for src, dest, weight in edges:\n            if minDist[src] != float(\"inf\") and minDist[src] + weight < minDist[dest]:\n                minDist[dest] = minDist[src] + weight\n                updated = True\n        if not updated:  # 若边不再更新，即停止回圈\n            break\n    \n    if minDist[-1] == float(\"inf\"):  # 返还终点权重\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python版本的Bellman-Ford算法实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <climits>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "int main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid.push_back({p1, p2, val});\n    }\n    int start = 1;  // 起点\n    int end = n;    // 终点\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) { \n        for (vector<int> &side : grid) { \n            int from = side[0];\n            int to = side[1];\n            int price = side[2];\n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) { \n                minDist[to] = minDist[from] + price;  \n            }\n        }\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; \n    else cout << minDist[end] << endl; \n}",
+          "description": "C++实现的Bellman-Ford算法"
+        },
+        {
+          "language": "java",
+          "code": "public class Main {\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<Edge> edges = new ArrayList<>();\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            edges.add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        for (int i = 1; i < n; i++) {\n            for (Edge edge : edges) {\n                if (minDist[edge.from] != Integer.MAX_VALUE && (minDist[edge.from] + edge.val) < minDist[edge.to]) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java实现的Bellman-Ford算法"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    n, m = map(int, input().strip().split())\n    edges = []\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges.append([src, dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0  # 起点处距离为0\n    \n    for i in range(1, n):\n        updated = False\n        for src, dest, weight in edges:\n            if minDist[src] != float(\"inf\") and minDist[src] + weight < minDist[dest]:\n                minDist[dest] = minDist[src] + weight\n                updated = True\n        if not updated:  # 若边不再更新，即停止回圈\n            break\n    \n    if minDist[-1] == float(\"inf\"):  # 返还终点权重\n        return \"unconnected\"\n    return minDist[-1]\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python实现的Bellman-Ford算法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "Bellman_ford 是可以计算 负权值的单源最短路算法。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <climits>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    // 将所有边保存起来\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        // p1 指向 p2，权值为 val\n        grid.push_back({p1, p2, val});\n\n    }\n    int start = 1;  // 起点\n    int end = n;    // 终点\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) { // 对所有边 松弛 n-1 次\n        for (vector<int> &side : grid) { // 每一次松弛，都是对所有边进行松弛\n            int from = side[0]; // 边的出发点\n            int to = side[1]; // 边的到达点\n            int price = side[2]; // 边的权值\n            // 松弛操作 \n            // minDist[from] != INT_MAX 防止从未计算过的节点出发\n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) { \n                minDist[to] = minDist[from] + price;  \n            }\n        }\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; // 不能到达终点\n    else cout << minDist[end] << endl; // 到达终点最短路径\n}",
+          "description": "C++版本的Bellman-Ford算法实现，用于求解带负权值的单源最短路径问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<Edge> edges = new ArrayList<>();\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            edges.add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        for (int i = 1; i < n; i++) {\n            for (Edge edge : edges) {\n                if (minDist[edge.from] != Integer.MAX_VALUE && (minDist[edge.from] + edge.val) < minDist[edge.to]) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java版本的Bellman-Ford算法实现，通过定义内部类Edge来存储图中的边信息，并使用动态数组存储从起点到各点的最小距离。"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    n, m = map(int, input().strip().split())\n    edges = []\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges.append([src, dest, weight])\n\n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0  # 起点处距离为0\n\n    for i in range(1, n):\n        updated = False\n        for src, dest, weight in edges:\n            if minDist[src] != float(\"inf\") and minDist[src] + weight < minDist[dest]:\n                minDist[dest] = minDist[src] + weight\n                updated = True\n        if not updated:  # 若边不再更新，即停止回圈\n            break\n\n    if minDist[-1] == float(\"inf\"):  # 返还终点权重\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python版本的Bellman-Ford算法实现，利用列表存储图中的边信息及顶点间的最短路径，适用于解决含有负权边的单源最短路径问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <climits>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    // 将所有边保存起来\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        // p1 指向 p2，权值为 val\n        grid.push_back({p1, p2, val});\n\n    }\n    int start = 1;  // 起点\n    int end = n;    // 终点\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) { // 对所有边 松弛 n-1 次\n        for (vector<int> &side : grid) { // 每一次松弛，都是对所有边进行松弛\n            int from = side[0]; // 边的出发点\n            int to = side[1]; // 边的到达点\n            int price = side[2]; // 边的权值\n            // 松弛操作 \n            // minDist[from] != INT_MAX 防止从未计算过的节点出发\n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) { \n                minDist[to] = minDist[from] + price;  \n            }\n        }\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; // 不能到达终点\n    else cout << minDist[end] << endl; // 到达终点最短路径\n}",
+          "description": "C++实现Bellman-Ford算法求解从城市1到城市n的最低运输成本"
+        },
+        {
+          "language": "java",
+          "code": "public class Main {\n\n    // Define an inner class Edge\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        // Input processing\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<Edge> edges = new ArrayList<>();\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            edges.add(new Edge(from, to, val));\n        }\n\n        // Represents the minimum distance from the current node to the original node\n        int[] minDist = new int[n + 1];\n\n        // Initialize the minDist array\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        // Starts the loop to relax all edges n - 1 times to update minDist array\n        for (int i = 1; i < n; i++) {\n\n            for (Edge edge : edges) {\n                // Updates the minDist array\n                if (minDist[edge.from] != Integer.MAX_VALUE && (minDist[edge.from] + edge.val) < minDist[edge.to]) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                }\n            }\n        }\n\n        // Outcome printing\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java实现Bellman-Ford算法求解从城市1到城市n的最低运输成本"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    n, m = map(int, input().strip().split())\n    edges = []\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges.append([src, dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0  # 起点处距离为0\n    \n    for i in range(1, n):\n        updated = False\n        for src, dest, weight in edges:\n            if minDist[src] != float(\"inf\") and minDist[src] + weight < minDist[dest]:\n                minDist[dest] = minDist[src] + weight\n                updated = True\n        if not updated:  # 若边不再更新，即停止回圈\n            break\n    \n    if minDist[-1] == float(\"inf\"):  # 返还终点权重\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python实现Bellman-Ford算法求解从城市1到城市n的最低运输成本"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "public class Main {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <climits>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    // 将所有边保存起来\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        // p1 指向 p2，权值为 val\n        grid.push_back({p1, p2, val});\n\n    }\n    int start = 1;  // 起点\n    int end = n;    // 终点\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) { // 对所有边 松弛 n-1 次\n        for (vector<int> &side : grid) { // 每一次松弛，都是对所有边进行松弛\n            int from = side[0]; // 边的出发点\n            int to = side[1]; // 边的到达点\n            int price = side[2]; // 边的权值\n            // 松弛操作 \n            // minDist[from] != INT_MAX 防止从未计算过的节点出发\n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) { \n                minDist[to] = minDist[from] + price;  \n            }\n        }\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; // 不能到达终点\n    else cout << minDist[end] << endl; // 到达终点最短路径\n}",
+          "description": "C++版本的Bellman-Ford算法实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<Edge> edges = new ArrayList<>();\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            edges.add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        for (int i = 1; i < n; i++) {\n            for (Edge edge : edges) {\n                if (minDist[edge.from] != Integer.MAX_VALUE && (minDist[edge.from] + edge.val) < minDist[edge.to]) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java版本的Bellman-Ford算法实现"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    n, m = map(int, input().strip().split())\n    edges = []\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges.append([src, dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0  # 起点处距离为0\n    \n    for i in range(1, n):\n        updated = False\n        for src, dest, weight in edges:\n            if minDist[src] != float(\"inf\") and minDist[src] + weight < minDist[dest]:\n                minDist[dest] = minDist[src] + weight\n                updated = True\n        if not updated:  # 若边不再更新，即停止回圈\n            break\n    \n    if minDist[-1] == float(\"inf\"):  # 返还终点权重\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python版本的Bellman-Ford算法实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "def main():",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "c++",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <climits>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    // 将所有边保存起来\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        // p1 指向 p2，权值为 val\n        grid.push_back({p1, p2, val});\n\n    }\n    int start = 1;  // 起点\n    int end = n;    // 终点\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) { // 对所有边 松弛 n-1 次\n        for (vector<int> &side : grid) { // 每一次松弛，都是对所有边进行松弛\n            int from = side[0]; // 边的出发点\n            int to = side[1]; // 边的到达点\n            int price = side[2]; // 边的权值\n            // 松弛操作 \n            // minDist[from] != INT_MAX 防止从未计算过的节点出发\n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) { \n                minDist[to] = minDist[from] + price;  \n            }\n        }\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; // 不能到达终点\n    else cout << minDist[end] << endl; // 到达终点最短路径\n}",
+          "description": "C++版本的Bellman_ford算法实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<Edge> edges = new ArrayList<>();\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            edges.add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        for (int i = 1; i < n; i++) {\n            for (Edge edge : edges) {\n                if (minDist[edge.from] != Integer.MAX_VALUE && (minDist[edge.from] + edge.val) < minDist[edge.to]) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java版本的Bellman_ford算法实现"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    n, m = map(int, input().strip().split())\n    edges = []\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges.append([src, dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0  # 起点处距离为0\n    \n    for i in range(1, n):\n        updated = False\n        for src, dest, weight in edges:\n            if minDist[src] != float(\"inf\") and minDist[src] + weight < minDist[dest]:\n                minDist[dest] = minDist[src] + weight\n                updated = True\n        if not updated:  # 若边不再更新，即停止循环\n            break\n    \n    if minDist[-1] == float(\"inf\"):  # 返回终点权重\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python版本的Bellman_ford算法实现"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(N * E)",
+    "space_complexity": "O(N)",
+    "explanation": "N为节点数量，E为图中边的数量"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "#include <iostream>\n#include <vector>\n#include <list>\n#include <climits>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    // 将所有边保存起来\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        // p1 指向 p2，权值为 val\n        grid.push_back({p1, p2, val});\n\n    }\n    int start = 1;  // 起点\n    int end = n;    // 终点\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) { // 对所有边 松弛 n-1 次\n        for (vector<int> &side : grid) { // 每一次松弛，都是对所有边进行松弛\n            int from = side[0]; // 边的出发点\n            int to = side[1]; // 边的到达点\n            int price = side[2]; // 边的权值\n            // 松弛操作 \n            // minDist[from] != INT_MAX 防止从未计算过的节点出发\n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) { \n                minDist[to] = minDist[from] + price;  \n            }\n        }\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; // 不能到达终点\n    else cout << minDist[end] << endl; // 到达终点最短路径\n}",
+      "description": "C++实现的Bellman_ford算法，用于解决单源最短路径问题，特别是处理含有负权重边的情况。"
+    },
+    {
+      "language": "java",
+      "code": "public class Main {\n\n    // Define an inner class Edge\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        // Input processing\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<Edge> edges = new ArrayList<>();\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            edges.add(new Edge(from, to, val));\n        }\n\n        // Represents the minimum distance from the current node to the original node\n        int[] minDist = new int[n + 1];\n\n        // Initialize the minDist array\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        // Starts the loop to relax all edges n - 1 times to update minDist array\n        for (int i = 1; i < n; i++) {\n\n            for (Edge edge : edges) {\n                // Updates the minDist array\n                if (minDist[edge.from] != Integer.MAX_VALUE && (minDist[edge.from] + edge.val) < minDist[edge.to]) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                }\n            }\n        }\n\n        // Outcome printing\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+      "description": "Java实现的Bellman_ford算法，利用一个内部类Edge来表示图中的边，并通过循环对所有边进行n-1次松弛操作以找到从起点到每个顶点的最短路径。"
+    },
+    {
+      "language": "python",
+      "code": "def main():\n    n, m = map(int, input().strip().split())\n    edges = []\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges.append([src, dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0  # 起点处距离为0\n    \n    for i in range(1, n):\n        updated = False\n        for src, dest, weight in edges:\n            if minDist[src] != float(\"inf\") and minDist[src] + weight < minDist[dest]:\n                minDist[dest] = minDist[src] + weight\n                updated = True\n        if not updated:  # 若边不再更新，即停止回圈\n            break\n    \n    if minDist[-1] == float(\"inf\"):  # 返还终点权重\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+      "description": "Python版本的Bellman_ford算法实现，该程序读取输入数据，构建边列表，并通过执行多次松弛操作来确定从起始城市到目标城市的最低成本路径。如果在给定的迭代次数内没有更新，则提前终止循环。"
+    }
+  ],
+  "common_mistakes": [
+    "认为Dijkstra算法同样适用于带有负权值的图，实际上Dijkstra算法仅适用于非负权重情况。",
+    "在实现过程中没有正确处理无法到达目的地的情况，即应返回'unconnected'而不是错误的距离值。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240509200224.png",
+      "description": "该图片展示了一个图论问题，要求找到从起点到终点的最低运输成本路径，涉及算法如Dijkstra或Bellman-Ford来处理带权有向图。",
+      "context": "该图展示了从城市1到城市n之间可能存在的一种路径配置，用于说明如何计算运输成本或判断是否连通的问题。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240327102620.png",
+      "description": "这张图片展示了链表数据结构中节点A、B和C之间的指针关系，其中C节点通过value1指向B节点，A节点通过value指向B节点。",
+      "context": "该图展示了从节点A到节点B的一条边及其权值，用于解释在计算minDist[B]时如何考虑不同路径的权值。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240328104119.png",
+      "description": "这张图片展示了一个图的最短路径问题，使用了Dijkstra算法，图中节点间的边权值和一个记录最小距离的数组`minDist`来表示当前的最短路径状态。",
+      "context": "此图展示了Bellman-Ford算法初始化阶段minDist数组的状态，其中起点节点1的最短距离设为0，其余节点的最短距离初始设置为最大值。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240329113537.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20240329113537.png",
+      "context": "此图展示了在算法开始阶段，由于minDist[5]仍保持默认最大值状态，因此无法通过边5->6来更新节点6的最短路径距离。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240329113703.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20240329113703.png",
+      "context": "此图展示了当边为节点2到节点5，权值为2时，根据条件更新minDist[5]的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240329113827.png",
+      "description": "这张图片展示了一个图的最短路径问题，使用了Dijkstra算法，图中节点间的边权值和一个记录最小距离的数组`minDist`来表示当前的最短路径状态。",
+      "context": "展示了由于节点5的minDist值仍为默认最大值，因此无法通过节点5来更新节点3的最短路径情况。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240329113927.png",
+      "description": "这张图片展示了一个使用Dijkstra算法求解最短路径的过程，图中包含节点、边权和距离数组的更新状态。",
+      "context": "该图展示了从节点2到节点5的边，权值为2，以及更新后的最短路径距离minDist[5]变为3的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240329114036.png",
+      "description": "这张图片展示了使用Dijkstra算法在带权图中寻找最短路径的过程，包括节点间的权重和距离数组的更新状态。",
+      "context": "该图展示了从节点2到节点4的路径，其中权值为-3，并更新了节点4的最短距离至-2。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240329114120.png",
+      "description": "这张图片展示了一个图的最短路径问题，使用了Dijkstra算法，并通过一个数组记录了从起点到各节点的最小距离。",
+      "context": "该图展示了当从节点4到节点6的边被考虑时，根据给定条件更新minDist[6]值的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240329114324.png",
+      "description": "这张图片展示了一个图的最短路径问题，使用Dijkstra算法进行求解，图中节点间的边权值和对应的最小距离数组（minDist）清晰地标示出来。",
+      "context": "展示了从节点1到节点3的最短路径更新过程，其中minDist[3]被更新为5。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240509200224.png",
+      "description": "GIF展示了Bellman-Ford算法寻找从起点到终点最短路径的过程，包括边的松弛操作和负权边的处理。",
+      "context": "GIF动画展示了在含有负权边的图中寻找从城市1到城市n最短路径的过程，强调了为何在这种情况下不能直接应用Dijkstra算法。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240327102620.png",
+      "description": "GIF展示了通过更新节点间最短路径来“松弛”边的过程。",
+      "context": "此GIF动画展示了在算法中如何通过比较不同路径的权值来更新到达节点B的最小距离，直观地解释了“松弛”操作的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240328104119.png",
+      "description": "GIF展示了Bellman-Ford算法中对所有边进行第一次松弛操作的过程。",
+      "context": "GIF动画展示了在Bellman-Ford算法中，对所有边进行第一次松弛操作的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240329113537.png",
+      "description": "GIF展示了在算法执行过程中，由于节点5的最小距离仍为初始最大值，因此无法通过边5->6来更新节点6的最短路径。",
+      "context": "展示了在初始状态下，由于节点5的最短路径值仍为默认最大数，因此无法通过边5->6来更新节点6的最短路径。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240329113703.png",
+      "description": "GIF展示了在图算法中，当从节点1到节点2的边被处理时，更新节点2的最短路径估计值的过程。",
+      "context": "GIF动画展示了从节点1到节点2的最短路径更新过程，其中minDist[2]由无穷大更新为1。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240329113827.png",
+      "description": "GIF展示了在图算法中，由于节点5到节点3的最短距离尚未确定，因此无法通过节点5更新节点3的距离值的过程。",
+      "context": "展示了当尝试通过节点5来更新节点3的最短路径时，由于minDist[5]仍为默认最大值而无法进行更新的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240329113927.png",
+      "description": "GIF展示了从节点2到节点5的路径更新过程，其中节点5的距离值从默认最大值被更新为3。",
+      "context": "该GIF展示了从节点2到节点5的路径更新过程，其中节点5的距离值被更新为3。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240329114036.png",
+      "description": "GIF展示了从节点2到节点4的边被处理时，根据其权值-3更新目标节点最短路径估计的过程。",
+      "context": "该GIF动画展示了从节点2到节点4的过程，其中路径权值为-3，并更新了节点4的最短距离至-2。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240329114120.png",
+      "description": "GIF展示了在图中通过更新节点间的最短路径来寻找从起点到特定终点的最小距离的过程。",
+      "context": "该GIF展示了在最短路径算法中，当从节点4到节点6的边被考虑时，如何根据当前已知的最小距离更新节点6的距离值。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240329114324.png",
+      "description": "GIF展示了通过一次松弛操作更新从起点到各节点最短路径的过程。",
+      "context": "该GIF展示了在对边“节点1到节点3”进行松弛操作后，更新minDist[3]值为5的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\最短路\\城市间货物运输_Bellman_ford.txt",
+  "extracted_at": "2025-07-22T12:27:36.193389",
+  "raw_content": "Bellman_ford 算法精讲\n卡码网：94. 城市间货物运输 I(https://kamacoder.com/problempage.php?pid=1152)\n\n题目描述\n\n某国为促进城市间经济交流，决定对货物运输提供补贴。共有 n 个编号为 1 到 n 的城市，通过道路网络连接，网络中的道路仅允许从某个城市单向通行到另一个城市，不能反向通行。\n\n网络中的道路都有各自的运输成本和政府补贴，道路的权值计算方式为：运输成本 - 政府补贴。\n\n权值为正表示扣除了政府补贴后运输货物仍需支付的费用；权值为负则表示政府的补贴超过了支出的运输成本，实际表现为运输过程中还能赚取一定的收益。\n\n请找出从城市 1 到城市 n 的所有可能路径中，综合政府补贴后的最低运输成本。\n\n如果最低运输成本是一个负数，它表示在遵循最优路径的情况下，运输过程中反而能够实现盈利。\n\n城市 1 到城市 n 之间可能会出现没有路径的情况，同时保证道路网络中不存在任何负权回路。\n\n负权回路是指一系列道路的总权值为负，这样的回路使得通过反复经过回路中的道路，理论上可以无限地减少总成本或无限地增加总收益。\n\n输入描述\n\n第一行包含两个正整数，第一个正整数 n 表示该国一共有 n 个城市，第二个整数 m 表示这些城市中共有 m 条道路。\n\n接下来为 m 行，每行包括三个整数，s、t 和 v，表示 s 号城市运输货物到达 t 号城市，道路权值为 v（单向图）。\n\n输出描述\n\n如果能够从城市 1 到连通到城市 n， 请输出一个整数，表示运输成本。如果该整数是负数，则表示实现了盈利。如果从城市 1 没有路径可达城市 n，请输出 \"unconnected\"。\n\n输入示例：\n\n6 7\n5 6 -2\n1 2 1\n5 3 1\n2 5 2\n2 4 -3\n4 6 4\n1 3 5\nhttps://file1.kamacoder.com/i/algo/20240509200224.png\n\n#思路\n本题依然是单源最短路问题，求 从 节点1 到节点n 的最小费用。 但本题不同之处在于 边的权值是有负数了。\n\n从 节点1 到节点n 的最小费用也可以是负数，费用如果是负数 则表示 运输的过程中 政府补贴大于运输成本。\n\n在求单源最短路的方法中，使用dijkstra 的话，则要求图中边的权值都为正数。\n\n我们在 dijkstra朴素版 中专门有讲解：为什么有边为负数 使用dijkstra就不行了。\n\n本题是经典的带负权值的单源最短路问题，此时就轮到Bellman_ford登场了，接下来我们来详细介绍Bellman_ford 算法 如何解决这类问题。\n\n该算法是由 R.Bellman 和L.Ford 在20世纪50年代末期发明的算法，故称为Bellman_ford算法。\n\nBellman_ford算法的核心思想是 对所有边进行松弛n-1次操作（n为节点数量），从而求得目标最短路。\n\n#什么叫做松弛\n看到这里，估计大家都比较晕了，为什么是 n-1 次，那“松弛”这两个字究竟是个啥意思？\n\n我们先来说什么是 “松弛”。\n\n《算法四》里面把这个操作叫做 “放松”， 英文版里叫做 “relax the edge”\n\n所以大家翻译过来，就是 “放松” 或者 “松弛” 。\n\n但《算法四》没有具体去讲这个 “放松” 究竟是个啥？ 网上很多题解也没有讲题解里的 “松弛这条边，松弛所有边”等等 里面的 “松弛” 究竟是什么意思？\n\n这里我给大家举一个例子，每条边有起点、终点和边的权值。例如一条边，节点A 到 节点B 权值为value，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240327102620.png\n\nminDist[B] 表示 到达B节点 最小权值，minDist[B] 有哪些状态可以推出来？\n\n状态一： minDist[A] + value 可以推出 minDist[B] 状态二： minDist[B]本身就有权值 （可能是其他边链接的节点B 例如节点C，以至于 minDist[B]记录了其他边到minDist[B]的权值）\n\nminDist[B] 应为如何取舍。\n\n本题我们要求最小权值，那么 这两个状态我们就取最小的\n\nif (minDist[B] > minDist[A] + value) minDist[B] = minDist[A] + value\n\n也就是说，如果 通过 A 到 B 这条边可以获得更短的到达B节点的路径，即如果 minDist[B] > minDist[A] + value，那么我们就更新 minDist[B] = minDist[A] + value ，这个过程就叫做 “松弛” 。\n\n以上讲了这么多，其实都是围绕以下这句代码展开：\n\nif (minDist[B] > minDist[A] + value) minDist[B] = minDist[A] + value\n\n这句代码就是 Bellman_ford算法的核心操作。\n\n以上代码也可以这么写：minDist[B] = min(minDist[A] + value, minDist[B])\n\n如果大家看过代码随想录的动态规划章节，会发现 无论是背包问题还是子序列问题，这段代码（递推公式）出现频率非常高的。\n\n其实 Bellman_ford算法 也是采用了动态规划的思想，即：将一个问题分解成多个决策阶段，通过状态之间的递归关系最后计算出全局最优解。\n\n（如果理解不了动态规划的思想也无所谓，理解我上面讲的松弛操作就好）\n\n那么为什么是 n - 1次 松弛呢？\n\n这里要给大家模拟一遍 Bellman_ford 的算法才行，接下来我们来看看对所有边松弛 n - 1 次的操作是什么样的。\n\n我们依然使用minDist数组来表达 起点到各个节点的最短距离，例如minDist[3] = 5 表示起点到达节点3 的最小距离为5\n\n#模拟过程\n初始化过程。\n\n起点为节点1， 起点到起点的距离为0，所以 minDist[1] 初始化为0\n\n如图：\n\nhttps://file1.kamacoder.com/i/algo/20240328104119.png\n\n其他节点对应的minDist初始化为max，因为我们要求最小距离，那么还没有计算过的节点 默认是一个最大数，这样才能更新最小距离。\n\n对所有边 进行第一次松弛： （什么是松弛，在上面我已经详细讲过）\n\n以示例给出的所有边为例：\n\n5 6 -2\n1 2 1\n5 3 1\n2 5 2\n2 4 -3\n4 6 4\n1 3 5\n接下来我们来松弛一遍所有的边。\n\n边：节点5 -> 节点6，权值为-2 ，minDist[5] 还是默认数值max，所以不能基于 节点5 去更新节点6，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240329113537.png\n\n（在复习一下，minDist[5] 表示起点到节点5的最短距离）\n\n边：节点1 -> 节点2，权值为1 ，minDist[2] > minDist[1] + 1 ，更新 minDist[2] = minDist[1] + 1 = 0 + 1 = 1 ，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240329113703.png\n\n边：节点5 -> 节点3，权值为1 ，minDist[5] 还是默认数值max，所以不能基于节点5去更新节点3 如图：\n\nhttps://file1.kamacoder.com/i/algo/20240329113827.png\n\n边：节点2 -> 节点5，权值为2 ，minDist[5] > minDist[2] + 2 （经过上面的计算minDist[2]已经不是默认值，而是 1），更新 minDist[5] = minDist[2] + 2 = 1 + 2 = 3 ，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240329113927.png\n\n边：节点2 -> 节点4，权值为-3 ，minDist[4] > minDist[2] + (-3)，更新 minDist[4] = minDist[2] + (-3) = 1 + (-3) = -2 ，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240329114036.png\n\n边：节点4 -> 节点6，权值为4 ，minDist[6] > minDist[4] + 4，更新 minDist[6] = minDist[4] + 4 = -2 + 4 = 2\n\nhttps://file1.kamacoder.com/i/algo/20240329114120.png\n\n边：节点1 -> 节点3，权值为5 ，minDist[3] > minDist[1] + 5，更新 minDist[3] = minDist[1] + 5 = 0 + 5 = 5 ，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240329114324.png\n\n以上是对所有边进行一次松弛之后的结果。\n\n那么需要对所有边松弛几次才能得到 起点（节点1） 到终点（节点6）的最短距离呢？\n\n对所有边松弛一次，相当于计算 起点到达 与起点一条边相连的节点 的最短距离。\n\n上面的距离中，我们得到里 起点达到 与起点一条边相邻的节点2 和 节点3 的最短距离，分别是 minDist[2] 和 minDist[3]\n\n这里有录友疑惑了 minDist[3] = 5，分明不是 起点到达 节点3 的最短距离，节点1 -> 节点2 -> 节点5 -> 节点3 这条路线 距离才是4。\n\n注意我上面讲的是 对所有边松弛一次，相当于计算 起点到达 与起点一条边相连的节点 的最短距离，这里 说的是 一条边相连的节点。\n\n与起点（节点1）一条边相邻的节点，到达节点2 最短距离是 1，到达节点3 最短距离是5。\n\n而 节点1 -> 节点2 -> 节点5 -> 节点3 这条路线 是 与起点 三条边相连的路线了。\n\n所以对所有边松弛一次 能得到 与起点 一条边相连的节点最短距离。\n\n那对所有边松弛两次 可以得到与起点 两条边相连的节点的最短距离。\n\n那对所有边松弛三次 可以得到与起点 三条边相连的节点的最短距离，这个时候，我们就能得到到达节点3真正的最短距离，也就是 节点1 -> 节点2 -> 节点5 -> 节点3 这条路线。\n\n那么再回归刚刚的问题，需要对所有边松弛几次才能得到 起点（节点1） 到终点（节点6）的最短距离呢？\n\n节点数量为n，那么起点到终点，最多是 n-1 条边相连。\n\n那么无论图是什么样的，边是什么样的顺序，我们对所有边松弛 n-1 次 就一定能得到 起点到达 终点的最短距离。\n\n其实也同时计算出了，起点 到达 所有节点的最短距离，因为所有节点与起点连接的边数最多也就是 n-1 条边。\n\n截止到这里，Bellman_ford 的核心算法思路，大家就了解的差不多了。\n\n共有两个关键点。\n\n“松弛”究竟是个啥？\n为什么要对所有边松弛 n - 1 次 （n为节点个数） ？\n那么Bellman_ford的解题解题过程其实就是对所有边松弛 n-1 次，然后得出得到终点的最短路径。\n\n#代码\n理解上面讲解的内容，代码就更容易写了，本题代码如下：（详细注释）\n\n#include <iostream>\n#include <vector>\n#include <list>\n#include <climits>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    // 将所有边保存起来\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        // p1 指向 p2，权值为 val\n        grid.push_back({p1, p2, val});\n\n    }\n    int start = 1;  // 起点\n    int end = n;    // 终点\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) { // 对所有边 松弛 n-1 次\n        for (vector<int> &side : grid) { // 每一次松弛，都是对所有边进行松弛\n            int from = side[0]; // 边的出发点\n            int to = side[1]; // 边的到达点\n            int price = side[2]; // 边的权值\n            // 松弛操作 \n            // minDist[from] != INT_MAX 防止从未计算过的节点出发\n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) { \n                minDist[to] = minDist[from] + price;  \n            }\n        }\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; // 不能到达终点\n    else cout << minDist[end] << endl; // 到达终点最短路径\n\n}\n时间复杂度： O(N * E) , N为节点数量，E为图中边的数量\n空间复杂度： O(N) ，即 minDist 数组所开辟的空间\n关于空间复杂度，可能有录友疑惑，代码中数组grid不也开辟空间了吗？ 为什么只算minDist数组的空间呢？\n\ngrid数组是用来存图的，这是题目描述中必须要使用的空间，而不是我们算法所使用的空间。\n\n我们在讲空间复杂度的时候，一般都是说，我们这个算法所用的空间复杂度。\n\n#拓展\n有录友可能会想，那我 松弛 n 次，松弛 n + 1次，松弛 2 * n 次会怎么样？\n\n其实没啥影响，结果不会变的，因为 题目中说了 “同时保证道路网络中不存在任何负权回路” 也就是图中没有 负权回路（在有向图中出现有向环 且环的总权值为负数）。\n\n那么我们只要松弛 n - 1次 就一定能得到结果，没必要在松弛更多次了。\n\n这里有疑惑的录友，可以加上打印 minDist数组 的日志，尝试一下，看看松弛 n 次会怎么样。\n\n你会发现 松弛 大于 n - 1次，minDist数组 就不会变化了。\n\n这里我给出打印日志的代码：\n\n#include <iostream>\n#include <vector>\n#include <list>\n#include <climits>\nusing namespace std;\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<vector<int>> grid;\n\n    // 将所有边保存起来\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        // p1 指向 p2，权值为 val\n        grid.push_back({p1, p2, val});\n\n    }\n    int start = 1;  // 起点\n    int end = n;    // 终点\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n    for (int i = 1; i < n; i++) { // 对所有边 松弛 n-1 次\n        for (vector<int> &side : grid) { // 每一次松弛，都是对所有边进行松弛\n            int from = side[0]; // 边的出发点\n            int to = side[1]; // 边的到达点\n            int price = side[2]; // 边的权值\n            // 松弛操作\n            // minDist[from] != INT_MAX 防止从未计算过的节点出发\n            if (minDist[from] != INT_MAX && minDist[to] > minDist[from] + price) {\n                minDist[to] = minDist[from] + price;\n            }\n        }\n        cout << \"对所有边松弛 \" << i << \"次\" << endl;\n        for (int k = 1; k <= n; k++) {\n            cout << minDist[k] << \" \";\n        }\n        cout << endl;\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; // 不能到达终点\n    else cout << minDist[end] << endl; // 到达终点最短路径\n\n}\n\n通过打日志，大家发现，怎么对所有边进行第二次松弛以后结果就 不再变化了，那根本就不用松弛 n - 1 ？\n\n这是本题的样例的特殊性， 松弛 n-1 次 是保证对任何图 都能最后求得到终点的最小距离。\n\n如果还想不明白 我再举一个例子，用以下测试用例再跑一下。\n\n6 5\n5 6 1\n4 5 1\n3 4 1\n2 3 1\n1 2 1\n打印结果：\n\n对所有边松弛 1次\n0 1 2147483647 2147483647 2147483647 2147483647\n对所有边松弛 2次\n0 1 2 2147483647 2147483647 2147483647\n对所有边松弛 3次\n0 1 2 3 2147483647 2147483647\n对所有边松弛 4次\n0 1 2 3 4 2147483647\n对所有边松弛 5次\n0 1 2 3 4 5\n你会发现到 n-1 次 才打印出最后的最短路结果。\n\n关于上面的讲解，大家一定要多写代码去实验，验证自己的想法。\n\n至于 负权回路 ，我在下一篇会专门讲解这种情况，大家有个印象就好。\n\n#总结\nBellman_ford 是可以计算 负权值的单源最短路算法。\n\n其算法核心思路是对 所有边进行 n-1 次 松弛。\n\n弄清楚 什么是 松弛？ 为什么要 n-1 次？ 对理解Bellman_ford 非常重要。\n\n#其他语言版本\n#Java\npublic class Main {\n\n    // Define an inner class Edge\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        // Input processing\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<Edge> edges = new ArrayList<>();\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            edges.add(new Edge(from, to, val));\n        }\n\n        // Represents the minimum distance from the current node to the original node\n        int[] minDist = new int[n + 1];\n\n        // Initialize the minDist array\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        // Starts the loop to relax all edges n - 1 times to update minDist array\n        for (int i = 1; i < n; i++) {\n\n            for (Edge edge : edges) {\n                // Updates the minDist array\n                if (minDist[edge.from] != Integer.MAX_VALUE && (minDist[edge.from] + edge.val) < minDist[edge.to]) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                }\n            }\n        }\n\n        // Outcome printing\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}\n\n#Python\ndef main():\n    n, m = map(int, input().strip().split())\n    edges = []\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges.append([src, dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0  # 起点处距离为0\n    \n    for i in range(1, n):\n        updated = False\n        for src, dest, weight in edges:\n            if minDist[src] != float(\"inf\") and minDist[src] + weight < minDist[dest]:\n                minDist[dest] = minDist[src] + weight\n                updated = True\n        if not updated:  # 若边不再更新，即停止回圈\n            break\n    \n    if minDist[-1] == float(\"inf\"):  # 返还终点权重\n        return \"unconnected\"\n    return minDist[-1]\n    \nif __name__ == \"__main__\":\n    print(main())"
+}

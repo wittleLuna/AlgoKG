@@ -1,0 +1,53 @@
+{
+  "id": "PT857",
+  "name": "骑士最短路径问题",
+  "alias": [
+    "骑士移动问题",
+    "骑士最短步数问题"
+  ],
+  "type": "problem_type",
+  "description": "给定骑士的起始坐标和目标坐标，根据骑士的移动规则，计算从起点到达目标点所需的最短步数。",
+  "key_concepts": [
+    "广度优先搜索",
+    "最短路径"
+  ],
+  "applications": [
+    "棋盘问题",
+    "路径规划"
+  ],
+  "created_at": "2025-07-19T12:31:38Z",
+  "updated_at": "2025-07-19T12:31:38Z",
+  "source_files": [
+    "A Star_kama .txt"
+  ],
+  "spacy_entities": {
+    "COMPLEXITY": [
+      "O(nlogn)",
+      "O(n log n)",
+      "O(dlogd)"
+    ],
+    "ALGORITHM_PARADIGM": [
+      "BFS"
+    ],
+    "SPECIFIC_ALGORITHM": [
+      "堆排序",
+      "dijkstra",
+      "Dijkstra",
+      "Floyd"
+    ],
+    "DATA_STRUCTURE": [
+      "堆",
+      "队列",
+      "图",
+      "queue"
+    ],
+    "CORE_CONCEPT": [
+      "空间复杂度",
+      "时间复杂度",
+      "路径"
+    ],
+    "PROBLEM_TYPE": [
+      "最短路径问题"
+    ]
+  }
+}

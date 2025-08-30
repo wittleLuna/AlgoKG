@@ -1,0 +1,186 @@
+{
+  "id": "AP_089b19ad",
+  "title": "逆波兰表达式求值",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/evaluate-reverse-polish-notation/",
+  "description": "逆波兰表达式总是有效的。换句话说，表达式总会得出有效数值且不存在除数为 0 的情况。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "栈",
+    "字符串处理"
+  ],
+  "data_structure_tags": [
+    "栈"
+  ],
+  "technique_tags": [
+    "迭代",
+    "后序遍历"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用栈来处理逆波兰表达式。遇到数字则入栈；遇到运算符时，从栈中弹出两个操作数进行计算，并将结果压回栈中。最终栈内剩下的唯一元素即为表达式的计算结果。",
+  "key_insights": [
+    {
+      "content": "逆波兰表达式可以看作是二叉树的后序遍历形式，非常适合用栈来进行处理。通过栈，我们可以轻松管理运算的操作顺序，无需考虑括号和优先级问题。"
+    },
+    {
+      "content": "提到递归本质上可以用栈实现，因此在处理如本题这样的问题时，可以利用栈来模仿递归的行为，从而简化问题解决过程。"
+    },
+    {
+      "content": "每个子表达式的结果可以被视为新的操作数参与后续运算，这种逐步构建答案的方式与某些字符串处理问题中的相邻元素消除相似。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "正题",
+      "text": "在上一篇文章中1047.删除字符串中的所有相邻重复项 (opens new window)提到了 递归就是用栈来实现的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int evalRPN(vector<string>& tokens) {stack<long long> st; for (int i = 0; i < tokens.size(); i++) {if (tokens[i] == \"+\" || tokens[i] == \"-\" || tokens[i] == \"*\" || tokens[i] == \"/\") {long long num1 = st.top();st.pop();long long num2 = st.top();st.pop();if (tokens[i] == \"+\") st.push(num2 + num1);if (tokens[i] == \"-\") st.push(num2 - num1);if (tokens[i] == \"*\") st.push(num2 * num1);if (tokens[i] == \"/\") st.push(num2 / num1);} else {st.push(stoll(tokens[i]));}} long long result = st.top();st.pop();return result;}};",
+          "description": "C++版本的逆波兰表达式求值"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int evalRPN(String[] tokens) {Deque<Integer> stack = new LinkedList();for (String s : tokens) {if (\"+\".equals(s)) {stack.push(stack.pop() + stack.pop());} else if (\"-\".equals(s)) {stack.push(-stack.pop() + stack.pop());} else if (\"*\".equals(s)) {stack.push(stack.pop() * stack.pop());} else if (\"/\".equals(s)) {int temp1 = stack.pop();int temp2 = stack.pop();stack.push(temp2 / temp1);} else {stack.push(Integer.valueOf(s));}}return stack.pop();}}",
+          "description": "Java版本的逆波兰表达式求值"
+        },
+        {
+          "language": "python",
+          "code": "from operator import add, sub, mul\ndef div(x, y):\n    return int(x / y) if x * y > 0 else -(abs(x) // abs(y))\nclass Solution(object):\n    op_map = {'+': add, '-': sub, '*': mul, '/': div}\n    def evalRPN(self, tokens: List[str]) -> int:\n        stack = []\n        for token in tokens:\n            if token not in {'+', '-', '*', '/'}:\n                stack.append(int(token))\n            else:\n                op2 = stack.pop()\n                op1 = stack.pop()\n                stack.append(self.op_map[token](op1, op2))\n        return stack.pop()",
+          "description": "Python3版本的逆波兰表达式求值，使用了内置运算符映射"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "题外话",
+      "text": "我们习惯看到的表达式都是中缀表达式，因为符合我们的习惯，但是中缀表达式对于计算机来说就不是很友好了。",
+      "resources": [],
+      "code_snippets": [],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int evalRPN(vector<string>& tokens) {stack<long long> st; for (int i = 0; i < tokens.size(); i++) {if (tokens[i] == \"+\" || tokens[i] == \"-\" || tokens[i] == \"*\" || tokens[i] == \"/\") {long long num1 = st.top(); st.pop(); long long num2 = st.top(); st.pop(); if (tokens[i] == \"+\") st.push(num2 + num1); if (tokens[i] == \"-\") st.push(num2 - num1); if (tokens[i] == \"*\") st.push(num2 * num1); if (tokens[i] == \"/\") st.push(num2 / num1);} else {st.push(stoll(tokens[i]));}} long long result = st.top(); st.pop(); return result;}};",
+          "description": "C++版本的逆波兰表达式求值"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int evalRPN(String[] tokens) {Deque<Integer> stack = new LinkedList(); for (String s : tokens) {if (\"+\".equals(s)) {stack.push(stack.pop() + stack.pop());} else if (\"-\".equals(s)) {stack.push(-stack.pop() + stack.pop());} else if (\"*\".equals(s)) {stack.push(stack.pop() * stack.pop());} else if (\"/\".equals(s)) {int temp1 = stack.pop(); int temp2 = stack.pop(); stack.push(temp2 / temp1);} else {stack.push(Integer.valueOf(s));}} return stack.pop();}}",
+          "description": "Java版本的逆波兰表达式求值"
+        },
+        {
+          "language": "python",
+          "code": "from operator import add, sub, mul\ndef div(x, y):\n    return int(x / y) if x * y > 0 else -(abs(x) // abs(y))\nclass Solution(object):\n    op_map = {'+': add, '-': sub, '*': mul, '/': div}\n    def evalRPN(self, tokens: List[str]) -> int:\n        stack = []\n        for token in tokens:\n            if token not in {'+', '-', '*', '/'}:\n                stack.append(int(token))\n            else:\n                op2 = stack.pop()\n                op1 = stack.pop()\n                stack.append(self.op_map[token](op1, op2))\n        return stack.pop()",
+          "description": "Python版本的逆波兰表达式求值"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java:",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int evalRPN(vector<string>& tokens) {stack<long long> st; for (int i = 0; i < tokens.size(); i++) {if (tokens[i] == \"+\" || tokens[i] == \"-\" || tokens[i] == \"*\" || tokens[i] == \"/\") {long long num1 = st.top();st.pop();long long num2 = st.top();st.pop();if (tokens[i] == \"+\") st.push(num2 + num1);if (tokens[i] == \"-\") st.push(num2 - num1);if (tokens[i] == \"*\") st.push(num2 * num1);if (tokens[i] == \"/\") st.push(num2 / num1);} else {st.push(stoll(tokens[i]));}} long long result = st.top();st.pop();return result;}};",
+          "description": "使用栈来计算逆波兰表达式的值"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int evalRPN(String[] tokens) {Deque<Integer> stack = new LinkedList();for (String s : tokens) {if (\"+\".equals(s)) {stack.push(stack.pop() + stack.pop());} else if (\"-\".equals(s)) {stack.push(-stack.pop() + stack.pop());} else if (\"*\".equals(s)) {stack.push(stack.pop() * stack.pop());} else if (\"/\".equals(s)) {int temp1 = stack.pop();int temp2 = stack.pop();stack.push(temp2 / temp1);} else {stack.push(Integer.valueOf(s));}} return stack.pop();}}",
+          "description": "Java实现，利用双端队列作为栈来计算逆波兰表达式的值"
+        },
+        {
+          "language": "python",
+          "code": "from operator import add, sub, mul\ndef div(x, y):\n    return int(x / y) if x * y > 0 else -(abs(x) // abs(y))\nclass Solution(object):\n    op_map = {'+': add, '-': sub, '*': mul, '/': div}\n    def evalRPN(self, tokens: List[str]) -> int:\n        stack = []\n        for token in tokens:\n            if token not in {'+', '-', '*', '/'}:\n                stack.append(int(token))\n            else:\n                op2 = stack.pop()\n                op1 = stack.pop()\n                stack.append(self.op_map[token](op1, op2))\n        return stack.pop()",
+          "description": "Python实现，使用字典映射运算符到相应的函数，并通过栈计算逆波兰表达式的值"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python3：",
+      "text": "from operator import add, sub, mul",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int evalRPN(vector<string>& tokens) {stack<long long> st; for (int i = 0; i < tokens.size(); i++) {if (tokens[i] == \"+\" || tokens[i] == \"-\" || tokens[i] == \"*\" || tokens[i] == \"/\") {long long num1 = st.top();st.pop();long long num2 = st.top();st.pop();if (tokens[i] == \"+\") st.push(num2 + num1);if (tokens[i] == \"-\") st.push(num2 - num1);if (tokens[i] == \"*\") st.push(num2 * num1);if (tokens[i] == \"/\") st.push(num2 / num1);} else {st.push(stoll(tokens[i]));}} long long result = st.top();st.pop();return result;}};",
+          "description": "C++版本的逆波兰表达式求值"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int evalRPN(String[] tokens) {Deque<Integer> stack = new LinkedList();for (String s : tokens) {if (\"+\".equals(s)) {stack.push(stack.pop() + stack.pop());} else if (\"-\".equals(s)) {stack.push(-stack.pop() + stack.pop());} else if (\"*\".equals(s)) {stack.push(stack.pop() * stack.pop());} else if (\"/\".equals(s)) {int temp1 = stack.pop();int temp2 = stack.pop();stack.push(temp2 / temp1);} else {stack.push(Integer.valueOf(s));}}return stack.pop();}}",
+          "description": "Java版本的逆波兰表达式求值"
+        },
+        {
+          "language": "python",
+          "code": "from operator import add, sub, mul\ndef div(x, y):\n    return int(x / y) if x * y > 0 else -(abs(x) // abs(y))\nclass Solution(object):\n    op_map = {'+': add, '-': sub, '*': mul, '/': div}\n    def evalRPN(self, tokens: List[str]) -> int:\n        stack = []\n        for token in tokens:\n            if token not in {'+', '-', '*', '/'}:\n                stack.append(int(token))\n            else:\n                op2 = stack.pop()\n                op1 = stack.pop()\n                stack.append(self.op_map[token](op1, op2))\n        return stack.pop()",
+          "description": "Python版本的逆波兰表达式求值，使用了操作符映射字典"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object):\n    def evalRPN(self, tokens: List[str]) -> int:\n        stack = []\n        for token in tokens:\n            if token.isdigit() or (len(token)>1 and token[1].isdigit()):\n                stack.append(token)\n            else:\n                op2 = stack.pop()\n                op1 = stack.pop()\n                stack.append(str(int(eval(op1 + token + op2))))\n        return int(stack.pop())",
+          "description": "另一种Python版本的逆波兰表达式求值，使用eval()函数"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int evalRPN(vector<string>& tokens) {stack<long long> st; for (int i = 0; i < tokens.size(); i++) {if (tokens[i] == \"+\" || tokens[i] == \"-\" || tokens[i] == \"*\" || tokens[i] == \"/\") {long long num1 = st.top();st.pop();long long num2 = st.top();st.pop();if (tokens[i] == \"+\") st.push(num2 + num1);if (tokens[i] == \"-\") st.push(num2 - num1);if (tokens[i] == \"*\") st.push(num2 * num1);if (tokens[i] == \"/\") st.push(num2 / num1);} else {st.push(stoll(tokens[i]));}} long long result = st.top();st.pop();return result;}};",
+      "description": "使用栈来处理逆波兰表达式，遇到运算符则弹出栈顶两个元素进行计算，并将结果压入栈中。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int evalRPN(String[] tokens) {Deque<Integer> stack = new LinkedList();for (String s : tokens) {if (\"+\".equals(s)) {stack.push(stack.pop() + stack.pop());} else if (\"-\".equals(s)) {stack.push(-stack.pop() + stack.pop());} else if (\"*\".equals(s)) {stack.push(stack.pop() * stack.pop());} else if (\"/\".equals(s)) {int temp1 = stack.pop();int temp2 = stack.pop();stack.push(temp2 / temp1);} else {stack.push(Integer.valueOf(s));}} return stack.pop();}}",
+      "description": "Java版本的实现，逻辑与C++版本相同，但使用了LinkedList作为栈。"
+    },
+    {
+      "language": "python",
+      "code": "from operator import add, sub, mul\ndef div(x, y):\n    return int(x / y) if x * y > 0 else -(abs(x) // abs(y))\nclass Solution(object):\n    op_map = {'+': add, '-': sub, '*': mul, '/': div}\n    def evalRPN(self, tokens: List[str]) -> int:\n        stack = []\n        for token in tokens:\n            if token not in {'+', '-', '*', '/'}:\n                stack.append(int(token))\n            else:\n                op2 = stack.pop()\n                op1 = stack.pop()\n                stack.append(self.op_map[token](op1, op2))\n        return stack.pop()",
+      "description": "Python版本的实现，使用字典映射操作符到对应的函数，并使用栈来处理逆波兰表达式。"
+    }
+  ],
+  "common_mistakes": [
+    "误用==判断字符串相等，应该使用equals方法。",
+    "忘记处理除法中的整数除法规则，直接使用/可能导致浮点数结果。",
+    "对于负数的处理不当，特别是涉及到减法和除法时需要特别注意操作数的顺序。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/150.%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B1%82%E5%80%BC.gif",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/150.%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B1%82%E5%80%BC.gif",
+      "context": "动画展示了通过逆波兰表达式求值的过程，形象地说明了其与删除字符串中所有相邻重复项问题的相似之处。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/150.%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B1%82%E5%80%BC.gif",
+      "description": "GIF展示了逆波兰表达式的计算过程，通过逐步处理操作数和运算符来求解最终结果。",
+      "context": "GIF动画展示了如何通过模拟对对碰游戏的过程来删除字符串中的所有相邻重复项，直观地解释了算法的操作步骤。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\栈与队列\\逆波兰表达式求值.txt",
+  "extracted_at": "2025-07-22T14:23:39.657230",
+  "raw_content": "逆波兰表达式求值\n力扣题目链接(https://leetcode.cn/problems/evaluate-reverse-polish-notation/)\n\n根据 逆波兰表示法，求表达式的值。\n\n有效的运算符包括 + ,  - ,  * ,  / 。每个运算对象可以是整数，也可以是另一个逆波兰表达式。\n\n说明：\n\n整数除法只保留整数部分。 给定逆波兰表达式总是有效的。换句话说，表达式总会得出有效数值且不存在除数为 0 的情况。\n\n示例 1：\n\n输入: [\"2\", \"1\", \"+\", \"3\", \" * \"]\n输出: 9\n解释: 该算式转化为常见的中缀算术表达式为：((2 + 1) * 3) = 9\n示例 2：\n\n输入: [\"4\", \"13\", \"5\", \"/\", \"+\"]\n输出: 6\n解释: 该算式转化为常见的中缀算术表达式为：(4 + (13 / 5)) = 6\n示例 3：\n\n输入: [\"10\", \"6\", \"9\", \"3\", \"+\", \"-11\", \" * \", \"/\", \" * \", \"17\", \"+\", \"5\", \"+\"]\n\n输出: 22\n\n解释:该算式转化为常见的中缀算术表达式为：\n\n((10 * (6 / ((9 + 3) * -11))) + 17) + 5       \n= ((10 * (6 / (12 * -11))) + 17) + 5       \n= ((10 * (6 / -132)) + 17) + 5     \n= ((10 * 0) + 17) + 5     \n= (0 + 17) + 5    \n= 17 + 5    \n= 22    \n逆波兰表达式：是一种后缀表达式，所谓后缀就是指运算符写在后面。\n\n平常使用的算式则是一种中缀表达式，如 ( 1 + 2 ) * ( 3 + 4 ) 。\n\n该算式的逆波兰表达式写法为 ( ( 1 2 + ) ( 3 4 + ) * ) 。\n\n逆波兰表达式主要有以下两个优点：\n\n去掉括号后表达式无歧义，上式即便写成 1 2 + 3 4 + * 也可以依据次序计算出正确结果。\n\n适合用栈操作运算：遇到数字则入栈；遇到运算符则取出栈顶两个数字进行计算，并将结果压入栈中。\n\n\n思路\n#正题\n在上一篇文章中1047.删除字符串中的所有相邻重复项 (opens new window)提到了 递归就是用栈来实现的。\n\n所以栈与递归之间在某种程度上是可以转换的！ 这一点我们在后续讲解二叉树的时候，会更详细的讲解到。\n\n那么来看一下本题，其实逆波兰表达式相当于是二叉树中的后序遍历。 大家可以把运算符作为中间节点，按照后序遍历的规则画出一个二叉树。\n\n但我们没有必要从二叉树的角度去解决这个问题，只要知道逆波兰表达式是用后序遍历的方式把二叉树序列化了，就可以了。\n\n在进一步看，本题中每一个子表达式要得出一个结果，然后拿这个结果再进行运算，那么这岂不就是一个相邻字符串消除的过程，和1047.删除字符串中的所有相邻重复项 (https://programmercarl.com/1047.%E5%88%A0%E9%99%A4%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89%E7%9B%B8%E9%82%BB%E9%87%8D%E5%A4%8D%E9%A1%B9.html)中的对对碰游戏是不是就非常像了。\n\n如动画所示： https://file1.kamacoder.com/i/algo/150.%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B1%82%E5%80%BC.gif\n\n相信看完动画大家应该知道，这和1047. 删除字符串中的所有相邻重复项 (https://programmercarl.com/1047.%E5%88%A0%E9%99%A4%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89%E7%9B%B8%E9%82%BB%E9%87%8D%E5%A4%8D%E9%A1%B9.html)是差不多的，只不过本题不要相邻元素做消除了，而是做运算！\n\nC++代码如下：\n\nclass Solution {\npublic:\n    int evalRPN(vector<string>& tokens) {\n        // 力扣修改了后台测试数据，需要用longlong\n        stack<long long> st; \n        for (int i = 0; i < tokens.size(); i++) {\n            if (tokens[i] == \"+\" || tokens[i] == \"-\" || tokens[i] == \"*\" || tokens[i] == \"/\") {\n                long long num1 = st.top();\n                st.pop();\n                long long num2 = st.top();\n                st.pop();\n                if (tokens[i] == \"+\") st.push(num2 + num1);\n                if (tokens[i] == \"-\") st.push(num2 - num1);\n                if (tokens[i] == \"*\") st.push(num2 * num1);\n                if (tokens[i] == \"/\") st.push(num2 / num1);\n            } else {\n                st.push(stoll(tokens[i]));\n            }\n        }\n\n        long long result = st.top();\n        st.pop(); // 把栈里最后一个元素弹出（其实不弹出也没事）\n        return result;\n    }\n};\n\n时间复杂度: O(n)\n空间复杂度: O(n)\n#题外话\n我们习惯看到的表达式都是中缀表达式，因为符合我们的习惯，但是中缀表达式对于计算机来说就不是很友好了。\n\n例如：4 + 13 / 5，这就是中缀表达式，计算机从左到右去扫描的话，扫到13，还要判断13后面是什么运算符，还要比较一下优先级，然后13还和后面的5做运算，做完运算之后，还要向前回退到 4 的位置，继续做加法，你说麻不麻烦！\n\n那么将中缀表达式，转化为后缀表达式之后：[\"4\", \"13\", \"5\", \"/\", \"+\"] ，就不一样了，计算机可以利用栈来顺序处理，不需要考虑优先级了。也不用回退了， 所以后缀表达式对计算机来说是非常友好的。\n\n可以说本题不仅仅是一道好题，也展现出计算机的思考方式。\n\n在1970年代和1980年代，惠普在其所有台式和手持式计算器中都使用了RPN（后缀表达式），直到2020年代仍在某些模型中使用了RPN。\n\n参考维基百科如下：\n\nDuring the 1970s and 1980s, Hewlett-Packard used RPN in all of their desktop and hand-held calculators, and continued to use it in some models into the 2020s.\n\n#其他语言版本\n#Java:\nclass Solution {\n    public int evalRPN(String[] tokens) {\n        Deque<Integer> stack = new LinkedList();\n        for (String s : tokens) {\n            if (\"+\".equals(s)) {        // leetcode 内置jdk的问题，不能使用==判断字符串是否相等\n                stack.push(stack.pop() + stack.pop());      // 注意 - 和/ 需要特殊处理\n            } else if (\"-\".equals(s)) {\n                stack.push(-stack.pop() + stack.pop());\n            } else if (\"*\".equals(s)) {\n                stack.push(stack.pop() * stack.pop());\n            } else if (\"/\".equals(s)) {\n                int temp1 = stack.pop();\n                int temp2 = stack.pop();\n                stack.push(temp2 / temp1);\n            } else {\n                stack.push(Integer.valueOf(s));\n            }\n        }\n        return stack.pop();\n    }\n}\n#Python3：\nfrom operator import add, sub, mul\n\ndef div(x, y):\n    # 使用整数除法的向零取整方式\n    return int(x / y) if x * y > 0 else -(abs(x) // abs(y))\n\nclass Solution(object):\n    op_map = {'+': add, '-': sub, '*': mul, '/': div}\n    \n    def evalRPN(self, tokens: List[str]) -> int:\n        stack = []\n        for token in tokens:\n            if token not in {'+', '-', '*', '/'}:\n                stack.append(int(token))\n            else:\n                op2 = stack.pop()\n                op1 = stack.pop()\n                stack.append(self.op_map[token](op1, op2))  # 第一个出来的在运算符后面\n        return stack.pop()\n另一种可行，但因为使用eval()相对较慢的方法:\n\nclass Solution(object):\n    def evalRPN(self, tokens: List[str]) -> int:\n        stack = []\n        for token in tokens:\n            # 判断是否为数字，因为isdigit()不识别负数，故需要排除第一位的符号\n            if token.isdigit() or (len(token)>1 and token[1].isdigit()):\n                stack.append(token)\n            else:\n                op2 = stack.pop()\n                op1 = stack.pop()\n\t\t# 由题意\"The division always truncates toward zero\"，所以使用int()可以天然取整\n                stack.append(str(int(eval(op1 + token + op2))))\n        return int(stack.pop())"
+}

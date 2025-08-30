@@ -1,0 +1,425 @@
+{
+  "id": "AP_7382d7fd",
+  "title": "无重叠区间",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/non-overlapping-intervals/",
+  "description": "一个区间的集合，找到需要移除区间的最小数量，使剩余区间互不重叠。\n\n注意: 可以认为区间的终点总是大于它的起点。 区间 [1,2] 和 [2,3] 的边界相互“接触”，但没有相互重叠。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "贪心算法",
+    "排序"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "自定义排序比较器",
+    "迭代"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过排序区间的右边界或左边界来优化查找非重叠区间的过程。主要思想是先将所有区间按照某一端点进行排序，然后遍历这些区间，记录下非重叠区间的最大数量，从而确定需要移除的最少区间数。",
+  "key_insights": [
+    {
+      "content": "无论是基于右边界还是左边界进行排序，都可以有效地找到非重叠区间的最大集合。关键在于如何利用排序后的顺序来简化后续处理。"
+    },
+    {
+      "content": "在遍历过程中，保持一个变量追踪当前非重叠区间的最后一个位置（即其边界），这有助于快速判断下一个区间是否与之重叠。"
+    },
+    {
+      "content": "计算非交叉区间的个数时，选择按右边界排序的方法更直观，因为总是可以保证尽可能多的不重叠区间被选取。"
+    },
+    {
+      "content": "对于左边界排序，则直接计算重叠区间的数量，这种方法也有效但逻辑上稍显复杂。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "相信很多同学看到这道题目都冥冥之中感觉要排序，但是究竟是按照右边界排序，还是按照左边界排序呢？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) {return a[1] < b[1];} int eraseOverlapIntervals(vector<vector<int>>& intervals) {if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 1; int end = intervals[0][1]; for (int i = 1; i < intervals.size(); i++) {if (end <= intervals[i][0]) {end = intervals[i][1];count++;}} return intervals.size() - count;}};",
+          "description": "C++代码实现，按照区间右边界排序来移除重叠区间。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) {return a[0] < b[0];} int eraseOverlapIntervals(vector<vector<int>>& intervals) {if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 0; int end = intervals[0][1]; for (int i = 1; i < intervals.size(); i++) {if (intervals[i][0] >= end) end = intervals[i][1]; else {end = min(end, intervals[i][1]);count++;}} return count;}};",
+          "description": "C++代码实现，通过左边界排序来计算并移除重叠区间。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) {return a[0] < b[0];} int eraseOverlapIntervals(vector<vector<int>>& intervals) {if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 0; for (int i = 1; i < intervals.size(); i++) {if (intervals[i][0] < intervals[i - 1][1]) {intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]);count++;}} return count;}};",
+          "description": "简化版的C++代码，同样基于左边界排序来处理重叠区间问题。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int eraseOverlapIntervals(int[][] intervals) {Arrays.sort(intervals, (a,b)-> {return Integer.compare(a[0],b[0]);}); int count = 1; for(int i = 1;i < intervals.length;i++){if(intervals[i][0] < intervals[i-1][1]){intervals[i][1] = Math.min(intervals[i - 1][1], intervals[i][1]);continue;}else{count++;}} return intervals.length - count;}}",
+          "description": "Java代码实现，使用左边界排序方法解决重叠区间问题。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int eraseOverlapIntervals(int[][] intervals) {Arrays.sort(intervals, (a,b)-> {return Integer.compare(a[0],b[0]);}); int remove = 0; int pre = intervals[0][1]; for(int i = 1; i < intervals.length; i++) {if(pre > intervals[i][0]) {remove++;pre = Math.min(pre, intervals[i][1]);}else pre = intervals[i][1];} return remove;}}",
+          "description": "另一种Java实现方式，采用左边界排序策略，并直接计算需要移除的区间数量。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int: if not intervals: return 0 intervals.sort(key=lambda x: x[0]) count = 0 for i in range(1, len(intervals)): if intervals[i][0] < intervals[i - 1][1]: intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]) count += 1 return count",
+          "description": "Python代码，基于左边界排序的贪心算法来解决非重叠区间问题。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int: if not intervals: return 0 intervals.sort(key=lambda x: x[0]) result = 1 for i in range(1, len(intervals)): if intervals[i][0] >= intervals[i - 1][1]: result += 1 else: intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]) return len(intervals) - result",
+          "description": "Python实现，调整自另一个相关问题（用最少箭引爆气球）的解法，用于解决当前问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "补充",
+      "text": "#补充（1）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) {return a[1] < b[1];} int eraseOverlapIntervals(vector<vector<int>>& intervals) {if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 1; int end = intervals[0][1]; for (int i = 1; i < intervals.size(); i++) {if (end <= intervals[i][0]) {end = intervals[i][1];count++;}} return intervals.size() - count;}};",
+          "description": "基于右边界排序的C++解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) {return a[0] < b[0];} int eraseOverlapIntervals(vector<vector<int>>& intervals) {if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 0; int end = intervals[0][1]; for (int i = 1; i < intervals.size(); i++) {if (intervals[i][0] >= end)  end = intervals[i][1]; else {end = min(end, intervals[i][1]);count++;}} return count;}};",
+          "description": "基于左边界排序的C++解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) {return a[0] < b[0];} int eraseOverlapIntervals(vector<vector<int>>& intervals) {if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 0; for (int i = 1; i < intervals.size(); i++) {if (intervals[i][0] < intervals[i - 1][1]) {intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]);count++;}} return count;}};",
+          "description": "简化版基于左边界排序的C++解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int eraseOverlapIntervals(int[][] intervals) {Arrays.sort(intervals, (a,b)-> {return Integer.compare(a[0],b[0]);}); int count = 1;for(int i = 1;i < intervals.length;i++){if(intervals[i][0] < intervals[i-1][1]){intervals[i][1] = Math.min(intervals[i - 1][1], intervals[i][1]);continue;}else{count++;}} return intervals.length - count;}}",
+          "description": "基于左边界的Java解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int eraseOverlapIntervals(int[][] intervals) {Arrays.sort(intervals, (a,b)-> {return Integer.compare(a[0],b[0]);}); int remove = 0;int pre = intervals[0][1];for(int i = 1; i < intervals.length; i++) {if(pre > intervals[i][0]) {remove++;pre = Math.min(pre, intervals[i][1]);}else pre = intervals[i][1];} return remove;}}",
+          "description": "另一种基于左边界的Java解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int: if not intervals: return 0 intervals.sort(key=lambda x: x[0]) count = 0 for i in range(1, len(intervals)): if intervals[i][0] < intervals[i - 1][1]: intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]) count += 1 return count",
+          "description": "基于左边界的Python解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int: if not intervals: return 0 intervals.sort(key=lambda x: x[0]) result = 1 for i in range(1, len(intervals)): if intervals[i][0] >= intervals[i - 1][1]: result += 1 else: intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]) return len(intervals) - result",
+          "description": "修改自用最少数量箭引爆气球问题的Python解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "补充（1）",
+      "text": "左边界排序可不可以呢？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) { return a[1] < b[1]; } int eraseOverlapIntervals(vector<vector<int>>& intervals) { if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 1; int end = intervals[0][1]; for (int i = 1; i < intervals.size(); i++) { if (end <= intervals[i][0]) { end = intervals[i][1]; count++; } } return intervals.size() - count; }};",
+          "description": "按照右边界排序，计算非交叉区间的最大数量"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) { return a[0] < b[0]; } int eraseOverlapIntervals(vector<vector<int>>& intervals) { if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 0; int end = intervals[0][1]; for (int i = 1; i < intervals.size(); i++) { if (intervals[i][0] >= end) end = intervals[i][1]; else { end = min(end, intervals[i][1]); count++; } } return count; }};",
+          "description": "左边界排序，直接求重叠的区间数"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) { return a[0] < b[0]; } int eraseOverlapIntervals(vector<vector<int>>& intervals) { if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 0; for (int i = 1; i < intervals.size(); i++) { if (intervals[i][0] < intervals[i - 1][1]) { intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]); count++; } } return count; }};",
+          "description": "简化版左边界排序，仅记录重叠情况"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) { return a[1] < b[1]; } int eraseOverlapIntervals(vector<vector<int>>& intervals) { if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int result = 1; for (int i = 1; i < intervals.size(); i++) { if (intervals[i][0] >= intervals[i - 1][1]) { result++; } else { intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]); } } return intervals.size() - result; }};",
+          "description": "基于箭引爆气球思路的右边界排序实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) { return a[0] < b[0]; } int eraseOverlapIntervals(vector<vector<int>>& intervals) { if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int result = 1; for (int i = 1; i < intervals.size(); i++) { if (intervals[i][0] >= intervals[i - 1][1]) { result++; } else { intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]); } } return intervals.size() - result; }};",
+          "description": "基于箭引爆气球思路的左边界排序实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int eraseOverlapIntervals(int[][] intervals) { Arrays.sort(intervals, (a,b)-> { return Integer.compare(a[0],b[0]); }); int count = 1; for(int i = 1;i < intervals.length;i++){ if(intervals[i][0] < intervals[i-1][1]){ intervals[i][1] = Math.min(intervals[i - 1][1], intervals[i][1]); continue; }else{ count++; } } return intervals.length - count; }}",
+          "description": "Java版本，按左边界排序"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int eraseOverlapIntervals(int[][] intervals) { Arrays.sort(intervals, (a,b)-> { return Integer.compare(a[0],b[0]); }); int remove = 0; int pre = intervals[0][1]; for(int i = 1; i < intervals.length; i++) { if(pre > intervals[i][0]) { remove++; pre = Math.min(pre, intervals[i][1]); } else pre = intervals[i][1]; } return remove; }}",
+          "description": "Java版本，另一种按左边界排序实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int: if not intervals: return 0 intervals.sort(key=lambda x: x[0]) count = 0 for i in range(1, len(intervals)): if intervals[i][0] < intervals[i - 1][1]: intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]) count += 1 return count",
+          "description": "Python版本，基于左边界排序"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int: if not intervals: return 0 intervals.sort(key=lambda x: x[0]) result = 1 for i in range(1, len(intervals)): if intervals[i][0] >= intervals[i - 1][1]: result += 1 else: intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]) return len(intervals) - result",
+          "description": "Python版本，基于箭引爆气球思路的左边界排序实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "补充（2）",
+      "text": "本题其实和452.用最少数量的箭引爆气球 (https://programmercarl.com/0452.%E7%94%A8%E6%9C%80%E5%B0%91%E6%95%B0%E9%87%8F%E7%9A%84%E7%AE%AD%E5%BC%95%E7%88%86%E6%B0%94%E7%90%83.html)非常像，弓箭的数量就相当于是非交叉区间的数量，只要把弓箭那道题目代码里射爆气球的判断条件加个等号（认为[0，1][1，2]不是相邻区间），然后用总区间数减去弓箭数量 就是要移除的区间数量了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) {return a[1] < b[1];} int eraseOverlapIntervals(vector<vector<int>>& intervals) {if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 1; int end = intervals[0][1]; for (int i = 1; i < intervals.size(); i++) {if (end <= intervals[i][0]) {end = intervals[i][1]; count++;}} return intervals.size() - count;}};",
+          "description": "右边界排序实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) {return a[0] < b[0];} int eraseOverlapIntervals(vector<vector<int>>& intervals) {if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 0; int end = intervals[0][1]; for (int i = 1; i < intervals.size(); i++) {if (intervals[i][0] >= end) end = intervals[i][1]; else {end = min(end, intervals[i][1]); count++;}} return count;}};",
+          "description": "左边界排序实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) {return a[0] < b[0];} int eraseOverlapIntervals(vector<vector<int>>& intervals) {if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 0; for (int i = 1; i < intervals.size(); i++) {if (intervals[i][0] < intervals[i - 1][1]) {intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]); count++;}} return count;}};",
+          "description": "简化后的左边界排序实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) {return a[1] < b[1];} int eraseOverlapIntervals(vector<vector<int>>& intervals) {if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int result = 1; for (int i = 1; i < intervals.size(); i++) {if (intervals[i][0] >= intervals[i - 1][1]) {result++;} else {intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]);}} return intervals.size() - result;}};",
+          "description": "基于最少箭数量问题的右边界排序修改版"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) {return a[0] < b[0];} int eraseOverlapIntervals(vector<vector<int>>& intervals) {if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int result = 1; for (int i = 1; i < intervals.size(); i++) {if (intervals[i][0] >= intervals[i - 1][1]) {result++;} else {intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]);}} return intervals.size() - result;}};",
+          "description": "基于最少箭数量问题的左边界排序修改版"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int eraseOverlapIntervals(int[][] intervals) {Arrays.sort(intervals, (a,b)-> {return Integer.compare(a[0],b[0]);}); int count = 1; for(int i = 1;i < intervals.length;i++){if(intervals[i][0] < intervals[i-1][1]){intervals[i][1] = Math.min(intervals[i - 1][1], intervals[i][1]); continue;}else{count++;}} return intervals.length - count;}}",
+          "description": "Java语言实现，按左边界排序"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int eraseOverlapIntervals(int[][] intervals) {Arrays.sort(intervals, (a,b)-> {return Integer.compare(a[0],b[0]);}); int remove = 0; int pre = intervals[0][1]; for(int i = 1; i < intervals.length; i++) {if(pre > intervals[i][0]) {remove++; pre = Math.min(pre, intervals[i][1]);} else pre = intervals[i][1];} return remove;}}",
+          "description": "另一种Java语言实现，按左边界排序"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int: if not intervals: return 0 intervals.sort(key=lambda x: x[0]) count = 0 for i in range(1, len(intervals)): if intervals[i][0] < intervals[i - 1][1]: intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]) count += 1 return count",
+          "description": "Python语言实现，基于左边界"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int: if not intervals: return 0 intervals.sort(key=lambda x: x[0]) result = 1 for i in range(1, len(intervals)): if intervals[i][0] >= intervals[i - 1][1]: result += 1 else: intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]) return len(intervals) - result",
+          "description": "Python语言实现，基于最少箭数量问题的代码修改"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) { return a[1] < b[1]; } int eraseOverlapIntervals(vector<vector<int>>& intervals) { if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 1; int end = intervals[0][1]; for (int i = 1; i < intervals.size(); i++) { if (end <= intervals[i][0]) { end = intervals[i][1]; count++; } } return intervals.size() - count; }};",
+          "description": "按照区间右边界排序，计算非交叉区间的最大个数。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) { return a[0] < b[0]; } int eraseOverlapIntervals(vector<vector<int>>& intervals) { if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 0; int end = intervals[0][1]; for (int i = 1; i < intervals.size(); i++) { if (intervals[i][0] >= end) end = intervals[i][1]; else { end = min(end, intervals[i][1]); count++; } } return count; }};",
+          "description": "按照左边界排序，直接计算重叠的区间数量。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) { return a[0] < b[0]; } int eraseOverlapIntervals(vector<vector<int>>& intervals) { if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 0; for (int i = 1; i < intervals.size(); i++) { if (intervals[i][0] < intervals[i - 1][1]) { intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]); count++; } } return count; }};",
+          "description": "简化版本，依然基于左边界排序计算重叠区间。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int eraseOverlapIntervals(int[][] intervals) { Arrays.sort(intervals, (a,b)-> { return Integer.compare(a[0],b[0]); }); int count = 1; for(int i = 1;i < intervals.length;i++){ if(intervals[i][0] < intervals[i-1][1]){ intervals[i][1] = Math.min(intervals[i - 1][1], intervals[i][1]); continue; }else{ count++; } } return intervals.length - count; }}",
+          "description": "Java实现，按照左边界排序后处理重叠区间。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int eraseOverlapIntervals(int[][] intervals) { Arrays.sort(intervals, (a,b)-> { return Integer.compare(a[0],b[0]); }); int remove = 0; int pre = intervals[0][1]; for(int i = 1; i < intervals.length; i++) { if(pre > intervals[i][0]) { remove++; pre = Math.min(pre, intervals[i][1]); } else pre = intervals[i][1]; } return remove; }}",
+          "description": "另一种Java实现方式，同样基于左边界排序。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int: if not intervals: return 0 intervals.sort(key=lambda x: x[0]) count = 0 for i in range(1, len(intervals)): if intervals[i][0] < intervals[i - 1][1]: intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]) count += 1 return count",
+          "description": "Python版本，按左边界排序并统计重叠区间数量。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int: if not intervals: return 0 intervals.sort(key=lambda x: x[0]) result = 1 for i in range(1, len(intervals)): if intervals[i][0] >= intervals[i - 1][1]: result += 1 else: intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]) return len(intervals) - result",
+          "description": "另一Python实现，通过不重叠区间数来间接求解需要移除的区间数。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) {return a[1] < b[1];} int eraseOverlapIntervals(vector<vector<int>>& intervals) {if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 1; int end = intervals[0][1]; for (int i = 1; i < intervals.size(); i++) {if (end <= intervals[i][0]) {end = intervals[i][1]; count++;}} return intervals.size() - count;}};",
+          "description": "基于右边界排序的C++解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) {return a[0] < b[0];} int eraseOverlapIntervals(vector<vector<int>>& intervals) {if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 0; int end = intervals[0][1]; for (int i = 1; i < intervals.size(); i++) {if (intervals[i][0] >= end) end = intervals[i][1]; else {end = min(end, intervals[i][1]); count++;}} return count;}};",
+          "description": "基于左边界排序的第一种C++解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) {return a[0] < b[0];} int eraseOverlapIntervals(vector<vector<int>>& intervals) {if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 0; for (int i = 1; i < intervals.size(); i++) {if (intervals[i][0] < intervals[i - 1][1]) {intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]); count++;}} return count;}};",
+          "description": "基于左边界排序的精简版C++解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int eraseOverlapIntervals(int[][] intervals) {Arrays.sort(intervals, (a,b)-> {return Integer.compare(a[0],b[0]);}); int count = 1; for(int i = 1;i < intervals.length;i++){if(intervals[i][0] < intervals[i-1][1]){intervals[i][1] = Math.min(intervals[i - 1][1], intervals[i][1]); continue;}else{count++;}} return intervals.length - count;}}",
+          "description": "基于左边界排序的Java解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int eraseOverlapIntervals(int[][] intervals) {Arrays.sort(intervals, (a,b)-> {return Integer.compare(a[0],b[0]);}); int remove = 0; int pre = intervals[0][1]; for(int i = 1; i < intervals.length; i++) {if(pre > intervals[i][0]) {remove++; pre = Math.min(pre, intervals[i][1]);} else pre = intervals[i][1];} return remove;}}",
+          "description": "另一种基于左边界排序的Java解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int: if not intervals: return 0 intervals.sort(key=lambda x: x[0]) count = 0 for i in range(1, len(intervals)): if intervals[i][0] < intervals[i - 1][1]: intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]) count += 1 return count",
+          "description": "基于左边界排序的Python解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int: if not intervals: return 0 intervals.sort(key=lambda x: x[0]) result = 1 for i in range(1, len(intervals)): if intervals[i][0] >= intervals[i - 1][1]: result += 1 else: intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]) return len(intervals) - result",
+          "description": "修改自用最少数量的箭引爆气球问题的Python解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "贪心 基于左边界",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    static bool cmp (const vector<int>& a, const vector<int>& b) {\n        return a[1] < b[1];\n    }\n    int eraseOverlapIntervals(vector<vector<int>>& intervals) {\n        if (intervals.size() == 0) return 0;\n        sort(intervals.begin(), intervals.end(), cmp);\n        int count = 1; \n        int end = intervals[0][1]; \n        for (int i = 1; i < intervals.size(); i++) {\n            if (end <= intervals[i][0]) {\n                end = intervals[i][1];\n                count++;\n            }\n        }\n        return intervals.size() - count;\n    }\n};",
+          "description": "基于右边界排序的C++实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    static bool cmp (const vector<int>& a, const vector<int>& b) {\n        return a[0] < b[0];\n    }\n    int eraseOverlapIntervals(vector<vector<int>>& intervals) {\n        if (intervals.size() == 0) return 0;\n        sort(intervals.begin(), intervals.end(), cmp);\n        int count = 0; \n        int end = intervals[0][1]; \n        for (int i = 1; i < intervals.size(); i++) {   \n            if (intervals[i][0] >= end)  end = intervals[i][1]; \n            else { \n                end = min(end, intervals[i][1]);\n                count++;\n            }\n        }\n        return count;\n    }\n};",
+          "description": "基于左边界排序的C++实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    static bool cmp (const vector<int>& a, const vector<int>& b) {\n        return a[0] < b[0];\n    }\n    int eraseOverlapIntervals(vector<vector<int>>& intervals) {\n        if (intervals.size() == 0) return 0;\n        sort(intervals.begin(), intervals.end(), cmp);\n        int count = 0; \n        for (int i = 1; i < intervals.size(); i++) {\n            if (intervals[i][0] < intervals[i - 1][1]) { \n                intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]);\n                count++;\n            }\n        }\n        return count;\n    }\n};",
+          "description": "简化版基于左边界排序的C++实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int eraseOverlapIntervals(int[][] intervals) {\n        Arrays.sort(intervals, (a,b)-> {\n            return Integer.compare(a[0],b[0]);\n        });\n        int count = 1;\n        for(int i = 1;i < intervals.length;i++){\n            if(intervals[i][0] < intervals[i-1][1]){\n                intervals[i][1] = Math.min(intervals[i - 1][1], intervals[i][1]);\n                continue;\n            }else{\n                count++;\n            }    \n        }\n        return intervals.length - count;\n    }\n}",
+          "description": "基于左边界排序的Java实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int eraseOverlapIntervals(int[][] intervals) {\n        Arrays.sort(intervals, (a,b)-> {\n            return Integer.compare(a[0],b[0]);\n        });\n        int remove = 0;\n        int pre = intervals[0][1];\n        for(int i = 1; i < intervals.length; i++) {\n            if(pre > intervals[i][0]) {\n                remove++;\n                pre = Math.min(pre, intervals[i][1]);\n            }\n            else pre = intervals[i][1];\n        }\n        return remove;\n    }\n}",
+          "description": "另一种基于左边界排序的Java实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:\n        if not intervals:\n            return 0\n        intervals.sort(key=lambda x: x[0])\n        count = 0\n        for i in range(1, len(intervals)):\n            if intervals[i][0] < intervals[i - 1][1]:\n                intervals[i][1] = min(intervals[i - 1][1], intervals[i][1])\n                count += 1\n        return count",
+          "description": "基于左边界排序的Python实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:\n        if not intervals:\n            return 0\n        intervals.sort(key=lambda x: x[0])\n        result = 1\n        for i in range(1, len(intervals)):\n            if intervals[i][0] >= intervals[i - 1][1]:\n                result += 1\n            else:\n                intervals[i][1] = min(intervals[i - 1][1], intervals[i][1])\n        return len(intervals) - result",
+          "description": "修改自452题的Python实现"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(nlog n)",
+    "space_complexity": "O(n)",
+    "explanation": "有一个快排"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) { return a[1] < b[1]; } int eraseOverlapIntervals(vector<vector<int>>& intervals) { if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 1; int end = intervals[0][1]; for (int i = 1; i < intervals.size(); i++) { if (end <= intervals[i][0]) { end = intervals[i][1]; count++; } } return intervals.size() - count; }};",
+      "description": "按照区间右边界排序，移除最少数量的区间以确保剩余区间互不重叠。"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) { return a[0] < b[0]; } int eraseOverlapIntervals(vector<vector<int>>& intervals) { if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 0; int end = intervals[0][1]; for (int i = 1; i < intervals.size(); i++) { if (intervals[i][0] >= end) end = intervals[i][1]; else { end = min(end, intervals[i][1]); count++; } } return count; }};",
+      "description": "按照左边界排序，直接求重叠区间的数量。"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: static bool cmp (const vector<int>& a, const vector<int>& b) { return a[0] < b[0]; } int eraseOverlapIntervals(vector<vector<int>>& intervals) { if (intervals.size() == 0) return 0; sort(intervals.begin(), intervals.end(), cmp); int count = 0; for (int i = 1; i < intervals.size(); i++) { if (intervals[i][0] < intervals[i - 1][1]) { intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]); count++; } } return count; }};",
+      "description": "简化版，同样基于左边界排序，但进一步简化了处理逻辑。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public int eraseOverlapIntervals(int[][] intervals) { Arrays.sort(intervals, (a,b)-> { return Integer.compare(a[0],b[0]); }); int count = 1; for(int i = 1;i < intervals.length;i++){ if(intervals[i][0] < intervals[i-1][1]){ intervals[i][1] = Math.min(intervals[i - 1][1], intervals[i][1]); continue; }else{ count++; } } return intervals.length - count; }}",
+      "description": "Java实现，按照左边界排序，计算并移除最小数量的重叠区间。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public int eraseOverlapIntervals(int[][] intervals) { Arrays.sort(intervals, (a,b)-> { return Integer.compare(a[0],b[0]); }); int remove = 0; int pre = intervals[0][1]; for(int i = 1; i < intervals.length; i++) { if(pre > intervals[i][0]) { remove++; pre = Math.min(pre, intervals[i][1]); } else pre = intervals[i][1]; } return remove; }}",
+      "description": "另一种Java实现方式，同样是根据左边界排序来移除重叠区间。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int: if not intervals: return 0 intervals.sort(key=lambda x: x[0]) count = 0 for i in range(1, len(intervals)): if intervals[i][0] < intervals[i - 1][1]: intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]) count += 1 return count",
+      "description": "Python实现，基于左边界排序，计算需要移除的重叠区间数量。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int: if not intervals: return 0 intervals.sort(key=lambda x: x[0]) result = 1 for i in range(1, len(intervals)): if intervals[i][0] >= intervals[i - 1][1]: result += 1 else: intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]) return len(intervals) - result",
+      "description": "Python实现，基于左边界排序，并修改自452题代码，计算非重叠区间数量。"
+    }
+  ],
+  "common_mistakes": [
+    "忽视了当两个区间恰好相接时并不算作重叠的情况。",
+    "没有正确处理空输入或者只有一个元素的情况。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230201164134.png",
+      "description": "这张图片展示了区间重合问题的分析，通过比较区间右边界最小值来判断区间是否重合，涉及算法中的区间管理和数据结构优化。",
+      "context": "该图展示了按照右边界排序后的区间示例，帮助理解如何确定非交叉区间的最大个数。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230201164134.png",
+      "description": "GIF展示了按照区间右边界排序后，逐步确定非交叉区间的算法执行过程。",
+      "context": "GIF动画展示了按照区间右边界排序后，如何通过比较相邻区间的右边界最小值来确定非交叉区间的最大数量的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\贪心算法\\无重叠区间.txt",
+  "extracted_at": "2025-07-22T16:20:48.572955",
+  "raw_content": "无重叠区间\n力扣题目链接(https://leetcode.cn/problems/non-overlapping-intervals/)\n\n给定一个区间的集合，找到需要移除区间的最小数量，使剩余区间互不重叠。\n\n注意: 可以认为区间的终点总是大于它的起点。 区间 [1,2] 和 [2,3] 的边界相互“接触”，但没有相互重叠。\n\n示例 1:\n\n输入: [ [1,2], [2,3], [3,4], [1,3] ]\n输出: 1\n解释: 移除 [1,3] 后，剩下的区间没有重叠。\n示例 2:\n\n输入: [ [1,2], [1,2], [1,2] ]\n输出: 2\n解释: 你需要移除两个 [1,2] 来使剩下的区间没有重叠。\n示例 3:\n\n输入: [ [1,2], [2,3] ]\n输出: 0\n解释: 你不需要移除任何区间，因为它们已经是无重叠的了。\n\n\n#思路\n相信很多同学看到这道题目都冥冥之中感觉要排序，但是究竟是按照右边界排序，还是按照左边界排序呢？\n\n其实都可以。主要就是为了让区间尽可能的重叠。\n\n我来按照右边界排序，从左向右记录非交叉区间的个数。最后用区间总数减去非交叉区间的个数就是需要移除的区间个数了。\n\n此时问题就是要求非交叉区间的最大个数。\n\n这里记录非交叉区间的个数还是有技巧的，如图：\n\nhttps://file1.kamacoder.com/i/algo/20230201164134.png\n\n区间，1，2，3，4，5，6都按照右边界排好序。\n\n当确定区间 1 和 区间2 重叠后，如何确定是否与 区间3 也重贴呢？\n\n就是取 区间1 和 区间2 右边界的最小值，因为这个最小值之前的部分一定是 区间1 和区间2 的重合部分，如果这个最小值也触达到区间3，那么说明 区间 1，2，3都是重合的。\n\n接下来就是找大于区间1结束位置的区间，是从区间4开始。那有同学问了为什么不从区间5开始？别忘了已经是按照右边界排序的了。\n\n区间4结束之后，再找到区间6，所以一共记录非交叉区间的个数是三个。\n\n总共区间个数为6，减去非交叉区间的个数3。移除区间的最小数量就是3。\n\nC++代码如下：\n\nclass Solution {\npublic:\n    // 按照区间右边界排序\n    static bool cmp (const vector<int>& a, const vector<int>& b) {\n        return a[1] < b[1];\n    }\n    int eraseOverlapIntervals(vector<vector<int>>& intervals) {\n        if (intervals.size() == 0) return 0;\n        sort(intervals.begin(), intervals.end(), cmp);\n        int count = 1; // 记录非交叉区间的个数\n        int end = intervals[0][1]; // 记录区间分割点\n        for (int i = 1; i < intervals.size(); i++) {\n            if (end <= intervals[i][0]) {\n                end = intervals[i][1];\n                count++;\n            }\n        }\n        return intervals.size() - count;\n    }\n};\n时间复杂度：O(nlog n) ，有一个快排\n空间复杂度：O(n)，有一个快排，最差情况(倒序)时，需要n次递归调用。因此确实需要O(n)的栈空间\n大家此时会发现如此复杂的一个问题，代码实现却这么简单！\n\n#补充\n#补充（1）\n左边界排序可不可以呢？\n\n也是可以的，只不过 左边界排序我们就是直接求 重叠的区间，count为记录重叠区间数。\n\nclass Solution {\npublic:\n    static bool cmp (const vector<int>& a, const vector<int>& b) {\n        return a[0] < b[0]; // 改为左边界排序\n    }\n    int eraseOverlapIntervals(vector<vector<int>>& intervals) {\n        if (intervals.size() == 0) return 0;\n        sort(intervals.begin(), intervals.end(), cmp);\n        int count = 0; // 注意这里从0开始，因为是记录重叠区间\n        int end = intervals[0][1]; // 记录区间分割点\n        for (int i = 1; i < intervals.size(); i++) {   \n            if (intervals[i][0] >= end)  end = intervals[i][1]; // 无重叠的情况\n            else { // 重叠情况 \n                end = min(end, intervals[i][1]);\n                count++;\n            }\n        }\n        return count;\n    }\n};\n其实代码还可以精简一下， 用 intervals[i][1] 替代 end变量，只判断 重叠情况就好\n\nclass Solution {\npublic:\n    static bool cmp (const vector<int>& a, const vector<int>& b) {\n        return a[0] < b[0]; // 改为左边界排序\n    }\n    int eraseOverlapIntervals(vector<vector<int>>& intervals) {\n        if (intervals.size() == 0) return 0;\n        sort(intervals.begin(), intervals.end(), cmp);\n        int count = 0; // 注意这里从0开始，因为是记录重叠区间\n        for (int i = 1; i < intervals.size(); i++) {\n            if (intervals[i][0] < intervals[i - 1][1]) { //重叠情况\n                intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]);\n                count++;\n            }\n        }\n        return count;\n    }\n};\n\n#补充（2）\n本题其实和452.用最少数量的箭引爆气球 (https://programmercarl.com/0452.%E7%94%A8%E6%9C%80%E5%B0%91%E6%95%B0%E9%87%8F%E7%9A%84%E7%AE%AD%E5%BC%95%E7%88%86%E6%B0%94%E7%90%83.html)非常像，弓箭的数量就相当于是非交叉区间的数量，只要把弓箭那道题目代码里射爆气球的判断条件加个等号（认为[0，1][1，2]不是相邻区间），然后用总区间数减去弓箭数量 就是要移除的区间数量了。\n\n把452.用最少数量的箭引爆气球 (https://programmercarl.com/0452.%E7%94%A8%E6%9C%80%E5%B0%91%E6%95%B0%E9%87%8F%E7%9A%84%E7%AE%AD%E5%BC%95%E7%88%86%E6%B0%94%E7%90%83.html)代码稍做修改，就可以AC本题。\n\nclass Solution {\npublic:\n    // 按照区间右边界排序\n    static bool cmp (const vector<int>& a, const vector<int>& b) {\n        return a[1] < b[1]; // 右边界排序 \n    }\n    int eraseOverlapIntervals(vector<vector<int>>& intervals) {\n        if (intervals.size() == 0) return 0;\n        sort(intervals.begin(), intervals.end(), cmp);\n\n        int result = 1; // points 不为空至少需要一支箭\n        for (int i = 1; i < intervals.size(); i++) {\n            if (intervals[i][0] >= intervals[i - 1][1]) {\n                result++; // 需要一支箭\n            }\n            else {  // 气球i和气球i-1挨着\n                intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]); // 更新重叠气球最小右边界\n            }\n        }\n        return intervals.size() - result;\n    }\n};\n这里按照 左边界排序，或者按照右边界排序，都可以AC，原理是一样的。\n\nclass Solution {\npublic:\n    // 按照区间左边界排序\n    static bool cmp (const vector<int>& a, const vector<int>& b) {\n        return a[0] < b[0]; // 左边界排序\n    }\n    int eraseOverlapIntervals(vector<vector<int>>& intervals) {\n        if (intervals.size() == 0) return 0;\n        sort(intervals.begin(), intervals.end(), cmp);\n\n        int result = 1; // points 不为空至少需要一支箭\n        for (int i = 1; i < intervals.size(); i++) {\n            if (intervals[i][0] >= intervals[i - 1][1]) {\n                result++; // 需要一支箭\n            }\n            else {  // 气球i和气球i-1挨着\n                intervals[i][1] = min(intervals[i - 1][1], intervals[i][1]); // 更新重叠气球最小右边界\n            }\n        }\n        return intervals.size() - result;\n    }\n};\n\n#其他语言版本\n#Java\nclass Solution {\n    public int eraseOverlapIntervals(int[][] intervals) {\n        Arrays.sort(intervals, (a,b)-> {\n            return Integer.compare(a[0],b[0]);\n        });\n        int count = 1;\n        for(int i = 1;i < intervals.length;i++){\n            if(intervals[i][0] < intervals[i-1][1]){\n                intervals[i][1] = Math.min(intervals[i - 1][1], intervals[i][1]);\n                continue;\n            }else{\n                count++;\n            }    \n        }\n        return intervals.length - count;\n    }\n}\n按左边排序，不管右边顺序。相交的时候取最小的右边。\n\nclass Solution {\n    public int eraseOverlapIntervals(int[][] intervals) {\n        Arrays.sort(intervals, (a,b)-> {\n            return Integer.compare(a[0],b[0]);\n        });\n        int remove = 0;\n        int pre = intervals[0][1];\n        for(int i = 1; i < intervals.length; i++) {\n            if(pre > intervals[i][0]) {\n                remove++;\n                pre = Math.min(pre, intervals[i][1]);\n            }\n            else pre = intervals[i][1];\n        }\n        return remove;\n    }\n}\n#Python\n贪心 基于左边界\n\nclass Solution:\n    def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:\n        if not intervals:\n            return 0\n        \n        intervals.sort(key=lambda x: x[0])  # 按照左边界升序排序\n        count = 0  # 记录重叠区间数量\n        \n        for i in range(1, len(intervals)):\n            if intervals[i][0] < intervals[i - 1][1]:  # 存在重叠区间\n                intervals[i][1] = min(intervals[i - 1][1], intervals[i][1])  # 更新重叠区间的右边界\n                count += 1\n        \n        return count\n\n贪心 基于左边界 把452.用最少数量的箭引爆气球代码稍做修改\n\nclass Solution:\n    def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:\n        if not intervals:\n            return 0\n        \n        intervals.sort(key=lambda x: x[0])  # 按照左边界升序排序\n        \n        result = 1  # 不重叠区间数量，初始化为1，因为至少有一个不重叠的区间\n        \n        for i in range(1, len(intervals)):\n            if intervals[i][0] >= intervals[i - 1][1]:  # 没有重叠\n                result += 1\n            else:  # 重叠情况\n                intervals[i][1] = min(intervals[i - 1][1], intervals[i][1])  # 更新重叠区间的右边界\n        \n        return len(intervals) - result"
+}

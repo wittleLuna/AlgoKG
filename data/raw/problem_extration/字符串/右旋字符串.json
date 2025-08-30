@@ -1,0 +1,661 @@
+{
+  "id": "AP_019dcec5",
+  "title": "右旋字符串",
+  "alternative_titles": [],
+  "platform": "kamacoder",
+  "url": "https://kamacoder.com/problempage.php?pid=1065",
+  "description": "",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "字符串处理",
+    "位移"
+  ],
+  "data_structure_tags": [
+    "字符串"
+  ],
+  "technique_tags": [
+    "反转",
+    "就地算法"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过整体反转字符串后，再局部反转两部分来实现右旋。这个方法避免了使用额外空间。",
+  "key_insights": [
+    {
+      "content": "通过对整个字符串及两个指定部分进行反转操作，可以巧妙地达到移动字符位置而不直接移动的效果。"
+    },
+    {
+      "content": "这种方法在原字符串上直接操作完成旋转，对于限制内存使用的场景非常有用。"
+    },
+    {
+      "content": "利用两次局部反转加上一次全局反转，能够有效且高效地实现字符串的右旋功能。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "为了让本题更有意义，提升一下本题难度：不能申请额外空间，只能在本串上操作。 （Java不能在字符串上修改，所以使用java一定要开辟新空间）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n\n    reverse(s.begin(), s.end()); // 整体反转\n    reverse(s.begin(), s.begin() + n); // 先反转前一段，长度n\n    reverse(s.begin() + n, s.end()); // 再反转后一段\n\n    cout << s << endl;\n}",
+          "description": "C++版本一：先整体反转字符串，再分别反转两部分"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n    reverse(s.begin(), s.begin() + len - n); // 先反转前一段，长度len-n ，注意这里是和版本一的区别\n    reverse(s.begin() + len - n, s.end()); // 再反转后一段\n    reverse(s.begin(), s.end()); // 整体反转\n    cout << s << endl;\n}",
+          "description": "C++版本二：先局部反转，再整体反转字符串"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n        reverseString(chars, 0, n - 1);  //反转前一段字符串，此时的字符串首尾尾是0,n - 1\n        reverseString(chars, n, len - 1);  //反转后一段字符串，此时的字符串首尾尾是n,len - 1\n\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本一：先整体反转字符数组，再分别反转两部分"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - n - 1);  //反转前一段字符串，此时的字符串首尾是0,len - n - 1\n        reverseString(chars, len - n, len - 1);  //反转后一段字符串，此时的字符串首尾是len - n,len - 1\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本二：先局部反转字符数组，再整体反转"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\n\ns = s[len(s)-k:] + s[:len(s)-k]\nprint(s)",
+          "description": "Python实现：使用切片操作来旋转字符串"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\n\nprint(s[-k:] + s[:-k])",
+          "description": "Python另一种实现：同样利用切片操作但更简洁地完成字符串右旋"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include<iostream>",
+      "text": "#include<algorithm>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n\n    reverse(s.begin(), s.end()); // 整体反转\n    reverse(s.begin(), s.begin() + n); // 先反转前一段，长度n\n    reverse(s.begin() + n, s.end()); // 再反转后一段\n\n    cout << s << endl;\n}",
+          "description": "版本一：先整体反转字符串，再局部反转"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n    reverse(s.begin(), s.begin() + len - n); // 先反转前一段，长度len-n ，注意这里是和版本一的区别\n    reverse(s.begin() + len - n, s.end()); // 再反转后一段\n    reverse(s.begin(), s.end()); // 整体反转\n    cout << s << endl;\n}",
+          "description": "版本二：先局部反转，再整体反转"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n        reverseString(chars, 0, n - 1);  //反转前一段字符串，此时的字符串首尾尾是0,n - 1\n        reverseString(chars, n, len - 1);  //反转后一段字符串，此时的字符串首尾尾是n,len - 1\n\n        System.out.println(chars);\n    }\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本一：使用异或法进行字符串反转"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - n - 1);  //反转前一段字符串，此时的字符串首尾是0,len - n - 1\n        reverseString(chars, len - n, len - 1);  //反转后一段字符串，此时的字符串首尾是len - n,len - 1\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n\n        System.out.println(chars);\n    }\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本二：先局部反转，再整体反转"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\ns = s[len(s)-k:] + s[:len(s)-k]\nprint(s)",
+          "description": "Python实现右旋字符串"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\nprint(s[-k:] + s[:-k])",
+          "description": "另一种Python实现方式"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include<algorithm>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n\n    reverse(s.begin(), s.end()); // 整体反转\n    reverse(s.begin(), s.begin() + n); // 先反转前一段，长度n\n    reverse(s.begin() + n, s.end()); // 再反转后一段\n\n    cout << s << endl;\n}",
+          "description": "版本一：先整体反转再局部反转"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n    reverse(s.begin(), s.begin() + len - n); // 先反转前一段，长度len-n ，注意这里是和版本一的区别\n    reverse(s.begin() + len - n, s.end()); // 再反转后一段\n    reverse(s.begin(), s.end()); // 整体反转\n    cout << s << endl;\n}",
+          "description": "版本二：先局部反转再整体反转"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n        reverseString(chars, 0, n - 1);  //反转前一段字符串，此时的字符串首尾尾是0,n - 1\n        reverseString(chars, n, len - 1);  //反转后一段字符串，此时的字符串首尾尾是n,len - 1\n\n        System.out.println(new String(chars));\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本一：先整体反转再局部反转"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - n - 1);  //反转前一段字符串，此时的字符串首尾是0,len - n - 1\n        reverseString(chars, len - n, len - 1);  //反转后一段字符串，此时的字符串首尾是len - n,len - 1\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n\n        System.out.println(new String(chars));\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本二：先局部反转再整体反转"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\n\ns = s[len(s)-k:] + s[:len(s)-k]\nprint(s)",
+          "description": "Python实现：使用切片完成右旋转"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\n\nprint(s[-k:] + s[:-k])",
+          "description": "Python简化版：同样使用切片但更简洁地完成右旋转"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include<iostream>",
+      "text": "#include<algorithm>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n\n    reverse(s.begin(), s.end()); // 整体反转\n    reverse(s.begin(), s.begin() + n); // 先反转前一段，长度n\n    reverse(s.begin() + n, s.end()); // 再反转后一段\n\n    cout << s << endl;\n}",
+          "description": "版本一：先整体反转再局部反转"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n    reverse(s.begin(), s.begin() + len - n); // 先反转前一段，长度len-n ，注意这里是和版本一的区别\n    reverse(s.begin() + len - n, s.end()); // 再反转后一段\n    reverse(s.begin(), s.end()); // 整体反转\n    cout << s << endl;\n}",
+          "description": "版本二：先局部反转再整体反转"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n        reverseString(chars, 0, n - 1);  //反转前一段字符串，此时的字符串首尾尾是0,n - 1\n        reverseString(chars, n, len - 1);  //反转后一段字符串，此时的字符串首尾尾是n,len - 1\n\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本一：先整体反转再局部反转"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - n - 1);  //反转前一段字符串，此时的字符串首尾是0,len - n - 1\n        reverseString(chars, len - n, len - 1);  //反转后一段字符串，此时的字符串首尾是len - n,len - 1\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本二：先局部反转再整体反转"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\ns = s[len(s)-k:] + s[:len(s)-k]\nprint(s)",
+          "description": "Python实现右旋字符串"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\nprint(s[-k:] + s[:-k])",
+          "description": "Python简化版实现右旋字符串"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include<algorithm>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n\n    reverse(s.begin(), s.end()); // 整体反转\n    reverse(s.begin(), s.begin() + n); // 先反转前一段，长度n\n    reverse(s.begin() + n, s.end()); // 再反转后一段\n\n    cout << s << endl;\n}",
+          "description": "版本一：C++实现字符串右旋"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n    reverse(s.begin(), s.begin() + len - n); // 先反转前一段，长度len-n ，注意这里是和版本一的区别\n    reverse(s.begin() + len - n, s.end()); // 再反转后一段\n    reverse(s.begin(), s.end()); // 整体反转\n    cout << s << endl;\n}",
+          "description": "版本二：C++实现字符串右旋"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n        reverseString(chars, 0, n - 1);  //反转前一段字符串，此时的字符串首尾尾是0,n - 1\n        reverseString(chars, n, len - 1);  //反转后一段字符串，此时的字符串首尾尾是n,len - 1\n\n        System.out.println(new String(chars));\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "版本一：Java实现字符串右旋"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - n - 1);  //反转前一段字符串，此时的字符串首尾是0,len - n - 1\n        reverseString(chars, len - n, len - 1);  //反转后一段字符串，此时的字符串首尾是len - n,len - 1\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n\n        System.out.println(new String(chars));\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "版本二：Java实现字符串右旋"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\ns = s[len(s)-k:] + s[:len(s)-k]\nprint(s)",
+          "description": "Python实现字符串右旋"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\nprint(s[-k:] + s[:-k])",
+          "description": "另一种Python实现字符串右旋"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "拓展",
+      "text": "大家在做剑指offer的时候，会发现 剑指offer的题目是左反转，那么左反转和右反转 有什么区别呢？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n\n    reverse(s.begin(), s.end()); // 整体反转\n    reverse(s.begin(), s.begin() + n); // 先反转前一段，长度n\n    reverse(s.begin() + n, s.end()); // 再反转后一段\n\n    cout << s << endl;\n}",
+          "description": "版本一：首先整体反转字符串，然后分别反转两部分"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n    reverse(s.begin(), s.begin() + len - n); // 先反转前一段，长度len-n ，注意这里是和版本一的区别\n    reverse(s.begin() + len - n, s.end()); // 再反转后一段\n    reverse(s.begin(), s.end()); // 整体反转\n    cout << s << endl;\n}",
+          "description": "版本二：先局部反转两部分，再整体反转字符串"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n    reverse(s.begin(), s.begin() + n); //  反转第一段长度为n \n    reverse(s.begin() + n, s.end()); // 反转第二段长度为len-n \n    reverse(s.begin(), s.end());  // 整体反转\n    cout << s << endl;\n}",
+          "description": "左旋转：先反转两部分，再整体反转字符串"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n        reverseString(chars, 0, n - 1);  //反转前一段字符串，此时的字符串首尾尾是0,n - 1\n        reverseString(chars, n, len - 1);  //反转后一段字符串，此时的字符串首尾尾是n,len - 1\n\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本一：使用异或法实现字符串反转"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - n - 1);  //反转前一段字符串，此时的字符串首尾是0,len - n - 1\n        reverseString(chars, len - n, len - 1);  //反转后一段字符串，此时的字符串首尾是len - n,len - 1\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本二：同样使用异或法，但反转顺序不同"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\n\ns = s[len(s)-k:] + s[:len(s)-k]\nprint(s)",
+          "description": "Python版本：通过切片操作直接实现右旋"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\n\nprint(s[-k:] + s[:-k])",
+          "description": "Python简化版：同样通过切片操作，但更加简洁地实现了右旋"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include<iostream>",
+      "text": "#include<algorithm>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n\n    reverse(s.begin(), s.end()); // 整体反转\n    reverse(s.begin(), s.begin() + n); // 先反转前一段，长度n\n    reverse(s.begin() + n, s.end()); // 再反转后一段\n\n    cout << s << endl;\n}",
+          "description": "版本一：先整体反转，再局部反转"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n    reverse(s.begin(), s.begin() + len - n); // 先反转前一段，长度len-n ，注意这里是和版本一的区别\n    reverse(s.begin() + len - n, s.end()); // 再反转后一段\n    reverse(s.begin(), s.end()); // 整体反转\n    cout << s << endl;\n}",
+          "description": "版本二：先局部反转，再整体反转"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n        reverseString(chars, 0, n - 1);  //反转前一段字符串，此时的字符串首尾尾是0,n - 1\n        reverseString(chars, n, len - 1);  //反转后一段字符串，此时的字符串首尾尾是n,len - 1\n\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本一：先整体反转，再局部反转"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - n - 1);  //反转前一段字符串，此时的字符串首尾是0,len - n - 1\n        reverseString(chars, len - n, len - 1);  //反转后一段字符串，此时的字符串首尾是len - n,len - 1\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本二：先局部反转，再整体反转"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\ns = s[len(s)-k:] + s[:len(s)-k]\nprint(s)",
+          "description": "Python实现右旋字符串"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\nprint(s[-k:] + s[:-k])",
+          "description": "另一种Python实现右旋字符串"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include<algorithm>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n\n    reverse(s.begin(), s.end()); // 整体反转\n    reverse(s.begin(), s.begin() + n); // 先反转前一段，长度n\n    reverse(s.begin() + n, s.end()); // 再反转后一段\n\n    cout << s << endl;\n}",
+          "description": "C++实现的字符串右旋版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n    reverse(s.begin(), s.begin() + len - n); // 先反转前一段，长度len-n ，注意这里是和版本一的区别\n    reverse(s.begin() + len - n, s.end()); // 再反转后一段\n    reverse(s.begin(), s.end()); // 整体反转\n    cout << s << endl;\n}",
+          "description": "C++实现的字符串右旋版本二"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n        reverseString(chars, 0, n - 1);  //反转前一段字符串，此时的字符串首尾尾是0,n - 1\n        reverseString(chars, n, len - 1);  //反转后一段字符串，此时的字符串首尾尾是n,len - 1\n\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java实现的字符串右旋版本一"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - n - 1);  //反转前一段字符串，此时的字符串首尾是0,len - n - 1\n        reverseString(chars, len - n, len - 1);  //反转后一段字符串，此时的字符串首尾是len - n,len - 1\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java实现的字符串右旋版本二"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\ns = s[len(s)-k:] + s[:len(s)-k]\nprint(s)",
+          "description": "Python实现的字符串右旋方法一"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\nprint(s[-k:] + s[:-k])",
+          "description": "Python实现的字符串右旋方法二"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size();\n    reverse(s.begin(), s.end());\n    reverse(s.begin(), s.begin() + n);\n    reverse(s.begin() + n, s.end());\n    cout << s << endl;\n}",
+          "description": "C++实现的版本一：先整体反转字符串，再分别反转两部分。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size();\n    reverse(s.begin(), s.begin() + len - n);\n    reverse(s.begin() + len - n, s.end());\n    reverse(s.begin(), s.end());\n    cout << s << endl;\n}",
+          "description": "C++实现的版本二：先局部反转两部分，再整体反转字符串。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n        int len = s.length();\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - 1);\n        reverseString(chars, 0, n - 1);\n        reverseString(chars, n, len - 1);\n        System.out.println(chars);\n    }\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java实现的版本一：先整体反转字符数组，再分别反转两部分。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n        int len = s.length();\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - n - 1);\n        reverseString(chars, len - n, len - 1);\n        reverseString(chars, 0, len - 1);\n        System.out.println(chars);\n    }\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java实现的版本二：先局部反转两部分，再整体反转字符数组。"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\ns = s[len(s)-k:] + s[:len(s)-k]\nprint(s)",
+          "description": "Python实现：使用切片操作将字符串后k个字符移到前面。"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\nprint(s[-k:] + s[:-k])",
+          "description": "Python实现：另一种方式使用切片操作实现右旋。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "// 版本一",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n\n    reverse(s.begin(), s.end()); // 整体反转\n    reverse(s.begin(), s.begin() + n); // 先反转前一段，长度n\n    reverse(s.begin() + n, s.end()); // 再反转后一段\n\n    cout << s << endl;\n}",
+          "description": "版本一：先整体反转字符串，再分别反转两段子串。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n    reverse(s.begin(), s.begin() + len - n); // 先反转前一段，长度len-n ，注意这里是和版本一的区别\n    reverse(s.begin() + len - n, s.end()); // 再反转后一段\n    reverse(s.begin(), s.end()); // 整体反转\n    cout << s << endl;\n}",
+          "description": "版本二：先局部反转字符串的两部分，再进行整体反转。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n        reverseString(chars, 0, n - 1);  //反转前一段字符串，此时的字符串首尾尾是0,n - 1\n        reverseString(chars, n, len - 1);  //反转后一段字符串，此时的字符串首尾尾是n,len - 1\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本一：使用自定义方法实现字符串局部和整体的反转。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - n - 1);  //反转前一段字符串，此时的字符串首尾是0,len - n - 1\n        reverseString(chars, len - n, len - 1);  //反转后一段字符串，此时的字符串首尾是len - n,len - 1\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本二：先反转两段子串后再进行整体反转。"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\ns = s[len(s)-k:] + s[:len(s)-k]\nprint(s)",
+          "description": "Python版本：通过切片操作实现字符串右旋转。"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\nprint(s[-k:] + s[:-k])",
+          "description": "Python简化版：直接使用负索引与切片来实现右旋。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python:",
+      "text": "#获取输入的数字k和字符串",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n\n    reverse(s.begin(), s.end()); // 整体反转\n    reverse(s.begin(), s.begin() + n); // 先反转前一段，长度n\n    reverse(s.begin() + n, s.end()); // 再反转后一段\n\n    cout << s << endl;\n}",
+          "description": "版本一：整体反转后再局部反转实现右旋字符串"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n    reverse(s.begin(), s.begin() + len - n); // 先反转前一段，长度len-n ，注意这里是和版本一的区别\n    reverse(s.begin() + len - n, s.end()); // 再反转后一段\n    reverse(s.begin(), s.end()); // 整体反转\n    cout << s << endl;\n}",
+          "description": "版本二：先局部反转再整体反转实现右旋字符串"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n        reverseString(chars, 0, n - 1);  //反转前一段字符串，此时的字符串首尾尾是0,n - 1\n        reverseString(chars, n, len - 1);  //反转后一段字符串，此时的字符串首尾尾是n,len - 1\n\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本一：使用字符数组实现右旋字符串"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - n - 1);  //反转前一段字符串，此时的字符串首尾是0,len - n - 1\n        reverseString(chars, len - n, len - 1);  //反转后一段字符串，此时的字符串首尾是len - n,len - 1\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本二：使用字符数组先局部反转再整体反转实现右旋字符串"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\n\ns = s[len(s)-k:] + s[:len(s)-k]\nprint(s)",
+          "description": "Python版本一：通过字符串切片实现右旋字符串"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\n\nprint(s[-k:] + s[:-k])",
+          "description": "Python版本二：简洁方式通过字符串切片实现右旋字符串"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "获取输入的数字k和字符串",
+      "text": "k = int(input())",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n\n    reverse(s.begin(), s.end()); // 整体反转\n    reverse(s.begin(), s.begin() + n); // 先反转前一段，长度n\n    reverse(s.begin() + n, s.end()); // 再反转后一段\n\n    cout << s << endl;\n}",
+          "description": "版本一：整体反转后局部反转"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n    reverse(s.begin(), s.begin() + len - n); // 先反转前一段，长度len-n ，注意这里是和版本一的区别\n    reverse(s.begin() + len - n, s.end()); // 再反转后一段\n    reverse(s.begin(), s.end()); // 整体反转\n    cout << s << endl;\n}",
+          "description": "版本二：先局部反转再整体反转"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n        reverseString(chars, 0, n - 1);  //反转前一段字符串，此时的字符串首尾尾是0,n - 1\n        reverseString(chars, n, len - 1);  //反转后一段字符串，此时的字符串首尾尾是n,len - 1\n\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本一：整体反转后局部反转"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - n - 1);  //反转前一段字符串，此时的字符串首尾是0,len - n - 1\n        reverseString(chars, len - n, len - 1);  //反转后一段字符串，此时的字符串首尾是len - n,len - 1\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本二：先局部反转再整体反转"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\n\ns = s[len(s)-k:] + s[:len(s)-k]\nprint(s)",
+          "description": "Python实现：使用切片完成右旋"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\n\nprint(s[-k:] + s[:-k])",
+          "description": "Python简化版：直接使用切片操作完成右旋"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "通过切片反转第一段和第二段字符串",
+      "text": "#注意：python中字符串是不可变的，所以也需要额外空间",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n\n    reverse(s.begin(), s.end()); // 整体反转\n    reverse(s.begin(), s.begin() + n); // 先反转前一段，长度n\n    reverse(s.begin() + n, s.end()); // 再反转后一段\n\n    cout << s << endl;\n}",
+          "description": "版本一：C++实现右旋字符串"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n    reverse(s.begin(), s.begin() + len - n); // 先反转前一段，长度len-n ，注意这里是和版本一的区别\n    reverse(s.begin() + len - n, s.end()); // 再反转后一段\n    reverse(s.begin(), s.end()); // 整体反转\n    cout << s << endl;\n}",
+          "description": "版本二：C++实现右旋字符串"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n        reverseString(chars, 0, n - 1);  //反转前一段字符串，此时的字符串首尾尾是0,n - 1\n        reverseString(chars, n, len - 1);  //反转后一段字符串，此时的字符串首尾尾是n,len - 1\n\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "版本一：Java实现右旋字符串"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - n - 1);  //反转前一段字符串，此时的字符串首尾是0,len - n - 1\n        reverseString(chars, len - n, len - 1);  //反转后一段字符串，此时的字符串首尾是len - n,len - 1\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "版本二：Java实现右旋字符串"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\ns = s[len(s)-k:] + s[:len(s)-k]\nprint(s)",
+          "description": "Python实现右旋字符串"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "注意：python中字符串是不可变的，所以也需要额外空间",
+      "text": "s = s[len(s)-k:] + s[:len(s)-k]",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n\n    reverse(s.begin(), s.end()); // 整体反转\n    reverse(s.begin(), s.begin() + n); // 先反转前一段，长度n\n    reverse(s.begin() + n, s.end()); // 再反转后一段\n\n    cout << s << endl;\n}",
+          "description": "版本一：先整体反转字符串，再分别反转前后两段"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n    reverse(s.begin(), s.begin() + len - n); // 先反转前一段，长度len-n ，注意这里是和版本一的区别\n    reverse(s.begin() + len - n, s.end()); // 再反转后一段\n    reverse(s.begin(), s.end()); // 整体反转\n    cout << s << endl;\n}",
+          "description": "版本二：先局部反转前后两段，再整体反转"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n        reverseString(chars, 0, n - 1);  //反转前一段字符串，此时的字符串首尾尾是0,n - 1\n        reverseString(chars, n, len - 1);  //反转后一段字符串，此时的字符串首尾尾是n,len - 1\n\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本一：实现字符串右旋操作"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - n - 1);  //反转前一段字符串，此时的字符串首尾是0,len - n - 1\n        reverseString(chars, len - n, len - 1);  //反转后一段字符串，此时的字符串首尾是len - n,len - 1\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n\n        System.out.println(chars);\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+          "description": "Java版本二：实现字符串右旋操作"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\n\ns = s[len(s)-k:] + s[:len(s)-k]\nprint(s)",
+          "description": "Python版本：通过切片直接实现字符串右旋"
+        },
+        {
+          "language": "python",
+          "code": "k = int(input())\ns = input()\n\nprint(s[-k:] + s[:-k])",
+          "description": "Python简化版：通过切片直接实现字符串右旋"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size();\n    reverse(s.begin(), s.end());\n    reverse(s.begin(), s.begin() + n);\n    reverse(s.begin() + n, s.end());\n    cout << s << endl;\n}",
+      "description": "C++实现字符串右旋，先整体反转再局部反转"
+    },
+    {
+      "language": "cpp",
+      "code": "#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size();\n    reverse(s.begin(), s.begin() + len - n);\n    reverse(s.begin() + len - n, s.end());\n    reverse(s.begin(), s.end());\n    cout << s << endl;\n}",
+      "description": "C++实现字符串右旋，先局部反转再整体反转"
+    },
+    {
+      "language": "java",
+      "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n        int len = s.length();\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - 1);\n        reverseString(chars, 0, n - 1);\n        reverseString(chars, n, len - 1);\n        System.out.println(new String(chars));\n    }\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+      "description": "Java实现字符串右旋，先整体反转再局部反转"
+    },
+    {
+      "language": "java",
+      "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n        int len = s.length();\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - n - 1);\n        reverseString(chars, len - n, len - 1);\n        reverseString(chars, 0, len - 1);\n        System.out.println(new String(chars));\n    }\n    public static void reverseString(char[] ch, int start, int end) {\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}",
+      "description": "Java实现字符串右旋，先局部反转再整体反转"
+    },
+    {
+      "language": "python",
+      "code": "k = int(input())\ns = input()\ns = s[len(s)-k:] + s[:len(s)-k]\nprint(s)",
+      "description": "Python实现字符串右旋，使用切片"
+    },
+    {
+      "language": "python",
+      "code": "k = int(input())\ns = input()\nprint(s[-k:] + s[:-k])",
+      "description": "Python简化版实现字符串右旋，使用切片"
+    }
+  ],
+  "common_mistakes": [
+    "忽视字符串长度与k值的关系可能导致逻辑错误。",
+    "在某些语言如Java中直接修改不可变对象（如String），需要转换成可变的数据类型如char数组。",
+    "忘记调整每次反转时的实际索引范围会导致结果错误。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20231106170143.png",
+      "description": "这张图片展示了将一个长度为 `length` 的数组分为两段，第一段长度为 `length - n`，第二段长度为 `n`，用于说明数组分割的算法概念。",
+      "context": "该图展示了当字符串需要右移n位时，如何将其分为两部分，并为后续通过整体反转和局部反转来实现目标做准备。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20231106171557.png",
+      "description": "这张图片展示了将一个数组分为两段并倒序输出第二段的算法过程。",
+      "context": "这张图片展示了将字符串右移n位后，通过整体倒序操作使得两段子串顺序颠倒的效果。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20231106172058.png",
+      "description": "该图展示了如何通过分段、倒序和重新组合来实现数组的右旋转操作。",
+      "context": "该图片展示了经过整体倒序处理后再对两段子串各自进行倒序，以恢复原始字符顺序的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20231106172534.png",
+      "description": "该图展示了通过子串反转和整体反转实现字符串右移n位的算法过程。",
+      "context": "该图展示了如何通过先局部反转字符串来实现整体反转的效果，其中特别标注了局部反转时子串长度的计算方法。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20231106170143.png",
+      "description": "GIF展示了如何通过整体反转和局部反转来实现字符串右移的操作过程。",
+      "context": "GIF动画展示了如何通过将字符串分割成两部分，并对这两部分进行整体及局部反转来实现字符串右移n位的操作过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20231106171557.png",
+      "description": "该GIF动画展示了通过整体反转字符串，将原字符串的后半段移动到前半段的过程。",
+      "context": "GIF展示了如何通过整体倒序操作来实现字符串右移n位后的两段子串位置互换的效果。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20231106172058.png",
+      "description": "GIF展示了字符串经过整体反转后再分别对两部分进行反转的过程，以实现字符串右移n位的效果。",
+      "context": "该GIF动画展示了如何通过先整体倒序再局部倒序的方法来调整字符串中两段子串的相对位置而不改变各自内部字符顺序的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20231106172534.png",
+      "description": "该GIF展示了字符串通过局部反转再整体反转的过程来实现特定排序效果。",
+      "context": "GIF动画展示了通过先局部反转字符串再整体反转来实现特定排序效果的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\字符串\\右旋字符串.txt",
+  "extracted_at": "2025-07-21T19:11:40.120507",
+  "raw_content": "右旋字符串\n卡码网题目链接(https://kamacoder.com/problempage.php?pid=1065)\n\n字符串的右旋转操作是把字符串尾部的若干个字符转移到字符串的前面。给定一个字符串 s 和一个正整数 k，请编写一个函数，将字符串中的后面 k 个字符移到字符串的前面，实现字符串的右旋转操作。\n\n例如，对于输入字符串 \"abcdefg\" 和整数 2，函数应该将其转换为 \"fgabcde\"。\n\n输入：输入共包含两行，第一行为一个正整数 k，代表右旋转的位数。第二行为字符串 s，代表需要旋转的字符串。\n\n输出：输出共一行，为进行了右旋转操作后的字符串。\n\n样例输入：\n\n2\nabcdefg \n样例输出：\n\nfgabcde\n数据范围：1 <= k < 10000, 1 <= s.length < 10000;\n\n#思路\n为了让本题更有意义，提升一下本题难度：不能申请额外空间，只能在本串上操作。 （Java不能在字符串上修改，所以使用java一定要开辟新空间）\n\n不能使用额外空间的话，模拟在本串操作要实现右旋转字符串的功能还是有点困难的。\n\n那么我们可以想一下上一题目字符串：花式反转还不够！ (opens new window)中讲过，使用整体反转+局部反转就可以实现反转单词顺序的目的。\n\n本题中，我们需要将字符串右移n位，字符串相当于分成了两个部分，如果n为2，符串相当于分成了两个部分，如图： （length为字符串长度）\nhttps://file1.kamacoder.com/i/algo/20231106170143.png\n\n\n右移n位， 就是将第二段放在前面，第一段放在后面，先不考虑里面字符的顺序，是不是整体倒叙不就行了。如图：\n\nhttps://file1.kamacoder.com/i/algo/20231106171557.png\n\n此时第一段和第二段的顺序是我们想要的，但里面的字符位置被我们倒叙，那么此时我们在把 第一段和第二段里面的字符再倒叙一把，这样字符顺序不就正确了。 如果：\n\nhttps://file1.kamacoder.com/i/algo/20231106172058.png\n\n其实，思路就是 通过 整体倒叙，把两段子串顺序颠倒，两个段子串里的的字符在倒叙一把，负负得正，这样就不影响子串里面字符的顺序了。\n\n整体代码如下：\n\n// 版本一\n#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n\n    reverse(s.begin(), s.end()); // 整体反转\n    reverse(s.begin(), s.begin() + n); // 先反转前一段，长度n\n    reverse(s.begin() + n, s.end()); // 再反转后一段\n\n    cout << s << endl;\n\n} \n那么整体反正的操作放在下面，先局部反转行不行？\n\n可以的，不过，要记得 控制好 局部反转的长度，如果先局部反转，那么先反转的子串长度就是 len - n，如图：\n\nhttps://file1.kamacoder.com/i/algo/20231106172534.png\n\n代码如下：\n\n// 版本二 \n#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n    reverse(s.begin(), s.begin() + len - n); // 先反转前一段，长度len-n ，注意这里是和版本一的区别\n    reverse(s.begin() + len - n, s.end()); // 再反转后一段\n    reverse(s.begin(), s.end()); // 整体反转\n    cout << s << endl;\n\n}\n#拓展\n大家在做剑指offer的时候，会发现 剑指offer的题目是左反转，那么左反转和右反转 有什么区别呢？\n\n其实思路是一样一样的，就是反转的区间不同而已。如果本题是左旋转n，那么实现代码如下：\n\n#include<iostream>\n#include<algorithm>\nusing namespace std;\nint main() {\n    int n;\n    string s;\n    cin >> n;\n    cin >> s;\n    int len = s.size(); //获取长度\n    reverse(s.begin(), s.begin() + n); //  反转第一段长度为n \n    reverse(s.begin() + n, s.end()); // 反转第二段长度为len-n \n    reverse(s.begin(), s.end());  // 整体反转\n    cout << s << endl;\n\n}\n大家可以感受一下 这份代码和 版本二的区别， 其实就是反转的区间不同而已。\n\n那么左旋转的话，可以不可以先整体反转，例如想版本一的那样呢？\n\n当然可以。\n\n#其他语言版本\n#Java：\n// 版本一\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n        reverseString(chars, 0, n - 1);  //反转前一段字符串，此时的字符串首尾尾是0,n - 1\n        reverseString(chars, n, len - 1);  //反转后一段字符串，此时的字符串首尾尾是n,len - 1\n        \n        System.out.println(chars);\n\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        //异或法反转字符串，参照题目 344.反转字符串的解释\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}\n\n\n// 版本二\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int n = Integer.parseInt(in.nextLine());\n        String s = in.nextLine();\n\n        int len = s.length();  //获取字符串长度\n        char[] chars = s.toCharArray();\n        reverseString(chars, 0, len - n - 1);  //反转前一段字符串，此时的字符串首尾是0,len - n - 1\n        reverseString(chars, len - n, len - 1);  //反转后一段字符串，此时的字符串首尾是len - n,len - 1\n        reverseString(chars, 0, len - 1);  //反转整个字符串\n\n        System.out.println(chars);\n\n    }\n\n    public static void reverseString(char[] ch, int start, int end) {\n        //异或法反转字符串，参照题目 344.反转字符串的解释\n        while (start < end) {\n            ch[start] ^= ch[end];\n            ch[end] ^= ch[start];\n            ch[start] ^= ch[end];\n            start++;\n            end--;\n        }\n    }\n}\n#Python:\n#获取输入的数字k和字符串\nk = int(input())\ns = input()\n\n#通过切片反转第一段和第二段字符串\n#注意：python中字符串是不可变的，所以也需要额外空间\ns = s[len(s)-k:] + s[:len(s)-k]\nprint(s)\nk = int(input())\ns = input()\n\nprint(s[-k:] + s[:-k])"
+}

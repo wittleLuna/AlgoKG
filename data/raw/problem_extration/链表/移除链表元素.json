@@ -1,0 +1,468 @@
+{
+  "id": "AP_188f6f34",
+  "title": "移除链表元素",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/remove-linked-list-elements/",
+  "description": "值 val 的所有节点。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "链表操作",
+    "迭代"
+  ],
+  "data_structure_tags": [
+    "链表"
+  ],
+  "technique_tags": [
+    "虚拟头结点",
+    "内存管理",
+    "递归"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过遍历链表来移除所有等于给定值val的节点。为简化头结点处理逻辑，可以使用虚拟头结点方法统一处理头结点和其他节点的删除操作；也可以直接处理原链表，但需要特别注意头结点的特殊情况。另外，还可以采用递归方式解决此问题。",
+  "key_insights": [
+    {
+      "content": "通过添加一个虚拟头结点，可以将头结点的处理方式与其他节点保持一致，从而简化代码逻辑。"
+    },
+    {
+      "content": "在不使用虚拟头结点的情况下，需要单独考虑头结点的删除情况，因为头结点没有前驱节点。"
+    },
+    {
+      "content": "递归解法基于基础情况（空链表）和递归情况（检查并可能移除当前头节点后继续处理剩余链表）构建解决方案。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这里以链表 1 4 2 4 来举例，移除元素4。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* removeElements(ListNode* head, int val) {while (head != NULL && head->val == val) {ListNode* tmp = head;head = head->next;delete tmp;}ListNode* cur = head;while (cur != NULL && cur->next!= NULL) {if (cur->next->val == val) {ListNode* tmp = cur->next;cur->next = cur->next->next;delete tmp;} else {cur = cur->next;}}return head;}};",
+          "description": "C++直接使用原来的链表来进行移除节点操作"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* removeElements(ListNode* head, int val) {ListNode* dummyHead = new ListNode(0);dummyHead->next = head;ListNode* cur = dummyHead;while (cur->next != NULL) {if(cur->next->val == val) {ListNode* tmp = cur->next;cur->next = cur->next->next;delete tmp;} else {cur = cur->next;}}head = dummyHead->next;delete dummyHead;return head;}};",
+          "description": "C++设置一个虚拟头结点在进行移除节点操作"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* removeElements(ListNode* head, int val) {if (head == nullptr) {return nullptr;}if (head->val == val) {ListNode* newHead = removeElements(head->next, val);delete head;return newHead;} else {head->next = removeElements(head->next, val);return head;}}};",
+          "description": "C++递归方法解决本题"
+        },
+        {
+          "language": "c",
+          "code": "struct ListNode* removeElements(struct ListNode* head, int val){struct ListNode* temp;while(head && head->val == val) {temp = head;head = head->next;free(temp);}struct ListNode *cur = head;while(cur && (temp = cur->next)) {if(temp->val == val) {cur->next = temp->next;free(temp);}elsecur = cur->next;}return head;}",
+          "description": "C语言直接使用原来的链表来移除元素"
+        },
+        {
+          "language": "c",
+          "code": "struct ListNode* removeElements(struct ListNode* head, int val){typedef struct ListNode ListNode;ListNode *shead;shead = (ListNode *)malloc(sizeof(ListNode));shead->next = head;ListNode *cur = shead;while(cur->next != NULL){if (cur->next->val == val){ListNode *tmp = cur->next;cur->next = cur->next->next;free(tmp);}else{cur = cur->next;}}head = shead->next;free(shead);return head;}",
+          "description": "C语言设置一个虚拟头结点来移除元素"
+        },
+        {
+          "language": "java",
+          "code": "public ListNode removeElements(ListNode head, int val) {while(head!=null && head.val==val) {head = head.next;}ListNode curr = head;while(curr!=null && curr.next !=null) {if(curr.next.val == val){curr.next = curr.next.next;} else {curr = curr.next;}}return head;}",
+          "description": "Java直接使用原来的链表来进行移除节点操作"
+        },
+        {
+          "language": "java",
+          "code": "public ListNode removeElements(ListNode head, int val) {while (head != null && head.val == val) {head = head.next;}if (head == null) {return head;}ListNode pre = head;ListNode cur = head.next;while (cur != null) {if (cur.val == val) {pre.next = cur.next;} else {pre = cur;}cur = cur.next;}return head;}",
+          "description": "Java另一种直接使用原来的链表的实现"
+        },
+        {
+          "language": "java",
+          "code": "public ListNode removeElements(ListNode head, int val) {ListNode dummy = new ListNode();dummy.next = head;ListNode cur = dummy;while (cur.next != null) {if (cur.next.val == val) {cur.next = cur.next.next;} else {cur = cur.next;}}return dummy.next;}",
+          "description": "Java设置一个虚拟头结点来进行移除节点操作"
+        },
+        {
+          "language": "java",
+          "code": "public ListNode removeElements(ListNode head, int val) {if (head == null) {return head;}head.next = removeElements(head.next, val);if (head.val == val) {return head.next;}return head;}",
+          "description": "Java递归方法解决本题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElements(self, head: Optional[ListNode], val: int) -> Optional[ListNode]: dummy_head = ListNode(next = head)current = dummy_headwhile current.next: if current.next.val == val: current.next = current.next.next else: current = current.nextreturn dummy_head.next",
+          "description": "Python使用虚拟头节点法移除链表中的指定元素"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#C:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* removeElements(ListNode* head, int val) {while (head != NULL && head->val == val) {ListNode* tmp = head;head = head->next;delete tmp;}ListNode* cur = head;while (cur != NULL && cur->next!= NULL) {if (cur->next->val == val) {ListNode* tmp = cur->next;cur->next = cur->next->next;delete tmp;} else {cur = cur->next;}}return head;}};",
+          "description": "直接使用原来的链表来进行移除节点操作"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* removeElements(ListNode* head, int val) {ListNode* dummyHead = new ListNode(0);dummyHead->next = head;ListNode* cur = dummyHead;while (cur->next != NULL) {if(cur->next->val == val) {ListNode* tmp = cur->next;cur->next = cur->next->next;delete tmp;} else {cur = cur->next;}}head = dummyHead->next;delete dummyHead;return head;}};",
+          "description": "设置一个虚拟头结点在进行移除节点操作"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* removeElements(ListNode* head, int val) {if (head == nullptr) {return nullptr;}if (head->val == val) {ListNode* newHead = removeElements(head->next, val);delete head;return newHead;} else {head->next = removeElements(head->next, val);return head;}}};",
+          "description": "递归方法解决本题"
+        },
+        {
+          "language": "c",
+          "code": "struct ListNode* removeElements(struct ListNode* head, int val){struct ListNode* temp;while(head && head->val == val) {temp = head;head = head->next;free(temp);}struct ListNode *cur = head;while(cur && (temp = cur->next)) {if(temp->val == val) {cur->next = temp->next;free(temp);}elsecur = cur->next;}return head;}",
+          "description": "C语言实现：用原来的链表操作"
+        },
+        {
+          "language": "c",
+          "code": "struct ListNode* removeElements(struct ListNode* head, int val){typedef struct ListNode ListNode;ListNode *shead;shead = (ListNode *)malloc(sizeof(ListNode));shead->next = head;ListNode *cur = shead;while(cur->next != NULL){if (cur->next->val == val){ListNode *tmp = cur->next;cur->next = cur->next->next;free(tmp);}else{cur = cur->next;}}head = shead->next;free(shead);return head;}",
+          "description": "C语言实现：设置一个虚拟头结点"
+        },
+        {
+          "language": "java",
+          "code": "public ListNode removeElements(ListNode head, int val) {while(head!=null && head.val==val) {head = head.next;}ListNode curr = head;while(curr!=null && curr.next !=null) {if(curr.next.val == val){curr.next = curr.next.next;} else {curr = curr.next;}}return head;}",
+          "description": "Java实现：用原来的链表操作"
+        },
+        {
+          "language": "java",
+          "code": "public ListNode removeElements(ListNode head, int val) {while (head != null && head.val == val) {head = head.next;}if (head == null) {return head;}ListNode pre = head;ListNode cur = head.next;while (cur != null) {if (cur.val == val) {pre.next = cur.next;} else {pre = cur;}cur = cur.next;}return head;}",
+          "description": "Java实现：另一种方式处理原有链表"
+        },
+        {
+          "language": "java",
+          "code": "public ListNode removeElements(ListNode head, int val) {ListNode dummy = new ListNode();dummy.next = head;ListNode cur = dummy;while (cur.next != null) {if (cur.next.val == val) {cur.next = cur.next.next;} else {cur = cur.next;}}return dummy.next;}",
+          "description": "Java实现：设置一个虚拟头结点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public ListNode removeElements(ListNode head, int val) {if (head == null) {return head;}head.next = removeElements(head.next, val);if (head.val == val) {return head.next;}return head;}}",
+          "description": "Java实现：递归方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElements(self, head: Optional[ListNode], val: int) -> Optional[ListNode]: dummy_head = ListNode(next = head) current = dummy_head while current.next: if current.next.val == val: current.next = current.next.next else: current = current.next return dummy_head.next",
+          "description": "Python实现：虚拟头节点法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "C:",
+      "text": "用原来的链表操作：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* removeElements(ListNode* head, int val) {while (head != NULL && head->val == val) {ListNode* tmp = head;head = head->next;delete tmp;}ListNode* cur = head;while (cur != NULL && cur->next!= NULL) {if (cur->next->val == val) {ListNode* tmp = cur->next;cur->next = cur->next->next;delete tmp;} else {cur = cur->next;}}return head;}};",
+          "description": "直接使用原来的链表来进行移除节点操作"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* removeElements(ListNode* head, int val) {ListNode* dummyHead = new ListNode(0);dummyHead->next = head;ListNode* cur = dummyHead;while (cur->next != NULL) {if(cur->next->val == val) {ListNode* tmp = cur->next;cur->next = cur->next->next;delete tmp;} else {cur = cur->next;}}head = dummyHead->next;delete dummyHead;return head;}};",
+          "description": "设置一个虚拟头结点在进行移除节点操作"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* removeElements(ListNode* head, int val) {if (head == nullptr) {return nullptr;}if (head->val == val) {ListNode* newHead = removeElements(head->next, val);delete head;return newHead;} else {head->next = removeElements(head->next, val);return head;}}};",
+          "description": "递归方法解决本题"
+        },
+        {
+          "language": "c",
+          "code": "struct ListNode* removeElements(struct ListNode* head, int val){struct ListNode* temp;while(head && head->val == val) {temp = head;head = head->next;free(temp);}struct ListNode *cur = head;while(cur && (temp = cur->next)) {if(temp->val == val) {cur->next = temp->next;free(temp);}elsecur = cur->next;}return head;}",
+          "description": "用原来的链表操作删除元素"
+        },
+        {
+          "language": "c",
+          "code": "struct ListNode* removeElements(struct ListNode* head, int val){typedef struct ListNode ListNode;ListNode *shead;shead = (ListNode *)malloc(sizeof(ListNode));shead->next = head;ListNode *cur = shead;while(cur->next != NULL){if (cur->next->val == val){ListNode *tmp = cur->next;cur->next = cur->next->next;free(tmp);}else{cur = cur->next;}}head = shead->next;free(shead);return head;}",
+          "description": "设置一个虚拟头结点删除元素"
+        },
+        {
+          "language": "java",
+          "code": "public ListNode removeElements(ListNode head, int val) {while(head!=null && head.val==val) {head = head.next;}ListNode curr = head;while(curr!=null && curr.next !=null) {if(curr.next.val == val){curr.next = curr.next.next;} else {curr = curr.next;}}return head;}",
+          "description": "用原来的链表操作删除元素"
+        },
+        {
+          "language": "java",
+          "code": "public ListNode removeElements(ListNode head, int val) {while (head != null && head.val == val) {head = head.next;}if (head == null) {return head;}ListNode pre = head;ListNode cur = head.next;while (cur != null) {if (cur.val == val) {pre.next = cur.next;} else {pre = cur;}cur = cur.next;}return head;}",
+          "description": "另一种方式使用原来的链表操作删除元素"
+        },
+        {
+          "language": "java",
+          "code": "public ListNode removeElements(ListNode head, int val) {ListNode dummy = new ListNode();dummy.next = head;ListNode cur = dummy;while (cur.next != null) {if (cur.next.val == val) {cur.next = cur.next.next;} else {cur = cur.next;}}return dummy.next;}",
+          "description": "设置一个虚拟头结点删除元素"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution {public ListNode removeElements(ListNode head, int val) {if (head == null) {return head;}head.next = removeElements(head.next, val);if (head.val == val) {return head.next;}return head;}}",
+          "description": "递归方法解决本题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElements(self, head: Optional[ListNode], val: int) -> Optional[ListNode]: dummy_head = ListNode(next = head) current = dummy_head while current.next: if current.next.val == val: current.next = current.next.next else: current = current.next return dummy_head.next",
+          "description": "虚拟头节点法删除元素"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "用原来的链表操作：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* removeElements(ListNode* head, int val) {while (head != NULL && head->val == val) {ListNode* tmp = head;head = head->next;delete tmp;}ListNode* cur = head;while (cur != NULL && cur->next!= NULL) {if (cur->next->val == val) {ListNode* tmp = cur->next;cur->next = cur->next->next;delete tmp;} else {cur = cur->next;}}return head;}};",
+          "description": "直接使用原来的链表来进行移除节点操作"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* removeElements(ListNode* head, int val) {ListNode* dummyHead = new ListNode(0);dummyHead->next = head;ListNode* cur = dummyHead;while (cur->next != NULL) {if(cur->next->val == val) {ListNode* tmp = cur->next;cur->next = cur->next->next;delete tmp;} else {cur = cur->next;}}head = dummyHead->next;delete dummyHead;return head;}};",
+          "description": "设置一个虚拟头结点在进行移除节点操作"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* removeElements(ListNode* head, int val) {if (head == nullptr) {return nullptr;}if (head->val == val) {ListNode* newHead = removeElements(head->next, val);delete head;return newHead;} else {head->next = removeElements(head->next, val);return head;}}};",
+          "description": "通过递归的思路解决本题"
+        },
+        {
+          "language": "c",
+          "code": "struct ListNode* removeElements(struct ListNode* head, int val){struct ListNode* temp;while(head && head->val == val) {temp = head;head = head->next;free(temp);}struct ListNode *cur = head;while(cur && (temp = cur->next)) {if(temp->val == val) {cur->next = temp->next;free(temp);}elsecur = cur->next;}return head;}",
+          "description": "用原来的链表操作"
+        },
+        {
+          "language": "c",
+          "code": "struct ListNode* removeElements(struct ListNode* head, int val){typedef struct ListNode ListNode;ListNode *shead;shead = (ListNode *)malloc(sizeof(ListNode));shead->next = head;ListNode *cur = shead;while(cur->next != NULL){if (cur->next->val == val){ListNode *tmp = cur->next;cur->next = cur->next->next;free(tmp);}else{cur = cur->next;}}head = shead->next;free(shead);return head;}",
+          "description": "设置一个虚拟头结点"
+        },
+        {
+          "language": "java",
+          "code": "public ListNode removeElements(ListNode head, int val) {while(head!=null && head.val==val) {head = head.next;}ListNode curr = head;while(curr!=null && curr.next !=null) {if(curr.next.val == val){curr.next = curr.next.next;} else {curr = curr.next;}}return head;}",
+          "description": "用原来的链表操作"
+        },
+        {
+          "language": "java",
+          "code": "public ListNode removeElements(ListNode head, int val) {while (head != null && head.val == val) {head = head.next;}if (head == null) {return head;}ListNode pre = head;ListNode cur = head.next;while (cur != null) {if (cur.val == val) {pre.next = cur.next;} else {pre = cur;}cur = cur.next;}return head;}",
+          "description": "用原来的链表操作"
+        },
+        {
+          "language": "java",
+          "code": "public ListNode removeElements(ListNode head, int val) {ListNode dummy = new ListNode();dummy.next = head;ListNode cur = dummy;while (cur.next != null) {if (cur.next.val == val) {cur.next = cur.next.next;} else {cur = cur.next;}}return dummy.next;}",
+          "description": "设置一个虚拟头结点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public ListNode removeElements(ListNode head, int val) {if (head == null) {return head;}head.next = removeElements(head.next, val);if (head.val == val) {return head.next;}return head;}}",
+          "description": "递归方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElements(self, head: Optional[ListNode], val: int) -> Optional[ListNode]: dummy_head = ListNode(next = head)current = dummy_headwhile current.next: if current.next.val == val: current.next = current.next.next else: current = current.nextreturn dummy_head.next",
+          "description": "虚拟头节点法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "（版本一）虚拟头节点法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* removeElements(ListNode* head, int val) { while (head != NULL && head->val == val) { ListNode* tmp = head; head = head->next; delete tmp; } ListNode* cur = head; while (cur != NULL && cur->next!= NULL) { if (cur->next->val == val) { ListNode* tmp = cur->next; cur->next = cur->next->next; delete tmp; } else { cur = cur->next; } } return head; }};",
+          "description": "直接使用原来的链表来进行移除节点操作"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* removeElements(ListNode* head, int val) { ListNode* dummyHead = new ListNode(0); dummyHead->next = head; ListNode* cur = dummyHead; while (cur->next != NULL) { if(cur->next->val == val) { ListNode* tmp = cur->next; cur->next = cur->next->next; delete tmp; } else { cur = cur->next; } } head = dummyHead->next; delete dummyHead; return head; }};",
+          "description": "设置一个虚拟头结点在进行移除节点操作"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* removeElements(ListNode* head, int val) { if (head == nullptr) { return nullptr; } if (head->val == val) { ListNode* newHead = removeElements(head->next, val); delete head; return newHead; } else { head->next = removeElements(head->next, val); return head; }}};",
+          "description": "递归方式解决移除节点操作"
+        },
+        {
+          "language": "c",
+          "code": "struct ListNode* removeElements(struct ListNode* head, int val){ struct ListNode* temp; while(head && head->val == val) { temp = head; head = head->next; free(temp); } struct ListNode *cur = head; while(cur && (temp = cur->next)) { if(temp->val == val) { cur->next = temp->next; free(temp); } else cur = cur->next; } return head;}",
+          "description": "C语言中直接使用原来的链表来进行移除节点操作"
+        },
+        {
+          "language": "c",
+          "code": "struct ListNode* removeElements(struct ListNode* head, int val){ typedef struct ListNode ListNode; ListNode *shead; shead = (ListNode *)malloc(sizeof(ListNode)); shead->next = head; ListNode *cur = shead; while(cur->next != NULL){ if (cur->next->val == val){ ListNode *tmp = cur->next; cur->next = cur->next->next; free(tmp); } else{ cur = cur->next; } } head = shead->next; free(shead); return head;}",
+          "description": "C语言中设置一个虚拟头结点在进行移除节点操作"
+        },
+        {
+          "language": "java",
+          "code": "public ListNode removeElements(ListNode head, int val) { while(head!=null && head.val==val) { head = head.next; } ListNode curr = head; while(curr!=null && curr.next !=null) { if(curr.next.val == val){ curr.next = curr.next.next; } else { curr = curr.next; } } return head;}",
+          "description": "Java中直接使用原来的链表来进行移除节点操作"
+        },
+        {
+          "language": "java",
+          "code": "public ListNode removeElements(ListNode head, int val) { while (head != null && head.val == val) { head = head.next; } if (head == null) { return head; } ListNode pre = head; ListNode cur = head.next; while (cur != null) { if (cur.val == val) { pre.next = cur.next; } else { pre = cur; } cur = cur.next; } return head;}",
+          "description": "另一种Java中直接使用原来的链表来进行移除节点操作"
+        },
+        {
+          "language": "java",
+          "code": "public ListNode removeElements(ListNode head, int val) { ListNode dummy = new ListNode(); dummy.next = head; ListNode cur = dummy; while (cur.next != null) { if (cur.next.val == val) { cur.next = cur.next.next; } else { cur = cur.next; } } return dummy.next;}",
+          "description": "Java中设置一个虚拟头结点在进行移除节点操作"
+        },
+        {
+          "language": "java",
+          "code": "public ListNode removeElements(ListNode head, int val) { if (head == null) { return head; } head.next = removeElements(head.next, val); if (head.val == val) { return head.next; } return head;}",
+          "description": "Java中递归方式解决移除节点操作"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElements(self, head: Optional[ListNode], val: int) -> Optional[ListNode]: dummy_head = ListNode(next = head) current = dummy_head while current.next: if current.next.val == val: current.next = current.next.next else: current = current.next return dummy_head.next",
+          "description": "Python中使用虚拟头节点法移除链表元素"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: ListNode* removeElements(ListNode* head, int val) { while (head != NULL && head->val == val) { ListNode* tmp = head; head = head->next; delete tmp; } ListNode* cur = head; while (cur != NULL && cur->next!= NULL) { if (cur->next->val == val) { ListNode* tmp = cur->next; cur->next = cur->next->next; delete tmp; } else { cur = cur->next; } } return head; }};",
+      "description": "C++实现：直接使用原来的链表来进行移除节点操作"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: ListNode* removeElements(ListNode* head, int val) { ListNode* dummyHead = new ListNode(0); dummyHead->next = head; ListNode* cur = dummyHead; while (cur->next != NULL) { if(cur->next->val == val) { ListNode* tmp = cur->next; cur->next = cur->next->next; delete tmp; } else { cur = cur->next; } } head = dummyHead->next; delete dummyHead; return head; }};",
+      "description": "C++实现：设置一个虚拟头结点在进行移除节点操作"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: ListNode* removeElements(ListNode* head, int val) { if (head == nullptr) { return nullptr; } if (head->val == val) { ListNode* newHead = removeElements(head->next, val); delete head; return newHead; } else { head->next = removeElements(head->next, val); return head; }};}",
+      "description": "C++实现：通过递归的思路解决本题"
+    },
+    {
+      "language": "c",
+      "code": "struct ListNode* removeElements(struct ListNode* head, int val){ struct ListNode* temp; while(head && head->val == val) { temp = head; head = head->next; free(temp); } struct ListNode *cur = head; while(cur && (temp = cur->next)) { if(temp->val == val) { cur->next = temp->next; free(temp); } else cur = cur->next; } return head;}",
+      "description": "C语言实现：用原来的链表操作"
+    },
+    {
+      "language": "c",
+      "code": "struct ListNode* removeElements(struct ListNode* head, int val){ typedef struct ListNode ListNode; ListNode *shead; shead = (ListNode *)malloc(sizeof(ListNode)); shead->next = head; ListNode *cur = shead; while(cur->next != NULL){ if (cur->next->val == val){ ListNode *tmp = cur->next; cur->next = cur->next->next; free(tmp); } else{ cur = cur->next; } } head = shead->next; free(shead); return head;}",
+      "description": "C语言实现：设置一个虚拟头结点"
+    },
+    {
+      "language": "java",
+      "code": "public ListNode removeElements(ListNode head, int val) { while(head!=null && head.val==val) { head = head.next; } ListNode curr = head; while(curr!=null && curr.next !=null) { if(curr.next.val == val){ curr.next = curr.next.next; } else { curr = curr.next; } } return head; }",
+      "description": "Java实现：用原来的链表操作"
+    },
+    {
+      "language": "java",
+      "code": "public ListNode removeElements(ListNode head, int val) { while (head != null && head.val == val) { head = head.next; } if (head == null) { return head; } ListNode pre = head; ListNode cur = head.next; while (cur != null) { if (cur.val == val) { pre.next = cur.next; } else { pre = cur; } cur = cur.next; } return head; }",
+      "description": "Java实现：另一种用原来的链表操作的方法"
+    },
+    {
+      "language": "java",
+      "code": "public ListNode removeElements(ListNode head, int val) { ListNode dummy = new ListNode(); dummy.next = head; ListNode cur = dummy; while (cur.next != null) { if (cur.next.val == val) { cur.next = cur.next.next; } else { cur = cur.next; } } return dummy.next; }",
+      "description": "Java实现：设置一个虚拟头结点"
+    },
+    {
+      "language": "java",
+      "code": "public ListNode removeElements(ListNode head, int val) { if (head == null) { return head; } head.next = removeElements(head.next, val); if (head.val == val) { return head.next; } return head; }",
+      "description": "Java实现：递归方法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def removeElements(self, head: Optional[ListNode], val: int) -> Optional[ListNode]: dummy_head = ListNode(next = head) current = dummy_head while current.next: if current.next.val == val: current.next = current.next.next else: current = current.next return dummy_head.next",
+      "description": "Python实现：虚拟头节点法"
+    }
+  ],
+  "common_mistakes": [
+    "忘记手动释放被删除节点的内存（对于C/C++）。",
+    "未考虑到头结点也可能需要被删除的情况。",
+    "返回新的头结点时错误地返回了虚拟头结点而非其next指针。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210316095351161.png",
+      "description": "该图展示了从链表 `1->4->2->4` 中移除值为 `4` 的所有节点的过程，最终得到链表 `1->2`。",
+      "context": "该图片展示了如何从链表1->4->2->4中移除值为4的节点的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210316095418280.png",
+      "description": "这张图片展示了一个包含两个节点（值分别为1和2）的单链表，节点通过指针连接，最后一个节点指向null。",
+      "context": "该图片展示了在移除链表中特定值的节点后，并手动清理这些节点所占内存的状态。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/2021031609544922.png",
+      "description": "该图展示了一个链表结构，初始链表为 1->4->2->4，目标是移除值为 1 的节点，操作后链表将从第二个节点（值为 4）开始。",
+      "context": "展示了直接使用原来的链表进行移除操作的示意图，特别是当需要移除的是链表中的非头结点时的操作方法。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210316095512470.png",
+      "description": "这是一张展示单链表数据结构的图片，链表节点值依次为1、4、2、4，头节点（head）指向值为1的节点。",
+      "context": "该图片展示了如何通过将头结点向后移动一位来移除单链表中的头结点。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210316095543775.png",
+      "description": "这是一张展示单链表数据结构的图片，链表包含三个节点（值分别为4、2、4），头节点（head）指向第一个节点，最后一个节点指向null。",
+      "context": "展示了移除头结点后，原头结点从内存中被删除的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210316095619221.png",
+      "description": "该图展示了在链表数据结构中移除值为1的节点的过程，通过调整指针跳过目标节点实现删除操作。",
+      "context": "该图片展示了通过添加一个虚拟头结点来统一移除链表中任何位置节点（包括原头结点）的操作方法。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210316095351161.png",
+      "description": "GIF展示了从链表中移除指定值节点的过程，通过调整指针跳过需要删除的元素。",
+      "context": "该GIF动画展示了从链表中移除指定值（此处为4）的所有节点的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210316095418280.png",
+      "description": "GIF展示了从链表中移除特定值的节点并手动清理这些节点内存的过程。",
+      "context": "该GIF动画展示了在移除链表中指定值的节点后，如何手动从内存中删除这些节点以释放空间的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/2021031609544922.png",
+      "description": "GIF展示了单链表中移除头结点的过程，通过将原头结点的下一个节点设置为新的头结点来实现。",
+      "context": "GIF动画展示了在单链表中直接使用原链表进行节点移除的过程，特别是如何处理头结点的删除。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210316095512470.png",
+      "description": "GIF展示了单链表中移除头结点的过程，通过将头指针指向下一个节点来实现。",
+      "context": "此GIF展示了如何通过将头结点向后移动一位来从链表中移除原头结点的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210316095543775.png",
+      "description": "该GIF展示了从单链表中移除头节点的过程，包括将原头节点后移一位并释放原头节点内存。",
+      "context": "该GIF动画展示了如何通过设置虚拟头结点来统一处理单链表中节点（包括原头结点）的移除过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210316095619221.png",
+      "description": "GIF展示了在单链表中通过添加虚拟头结点来统一移除节点（包括原头结点）的过程。",
+      "context": "此GIF动画展示了通过引入虚拟头结点来统一处理单链表中移除节点（包括头结点）的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\链表\\移除链表元素.txt",
+  "extracted_at": "2025-07-22T18:04:52.059361",
+  "raw_content": "移除链表元素\n力扣题目链接(https://leetcode.cn/problems/remove-linked-list-elements/)\n\n题意：删除链表中等于给定值 val 的所有节点。\n\n示例 1： 输入：head = [1,2,6,3,4,5,6], val = 6 输出：[1,2,3,4,5]\n\n示例 2： 输入：head = [], val = 1 输出：[]\n\n示例 3： 输入：head = [7,7,7,7], val = 7 输出：[]\n\n\n#思路\n这里以链表 1 4 2 4 来举例，移除元素4。\n\nhttps://file1.kamacoder.com/i/algo/20210316095351161.png\n\n如果使用C，C++编程语言的话，不要忘了还要从内存中删除这两个移除的节点， 清理节点内存之后如图：\n\nhttps://file1.kamacoder.com/i/algo/20210316095418280.png\n\n当然如果使用java ，python的话就不用手动管理内存了。\n\n还要说明一下，就算使用C++来做leetcode，如果移除一个节点之后，没有手动在内存中删除这个节点，leetcode依然也是可以通过的，只不过，内存使用的空间大一些而已，但建议依然要养成手动清理内存的习惯。\n\n这种情况下的移除操作，就是让节点next指针直接指向下下一个节点就可以了，\n\n那么因为单链表的特殊性，只能指向下一个节点，刚刚删除的是链表的中第二个，和第四个节点，那么如果删除的是头结点又该怎么办呢？\n\n这里就涉及如下链表操作的两种方式：\n\n直接使用原来的链表来进行删除操作。\n设置一个虚拟头结点在进行删除操作。\n来看第一种操作：直接使用原来的链表来进行移除。\n\nhttps://file1.kamacoder.com/i/algo/2021031609544922.png\n\n移除头结点和移除其他节点的操作是不一样的，因为链表的其他节点都是通过前一个节点来移除当前节点，而头结点没有前一个节点。\n\n所以头结点如何移除呢，其实只要将头结点向后移动一位就可以，这样就从链表中移除了一个头结点。\n\nhttps://file1.kamacoder.com/i/algo/20210316095512470.png\n\n依然别忘将原头结点从内存中删掉。 \n\nhttps://file1.kamacoder.com/i/algo/20210316095543775.png\n\n这样移除了一个头结点，是不是发现，在单链表中移除头结点 和 移除其他节点的操作方式是不一样，其实在写代码的时候也会发现，需要单独写一段逻辑来处理移除头结点的情况。\n\n那么可不可以 以一种统一的逻辑来移除 链表的节点呢。\n\n其实可以设置一个虚拟头结点，这样原链表的所有节点就都可以按照统一的方式进行移除了。\n\n来看看如何设置一个虚拟头。依然还是在这个链表中，移除元素1。\n\nhttps://file1.kamacoder.com/i/algo/20210316095619221.png\n\n这里来给链表添加一个虚拟头结点为新的头结点，此时要移除这个旧头结点元素1。\n\n这样是不是就可以使用和移除链表其他节点的方式统一了呢？\n\n来看一下，如何移除元素1 呢，还是熟悉的方式，然后从内存中删除元素1。\n\n最后呢在题目中，return 头结点的时候，别忘了 return dummyNode->next;， 这才是新的头结点\n\n直接使用原来的链表来进行移除节点操作：\n\nclass Solution {\npublic:\n    ListNode* removeElements(ListNode* head, int val) {\n        // 删除头结点\n        while (head != NULL && head->val == val) { // 注意这里不是if\n            ListNode* tmp = head;\n            head = head->next;\n            delete tmp;\n        }\n\n        // 删除非头结点\n        ListNode* cur = head;\n        while (cur != NULL && cur->next!= NULL) {\n            if (cur->next->val == val) {\n                ListNode* tmp = cur->next;\n                cur->next = cur->next->next;\n                delete tmp;\n            } else {\n                cur = cur->next;\n            }\n        }\n        return head;\n    }\n};\n时间复杂度: O(n)\n空间复杂度: O(1)\n设置一个虚拟头结点在进行移除节点操作：\n\nclass Solution {\npublic:\n    ListNode* removeElements(ListNode* head, int val) {\n        ListNode* dummyHead = new ListNode(0); // 设置一个虚拟头结点\n        dummyHead->next = head; // 将虚拟头结点指向head，这样方便后面做删除操作\n        ListNode* cur = dummyHead;\n        while (cur->next != NULL) {\n            if(cur->next->val == val) {\n                ListNode* tmp = cur->next;\n                cur->next = cur->next->next;\n                delete tmp;\n            } else {\n                cur = cur->next;\n            }\n        }\n        head = dummyHead->next;\n        delete dummyHead;\n        return head;\n    }\n};\n\n时间复杂度: O(n)\n空间复杂度: O(1)\n也可以通过递归的思路解决本题:\n\n基础情况：对于空链表，不需要移除元素。\n\n递归情况：首先检查头节点的值是否为 val，如果是则移除头节点，答案即为在头节点的后续节点上递归的结果；如果头节点的值不为 val，则答案为头节点与在头节点的后续节点上递归得到的新链表拼接的结果。\n\nclass Solution {\npublic:\n    ListNode* removeElements(ListNode* head, int val) {\n        // 基础情况：空链表\n        if (head == nullptr) {\n            return nullptr;\n        }\n\n        // 递归处理\n        if (head->val == val) {\n            ListNode* newHead = removeElements(head->next, val);\n            delete head;\n            return newHead;\n        } else {\n            head->next = removeElements(head->next, val);\n            return head;\n        }\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(n)\n#其他语言版本\n#C:\n用原来的链表操作：\n\nstruct ListNode* removeElements(struct ListNode* head, int val){\n    struct ListNode* temp;\n    // 当头结点存在并且头结点的值等于val时\n    while(head && head->val == val) {\n        temp = head;\n        // 将新的头结点设置为head->next并删除原来的头结点\n        head = head->next;\n        free(temp);\n    }\n\n    struct ListNode *cur = head;\n    // 当cur存在并且cur->next存在时\n    // 此解法需要判断cur存在因为cur指向head。若head本身为NULL或者原链表中元素都为val的话，cur也会为NULL\n    while(cur && (temp = cur->next)) {\n        // 若cur->next的值等于val\n        if(temp->val == val) {\n            // 将cur->next设置为cur->next->next并删除cur->next\n            cur->next = temp->next;\n            free(temp);\n        }\n        // 若cur->next不等于val，则将cur后移一位\n        else\n            cur = cur->next;\n    }\n\n    // 返回头结点\n    return head;\n}\n设置一个虚拟头结点：\n\n/**\n * Definition for singly-linked list.\n * struct ListNode {\n *     int val;\n *     struct ListNode *next;\n * };\n */\n\n\nstruct ListNode* removeElements(struct ListNode* head, int val){\n    typedef struct ListNode ListNode;\n    ListNode *shead;\n    shead = (ListNode *)malloc(sizeof(ListNode));\n    shead->next = head;\n    ListNode *cur = shead;\n    while(cur->next != NULL){\n        if (cur->next->val == val){\n            ListNode *tmp = cur->next;\n            cur->next = cur->next->next;\n            free(tmp);\n        }\n        else{\n            cur = cur->next;\n        }\n    }\n    head = shead->next;\n    free(shead);\n    return head;\n}\n#Java：\n用原来的链表操作：\n\n/**\n * 方法1\n * 时间复杂度 O(n)\n * 空间复杂度 O(1)\n * @param head\n * @param val\n * @return\n */\npublic ListNode removeElements(ListNode head, int val) {\n    while(head!=null && head.val==val) {\n        head = head.next;\n    }\n    ListNode curr = head;\n    while(curr!=null && curr.next !=null) {\n        if(curr.next.val == val){\n            curr.next = curr.next.next;\n        } else {\n            curr = curr.next;\n        }\n    }\n    return head;\n}\n\n/**\n * 方法1\n * 时间复杂度 O(n)\n * 空间复杂度 O(1)\n * @param head\n * @param val\n * @return\n */\npublic ListNode removeElements(ListNode head, int val) {\n    while (head != null && head.val == val) {\n        head = head.next;\n    }\n    // 已经为null，提前退出\n    if (head == null) {\n        return head;\n    }\n    // 已确定当前head.val != val\n    ListNode pre = head;\n    ListNode cur = head.next;\n    while (cur != null) {\n        if (cur.val == val) {\n            pre.next = cur.next;\n        } else {\n            pre = cur;\n        }\n        cur = cur.next;\n    }\n    return head;\n}\n\n设置一个虚拟头结点：\n\n/**\n * 时间复杂度 O(n)\n * 空间复杂度 O(1)\n * @param head\n * @param val\n * @return\n */\npublic ListNode removeElements(ListNode head, int val) {\n    // 设置一个虚拟的头结点\n    ListNode dummy = new ListNode();\n    dummy.next = head;\n\n    ListNode cur = dummy;\n    while (cur.next != null) {\n        if (cur.next.val == val) {\n            cur.next = cur.next.next;\n        } else {\n            cur = cur.next;        \n        }\n    }\n    return dummy.next;\n}\n\n递归\n\n/**\n * 时间复杂度 O(n)\n * 空间复杂度 O(n)\n * @param head\n * @param val\n * @return\n */\nclass Solution {\n    public ListNode removeElements(ListNode head, int val) {\n        if (head == null) {\n            return head;\n        }\n\n        // 假设 removeElements() 返回后面完整的已经去掉val节点的子链表\n        // 在当前递归层用当前节点接住后面的子链表\n        // 随后判断当前层的node是否需要被删除，如果是，就返回\n        // 也可以先判断是否需要删除当前node，但是这样条件语句会比较不好想\n        head.next = removeElements(head.next, val);\n        if (head.val == val) {\n            return head.next;\n        }\n        return head;\n\n        // 实际上就是还原一个从尾部开始重新构建链表的过程\n    }\n}\n#Python：\n（版本一）虚拟头节点法\n# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\nclass Solution:\n    def removeElements(self, head: Optional[ListNode], val: int) -> Optional[ListNode]:\n        # 创建虚拟头部节点以简化删除过程\n        dummy_head = ListNode(next = head)\n        \n        # 遍历列表并删除值为val的节点\n        current = dummy_head\n        while current.next:\n            if current.next.val == val:\n                current.next = current.next.next\n            else:\n                current = current.next\n        \n        return dummy_head.next"
+}

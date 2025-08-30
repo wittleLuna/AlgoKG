@@ -1,0 +1,265 @@
+{
+  "id": "AP_e3fac4b7",
+  "title": "有效的括号",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/valid-parentheses/",
+  "description": "一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串，判断字符串是否有效。\n\n有效字符串需满足：\n\n左括号必须用相同类型的右括号闭合。\n左括号必须以正确的顺序闭合。\n注意空字符串可被认为是有效字符串。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "栈",
+    "字符串处理"
+  ],
+  "data_structure_tags": [
+    "栈"
+  ],
+  "technique_tags": [
+    "对称性匹配"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过使用栈来检查给定字符串中的括号是否有效。每当遇到左括号时，向栈中添加对应的右括号；遇到右括号时，则检查它是否与栈顶元素相匹配。如果在遍历结束时栈为空，则说明所有括号都正确闭合。",
+  "key_insights": [
+    {
+      "content": "栈的后进先出特性非常适合处理括号匹配这类需要‘反向’对应的问题。"
+    },
+    {
+      "content": "在编码前分析可能的不匹配情形有助于更清晰地构建解决方案。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "题外话",
+      "text": "括号匹配是使用栈解决的经典问题。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool isValid(string s) {if (s.size() % 2 != 0) return false; stack<char> st; for (int i = 0; i < s.size(); i++) {if (s[i] == '(') st.push(')'); else if (s[i] == '{') st.push('}'); else if (s[i] == '[') st.push(']'); else if (st.empty() || st.top() != s[i]) return false; else st.pop();} return st.empty();}};",
+          "description": "使用栈来解决括号匹配问题，遍历给定字符串中的每个字符，对于左括号将其对应的右括号入栈；遇到右括号时检查是否与栈顶元素匹配。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isValid(String s) {Deque<Character> deque = new LinkedList<>(); char ch; for (int i = 0; i < s.length(); i++) {ch = s.charAt(i); if (ch == '(') {deque.push(')');} else if (ch == '{') {deque.push('}');} else if (ch == '[') {deque.push(']');} else if (deque.isEmpty() || deque.peek() != ch) {return false;} else {deque.pop();}} return deque.isEmpty();}}",
+          "description": "使用LinkedList作为双端队列实现栈的功能，处理方法与C++版本相似。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isValid(String s) {Stack<Character> stack = new Stack<>(); for(char c : s.toCharArray()){if(c == ')' && !stack.isEmpty() && stack.peek() == '(') stack.pop(); else if(c == '}' && !stack.isEmpty() && stack.peek() == '{') stack.pop(); else if(c == ']' && !stack.isEmpty() && stack.peek() == '[') stack.pop(); else stack.push(c);} return stack.isEmpty();}}",
+          "description": "Java中直接使用Stack类，逻辑与上述相同，但更直观地展示了如何使用Stack。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isValid(self, s: str) -> bool: stack = [] for item in s: if item == '(': stack.append(')') elif item == '[': stack.append(']') elif item == '{': stack.append('}') elif not stack or stack[-1] != item: return False else: stack.pop() return True if not stack else False",
+          "description": "Python版本的解决方案，通过列表模拟栈的行为，基本逻辑与其他语言版本一致。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isValid(self, s: str) -> bool: stack = [] mapping = {'(': ')', '[': ']', '{': '}'} for item in s: if item in mapping.keys(): stack.append(mapping[item]) elif not stack or stack[-1] != item: return False else: stack.pop() return True if not stack else False",
+          "description": "另一种Python实现方式，利用字典存储括号对，使代码更加简洁易读。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "进入正题",
+      "text": "由于栈结构的特殊性，非常适合做对称匹配类的题目。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool isValid(string s) {if (s.size() % 2 != 0) return false; stack<char> st; for (int i = 0; i < s.size(); i++) {if (s[i] == '(') st.push(')'); else if (s[i] == '{') st.push('}'); else if (s[i] == '[') st.push(']'); else if (st.empty() || st.top() != s[i]) return false; else st.pop();} return st.empty();}};",
+          "description": "C++实现的括号匹配算法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isValid(String s) {Deque<Character> deque = new LinkedList<>(); char ch; for (int i = 0; i < s.length(); i++) {ch = s.charAt(i); if (ch == '(') {deque.push(')');} else if (ch == '{') {deque.push('}');} else if (ch == '[') {deque.push(']');} else if (deque.isEmpty() || deque.peek() != ch) {return false;} else {deque.pop();}} return deque.isEmpty();}}",
+          "description": "Java实现的括号匹配算法，使用了双端队列"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isValid(String s) {Stack<Character> stack = new Stack<>(); for(char c : s.toCharArray()){if(c == ')' && !stack.isEmpty() && stack.peek() == '(') stack.pop(); else if(c == '}' && !stack.isEmpty() && stack.peek() == '{') stack.pop(); else if(c == ']' && !stack.isEmpty() && stack.peek() == '[') stack.pop(); else stack.push(c);} return stack.isEmpty();}}",
+          "description": "另一种Java实现，直接使用栈进行括号匹配"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isValid(self, s: str) -> bool: stack = [] for item in s: if item == '(': stack.append(')') elif item == '[': stack.append(']') elif item == '{': stack.append('}') elif not stack or stack[-1] != item: return False else: stack.pop() return True if not stack else False",
+          "description": "Python版本的括号匹配算法，使用列表作为栈"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isValid(self, s: str) -> bool: stack = [] mapping = {'(': ')', '[': ']', '{': '}'} for item in s: if item in mapping.keys(): stack.append(mapping[item]) elif not stack or stack[-1] != item: return False else: stack.pop() return True if not stack else False",
+          "description": "另一个Python版本，通过字典来映射左右括号"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool isValid(string s) { if (s.size() % 2 != 0) return false; stack<char> st; for (int i = 0; i < s.size(); i++) { if (s[i] == '(') st.push(')'); else if (s[i] == '{') st.push('}'); else if (s[i] == '[') st.push(']'); else if (st.empty() || st.top() != s[i]) return false; else st.pop(); } return st.empty(); }};",
+          "description": "C++实现的括号匹配判断"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean isValid(String s) { Deque<Character> deque = new LinkedList<>(); char ch; for (int i = 0; i < s.length(); i++) { ch = s.charAt(i); if (ch == '(') { deque.push(')'); } else if (ch == '{') { deque.push('}'); } else if (ch == '[') { deque.push(']'); } else if (deque.isEmpty() || deque.peek() != ch) { return false; } else { deque.pop(); } } return deque.isEmpty(); }}",
+          "description": "Java使用Deque实现的括号匹配判断"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean isValid(String s) { Stack<Character> stack = new Stack<>(); for(char c : s.toCharArray()){ if(c == ')' && !stack.isEmpty() && stack.peek() == '(') stack.pop(); else if(c == '}' && !stack.isEmpty() && stack.peek() == '{') stack.pop(); else if(c == ']' && !stack.isEmpty() && stack.peek() == '[') stack.pop(); else stack.push(c); } return stack.isEmpty(); }}",
+          "description": "Java使用Stack实现的另一种括号匹配判断方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isValid(self, s: str) -> bool: stack = [] for item in s: if item == '(': stack.append(')') elif item == '[': stack.append(']') elif item == '{': stack.append('}') elif not stack or stack[-1] != item: return False else: stack.pop() return True if not stack else False",
+          "description": "Python使用栈实现的括号匹配判断"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isValid(self, s: str) -> bool: stack = [] mapping = { '(': ')', '[': ']', '{': '}' } for item in s: if item in mapping.keys(): stack.append(mapping[item]) elif not stack or stack[-1] != item: return False else: stack.pop() return True if not stack else False",
+          "description": "Python使用字典辅助实现的括号匹配判断"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool isValid(string s) {if (s.size() % 2 != 0) return false; stack<char> st; for (int i = 0; i < s.size(); i++) {if (s[i] == '(') st.push(')'); else if (s[i] == '{') st.push('}'); else if (s[i] == '[') st.push(']'); else if (st.empty() || st.top() != s[i]) return false; else st.pop();} return st.empty();}};",
+          "description": "C++版本的括号有效性检查"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isValid(String s) {Deque<Character> deque = new LinkedList<>(); char ch; for (int i = 0; i < s.length(); i++) {ch = s.charAt(i); if (ch == '(') {deque.push(')');}else if (ch == '{') {deque.push('}');}else if (ch == '[') {deque.push(']');} else if (deque.isEmpty() || deque.peek() != ch) {return false;}else {deque.pop();}} return deque.isEmpty();}}",
+          "description": "Java版本使用LinkedList作为栈来实现括号匹配"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isValid(String s) {Stack<Character> stack = new Stack<>(); for(char c : s.toCharArray()){if(c == ')' && !stack.isEmpty() && stack.peek() == '(') stack.pop(); else if(c == '}' && !stack.isEmpty() && stack.peek() == '{') stack.pop(); else if(c == ']' && !stack.isEmpty() && stack.peek() == '[') stack.pop(); else stack.push(c);} return stack.isEmpty();}}",
+          "description": "Java版本直接使用Stack类来解决括号匹配问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isValid(self, s: str) -> bool: stack = [] for item in s: if item == '(': stack.append(')') elif item == '[': stack.append(']') elif item == '{': stack.append('}') elif not stack or stack[-1] != item: return False else: stack.pop() return True if not stack else False",
+          "description": "Python版本使用列表模拟栈进行括号匹配"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isValid(self, s: str) -> bool: stack = [] mapping = {'(': ')', '[': ']', '{': '}'} for item in s: if item in mapping.keys(): stack.append(mapping[item]) elif not stack or stack[-1] != item: return False else: stack.pop() return True if not stack else False",
+          "description": "Python版本使用字典辅助完成括号匹配"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "# 方法一，仅使用栈，更省空间",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool isValid(string s) {if (s.size() % 2 != 0) return false; stack<char> st; for (int i = 0; i < s.size(); i++) {if (s[i] == '(') st.push(')'); else if (s[i] == '{') st.push('}'); else if (s[i] == '[') st.push(']'); else if (st.empty() || st.top() != s[i]) return false; else st.pop();} return st.empty();}};",
+          "description": "C++实现的括号匹配"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isValid(String s) {Deque<Character> deque = new LinkedList<>(); char ch; for (int i = 0; i < s.length(); i++) {ch = s.charAt(i); if (ch == '(') {deque.push(')');} else if (ch == '{') {deque.push('}');} else if (ch == '[') {deque.push(']');} else if (deque.isEmpty() || deque.peek() != ch) {return false;} else {deque.pop();}} return deque.isEmpty();}}",
+          "description": "Java实现的括号匹配"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isValid(String s) {Stack<Character> stack = new Stack<>(); for(char c : s.toCharArray()){if(c == ')' && !stack.isEmpty() && stack.peek() == '(') stack.pop(); else if(c == '}' && !stack.isEmpty() && stack.peek() == '{') stack.pop(); else if(c == ']' && !stack.isEmpty() && stack.peek() == '[') stack.pop(); else stack.push(c);} return stack.isEmpty();}}",
+          "description": "Java另一种实现的括号匹配"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isValid(self, s: str) -> bool: stack = [] for item in s: if item == '(': stack.append(')') elif item == '[': stack.append(']') elif item == '{': stack.append('}') elif not stack or stack[-1] != item: return False else: stack.pop() return True if not stack else False",
+          "description": "Python实现的括号匹配"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isValid(self, s: str) -> bool: stack = [] mapping = {'(': ')', '[': ']', '{': '}'} for item in s: if item in mapping.keys(): stack.append(mapping[item]) elif not stack or stack[-1] != item: return False else: stack.pop() return True if not stack else False",
+          "description": "使用字典的Python实现的括号匹配"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: bool isValid(string s) { if (s.size() % 2 != 0) return false; stack<char> st; for (int i = 0; i < s.size(); i++) { if (s[i] == '(') st.push(')'); else if (s[i] == '{') st.push('}'); else if (s[i] == '[') st.push(']'); else if (st.empty() || st.top() != s[i]) return false; else st.pop(); } return st.empty(); }};",
+      "description": "C++实现，使用栈来检查括号是否有效匹配"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public boolean isValid(String s) { Deque<Character> deque = new LinkedList<>(); char ch; for (int i = 0; i < s.length(); i++) { ch = s.charAt(i); if (ch == '(') { deque.push(')'); }else if (ch == '{') { deque.push('}'); }else if (ch == '[') { deque.push(']'); } else if (deque.isEmpty() || deque.peek() != ch) { return false; }else { deque.pop(); } } return deque.isEmpty(); }}",
+      "description": "Java实现，利用双端队列作为栈来验证括号的有效性"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public boolean isValid(String s) { Stack<Character> stack = new Stack<>(); for(char c : s.toCharArray()){ if(c == ')' && !stack.isEmpty() && stack.peek() == '(') stack.pop(); else if(c == '}' && !stack.isEmpty() && stack.peek() == '{') stack.pop(); else if(c == ']' && !stack.isEmpty() && stack.peek() == '[') stack.pop(); else stack.push(c); } return stack.isEmpty(); }}",
+      "description": "另一种Java实现方法，直接使用Stack类处理括号匹配"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def isValid(self, s: str) -> bool: stack = [] for item in s: if item == '(': stack.append(')') elif item == '[': stack.append(']') elif item == '{': stack.append('}') elif not stack or stack[-1] != item: return False else: stack.pop() return True if not stack else False",
+      "description": "Python实现，通过列表模拟栈的行为来解决括号匹配问题"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def isValid(self, s: str) -> bool: stack = [] mapping = { '(': ')', '[': ']', '{': '}' } for item in s: if item in mapping.keys(): stack.append(mapping[item]) elif not stack or stack[-1] != item: return False else: stack.pop() return True if not stack else False",
+      "description": "另一种Python实现，使用字典映射左括号到右括号进行匹配"
+    }
+  ],
+  "common_mistakes": [
+    "忽视了奇数长度字符串必然无效的情况。",
+    "未考虑所有类型的括号不匹配情况（如类型不匹配、方向相反等）。",
+    "在实现时直接将左括号入栈而非其对应的右括号，导致逻辑复杂化。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/2020080915505387.png",
+      "description": "图片展示了一组嵌套的括号，包括圆括号、方括号和花括号，常用于算法中检查括号匹配的有效性问题。",
+      "context": "该图片展示了字符串中左方向括号多余导致的不匹配情况。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20200809155107397.png",
+      "description": "图片展示了一组嵌套的括号结构，涉及算法中的括号匹配问题，红色框标出了需要特别注意的匹配部分。",
+      "context": "这张图片展示了第二种不匹配的情况，即括号没有多余但类型不匹配。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20200809155115779.png",
+      "description": "图片展示了一个包含嵌套括号的字符串，其中右括号“)”被红色框标记，暗示在检查括号匹配的算法中存在不平衡或错误。",
+      "context": "这张图片展示了第三种情况，即字符串中右方向的括号多余导致不匹配的情形。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20.%E6%9C%89%E6%95%88%E6%8B%AC%E5%8F%B7.gif",
+      "description": "GIF展示了通过栈来匹配字符串中括号的过程，包括三种不匹配的情况以及完全匹配时的情形。",
+      "context": "此GIF动画展示了在遍历字符串以检查括号匹配时，三种导致不匹配的情况以及最终如何判断所有括号都正确匹配的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\栈与队列\\有效的括号.txt",
+  "extracted_at": "2025-07-22T13:34:37.437651",
+  "raw_content": "有效的括号\n力扣题目链接(https://leetcode.cn/problems/valid-parentheses/)\n\n给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串，判断字符串是否有效。\n\n有效字符串需满足：\n\n左括号必须用相同类型的右括号闭合。\n左括号必须以正确的顺序闭合。\n注意空字符串可被认为是有效字符串。\n示例 1:\n\n输入: \"()\"\n输出: true\n示例 2:\n\n输入: \"()[]{}\"\n输出: true\n示例 3:\n\n输入: \"(]\"\n输出: false\n示例 4:\n\n输入: \"([)]\"\n输出: false\n示例 5:\n\n输入: \"{[]}\"\n输出: true\n\n思路\n#题外话\n括号匹配是使用栈解决的经典问题。\n\n题意其实就像我们在写代码的过程中，要求括号的顺序是一样的，有左括号，相应的位置必须要有右括号。\n\n如果还记得编译原理的话，编译器在 词法分析的过程中处理括号、花括号等这个符号的逻辑，也是使用了栈这种数据结构。\n\n再举个例子，linux系统中，cd这个进入目录的命令我们应该再熟悉不过了。\n\ncd a/b/c/../../\n这个命令最后进入a目录，系统是如何知道进入了a目录呢 ，这就是栈的应用（其实可以出一道相应的面试题了）\n\n所以栈在计算机领域中应用是非常广泛的。\n\n有的同学经常会想学的这些数据结构有什么用，也开发不了什么软件，大多数同学说的软件应该都是可视化的软件例如APP、网站之类的，那都是非常上层的应用了，底层很多功能的实现都是基础的数据结构和算法。\n\n所以数据结构与算法的应用往往隐藏在我们看不到的地方！\n\n这里我就不过多展开了，先来看题。\n\n#进入正题\n由于栈结构的特殊性，非常适合做对称匹配类的题目。\n\n首先要弄清楚，字符串里的括号不匹配有几种情况。\n\n一些同学，在面试中看到这种题目上来就开始写代码，然后就越写越乱。\n\n建议在写代码之前要分析好有哪几种不匹配的情况，如果不在动手之前分析好，写出的代码也会有很多问题。\n\n先来分析一下 这里有三种不匹配的情况，\n\n第一种情况，字符串里左方向的括号多余了 ，所以不匹配。 https://file1.kamacoder.com/i/algo/2020080915505387.png\n\n第二种情况，括号没有多余，但是 括号的类型没有匹配上。 https://file1.kamacoder.com/i/algo/20200809155107397.png\n\n第三种情况，字符串里右方向的括号多余了，所以不匹配。 https://file1.kamacoder.com/i/algo/20200809155115779.png\n\n我们的代码只要覆盖了这三种不匹配的情况，就不会出问题，可以看出 动手之前分析好题目的重要性。\n\n动画如下：\n\nhttps://file1.kamacoder.com/i/algo/20.%E6%9C%89%E6%95%88%E6%8B%AC%E5%8F%B7.gif\n\n第一种情况：已经遍历完了字符串，但是栈不为空，说明有相应的左括号没有右括号来匹配，所以return false\n\n第二种情况：遍历字符串匹配的过程中，发现栈里没有要匹配的字符。所以return false\n\n第三种情况：遍历字符串匹配的过程中，栈已经为空了，没有匹配的字符了，说明右括号没有找到对应的左括号return false\n\n那么什么时候说明左括号和右括号全都匹配了呢，就是字符串遍历完之后，栈是空的，就说明全都匹配了。\n\n分析完之后，代码其实就比较好写了，\n\n但还有一些技巧，在匹配左括号的时候，右括号先入栈，就只需要比较当前元素和栈顶相不相等就可以了，比左括号先入栈代码实现要简单的多了！\n\n实现C++代码如下：\n\nclass Solution {\npublic:\n    bool isValid(string s) {\n        if (s.size() % 2 != 0) return false; // 如果s的长度为奇数，一定不符合要求\n        stack<char> st;\n        for (int i = 0; i < s.size(); i++) {\n            if (s[i] == '(') st.push(')');\n            else if (s[i] == '{') st.push('}');\n            else if (s[i] == '[') st.push(']');\n            // 第三种情况：遍历字符串匹配的过程中，栈已经为空了，没有匹配的字符了，说明右括号没有找到对应的左括号 return false\n            // 第二种情况：遍历字符串匹配的过程中，发现栈里没有我们要匹配的字符。所以return false\n            else if (st.empty() || st.top() != s[i]) return false;\n            else st.pop(); // st.top() 与 s[i]相等，栈弹出元素\n        }\n        // 第一种情况：此时我们已经遍历完了字符串，但是栈不为空，说明有相应的左括号没有右括号来匹配，所以return false，否则就return true\n        return st.empty();\n    }\n};\n\n时间复杂度: O(n)\n空间复杂度: O(n)\n技巧性的东西没有固定的学习方法，还是要多看多练，自己灵活运用了。\n\n#其他语言版本\n#Java：\nclass Solution {\n    public boolean isValid(String s) {\n        Deque<Character> deque = new LinkedList<>();\n        char ch;\n        for (int i = 0; i < s.length(); i++) {\n            ch = s.charAt(i);\n            //碰到左括号，就把相应的右括号入栈\n            if (ch == '(') {\n                deque.push(')');\n            }else if (ch == '{') {\n                deque.push('}');\n            }else if (ch == '[') {\n                deque.push(']');\n            } else if (deque.isEmpty() || deque.peek() != ch) {\n                return false;\n            }else {//如果是右括号判断是否和栈顶元素匹配\n                deque.pop();\n            }\n        }\n        //遍历结束，如果栈为空，则括号全部匹配\n        return deque.isEmpty();\n    }\n}\n// 解法二\n// 对应的另一半一定在栈顶\nclass Solution {\n    public boolean isValid(String s) {\n        Stack<Character> stack = new Stack<>();\n        for(char c : s.toCharArray()){\n            // 有对应的另一半就直接消消乐\n            if(c == ')' && !stack.isEmpty() && stack.peek() == '(')\n                stack.pop();\n            else if(c == '}' && !stack.isEmpty() && stack.peek() == '{')\n                stack.pop();\n            else if(c == ']' && !stack.isEmpty() && stack.peek() == '[')\n                stack.pop();\n            else\n                stack.push(c);// 没有匹配的就放进去\n        }\n\n        return stack.isEmpty();\n    }\n}\n#Python：\n# 方法一，仅使用栈，更省空间\nclass Solution:\n    def isValid(self, s: str) -> bool:\n        stack = []\n        \n        for item in s:\n            if item == '(':\n                stack.append(')')\n            elif item == '[':\n                stack.append(']')\n            elif item == '{':\n                stack.append('}')\n            elif not stack or stack[-1] != item:\n                return False\n            else:\n                stack.pop()\n        \n        return True if not stack else False\n# 方法二，使用字典\nclass Solution:\n    def isValid(self, s: str) -> bool:\n        stack = []\n        mapping = {\n            '(': ')',\n            '[': ']',\n            '{': '}'\n        }\n        for item in s:\n            if item in mapping.keys():\n                stack.append(mapping[item])\n            elif not stack or stack[-1] != item: \n                return False\n            else: \n                stack.pop()\n        return True if not stack else False"
+}

@@ -1,0 +1,109 @@
+二叉树的层平均值
+力扣题目链接(https://leetcode.cn/problems/average-of-levels-in-binary-tree/)
+
+给定一个非空二叉树, 返回一个由每层节点平均值组成的数组。
+
+https://file1.kamacoder.com/i/algo/20210203151350500.png
+
+#思路
+本题就是层序遍历的时候把一层求个总和再取一个均值。
+
+C++代码:
+
+class Solution {
+public:
+    vector<double> averageOfLevels(TreeNode* root) {
+        queue<TreeNode*> que;
+        if (root != NULL) que.push(root);
+        vector<double> result;
+        while (!que.empty()) {
+            int size = que.size();
+            double sum = 0; // 统计每一层的和
+            for (int i = 0; i < size; i++) {
+                TreeNode* node = que.front();
+                que.pop();
+                sum += node->val;
+                if (node->left) que.push(node->left);
+                if (node->right) que.push(node->right);
+            }
+            result.push_back(sum / size); // 将每一层均值放进结果集
+        }
+        return result;
+    }
+};
+
+#其他语言版本
+#Python：
+class Solution:
+    """二叉树层平均值迭代解法"""
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def averageOfLevels(self, root: TreeNode) -> List[float]:
+        if not root:
+            return []
+
+        queue = collections.deque([root])
+        averages = []
+        
+        while queue:
+            size = len(queue)
+            level_sum = 0
+            
+            for i in range(size):
+                node = queue.popleft()
+                
+                
+                level_sum += node.val
+                    
+                if node.left:
+                    queue.append(node.left)
+                if node.right:
+                    queue.append(node.right)
+            
+            averages.append(level_sum / size)
+        
+        return averages
+#Java:
+// 637. 二叉树的层平均值
+public class N0637 {
+
+    /**
+     * 解法：队列，迭代。
+     * 每次返回每层的最后一个字段即可。
+     */
+    public List<Double> averageOfLevels(TreeNode root) {
+        List<Double> list = new ArrayList<>();
+        Deque<TreeNode> que = new LinkedList<>();
+
+        if (root == null) {
+            return list;
+        }
+
+        que.offerLast(root);
+        while (!que.isEmpty()) {
+
+            int levelSize = que.size();
+            double levelSum = 0.0;
+            for (int i = 0; i < levelSize; i++) {
+                TreeNode poll = que.pollFirst();
+
+                levelSum += poll.val;
+
+                if (poll.left != null) {
+                    que.addLast(poll.left);
+                }
+                if (poll.right != null) {
+                    que.addLast(poll.right);
+                }
+            }
+            list.add(levelSum / levelSize);
+        }
+        return list;
+    }
+}

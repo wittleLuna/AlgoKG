@@ -1,0 +1,280 @@
+{
+  "id": "AP_62d9dcb4",
+  "title": "组合总和III",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/combination-sum-iii/",
+  "description": "找出所有相加之和为 n 的 k 个数的组合。组合中只允许含有 1 - 9 的正整数，并且每种组合中不存在重复的数字。\n\n说明：\n\n所有数字都是正整数。\n解集不能包含重复的组合。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "回溯",
+    "深度优先搜索"
+  ],
+  "data_structure_tags": [
+    "数组",
+    "列表"
+  ],
+  "technique_tags": [
+    "剪枝",
+    "递归"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过回溯法，在1到9的整数范围内寻找和为n且由k个数字组成的组合。使用递归函数来实现搜索过程，其中path数组用于存储当前路径（即一个可能的组合），result数组用于存储所有满足条件的组合。",
+  "key_insights": [
+    {
+      "content": "题目中给定的元素范围是固定在1-9之间的，这使得我们可以直接对这个范围进行遍历，而不需要额外考虑其他数值。"
+    },
+    {
+      "content": "引入sum参数来追踪当前路径上所有元素的总和，便于快速判断是否达到目标值targetSum。"
+    },
+    {
+      "content": "利用剪枝技术可以有效减少不必要的计算：如果当前路径上的元素总和已经超过了目标值，则无需继续向下搜索。"
+    },
+    {
+      "content": "为了保证每个组合内不包含重复数字以及组合本身不重复，每次选择新数字时从上次选择的下一个数字开始，避免了重复选择同一个数字或重复组合的情况发生。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "本题就是在[1,2,3,4,5,6,7,8,9]这个集合中找到和为n的k个数的组合。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<int>> result; // 存放结果集 vector<int> path; // 符合条件的结果 void backtracking(int targetSum, int k, int sum, int startIndex) { if (sum > targetSum) { return; } if (path.size() == k) { if (sum == targetSum) result.push_back(path); return; } for (int i = startIndex; i <= 9 - (k - path.size()) + 1; i++) { sum += i; path.push_back(i); backtracking(targetSum, k, sum, i + 1); sum -= i; path.pop_back(); } } public: vector<vector<int>> combinationSum3(int k, int n) { result.clear(); path.clear(); backtracking(n, k, 0, 1); return result; }};",
+          "description": "C++实现组合总和III"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { List<List<Integer>> result = new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); public List<List<Integer>> combinationSum3(int k, int n) { backTracking(n, k, 1, 0); return result; } private void backTracking(int targetSum, int k, int startIndex, int sum) { if (sum > targetSum) { return; } if (path.size() == k) { if (sum == targetSum) result.add(new ArrayList<>(path)); return; } for (int i = startIndex; i <= 9 - (k - path.size()) + 1; i++) { path.add(i); sum += i; backTracking(targetSum, k, i + 1, sum); path.removeLast(); sum -= i; } }}",
+          "description": "Java实现组合总和III"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def combinationSum3(self, k: int, n: int) -> List[List[int]]: result = [] self.backtracking(n, k, 0, 1, [], result) return result def backtracking(self, targetSum, k, currentSum, startIndex, path, result): if currentSum > targetSum: return if len(path) == k: if currentSum == targetSum: result.append(path[:]) return for i in range(startIndex, 9 - (k - len(path)) + 2): currentSum += i path.append(i) self.backtracking(targetSum, k, currentSum, i + 1, path, result) currentSum -= i path.pop()",
+          "description": "Python实现组合总和III"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "回溯三部曲",
+      "text": "确定递归函数参数",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<int>> result; // 存放结果集 vector<int> path; // 符合条件的结果 void backtracking(int targetSum, int k, int sum, int startIndex) { if (sum > targetSum) { return; } if (path.size() == k) { if (sum == targetSum) result.push_back(path); return; } for (int i = startIndex; i <= 9 - (k - path.size()) + 1; i++) { sum += i; path.push_back(i); backtracking(targetSum, k, sum, i + 1); sum -= i; path.pop_back(); } } public: vector<vector<int>> combinationSum3(int k, int n) { result.clear(); path.clear(); backtracking(n, k, 0, 1); return result; }};",
+          "description": "C++实现的组合总和III问题解决方案，使用回溯法解决。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { List<List<Integer>> result = new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); public List<List<Integer>> combinationSum3(int k, int n) { backTracking(n, k, 1, 0); return result; } private void backTracking(int targetSum, int k, int startIndex, int sum) { if (sum > targetSum) { return; } if (path.size() == k) { if (sum == targetSum) result.add(new ArrayList<>(path)); return; } for (int i = startIndex; i <= 9 - (k - path.size()) + 1; i++) { path.add(i); sum += i; backTracking(targetSum, k, i + 1, sum); path.removeLast(); sum -= i; } }}",
+          "description": "Java实现的组合总和III问题解决方案，采用回溯算法并进行了剪枝优化。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def combinationSum3(self, k: int, n: int) -> List[List[int]]: result = [] self.backtracking(n, k, 0, 1, [], result) return result def backtracking(self, targetSum, k, currentSum, startIndex, path, result): if currentSum > targetSum: return if len(path) == k: if currentSum == targetSum: result.append(path[:]) return for i in range(startIndex, 9 - (k - len(path)) + 2): currentSum += i path.append(i) self.backtracking(targetSum, k, currentSum, i + 1, path, result) currentSum -= i path.pop()",
+          "description": "Python实现的组合总和III问题，通过回溯方法找出所有符合条件的组合，并进行了适当的剪枝处理以提高效率。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "剪枝",
+      "text": "这道题目，剪枝操作其实是很容易想到了，想必大家看上面的树形图的时候已经想到了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result; // 存放结果集\n    vector<int> path; // 符合条件的结果\n    void backtracking(int targetSum, int k, int sum, int startIndex) {\n        if (sum > targetSum) { // 剪枝操作\n            return; \n        }\n        if (path.size() == k) {\n            if (sum == targetSum) result.push_back(path);\n            return; // 如果path.size() == k 但sum != targetSum 直接返回\n        }\n        for (int i = startIndex; i <= 9 - (k - path.size()) + 1; i++) { // 剪枝\n            sum += i; // 处理\n            path.push_back(i); // 处理\n            backtracking(targetSum, k, sum, i + 1); // 注意i+1调整startIndex\n            sum -= i; // 回溯\n            path.pop_back(); // 回溯\n        }\n    }\n\npublic:\n    vector<vector<int>> combinationSum3(int k, int n) {\n        result.clear(); // 可以不加\n        path.clear();   // 可以不加\n        backtracking(n, k, 0, 1);\n        return result;\n    }\n};",
+          "description": "C++实现的组合总和III问题解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<List<Integer>> result = new ArrayList<>();\n    LinkedList<Integer> path = new LinkedList<>();\n\n    public List<List<Integer>> combinationSum3(int k, int n) {\n        backTracking(n, k, 1, 0);\n        return result;\n    }\n\n    private void backTracking(int targetSum, int k, int startIndex, int sum) {\n        if (sum > targetSum) {\n            return;\n        }\n\n        if (path.size() == k) {\n            if (sum == targetSum) result.add(new ArrayList<>(path));\n            return;\n        }\n\n        for (int i = startIndex; i <= 9 - (k - path.size()) + 1; i++) {\n            path.add(i);\n            sum += i;\n            backTracking(targetSum, k, i + 1, sum);\n            path.removeLast();\n            sum -= i;\n        }\n    }\n}",
+          "description": "Java实现的组合总和III问题解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def combinationSum3(self, k: int, n: int) -> List[List[int]]:\n        result = []  # 存放结果集\n        self.backtracking(n, k, 0, 1, [], result)\n        return result\n\n    def backtracking(self, targetSum, k, currentSum, startIndex, path, result):\n        if currentSum > targetSum:  # 剪枝操作\n            return  # 如果currentSum已经超过targetSum，则直接返回\n        if len(path) == k:\n            if currentSum == targetSum:\n                result.append(path[:])\n            return\n        for i in range(startIndex, 9 - (k - len(path)) + 2):  # 剪枝\n            currentSum += i  # 处理\n            path.append(i)  # 处理\n            self.backtracking(targetSum, k, currentSum, i + 1, path, result)  # 注意i+1调整startIndex\n            currentSum -= i  # 回溯\n            path.pop()  # 回溯",
+          "description": "Python实现的组合总和III问题解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "开篇就介绍了本题与77.组合 (https://programmercarl.com/0077.%E7%BB%84%E5%90%88.html)的区别，相对来说加了元素总和的限制，如果做完77.组合 (https://programmercarl.com/0077.%E7%BB%84%E5%90%88.html)再做本题在合适不过。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<int>> result; // 存放结果集 vector<int> path; // 符合条件的结果 void backtracking(int targetSum, int k, int sum, int startIndex) { if (sum > targetSum) { // 剪枝操作 return; } if (path.size() == k) { if (sum == targetSum) result.push_back(path); return; // 如果path.size() == k 但sum != targetSum 直接返回 } for (int i = startIndex; i <= 9 - (k - path.size()) + 1; i++) { // 剪枝 sum += i; // 处理 path.push_back(i); // 处理 backtracking(targetSum, k, sum, i + 1); // 注意i+1调整startIndex sum -= i; // 回溯 path.pop_back(); // 回溯 }} public: vector<vector<int>> combinationSum3(int k, int n) { result.clear(); // 可以不加 path.clear();   // 可以不加 backtracking(n, k, 0, 1); return result;}};",
+          "description": "C++实现的组合总和III问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {List<List<Integer>> result = new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); public List<List<Integer>> combinationSum3(int k, int n) { backTracking(n, k, 1, 0); return result; } private void backTracking(int targetSum, int k, int startIndex, int sum) { if (sum > targetSum) { return; } if (path.size() == k) { if (sum == targetSum) result.add(new ArrayList<>(path)); return; } for (int i = startIndex; i <= 9 - (k - path.size()) + 1; i++) { path.add(i); sum += i; backTracking(targetSum, k, i + 1, sum); path.removeLast(); sum -= i; }}}",
+          "description": "Java实现的组合总和III问题，使用了剪枝优化"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {LinkedList<Integer> path = new LinkedList<>(); List<List<Integer>> ans = new ArrayList<>(); public List<List<Integer>> combinationSum3(int k, int n) { build(k, n, 1, 0); return ans; } private void build(int k, int n, int startIndex, int sum) { if (sum > n) return; if (path.size() > k) return; if (sum == n && path.size() == k) { ans.add(new ArrayList<>(path)); return; } for(int i = startIndex; i <= 9; i++) { path.add(i); sum += i; build(k, n, i + 1, sum); sum -= i; path.removeLast(); }}}",
+          "description": "Java另一种实现方式，同样针对组合总和III问题进行了解决"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def combinationSum3(self, k: int, n: int) -> List[List[int]]: result = [] self.backtracking(n, k, 0, 1, [], result) return result def backtracking(self, targetSum, k, currentSum, startIndex, path, result): if currentSum > targetSum: return if len(path) == k: if currentSum == targetSum: result.append(path[:]) return for i in range(startIndex, 9 - (k - len(path)) + 2): currentSum += i path.append(i) self.backtracking(targetSum, k, currentSum, i + 1, path, result) currentSum -= i path.pop()",
+          "description": "Python版本实现的组合总和III问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<List<Integer>> result = new ArrayList<>();\n    LinkedList<Integer> path = new LinkedList<>();\n\n    public List<List<Integer>> combinationSum3(int k, int n) {\n        backTracking(n, k, 1, 0);\n        return result;\n    }\n\n    private void backTracking(int targetSum, int k, int startIndex, int sum) {\n        if (sum > targetSum) {\n            return;\n        }\n\n        if (path.size() == k) {\n            if (sum == targetSum) result.add(new ArrayList<>(path));\n            return;\n        }\n\n        for (int i = startIndex; i <= 9 - (k - path.size()) + 1; i++) {\n            path.add(i);\n            sum += i;\n            backTracking(targetSum, k, i + 1, sum);\n            path.removeLast();\n            sum -= i;\n        }\n    }\n}",
+          "description": "Java版本的组合总和III解决方案，采用回溯算法。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    LinkedList<Integer> path = new LinkedList<>();\n    List<List<Integer>> ans = new ArrayList<>();\n\n    public List<List<Integer>> combinationSum3(int k, int n) {\n        build(k, n, 1, 0);\n        return ans;\n    }\n\n    private void build(int k, int n, int startIndex, int sum) {\n        if (sum > n || path.size() > k) return;\n\n        if (sum == n && path.size() == k) {\n            ans.add(new ArrayList<>(path));\n            return;\n        }\n\n        for(int i = startIndex; i <= 9; i++) {\n            path.add(i);\n            sum += i;\n            build(k, n, i + 1, sum);\n            sum -= i;\n            path.removeLast();\n        }\n    }\n}",
+          "description": "另一种Java版本的组合总和III解决方案，同样使用回溯方法但剪枝方式略有不同。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<List<Integer>> res = new ArrayList<>();\n    List<Integer> list = new ArrayList<>();\n\n    public List<List<Integer>> combinationSum3(int k, int n) {\n        res.clear();\n        list.clear();\n        backtracking(k, n, 9);\n        return res;\n    }\n\n    private void backtracking(int k, int n, int maxNum) {\n        if (k == 0 && n == 0) {\n            res.add(new ArrayList<>(list));\n            return;\n        }\n\n        if (maxNum == 0 || n > k * maxNum - k * (k - 1) / 2 || n < (1 + k) * k / 2) {\n            return;\n        }\n\n        list.add(maxNum);\n        backtracking(k - 1, n - maxNum, maxNum - 1);\n        list.remove(list.size() - 1);\n        backtracking(k, n, maxNum - 1);\n    }\n}",
+          "description": "第三种Java实现方式，采用了不同的回溯策略来解决组合总和问题。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def combinationSum3(self, k: int, n: int) -> List[List[int]]:\n        result = []\n        self.backtracking(n, k, 0, 1, [], result)\n        return result\n\n    def backtracking(self, targetSum, k, currentSum, startIndex, path, result):\n        if currentSum > targetSum:\n            return\n        if len(path) == k:\n            if currentSum == targetSum:\n                result.append(path[:])\n            return\n        for i in range(startIndex, 9 - (k - len(path)) + 2):\n            currentSum += i\n            path.append(i)\n            self.backtracking(targetSum, k, currentSum, i + 1, path, result)\n            currentSum -= i\n            path.pop()",
+          "description": "Python版本的组合总和III解法，基于回溯算法并包含剪枝优化。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "模板方法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<int>> result; // 存放结果集 vector<int> path; // 符合条件的结果 void backtracking(int targetSum, int k, int sum, int startIndex) { if (sum > targetSum) { return; } if (path.size() == k) { if (sum == targetSum) result.push_back(path); return; } for (int i = startIndex; i <= 9 - (k - path.size()) + 1; i++) { sum += i; path.push_back(i); backtracking(targetSum, k, sum, i + 1); sum -= i; path.pop_back(); } } public: vector<vector<int>> combinationSum3(int k, int n) { result.clear(); path.clear(); backtracking(n, k, 0, 1); return result; }};",
+          "description": "C++实现组合总和III问题的解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {List<List<Integer>> result = new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); public List<List<Integer>> combinationSum3(int k, int n) { backTracking(n, k, 1, 0); return result; } private void backTracking(int targetSum, int k, int startIndex, int sum) { if (sum > targetSum) { return; } if (path.size() == k) { if (sum == targetSum) result.add(new ArrayList<>(path)); return; } for (int i = startIndex; i <= 9 - (k - path.size()) + 1; i++) { path.add(i); sum += i; backTracking(targetSum, k, i + 1, sum); path.removeLast(); sum -= i; }}}",
+          "description": "Java实现组合总和III问题的解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def combinationSum3(self, k: int, n: int) -> List[List[int]]: result = [] self.backtracking(n, k, 0, 1, [], result) return result def backtracking(self, targetSum, k, currentSum, startIndex, path, result): if currentSum > targetSum: return if len(path) == k: if currentSum == targetSum: result.append(path[:]) return for i in range(startIndex, 9 - (k - len(path)) + 2): currentSum += i path.append(i) self.backtracking(targetSum, k, currentSum, i + 1, path, result) currentSum -= i path.pop()",
+          "description": "Python实现组合总和III问题的解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "class Solution:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<int>> result; // 存放结果集 vector<int> path; // 符合条件的结果 void backtracking(int targetSum, int k, int sum, int startIndex) { if (sum > targetSum) { // 剪枝操作 return; } if (path.size() == k) { if (sum == targetSum) result.push_back(path); return; // 如果path.size() == k 但sum != targetSum 直接返回 } for (int i = startIndex; i <= 9 - (k - path.size()) + 1; i++) { // 剪枝 sum += i; // 处理 path.push_back(i); // 处理 backtracking(targetSum, k, sum, i + 1); // 注意i+1调整startIndex sum -= i; // 回溯 path.pop_back(); // 回溯 }} public: vector<vector<int>> combinationSum3(int k, int n) { result.clear(); // 可以不加 path.clear();   // 可以不加 backtracking(n, k, 0, 1); return result;}};",
+          "description": "C++实现的组合总和III问题解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { List<List<Integer>> result = new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); public List<List<Integer>> combinationSum3(int k, int n) { backTracking(n, k, 1, 0); return result; } private void backTracking(int targetSum, int k, int startIndex, int sum) { if (sum > targetSum) { return; } if (path.size() == k) { if (sum == targetSum) result.add(new ArrayList<>(path)); return; } for (int i = startIndex; i <= 9 - (k - path.size()) + 1; i++) { path.add(i); sum += i; backTracking(targetSum, k, i + 1, sum); path.removeLast(); sum -= i; }}}",
+          "description": "Java实现的组合总和III问题解决方案，使用了回溯方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def combinationSum3(self, k: int, n: int) -> List[List[int]]: result = [] self.backtracking(n, k, 0, 1, [], result) return result def backtracking(self, targetSum, k, currentSum, startIndex, path, result): if currentSum > targetSum: return if len(path) == k: if currentSum == targetSum: result.append(path[:]) return for i in range(startIndex, 9 - (k - len(path)) + 2): currentSum += i path.append(i) self.backtracking(targetSum, k, currentSum, i + 1, path, result) currentSum -= i path.pop()",
+          "description": "Python实现的组合总和III问题解决方案，利用递归和回溯技术"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n * 2^n)",
+    "space_complexity": "O(n)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {private: vector<vector<int>> result; // 存放结果集 vector<int> path; // 符合条件的结果 void backtracking(int targetSum, int k, int sum, int startIndex) { if (sum > targetSum) { return; } if (path.size() == k) { if (sum == targetSum) result.push_back(path); return; } for (int i = startIndex; i <= 9 - (k - path.size()) + 1; i++) { sum += i; path.push_back(i); backtracking(targetSum, k, sum, i + 1); sum -= i; path.pop_back(); }} public: vector<vector<int>> combinationSum3(int k, int n) { result.clear(); path.clear(); backtracking(n, k, 0, 1); return result; }};",
+      "description": "C++实现，通过回溯法找到所有和为n的k个数的组合。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {List<List<Integer>> result = new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); public List<List<Integer>> combinationSum3(int k, int n) { backTracking(n, k, 1, 0); return result; } private void backTracking(int targetSum, int k, int startIndex, int sum) { if (sum > targetSum) { return; } if (path.size() == k) { if (sum == targetSum) result.add(new ArrayList<>(path)); return; } for (int i = startIndex; i <= 9 - (k - path.size()) + 1; i++) { path.add(i); sum += i; backTracking(targetSum, k, i + 1, sum); path.removeLast(); sum -= i; }}}",
+      "description": "Java实现，使用回溯算法来找出所有相加之和为n的k个数的组合。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def combinationSum3(self, k: int, n: int) -> List[List[int]]: result = [] self.backtracking(n, k, 0, 1, [], result) return result def backtracking(self, targetSum, k, currentSum, startIndex, path, result): if currentSum > targetSum: return if len(path) == k: if currentSum == targetSum: result.append(path[:]) return for i in range(startIndex, 9 - (k - len(path)) + 2): currentSum += i path.append(i) self.backtracking(targetSum, k, currentSum, i + 1, path, result) currentSum -= i path.pop()",
+      "description": "Python实现，利用递归与回溯技术解决组合总和问题。"
+    }
+  ],
+  "common_mistakes": [
+    "未正确处理边界情况，如当path.size() == k但sum != targetSum时忘记返回。",
+    "在回溯过程中遗漏了撤销选择的操作，导致结果错误。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201123195717975.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20201123195717975.png",
+      "context": "该图片展示了当k=2且n=4时，从集合[1,2,3,4,5,6,7,8,9]中选取符合条件的组合过程，其中只有(1,3)这对组合满足题目要求。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201123195717975-20230310113546003.png",
+      "description": "这张图片展示了使用回溯算法在集合[1,2,3,4,5,6,7,8,9]中寻找k=2且和为4的组合的过程，通过递归和for循环实现横向和纵向遍历。",
+      "context": "该图展示了在固定集合[1,...,9]中寻找和为目标值的组合时，使用回溯算法进行单层搜索的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/2020112319580476.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/2020112319580476.png",
+      "context": "该图片展示了在求解过程中使用剪枝技术来减少不必要的计算，特别是当已选元素总和超过目标值时的情形。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201123195717975.png",
+      "description": "GIF展示了从集合[1,2,3,4,5,6,7,8,9]中寻找和为4且由2个数组成的所有可能组合的过程。",
+      "context": "GIF动画展示了从集合[1,2,3,4,5,6,7,8,9]中选取k=2个数，使其和为n=4的过程，通过树形结构形象地说明了符合条件的组合是如何被找到的。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201123195717975-20230310113546003.png",
+      "description": "GIF展示了回溯算法在寻找满足特定条件的组合时，通过递归调用过程以及回溯步骤来探索所有可能解的过程。",
+      "context": "GIF动画展示了固定集合[1, ..., 9]中选择元素形成组合的过程，通过树形结构表示了回溯算法探索所有可能解空间的方式。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/2020112319580476.png",
+      "description": "GIF展示了通过回溯法寻找所有可能组合的过程，并在总和超过目标值时进行剪枝操作。",
+      "context": "GIF动画展示了在求解组合总和问题时，如何通过剪枝操作来优化回溯算法的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\回溯算法\\组合总和III.txt",
+  "extracted_at": "2025-07-21T12:25:55.314171",
+  "raw_content": "组合总和III\n力扣题目链接(https://leetcode.cn/problems/combination-sum-iii/)\n\n找出所有相加之和为 n 的 k 个数的组合。组合中只允许含有 1 - 9 的正整数，并且每种组合中不存在重复的数字。\n\n说明：\n\n所有数字都是正整数。\n解集不能包含重复的组合。\n示例 1: 输入: k = 3, n = 7 输出: [[1,2,4]]\n\n示例 2: 输入: k = 3, n = 9 输出: [[1,2,6], [1,3,5], [2,3,4]]\n\n\n#思路\n本题就是在[1,2,3,4,5,6,7,8,9]这个集合中找到和为n的k个数的组合。\n\n相对于77. 组合 (https://programmercarl.com/0077.%E7%BB%84%E5%90%88.html)，无非就是多了一个限制，本题是要找到和为n的k个数的组合，而整个集合已经是固定的了[1,...,9]。\n\n想到这一点了，做过77. 组合 (https://programmercarl.com/0077.%E7%BB%84%E5%90%88.html)之后，本题是简单一些了。\n\n本题k相当于树的深度，9（因为整个集合就是9个数）就是树的宽度。\n\n例如 k = 2，n = 4的话，就是在集合[1,2,3,4,5,6,7,8,9]中求 k（个数） = 2, n（和） = 4的组合。\n\n选取过程如图：\n\nhttps://file1.kamacoder.com/i/algo/20201123195717975.png\n\n图中，可以看出，只有最后取到集合（1，3）和为4 符合条件。\n\n#回溯三部曲\n确定递归函数参数\n和77. 组合 (https://programmercarl.com/0077.%E7%BB%84%E5%90%88.html)一样，依然需要一维数组path来存放符合条件的结果，二维数组result来存放结果集。\n\n这里我依然定义path 和 result为全局变量。\n\n至于为什么取名为path？从上面树形结构中，可以看出，结果其实就是一条根节点到叶子节点的路径。\n\nvector<vector<int>> result; // 存放结果集\nvector<int> path; // 符合条件的结果\n接下来还需要如下参数：\n\ntargetSum（int）目标和，也就是题目中的n。\nk（int）就是题目中要求k个数的集合。\nsum（int）为已经收集的元素的总和，也就是path里元素的总和。\nstartIndex（int）为下一层for循环搜索的起始位置。\n所以代码如下：\n\nvector<vector<int>> result;\nvector<int> path;\nvoid backtracking(int targetSum, int k, int sum, int startIndex)\n其实这里sum这个参数也可以省略，每次targetSum减去选取的元素数值，然后判断如果targetSum为0了，说明收集到符合条件的结果了，我这里为了直观便于理解，还是加一个sum参数。\n\n还要强调一下，回溯法中递归函数参数很难一次性确定下来，一般先写逻辑，需要啥参数了，填什么参数。\n\n确定终止条件\n什么时候终止呢？\n\n在上面已经说了，k其实就已经限制树的深度，因为就取k个元素，树再往下深了没有意义。\n\n所以如果path.size() 和 k相等了，就终止。\n\n如果此时path里收集到的元素和（sum） 和targetSum（就是题目描述的n）相同了，就用result收集当前的结果。\n\n所以 终止代码如下：\n\nif (path.size() == k) {\n    if (sum == targetSum) result.push_back(path);\n    return; // 如果path.size() == k 但sum != targetSum 直接返回\n}\n单层搜索过程\n本题和77. 组合 (https://programmercarl.com/0077.%E7%BB%84%E5%90%88.html)区别之一就是集合固定的就是9个数[1,...,9]，所以for循环固定i<=9\n\n如图： https://file1.kamacoder.com/i/algo/20201123195717975-20230310113546003.png\n\n处理过程就是 path收集每次选取的元素，相当于树型结构里的边，sum来统计path里元素的总和。\n\n代码如下：\n\nfor (int i = startIndex; i <= 9; i++) {\n    sum += i;\n    path.push_back(i);\n    backtracking(targetSum, k, sum, i + 1); // 注意i+1调整startIndex\n    sum -= i; // 回溯\n    path.pop_back(); // 回溯\n}\n别忘了处理过程 和 回溯过程是一一对应的，处理有加，回溯就要有减！\n\n参照关于回溯算法，你该了解这些！ (https://programmercarl.com/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html)中的模板，不难写出如下C++代码：\n\nclass Solution {\nprivate:\n    vector<vector<int>> result; // 存放结果集\n    vector<int> path; // 符合条件的结果\n    // targetSum：目标和，也就是题目中的n。\n    // k：题目中要求k个数的集合。\n    // sum：已经收集的元素的总和，也就是path里元素的总和。\n    // startIndex：下一层for循环搜索的起始位置。\n    void backtracking(int targetSum, int k, int sum, int startIndex) {\n        if (path.size() == k) {\n            if (sum == targetSum) result.push_back(path);\n            return; // 如果path.size() == k 但sum != targetSum 直接返回\n        }\n        for (int i = startIndex; i <= 9; i++) {\n            sum += i; // 处理\n            path.push_back(i); // 处理\n            backtracking(targetSum, k, sum, i + 1); // 注意i+1调整startIndex\n            sum -= i; // 回溯\n            path.pop_back(); // 回溯\n        }\n    }\n\npublic:\n    vector<vector<int>> combinationSum3(int k, int n) {\n        result.clear(); // 可以不加\n        path.clear();   // 可以不加\n        backtracking(n, k, 0, 1);\n        return result;\n    }\n};\n#剪枝\n这道题目，剪枝操作其实是很容易想到了，想必大家看上面的树形图的时候已经想到了。\n\n如图： https://file1.kamacoder.com/i/algo/2020112319580476.png\n\n已选元素总和如果已经大于n（图中数值为4）了，那么往后遍历就没有意义了，直接剪掉。\n\n那么剪枝的地方可以放在递归函数开始的地方，剪枝代码如下：\n\nif (sum > targetSum) { // 剪枝操作\n    return;\n}\n当然这个剪枝也可以放在 调用递归之前，即放在这里，只不过要记得 要回溯操作给做了。\n\nfor (int i = startIndex; i <= 9 - (k - path.size()) + 1; i++) { // 剪枝\n    sum += i; // 处理\n    path.push_back(i); // 处理\n    if (sum > targetSum) { // 剪枝操作\n        sum -= i; // 剪枝之前先把回溯做了\n        path.pop_back(); // 剪枝之前先把回溯做了\n        return;\n    }\n    backtracking(targetSum, k, sum, i + 1); // 注意i+1调整startIndex\n    sum -= i; // 回溯\n    path.pop_back(); // 回溯\n}\n和回溯算法：组合问题再剪剪枝 (https://programmercarl.com/0077.%E7%BB%84%E5%90%88%E4%BC%98%E5%8C%96.html)一样，for循环的范围也可以剪枝，i <= 9 - (k - path.size()) + 1就可以了。\n\n最后C++代码如下：\n\nclass Solution {\nprivate:\n    vector<vector<int>> result; // 存放结果集\n    vector<int> path; // 符合条件的结果\n    void backtracking(int targetSum, int k, int sum, int startIndex) {\n        if (sum > targetSum) { // 剪枝操作\n            return; \n        }\n        if (path.size() == k) {\n            if (sum == targetSum) result.push_back(path);\n            return; // 如果path.size() == k 但sum != targetSum 直接返回\n        }\n        for (int i = startIndex; i <= 9 - (k - path.size()) + 1; i++) { // 剪枝\n            sum += i; // 处理\n            path.push_back(i); // 处理\n            backtracking(targetSum, k, sum, i + 1); // 注意i+1调整startIndex\n            sum -= i; // 回溯\n            path.pop_back(); // 回溯\n        }\n    }\n\npublic:\n    vector<vector<int>> combinationSum3(int k, int n) {\n        result.clear(); // 可以不加\n        path.clear();   // 可以不加\n        backtracking(n, k, 0, 1);\n        return result;\n    }\n};\n时间复杂度: O(n * 2^n)\n空间复杂度: O(n)\n#总结\n开篇就介绍了本题与77.组合 (https://programmercarl.com/0077.%E7%BB%84%E5%90%88.html)的区别，相对来说加了元素总和的限制，如果做完77.组合 (https://programmercarl.com/0077.%E7%BB%84%E5%90%88.html)再做本题在合适不过。\n\n分析完区别，依然把问题抽象为树形结构，按照回溯三部曲进行讲解，最后给出剪枝的优化。\n\n相信做完本题，大家对组合问题应该有初步了解了。\n\n#其他语言版本\n#Java\n模板方法\n\nclass Solution {\n\tList<List<Integer>> result = new ArrayList<>();\n\tLinkedList<Integer> path = new LinkedList<>();\n\n\tpublic List<List<Integer>> combinationSum3(int k, int n) {\n\t\tbackTracking(n, k, 1, 0);\n\t\treturn result;\n\t}\n\n\tprivate void backTracking(int targetSum, int k, int startIndex, int sum) {\n\t\t// 减枝\n\t\tif (sum > targetSum) {\n\t\t\treturn;\n\t\t}\n\n\t\tif (path.size() == k) {\n\t\t\tif (sum == targetSum) result.add(new ArrayList<>(path));\n\t\t\treturn;\n\t\t}\n\n\t\t// 减枝 9 - (k - path.size()) + 1\n\t\tfor (int i = startIndex; i <= 9 - (k - path.size()) + 1; i++) {\n\t\t\tpath.add(i);\n\t\t\tsum += i;\n\t\t\tbackTracking(targetSum, k, i + 1, sum);\n\t\t\t//回溯\n\t\t\tpath.removeLast();\n\t\t\t//回溯\n\t\t\tsum -= i;\n\t\t}\n\t}\n}\n\n// 上面剪枝 i <= 9 - (k - path.size()) + 1; 如果还是不清楚\n// 也可以改为 if (path.size() > k) return; 执行效率上是一样的\nclass Solution {\n    LinkedList<Integer> path = new LinkedList<>();\n    List<List<Integer>> ans = new ArrayList<>();\n    public List<List<Integer>> combinationSum3(int k, int n) {\n        build(k, n, 1, 0);\n        return ans;\n    }\n\n    private void build(int k, int n, int startIndex, int sum) {\n\n        if (sum > n) return;\n\n        if (path.size() > k) return;\n\n        if (sum == n && path.size() == k) {\n            ans.add(new ArrayList<>(path));\n            return;\n        }\n\n        for(int i = startIndex; i <= 9; i++) {\n            path.add(i);\n            sum += i;\n            build(k, n, i + 1, sum);\n            sum -= i;\n            path.removeLast();\n        }\n    }\n}\n其他方法\n\nclass Solution {\n    List<List<Integer>> res = new ArrayList<>();\n    List<Integer> list = new ArrayList<>();\n\n    public List<List<Integer>> combinationSum3(int k, int n) {\n        res.clear();\n        list.clear();\n        backtracking(k, n, 9);\n        return res;\n    }\n\n    private void backtracking(int k, int n, int maxNum) {\n        if (k == 0 && n == 0) {\n            res.add(new ArrayList<>(list));\n            return;\n        }\n\n        // 因为不能重复，并且单个数字最大值是maxNum，所以sum最大值为\n        // （maxNum + (maxNum - 1) + ... + (maxNum - k + 1)） == k * maxNum - k*(k - 1) / 2\n        if (maxNum == 0\n                || n > k * maxNum - k * (k - 1) / 2\n                || n < (1 + k) * k / 2) {\n            return;\n        }\n        list.add(maxNum);\n        backtracking(k - 1, n - maxNum, maxNum - 1);\n        list.remove(list.size() - 1);\n        backtracking(k, n, maxNum - 1);\n    }\n\n}\n#Python\nclass Solution:\n    def combinationSum3(self, k: int, n: int) -> List[List[int]]:\n        result = []  # 存放结果集\n        self.backtracking(n, k, 0, 1, [], result)\n        return result\n\n    def backtracking(self, targetSum, k, currentSum, startIndex, path, result):\n        if currentSum > targetSum:  # 剪枝操作\n            return  # 如果currentSum已经超过targetSum，则直接返回\n        if len(path) == k:\n            if currentSum == targetSum:\n                result.append(path[:])\n            return\n        for i in range(startIndex, 9 - (k - len(path)) + 2):  # 剪枝\n            currentSum += i  # 处理\n            path.append(i)  # 处理\n            self.backtracking(targetSum, k, currentSum, i + 1, path, result)  # 注意i+1调整startIndex\n            currentSum -= i  # 回溯\n            path.pop()  # 回溯"
+}

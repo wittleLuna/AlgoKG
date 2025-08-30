@@ -1,0 +1,386 @@
+{
+  "id": "AP_50257fb6",
+  "title": "反转链表",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/reverse-linked-list/",
+  "description": "题意：反转一个单链表。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "双指针",
+    "递归"
+  ],
+  "data_structure_tags": [
+    "链表"
+  ],
+  "technique_tags": [
+    "指针操作",
+    "递归调用"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过改变链表中每个节点的next指针指向来直接反转链表，而不是创建一个新的链表。使用双指针法或递归方法实现。",
+  "key_insights": [
+    {
+      "content": "通过直接修改原链表节点的next指针而非创建新链表，有效地节省了内存空间。"
+    },
+    {
+      "content": "利用两个指针pre和cur，分别用来追踪当前处理节点的前一个节点和当前节点，确保每次迭代都能正确翻转链表中的连接方向。"
+    },
+    {
+      "content": "无论是从前向后还是从后向前进行递归，其核心都是将当前节点与它的下一个节点之间的链接反向，并递归地对剩余部分执行相同操作直到链表末尾。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "如果再定义一个新的链表，实现链表元素的反转，其实这是对内存空间的浪费。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* reverseList(ListNode* head) {ListNode* temp; // 保存cur的下一个节点 ListNode* cur = head; ListNode* pre = NULL; while(cur) {temp = cur->next;  // 保存一下 cur的下一个节点，因为接下来要改变cur->next cur->next = pre; // 翻转操作 // 更新pre 和 cur指针 pre = cur; cur = temp;} return pre;}};",
+          "description": "反转链表的双指针方法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* reverse(ListNode* pre,ListNode* cur){if(cur == NULL) return pre;ListNode* temp = cur->next;cur->next = pre;return reverse(cur,temp);}ListNode* reverseList(ListNode* head) {return reverse(NULL, head);}};",
+          "description": "反转链表的递归方法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* reverseList(ListNode* head) {if(head == NULL) return NULL;if (head->next == NULL) return head;ListNode *last = reverseList(head->next);head->next->next = head;head->next = NULL;return last;}};",
+          "description": "从后往前翻转链表的递归方法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public ListNode reverseList(ListNode head) {ListNode prev = null;ListNode cur = head;ListNode temp = null;while (cur != null) {temp = cur.next;cur.next = prev;prev = cur;cur = temp;}return prev;}}",
+          "description": "Java版反转链表的双指针方法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public ListNode reverseList(ListNode head) {return reverse(null, head);}private ListNode reverse(ListNode prev, ListNode cur) {if (cur == null) {return prev;}ListNode temp = null;temp = cur.next;cur.next = prev;return reverse(cur, temp);}}",
+          "description": "Java版反转链表的递归方法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {ListNode reverseList(ListNode head) {if(head == null) return null;if (head.next == null) return head;ListNode last = reverseList(head.next);head.next.next = head;head.next = null;return last;}}",
+          "description": "Java版从后往前翻转链表的递归方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseList(self, head: ListNode) -> ListNode: cur = head pre = None while cur: temp = cur.next cur.next = pre pre = cur cur = temp return pre",
+          "description": "Python版反转链表的双指针方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseList(self, head: ListNode) -> ListNode: return self.reverse(head, None) def reverse(self, cur: ListNode, pre: ListNode) -> ListNode: if cur == None: return pre temp = cur.next cur.next = pre return self.reverse(temp, cur)",
+          "description": "Python版反转链表的递归方法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "双指针法",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    ListNode* reverseList(ListNode* head) {\n        ListNode* temp; // 保存cur的下一个节点\n        ListNode* cur = head;\n        ListNode* pre = NULL;\n        while(cur) {\n            temp = cur->next;  // 保存一下 cur的下一个节点，因为接下来要改变cur->next\n            cur->next = pre; // 翻转操作\n            // 更新pre 和 cur指针\n            pre = cur;\n            cur = temp;\n        }\n        return pre;\n    }\n};",
+          "description": "C++实现链表反转-双指针法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    ListNode* reverse(ListNode* pre,ListNode* cur){\n        if(cur == NULL) return pre;\n        ListNode* temp = cur->next;\n        cur->next = pre;\n        return reverse(cur,temp);\n    }\n    ListNode* reverseList(ListNode* head) {\n        return reverse(NULL, head);\n    }\n};",
+          "description": "C++实现链表反转-递归法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    ListNode* reverseList(ListNode* head) {\n        if(head == NULL) return NULL;\n        if (head->next == NULL) return head;\n        ListNode *last = reverseList(head->next);\n        head->next->next = head;\n        head->next = NULL;\n        return last;\n    }\n};",
+          "description": "C++实现链表反转-从后向前递归法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public ListNode reverseList(ListNode head) {\n        ListNode prev = null;\n        ListNode cur = head;\n        ListNode temp = null;\n        while (cur != null) {\n            temp = cur.next;// 保存下一个节点\n            cur.next = prev;\n            prev = cur;\n            cur = temp;\n        }\n        return prev;\n    }\n}",
+          "description": "Java实现链表反转-双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public ListNode reverseList(ListNode head) {\n        return reverse(null, head);\n    }\n    private ListNode reverse(ListNode prev, ListNode cur) {\n        if (cur == null) {\n            return prev;\n        }\n        ListNode temp = null;\n        temp = cur.next;// 先保存下一个节点\n        cur.next = prev;// 反转\n        return reverse(cur, temp);\n    }\n}",
+          "description": "Java实现链表反转-递归法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    ListNode reverseList(ListNode head) {\n        if(head == null) return null;\n        if (head.next == null) return head;\n        ListNode last = reverseList(head.next);\n        head.next.next = head;\n        head.next = null;\n        return last;\n    } \n}",
+          "description": "Java实现链表反转-从后向前递归法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def reverseList(self, head: ListNode) -> ListNode:\n        cur = head   \n        pre = None\n        while cur:\n            temp = cur.next # 保存一下 cur的下一个节点，因为接下来要改变cur->next\n            cur.next = pre #反转\n            pre = cur\n            cur = temp\n        return pre",
+          "description": "Python实现链表反转-双指针法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def reverseList(self, head: ListNode) -> ListNode:\n        return self.reverse(head, None)\n    def reverse(self, cur: ListNode, pre: ListNode) -> ListNode:\n        if cur == None:\n            return pre\n        temp = cur.next\n        cur.next = pre\n        return self.reverse(temp, cur)",
+          "description": "Python实现链表反转-递归法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "递归法",
+      "text": "递归法相对抽象一些，但是其实和双指针法是一样的逻辑，同样是当cur为空的时候循环结束，不断将cur指向pre的过程。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* reverseList(ListNode* head) {ListNode* temp; // 保存cur的下一个节点 ListNode* cur = head; ListNode* pre = NULL; while(cur) {temp = cur->next;  // 保存一下 cur的下一个节点，因为接下来要改变cur->next cur->next = pre; // 翻转操作 // 更新pre 和 cur指针 pre = cur; cur = temp;} return pre;}};",
+          "description": ""
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* reverse(ListNode* pre,ListNode* cur){if(cur == NULL) return pre; ListNode* temp = cur->next; cur->next = pre; // 可以和双指针法的代码进行对比，如下递归的写法，其实就是做了这两步 // pre = cur; // cur = temp; return reverse(cur,temp);} ListNode* reverseList(ListNode* head) {return reverse(NULL, head);}};",
+          "description": ""
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* reverseList(ListNode* head) {if(head == NULL) return NULL;if (head->next == NULL) return head;ListNode *last = reverseList(head->next);head->next->next = head;head->next = NULL;return last;}};",
+          "description": ""
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public ListNode reverseList(ListNode head) {ListNode prev = null; ListNode cur = head; ListNode temp = null; while (cur != null) {temp = cur.next;// 保存下一个节点 cur.next = prev;prev = cur;cur = temp;}return prev;}}",
+          "description": ""
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public ListNode reverseList(ListNode head) {return reverse(null, head);} private ListNode reverse(ListNode prev, ListNode cur) {if (cur == null) {return prev;} ListNode temp = null; temp = cur.next;// 先保存下一个节点 cur.next = prev;// 反转 // 更新prev、cur位置 // prev = cur; // cur = temp; return reverse(cur, temp);}}",
+          "description": ""
+        },
+        {
+          "language": "java",
+          "code": "class Solution {ListNode reverseList(ListNode head) {if(head == null) return null;if (head.next == null) return head;ListNode last = reverseList(head.next);head.next.next = head;head.next = null;return last;}}",
+          "description": ""
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseList(self, head: ListNode) -> ListNode: cur = head pre = None while cur: temp = cur.next # 保存一下 cur的下一个节点，因为接下来要改变cur->next cur.next = pre #反转 #更新pre、cur指针 pre = cur cur = temp return pre",
+          "description": ""
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseList(self, head: ListNode) -> ListNode: return self.reverse(head, None) def reverse(self, cur: ListNode, pre: ListNode) -> ListNode: if cur == None: return pre temp = cur.next cur.next = pre return self.reverse(temp, cur)",
+          "description": ""
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution {\n    public ListNode reverseList(ListNode head) {\n        ListNode prev = null;\n        ListNode cur = head;\n        ListNode temp = null;\n        while (cur != null) {\n            temp = cur.next;// 保存下一个节点\n            cur.next = prev;\n            prev = cur;\n            cur = temp;\n        }\n        return prev;\n    }\n}",
+          "description": "双指针法反转链表"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public ListNode reverseList(ListNode head) {\n        return reverse(null, head);\n    }\n\n    private ListNode reverse(ListNode prev, ListNode cur) {\n        if (cur == null) {\n            return prev;\n        }\n        ListNode temp = null;\n        temp = cur.next;// 先保存下一个节点\n        cur.next = prev;// 反转\n        // 更新prev、cur位置\n        // prev = cur;\n        // cur = temp;\n        return reverse(cur, temp);\n    }\n}",
+          "description": "递归法反转链表"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    ListNode reverseList(ListNode head) {\n        // 边缘条件判断\n        if(head == null) return null;\n        if (head.next == null) return head;\n\n        // 递归调用，翻转第二个节点开始往后的链表\n        ListNode last = reverseList(head.next);\n        // 翻转头节点与第二个节点的指向\n        head.next.next = head;\n        // 此时的 head 节点为尾节点，next 需要指向 NULL\n        head.next = null;\n        return last;\n    } \n}",
+          "description": "从后向前递归法反转链表"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def reverseList(self, head: ListNode) -> ListNode:\n        cur = head   \n        pre = None\n        while cur:\n            temp = cur.next # 保存一下 cur的下一个节点，因为接下来要改变cur->next\n            cur.next = pre #反转\n            #更新pre、cur指针\n            pre = cur\n            cur = temp\n        return pre",
+          "description": "双指针法反转链表"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def reverseList(self, head: ListNode) -> ListNode:\n        return self.reverse(head, None)\n    def reverse(self, cur: ListNode, pre: ListNode) -> ListNode:\n        if cur == None:\n            return pre\n        temp = cur.next\n        cur.next = pre\n        return self.reverse(temp, cur)",
+          "description": "递归法反转链表"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "// 双指针",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* reverseList(ListNode* head) {ListNode* temp; ListNode* cur = head;ListNode* pre = NULL;while(cur) {temp = cur->next; cur->next = pre;pre = cur;cur = temp;}return pre;}};",
+          "description": "使用双指针方法反转链表"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* reverse(ListNode* pre,ListNode* cur){if(cur == NULL) return pre;ListNode* temp = cur->next;cur->next = pre;return reverse(cur,temp);}ListNode* reverseList(ListNode* head) {return reverse(NULL, head);}};",
+          "description": "递归法实现链表反转"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* reverseList(ListNode* head) {if(head == NULL) return NULL;if (head->next == NULL) return head;ListNode *last = reverseList(head->next);head->next->next = head;head->next = NULL;return last;}};",
+          "description": "从后向前的递归法实现链表反转"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public ListNode reverseList(ListNode head) {ListNode prev = null;ListNode cur = head;ListNode temp = null;while (cur != null) {temp = cur.next;cur.next = prev;prev = cur;cur = temp;}return prev;}}",
+          "description": "Java版双指针方法反转链表"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public ListNode reverseList(ListNode head) {return reverse(null, head);}private ListNode reverse(ListNode prev, ListNode cur) {if (cur == null) {return prev;}ListNode temp = null;temp = cur.next;cur.next = prev;return reverse(cur, temp);}}",
+          "description": "Java版递归法实现链表反转"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {ListNode reverseList(ListNode head) {if(head == null) return null;if (head.next == null) return head;ListNode last = reverseList(head.next);head.next.next = head;head.next = null;return last;}}",
+          "description": "Java版从后向前的递归法实现链表反转"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseList(self, head: ListNode) -> ListNode: cur = head pre = None while cur: temp = cur.next cur.next = pre pre = cur cur = temp return pre",
+          "description": "Python版双指针方法反转链表"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseList(self, head: ListNode) -> ListNode: return self.reverse(head, None) def reverse(self, cur: ListNode, pre: ListNode) -> ListNode: if cur == None: return pre temp = cur.next cur.next = pre return self.reverse(temp, cur)",
+          "description": "Python版递归法实现链表反转"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "（版本一）双指针法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* reverseList(ListNode* head) {ListNode* temp; // 保存cur的下一个节点ListNode* cur = head;ListNode* pre = NULL;while(cur) {temp = cur->next;  // 保存一下 cur的下一个节点，因为接下来要改变cur->nextcur->next = pre; // 翻转操作// 更新pre 和 cur指针pre = cur;cur = temp;}return pre;}};",
+          "description": "双指针法实现链表反转"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* reverse(ListNode* pre,ListNode* cur){if(cur == NULL) return pre;ListNode* temp = cur->next;cur->next = pre;return reverse(cur,temp);}ListNode* reverseList(ListNode* head) {return reverse(NULL, head);}};",
+          "description": "递归法实现链表反转"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode* reverseList(ListNode* head) {if(head == NULL) return NULL;if (head->next == NULL) return head;ListNode *last = reverseList(head->next);head->next->next = head;head->next = NULL;return last;}};",
+          "description": "从后往前翻转指针指向的递归写法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public ListNode reverseList(ListNode head) {ListNode prev = null;ListNode cur = head;ListNode temp = null;while (cur != null) {temp = cur.next;cur.next = prev;prev = cur;cur = temp;}return prev;}}",
+          "description": "Java版本双指针法实现链表反转"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public ListNode reverseList(ListNode head) {return reverse(null, head);}private ListNode reverse(ListNode prev, ListNode cur) {if (cur == null) {return prev;}ListNode temp = null;temp = cur.next;cur.next = prev;return reverse(cur, temp);}}",
+          "description": "Java版本递归法实现链表反转"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {ListNode reverseList(ListNode head) {if(head == null) return null;if (head.next == null) return head;ListNode last = reverseList(head.next);head.next.next = head;head.next = null;return last;}}",
+          "description": "Java版本从后向前递归实现链表反转"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseList(self, head: ListNode) -> ListNode: cur = head pre = None while cur: temp = cur.next # 反转 cur.next = pre #更新pre、cur指针 pre = cur cur = temp return pre",
+          "description": "Python版本双指针法实现链表反转"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseList(self, head: ListNode) -> ListNode: return self.reverse(head, None) def reverse(self, cur: ListNode, pre: ListNode) -> ListNode: if cur == None: return pre temp = cur.next cur.next = pre return self.reverse(temp, cur)",
+          "description": "Python版本递归法实现链表反转"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: ListNode* reverseList(ListNode* head) {ListNode* temp; ListNode* cur = head; ListNode* pre = NULL; while(cur) {temp = cur->next; cur->next = pre; pre = cur; cur = temp;} return pre;}};",
+      "description": "C++实现的双指针法反转链表"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: ListNode* reverse(ListNode* pre,ListNode* cur){if(cur == NULL) return pre; ListNode* temp = cur->next; cur->next = pre; return reverse(cur,temp);} ListNode* reverseList(ListNode* head) {return reverse(NULL, head);}};",
+      "description": "C++实现的递归法反转链表"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: ListNode* reverseList(ListNode* head) {if(head == NULL) return NULL;if (head->next == NULL) return head;ListNode *last = reverseList(head->next);head->next->next = head;head->next = NULL;return last;}};",
+      "description": "C++实现的另一种递归法反转链表"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public ListNode reverseList(ListNode head) {ListNode prev = null;ListNode cur = head;ListNode temp = null;while (cur != null) {temp = cur.next;cur.next = prev;prev = cur;cur = temp;}return prev;}}",
+      "description": "Java实现的双指针法反转链表"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public ListNode reverseList(ListNode head) {return reverse(null, head);}private ListNode reverse(ListNode prev, ListNode cur) {if (cur == null) {return prev;}ListNode temp = null;temp = cur.next;cur.next = prev;return reverse(cur, temp);}}",
+      "description": "Java实现的递归法反转链表"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {ListNode reverseList(ListNode head) {if(head == null) return null;if (head.next == null) return head;ListNode last = reverseList(head.next);head.next.next = head;head.next = null;return last;}}",
+      "description": "Java实现的另一种递归法反转链表"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def reverseList(self, head: ListNode) -> ListNode: cur = head pre = None while cur: temp = cur.next cur.next = pre pre = cur cur = temp return pre",
+      "description": "Python实现的双指针法反转链表"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def reverseList(self, head: ListNode) -> ListNode: return self.reverse(head, None) def reverse(self, cur: ListNode, pre: ListNode) -> ListNode: if cur == None: return pre temp = cur.next cur.next = pre return self.reverse(temp, cur)",
+      "description": "Python实现的递归法反转链表"
+    }
+  ],
+  "common_mistakes": [
+    "在循环体开始时忘记保存当前节点的下一个节点。",
+    "未正确更新pre和cur指针的位置导致链表断裂或形成环路。",
+    "递归版本中边界条件判断错误，比如没有处理空链表的情况。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210218090901207.png",
+      "description": "这张图片展示了单链表反转的前后状态，从初始链表（1→2→3→4→5）反转为（5→4→3→2→1），体现了链表反转算法的过程。",
+      "context": "该图片展示了如何通过改变链表中节点的next指针方向来实现单链表的反转过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/206.%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A8.gif",
+      "description": "这是一张展示单链表数据结构的图片，节点依次为1、2、3、4、5，最后一个节点指向null。",
+      "context": "该动画展示了通过调整指针方向来反转链表的过程，其中先移动pre指针再移动cur指针。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/206.%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A8.gif",
+      "description": "GIF展示了通过双指针法逐步反转单链表的过程，包括移动指针和调整节点指向。",
+      "context": "该GIF动画展示了如何通过调整指针方向来反转链表的过程，其中首先移动pre指针再移动cur指针，逐步将链表从头到尾的方向反转。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\双指针\\反转链表.txt",
+  "extracted_at": "2025-07-21T01:55:45.831413",
+  "raw_content": "反转链表\n力扣题目链接(https://leetcode.cn/problems/reverse-linked-list/)\n\n题意：反转一个单链表。\n\n示例: 输入: 1->2->3->4->5->NULL 输出: 5->4->3->2->1->NULL\n\n\n#思路\n如果再定义一个新的链表，实现链表元素的反转，其实这是对内存空间的浪费。\n\n其实只需要改变链表的next指针的指向，直接将链表反转 ，而不用重新定义一个新的链表，如图所示:\n\nhttps://file1.kamacoder.com/i/algo/20210218090901207.png\n\n之前链表的头节点是元素1， 反转之后头结点就是元素5 ，这里并没有添加或者删除节点，仅仅是改变next指针的方向。\n\n那么接下来看一看是如何反转的呢？\n\n我们拿有示例中的链表来举例，如动画所示：（纠正：动画应该是先移动pre，在移动cur）\n\nhttps://file1.kamacoder.com/i/algo/206.%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A8.gif\n\n首先定义一个cur指针，指向头结点，再定义一个pre指针，初始化为null。\n\n然后就要开始反转了，首先要把 cur->next 节点用tmp指针保存一下，也就是保存一下这个节点。\n\n为什么要保存一下这个节点呢，因为接下来要改变 cur->next 的指向了，将cur->next 指向pre ，此时已经反转了第一个节点了。\n\n接下来，就是循环走如下代码逻辑了，继续移动pre和cur指针。\n\n最后，cur 指针已经指向了null，循环结束，链表也反转完毕了。 此时我们return pre指针就可以了，pre指针就指向了新的头结点。\n\n#双指针法\nclass Solution {\npublic:\n    ListNode* reverseList(ListNode* head) {\n        ListNode* temp; // 保存cur的下一个节点\n        ListNode* cur = head;\n        ListNode* pre = NULL;\n        while(cur) {\n            temp = cur->next;  // 保存一下 cur的下一个节点，因为接下来要改变cur->next\n            cur->next = pre; // 翻转操作\n            // 更新pre 和 cur指针\n            pre = cur;\n            cur = temp;\n        }\n        return pre;\n    }\n};\n时间复杂度: O(n)\n空间复杂度: O(1)\n#递归法\n递归法相对抽象一些，但是其实和双指针法是一样的逻辑，同样是当cur为空的时候循环结束，不断将cur指向pre的过程。\n\n关键是初始化的地方，可能有的同学会不理解， 可以看到双指针法中初始化 cur = head，pre = NULL，在递归法中可以从如下代码看出初始化的逻辑也是一样的，只不过写法变了。\n\n具体可以看代码（已经详细注释），双指针法写出来之后，理解如下递归写法就不难了，代码逻辑都是一样的。\n\nclass Solution {\npublic:\n    ListNode* reverse(ListNode* pre,ListNode* cur){\n        if(cur == NULL) return pre;\n        ListNode* temp = cur->next;\n        cur->next = pre;\n        // 可以和双指针法的代码进行对比，如下递归的写法，其实就是做了这两步\n        // pre = cur;\n        // cur = temp;\n        return reverse(cur,temp);\n    }\n    ListNode* reverseList(ListNode* head) {\n        // 和双指针法初始化是一样的逻辑\n        // ListNode* cur = head;\n        // ListNode* pre = NULL;\n        return reverse(NULL, head);\n    }\n\n};\n时间复杂度: O(n), 要递归处理链表的每个节点\n空间复杂度: O(n), 递归调用了 n 层栈空间\n我们可以发现，上面的递归写法和双指针法实质上都是从前往后翻转指针指向，其实还有另外一种与双指针法不同思路的递归写法：从后往前翻转指针指向。\n\n具体代码如下（带详细注释）：\n\nclass Solution {\npublic:\n    ListNode* reverseList(ListNode* head) {\n        // 边缘条件判断\n        if(head == NULL) return NULL;\n        if (head->next == NULL) return head;\n        \n        // 递归调用，翻转第二个节点开始往后的链表\n        ListNode *last = reverseList(head->next);\n        // 翻转头节点与第二个节点的指向\n        head->next->next = head;\n        // 此时的 head 节点为尾节点，next 需要指向 NULL\n        head->next = NULL;\n        return last;\n    }\n}; \n时间复杂度: O(n)\n空间复杂度: O(n)\n#其他语言版本\n#Java：\n// 双指针\nclass Solution {\n    public ListNode reverseList(ListNode head) {\n        ListNode prev = null;\n        ListNode cur = head;\n        ListNode temp = null;\n        while (cur != null) {\n            temp = cur.next;// 保存下一个节点\n            cur.next = prev;\n            prev = cur;\n            cur = temp;\n        }\n        return prev;\n    }\n}\n// 递归 \nclass Solution {\n    public ListNode reverseList(ListNode head) {\n        return reverse(null, head);\n    }\n\n    private ListNode reverse(ListNode prev, ListNode cur) {\n        if (cur == null) {\n            return prev;\n        }\n        ListNode temp = null;\n        temp = cur.next;// 先保存下一个节点\n        cur.next = prev;// 反转\n        // 更新prev、cur位置\n        // prev = cur;\n        // cur = temp;\n        return reverse(cur, temp);\n    }\n}\n// 从后向前递归\nclass Solution {\n    ListNode reverseList(ListNode head) {\n        // 边缘条件判断\n        if(head == null) return null;\n        if (head.next == null) return head;\n        \n        // 递归调用，翻转第二个节点开始往后的链表\n        ListNode last = reverseList(head.next);\n        // 翻转头节点与第二个节点的指向\n        head.next.next = head;\n        // 此时的 head 节点为尾节点，next 需要指向 NULL\n        head.next = null;\n        return last;\n    } \n}\n#Python：\n（版本一）双指针法\n# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\nclass Solution:\n    def reverseList(self, head: ListNode) -> ListNode:\n        cur = head   \n        pre = None\n        while cur:\n            temp = cur.next # 保存一下 cur的下一个节点，因为接下来要改变cur->next\n            cur.next = pre #反转\n            #更新pre、cur指针\n            pre = cur\n            cur = temp\n        return pre\n（版本二）递归法\n# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\nclass Solution:\n    def reverseList(self, head: ListNode) -> ListNode:\n        return self.reverse(head, None)\n    def reverse(self, cur: ListNode, pre: ListNode) -> ListNode:\n        if cur == None:\n            return pre\n        temp = cur.next\n        cur.next = pre\n        return self.reverse(temp, cur)"
+}

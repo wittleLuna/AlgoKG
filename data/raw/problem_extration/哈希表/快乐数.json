@@ -1,0 +1,282 @@
+{
+  "id": "AP_b404b25b",
+  "title": "快乐数",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/happy-number/",
+  "description": "编写一个算法来判断一个数 n 是不是快乐数。\n\n「快乐数」定义为：对于一个正整数，每一次将该数替换为它每个位置上的数字的平方和，然后重复这个过程直到这个数变为 1，也可能是 无限循环 但始终变不到 1。如果 可以变为  1，那么这个数就是快乐数。\n\n如果 n 是快乐数就返回 True ；不是，则返回 False 。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "Hash Table",
+    "Math"
+  ],
+  "data_structure_tags": [
+    "Set",
+    "List"
+  ],
+  "technique_tags": [
+    "Floyd's Cycle-Finding Algorithm (快慢指针)",
+    "Digit Manipulation"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过计算给定整数n每个位置上的数字平方和，并重复此过程直到结果为1或陷入循环。使用哈希表（如unordered_set）来跟踪已经出现过的平方和，以检测是否存在无限循环。",
+  "key_insights": [
+    {
+      "content": "由于题目中提到求和过程可能会导致无限循环，因此采用哈希方法（具体实现为unordered_set或其他类似数据结构）来存储每次迭代得到的数值总和，可以有效检测到何时开始重复，从而避免了无尽循环。"
+    },
+    {
+      "content": "对于任何给定的整数，可以通过取模运算%10获得最后一位数字，然后将原数除以10去掉最后一位。不断重复这个过程直至该数变为0，这样就能逐位地获取并处理每一位数字。"
+    },
+    {
+      "content": "除了使用哈希表外，还可以利用快慢指针的方法来检测循环，这在一定程度上减少了额外空间的使用。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目看上去貌似一道数学问题，其实并不是！",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "class Solution {public: int getSum(int n) {int sum = 0; while (n) {sum += (n % 10) * (n % 10); n /= 10;} return sum;} bool isHappy(int n) {unordered_set<int> set; while(1) {int sum = getSum(n); if (sum == 1) {return true;} if (set.find(sum) != set.end()) {return false;} else {set.insert(sum);} n = sum;}}};",
+          "description": "使用哈希表检测循环，判断一个数是否为快乐数"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public boolean isHappy(int n) {Set<Integer> record = new HashSet<>(); while (n != 1 && !record.contains(n)) {record.add(n); n = getNextNumber(n);} return n == 1;} private int getNextNumber(int n) {int res = 0; while (n > 0) {int temp = n % 10; res += temp * temp; n = n / 10;} return res;}}",
+          "description": "使用HashSet检测循环，实现快乐数的判断"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def isHappy(self, n: int) -> bool: record = set() while True: n = self.get_sum(n) if n == 1: return True if n in record: return False else: record.add(n) def get_sum(self,n: int) -> int: new_num = 0 while n: n, r = divmod(n, 10) new_num += r ** 2 return new_num",
+          "description": "基于集合的快乐数验证方法"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def isHappy(self, n: int) -> bool: record = set() while n not in record: record.add(n) new_num = 0 n_str = str(n) for i in n_str: new_num+=int(i)**2 if new_num==1: return True else: n = new_num return False",
+          "description": "使用集合存储中间结果来判断是否出现循环"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def isHappy(self, n: int) -> bool: record = [] while n not in record: record.append(n) new_num = 0 n_str = str(n) for i in n_str: new_num+=int(i)**2 if new_num==1: return True else: n = new_num return False",
+          "description": "通过数组记录已访问数字，检查是否存在循环"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def isHappy(self, n: int) -> bool: slow = n fast = n while self.get_sum(fast) != 1 and self.get_sum(self.get_sum(fast)): slow = self.get_sum(slow) fast = self.get_sum(self.get_sum(fast)) if slow == fast: return False return True def get_sum(self,n: int) -> int: new_num = 0 while n: n, r = divmod(n, 10) new_num += r ** 2 return new_num",
+          "description": "利用快慢指针技术查找循环"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def isHappy(self, n: int) -> bool: seen = set() while n != 1: n = sum(int(i) ** 2 for i in str(n)) if n in seen: return False seen.add(n) return True",
+          "description": "简化版集合实现的快乐数判断"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def isHappy(self, n: int) -> bool: seen = [] while n != 1: n = sum(int(i) ** 2 for i in str(n)) if n in seen: return False seen.append(n) return True",
+          "description": "使用列表跟踪计算过程中的值以避免无限循环"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean isHappy(int n) {\n        Set<Integer> record = new HashSet<>();\n        while (n != 1 && !record.contains(n)) {\n            record.add(n);\n            n = getNextNumber(n);\n        }\n        return n == 1;\n    }\n\n    private int getNextNumber(int n) {\n        int res = 0;\n        while (n > 0) {\n            int temp = n % 10;\n            res += temp * temp;\n            n = n / 10;\n        }\n        return res;\n    }\n}",
+          "description": "Java实现判断快乐数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def isHappy(self, n: int) -> bool: \n        record = set()\n\n        while True:\n            n = self.get_sum(n)\n            if n == 1:\n                return True\n\n            if n in record:\n                return False\n            else:\n                record.add(n)\n\n    def get_sum(self,n: int) -> int: \n        new_num = 0\n        while n:\n            n, r = divmod(n, 10)\n            new_num += r ** 2\n        return new_num",
+          "description": "Python版本一使用集合实现判断快乐数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n   def isHappy(self, n: int) -> bool:\n       record = set()\n       while n not in record:\n           record.add(n)\n           new_num = 0\n           n_str = str(n)\n           for i in n_str:\n               new_num+=int(i)**2\n           if new_num==1: return True\n           else: n = new_num\n       return False",
+          "description": "Python版本二使用集合实现判断快乐数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n   def isHappy(self, n: int) -> bool:\n       record = []\n       while n not in record:\n           record.append(n)\n           new_num = 0\n           n_str = str(n)\n           for i in n_str:\n               new_num+=int(i)**2\n           if new_num==1: return True\n           else: n = new_num\n       return False",
+          "description": "Python版本三使用数组实现判断快乐数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n   def isHappy(self, n: int) -> bool: \n       slow = n\n       fast = n\n       while self.get_sum(fast) != 1 and self.get_sum(self.get_sum(fast)):\n           slow = self.get_sum(slow)\n           fast = self.get_sum(self.get_sum(fast))\n           if slow == fast:\n               return False\n       return True\n   def get_sum(self,n: int) -> int: \n       new_num = 0\n       while n:\n           n, r = divmod(n, 10)\n           new_num += r ** 2\n       return new_num",
+          "description": "Python版本四使用快慢指针实现判断快乐数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n   def isHappy(self, n: int) -> bool:\n       seen = set()\n       while n != 1:\n           n = sum(int(i) ** 2 for i in str(n))\n           if n in seen:\n               return False\n           seen.add(n)\n       return True",
+          "description": "Python版本五使用集合简化实现判断快乐数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n   def isHappy(self, n: int) -> bool:\n       seen = []\n       while n != 1:\n           n = sum(int(i) ** 2 for i in str(n))\n           if n in seen:\n               return False\n           seen.append(n)\n       return True",
+          "description": "Python版本六使用数组简化实现判断快乐数"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int getSum(int n) {int sum = 0; while (n) {sum += (n % 10) * (n % 10); n /= 10;} return sum;} bool isHappy(int n) {unordered_set<int> set; while(1) {int sum = getSum(n); if (sum == 1) {return true;} if (set.find(sum) != set.end()) {return false;} else {set.insert(sum);} n = sum;}}};",
+          "description": "C++实现判断快乐数"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isHappy(int n) {Set<Integer> record = new HashSet<>(); while (n != 1 && !record.contains(n)) {record.add(n); n = getNextNumber(n);} return n == 1;} private int getNextNumber(int n) {int res = 0; while (n > 0) {int temp = n % 10; res += temp * temp; n = n / 10;} return res;}}",
+          "description": "Java实现判断快乐数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isHappy(self, n: int) -> bool: record = set() while True: n = self.get_sum(n) if n == 1: return True if n in record: return False else: record.add(n) def get_sum(self,n: int) -> int: new_num = 0 while n: n, r = divmod(n, 10) new_num += r ** 2 return new_num",
+          "description": "Python版本一使用集合实现判断快乐数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isHappy(self, n: int) -> bool: record = set() while n not in record: record.add(n) new_num = 0 n_str = str(n) for i in n_str: new_num+=int(i)**2 if new_num==1: return True else: n = new_num return False",
+          "description": "Python版本二使用集合实现判断快乐数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isHappy(self, n: int) -> bool: record = [] while n not in record: record.append(n) new_num = 0 n_str = str(n) for i in n_str: new_num+=int(i)**2 if new_num==1: return True else: n = new_num return False",
+          "description": "Python版本三使用数组实现判断快乐数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isHappy(self, n: int) -> bool: slow = n fast = n while self.get_sum(fast) != 1 and self.get_sum(self.get_sum(fast)): slow = self.get_sum(slow) fast = self.get_sum(self.get_sum(fast)) if slow == fast: return False return True def get_sum(self,n: int) -> int: new_num = 0 while n: n, r = divmod(n, 10) new_num += r ** 2 return new_num",
+          "description": "Python版本四使用快慢指针实现判断快乐数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isHappy(self, n: int) -> bool: seen = set() while n != 1: n = sum(int(i) ** 2 for i in str(n)) if n in seen: return False seen.add(n) return True",
+          "description": "Python版本五使用集合精简实现判断快乐数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isHappy(self, n: int) -> bool: seen = [] while n != 1: n = sum(int(i) ** 2 for i in str(n)) if n in seen: return False seen.append(n) return True",
+          "description": "Python版本六使用数组精简实现判断快乐数"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "(版本一)使用集合",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int getSum(int n) {int sum = 0;while (n) {sum += (n % 10) * (n % 10);n /= 10;}return sum;}bool isHappy(int n) {unordered_set<int> set;while(1) {int sum = getSum(n);if (sum == 1) {return true;}if (set.find(sum) != set.end()) {return false;} else {set.insert(sum);}n = sum;}}};",
+          "description": "C++实现判断快乐数"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isHappy(int n) {Set<Integer> record = new HashSet<>();while (n != 1 && !record.contains(n)) {record.add(n);n = getNextNumber(n);}return n == 1;}private int getNextNumber(int n) {int res = 0;while (n > 0) {int temp = n % 10;res += temp * temp;n = n / 10;}return res;}}",
+          "description": "Java实现判断快乐数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isHappy(self, n: int) -> bool: record = set() while True: n = self.get_sum(n) if n == 1: return True if n in record: return False else: record.add(n) def get_sum(self,n: int) -> int: new_num = 0 while n: n, r = divmod(n, 10) new_num += r ** 2 return new_num",
+          "description": "Python版本一使用集合实现判断快乐数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isHappy(self, n: int) -> bool: record = set() while n not in record: record.add(n) new_num = 0 n_str = str(n) for i in n_str: new_num+=int(i)**2 if new_num==1: return True else: n = new_num return False",
+          "description": "Python版本二使用集合实现判断快乐数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isHappy(self, n: int) -> bool: record = [] while n not in record: record.append(n) new_num = 0 n_str = str(n) for i in n_str: new_num+=int(i)**2 if new_num==1: return True else: n = new_num return False",
+          "description": "Python版本三使用数组实现判断快乐数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isHappy(self, n: int) -> bool: slow = n fast = n while self.get_sum(fast) != 1 and self.get_sum(self.get_sum(fast)): slow = self.get_sum(slow) fast = self.get_sum(self.get_sum(fast)) if slow == fast: return False return True def get_sum(self,n: int) -> int: new_num = 0 while n: n, r = divmod(n, 10) new_num += r ** 2 return new_num",
+          "description": "Python版本四使用快慢指针实现判断快乐数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isHappy(self, n: int) -> bool: seen = set() while n != 1: n = sum(int(i) ** 2 for i in str(n)) if n in seen: return False seen.add(n) return True",
+          "description": "Python版本五使用集合精简版实现判断快乐数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isHappy(self, n: int) -> bool: seen = [] while n != 1: n = sum(int(i) ** 2 for i in str(n)) if n in seen: return False seen.append(n) return True",
+          "description": "Python版本六使用数组精简版实现判断快乐数"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(logn)",
+    "space_complexity": "O(logn)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int getSum(int n) {int sum = 0; while (n) {sum += (n % 10) * (n % 10); n /= 10;} return sum;} bool isHappy(int n) {unordered_set<int> set; while(1) {int sum = getSum(n); if (sum == 1) {return true;} if (set.find(sum) != set.end()) {return false;} else {set.insert(sum);} n = sum;}}};",
+      "description": "C++实现的快乐数判断算法，使用哈希表来检测循环。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public boolean isHappy(int n) {Set<Integer> record = new HashSet<>(); while (n != 1 && !record.contains(n)) {record.add(n); n = getNextNumber(n);} return n == 1;} private int getNextNumber(int n) {int res = 0; while (n > 0) {int temp = n % 10; res += temp * temp; n = n / 10;} return res;}}",
+      "description": "Java实现的快乐数判断算法，通过HashSet存储已出现过的数字以检测循环。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def isHappy(self, n: int) -> bool: record = set() while True: n = self.get_sum(n) if n == 1: return True if n in record: return False else: record.add(n) def get_sum(self,n: int) -> int: new_num = 0 while n: n, r = divmod(n, 10) new_num += r ** 2 return new_num",
+      "description": "Python版本一，使用集合记录已出现过的数字以检测循环。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def isHappy(self, n: int) -> bool: record = set() while n not in record: record.add(n) new_num = 0 n_str = str(n) for i in n_str: new_num+=int(i)**2 if new_num==1: return True else: n = new_num return False",
+      "description": "Python版本二，同样利用集合但采用字符串处理方式计算新数值。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def isHappy(self, n: int) -> bool: record = [] while n not in record: record.append(n) new_num = 0 n_str = str(n) for i in n_str: new_num+=int(i)**2 if new_num==1: return True else: n = new_num return False",
+      "description": "Python版本三，使用列表代替集合进行重复检测。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def isHappy(self, n: int) -> bool: slow = n fast = n while self.get_sum(fast) != 1 and self.get_sum(self.get_sum(fast)): slow = self.get_sum(slow) fast = self.get_sum(self.get_sum(fast)) if slow == fast: return False return True def get_sum(self,n: int) -> int: new_num = 0 while n: n, r = divmod(n, 10) new_num += r ** 2 return new_num",
+      "description": "Python版本四，采用快慢指针法避免直接使用额外空间存储历史值。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def isHappy(self, n: int) -> bool: seen = set() while n != 1: n = sum(int(i) ** 2 for i in str(n)) if n in seen: return False seen.add(n) return True",
+      "description": "Python版本五，简化版使用集合检测循环。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def isHappy(self, n: int) -> bool: seen = [] while n != 1: n = sum(int(i) ** 2 for i in str(n)) if n in seen: return False seen.append(n) return True",
+      "description": "Python版本六，与版本五类似但使用列表而非集合。"
+    }
+  ],
+  "common_mistakes": [
+    "忘记检查是否进入了无限循环，仅关注于达到快乐数条件。",
+    "在处理数字时忽略了对单个数字进行平方操作后再相加。",
+    "使用不当的数据结构来记录已访问过的值，可能导致效率低下或者逻辑错误。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\哈希表\\快乐数.txt",
+  "extracted_at": "2025-07-21T03:45:37.427212",
+  "raw_content": "快乐数\n力扣题目链接(https://leetcode.cn/problems/happy-number/)\n\n编写一个算法来判断一个数 n 是不是快乐数。\n\n「快乐数」定义为：对于一个正整数，每一次将该数替换为它每个位置上的数字的平方和，然后重复这个过程直到这个数变为 1，也可能是 无限循环 但始终变不到 1。如果 可以变为  1，那么这个数就是快乐数。\n\n如果 n 是快乐数就返回 True ；不是，则返回 False 。\n\n示例：\n\n输入：19\n输出：true\n解释：\n1^2 + 9^2 = 82\n8^2 + 2^2 = 68\n6^2 + 8^2 = 100\n1^2 + 0^2 + 0^2 = 1\n\n#思路\n这道题目看上去貌似一道数学问题，其实并不是！\n\n题目中说了会 无限循环，那么也就是说求和的过程中，sum会重复出现，这对解题很重要！\n\n正如：关于哈希表，你该了解这些！ (opens new window)中所说，当我们遇到了要快速判断一个元素是否出现集合里的时候，就要考虑哈希法了。\n\n所以这道题目使用哈希法，来判断这个sum是否重复出现，如果重复了就是return false， 否则一直找到sum为1为止。\n\n判断sum是否重复出现就可以使用unordered_set。\n\n还有一个难点就是求和的过程，如果对取数值各个位上的单数操作不熟悉的话，做这道题也会比较艰难。\n\nC++代码如下：\n\nclass Solution {\npublic:\n    // 取数值各个位上的单数之和\n    int getSum(int n) {\n        int sum = 0;\n        while (n) {\n            sum += (n % 10) * (n % 10);\n            n /= 10;\n        }\n        return sum;\n    }\n    bool isHappy(int n) {\n        unordered_set<int> set;\n        while(1) {\n            int sum = getSum(n);\n            if (sum == 1) {\n                return true;\n            }\n            // 如果这个sum曾经出现过，说明已经陷入了无限循环了，立刻return false\n            if (set.find(sum) != set.end()) {\n                return false;\n            } else {\n                set.insert(sum);\n            }\n            n = sum;\n        }\n    }\n};\n时间复杂度: O(logn)\n空间复杂度: O(logn)\n#其他语言版本\n#Java：\nclass Solution {\n    public boolean isHappy(int n) {\n        Set<Integer> record = new HashSet<>();\n        while (n != 1 && !record.contains(n)) {\n            record.add(n);\n            n = getNextNumber(n);\n        }\n        return n == 1;\n    }\n\n    private int getNextNumber(int n) {\n        int res = 0;\n        while (n > 0) {\n            int temp = n % 10;\n            res += temp * temp;\n            n = n / 10;\n        }\n        return res;\n    }\n}\n#Python：\n(版本一)使用集合\n\nclass Solution:\n    def isHappy(self, n: int) -> bool:        \n        record = set()\n\n        while True:\n            n = self.get_sum(n)\n            if n == 1:\n                return True\n            \n            # 如果中间结果重复出现，说明陷入死循环了，该数不是快乐数\n            if n in record:\n                return False\n            else:\n                record.add(n)\n\n    def get_sum(self,n: int) -> int: \n        new_num = 0\n        while n:\n            n, r = divmod(n, 10)\n            new_num += r ** 2\n        return new_num\n(版本二)使用集合\n\nclass Solution:\n   def isHappy(self, n: int) -> bool:\n       record = set()\n       while n not in record:\n           record.add(n)\n           new_num = 0\n           n_str = str(n)\n           for i in n_str:\n               new_num+=int(i)**2\n           if new_num==1: return True\n           else: n = new_num\n       return False\n(版本三)使用数组\n\nclass Solution:\n   def isHappy(self, n: int) -> bool:\n       record = []\n       while n not in record:\n           record.append(n)\n           new_num = 0\n           n_str = str(n)\n           for i in n_str:\n               new_num+=int(i)**2\n           if new_num==1: return True\n           else: n = new_num\n       return False\n(版本四)使用快慢指针\n\nclass Solution:\n   def isHappy(self, n: int) -> bool:        \n       slow = n\n       fast = n\n       while self.get_sum(fast) != 1 and self.get_sum(self.get_sum(fast)):\n           slow = self.get_sum(slow)\n           fast = self.get_sum(self.get_sum(fast))\n           if slow == fast:\n               return False\n       return True\n   def get_sum(self,n: int) -> int: \n       new_num = 0\n       while n:\n           n, r = divmod(n, 10)\n           new_num += r ** 2\n       return new_num\n(版本五)使用集合+精简\n\nclass Solution:\n   def isHappy(self, n: int) -> bool:\n       seen = set()\n       while n != 1:\n           n = sum(int(i) ** 2 for i in str(n))\n           if n in seen:\n               return False\n           seen.add(n)\n       return True\n(版本六)使用数组+精简\n\nclass Solution:\n   def isHappy(self, n: int) -> bool:\n       seen = []\n       while n != 1:\n           n = sum(int(i) ** 2 for i in str(n))\n           if n in seen:\n               return False\n           seen.append(n)\n       return True"
+}

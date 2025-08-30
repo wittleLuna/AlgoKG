@@ -1,0 +1,406 @@
+岛屿的最大面积
+卡码网题目链接（ACM模式）(https://kamacoder.com/problempage.php?pid=1172)
+
+题目描述
+
+给定一个由 1（陆地）和 0（水）组成的矩阵，计算岛屿的最大面积。岛屿面积的计算方式为组成岛屿的陆地的总数。岛屿由水平方向或垂直方向上相邻的陆地连接而成，并且四周都是水域。你可以假设矩阵外均被水包围。
+
+输入描述
+
+第一行包含两个整数 N, M，表示矩阵的行数和列数。后续 N 行，每行包含 M 个数字，数字为 1 或者 0，表示岛屿的单元格。
+
+输出描述
+
+输出一个整数，表示岛屿的最大面积。如果不存在岛屿，则输出 0。
+
+输入示例
+
+4 5
+1 1 0 0 0
+1 1 0 0 0
+0 0 1 0 0
+0 0 0 1 1
+输出示例
+
+4
+
+提示信息
+https://file1.kamacoder.com/i/algo/20240517103410.png
+
+
+样例输入中，岛屿的最大面积为 4。
+
+数据范围：
+
+1 <= M, N <= 50。
+#思路
+
+注意题目中每座岛屿只能由水平方向和/或竖直方向上相邻的陆地连接形成。
+
+也就是说斜角度链接是不算了， 例如示例二，是三个岛屿，如图：
+
+https://file1.kamacoder.com/i/algo/20220726094200.png
+
+这道题目也是 dfs bfs基础类题目，就是搜索每个岛屿上“1”的数量，然后取一个最大的。
+
+本题思路上比较简单，难点其实都是 dfs 和 bfs的理论基础，关于理论基础我在这里都有详细讲解 ：
+
+DFS理论基础(https://programmercarl.com/kamacoder/%E5%9B%BE%E8%AE%BA%E6%B7%B1%E6%90%9C%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html)
+BFS理论基础(https://programmercarl.com/kamacoder/%E5%9B%BE%E8%AE%BA%E5%B9%BF%E6%90%9C%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html)
+#DFS
+很多同学写dfs其实也是凭感觉来的，有的时候dfs函数中写终止条件才能过，有的时候 dfs函数不写终止添加也能过！
+
+这里其实涉及到dfs的两种写法。
+
+写法一，dfs处理当前节点的相邻节点，即在主函数遇到岛屿就计数为1，dfs处理接下来的相邻陆地
+
+// 版本一
+#include <iostream>
+#include <vector>
+using namespace std;
+int count;
+int dir[4][2] = {0, 1, 1, 0, -1, 0, 0, -1}; // 四个方向
+void dfs(vector<vector<int>>& grid, vector<vector<bool>>& visited, int x, int y) {
+    for (int i = 0; i < 4; i++) {
+        int nextx = x + dir[i][0];
+        int nexty = y + dir[i][1];
+        if (nextx < 0 || nextx >= grid.size() || nexty < 0 || nexty >= grid[0].size()) continue;  // 越界了，直接跳过
+        if (!visited[nextx][nexty] && grid[nextx][nexty] == 1) { // 没有访问过的 同时 是陆地的
+            visited[nextx][nexty] = true;
+            count++;
+            dfs(grid, visited, nextx, nexty);
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    vector<vector<int>> grid(n, vector<int>(m, 0));
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            cin >> grid[i][j];
+        }
+    }
+    vector<vector<bool>> visited(n, vector<bool>(m, false));
+    int result = 0;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            if (!visited[i][j] && grid[i][j] == 1) {
+                count = 1;  // 因为dfs处理下一个节点，所以这里遇到陆地了就先计数，dfs处理接下来的相邻陆地
+                visited[i][j] = true;
+                dfs(grid, visited, i, j); // 将与其链接的陆地都标记上 true
+                result = max(result, count);
+            }
+        }
+    }
+    cout << result << endl;
+
+}
+写法二，dfs处理当前节点，即在主函数遇到岛屿就计数为0，dfs处理接下来的全部陆地
+
+dfs
+
+// 版本二
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int count;
+int dir[4][2] = {0, 1, 1, 0, -1, 0, 0, -1}; // 四个方向
+void dfs(vector<vector<int>>& grid, vector<vector<bool>>& visited, int x, int y) {
+    if (visited[x][y] || grid[x][y] == 0) return; // 终止条件：访问过的节点 或者 遇到海水
+    visited[x][y] = true; // 标记访问过
+    count++;
+    for (int i = 0; i < 4; i++) {
+        int nextx = x + dir[i][0];
+        int nexty = y + dir[i][1];
+        if (nextx < 0 || nextx >= grid.size() || nexty < 0 || nexty >= grid[0].size()) continue;  // 越界了，直接跳过
+        dfs(grid, visited, nextx, nexty);
+    }
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    vector<vector<int>> grid(n, vector<int>(m, 0));
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            cin >> grid[i][j];
+        }
+    }
+    vector<vector<bool>> visited = vector<vector<bool>>(n, vector<bool>(m, false));
+    int result = 0;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            if (!visited[i][j] && grid[i][j] == 1) {
+                count = 0; // 因为dfs处理当前节点，所以遇到陆地计数为0，进dfs之后在开始从1计数
+                dfs(grid, visited, i, j); // 将与其链接的陆地都标记上 true
+                result = max(result, count);
+            }
+        }
+    }
+    cout << result << endl;
+}
+大家通过注释可以发现，两种写法，版本一，在主函数遇到陆地就计数为1，接下来的相邻陆地都在dfs中计算。
+
+版本二 在主函数遇到陆地 计数为0，也就是不计数，陆地数量都去dfs里做计算。
+
+这也是为什么大家看了很多 dfs的写法 ，发现写法怎么都不一样呢？ 其实这就是根本原因。
+
+#BFS
+关于广度优先搜索，如果大家还不了解的话，看这里：广度优先搜索精讲 https://programmercarl.com/kamacoder/%E5%9B%BE%E8%AE%BA%E5%B9%BF%E6%90%9C%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html
+
+本题BFS代码如下：
+
+class Solution {
+private:
+    int count;
+    int dir[4][2] = {0, 1, 1, 0, -1, 0, 0, -1}; // 四个方向
+    void bfs(vector<vector<int>>& grid, vector<vector<bool>>& visited, int x, int y) {
+        queue<int> que;
+        que.push(x);
+        que.push(y);
+        visited[x][y] = true; // 加入队列就意味节点是陆地可到达的点
+        count++;
+        while(!que.empty()) {
+            int xx = que.front();que.pop();
+            int yy = que.front();que.pop();
+            for (int i = 0 ;i < 4; i++) {
+                int nextx = xx + dir[i][0];
+                int nexty = yy + dir[i][1];
+                if (nextx < 0 || nextx >= grid.size() || nexty < 0 || nexty >= grid[0].size()) continue; // 越界
+                if (!visited[nextx][nexty] && grid[nextx][nexty] == 1) { // 节点没有被访问过且是陆地
+                    visited[nextx][nexty] = true;
+                    count++;
+                    que.push(nextx);
+                    que.push(nexty);
+                }
+            }
+        }
+    }
+
+public:
+    int maxAreaOfIsland(vector<vector<int>>& grid) {
+        int n = grid.size(), m = grid[0].size();
+        vector<vector<bool>> visited = vector<vector<bool>>(n, vector<bool>(m, false));
+        int result = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (!visited[i][j] && grid[i][j] == 1) {
+                    count = 0;
+                    bfs(grid, visited, i, j); // 将与其链接的陆地都标记上 true
+                    result = max(result, count);
+                }
+            }
+        }
+        return result;
+    }
+};
+
+#其他语言版本
+#Java
+import java.util.*;
+import java.math.*;
+
+/**
+ * DFS版
+ */
+public class Main{
+
+    static final int[][] dir={{0,1},{1,0},{0,-1},{-1,0}};
+    static int result=0;
+    static int count=0;
+
+    public static void main(String[] args){
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        int m = scanner.nextInt();
+        int[][] map = new int[n][m];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                map[i][j]=scanner.nextInt();
+            }
+        }
+        boolean[][] visited = new boolean[n][m];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if(!visited[i][j]&&map[i][j]==1){
+                    count=0;
+                    dfs(map,visited,i,j);
+                    result= Math.max(count, result);
+                }
+            }
+        }
+        System.out.println(result);
+    }
+
+    static void dfs(int[][] map,boolean[][] visited,int x,int y){
+                count++;
+                visited[x][y]=true;
+                for (int i = 0; i < 4; i++) {
+                    int nextX=x+dir[i][0];
+                    int nextY=y+dir[i][1];
+                    //水或者已经访问过的跳过
+                    if(nextX<0||nextY<0
+                    ||nextX>=map.length||nextY>=map[0].length
+                    ||visited[nextX][nextY]||map[nextX][nextY]==0)continue;
+                    
+                    dfs(map,visited,nextX,nextY);
+                }
+            }
+}
+import java.util.*;
+import java.math.*;
+
+/**
+ * BFS版
+ */
+public class Main {
+    static class Node {
+        int x;
+        int y;
+
+        public Node(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    static final int[][] dir = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+    static int result = 0;
+    static int count = 0;
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        int m = scanner.nextInt();
+        int[][] map = new int[n][m];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                map[i][j] = scanner.nextInt();
+            }
+        }
+        boolean[][] visited = new boolean[n][m];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (!visited[i][j] && map[i][j] == 1) {
+                    count = 0;
+                    bfs(map, visited, i, j);
+                    result = Math.max(count, result);
+
+                }
+            }
+        }
+        System.out.println(result);
+    }
+
+    static void bfs(int[][] map, boolean[][] visited, int x, int y) {
+        Queue<Node> q = new LinkedList<>();
+        q.add(new Node(x, y));
+        visited[x][y] = true;
+        count++;
+        while (!q.isEmpty()) {
+            Node node = q.remove();
+            for (int i = 0; i < 4; i++) {
+                int nextX = node.x + dir[i][0];
+                int nextY = node.y + dir[i][1];
+                if (nextX < 0 || nextY < 0 || nextX >= map.length || nextY >= map[0].length || visited[nextX][nextY] || map[nextX][nextY] == 0)
+                    continue;
+                q.add(new Node(nextX, nextY));
+                visited[nextX][nextY] = true;
+                count++;
+            }
+        }
+    }
+}
+
+#Python
+DFS
+
+# 四个方向
+position = [[0, 1], [1, 0], [0, -1], [-1, 0]]
+count = 0
+
+
+def dfs(grid, visited, x, y):
+    """
+    深度优先搜索，对一整块陆地进行标记
+    """
+    global count  # 定义全局变量，便于传递count值
+    for i, j in position:
+        cur_x = x + i
+        cur_y = y + j
+        # 下标越界，跳过
+        if cur_x < 0 or cur_x >= len(grid) or cur_y < 0 or cur_y >= len(grid[0]):
+            continue
+        if not visited[cur_x][cur_y] and grid[cur_x][cur_y] == 1:
+            visited[cur_x][cur_y] = True
+            count += 1
+            dfs(grid, visited, cur_x, cur_y)
+
+
+n, m = map(int, input().split())
+# 邻接矩阵
+grid = []
+for i in range(n):
+    grid.append(list(map(int, input().split())))
+# 访问表
+visited = [[False] * m for _ in range(n)]
+
+result = 0  # 记录最终结果
+for i in range(n):
+    for j in range(m):
+        if grid[i][j] == 1 and not visited[i][j]:
+            count = 1
+            visited[i][j] = True
+            dfs(grid, visited, i, j)
+            result = max(count, result)
+
+print(result)
+BFS
+
+from collections import deque
+
+position = [[0, 1], [1, 0], [0, -1], [-1, 0]]  # 四个方向
+count = 0
+
+
+def bfs(grid, visited, x, y):
+    """
+    广度优先搜索对陆地进行标记
+    """
+    global count  # 声明全局变量
+    que = deque()
+    que.append([x, y])
+    while que:
+        cur_x, cur_y = que.popleft()
+        for i, j in position:
+            next_x = cur_x + i
+            next_y = cur_y + j
+            # 下标越界，跳过
+            if next_x < 0 or next_x >= len(grid) or next_y < 0 or next_y >= len(grid[0]):
+                continue
+            if grid[next_x][next_y] == 1 and not visited[next_x][next_y]:
+                visited[next_x][next_y] = True
+                count += 1
+                que.append([next_x, next_y])
+
+
+n, m = map(int, input().split())
+# 邻接矩阵
+grid = []
+for i in range(n):
+    grid.append(list(map(int, input().split())))
+visited = [[False] * m for _ in range(n)]  # 访问表
+
+result = 0  # 记录最终结果
+for i in range(n):
+    for j in range(m):
+        if grid[i][j] == 1 and not visited[i][j]:
+            count = 1
+            visited[i][j] = True
+            bfs(grid, visited, i, j)
+            res = max(result, count)
+
+print(result)

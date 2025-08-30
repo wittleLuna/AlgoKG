@@ -1,0 +1,102 @@
+二叉树的右视图
+力扣题目链接(https://leetcode.cn/problems/binary-tree-right-side-view/)
+
+给定一棵二叉树，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。
+
+https://file1.kamacoder.com/i/algo/20210203151307377.png
+
+#思路
+层序遍历的时候，判断是否遍历到单层的最后面的元素，如果是，就放进result数组中，随后返回result就可以了。
+
+C++代码：
+
+class Solution {
+public:
+    vector<int> rightSideView(TreeNode* root) {
+        queue<TreeNode*> que;
+        if (root != NULL) que.push(root);
+        vector<int> result;
+        while (!que.empty()) {
+            int size = que.size();
+            for (int i = 0; i < size; i++) {
+                TreeNode* node = que.front();
+                que.pop();
+                if (i == (size - 1)) result.push_back(node->val); // 将每一层的最后元素放入result数组中
+                if (node->left) que.push(node->left);
+                if (node->right) que.push(node->right);
+            }
+        }
+        return result;
+    }
+};
+#其他语言版本
+#Python：
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def rightSideView(self, root: TreeNode) -> List[int]:
+        if not root:
+            return []
+        
+        queue = collections.deque([root])
+        right_view = []
+        
+        while queue:
+            level_size = len(queue)
+            
+            for i in range(level_size):
+                node = queue.popleft()
+                
+                if i == level_size - 1:
+                    right_view.append(node.val)
+                
+                if node.left:
+                    queue.append(node.left)
+                if node.right:
+                    queue.append(node.right)
+        
+        return right_view
+#Java:
+// 199.二叉树的右视图
+public class N0199 {
+    /**
+     * 解法：队列，迭代。
+     * 每次返回每层的最后一个字段即可。
+     *
+     * 小优化：每层右孩子先入队。代码略。
+     */
+    public List<Integer> rightSideView(TreeNode root) {
+        List<Integer> list = new ArrayList<>();
+        Deque<TreeNode> que = new LinkedList<>();
+
+        if (root == null) {
+            return list;
+        }
+
+        que.offerLast(root);
+        while (!que.isEmpty()) {
+            int levelSize = que.size();
+
+            for (int i = 0; i < levelSize; i++) {
+                TreeNode poll = que.pollFirst();
+
+                if (poll.left != null) {
+                    que.addLast(poll.left);
+                }
+                if (poll.right != null) {
+                    que.addLast(poll.right);
+                }
+
+                if (i == levelSize - 1) {
+                    list.add(poll.val);
+                }
+            }
+        }
+
+        return list;
+    }
+}

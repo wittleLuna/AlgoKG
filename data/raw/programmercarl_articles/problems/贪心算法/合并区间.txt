@@ -1,0 +1,135 @@
+合并区间
+力扣题目链接(https://leetcode.cn/problems/merge-intervals/)
+
+给出一个区间的集合，请合并所有重叠的区间。
+
+示例 1:
+
+输入: intervals = [[1,3],[2,6],[8,10],[15,18]]
+输出: [[1,6],[8,10],[15,18]]
+解释: 区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6].
+示例 2:
+
+输入: intervals = [[1,4],[4,5]]
+输出: [[1,5]]
+解释: 区间 [1,4] 和 [4,5] 可被视为重叠区间。
+注意：输入类型已于2019年4月15日更改。 请重置默认代码定义以获取新方法签名。
+
+
+#思路
+本题的本质其实还是判断重叠区间问题。
+
+大家如果认真做题的话，话发现和我们刚刚讲过的452. 用最少数量的箭引爆气球 (https://programmercarl.com/0452.%E7%94%A8%E6%9C%80%E5%B0%91%E6%95%B0%E9%87%8F%E7%9A%84%E7%AE%AD%E5%BC%95%E7%88%86%E6%B0%94%E7%90%83.html)和 435. 无重叠区间 (https://programmercarl.com/0435.%E6%97%A0%E9%87%8D%E5%8F%A0%E5%8C%BA%E9%97%B4.html)都是一个套路。
+
+这几道题都是判断区间重叠，区别就是判断区间重叠后的逻辑，本题是判断区间重贴后要进行区间合并。
+
+所以一样的套路，先排序，让所有的相邻区间尽可能的重叠在一起，按左边界，或者右边界排序都可以，处理逻辑稍有不同。
+
+按照左边界从小到大排序之后，如果 intervals[i][0] <= intervals[i - 1][1] 即intervals[i]的左边界 <= intervals[i - 1]的右边界，则一定有重叠。（本题相邻区间也算重贴，所以是<=）
+
+这么说有点抽象，看图：（注意图中区间都是按照左边界排序之后了）
+
+https://file1.kamacoder.com/i/algo/20201223200632791.png
+
+知道如何判断重复之后，剩下的就是合并了，如何去模拟合并区间呢？
+
+其实就是用合并区间后左边界和右边界，作为一个新的区间，加入到result数组里就可以了。如果没有合并就把原区间加入到result数组。
+
+C++代码如下：
+
+class Solution {
+public:
+    vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        vector<vector<int>> result;
+        if (intervals.size() == 0) return result; // 区间集合为空直接返回
+        // 排序的参数使用了lambda表达式
+        sort(intervals.begin(), intervals.end(), [](const vector<int>& a, const vector<int>& b){return a[0] < b[0];});
+
+        // 第一个区间就可以放进结果集里，后面如果重叠，在result上直接合并
+        result.push_back(intervals[0]); 
+
+        for (int i = 1; i < intervals.size(); i++) {
+            if (result.back()[1] >= intervals[i][0]) { // 发现重叠区间
+                // 合并区间，只更新右边界就好，因为result.back()的左边界一定是最小值，因为我们按照左边界排序的
+                result.back()[1] = max(result.back()[1], intervals[i][1]); 
+            } else {
+                result.push_back(intervals[i]); // 区间不重叠 
+            }
+        }
+        return result;
+    }
+};
+时间复杂度: O(nlogn)
+空间复杂度: O(logn)，排序需要的空间开销
+#其他语言版本
+#Java
+
+/**
+时间复杂度 ： O(NlogN) 排序需要O(NlogN)
+空间复杂度 ： O(logN)  java 的内置排序是快速排序 需要 O(logN)空间
+
+*/
+class Solution {
+    public int[][] merge(int[][] intervals) {
+        List<int[]> res = new LinkedList<>();
+        //按照左边界排序
+        Arrays.sort(intervals, (x, y) -> Integer.compare(x[0], y[0]));
+        //initial start 是最小左边界
+        int start = intervals[0][0];
+        int rightmostRightBound = intervals[0][1];
+        for (int i = 1; i < intervals.length; i++) {
+            //如果左边界大于最大右边界
+            if (intervals[i][0] > rightmostRightBound) {
+                //加入区间 并且更新start
+                res.add(new int[]{start, rightmostRightBound});
+                start = intervals[i][0];
+                rightmostRightBound = intervals[i][1];
+            } else {
+                //更新最大右边界
+                rightmostRightBound = Math.max(rightmostRightBound, intervals[i][1]);
+            }
+        }
+        res.add(new int[]{start, rightmostRightBound});
+        return res.toArray(new int[res.size()][]);
+    }
+}
+
+// 版本2
+class Solution {
+    public int[][] merge(int[][] intervals) {
+        LinkedList<int[]> res = new LinkedList<>();
+        Arrays.sort(intervals, (o1, o2) -> Integer.compare(o1[0], o2[0]));
+        res.add(intervals[0]);
+        for (int i = 1; i < intervals.length; i++) {
+            if (intervals[i][0] <= res.getLast()[1]) {
+                int start = res.getLast()[0];
+                int end = Math.max(intervals[i][1], res.getLast()[1]);
+                res.removeLast();
+                res.add(new int[]{start, end});
+            }
+            else {
+                res.add(intervals[i]);
+            }         
+        }
+        return res.toArray(new int[res.size()][]);
+    }
+}
+#Python
+class Solution:
+    def merge(self, intervals):
+        result = []
+        if len(intervals) == 0:
+            return result  # 区间集合为空直接返回
+
+        intervals.sort(key=lambda x: x[0])  # 按照区间的左边界进行排序
+
+        result.append(intervals[0])  # 第一个区间可以直接放入结果集中
+
+        for i in range(1, len(intervals)):
+            if result[-1][1] >= intervals[i][0]:  # 发现重叠区间
+                # 合并区间，只需要更新结果集最后一个区间的右边界，因为根据排序，左边界已经是最小的
+                result[-1][1] = max(result[-1][1], intervals[i][1])
+            else:
+                result.append(intervals[i])  # 区间不重叠
+
+        return result

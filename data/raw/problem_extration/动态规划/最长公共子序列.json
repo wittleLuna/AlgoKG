@@ -1,0 +1,228 @@
+{
+  "id": "AP_991eafe0",
+  "title": "最长公共子序列",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/longest-common-subsequence/",
+  "description": "两个字符串 text1 和 text2，返回这两个字符串的最长公共子序列的长度。\n\n一个字符串的 子序列 是指这样一个新的字符串：它是由原字符串在不改变字符的相对顺序的情况下删除某些字符（也可以不删除任何字符）后组成的新字符串。\n\n例如，\"ace\" 是 \"abcde\" 的子序列，但 \"aec\" 不是 \"abcde\" 的子序列。两个字符串的「公共子序列」是这两个字符串所共同拥有的子序列。\n\n若这两个字符串没有公共子序列，则返回 0。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "动态规划"
+  ],
+  "data_structure_tags": [
+    "数组",
+    "二维数组"
+  ],
+  "technique_tags": [
+    "状态压缩"
+  ],
+  "difficulty": null,
+  "solution_approach": "采用动态规划方法来解决最长公共子序列问题。通过定义一个二维dp数组存储两个字符串不同长度前缀的最长公共子序列长度，并基于递推公式更新该数组直至计算出最终结果。",
+  "key_insights": [
+    {
+      "content": "此问题可以通过分解为更小规模相同问题（即较短字符串间的最长公共子序列）来解决，符合动态规划策略的应用场景。"
+    },
+    {
+      "content": "确定正确的状态转移方程是解决问题的关键。若当前字符相等，则增加先前匹配的最大长度；否则选择已知最长路径之一继续。"
+    },
+    {
+      "content": "初始化dp数组时，考虑边界条件，对于空串与任何串的最长公共子序列长度均为0。"
+    },
+    {
+      "content": "遍历顺序需要从前向后、从上到下以确保每个dp[i][j]值在被计算时其依赖的状态已经被正确计算。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "本题和动态规划：718. 最长重复子数组 (https://programmercarl.com/0718.%E6%9C%80%E9%95%BF%E9%87%8D%E5%A4%8D%E5%AD%90%E6%95%B0%E7%BB%84.html)区别在于这里不要求是连续的了，但要有相对顺序，即：\"ace\" 是 \"abcde\" 的子序列，但 \"aec\" 不是 \"abcde\" 的子序列。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int longestCommonSubsequence(string text1, string text2) {vector<vector<int>> dp(text1.size() + 1, vector<int>(text2.size() + 1, 0)); for (int i = 1; i <= text1.size(); i++) {for (int j = 1; j <= text2.size(); j++) {if (text1[i - 1] == text2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;} else {dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);}}} return dp[text1.size()][text2.size()];}};",
+          "description": "C++实现的最长公共子序列算法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int longestCommonSubsequence(String text1, String text2) {int[][] dp = new int[text1.length() + 1][text2.length() + 1]; for (int i = 1 ; i <= text1.length() ; i++) {char char1 = text1.charAt(i - 1); for (int j = 1; j <= text2.length(); j++) {char char2 = text2.charAt(j - 1); if (char1 == char2) {dp[i][j] = dp[i - 1][j - 1] + 1;} else {dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);}}} return dp[text1.length()][text2.length()];}}",
+          "description": "Java实现的二维数组版本最长公共子序列算法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int longestCommonSubsequence(String text1, String text2) {int n1 = text1.length(); int n2 = text2.length(); int [] dp = new int[n2 + 1]; for(int i = 1; i <= n1; i++){int pre = dp[0]; for(int j = 1; j <= n2; j++){int cur = dp[j]; if(text1.charAt(i - 1) == text2.charAt(j - 1)){dp[j] = pre + 1;} else{dp[j] = Math.max(dp[j], dp[j - 1]);} pre = cur;}} return dp[n2];}}",
+          "description": "Java实现的一维数组优化版本最长公共子序列算法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def longestCommonSubsequence(self, text1: str, text2: str) -> int: dp = [[0] * (len(text2) + 1) for _ in range(len(text1) + 1)] for i in range(1, len(text1) + 1): for j in range(1, len(text2) + 1): if text1[i - 1] == text2[j - 1]: dp[i][j] = dp[i - 1][j - 1] + 1 else: dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]) return dp[len(text1)][len(text2)]",
+          "description": "Python实现的二维DP版本最长公共子序列算法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def longestCommonSubsequence(self, text1: str, text2: str) -> int: m, n = len(text1), len(text2) dp = [0] * (n + 1) for i in range(1, m + 1): prev = 0 for j in range(1, n + 1): curr = dp[j] if text1[i - 1] == text2[j - 1]: dp[j] = prev + 1 else: dp[j] = max(dp[j], dp[j - 1]) prev = curr return dp[n]",
+          "description": "Python实现的一维DP优化版本最长公共子序列算法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution { public int longestCommonSubsequence(String text1, String text2) { int[][] dp = new int[text1.length() + 1][text2.length() + 1]; for (int i = 1 ; i <= text1.length() ; i++) { char char1 = text1.charAt(i - 1); for (int j = 1; j <= text2.length(); j++) { char char2 = text2.charAt(j - 1); if (char1 == char2) { dp[i][j] = dp[i - 1][j - 1] + 1; } else { dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]); } } } return dp[text1.length()][text2.length()]; } }",
+          "description": "二维dp数组解决最长公共子序列问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int longestCommonSubsequence(String text1, String text2) { int n1 = text1.length(); int n2 = text2.length(); int[] dp = new int[n2 + 1]; for(int i = 1; i <= n1; i++) { int pre = dp[0]; for(int j = 1; j <= n2; j++) { int cur = dp[j]; if(text1.charAt(i - 1) == text2.charAt(j - 1)) { dp[j] = pre + 1; } else { dp[j] = Math.max(dp[j], dp[j - 1]); } pre = cur; } } return dp[n2]; } }",
+          "description": "一维dp数组解决最长公共子序列问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def longestCommonSubsequence(self, text1: str, text2: str) -> int: dp = [[0] * (len(text2) + 1) for _ in range(len(text1) + 1)] for i in range(1, len(text1) + 1): for j in range(1, len(text2) + 1): if text1[i - 1] == text2[j - 1]: dp[i][j] = dp[i - 1][j - 1] + 1 else: dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]) return dp[len(text1)][len(text2)]",
+          "description": "二维dp数组解决最长公共子序列问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def longestCommonSubsequence(self, text1: str, text2: str) -> int: m, n = len(text1), len(text2) dp = [0] * (n + 1) for i in range(1, m + 1): prev = 0 for j in range(1, n + 1): curr = dp[j] if text1[i - 1] == text2[j - 1]: dp[j] = prev + 1 else: dp[j] = max(dp[j], dp[j - 1]) prev = curr return dp[n]",
+          "description": "一维dp数组解决最长公共子序列问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "/*",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int longestCommonSubsequence(string text1, string text2) {vector<vector<int>> dp(text1.size() + 1, vector<int>(text2.size() + 1, 0));for (int i = 1; i <= text1.size(); i++) {for (int j = 1; j <= text2.size(); j++) {if (text1[i - 1] == text2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;} else {dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);}}}return dp[text1.size()][text2.size()];}};",
+          "description": "C++实现的二维动态规划方法求解最长公共子序列问题。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int longestCommonSubsequence(String text1, String text2) {int[][] dp = new int[text1.length() + 1][text2.length() + 1];for (int i = 1 ; i <= text1.length() ; i++) {char char1 = text1.charAt(i - 1);for (int j = 1; j <= text2.length(); j++) {char char2 = text2.charAt(j - 1);if (char1 == char2) {dp[i][j] = dp[i - 1][j - 1] + 1;} else {dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);}}}}return dp[text1.length()][text2.length()];}}",
+          "description": "Java实现的二维动态规划方法求解最长公共子序列问题。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int longestCommonSubsequence(String text1, String text2) {int n1 = text1.length();int n2 = text2.length();int [] dp = new int[n2 + 1];for(int i = 1; i <= n1; i++){int pre = dp[0];for(int j = 1; j <= n2; j++){int cur = dp[j];if(text1.charAt(i - 1) == text2.charAt(j - 1)){dp[j] = pre + 1;} else{dp[j] = Math.max(dp[j], dp[j - 1]);}pre = cur;}}return dp[n2];}}",
+          "description": "Java实现的一维动态规划方法求解最长公共子序列问题。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def longestCommonSubsequence(self, text1: str, text2: str) -> int: dp = [[0] * (len(text2) + 1) for _ in range(len(text1) + 1)]for i in range(1, len(text1) + 1):for j in range(1, len(text2) + 1):if text1[i - 1] == text2[j - 1]:dp[i][j] = dp[i - 1][j - 1] + 1else:dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])return dp[len(text1)][len(text2)]",
+          "description": "Python实现的二维动态规划方法求解最长公共子序列问题。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def longestCommonSubsequence(self, text1: str, text2: str) -> int: m, n = len(text1), len(text2)dp = [0] * (n + 1)for i in range(1, m + 1):prev = 0for j in range(1, n + 1):curr = dp[j]if text1[i - 1] == text2[j - 1]:dp[j] = prev + 1else:dp[j] = max(dp[j], dp[j - 1])prev = currreturn dp[n]",
+          "description": "Python实现的一维动态规划方法求解最长公共子序列问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "2维DP",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int longestCommonSubsequence(string text1, string text2) { vector<vector<int>> dp(text1.size() + 1, vector<int>(text2.size() + 1, 0)); for (int i = 1; i <= text1.size(); i++) { for (int j = 1; j <= text2.size(); j++) { if (text1[i - 1] == text2[j - 1]) { dp[i][j] = dp[i - 1][j - 1] + 1; } else { dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]); } } } return dp[text1.size()][text2.size()]; }};",
+          "description": "使用二维动态规划求解最长公共子序列"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int longestCommonSubsequence(String text1, String text2) { int[][] dp = new int[text1.length() + 1][text2.length() + 1]; for (int i = 1 ; i <= text1.length() ; i++) { char char1 = text1.charAt(i - 1); for (int j = 1; j <= text2.length(); j++) { char char2 = text2.charAt(j - 1); if (char1 == char2) { dp[i][j] = dp[i - 1][j - 1] + 1; } else { dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]); } } } return dp[text1.length()][text2.length()]; }}",
+          "description": "Java版本的二维动态规划求解最长公共子序列"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def longestCommonSubsequence(self, text1: str, text2: str) -> int: dp = [[0] * (len(text2) + 1) for _ in range(len(text1) + 1)] for i in range(1, len(text1) + 1): for j in range(1, len(text2) + 1): if text1[i - 1] == text2[j - 1]: dp[i][j] = dp[i - 1][j - 1] + 1 else: dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]) return dp[len(text1)][len(text2)]",
+          "description": "Python版本的二维动态规划求解最长公共子序列"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def longestCommonSubsequence(self, text1: str, text2: str) -> int: m, n = len(text1), len(text2) dp = [0] * (n + 1) for i in range(1, m + 1): prev = 0 for j in range(1, n + 1): curr = dp[j] if text1[i - 1] == text2[j - 1]: dp[j] = prev + 1 else: dp[j] = max(dp[j], dp[j - 1]) prev = curr return dp[n]",
+          "description": "Python版本的一维动态规划求解最长公共子序列"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n * m)",
+    "space_complexity": "O(n * m)",
+    "explanation": "其中 n 和 m 分别为 text1 和 text2 的长度"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int longestCommonSubsequence(string text1, string text2) { vector<vector<int>> dp(text1.size() + 1, vector<int>(text2.size() + 1, 0)); for (int i = 1; i <= text1.size(); i++) { for (int j = 1; j <= text2.size(); j++) { if (text1[i - 1] == text2[j - 1]) { dp[i][j] = dp[i - 1][j - 1] + 1; } else { dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]); } } } return dp[text1.size()][text2.size()]; }};",
+      "description": "C++实现的最长公共子序列算法，使用二维动态规划"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public int longestCommonSubsequence(String text1, String text2) { int[][] dp = new int[text1.length() + 1][text2.length() + 1]; for (int i = 1 ; i <= text1.length() ; i++) { char char1 = text1.charAt(i - 1); for (int j = 1; j <= text2.length(); j++) { char char2 = text2.charAt(j - 1); if (char1 == char2) { dp[i][j] = dp[i - 1][j - 1] + 1; } else { dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]); } } } return dp[text1.length()][text2.length()]; }}",
+      "description": "Java实现的最长公共子序列算法，使用二维动态规划"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public int longestCommonSubsequence(String text1, String text2) { int n1 = text1.length(); int n2 = text2.length(); int [] dp = new int[n2 + 1]; for(int i = 1; i <= n1; i++){ int pre = dp[0]; for(int j = 1; j <= n2; j++){ int cur = dp[j]; if(text1.charAt(i - 1) == text2.charAt(j - 1)){ dp[j] = pre + 1; } else{ dp[j] = Math.max(dp[j], dp[j - 1]); } pre = cur; } } return dp[n2]; }}",
+      "description": "Java实现的一维动态规划最长公共子序列算法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def longestCommonSubsequence(self, text1: str, text2: str) -> int: dp = [[0] * (len(text2) + 1) for _ in range(len(text1) + 1)] for i in range(1, len(text1) + 1): for j in range(1, len(text2) + 1): if text1[i - 1] == text2[j - 1]: dp[i][j] = dp[i - 1][j - 1] + 1 else: dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]) return dp[len(text1)][len(text2)]",
+      "description": "Python实现的二维动态规划最长公共子序列算法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def longestCommonSubsequence(self, text1: str, text2: str) -> int: m, n = len(text1), len(text2) dp = [0] * (n + 1) for i in range(1, m + 1): prev = 0 for j in range(1, n + 1): curr = dp[j] if text1[i - 1] == text2[j - 1]: dp[j] = prev + 1 else: dp[j] = max(dp[j], dp[j - 1]) prev = curr return dp[n]",
+      "description": "Python实现的一维动态规划最长公共子序列算法"
+    }
+  ],
+  "common_mistakes": [
+    "未正确初始化边界条件。",
+    "混淆子串与子序列的概念。",
+    "忽略了相对顺序保持不变的要求。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210204115139616.jpg",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20210204115139616.jpg",
+      "context": "该图展示了dp[i][j]可以从三个方向推导而来，帮助理解为了确保递推过程中使用到的值都是已计算过的，需要按照从前向后、从上到下的顺序遍历矩阵。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210210150215918.jpg",
+      "description": "这张图片展示了使用动态规划算法求解两个字符串 \"abcde\" 和 \"ace\" 的最长公共子序列（LCS）问题的过程。",
+      "context": "这张图片展示了以text1 = \"abcde\"和text2 = \"ace\"为例时，动态规划数组dp的状态变化过程，其中红框标记了最终结果所在位置。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210204115139616.jpg",
+      "description": "GIF展示了动态规划算法中dp数组的填充过程，从前向后、从上到下遍历矩阵以计算最长公共子序列。",
+      "context": "GIF动画展示了根据递推公式从前向后、从上到下遍历矩阵来填充dp数组的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210210150215918.jpg",
+      "description": "GIF展示了两个字符串\"abcde\"与\"ace\"进行最长公共子序列计算时，动态规划表dp的逐步填充过程。",
+      "context": "该GIF展示了以\"text1 = abcde\", \"text2 = ace\"为例时，动态规划数组dp的填充过程及其最终状态，其中右下角红框内的值即为两个字符串最长公共子序列的长度。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\动态规划\\最长公共子序列.txt",
+  "extracted_at": "2025-07-20T20:56:18.973391",
+  "raw_content": "最长公共子序列\n力扣题目链接(https://leetcode.cn/problems/longest-common-subsequence/)\n\n给定两个字符串 text1 和 text2，返回这两个字符串的最长公共子序列的长度。\n\n一个字符串的 子序列 是指这样一个新的字符串：它是由原字符串在不改变字符的相对顺序的情况下删除某些字符（也可以不删除任何字符）后组成的新字符串。\n\n例如，\"ace\" 是 \"abcde\" 的子序列，但 \"aec\" 不是 \"abcde\" 的子序列。两个字符串的「公共子序列」是这两个字符串所共同拥有的子序列。\n\n若这两个字符串没有公共子序列，则返回 0。\n\n示例 1:\n\n输入：text1 = \"abcde\", text2 = \"ace\"\n输出：3\n解释：最长公共子序列是 \"ace\"，它的长度为 3。\n示例 2:\n\n输入：text1 = \"abc\", text2 = \"abc\"\n输出：3\n解释：最长公共子序列是 \"abc\"，它的长度为 3。\n示例 3:\n\n输入：text1 = \"abc\", text2 = \"def\"\n输出：0\n解释：两个字符串没有公共子序列，返回 0。\n提示:\n\n1 <= text1.length <= 1000\n1 <= text2.length <= 1000 输入的字符串只含有小写英文字符。\n\n\n#思路\n本题和动态规划：718. 最长重复子数组 (https://programmercarl.com/0718.%E6%9C%80%E9%95%BF%E9%87%8D%E5%A4%8D%E5%AD%90%E6%95%B0%E7%BB%84.html)区别在于这里不要求是连续的了，但要有相对顺序，即：\"ace\" 是 \"abcde\" 的子序列，但 \"aec\" 不是 \"abcde\" 的子序列。\n\n继续动规五部曲分析如下：\n\n确定dp数组（dp table）以及下标的含义\ndp[i][j]：长度为[0, i - 1]的字符串text1与长度为[0, j - 1]的字符串text2的最长公共子序列为dp[i][j]\n\n有同学会问：为什么要定义长度为[0, i - 1]的字符串text1，定义为长度为[0, i]的字符串text1不香么？\n\n这样定义是为了后面代码实现方便，如果非要定义为长度为[0, i]的字符串text1也可以，我在 动态规划：718. 最长重复子数组 (https://programmercarl.com/0718.%E6%9C%80%E9%95%BF%E9%87%8D%E5%A4%8D%E5%AD%90%E6%95%B0%E7%BB%84.html)中的「拓展」里 详细讲解了区别所在，其实就是简化了dp数组第一行和第一列的初始化逻辑。\n\n确定递推公式\n主要就是两大情况： text1[i - 1] 与 text2[j - 1]相同，text1[i - 1] 与 text2[j - 1]不相同\n\n如果text1[i - 1] 与 text2[j - 1]相同，那么找到了一个公共元素，所以dp[i][j] = dp[i - 1][j - 1] + 1;\n\n如果text1[i - 1] 与 text2[j - 1]不相同，那就看看text1[0, i - 2]与text2[0, j - 1]的最长公共子序列 和 text1[0, i - 1]与text2[0, j - 2]的最长公共子序列，取最大的。\n\n即：dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);\n\n代码如下：\n\nif (text1[i - 1] == text2[j - 1]) {\n    dp[i][j] = dp[i - 1][j - 1] + 1;\n} else {\n    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);\n}\ndp数组如何初始化\n先看看dp[i][0]应该是多少呢？\n\ntext1[0, i-1]和空串的最长公共子序列自然是0，所以dp[i][0] = 0;\n\n同理dp[0][j]也是0。\n\n其他下标都是随着递推公式逐步覆盖，初始为多少都可以，那么就统一初始为0。\n\n代码：\n\nvector<vector<int>> dp(text1.size() + 1, vector<int>(text2.size() + 1, 0));\n确定遍历顺序\n从递推公式，可以看出，有三个方向可以推出dp[i][j]，如图：\n\nhttps://file1.kamacoder.com/i/algo/20210204115139616.jpg\n\n那么为了在递推的过程中，这三个方向都是经过计算的数值，所以要从前向后，从上到下来遍历这个矩阵。\n\n举例推导dp数组\n以输入：text1 = \"abcde\", text2 = \"ace\" 为例，dp状态如图：\n\nhttps://file1.kamacoder.com/i/algo/20210210150215918.jpg\n\n最后红框dp[text1.size()][text2.size()]为最终结果\n\n以上分析完毕，C++代码如下：\n\nclass Solution {\npublic:\n    int longestCommonSubsequence(string text1, string text2) {\n        vector<vector<int>> dp(text1.size() + 1, vector<int>(text2.size() + 1, 0));\n        for (int i = 1; i <= text1.size(); i++) {\n            for (int j = 1; j <= text2.size(); j++) {\n                if (text1[i - 1] == text2[j - 1]) {\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                } else {\n                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);\n                }\n            }\n        }\n        return dp[text1.size()][text2.size()];\n    }\n};\n时间复杂度: O(n * m)，其中 n 和 m 分别为 text1 和 text2 的长度\n空间复杂度: O(n * m)\n#其他语言版本\n#Java：\n/*\n\t二维dp数组\n*/\nclass Solution {\n    public int longestCommonSubsequence(String text1, String text2) {\n        // char[] char1 = text1.toCharArray();\n        // char[] char2 = text2.toCharArray();\n\t// 可以在一開始的時候就先把text1, text2 轉成char[]，之後就不需要有這麼多爲了處理字串的調整\n\t// 就可以和卡哥的code更一致\n \t\n        int[][] dp = new int[text1.length() + 1][text2.length() + 1]; // 先对dp数组做初始化操作\n        for (int i = 1 ; i <= text1.length() ; i++) {\n            char char1 = text1.charAt(i - 1);\n            for (int j = 1; j <= text2.length(); j++) {\n                char char2 = text2.charAt(j - 1);\n                if (char1 == char2) { // 开始列出状态转移方程\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                } else {\n                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);\n                }\n            }\n        }\n        return dp[text1.length()][text2.length()];\n    }\n}\n\n\n\n/**\n\t一维dp数组\n*/\nclass Solution {\n    public int longestCommonSubsequence(String text1, String text2) {\n        int n1 = text1.length();\n        int n2 = text2.length();\n\n        // 多从二维dp数组过程分析  \n        // 关键在于  如果记录  dp[i - 1][j - 1]\n        // 因为 dp[i - 1][j - 1]  <!=>  dp[j - 1]  <=>  dp[i][j - 1]\n        int [] dp = new int[n2 + 1];\n\n        for(int i = 1; i <= n1; i++){\n\n            // 这里pre相当于 dp[i - 1][j - 1]\n            int pre = dp[0];\n            for(int j = 1; j <= n2; j++){\n\n                //用于给pre赋值\n                int cur = dp[j];\n                if(text1.charAt(i - 1) == text2.charAt(j - 1)){\n                    //这里pre相当于dp[i - 1][j - 1]   千万不能用dp[j - 1] !!\n                    dp[j] = pre + 1;\n                } else{\n                    // dp[j]     相当于   dp[i - 1][j]\n                    // dp[j - 1] 相当于   dp[i][j - 1]\n                    dp[j] = Math.max(dp[j], dp[j - 1]);\n                }\n\n                //更新dp[i - 1][j - 1], 为下次使用做准备\n                pre = cur;\n            }\n        }\n\n        return dp[n2];\n    }\n}\n#Python：\n2维DP\n\nclass Solution:\n    def longestCommonSubsequence(self, text1: str, text2: str) -> int:\n        # 创建一个二维数组 dp，用于存储最长公共子序列的长度\n        dp = [[0] * (len(text2) + 1) for _ in range(len(text1) + 1)]\n        \n        # 遍历 text1 和 text2，填充 dp 数组\n        for i in range(1, len(text1) + 1):\n            for j in range(1, len(text2) + 1):\n                if text1[i - 1] == text2[j - 1]:\n                    # 如果 text1[i-1] 和 text2[j-1] 相等，则当前位置的最长公共子序列长度为左上角位置的值加一\n                    dp[i][j] = dp[i - 1][j - 1] + 1\n                else:\n                    # 如果 text1[i-1] 和 text2[j-1] 不相等，则当前位置的最长公共子序列长度为上方或左方的较大值\n                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])\n        \n        # 返回最长公共子序列的长度\n        return dp[len(text1)][len(text2)]\n\n1维DP\n\nclass Solution:\n    def longestCommonSubsequence(self, text1: str, text2: str) -> int:\n        m, n = len(text1), len(text2)\n        dp = [0] * (n + 1)  # 初始化一维DP数组\n        \n        for i in range(1, m + 1):\n            prev = 0  # 保存上一个位置的最长公共子序列长度\n            for j in range(1, n + 1):\n                curr = dp[j]  # 保存当前位置的最长公共子序列长度\n                if text1[i - 1] == text2[j - 1]:\n                    # 如果当前字符相等，则最长公共子序列长度加一\n                    dp[j] = prev + 1\n                else:\n                    # 如果当前字符不相等，则选择保留前一个位置的最长公共子序列长度中的较大值\n                    dp[j] = max(dp[j], dp[j - 1])\n                prev = curr  # 更新上一个位置的最长公共子序列长度\n        \n        return dp[n]  # 返回最后一个位置的最长公共子序列长度作为结果"
+}

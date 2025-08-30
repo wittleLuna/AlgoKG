@@ -1,0 +1,396 @@
+{
+  "id": "AP_891bf6b3",
+  "title": "岛屿的周长",
+  "alternative_titles": [],
+  "platform": "kamacoder",
+  "url": "https://kamacoder.com/problempage.php?pid=1178",
+  "description": "一个由 1（陆地）和 0（水）组成的矩阵，岛屿是被水包围，并且通过水平方向或垂直方向上相邻的陆地连接而成的。\n\n你可以假设矩阵外均被水包围。在矩阵中恰好拥有一个岛屿，假设组成岛屿的陆地边长都为 1，请计算岛屿的周长。岛屿内部没有水域。\n\n输入描述\n\n第一行包含两个整数 N, M，表示矩阵的行数和列数。之后 N 行，每行包含 M 个数字，数字为 1 或者 0，表示岛屿的单元格。\n\n输出描述\n\n输出一个整数，表示岛屿的周长。\n\n输入",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "迭代",
+    "数学"
+  ],
+  "data_structure_tags": [
+    "二维数组"
+  ],
+  "technique_tags": [
+    "边界条件处理",
+    "简单数学运算"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过遍历矩阵中的每个单元格，当遇到陆地时（值为1），检查其四个方向（上、下、左、右）的相邻情况。如果相邻位置是水域或超出边界，则增加周长计数。另一个方法是先计算所有陆地的数量和相邻陆地对的数量，利用公式'总周长 = 陆地数量 * 4 - 相邻陆地对数量 * 2'来直接得出结果。",
+  "key_insights": [
+    {
+      "content": "对于每一块陆地，其四周只要不是陆地或者越界，都算作岛屿的一条边。这是因为题目假设了矩阵外全为水，且岛屿内部无水域。"
+    },
+    {
+      "content": "两个相邻的陆地会共享一条边，因此在计算总的周长时需要减去这部分重复计算的边。这可以通过统计相邻陆地对来实现。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "岛屿问题最容易让人想到BFS或者DFS，但本题确实还用不上。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int direction[4][2] = {0, 1, 1, 0, -1, 0, 0, -1};\n    int result = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                for (int k = 0; k < 4; k++) {\n                    int x = i + direction[k][0];\n                    int y = j + direction[k][1];\n                    if (x < 0 || x >= grid.size() || y < 0 || y >= grid[0].size() || grid[x][y] == 0) {\n                        result++;\n                    }\n                }\n            }\n        }\n    }\n    cout << result << endl;\n}",
+          "description": "C++代码实现计算岛屿周长，通过遍历每个单元格及其四周来确定边界。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int sum = 0;\n    int cover = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                sum++;\n                if(i - 1 >= 0 && grid[i - 1][j] == 1) cover++;\n                if(j - 1 >= 0 && grid[i][j - 1] == 1) cover++;\n            }\n        }\n    }\n    cout << sum * 4 - cover * 2 << endl;\n}",
+          "description": "C++代码实现另一种方法计算岛屿周长，基于陆地数量和相邻陆地的数量。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    static int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};\n    static int count;\n    public static void helper(int[][] grid, int x, int y) {\n        for (int[] dir : dirs) {\n            int nx = x + dir[0];\n            int ny = y + dir[1];\n            if (nx < 0 || nx >= grid.length || ny < 0 || ny >= grid[0].length || grid[nx][ny] == 0) {\n                count++;\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int M = sc.nextInt();\n        int N = sc.nextInt();\n        int[][] grid = new int[M][N];\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                grid[i][j] = sc.nextInt();\n            }\n        }\n        int result = 0;\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                if (grid[i][j] == 1) {\n                    count = 0;\n                    helper(grid, i, j);\n                    result += count;\n                }\n            }\n        }\n        System.out.println(result);\n    }\n}",
+          "description": "Java版本的解决方案，使用辅助函数探索每个方向上的邻居以计算周长。"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    n = int(data[0])\n    m = int(data[1])\n    grid = []\n    index = 2\n    for i in range(n):\n        grid.append([int(data[index + j]) for j in range(m)])\n        index += m\n    sum_land = 0\n    cover = 0\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1:\n                sum_land += 1\n                if i - 1 >= 0 and grid[i - 1][j] == 1:\n                    cover += 1\n                if j - 1 >= 0 and grid[i][j - 1] == 1:\n                    cover += 1\n    result = sum_land * 4 - cover * 2\n    print(result)\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python代码实现根据岛屿总数量以及相邻岛屿数来计算周长。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "解法一：",
+      "text": "遍历每一个空格，遇到岛屿则计算其上下左右的空格情况。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int direction[4][2] = {0, 1, 1, 0, -1, 0, 0, -1};\n    int result = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                for (int k = 0; k < 4; k++) {       // 上下左右四个方向\n                    int x = i + direction[k][0];\n                    int y = j + direction[k][1];    // 计算周边坐标x,y\n                    if (x < 0                       // x在边界上\n                            || x >= grid.size()     // x在边界上\n                            || y < 0                // y在边界上\n                            || y >= grid[0].size()  // y在边界上\n                            || grid[x][y] == 0) {   // x,y位置是水域\n                        result++;\n                    }\n                }\n            }\n        }\n    }\n    cout << result << endl;\n}",
+          "description": "C++解法一：遍历每一个空格，遇到岛屿则计算其上下左右的空格情况。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int sum = 0;    // 陆地数量\n    int cover = 0;  // 相邻数量\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                sum++; // 统计总的陆地数量\n                // 统计上边相邻陆地\n                if(i - 1 >= 0 && grid[i - 1][j] == 1) cover++;\n                // 统计左边相邻陆地\n                if(j - 1 >= 0 && grid[i][j - 1] == 1) cover++;\n                // 为什么没统计下边和右边？ 因为避免重复计算\n            }\n        }\n    }\n\n    cout << sum * 4 - cover * 2 << endl;\n}",
+          "description": "C++解法二：先计算总的岛屿数量，再根据相邻岛屿的数量调整周长。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    static int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};\n    static int count;\n    public static void helper(int[][] grid, int x, int y) {\n        for (int[] dir : dirs) {\n            int nx = x + dir[0];\n            int ny = y + dir[1];\n            if (nx < 0 || nx >= grid.length || ny < 0 || ny >= grid[0].length || grid[nx][ny] == 0) {\n                count++;\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int M = sc.nextInt();\n        int N = sc.nextInt();\n        int[][] grid = new int[M][N];\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                grid[i][j] = sc.nextInt();\n            }\n        }\n        int result = 0;\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                if (grid[i][j] == 1) {\n                    count = 0;\n                    helper(grid, i, j);\n                    result += count;\n                }\n            }\n        }\n        System.out.println(result);\n    }\n}",
+          "description": "Java版本：遍历每一个空格，遇到岛屿则计算其上下左右的空格情况。"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    n = int(data[0])\n    m = int(data[1])\n    grid = []\n    index = 2\n    for i in range(n):\n        grid.append([int(data[index + j]) for j in range(m)])\n        index += m\n    sum_land = 0\n    cover = 0\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1:\n                sum_land += 1\n                if i - 1 >= 0 and grid[i - 1][j] == 1:\n                    cover += 1\n                if j - 1 >= 0 and grid[i][j - 1] == 1:\n                    cover += 1\n    result = sum_land * 4 - cover * 2\n    print(result)\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本：先计算总的岛屿数量，再根据相邻岛屿的数量调整周长。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int direction[4][2] = {0, 1, 1, 0, -1, 0, 0, -1};\n    int result = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                for (int k = 0; k < 4; k++) {\n                    int x = i + direction[k][0];\n                    int y = j + direction[k][1];\n                    if (x < 0 || x >= grid.size() || y < 0 || y >= grid[0].size() || grid[x][y] == 0) {\n                        result++;\n                    }\n                }\n            }\n        }\n    }\n    cout << result << endl;\n}",
+          "description": "C++解法一：遍历每一个空格，遇到岛屿则计算其上下左右的空格情况。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int sum = 0;\n    int cover = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                sum++;\n                if(i - 1 >= 0 && grid[i - 1][j] == 1) cover++;\n                if(j - 1 >= 0 && grid[i][j - 1] == 1) cover++;\n            }\n        }\n    }\n    cout << sum * 4 - cover * 2 << endl;\n}",
+          "description": "C++解法二：计算出总的岛屿数量，再减去相邻岛屿造成的重复边长。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    static int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};\n    static int count;\n    public static void helper(int[][] grid, int x, int y) {\n        for (int[] dir : dirs) {\n            int nx = x + dir[0];\n            int ny = y + dir[1];\n            if (nx < 0 || nx >= grid.length || ny < 0 || ny >= grid[0].length || grid[nx][ny] == 0) {\n                count++;\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int M = sc.nextInt();\n        int N = sc.nextInt();\n        int[][] grid = new int[M][N];\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                grid[i][j] = sc.nextInt();\n            }\n        }\n        int result = 0;\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                if (grid[i][j] == 1) {\n                    count = 0;\n                    helper(grid, i, j);\n                    result += count;\n                }\n            }\n        }\n        System.out.println(result);\n    }\n}",
+          "description": "Java版本：遍历每个陆地单元格，并对其四周进行探索以计算周长。"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    n = int(data[0])\n    m = int(data[1])\n    grid = []\n    index = 2\n    for i in range(n):\n        grid.append([int(data[index + j]) for j in range(m)])\n        index += m\n    sum_land = 0\n    cover = 0\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1:\n                sum_land += 1\n                if i - 1 >= 0 and grid[i - 1][j] == 1:\n                    cover += 1\n                if j - 1 >= 0 and grid[i][j - 1] == 1:\n                    cover += 1\n    result = sum_land * 4 - cover * 2\n    print(result)\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本：通过读取输入数据构建网格，然后计算总陆地数和相邻陆地减少的边长来得到最终周长。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int direction[4][2] = {0, 1, 1, 0, -1, 0, 0, -1};\n    int result = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                for (int k = 0; k < 4; k++) {       // 上下左右四个方向\n                    int x = i + direction[k][0];\n                    int y = j + direction[k][1];    // 计算周边坐标x,y\n                    if (x < 0                       // x在边界上\n                            || x >= grid.size()     // x在边界上\n                            || y < 0                // y在边界上\n                            || y >= grid[0].size()  // y在边界上\n                            || grid[x][y] == 0) {   // x,y位置是水域\n                        result++;\n                    }\n                }\n            }\n        }\n    }\n    cout << result << endl;\n}",
+          "description": "C++版本，通过遍历矩阵每个元素并检查其四周来计算岛屿周长。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int sum = 0;    // 陆地数量\n    int cover = 0;  // 相邻数量\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                sum++; // 统计总的陆地数量\n                // 统计上边相邻陆地\n                if(i - 1 >= 0 && grid[i - 1][j] == 1) cover++;\n                // 统计左边相邻陆地\n                if(j - 1 >= 0 && grid[i][j - 1] == 1) cover++;\n                // 为什么没统计下边和右边？ 因为避免重复计算\n            }\n        }\n    }\n\n    cout << sum * 4 - cover * 2 << endl;\n}",
+          "description": "C++版本，通过计算总陆地数及相邻陆地数间接得出岛屿周长。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    static int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};\n    static int count;\n    public static void helper(int[][] grid, int x, int y) {\n        for (int[] dir : dirs) {\n            int nx = x + dir[0];\n            int ny = y + dir[1];\n            if (nx < 0 || nx >= grid.length || ny < 0 || ny >= grid[0].length || grid[nx][ny] == 0) {\n                count++;\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int M = sc.nextInt();\n        int N = sc.nextInt();\n        int[][] grid = new int[M][N];\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                grid[i][j] = sc.nextInt();\n            }\n        }\n        int result = 0;\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                if (grid[i][j] == 1) {\n                    count = 0;\n                    helper(grid, i, j);\n                    result += count;\n                }\n            }\n        }\n        System.out.println(result);\n    }\n}",
+          "description": "Java版本，通过辅助函数探索每个陆地周围的环境以计算周长。"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    n = int(data[0])\n    m = int(data[1])\n    grid = []\n    index = 2\n    for i in range(n):\n        grid.append([int(data[index + j]) for j in range(m)])\n        index += m\n    sum_land = 0\n    cover = 0\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1:\n                sum_land += 1\n                if i - 1 >= 0 and grid[i - 1][j] == 1:\n                    cover += 1\n                if j - 1 >= 0 and grid[i][j - 1] == 1:\n                    cover += 1\n    result = sum_land * 4 - cover * 2\n    print(result)\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本，通过计算总陆地数及相邻陆地数间接得出岛屿周长。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "解法二：",
+      "text": "计算出总的岛屿数量，总的变数为：岛屿数量 * 4",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int direction[4][2] = {0, 1, 1, 0, -1, 0, 0, -1};\n    int result = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                for (int k = 0; k < 4; k++) {       // 上下左右四个方向\n                    int x = i + direction[k][0];\n                    int y = j + direction[k][1];    // 计算周边坐标x,y\n                    if (x < 0                       // x在边界上\n                            || x >= grid.size()     // x在边界上\n                            || y < 0                // y在边界上\n                            || y >= grid[0].size()  // y在边界上\n                            || grid[x][y] == 0) {   // x,y位置是水域\n                        result++;\n                    }\n                }\n            }\n        }\n    }\n    cout << result << endl;\n}",
+          "description": "C++解法一：遍历每一个空格，遇到岛屿则计算其上下左右的空格情况。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int sum = 0;    // 陆地数量\n    int cover = 0;  // 相邻数量\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                sum++; // 统计总的陆地数量\n                // 统计上边相邻陆地\n                if(i - 1 >= 0 && grid[i - 1][j] == 1) cover++;\n                // 统计左边相邻陆地\n                if(j - 1 >= 0 && grid[i][j - 1] == 1) cover++;\n                // 为什么没统计下边和右边？ 因为避免重复计算\n            }\n        }\n    }\n\n    cout << sum * 4 - cover * 2 << endl;\n}",
+          "description": "C++解法二：基于岛屿数量与相邻岛屿数来计算周长。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    static int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};\n    static int count;\n    public static void helper(int[][] grid, int x, int y) {\n        for (int[] dir : dirs) {\n            int nx = x + dir[0];\n            int ny = y + dir[1];\n            if (nx < 0 || nx >= grid.length || ny < 0 || ny >= grid[0].length || grid[nx][ny] == 0) {\n                count++;\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int M = sc.nextInt();\n        int N = sc.nextInt();\n        int[][] grid = new int[M][N];\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                grid[i][j] = sc.nextInt();\n            }\n        }\n        int result = 0;\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                if (grid[i][j] == 1) {\n                    count = 0;\n                    helper(grid, i, j);\n                    result += count;\n                }\n            }\n        }\n        System.out.println(result);\n    }\n}",
+          "description": "Java版本：通过探索每个陆地方块周围的四个方向来计算总周长。"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    n = int(data[0])\n    m = int(data[1])\n    grid = []\n    index = 2\n    for i in range(n):\n        grid.append([int(data[index + j]) for j in range(m)])\n        index += m\n    sum_land = 0\n    cover = 0\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1:\n                sum_land += 1\n                if i - 1 >= 0 and grid[i - 1][j] == 1: cover += 1\n                if j - 1 >= 0 and grid[i][j - 1] == 1: cover += 1\n    result = sum_land * 4 - cover * 2\n    print(result)\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本：基于岛屿数量与相邻岛屿数来计算周长。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int direction[4][2] = {0, 1, 1, 0, -1, 0, 0, -1};\n    int result = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                for (int k = 0; k < 4; k++) {       // 上下左右四个方向\n                    int x = i + direction[k][0];\n                    int y = j + direction[k][1];    // 计算周边坐标x,y\n                    if (x < 0                       // x在边界上\n                            || x >= grid.size()     // x在边界上\n                            || y < 0                // y在边界上\n                            || y >= grid[0].size()  // y在边界上\n                            || grid[x][y] == 0) {   // x,y位置是水域\n                        result++;\n                    }\n                }\n            }\n        }\n    }\n    cout << result << endl;\n}",
+          "description": "C++解法一"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int sum = 0;    // 陆地数量\n    int cover = 0;  // 相邻数量\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                sum++; // 统计总的陆地数量\n                // 统计上边相邻陆地\n                if(i - 1 >= 0 && grid[i - 1][j] == 1) cover++;\n                // 统计左边相邻陆地\n                if(j - 1 >= 0 && grid[i][j - 1] == 1) cover++;\n                // 为什么没统计下边和右边？ 因为避免重复计算\n            }\n        }\n    }\n\n    cout << sum * 4 - cover * 2 << endl;\n}",
+          "description": "C++解法二"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    static int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};\n    static int count;\n    public static void helper(int[][] grid, int x, int y) {\n        for (int[] dir : dirs) {\n            int nx = x + dir[0];\n            int ny = y + dir[1];\n            if (nx < 0 || nx >= grid.length || ny < 0 || ny >= grid[0].length || grid[nx][ny] == 0) {\n                count++;\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int M = sc.nextInt();\n        int N = sc.nextInt();\n        int[][] grid = new int[M][N];\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                grid[i][j] = sc.nextInt();\n            }\n        }\n        int result = 0;\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                if (grid[i][j] == 1) {\n                    count = 0;\n                    helper(grid, i, j);\n                    result += count;\n                }\n            }\n        }\n        System.out.println(result);\n    }\n}",
+          "description": "Java版本"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    n = int(data[0])\n    m = int(data[1])\n    grid = []\n    index = 2\n    for i in range(n):\n        grid.append([int(data[index + j]) for j in range(m)])\n        index += m\n    sum_land = 0\n    cover = 0\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1:\n                sum_land += 1\n                if i - 1 >= 0 and grid[i - 1][j] == 1:\n                    cover += 1\n                if j - 1 >= 0 and grid[i][j - 1] == 1:\n                    cover += 1\n    result = sum_land * 4 - cover * 2\n    print(result)\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int direction[4][2] = {0, 1, 1, 0, -1, 0, 0, -1};\n    int result = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                for (int k = 0; k < 4; k++) {       // 上下左右四个方向\n                    int x = i + direction[k][0];\n                    int y = j + direction[k][1];    // 计算周边坐标x,y\n                    if (x < 0                       // x在边界上\n                            || x >= grid.size()     // x在边界上\n                            || y < 0                // y在边界上\n                            || y >= grid[0].size()  // y在边界上\n                            || grid[x][y] == 0) {   // x,y位置是水域\n                        result++;\n                    }\n                }\n            }\n        }\n    }\n    cout << result << endl;\n}",
+          "description": "通过遍历矩阵中的每个元素，检查其上下左右是否为水或越界来计算岛屿的周长。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int sum = 0;    // 陆地数量\n    int cover = 0;  // 相邻数量\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                sum++; // 统计总的陆地数量\n                // 统计上边相邻陆地\n                if(i - 1 >= 0 && grid[i - 1][j] == 1) cover++;\n                // 统计左边相邻陆地\n                if(j - 1 >= 0 && grid[i][j - 1] == 1) cover++;\n                // 为什么没统计下边和右边？ 因为避免重复计算\n            }\n        }\n    }\n\n    cout << sum * 4 - cover * 2 << endl;\n}",
+          "description": "首先计算出所有陆地的数量以及相邻陆地的数量，然后根据公式计算岛屿的周长。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    static int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};\n    static int count;\n    public static void helper(int[][] grid, int x, int y) {\n        for (int[] dir : dirs) {\n            int nx = x + dir[0];\n            int ny = y + dir[1];\n            if (nx < 0 || nx >= grid.length || ny < 0 || ny >= grid[0].length || grid[nx][ny] == 0) {\n                count++;\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int M = sc.nextInt();\n        int N = sc.nextInt();\n        int[][] grid = new int[M][N];\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                grid[i][j] = sc.nextInt();\n            }\n        }\n        int result = 0;\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                if (grid[i][j] == 1) {\n                    count = 0;\n                    helper(grid, i, j);\n                    result += count;\n                }\n            }\n        }\n        System.out.println(result);\n    }\n}",
+          "description": "使用辅助函数探索每个陆地方块周围的环境，并累加周长。"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    n = int(data[0])\n    m = int(data[1])\n    grid = []\n    index = 2\n    for i in range(n):\n        grid.append([int(data[index + j]) for j in range(m)])\n        index += m\n    sum_land = 0\n    cover = 0\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1:\n                sum_land += 1\n                if i - 1 >= 0 and grid[i - 1][j] == 1:\n                    cover += 1\n                if j - 1 >= 0 and grid[i][j - 1] == 1:\n                    cover += 1\n    result = sum_land * 4 - cover * 2\n    print(result)\nif __name__ == \"__main__\":\n    main()",
+          "description": "通过读取输入构建网格，计算总陆地数及相邻陆地数，从而得出岛屿周长。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int direction[4][2] = {0, 1, 1, 0, -1, 0, 0, -1};\n    int result = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                for (int k = 0; k < 4; k++) {       // 上下左右四个方向\n                    int x = i + direction[k][0];\n                    int y = j + direction[k][1];    // 计算周边坐标x,y\n                    if (x < 0                       // x在边界上\n                            || x >= grid.size()     // x在边界上\n                            || y < 0                // y在边界上\n                            || y >= grid[0].size()  // y在边界上\n                            || grid[x][y] == 0) {   // x,y位置是水域\n                        result++;\n                    }\n                }\n            }\n        }\n    }\n    cout << result << endl;\n}",
+          "description": "通过遍历矩阵中的每个元素，判断其四周是否为边界或水域来计算岛屿的周长。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int sum = 0;    // 陆地数量\n    int cover = 0;  // 相邻数量\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                sum++; // 统计总的陆地数量\n                // 统计上边相邻陆地\n                if(i - 1 >= 0 && grid[i - 1][j] == 1) cover++;\n                // 统计左边相邻陆地\n                if(j - 1 >= 0 && grid[i][j - 1] == 1) cover++;\n                // 为什么没统计下边和右边？ 因为避免重复计算\n            }\n        }\n    }\n\n    cout << sum * 4 - cover * 2 << endl;\n}",
+          "description": "首先统计所有的陆地块数以及相邻的陆地块数，根据公式计算岛屿的周长。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    static int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};\n    static int count;\n    public static void helper(int[][] grid, int x, int y) {\n        for (int[] dir : dirs) {\n            int nx = x + dir[0];\n            int ny = y + dir[1];\n            if (nx < 0 || nx >= grid.length || ny < 0 || ny >= grid[0].length || grid[nx][ny] == 0) {\n                count++;\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int M = sc.nextInt();\n        int N = sc.nextInt();\n        int[][] grid = new int[M][N];\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                grid[i][j] = sc.nextInt();\n            }\n        }\n        int result = 0; \n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                if (grid[i][j] == 1) {\n                    count = 0;\n                    helper(grid, i, j);\n                    result += count;\n                }\n            }\n        }\n        System.out.println(result);\n    }\n}",
+          "description": "使用辅助函数探索每个陆地周围的四个方向，并记录周长，最终合计得到整个岛屿的周长。"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    n = int(data[0])\n    m = int(data[1])\n    grid = []\n    index = 2\n    for i in range(n):\n        grid.append([int(data[index + j]) for j in range(m)])\n        index += m\n    sum_land = 0\n    cover = 0\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1:\n                sum_land += 1\n                if i - 1 >= 0 and grid[i - 1][j] == 1:\n                    cover += 1\n                if j - 1 >= 0 and grid[i][j - 1] == 1:\n                    cover += 1\n    result = sum_land * 4 - cover * 2\n    print(result)\nif __name__ == \"__main__\":\n    main()",
+          "description": "读取输入数据并构建网格，然后统计所有陆地块数及相邻陆地块数，最后根据公式计算出岛屿的周长。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "import java.util.*;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int direction[4][2] = {0, 1, 1, 0, -1, 0, 0, -1};\n    int result = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                for (int k = 0; k < 4; k++) {       // 上下左右四个方向\n                    int x = i + direction[k][0];\n                    int y = j + direction[k][1];    // 计算周边坐标x,y\n                    if (x < 0                       // x在边界上\n                            || x >= grid.size()     // x在边界上\n                            || y < 0                // y在边界上\n                            || y >= grid[0].size()  // y在边界上\n                            || grid[x][y] == 0) {   // x,y位置是水域\n                        result++;\n                    }\n                }\n            }\n        }\n    }\n    cout << result << endl;\n}",
+          "description": "C++版本的岛屿周长计算"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int sum = 0;    // 陆地数量\n    int cover = 0;  // 相邻数量\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                sum++; // 统计总的陆地数量\n                // 统计上边相邻陆地\n                if(i - 1 >= 0 && grid[i - 1][j] == 1) cover++;\n                // 统计左边相邻陆地\n                if(j - 1 >= 0 && grid[i][j - 1] == 1) cover++;\n                // 为什么没统计下边和右边？ 因为避免重复计算\n            }\n        }\n    }\n    cout << sum * 4 - cover * 2 << endl;\n}",
+          "description": "另一种C++方法计算岛屿周长"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    static int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};\n    static int count;\n    public static void helper(int[][] grid, int x, int y) {\n        for (int[] dir : dirs) {\n            int nx = x + dir[0];\n            int ny = y + dir[1];\n            if (nx < 0 || nx >= grid.length || ny < 0 || ny >= grid[0].length || grid[nx][ny] == 0) {\n                count++;\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int M = sc.nextInt();\n        int N = sc.nextInt();\n        int[][] grid = new int[M][N];\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                grid[i][j] = sc.nextInt();\n            }\n        }\n        int result = 0;\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                if (grid[i][j] == 1) {\n                    count = 0;\n                    helper(grid, i, j);\n                    result += count;\n                }\n            }\n        }\n        System.out.println(result);\n    }\n}",
+          "description": "Java版本的岛屿周长计算"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    n = int(data[0])\n    m = int(data[1])\n    grid = []\n    index = 2\n    for i in range(n):\n        grid.append([int(data[index + j]) for j in range(m)])\n        index += m\n    sum_land = 0\n    cover = 0\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1:\n                sum_land += 1\n                if i - 1 >= 0 and grid[i - 1][j] == 1:\n                    cover += 1\n                if j - 1 >= 0 and grid[i][j - 1] == 1:\n                    cover += 1\n    result = sum_land * 4 - cover * 2\n    print(result)\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本的岛屿周长计算"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "def main():",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int direction[4][2] = {0, 1, 1, 0, -1, 0, 0, -1};\n    int result = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                for (int k = 0; k < 4; k++) {       // 上下左右四个方向\n                    int x = i + direction[k][0];\n                    int y = j + direction[k][1];    // 计算周边坐标x,y\n                    if (x < 0                       // x在边界上\n                            || x >= grid.size()     // x在边界上\n                            || y < 0                // y在边界上\n                            || y >= grid[0].size()  // y在边界上\n                            || grid[x][y] == 0) {   // x,y位置是水域\n                        result++;\n                    }\n                }\n            }\n        }\n    }\n    cout << result << endl;\n}",
+          "description": "通过遍历矩阵中的每个元素，计算岛屿的周长。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int sum = 0;    // 陆地数量\n    int cover = 0;  // 相邻数量\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                sum++; // 统计总的陆地数量\n                // 统计上边相邻陆地\n                if(i - 1 >= 0 && grid[i - 1][j] == 1) cover++;\n                // 统计左边相邻陆地\n                if(j - 1 >= 0 && grid[i][j - 1] == 1) cover++;\n            }\n        }\n    }\n    cout << sum * 4 - cover * 2 << endl;\n}",
+          "description": "通过计算总陆地数量和相邻陆地的数量来间接得到岛屿的周长。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    static int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};\n    static int count;\n    public static void helper(int[][] grid, int x, int y) {\n        for (int[] dir : dirs) {\n            int nx = x + dir[0];\n            int ny = y + dir[1];\n            if (nx < 0 || nx >= grid.length || ny < 0 || ny >= grid[0].length || grid[nx][ny] == 0) {\n                count++;\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int M = sc.nextInt();\n        int N = sc.nextInt();\n        int[][] grid = new int[M][N];\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                grid[i][j] = sc.nextInt();\n            }\n        }\n        int result = 0;\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                if (grid[i][j] == 1) {\n                    count = 0;\n                    helper(grid, i, j);\n                    result += count;\n                }\n            }\n        }\n        System.out.println(result);\n    }\n}",
+          "description": "使用辅助函数检查每个陆地块四周的情况，并累加周长。"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    n = int(data[0])\n    m = int(data[1])\n    grid = []\n    index = 2\n    for i in range(n):\n        grid.append([int(data[index + j]) for j in range(m)])\n        index += m\n    sum_land = 0\n    cover = 0\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1:\n                sum_land += 1\n                if i - 1 >= 0 and grid[i - 1][j] == 1:\n                    cover += 1\n                if j - 1 >= 0 and grid[i][j - 1] == 1:\n                    cover += 1\n    result = sum_land * 4 - cover * 2\n    print(result)\nif __name__ == \"__main__\":\n    main()",
+          "description": "通过统计所有陆地单元格及其与相邻陆地的关系来计算岛屿的周长。"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int direction[4][2] = {0, 1, 1, 0, -1, 0, 0, -1};\n    int result = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                for (int k = 0; k < 4; k++) {       // 上下左右四个方向\n                    int x = i + direction[k][0];\n                    int y = j + direction[k][1];    // 计算周边坐标x,y\n                    if (x < 0                       // x在边界上\n                            || x >= grid.size()     // x在边界上\n                            || y < 0                // y在边界上\n                            || y >= grid[0].size()  // y在边界上\n                            || grid[x][y] == 0) {   // x,y位置是水域\n                        result++;\n                    }\n                }\n            }\n        }\n    }\n    cout << result << endl;\n}",
+      "description": "C++代码实现，遍历每一个空格，遇到岛屿则计算其上下左右的空格情况。"
+    },
+    {
+      "language": "cpp",
+      "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int sum = 0;    // 陆地数量\n    int cover = 0;  // 相邻数量\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                sum++; // 统计总的陆地数量\n                // 统计上边相邻陆地\n                if(i - 1 >= 0 && grid[i - 1][j] == 1) cover++;\n                // 统计左边相邻陆地\n                if(j - 1 >= 0 && grid[i][j - 1] == 1) cover++;\n                // 为什么没统计下边和右边？ 因为避免重复计算\n            }\n        }\n    }\n\n    cout << sum * 4 - cover * 2 << endl;\n}",
+      "description": "C++代码实现，通过计算总的岛屿数量与相邻岛屿数量来求解岛屿周长。"
+    },
+    {
+      "language": "java",
+      "code": "import java.util.*;\npublic class Main {\n    // 每次遍历到1，探索其周围4个方向，并记录周长，最终合计\n    // 声明全局变量，dirs表示4个方向\n    static int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};\n    // 统计每单个1的周长\n    static int count;\n    \n    // 探索其周围4个方向，并记录周长\n    public static void helper(int[][] grid, int x, int y) {\n        for (int[] dir : dirs) {\n            int nx = x + dir[0];\n            int ny = y + dir[1];\n            \n            // 遇到边界或者水，周长加一\n            if (nx < 0 || nx >= grid.length || ny < 0 || ny >= grid[0].length\n                || grid[nx][ny] == 0) {\n                count++;\n            }\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        \n        // 接收输入\n        int M = sc.nextInt();\n        int N = sc.nextInt();\n\n        int[][] grid = new int[M][N];\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                grid[i][j] = sc.nextInt();\n            }\n        }\n\n        int result = 0; // 总周长\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                if (grid[i][j] == 1) {\n                    count = 0;\n                    helper(grid, i, j);\n                    // 更新总周长\n                    result += count;\n                }\n            }\n        }\n        \n        // 打印结果\n        System.out.println(result);\n    }\n}",
+      "description": "Java代码实现，遍历矩阵中的每个单元格，对于每个岛屿单元格，检查其四周并计算周长。"
+    },
+    {
+      "language": "python",
+      "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    \n    # 读取 n 和 m\n    n = int(data[0])\n    m = int(data[1])\n    \n    # 初始化 grid\n    grid = []\n    index = 2\n    for i in range(n):\n        grid.append([int(data[index + j]) for j in range(m)])\n        index += m\n    \n    sum_land = 0    # 陆地数量\n    cover = 0       # 相邻数量\n\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1:\n                sum_land += 1\n                # 统计上边相邻陆地\n                if i - 1 >= 0 and grid[i - 1][j] == 1:\n                    cover += 1\n                # 统计左边相邻陆地\n                if j - 1 >= 0 and grid[i][j - 1] == 1:\n                    cover += 1\n                # 不统计下边和右边，避免重复计算\n\n    result = sum_land * 4 - cover * 2\n    print(result)\nif __name__ == \"__main__\":\n    main()",
+      "description": "Python代码实现，通过计算总的岛屿数量与相邻岛屿数量来求解岛屿周长。"
+    }
+  ],
+  "common_mistakes": [
+    "忽略边界条件导致数组越界错误。",
+    "未能正确处理相邻陆地共用边的情况，造成周长计算不准确。",
+    "忘记考虑矩阵外部默认为水域这一设定，影响周长计算准确性。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240524115244.png",
+      "description": "这张图片展示了一个5x5的二维数组，其中包含一个由1组成的连通区域，适用于图的遍历算法（如深度优先搜索或广度优先搜索）来识别和分析该连通区域。",
+      "context": "该图片展示了给定示例中岛屿的布局及其周长计算结果，帮助理解如何根据矩阵中的1和0来确定岛屿边界。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240524115933.png",
+      "description": "这张图片展示了一个4x4的二维数组，其中部分元素为1，箭头指示从一个1移动到相邻的0，可能涉及路径搜索或岛屿问题的算法。",
+      "context": "该图片展示了当陆地的相邻位置为水域时，如何确定岛屿的一条边。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240524120105.png",
+      "description": "这张图片展示了一个4x4的二维数组，其中包含一个连通块（由值为1的元素组成），箭头指示了向下遍历的方向，可能涉及深度优先搜索（DFS）或广度优先搜索（BFS）算法来处理连通块问题。",
+      "context": "该图片展示了当陆地的下边空格出界时，即找到了岛屿的一条边界的情况。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240524120855.png",
+      "description": "这张图片展示了一个4x4的二维数组，其中包含一个由1组成的“L”形图案，可用于算法中的模式识别或数据结构中的矩阵操作分析。",
+      "context": "该图展示了两个相邻陆地单元格的情况，用于说明每当有一对相邻的陆地时，总边数需要减少2。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240524115244.png",
+      "description": "GIF展示了如何通过遍历矩阵中的每个单元格来计算岛屿周长的过程，特别标注了当遇到水域或边界时如何增加周长计数。",
+      "context": "GIF动画展示了如何通过检查每个陆地块的四周来计算岛屿周长的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240524115933.png",
+      "description": "GIF展示了如何通过检查每个陆地单元格的四周来计算岛屿周长的过程。",
+      "context": "该GIF动画展示了当陆地的相邻位置为水域时如何确定岛屿的一条边界。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240524120105.png",
+      "description": "GIF展示了通过遍历每个单元格来计算岛屿周长的过程，特别是当遇到陆地边界或水域时如何确定边界的增加。",
+      "context": "该GIF动画展示了当陆地的下边空格出界时，即找到了一条边界的情况。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240524120855.png",
+      "description": "GIF展示了计算岛屿边缘数量的过程，通过减少相邻陆地块导致的重复边数来优化总边数的计算。",
+      "context": "GIF动画展示了当两个陆地相邻时，如何通过减少公共边来调整总边数的计算过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\图论\\岛屿的周长.txt",
+  "extracted_at": "2025-07-21T15:39:03.413212",
+  "raw_content": "岛屿的周长\n卡码网题目链接（ACM模式）(https://kamacoder.com/problempage.php?pid=1178)\n\n题目描述\n\n给定一个由 1（陆地）和 0（水）组成的矩阵，岛屿是被水包围，并且通过水平方向或垂直方向上相邻的陆地连接而成的。\n\n你可以假设矩阵外均被水包围。在矩阵中恰好拥有一个岛屿，假设组成岛屿的陆地边长都为 1，请计算岛屿的周长。岛屿内部没有水域。\n\n输入描述\n\n第一行包含两个整数 N, M，表示矩阵的行数和列数。之后 N 行，每行包含 M 个数字，数字为 1 或者 0，表示岛屿的单元格。\n\n输出描述\n\n输出一个整数，表示岛屿的周长。\n\n输入示例\n\n5 5\n0 0 0 0 0\n0 1 0 1 0\n0 1 1 1 0\n0 1 1 1 0\n0 0 0 0 0\n输出示例\n\n14\n\n提示信息\n\nhttps://file1.kamacoder.com/i/algo/20240524115244.png\n\n岛屿的周长为 14。\n\n数据范围：\n\n1 <= M, N <= 50。\n\n#思路\n\n\n岛屿问题最容易让人想到BFS或者DFS，但本题确实还用不上。\n\n为了避免大家惯性思维，所以给大家安排了这道题目。\n\n#解法一：\n遍历每一个空格，遇到岛屿则计算其上下左右的空格情况。\n\n如果该陆地上下左右的空格是有水域，则说明是一条边，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240524115933.png\n\n陆地的右边空格是水域，则说明找到一条边。\n\n如果该陆地上下左右的空格出界了，则说明是一条边，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240524120105.png\n\n该陆地的下边空格出界了，则说明找到一条边。\n\nC++代码如下：（详细注释）\n\n#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int direction[4][2] = {0, 1, 1, 0, -1, 0, 0, -1};\n    int result = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                for (int k = 0; k < 4; k++) {       // 上下左右四个方向\n                    int x = i + direction[k][0];\n                    int y = j + direction[k][1];    // 计算周边坐标x,y\n                    if (x < 0                       // x在边界上\n                            || x >= grid.size()     // x在边界上\n                            || y < 0                // y在边界上\n                            || y >= grid[0].size()  // y在边界上\n                            || grid[x][y] == 0) {   // x,y位置是水域\n                        result++;\n                    }\n                }\n            }\n        }\n    }\n    cout << result << endl;\n\n}\n#解法二：\n计算出总的岛屿数量，总的变数为：岛屿数量 * 4\n\n因为有一对相邻两个陆地，边的总数就要减2，如图红线部分，有两个陆地相邻，总边数就要减2\n\nhttps://file1.kamacoder.com/i/algo/20240524120855.png\n\n那么只需要在计算出相邻岛屿的数量就可以了，相邻岛屿数量为cover。\n\n结果 result = 岛屿数量 * 4 - cover * 2;\n\nC++代码如下：（详细注释）\n\n#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    int sum = 0;    // 陆地数量\n    int cover = 0;  // 相邻数量\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) {\n                sum++; // 统计总的陆地数量\n                // 统计上边相邻陆地\n                if(i - 1 >= 0 && grid[i - 1][j] == 1) cover++;\n                // 统计左边相邻陆地\n                if(j - 1 >= 0 && grid[i][j - 1] == 1) cover++;\n                // 为什么没统计下边和右边？ 因为避免重复计算\n            }\n        }\n    }\n\n    cout << sum * 4 - cover * 2 << endl;\n\n}\n#其他语言版本\n#Java\nimport java.util.*;\n\npublic class Main {\n    // 每次遍历到1，探索其周围4个方向，并记录周长，最终合计\n    // 声明全局变量，dirs表示4个方向\n    static int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};\n    // 统计每单个1的周长\n    static int count;\n    \n    // 探索其周围4个方向，并记录周长\n    public static void helper(int[][] grid, int x, int y) {\n        for (int[] dir : dirs) {\n            int nx = x + dir[0];\n            int ny = y + dir[1];\n            \n            // 遇到边界或者水，周长加一\n            if (nx < 0 || nx >= grid.length || ny < 0 || ny >= grid[0].length\n                || grid[nx][ny] == 0) {\n                count++;\n            }\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        \n        // 接收输入\n        int M = sc.nextInt();\n        int N = sc.nextInt();\n\n        int[][] grid = new int[M][N];\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                grid[i][j] = sc.nextInt();\n            }\n        }\n\n        int result = 0; // 总周长\n        for (int i = 0; i < M; i++) {\n            for (int j = 0; j < N; j++) {\n                if (grid[i][j] == 1) {\n                    count = 0;\n                    helper(grid, i, j);\n                    // 更新总周长\n                    result += count;\n                }\n            }\n        }\n        \n        // 打印结果\n        System.out.println(result);\n    }\n}\n#Python\n\ndef main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    \n    # 读取 n 和 m\n    n = int(data[0])\n    m = int(data[1])\n    \n    # 初始化 grid\n    grid = []\n    index = 2\n    for i in range(n):\n        grid.append([int(data[index + j]) for j in range(m)])\n        index += m\n    \n    sum_land = 0    # 陆地数量\n    cover = 0       # 相邻数量\n\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1:\n                sum_land += 1\n                # 统计上边相邻陆地\n                if i - 1 >= 0 and grid[i - 1][j] == 1:\n                    cover += 1\n                # 统计左边相邻陆地\n                if j - 1 >= 0 and grid[i][j - 1] == 1:\n                    cover += 1\n                # 不统计下边和右边，避免重复计算\n    \n    result = sum_land * 4 - cover * 2\n    print(result)\n\nif __name__ == \"__main__\":\n    main()"
+}

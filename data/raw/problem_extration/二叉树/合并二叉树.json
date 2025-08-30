@@ -1,0 +1,629 @@
+{
+  "id": "AP_0aaac690",
+  "title": "合并二叉树",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/merge-two-binary-trees/",
+  "description": "两个二叉树，想象当你将它们中的一个覆盖到另一个上时，两个二叉树的一些节点便会重叠。\n\n你需要将他们合并为一个新的二叉树。合并的规则是如果两个节点重叠，那么将他们的值相加作为节点合并后的新值，否则不为 NULL 的节点将直接作为新二叉树的节点。",
+  "examples": [
+    {
+      "input": "见图",
+      "output": "见图",
+      "explanation": null,
+      "image": "https://file1.kamacoder.com/i/algo/20230310000854.png"
+    }
+  ],
+  "constraints": [],
+  "algorithm_tags": [
+    "二叉树",
+    "递归",
+    "迭代"
+  ],
+  "data_structure_tags": [
+    "队列",
+    "二叉树"
+  ],
+  "technique_tags": [
+    "深度优先搜索(DFS)",
+    "广度优先搜索(BFS)"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用递归或迭代方法遍历两个二叉树，将对应节点的值相加作为新树的节点值。如果一个树中的节点为空，则直接采用另一个树中对应的非空节点。",
+  "key_insights": [
+    {
+      "content": "通过同时操作两棵树的相应节点来合并它们，无论是通过递归还是迭代的方法，都能有效地结合两个树的信息。"
+    },
+    {
+      "content": "合并过程中可以灵活选择遍历方式，但前序遍历逻辑最直观易于理解。"
+    },
+    {
+      "content": "在迭代法中，可以使用队列模拟层序遍历以同时处理两个二叉树的节点，这种方式较为直观且容易实现。"
+    },
+    {
+      "content": "修改输入树结构或者创建新树都是可行的方案，选择取决于具体需求和性能考虑。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "相信这道题目很多同学疑惑的点是如何同时遍历两个二叉树呢？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n    if (t1 == NULL) return t2; // 如果t1为空，合并之后就应该是t2\n    if (t2 == NULL) return t1; // 如果t2为空，合并之后就应该是t1\n    // 修改了t1的数值和结构\n    t1->val += t2->val;                             // 中\n    t1->left = mergeTrees(t1->left, t2->left);      // 左\n    t1->right = mergeTrees(t1->right, t2->right);   // 右\n    return t1;\n}",
+          "description": "前序遍历合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n    if (t1 == NULL) return t2; // 如果t1为空，合并之后就应该是t2\n    if (t2 == NULL) return t1; // 如果t2为空，合并之后就应该是t1\n    // 修改了t1的数值和结构\n    t1->left = mergeTrees(t1->left, t2->left);      // 左\n    t1->val += t2->val;                             // 中\n    t1->right = mergeTrees(t1->right, t2->right);   // 右\n    return t1;\n}",
+          "description": "中序遍历合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n    if (t1 == NULL) return t2; // 如果t1为空，合并之后就应该是t2\n    if (t2 == NULL) return t1; // 如果t2为空，合并之后就应该是t1\n    // 修改了t1的数值和结构\n    t1->left = mergeTrees(t1->left, t2->left);      // 左\n    t1->right = mergeTrees(t1->right, t2->right);   // 右\n    t1->val += t2->val;                             // 中\n    return t1;\n}",
+          "description": "后序遍历合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n    if (t1 == NULL) return t2;\n    if (t2 == NULL) return t1;\n    // 重新定义新的节点，不修改原有两个树的结构\n    TreeNode* root = new TreeNode(0);\n    root->val = t1->val + t2->val;\n    root->left = mergeTrees(t1->left, t2->left);\n    root->right = mergeTrees(t1->right, t2->right);\n    return root;\n}",
+          "description": "不修改输入树的结构，前序遍历合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n    if (t1 == NULL) return t2;\n    if (t2 == NULL) return t1;\n    queue<TreeNode*> que;\n    que.push(t1);\n    que.push(t2);\n    while(!que.empty()) {\n        TreeNode* node1 = que.front(); que.pop();\n        TreeNode* node2 = que.front(); que.pop();\n        // 此时两个节点一定不为空，val相加\n        node1->val += node2->val;\n\n        // 如果两棵树左节点都不为空，加入队列\n        if (node1->left != NULL && node2->left != NULL) {\n            que.push(node1->left);\n            que.push(node2->left);\n        }\n        // 如果两棵树右节点都不为空，加入队列\n        if (node1->right != NULL && node2->right != NULL) {\n            que.push(node1->right);\n            que.push(node2->right);\n        }\n\n        // 当t1的左节点 为空 t2左节点不为空，就赋值过去\n        if (node1->left == NULL && node2->left != NULL) {\n            node1->left = node2->left;\n        }\n        // 当t1的右节点 为空 t2右节点不为空，就赋值过去\n        if (node1->right == NULL && node2->right != NULL) {\n            node1->right = node2->right;\n        }\n    }\n    return t1;\n}",
+          "description": "迭代法合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "void process(TreeNode** t1, TreeNode** t2) {\n    if ((*t1) == NULL && (*t2) == NULL) return;\n    if ((*t1) != NULL && (*t2) != NULL) {\n        (*t1)->val += (*t2)->val;\n    }\n    if ((*t1) == NULL && (*t2) != NULL) {\n        *t1 = *t2;\n        return;\n    }\n    if ((*t1) != NULL && (*t2) == NULL) {\n        return;\n    }\n    process(&((*t1)->left), &((*t2)->left));\n    process(&((*t1)->right), &((*t2)->right));\n}\nTreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n    process(&t1, &t2);\n    return t1;\n}",
+          "description": "使用指针操作合并二叉树"
+        },
+        {
+          "language": "java",
+          "code": "public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {\n    if (root1 == null) return root2;\n    if (root2 == null) return root1;\n\n    root1.val += root2.val;\n    root1.left = mergeTrees(root1.left,root2.left);\n    root1.right = mergeTrees(root1.right,root2.right);\n    return root1;\n}",
+          "description": "Java递归合并二叉树"
+        },
+        {
+          "language": "java",
+          "code": "public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {\n    if (root1 == null) {\n        return root2;\n    }\n    if (root2 == null) {\n        return root1;\n    }\n    Stack<TreeNode> stack = new Stack<>();\n    stack.push(root2);\n    stack.push(root1);\n    while (!stack.isEmpty()) {\n        TreeNode node1 = stack.pop();\n        TreeNode node2 = stack.pop();\n        node1.val += node2.val;\n        if (node2.right != null && node1.right != null) {\n            stack.push(node2.right);\n            stack.push(node1.right);\n        } else {\n            if (node1.right == null) {\n                node1.right = node2.right;\n            }\n        }\n        if (node2.left != null && node1.left != null) {\n            stack.push(node2.left);\n            stack.push(node1.left);\n        } else {\n            if (node1.left == null) {\n                node1.left = node2.left;\n            }\n        }\n    }\n    return root1;\n}",
+          "description": "Java使用栈迭代合并二叉树"
+        },
+        {
+          "language": "java",
+          "code": "public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {\n    if (root1 == null) return root2;\n    if (root2 ==null) return root1;\n    Queue<TreeNode> queue = new LinkedList<>();\n    queue.offer(root1);\n    queue.offer(root2);\n    while (!queue.isEmpty()) {\n        TreeNode node1 = queue.poll();\n        TreeNode node2 = queue.poll();\n        // 此时两个节点一定不为空，val相加\n        node1.val = node1.val + node2.val;\n        // 如果两棵树左节点都不为空，加入队列\n        if (node1.left != null && node2.left != null) {\n            queue.offer(node1.left);\n            queue.offer(node2.left);\n        }\n        // 如果两棵树右节点都不为空，加入队列\n        if (node1.right != null && node2.right != null) {\n            queue.offer(node1.right);\n            queue.offer(node2.right);\n        }\n        // 若node1的左节点为空，直接赋值\n        if (node1.left == null && node2.left != null) {\n            node1.left = node2.left;\n        }\n        // 若node1的右节点为空，直接赋值\n        if (node1.right == null && node2.right != null) {\n            node1.right = node2.right;\n        }\n    }\n    return root1;\n}",
+          "description": "Java使用队列迭代合并二叉树"
+        },
+        {
+          "language": "python",
+          "code": "def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode:\n    if not root1: \n        return root2\n    if not root2: \n        return root1\n    root1.val += root2.val # 中\n    root1.left = self.mergeTrees(root1.left, root2.left) #左\n    root1.right = self.mergeTrees(root1.right, root2.right) # 右\n    return root1",
+          "description": "Python递归-前序-修改root1合并二叉树"
+        },
+        {
+          "language": "python",
+          "code": "def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode:\n    if not root1: \n        return root2\n    if not root2: \n        return root1\n    root = TreeNode() # 创建新节点\n    root.val += root1.val + root2.val# 中\n    root.left = self.mergeTrees(root1.left, root2.left) #左\n    root.right = self.mergeTrees(root1.right, root2.right) # 右\n    return root",
+          "description": "Python递归-前序-新建root合并二叉树"
+        },
+        {
+          "language": "python",
+          "code": "def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode:\n    if not root1: \n        return root2\n    if not root2: \n        return root1\n    queue = deque()\n    queue.append(root1)\n    queue.append(root2)\n    while queue: \n        node1 = queue.popleft()\n        node2 = queue.popleft()\n        # 更新queue\n        # 只有两个节点都有左节点时, 再往queue里面放.\n        if node1.left and node2.left: \n            queue.append(node1.left)\n            queue.append(node2.left)\n        # 只有两个节点都有右节点时, 再往queue里面放.\n        if node1.right and node2.right: \n            queue.append(node1.right)\n            queue.append(node2.right)\n        # 更新当前节点. 同时改变当前节点的左右孩子. \n        node1.val += node2.val\n        if not node1.left and node2.left: \n            node1.left = node2.left\n        if not node1.right and node2.right: \n            node1.right = node2.right\n    return root1",
+          "description": "Python迭代合并二叉树"
+        },
+        {
+          "language": "python",
+          "code": "def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode:\n    if not root1:\n        return root2\n    if not root2:\n        return root1\n    queue = deque()\n    queue.append((root1, root2))\n    while queue:\n        node1, node2 = queue.popleft()\n        node1.val += node2.val\n        if node1.left and node2.left:\n            queue.append((node1.left, node2.left))\n        elif not node1.left:\n            node1.left = node2.left\n        if node1.right and node2.right:\n            queue.append((node1.right, node2.right))\n        elif not node1.right:\n            node1.right = node2.right\n    return root1",
+          "description": "Python迭代+代码优化合并二叉树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "递归",
+      "text": "二叉树使用递归，就要想使用前中后哪种遍历方式？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n    if (t1 == NULL) return t2; // 如果t1为空，合并之后就应该是t2\n    if (t2 == NULL) return t1; // 如果t2为空，合并之后就应该是t1\n    t1->val += t2->val;                             // 中\n    t1->left = mergeTrees(t1->left, t2->left);      // 左\n    t1->right = mergeTrees(t1->right, t2->right);   // 右\n    return t1;\n}",
+          "description": "使用前序遍历方式递归合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n    if (t1 == NULL) return t2; // 如果t1为空，合并之后就应该是t2\n    if (t2 == NULL) return t1; // 如果t2为空，合并之后就应该是t1\n    t1->left = mergeTrees(t1->left, t2->left);      // 左\n    t1->val += t2->val;                             // 中\n    t1->right = mergeTrees(t1->right, t2->right);   // 右\n    return t1;\n}",
+          "description": "使用中序遍历方式递归合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n    if (t1 == NULL) return t2; // 如果t1为空，合并之后就应该是t2\n    if (t2 == NULL) return t1; // 如果t2为空，合并之后就应该是t1\n    t1->left = mergeTrees(t1->left, t2->left);      // 左\n    t1->right = mergeTrees(t1->right, t2->right);   // 右\n    t1->val += t2->val;                             // 中\n    return t1;\n}",
+          "description": "使用后序遍历方式递归合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n    if (t1 == NULL) return t2;\n    if (t2 == NULL) return t1;\n    TreeNode* root = new TreeNode(0);\n    root->val = t1->val + t2->val;\n    root->left = mergeTrees(t1->left, t2->left);\n    root->right = mergeTrees(t1->right, t2->right);\n    return root;\n}",
+          "description": "不修改输入树的结构，创建新节点来合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n    if (t1 == NULL) return t2;\n    if (t2 == NULL) return t1;\n    queue<TreeNode*> que;\n    que.push(t1);\n    que.push(t2);\n    while(!que.empty()) {\n        TreeNode* node1 = que.front(); que.pop();\n        TreeNode* node2 = que.front(); que.pop();\n        node1->val += node2->val;\n        if (node1->left != NULL && node2->left != NULL) {\n            que.push(node1->left);\n            que.push(node2->left);\n        }\n        if (node1->right != NULL && node2->right != NULL) {\n            que.push(node1->right);\n            que.push(node2->right);\n        }\n        if (node1->left == NULL && node2->left != NULL) {\n            node1->left = node2->left;\n        }\n        if (node1->right == NULL && node2->right != NULL) {\n            node1->right = node2->right;\n        }\n    }\n    return t1;\n}",
+          "description": "使用迭代法（队列）合并二叉树"
+        },
+        {
+          "language": "java",
+          "code": "public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {\n    if (root1 == null) return root2;\n    if (root2 == null) return root1;\n    root1.val += root2.val;\n    root1.left = mergeTrees(root1.left,root2.left);\n    root1.right = mergeTrees(root1.right,root2.right);\n    return root1;\n}",
+          "description": "Java版本的递归合并二叉树"
+        },
+        {
+          "language": "java",
+          "code": "public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {\n    if (root1 == null) {\n        return root2;\n    }\n    if (root2 == null) {\n        return root1;\n    }\n    Stack<TreeNode> stack = new Stack<>();\n    stack.push(root2);\n    stack.push(root1);\n    while (!stack.isEmpty()) {\n        TreeNode node1 = stack.pop();\n        TreeNode node2 = stack.pop();\n        node1.val += node2.val;\n        if (node2.right != null && node1.right != null) {\n            stack.push(node2.right);\n            stack.push(node1.right);\n        } else {\n            if (node1.right == null) {\n                node1.right = node2.right;\n            }\n        }\n        if (node2.left != null && node1.left != null) {\n            stack.push(node2.left);\n            stack.push(node1.left);\n        } else {\n            if (node1.left == null) {\n                node1.left = node2.left;\n            }\n        }\n    }\n    return root1;\n}",
+          "description": "Java版本的使用栈迭代合并二叉树"
+        },
+        {
+          "language": "java",
+          "code": "public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {\n    if (root1 == null) return root2;\n    if (root2 ==null) return root1;\n    Queue<TreeNode> queue = new LinkedList<>();\n    queue.offer(root1);\n    queue.offer(root2);\n    while (!queue.isEmpty()) {\n        TreeNode node1 = queue.poll();\n        TreeNode node2 = queue.poll();\n        node1.val = node1.val + node2.val;\n        if (node1.left != null && node2.left != null) {\n            queue.offer(node1.left);\n            queue.offer(node2.left);\n        }\n        if (node1.right != null && node2.right != null) {\n            queue.offer(node1.right);\n            queue.offer(node2.right);\n        }\n        if (node1.left == null && node2.left != null) {\n            node1.left = node2.left;\n        }\n        if (node1.right == null && node2.right != null) {\n            node1.right = node2.right;\n        }\n    }\n    return root1;\n}",
+          "description": "Java版本的使用队列迭代合并二叉树"
+        },
+        {
+          "language": "python",
+          "code": "def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode:\n    if not root1: \n        return root2\n    if not root2: \n        return root1\n    root1.val += root2.val # 中\n    root1.left = self.mergeTrees(root1.left, root2.left) #左\n    root1.right = self.mergeTrees(root1.right, root2.right) # 右\n    return root1",
+          "description": "Python版本的递归（前序）合并二叉树，并修改root1"
+        },
+        {
+          "language": "python",
+          "code": "def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode:\n    if not root1: \n        return root2\n    if not root2: \n        return root1\n    root = TreeNode() # 创建新节点\n    root.val += root1.val + root2.val# 中\n    root.left = self.mergeTrees(root1.left, root2.left) #左\n    root.right = self.mergeTrees(root1.right, root2.right) # 右\n    return root",
+          "description": "Python版本的递归（前序）合并二叉树，并新建root"
+        },
+        {
+          "language": "python",
+          "code": "def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode:\n    if not root1: \n        return root2\n    if not root2: \n        return root1\n    queue = deque()\n    queue.append(root1)\n    queue.append(root2)\n    while queue: \n        node1 = queue.popleft()\n        node2 = queue.popleft()\n        if node1.left and node2.left: \n            queue.append(node1.left)\n            queue.append(node2.left)\n        if node1.right and node2.right: \n            queue.append(node1.right)\n            queue.append(node2.right)\n        node1.val += node2.val\n        if not node1.left and node2.left: \n            node1.left = node2.left\n        if not node1.right and node2.right: \n            node1.right = node2.right\n    return root1",
+          "description": "Python版本的迭代法合并二叉树"
+        },
+        {
+          "language": "python",
+          "code": "def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode:\n    if not root1:\n        return root2\n    if not root2:\n        return root1\n    queue = deque()\n    queue.append((root1, root2))\n    while queue:\n        node1, node2 = queue.popleft()\n        node1.val += node2.val\n        if node1.left and node2.left:\n            queue.append((node1.left, node2.left))\n        elif not node1.left:\n            node1.left = node2.left\n        if node1.right and node2.right:\n            queue.append((node1.right, node2.right))\n        elif not node1.right:\n            node1.right = node2.right\n    return root1",
+          "description": "Python版本的优化迭代法合并二叉树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "迭代法",
+      "text": "使用迭代法，如何同时处理两棵树呢？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {if (t1 == NULL) return t2; if (t2 == NULL) return t1; t1->val += t2->val; t1->left = mergeTrees(t1->left, t2->left); t1->right = mergeTrees(t1->right, t2->right); return t1;}};",
+          "description": "递归法前序遍历合并两棵树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {if (t1 == NULL) return t2; if (t2 == NULL) return t1; t1->left = mergeTrees(t1->left, t2->left); t1->val += t2->val; t1->right = mergeTrees(t1->right, t2->right); return t1;}};",
+          "description": "递归法中序遍历合并两棵树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {if (t1 == NULL) return t2; if (t2 == NULL) return t1; t1->left = mergeTrees(t1->left, t2->left); t1->right = mergeTrees(t1->right, t2->right); t1->val += t2->val; return t1;}};",
+          "description": "递归法后序遍历合并两棵树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {if (t1 == NULL) return t2; if (t2 == NULL) return t1; TreeNode* root = new TreeNode(0); root->val = t1->val + t2->val; root->left = mergeTrees(t1->left, t2->left); root->right = mergeTrees(t1->right, t2->right); return root;}};",
+          "description": "不修改输入树的结构，使用新的节点进行合并"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {if (t1 == NULL) return t2; if (t2 == NULL) return t1; queue<TreeNode*> que; que.push(t1); que.push(t2); while(!que.empty()) {TreeNode* node1 = que.front(); que.pop(); TreeNode* node2 = que.front(); que.pop(); node1->val += node2->val; if (node1->left != NULL && node2->left != NULL) {que.push(node1->left); que.push(node2->left);} if (node1->right != NULL && node2->right != NULL) {que.push(node1->right); que.push(node2->right);} if (node1->left == NULL && node2->left != NULL) {node1->left = node2->left;} if (node1->right == NULL && node2->right != NULL) {node1->right = node2->right;}} return t1;}};",
+          "description": "迭代法使用队列模拟层序遍历来合并两棵树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {if (root1 == null) return root2; if (root2 == null) return root1; root1.val += root2.val; root1.left = mergeTrees(root1.left,root2.left); root1.right = mergeTrees(root1.right,root2.right); return root1;}}",
+          "description": "Java版本递归法合并两棵树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {if (root1 == null) {return root2;} if (root2 == null) {return root1;} Stack<TreeNode> stack = new Stack<>(); stack.push(root2); stack.push(root1); while (!stack.isEmpty()) {TreeNode node1 = stack.pop(); TreeNode node2 = stack.pop(); node1.val += node2.val; if (node2.right != null && node1.right != null) {stack.push(node2.right); stack.push(node1.right);} else {if (node1.right == null) {node1.right = node2.right;}} if (node2.left != null && node1.left != null) {stack.push(node2.left); stack.push(node1.left);} else {if (node1.left == null) {node1.left = node2.left;}}} return root1;}}",
+          "description": "Java版本使用栈迭代合并两棵树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {if (root1 == null) return root2; if (root2 ==null) return root1; Queue<TreeNode> queue = new LinkedList<>(); queue.offer(root1); queue.offer(root2); while (!queue.isEmpty()) {TreeNode node1 = queue.poll(); TreeNode node2 = queue.poll(); node1.val = node1.val + node2.val; if (node1.left != null && node2.left != null) {queue.offer(node1.left); queue.offer(node2.left);} if (node1.right != null && node2.right != null) {queue.offer(node1.right); queue.offer(node2.right);} if (node1.left == null && node2.left != null) {node1.left = node2.left;} if (node1.right == null && node2.right != null) {node1.right = node2.right;}} return root1;}}",
+          "description": "Java版本使用队列迭代合并两棵树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode: if not root1: return root2 if not root2: return root1 root1.val += root2.val root1.left = self.mergeTrees(root1.left, root2.left) root1.right = self.mergeTrees(root1.right, root2.right) return root1",
+          "description": "Python版本递归法（前序）合并两棵树，并修改root1"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode: if not root1: return root2 if not root2: return root1 root = TreeNode() root.val = root1.val + root2.val root.left = self.mergeTrees(root1.left, root2.left) root.right = self.mergeTrees(root1.right, root2.right) return root",
+          "description": "Python版本递归法（前序）合并两棵树，并新建一个root"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode: if not root1: return root2 if not root2: return root1 queue = deque() queue.append(root1) queue.append(root2) while queue: node1 = queue.popleft() node2 = queue.popleft() if node1.left and node2.left: queue.append(node1.left) queue.append(node2.left) if node1.right and node2.right: queue.append(node1.right) queue.append(node2.right) node1.val += node2.val if not node1.left and node2.left: node1.left = node2.left if not node1.right and node2.right: node1.right = node2.right return root1",
+          "description": "Python版本迭代法合并两棵树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode: if not root1: return root2 if not root2: return root1 queue = deque() queue.append((root1, root2)) while queue: node1, node2 = queue.popleft() node1.val += node2.val if node1.left and node2.left: queue.append((node1.left, node2.left)) elif not node1.left: node1.left = node2.left if node1.right and node2.right: queue.append((node1.right, node2.right)) elif not node1.right: node1.right = node2.right return root1",
+          "description": "Python版本迭代法合并两棵树，代码优化版"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "拓展",
+      "text": "当然也可以秀一波指针的操作，这是我写的野路子，大家就随便看看就行了，以防带跑偏了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {if (t1 == NULL) return t2; if (t2 == NULL) return t1; t1->val += t2->val; t1->left = mergeTrees(t1->left, t2->left); t1->right = mergeTrees(t1->right, t2->right); return t1;}};",
+          "description": "使用递归前序遍历合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {if (t1 == NULL) return t2; if (t2 == NULL) return t1; t1->left = mergeTrees(t1->left, t2->left); t1->val += t2->val; t1->right = mergeTrees(t1->right, t2->right); return t1;}};",
+          "description": "使用递归中序遍历合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {if (t1 == NULL) return t2; if (t2 == NULL) return t1; t1->left = mergeTrees(t1->left, t2->left); t1->right = mergeTrees(t1->right, t2->right); t1->val += t2->val; return t1;}};",
+          "description": "使用递归后序遍历合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {if (t1 == NULL) return t2; if (t2 == NULL) return t1; TreeNode* root = new TreeNode(0); root->val = t1->val + t2->val; root->left = mergeTrees(t1->left, t2->left); root->right = mergeTrees(t1->right, t2->right); return root;}};",
+          "description": "不修改输入树的结构，重新定义一个新树来合并"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {if (t1 == NULL) return t2; if (t2 == NULL) return t1; queue<TreeNode*> que; que.push(t1); que.push(t2); while(!que.empty()) {TreeNode* node1 = que.front(); que.pop(); TreeNode* node2 = que.front(); que.pop(); node1->val += node2->val; if (node1->left != NULL && node2->left != NULL) {que.push(node1->left); que.push(node2->left);} if (node1->right != NULL && node2->right != NULL) {que.push(node1->right); que.push(node2->right);} if (node1->left == NULL && node2->left != NULL) {node1->left = node2->left;} if (node1->right == NULL && node2->right != NULL) {node1->right = node2->right;}} return t1;}};",
+          "description": "使用队列迭代法合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void process(TreeNode** t1, TreeNode** t2) {if ((*t1) == NULL && (*t2) == NULL) return; if ((*t1) != NULL && (*t2) != NULL) {(*t1)->val += (*t2)->val;} if ((*t1) == NULL && (*t2) != NULL) {*t1 = *t2; return;} if ((*t1) != NULL && (*t2) == NULL) {return;} process(&((*t1)->left), &((*t2)->left)); process(&((*t1)->right), &((*t2)->right));} TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {process(&t1, &t2); return t1;}};",
+          "description": "使用指针操作合并二叉树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {if (root1 == null) return root2; if (root2 == null) return root1; root1.val += root2.val; root1.left = mergeTrees(root1.left,root2.left); root1.right = mergeTrees(root1.right,root2.right); return root1;}}",
+          "description": "Java版本递归合并二叉树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {if (root1 == null) {return root2;} if (root2 == null) {return root1;} Stack<TreeNode> stack = new Stack<>(); stack.push(root2); stack.push(root1); while (!stack.isEmpty()) {TreeNode node1 = stack.pop(); TreeNode node2 = stack.pop(); node1.val += node2.val; if (node2.right != null && node1.right != null) {stack.push(node2.right); stack.push(node1.right);} else {if (node1.right == null) {node1.right = node2.right;}} if (node2.left != null && node1.left != null) {stack.push(node2.left); stack.push(node1.left);} else {if (node1.left == null) {node1.left = node2.left;}}} return root1;}}",
+          "description": "Java版本使用栈迭代合并二叉树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {if (root1 == null) return root2; if (root2 ==null) return root1; Queue<TreeNode> queue = new LinkedList<>(); queue.offer(root1); queue.offer(root2); while (!queue.isEmpty()) {TreeNode node1 = queue.poll(); TreeNode node2 = queue.poll(); node1.val = node1.val + node2.val; if (node1.left != null && node2.left != null) {queue.offer(node1.left); queue.offer(node2.left);} if (node1.right != null && node2.right != null) {queue.offer(node1.right); queue.offer(node2.right);} if (node1.left == null && node2.left != null) {node1.left = node2.left;} if (node1.right == null && node2.right != null) {node1.right = node2.right;}} return root1;}}",
+          "description": "Java版本使用队列迭代合并二叉树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode: if not root1: return root2 if not root2: return root1 root1.val += root2.val root1.left = self.mergeTrees(root1.left, root2.left) root1.right = self.mergeTrees(root1.right, root2.right) return root1",
+          "description": "Python版本递归 - 前序 - 修改root1合并二叉树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode: if not root1: return root2 if not root2: return root1 root = TreeNode() root.val = root1.val + root2.val root.left = self.mergeTrees(root1.left, root2.left) root.right = self.mergeTrees(root1.right, root2.right) return root",
+          "description": "Python版本递归 - 前序 - 新建root合并二叉树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode: if not root1: return root2 if not root2: return root1 queue = deque() queue.append(root1) queue.append(root2) while queue: node1 = queue.popleft() node2 = queue.popleft() if node1.left and node2.left: queue.append(node1.left) queue.append(node2.left) if node1.right and node2.right: queue.append(node1.right) queue.append(node2.right) node1.val += node2.val if not node1.left and node2.left: node1.left = node2.left if not node1.right and node2.right: node1.right = node2.right return root1",
+          "description": "Python版本迭代合并二叉树"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\nclass Solution: def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode: if not root1: return root2 if not root2: return root1 queue = deque() queue.append((root1, root2)) while queue: node1, node2 = queue.popleft() node1.val += node2.val if node1.left and node2.left: queue.append((node1.left, node2.left)) elif not node1.left: node1.left = node2.left if node1.right and node2.right: queue.append((node1.right, node2.right)) elif not node1.right: node1.right = node2.right return root1",
+          "description": "Python版本迭代 + 代码优化合并二叉树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "合并二叉树，也是二叉树操作的经典题目，如果没有接触过的话，其实并不简单，因为我们习惯了操作一个二叉树，一起操作两个二叉树，还会有点懵懵的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) { if (t1 == NULL) return t2; if (t2 == NULL) return t1; t1->val += t2->val; t1->left = mergeTrees(t1->left, t2->left); t1->right = mergeTrees(t1->right, t2->right); return t1; }};",
+          "description": "C++实现的递归前序遍历合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) { if (t1 == NULL) return t2; if (t2 == NULL) return t1; t1->left = mergeTrees(t1->left, t2->left); t1->val += t2->val; t1->right = mergeTrees(t1->right, t2->right); return t1; }};",
+          "description": "C++实现的递归中序遍历合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) { if (t1 == NULL) return t2; if (t2 == NULL) return t1; t1->left = mergeTrees(t1->left, t2->left); t1->right = mergeTrees(t1->right, t2->right); t1->val += t2->val; return t1; }};",
+          "description": "C++实现的递归后序遍历合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) { if (t1 == NULL) return t2; if (t2 == NULL) return t1; TreeNode* root = new TreeNode(0); root->val = t1->val + t2->val; root->left = mergeTrees(t1->left, t2->left); root->right = mergeTrees(t1->right, t2->right); return root; }};",
+          "description": "C++实现的不修改输入树结构的递归前序遍历合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) { if (t1 == NULL) return t2; if (t2 == NULL) return t1; queue<TreeNode*> que; que.push(t1); que.push(t2); while(!que.empty()) { TreeNode* node1 = que.front(); que.pop(); TreeNode* node2 = que.front(); que.pop(); node1->val += node2->val; if (node1->left != NULL && node2->left != NULL) { que.push(node1->left); que.push(node2->left); } if (node1->right != NULL && node2->right != NULL) { que.push(node1->right); que.push(node2->right); } if (node1->left == NULL && node2->left != NULL) { node1->left = node2->left; } if (node1->right == NULL && node2->right != NULL) { node1->right = node2->right; }} return t1; }};",
+          "description": "C++实现的使用队列迭代法合并二叉树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode mergeTrees(TreeNode root1, TreeNode root2) { if (root1 == null) return root2; if (root2 == null) return root1; root1.val += root2.val; root1.left = mergeTrees(root1.left, root2.left); root1.right = mergeTrees(root1.right, root2.right); return root1; }};",
+          "description": "Java实现的递归前序遍历合并二叉树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode mergeTrees(TreeNode root1, TreeNode root2) { if (root1 == null) { return root2; } if (root2 == null) { return root1; } Stack<TreeNode> stack = new Stack<>(); stack.push(root1); stack.push(root2); while (!stack.isEmpty()) { TreeNode node1 = stack.pop(); TreeNode node2 = stack.pop(); node1.val += node2.val; if (node2.right != null && node1.right != null) { stack.push(node1.right); stack.push(node2.right); } else { if (node1.right == null) { node1.right = node2.right; } } if (node2.left != null && node1.left != null) { stack.push(node1.left); stack.push(node2.left); } else { if (node1.left == null) { node1.left = node2.left; } } } return root1; }};",
+          "description": "Java实现的使用栈迭代法合并二叉树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode mergeTrees(TreeNode root1, TreeNode root2) { if (root1 == null) return root2; if (root2 ==null) return root1; Queue<TreeNode> queue = new LinkedList<>(); queue.offer(root1); queue.offer(root2); while (!queue.isEmpty()) { TreeNode node1 = queue.poll(); TreeNode node2 = queue.poll(); node1.val = node1.val + node2.val; if (node1.left != null && node2.left != null) { queue.offer(node1.left); queue.offer(node2.left); } if (node1.right != null && node2.right != null) { queue.offer(node1.right); queue.offer(node2.right); } if (node1.left == null && node2.left != null) { node1.left = node2.left; } if (node1.right == null && node2.right != null) { node1.right = node2.right; } } return root1; }};",
+          "description": "Java实现的使用队列迭代法合并二叉树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode: if not root1: return root2 if not root2: return root1 root1.val += root2.val root1.left = self.mergeTrees(root1.left, root2.left) root1.right = self.mergeTrees(root1.right, root2.right) return root1",
+          "description": "Python实现的递归前序遍历合并二叉树并修改root1"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode: if not root1: return root2 if not root2: return root1 root = TreeNode() root.val = root1.val + root2.val root.left = self.mergeTrees(root1.left, root2.left) root.right = self.mergeTrees(root1.right, root2.right) return root",
+          "description": "Python实现的递归前序遍历创建新节点合并二叉树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode: if not root1: return root2 if not root2: return root1 queue = deque() queue.append(root1) queue.append(root2) while queue: node1 = queue.popleft() node2 = queue.popleft() if node1.left and node2.left: queue.append(node1.left) queue.append(node2.left) if node1.right and node2.right: queue.append(node1.right) queue.append(node2.right) node1.val += node2.val if not node1.left and node2.left: node1.left = node2.left if not node1.right and node2.right: node1.right = node2.right return root1",
+          "description": "Python实现的迭代法合并二叉树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode: if not root1: return root2 if not root2: return root1 queue = deque() queue.append((root1, root2)) while queue: node1, node2 = queue.popleft() node1.val += node2.val if node1.left and node2.left: queue.append((node1.left, node2.left)) elif not node1.left: node1.left = node2.left if node1.right and node2.right: queue.append((node1.right, node2.right)) elif not node1.right: node1.right = node2.right return root1",
+          "description": "Python实现的迭代法优化版本合并二叉树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n        if (t1 == NULL) return t2; // 如果t1为空，合并之后就应该是t2\n        if (t2 == NULL) return t1; // 如果t2为空，合并之后就应该是t1\n        // 修改了t1的数值和结构\n        t1->val += t2->val;                             // 中\n        t1->left = mergeTrees(t1->left, t2->left);      // 左\n        t1->right = mergeTrees(t1->right, t2->right);   // 右\n        return t1;\n    }\n};",
+          "description": "前序遍历递归合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n        if (t1 == NULL) return t2; \n        if (t2 == NULL) return t1; \n        queue<TreeNode*> que;\n        que.push(t1);\n        que.push(t2);\n        while(!que.empty()) {\n            TreeNode* node1 = que.front(); que.pop();\n            TreeNode* node2 = que.front(); que.pop();\n            node1->val += node2->val;\n            if (node1->left != NULL && node2->left != NULL) {\n                que.push(node1->left);\n                que.push(node2->left);\n            }\n            if (node1->right != NULL && node2->right != NULL) {\n                que.push(node1->right);\n                que.push(node2->right);\n            }\n            if (node1->left == NULL && node2->left != NULL) {\n                node1->left = node2->left;\n            }\n            if (node1->right == NULL && node2->right != NULL) {\n                node1->right = node2->right;\n            }\n        }\n        return t1;\n    }\n};",
+          "description": "迭代法使用队列合并二叉树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {\n        if (root1 == null) return root2;\n        if (root2 == null) return root1;\n        root1.val += root2.val;\n        root1.left = mergeTrees(root1.left,root2.left);\n        root1.right = mergeTrees(root1.right,root2.right);\n        return root1;\n    }\n}",
+          "description": "Java版本递归合并二叉树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {\n        if (root1 == null) return root2;\n        if (root2 ==null) return root1;\n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root1);\n        queue.offer(root2);\n        while (!queue.isEmpty()) {\n            TreeNode node1 = queue.poll();\n            TreeNode node2 = queue.poll();\n            node1.val = node1.val + node2.val;\n            if (node1.left != null && node2.left != null) {\n                queue.offer(node1.left);\n                queue.offer(node2.left);\n            }\n            if (node1.right != null && node2.right != null) {\n                queue.offer(node1.right);\n                queue.offer(node2.right);\n            }\n            if (node1.left == null && node2.left != null) {\n                node1.left = node2.left;\n            }\n            if (node1.right == null && node2.right != null) {\n                node1.right = node2.right;\n            }\n        }\n        return root1;\n    }\n}",
+          "description": "Java版本使用队列迭代合并二叉树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode:\n        if not root1: \n            return root2\n        if not root2: \n            return root1\n        root1.val += root2.val # 中\n        root1.left = self.mergeTrees(root1.left, root2.left) #左\n        root1.right = self.mergeTrees(root1.right, root2.right) # 右\n        return root1",
+          "description": "Python版本递归合并二叉树（前序遍历）"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\nclass Solution:\n    def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode:\n        if not root1:\n            return root2\n        if not root2:\n            return root1\n        queue = deque()\n        queue.append((root1, root2))\n        while queue:\n            node1, node2 = queue.popleft()\n            node1.val += node2.val\n            if node1.left and node2.left:\n                queue.append((node1.left, node2.left))\n            elif not node1.left:\n                node1.left = node2.left\n            if node1.right and node2.right:\n                queue.append((node1.right, node2.right))\n            elif not node1.right:\n                node1.right = node2.right\n        return root1",
+          "description": "Python版本迭代优化合并二叉树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {if (t1 == NULL) return t2; if (t2 == NULL) return t1; t1->val += t2->val; t1->left = mergeTrees(t1->left, t2->left); t1->right = mergeTrees(t1->right, t2->right); return t1;}};",
+          "description": "递归前序遍历合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {if (t1 == NULL) return t2; if (t2 == NULL) return t1; t1->left = mergeTrees(t1->left, t2->left); t1->val += t2->val; t1->right = mergeTrees(t1->right, t2->right); return t1;}};",
+          "description": "递归中序遍历合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {if (t1 == NULL) return t2; if (t2 == NULL) return t1; t1->left = mergeTrees(t1->left, t2->left); t1->right = mergeTrees(t1->right, t2->right); t1->val += t2->val; return t1;}};",
+          "description": "递归后序遍历合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {if (t1 == NULL) return t2; if (t2 == NULL) return t1; TreeNode* root = new TreeNode(0); root->val = t1->val + t2->val; root->left = mergeTrees(t1->left, t2->left); root->right = mergeTrees(t1->right, t2->right); return root;}};",
+          "description": "不修改输入树结构的递归前序遍历合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {if (t1 == NULL) return t2; if (t2 == NULL) return t1; queue<TreeNode*> que; que.push(t1); que.push(t2); while(!que.empty()) {TreeNode* node1 = que.front(); que.pop(); TreeNode* node2 = que.front(); que.pop(); node1->val += node2->val; if (node1->left != NULL && node2->left != NULL) {que.push(node1->left); que.push(node2->left);} if (node1->right != NULL && node2->right != NULL) {que.push(node1->right); que.push(node2->right);} if (node1->left == NULL && node2->left != NULL) {node1->left = node2->left;} if (node1->right == NULL && node2->right != NULL) {node1->right = node2->right;}}} return t1;}};",
+          "description": "迭代法合并二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void process(TreeNode** t1, TreeNode** t2) {if ((*t1) == NULL && (*t2) == NULL) return; if ((*t1) != NULL && (*t2) != NULL) {(*t1)->val += (*t2)->val;} if ((*t1) == NULL && (*t2) != NULL) {*t1 = *t2; return;} if ((*t1) != NULL && (*t2) == NULL) {return;} process(&((*t1)->left), &((*t2)->left)); process(&((*t1)->right), &((*t2)->right));} TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {process(&t1, &t2); return t1;}};",
+          "description": "指针操作方法合并二叉树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {if (root1 == null) return root2; if (root2 == null) return root1; root1.val += root2.val; root1.left = mergeTrees(root1.left, root2.left); root1.right = mergeTrees(root1.right, root2.right); return root1;}}",
+          "description": "Java递归前序遍历合并二叉树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {if (root1 == null) {return root2;} if (root2 == null) {return root1;} Stack<TreeNode> stack = new Stack<>(); stack.push(root2); stack.push(root1); while (!stack.isEmpty()) {TreeNode node1 = stack.pop(); TreeNode node2 = stack.pop(); node1.val += node2.val; if (node2.right != null && node1.right != null) {stack.push(node2.right); stack.push(node1.right);} else {if (node1.right == null) {node1.right = node2.right;}} if (node2.left != null && node1.left != null) {stack.push(node2.left); stack.push(node1.left);} else {if (node1.left == null) {node1.left = node2.left;}}} return root1;}}",
+          "description": "Java使用栈迭代合并二叉树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {if (root1 == null) return root2; if (root2 ==null) return root1; Queue<TreeNode> queue = new LinkedList<>(); queue.offer(root1); queue.offer(root2); while (!queue.isEmpty()) {TreeNode node1 = queue.poll(); TreeNode node2 = queue.poll(); node1.val = node1.val + node2.val; if (node1.left != null && node2.left != null) {queue.offer(node1.left); queue.offer(node2.left);} if (node1.right != null && node2.right != null) {queue.offer(node1.right); queue.offer(node2.right);} if (node1.left == null && node2.left != null) {node1.left = node2.left;} if (node1.right == null && node2.right != null) {node1.right = node2.right;}} return root1;}}",
+          "description": "Java使用队列迭代合并二叉树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode: if not root1: return root2 if not root2: return root1 root1.val += root2.val root1.left = self.mergeTrees(root1.left, root2.left) root1.right = self.mergeTrees(root1.right, root2.right) return root1",
+          "description": "Python递归前序遍历合并二叉树（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode: if not root1: return root2 if not root2: return root1 root = TreeNode() root.val += root1.val + root2.val root.left = self.mergeTrees(root1.left, root2.left) root.right = self.mergeTrees(root1.right, root2.right) return root",
+          "description": "Python递归前序遍历合并二叉树并新建节点（版本二）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode: if not root1: return root2 if not root2: return root1 queue = deque() queue.append(root1) queue.append(root2) while queue: node1 = queue.popleft() node2 = queue.popleft() if node1.left and node2.left: queue.append(node1.left) queue.append(node2.left) if node1.right and node2.right: queue.append(node1.right) queue.append(node2.right) node1.val += node2.val if not node1.left and node2.left: node1.left = node2.left if not node1.right and node2.right: node1.right = node2.right return root1",
+          "description": "Python迭代合并二叉树（版本三）"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque class Solution: def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode: if not root1: return root2 if not root2: return root1 queue = deque() queue.append((root1, root2)) while queue: node1, node2 = queue.popleft() node1.val += node2.val if node1.left and node2.left: queue.append((node1.left, node2.left)) elif not node1.left: node1.left = node2.left if node1.right and node2.right: queue.append((node1.right, node2.right)) elif not node1.right: node1.right = node2.right return root1",
+          "description": "Python迭代合并二叉树代码优化（版本四）"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "(版本一) 递归 - 前序 - 修改root1",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {if (t1 == NULL) return t2; if (t2 == NULL) return t1; t1->val += t2->val; t1->left = mergeTrees(t1->left, t2->left); t1->right = mergeTrees(t1->right, t2->right); return t1;}};",
+          "description": "递归前序遍历合并二叉树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {if (root1 == null) return root2;if (root2 == null) return root1;root1.val += root2.val;root1.left = mergeTrees(root1.left,root2.left);root1.right = mergeTrees(root1.right,root2.right);return root1;}}",
+          "description": "递归前序遍历合并二叉树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode: if not root1: return root2 if not root2: return root1 root1.val += root2.val root1.left = self.mergeTrees(root1.left, root2.left) root1.right = self.mergeTrees(root1.right, root2.right) return root1",
+          "description": "递归前序遍历合并二叉树"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n    if (t1 == NULL) return t2; // 如果t1为空，合并之后就应该是t2\n    if (t2 == NULL) return t1; // 如果t2为空，合并之后就应该是t1\n    t1->val += t2->val;                             // 中\n    t1->left = mergeTrees(t1->left, t2->left);      // 左\n    t1->right = mergeTrees(t1->right, t2->right);   // 右\n    return t1;\n}",
+      "description": "递归前序遍历合并二叉树"
+    },
+    {
+      "language": "cpp",
+      "code": "TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n    if (t1 == NULL) return t2; // 如果t1为空，合并之后就应该是t2\n    if (t2 == NULL) return t1; // 如果t2为空，合并之后就应该是t1\n    t1->left = mergeTrees(t1->left, t2->left);      // 左\n    t1->val += t2->val;                             // 中\n    t1->right = mergeTrees(t1->right, t2->right);   // 右\n    return t1;\n}",
+      "description": "递归中序遍历合并二叉树"
+    },
+    {
+      "language": "cpp",
+      "code": "TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n    if (t1 == NULL) return t2; // 如果t1为空，合并之后就应该是t2\n    if (t2 == NULL) return t1; // 如果t2为空，合并之后就应该是t1\n    t1->left = mergeTrees(t1->left, t2->left);      // 左\n    t1->right = mergeTrees(t1->right, t2->right);   // 右\n    t1->val += t2->val;                             // 中\n    return t1;\n}",
+      "description": "递归后序遍历合并二叉树"
+    },
+    {
+      "language": "cpp",
+      "code": "TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n    if (t1 == NULL) return t2;\n    if (t2 == NULL) return t1;\n    TreeNode* root = new TreeNode(0);\n    root->val = t1->val + t2->val;\n    root->left = mergeTrees(t1->left, t2->left);\n    root->right = mergeTrees(t1->right, t2->right);\n    return root;\n}",
+      "description": "不修改输入树的结构，前序遍历合并二叉树"
+    },
+    {
+      "language": "cpp",
+      "code": "TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n    if (t1 == NULL) return t2;\n    if (t2 == NULL) return t1;\n    queue<TreeNode*> que;\n    que.push(t1);\n    que.push(t2);\n    while(!que.empty()) {\n        TreeNode* node1 = que.front(); que.pop();\n        TreeNode* node2 = que.front(); que.pop();\n        node1->val += node2->val;\n        if (node1->left != NULL && node2->left != NULL) {\n            que.push(node1->left);\n            que.push(node2->left);\n        }\n        if (node1->right != NULL && node2->right != NULL) {\n            que.push(node1->right);\n            que.push(node2->right);\n        }\n        if (node1->left == NULL && node2->left != NULL) {\n            node1->left = node2->left;\n        }\n        if (node1->right == NULL && node2->right != NULL) {\n            node1->right = node2->right;\n        }\n    }\n    return t1;\n}",
+      "description": "迭代法层序遍历合并二叉树"
+    },
+    {
+      "language": "cpp",
+      "code": "void process(TreeNode** t1, TreeNode** t2) {\n    if ((*t1) == NULL && (*t2) == NULL) return;\n    if ((*t1) != NULL && (*t2) != NULL) {\n        (*t1)->val += (*t2)->val;\n    }\n    if ((*t1) == NULL && (*t2) != NULL) {\n        *t1 = *t2;\n        return;\n    }\n    if ((*t1) != NULL && (*t2) == NULL) {\n        return;\n    }\n    process(&((*t1)->left), &((*t2)->left));\n    process(&((*t1)->right), &((*t2)->right));\n}\nTreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n    process(&t1, &t2);\n    return t1;\n}",
+      "description": "使用指针操作合并二叉树"
+    },
+    {
+      "language": "java",
+      "code": "public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {\n    if (root1 == null) return root2;\n    if (root2 == null) return root1;\n    root1.val += root2.val;\n    root1.left = mergeTrees(root1.left,root2.left);\n    root1.right = mergeTrees(root1.right,root2.right);\n    return root1;\n}",
+      "description": "Java递归前序遍历合并二叉树"
+    },
+    {
+      "language": "java",
+      "code": "public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {\n    if (root1 == null) {\n        return root2;\n    }\n    if (root2 == null) {\n        return root1;\n    }\n    Stack<TreeNode> stack = new Stack<>();\n    stack.push(root2);\n    stack.push(root1);\n    while (!stack.isEmpty()) {\n        TreeNode node1 = stack.pop();\n        TreeNode node2 = stack.pop();\n        node1.val += node2.val;\n        if (node2.right != null && node1.right != null) {\n            stack.push(node2.right);\n            stack.push(node1.right);\n        } else {\n            if (node1.right == null) {\n                node1.right = node2.right;\n            }\n        }\n        if (node2.left != null && node1.left != null) {\n            stack.push(node2.left);\n            stack.push(node1.left);\n        } else {\n            if (node1.left == null) {\n                node1.left = node2.left;\n            }\n        }\n    }\n    return root1;\n}",
+      "description": "Java使用栈迭代合并二叉树"
+    },
+    {
+      "language": "java",
+      "code": "public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {\n    if (root1 == null) return root2;\n    if (root2 ==null) return root1;\n    Queue<TreeNode> queue = new LinkedList<>();\n    queue.offer(root1);\n    queue.offer(root2);\n    while (!queue.isEmpty()) {\n        TreeNode node1 = queue.poll();\n        TreeNode node2 = queue.poll();\n        node1.val = node1.val + node2.val;\n        if (node1.left != null && node2.left != null) {\n            queue.offer(node1.left);\n            queue.offer(node2.left);\n        }\n        if (node1.right != null && node2.right != null) {\n            queue.offer(node1.right);\n            queue.offer(node2.right);\n        }\n        if (node1.left == null && node2.left != null) {\n            node1.left = node2.left;\n        }\n        if (node1.right == null && node2.right != null) {\n            node1.right = node2.right;\n        }\n    }\n    return root1;\n}",
+      "description": "Java使用队列迭代合并二叉树"
+    },
+    {
+      "language": "python",
+      "code": "def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode:\n    if not root1: \n        return root2\n    if not root2: \n        return root1\n    root1.val += root2.val # 中\n    root1.left = self.mergeTrees(root1.left, root2.left) #左\n    root1.right = self.mergeTrees(root1.right, root2.right) # 右\n    return root1",
+      "description": "Python递归前序遍历合并二叉树（修改root1）"
+    },
+    {
+      "language": "python",
+      "code": "def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode:\n    if not root1: \n        return root2\n    if not root2: \n        return root1\n    root = TreeNode() # 创建新节点\n    root.val += root1.val + root2.val# 中\n    root.left = self.mergeTrees(root1.left, root2.left) #左\n    root.right = self.mergeTrees(root1.right, root2.right) # 右\n    return root",
+      "description": "Python递归前序遍历合并二叉树（新建root）"
+    },
+    {
+      "language": "python",
+      "code": "def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode:\n    if not root1: \n        return root2\n    if not root2: \n        return root1\n    queue = deque()\n    queue.append(root1)\n    queue.append(root2)\n    while queue: \n        node1 = queue.popleft()\n        node2 = queue.popleft()\n        if node1.left and node2.left: \n            queue.append(node1.left)\n            queue.append(node2.left)\n        if node1.right and node2.right: \n            queue.append(node1.right)\n            queue.append(node2.right)\n        node1.val += node2.val\n        if not node1.left and node2.left: \n            node1.left = node2.left\n        if not node1.right and node2.right: \n            node1.right = node2.right\n    return root1",
+      "description": "Python迭代法合并二叉树"
+    },
+    {
+      "language": "python",
+      "code": "def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode:\n    if not root1:\n        return root2\n    if not root2:\n        return root1\n    queue = deque()\n    queue.append((root1, root2))\n    while queue:\n        node1, node2 = queue.popleft()\n        node1.val += node2.val\n        if node1.left and node2.left:\n            queue.append((node1.left, node2.left))\n        elif not node1.left:\n            node1.left = node2.left\n        if node1.right and node2.right:\n            queue.append((node1.right, node2.right))\n        elif not node1.right:\n            node1.right = node2.right\n    return root1",
+      "description": "Python迭代法优化合并二叉树"
+    }
+  ],
+  "common_mistakes": [
+    "未考虑当其中一个节点为空时的情况，这可能导致错误地创建多余节点或丢失信息。",
+    "在进行递归调用时忘记更新当前节点的左右子节点，导致生成的新树结构不正确。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230310000854.png",
+      "description": "该图片展示了两棵二叉树的合并过程，通过将对应节点的值相加得到新的二叉树结构。",
+      "context": "该图片展示了示例1中两个二叉树合并前后的对比情况，帮助理解题目要求的合并过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/617.%E5%90%88%E5%B9%B6%E4%BA%8C%E5%8F%89%E6%A0%91.gif",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/617.%E5%90%88%E5%B9%B6%E4%BA%8C%E5%8F%89%E6%A0%91.gif",
+      "context": "该动画展示了如何通过前序遍历的方式合并两棵二叉树的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/617.%E5%90%88%E5%B9%B6%E4%BA%8C%E5%8F%89%E6%A0%91.gif",
+      "description": "GIF展示了两棵二叉树合并的过程，通过递归方式从前序遍历的角度逐步将两个节点的值相加或直接采用非空节点来构建新的二叉树。",
+      "context": "该GIF动画展示了如何通过递归方法从前序遍历的角度合并两棵二叉树的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\合并二叉树.txt",
+  "extracted_at": "2025-07-19T20:30:42.781278",
+  "raw_content": "合并二叉树\n力扣题目链接(https://leetcode.cn/problems/merge-two-binary-trees/)\n\n给定两个二叉树，想象当你将它们中的一个覆盖到另一个上时，两个二叉树的一些节点便会重叠。\n\n你需要将他们合并为一个新的二叉树。合并的规则是如果两个节点重叠，那么将他们的值相加作为节点合并后的新值，否则不为 NULL 的节点将直接作为新二叉树的节点。\n\n示例 1:\n\n617.合并二叉树 https://file1.kamacoder.com/i/algo/20230310000854.png\n\n注意: 合并必须从两个树的根节点开始。\n\n\n\n#思路\n相信这道题目很多同学疑惑的点是如何同时遍历两个二叉树呢？\n\n其实和遍历一个树逻辑是一样的，只不过传入两个树的节点，同时操作。\n\n#递归\n二叉树使用递归，就要想使用前中后哪种遍历方式？\n\n本题使用哪种遍历都是可以的！\n\n我们下面以前序遍历为例。\n\n动画如下：\n\n617.合并二叉树 https://file1.kamacoder.com/i/algo/617.%E5%90%88%E5%B9%B6%E4%BA%8C%E5%8F%89%E6%A0%91.gif\n\n那么我们来按照递归三部曲来解决：\n\n确定递归函数的参数和返回值：\n首先要合入两个二叉树，那么参数至少是要传入两个二叉树的根节点，返回值就是合并之后二叉树的根节点。\n\n代码如下：\n\nTreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n确定终止条件：\n因为是传入了两个树，那么就有两个树遍历的节点t1 和 t2，如果t1 == NULL 了，两个树合并就应该是 t2 了（如果t2也为NULL也无所谓，合并之后就是NULL）。\n\n反过来如果t2 == NULL，那么两个数合并就是t1（如果t1也为NULL也无所谓，合并之后就是NULL）。\n\n代码如下：\n\nif (t1 == NULL) return t2; // 如果t1为空，合并之后就应该是t2\nif (t2 == NULL) return t1; // 如果t2为空，合并之后就应该是t1\n确定单层递归的逻辑：\n单层递归的逻辑就比较好写了，这里我们重复利用一下t1这个树，t1就是合并之后树的根节点（就是修改了原来树的结构）。\n\n那么单层递归中，就要把两棵树的元素加到一起。\n\nt1->val += t2->val;\n接下来t1 的左子树是：合并 t1左子树 t2左子树之后的左子树。\n\nt1 的右子树：是 合并 t1右子树 t2右子树之后的右子树。\n\n最终t1就是合并之后的根节点。\n\n代码如下：\n\nt1->left = mergeTrees(t1->left, t2->left);\nt1->right = mergeTrees(t1->right, t2->right);\nreturn t1;\n此时前序遍历，完整代码就写出来了，如下：\n\nclass Solution {\npublic:\n    TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n        if (t1 == NULL) return t2; // 如果t1为空，合并之后就应该是t2\n        if (t2 == NULL) return t1; // 如果t2为空，合并之后就应该是t1\n        // 修改了t1的数值和结构\n        t1->val += t2->val;                             // 中\n        t1->left = mergeTrees(t1->left, t2->left);      // 左\n        t1->right = mergeTrees(t1->right, t2->right);   // 右\n        return t1;\n    }\n};\n那么中序遍历也是可以的，代码如下：\n\nclass Solution {\npublic:\n    TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n        if (t1 == NULL) return t2; // 如果t1为空，合并之后就应该是t2\n        if (t2 == NULL) return t1; // 如果t2为空，合并之后就应该是t1\n        // 修改了t1的数值和结构\n        t1->left = mergeTrees(t1->left, t2->left);      // 左\n        t1->val += t2->val;                             // 中\n        t1->right = mergeTrees(t1->right, t2->right);   // 右\n        return t1;\n    }\n};\n后序遍历依然可以，代码如下：\n\nclass Solution {\npublic:\n    TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n        if (t1 == NULL) return t2; // 如果t1为空，合并之后就应该是t2\n        if (t2 == NULL) return t1; // 如果t2为空，合并之后就应该是t1\n        // 修改了t1的数值和结构\n        t1->left = mergeTrees(t1->left, t2->left);      // 左\n        t1->right = mergeTrees(t1->right, t2->right);   // 右\n        t1->val += t2->val;                             // 中\n        return t1;\n    }\n};\n但是前序遍历是最好理解的，我建议大家用前序遍历来做就OK。\n\n如上的方法修改了t1的结构，当然也可以不修改t1和t2的结构，重新定义一个树。\n\n不修改输入树的结构，前序遍历，代码如下：\n\nclass Solution {\npublic:\n    TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n        if (t1 == NULL) return t2;\n        if (t2 == NULL) return t1;\n        // 重新定义新的节点，不修改原有两个树的结构\n        TreeNode* root = new TreeNode(0);\n        root->val = t1->val + t2->val;\n        root->left = mergeTrees(t1->left, t2->left);\n        root->right = mergeTrees(t1->right, t2->right);\n        return root;\n    }\n};\n#迭代法\n使用迭代法，如何同时处理两棵树呢？\n\n思路我们在二叉树：我对称么？ (https://programmercarl.com/0101.%E5%AF%B9%E7%A7%B0%E4%BA%8C%E5%8F%89%E6%A0%91.html)中的迭代法已经讲过一次了，求二叉树对称的时候就是把两个树的节点同时加入队列进行比较。\n\n本题我们也使用队列，模拟的层序遍历，代码如下：\n\nclass Solution {\npublic:\n    TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n        if (t1 == NULL) return t2;\n        if (t2 == NULL) return t1;\n        queue<TreeNode*> que;\n        que.push(t1);\n        que.push(t2);\n        while(!que.empty()) {\n            TreeNode* node1 = que.front(); que.pop();\n            TreeNode* node2 = que.front(); que.pop();\n            // 此时两个节点一定不为空，val相加\n            node1->val += node2->val;\n\n            // 如果两棵树左节点都不为空，加入队列\n            if (node1->left != NULL && node2->left != NULL) {\n                que.push(node1->left);\n                que.push(node2->left);\n            }\n            // 如果两棵树右节点都不为空，加入队列\n            if (node1->right != NULL && node2->right != NULL) {\n                que.push(node1->right);\n                que.push(node2->right);\n            }\n\n            // 当t1的左节点 为空 t2左节点不为空，就赋值过去\n            if (node1->left == NULL && node2->left != NULL) {\n                node1->left = node2->left;\n            }\n            // 当t1的右节点 为空 t2右节点不为空，就赋值过去\n            if (node1->right == NULL && node2->right != NULL) {\n                node1->right = node2->right;\n            }\n        }\n        return t1;\n    }\n};\n#拓展\n当然也可以秀一波指针的操作，这是我写的野路子，大家就随便看看就行了，以防带跑偏了。\n\n如下代码中，想要更改二叉树的值，应该传入指向指针的指针。\n\n代码如下：（前序遍历）\n\nclass Solution {\npublic:\n    void process(TreeNode** t1, TreeNode** t2) {\n        if ((*t1) == NULL && (*t2) == NULL) return;\n        if ((*t1) != NULL && (*t2) != NULL) {\n            (*t1)->val += (*t2)->val;\n        }\n        if ((*t1) == NULL && (*t2) != NULL) {\n            *t1 = *t2;\n            return;\n        }\n        if ((*t1) != NULL && (*t2) == NULL) {\n            return;\n        }\n        process(&((*t1)->left), &((*t2)->left));\n        process(&((*t1)->right), &((*t2)->right));\n    }\n    TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {\n        process(&t1, &t2);\n        return t1;\n    }\n};\n#总结\n合并二叉树，也是二叉树操作的经典题目，如果没有接触过的话，其实并不简单，因为我们习惯了操作一个二叉树，一起操作两个二叉树，还会有点懵懵的。\n\n这不是我们第一次操作两棵二叉树了，在二叉树：我对称么？ (https://programmercarl.com/0101.%E5%AF%B9%E7%A7%B0%E4%BA%8C%E5%8F%89%E6%A0%91.html)中也一起操作了两棵二叉树。\n\n迭代法中，一般一起操作两个树都是使用队列模拟类似层序遍历，同时处理两个树的节点，这种方式最好理解，如果用模拟递归的思路的话，要复杂一些。\n\n最后拓展中，我给了一个操作指针的野路子，大家随便看看就行了，如果学习C++的话，可以再去研究研究。\n\n#其他语言版本\n#Java\nclass Solution {\n    // 递归\n    public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {\n        if (root1 == null) return root2;\n        if (root2 == null) return root1;\n\n        root1.val += root2.val;\n        root1.left = mergeTrees(root1.left,root2.left);\n        root1.right = mergeTrees(root1.right,root2.right);\n        return root1;\n    }\n}\nclass Solution {\n    // 使用栈迭代\n    public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {\n        if (root1 == null) {\n            return root2;\n        }\n        if (root2 == null) {\n            return root1;\n        }\n        Stack<TreeNode> stack = new Stack<>();\n        stack.push(root2);\n        stack.push(root1);\n        while (!stack.isEmpty()) {\n            TreeNode node1 = stack.pop();\n            TreeNode node2 = stack.pop();\n            node1.val += node2.val;\n            if (node2.right != null && node1.right != null) {\n                stack.push(node2.right);\n                stack.push(node1.right);\n            } else {\n                if (node1.right == null) {\n                    node1.right = node2.right;\n                }\n            }\n            if (node2.left != null && node1.left != null) {\n                stack.push(node2.left);\n                stack.push(node1.left);\n            } else {\n                if (node1.left == null) {\n                    node1.left = node2.left;\n                }\n            }\n        }\n        return root1;\n    }\n}\nclass Solution {\n    // 使用队列迭代\n    public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {\n        if (root1 == null) return root2;\n        if (root2 ==null) return root1;\n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root1);\n        queue.offer(root2);\n        while (!queue.isEmpty()) {\n            TreeNode node1 = queue.poll();\n            TreeNode node2 = queue.poll();\n            // 此时两个节点一定不为空，val相加\n            node1.val = node1.val + node2.val;\n            // 如果两棵树左节点都不为空，加入队列\n            if (node1.left != null && node2.left != null) {\n                queue.offer(node1.left);\n                queue.offer(node2.left);\n            }\n            // 如果两棵树右节点都不为空，加入队列\n            if (node1.right != null && node2.right != null) {\n                queue.offer(node1.right);\n                queue.offer(node2.right);\n            }\n            // 若node1的左节点为空，直接赋值\n            if (node1.left == null && node2.left != null) {\n                node1.left = node2.left;\n            }\n            // 若node1的右节点为空，直接赋值\n            if (node1.right == null && node2.right != null) {\n                node1.right = node2.right;\n            }\n        }\n        return root1;\n    }\n}\n#Python\n(版本一) 递归 - 前序 - 修改root1\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode:\n        # 递归终止条件: \n        #  但凡有一个节点为空, 就立刻返回另外一个. 如果另外一个也为None就直接返回None. \n        if not root1: \n            return root2\n        if not root2: \n            return root1\n        # 上面的递归终止条件保证了代码执行到这里root1, root2都非空. \n        root1.val += root2.val # 中\n        root1.left = self.mergeTrees(root1.left, root2.left) #左\n        root1.right = self.mergeTrees(root1.right, root2.right) # 右\n        \n        return root1 # ⚠️ 注意: 本题我们重复使用了题目给出的节点而不是创建新节点. 节省时间, 空间. \n\n(版本二) 递归 - 前序 - 新建root\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode:\n        # 递归终止条件: \n        #  但凡有一个节点为空, 就立刻返回另外一个. 如果另外一个也为None就直接返回None. \n        if not root1: \n            return root2\n        if not root2: \n            return root1\n        # 上面的递归终止条件保证了代码执行到这里root1, root2都非空. \n        root = TreeNode() # 创建新节点\n        root.val += root1.val + root2.val# 中\n        root.left = self.mergeTrees(root1.left, root2.left) #左\n        root.right = self.mergeTrees(root1.right, root2.right) # 右\n        \n        return root # ⚠️ 注意: 本题我们创建了新节点. \n\n(版本三) 迭代\n\nclass Solution:\n    def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode:\n        if not root1: \n            return root2\n        if not root2: \n            return root1\n\n        queue = deque()\n        queue.append(root1)\n        queue.append(root2)\n\n        while queue: \n            node1 = queue.popleft()\n            node2 = queue.popleft()\n            # 更新queue\n            # 只有两个节点都有左节点时, 再往queue里面放.\n            if node1.left and node2.left: \n                queue.append(node1.left)\n                queue.append(node2.left)\n            # 只有两个节点都有右节点时, 再往queue里面放.\n            if node1.right and node2.right: \n                queue.append(node1.right)\n                queue.append(node2.right)\n\n            # 更新当前节点. 同时改变当前节点的左右孩子. \n            node1.val += node2.val\n            if not node1.left and node2.left: \n                node1.left = node2.left\n            if not node1.right and node2.right: \n                node1.right = node2.right\n\n        return root1\n(版本四) 迭代 + 代码优化\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nfrom collections import deque\n\nclass Solution:\n    def mergeTrees(self, root1: TreeNode, root2: TreeNode) -> TreeNode:\n        if not root1:\n            return root2\n        if not root2:\n            return root1\n\n        queue = deque()\n        queue.append((root1, root2))\n\n        while queue:\n            node1, node2 = queue.popleft()\n            node1.val += node2.val\n\n            if node1.left and node2.left:\n                queue.append((node1.left, node2.left))\n            elif not node1.left:\n                node1.left = node2.left\n\n            if node1.right and node2.right:\n                queue.append((node1.right, node2.right))\n            elif not node1.right:\n                node1.right = node2.right\n\n        return root1"
+}

@@ -1,0 +1,324 @@
+{
+  "id": "AP_31e86a0d",
+  "title": "最佳买卖股票时机含冷冻期",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-with-cooldown/",
+  "description": "一个整数数组，其中第 i 个元素代表了第 i 天的股票价格 。\n\n设计一个算法计算出最大利润。在满足以下约束条件下，你可以尽可能地完成更多的交易（多次买卖一支股票）:\n\n你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。\n卖出股票后，你无法在第二天买入股票 (即冷冻期为 1 天)。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "动态规划"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "状态机",
+    "多状态DP"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过定义四个不同的状态来追踪每一天结束后可能的最大收益，使用动态规划解决含冷冻期的股票买卖问题。每个状态代表了持有或不持有股票的不同情况，并且考虑到了冷冻期对交易策略的影响。",
+  "key_insights": [
+    {
+      "content": "将每天的状态细分为持有股票、保持卖出股票、今天卖出股票以及冷冻期四种情况，以便更清晰地处理冷冻期对交易的影响。"
+    },
+    {
+      "content": "基于前一天的状态确定当前天的状态，每个状态都有明确的转移方程，确保了每一步决策都基于最优解。"
+    },
+    {
+      "content": "冷冻期的存在使得卖出股票后的一天不能进行买入操作，因此需要特别区分今天的卖出与之前的卖出以正确计算最大利润。"
+    },
+    {
+      "content": "初始化时需考虑第一天的各种状态，特别是持有股票状态下的初始值为负的价格，表示购买了股票。"
+    },
+    {
+      "content": "最终结果取最后一天不持有股票（包括处于冷冻期）的最大值作为答案。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "相对于动态规划：122.买卖股票的最佳时机II (https://programmercarl.com/0122.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BAII%EF%BC%88%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%89.html)，本题加上了一个冷冻期",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int n = prices.size();if (n == 0) return 0;vector<vector<int>> dp(n, vector<int>(4, 0));dp[0][0] -= prices[0];for (int i = 1; i < n; i++) {dp[i][0] = max(dp[i - 1][0], max(dp[i - 1][3] - prices[i], dp[i - 1][1] - prices[i]));dp[i][1] = max(dp[i - 1][1], dp[i - 1][3]);dp[i][2] = dp[i - 1][0] + prices[i];dp[i][3] = dp[i - 1][2];}return max(dp[n - 1][3], max(dp[n - 1][1], dp[n - 1][2]));}};",
+          "description": "C++实现，使用动态规划解决股票买卖含冷冻期问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {if (prices == null || prices.length < 2) {return 0;}int[][] dp = new int[prices.length][2];dp[0][0] = 0;dp[0][1] = -prices[0];dp[1][0] = Math.max(dp[0][0], dp[0][1] + prices[1]);dp[1][1] = Math.max(dp[0][1], -prices[1]);for (int i = 2; i < prices.length; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);dp[i][1] = Math.max(dp[i - 1][1], dp[i - 2][0] - prices[i]);}return dp[prices.length - 1][0];}}",
+          "description": "Java实现，通过动态规划处理股票买卖含冷冻期问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int len = prices.length;int dp[][] = new int [2][4];dp[0][0] = -prices[0];for(int i = 1; i < len; i++){dp[i % 2][0] = Math.max(Math.max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]), dp[(i - 1) % 2][3] - prices[i]);dp[i % 2][1] = Math.max(dp[(i - 1) % 2][1], dp[(i - 1) % 2][3]);dp[i % 2][2] = dp[(i - 1) % 2][0] + prices[i];dp[i % 2][3] = dp[(i - 1) % 2][2];}return Math.max(Math.max(dp[(len - 1) % 2][1], dp[(len - 1) % 2][2]), dp[(len - 1) % 2][3]);}}",
+          "description": "Java实现，利用二维数组优化空间复杂度来解决股票买卖含冷冻期问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int[] dp=new int[4];dp[0] = -prices[0];dp[1] = 0;for(int i = 1; i <= prices.length; i++){int temp = dp[0];int temp1 = dp[2];dp[0] = Math.max(dp[0], Math.max(dp[3], dp[1]) - prices[i]);dp[1] = Math.max(dp[1], dp[3]);dp[2] = temp + prices[i];dp[3] = temp1;}return Math.max(dp[3],Math.max(dp[1],dp[2]));}}",
+          "description": "Java实现，采用一维数组优化存储空间解决股票买卖含冷冻期问题"
+        },
+        {
+          "language": "python",
+          "code": "from typing import List\nclass Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        n = len(prices)\n        if n == 0:\n            return 0\n        dp = [[0] * 4 for _ in range(n)]\ndp[0][0] = -prices[0]\nfor i in range(1, n):\n    dp[i][0] = max(dp[i-1][0], max(dp[i-1][3], dp[i-1][1]) - prices[i])\n    dp[i][1] = max(dp[i-1][1], dp[i-1][3])\n    dp[i][2] = dp[i-1][0] + prices[i]\n    dp[i][3] = dp[i-1][2]\nreturn max(dp[n-1][3], dp[n-1][1], dp[n-1][2])",
+          "description": "Python实现，通过动态规划求解股票买卖含冷冻期的最大利润问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        n = len(prices)\n        if n < 2:\n            return 0\ndp = [[0] * 3 for _ in range(n)]\ndp[0][0] = -prices[0]\ndp[0][1] = 0\ndp[0][2] = 0\nfor i in range(1, n):\n    dp[i][0] = max(dp[i-1][0], dp[i-1][2] - prices[i])\n    dp[i][1] = dp[i-1][0] + prices[i]\n    dp[i][2] = max(dp[i-1][2], dp[i-1][1])\nreturn max(dp[-1][1], dp[-1][2])",
+          "description": "Python实现，通过简化状态转换逻辑来解决股票买卖含冷冻期的问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        dp = [-prices[0], 0, 0, 0]\nfor price in prices[1:]:\n    dc = dp.copy()\n    dp[0] = max(dc[0], dc[1] - price, dc[3] - price)\n    dp[1] = max(dc[1], dc[3])\n    dp[2] = dc[0] + price\n    dp[3] = dc[2]\nreturn max(dp)",
+          "description": "Python实现，以更简洁的方式处理股票买卖含冷冻期问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "这次把冷冻期这道题目，讲的很透彻了，细分为四个状态，其状态转移也十分清晰，建议大家都按照四个状态来分析，如果只划分三个状态确实很容易给自己绕进去。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int n = prices.size();if (n == 0) return 0;vector<vector<int>> dp(n, vector<int>(4, 0));dp[0][0] -= prices[0];for (int i = 1; i < n; i++) {dp[i][0] = max(dp[i - 1][0], max(dp[i - 1][3] - prices[i], dp[i - 1][1] - prices[i]));dp[i][1] = max(dp[i - 1][1], dp[i - 1][3]);dp[i][2] = dp[i - 1][0] + prices[i];dp[i][3] = dp[i - 1][2];}return max(dp[n - 1][3], max(dp[n - 1][1], dp[n - 1][2]));}};",
+          "description": "C++实现的冷冻期股票买卖问题解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {if (prices == null || prices.length < 2) {return 0;}int[][] dp = new int[prices.length][2];dp[0][0] = 0;dp[0][1] = -prices[0];dp[1][0] = Math.max(dp[0][0], dp[0][1] + prices[1]);dp[1][1] = Math.max(dp[0][1], -prices[1]);for (int i = 2; i < prices.length; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);dp[i][1] = Math.max(dp[i - 1][1], dp[i - 2][0] - prices[i]);}return dp[prices.length - 1][0];}}",
+          "description": "Java实现的冷冻期股票买卖问题解决方案，使用二维数组进行状态存储。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int len = prices.length;int dp[][] = new int [2][4];dp[0][0] = -prices[0];for(int i = 1; i < len; i++){dp[i % 2][0] = Math.max(Math.max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]), dp[(i - 1) % 2][3] - prices[i]);dp[i % 2][1] = Math.max(dp[(i - 1) % 2][1], dp[(i - 1) % 2][3]);dp[i % 2][2] = dp[(i - 1) % 2][0] + prices[i];dp[i % 2][3] = dp[(i - 1) % 2][2];}return Math.max(Math.max(dp[(len - 1) % 2][1], dp[(len - 1) % 2][2]), dp[(len - 1) % 2][3]);}}",
+          "description": "Java优化空间版本，利用滚动数组减少内存消耗。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int[] dp=new int[4];dp[0] = -prices[0];dp[1] = 0;for(int i = 1; i <= prices.length; i++){int temp = dp[0];int temp1 = dp[2];dp[0] = Math.max(dp[0], Math.max(dp[3], dp[1]) - prices[i]);dp[1] = Math.max(dp[1], dp[3]);dp[2] = temp + prices[i];dp[3] = temp1;}return Math.max(dp[3],Math.max(dp[1],dp[2]));}}",
+          "description": "Java一维数组优化版本，进一步减少了空间复杂度。"
+        },
+        {
+          "language": "python",
+          "code": "from typing import List\nclass Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        n = len(prices)\n        if n == 0:\n            return 0\n        dp = [[0] * 4 for _ in range(n)]\ndp[0][0] = -prices[0]\nfor i in range(1, n):\ndp[i][0] = max(dp[i-1][0], max(dp[i-1][3], dp[i-1][1]) - prices[i])\ndp[i][1] = max(dp[i-1][1], dp[i-1][3])\ndp[i][2] = dp[i-1][0] + prices[i]\ndp[i][3] = dp[i-1][2]\nreturn max(dp[n-1][3], dp[n-1][1], dp[n-1][2])",
+          "description": "Python版本的冷冻期股票买卖问题解法，采用动态规划解决。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution { public int maxProfit(int[] prices) { if (prices == null || prices.length < 2) { return 0; } int[][] dp = new int[prices.length][2]; dp[0][0] = 0; dp[0][1] = -prices[0]; dp[1][0] = Math.max(dp[0][0], dp[0][1] + prices[1]); dp[1][1] = Math.max(dp[0][1], -prices[1]); for (int i = 2; i < prices.length; i++) { dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]); dp[i][1] = Math.max(dp[i - 1][1], dp[i - 2][0] - prices[i]); } return dp[prices.length - 1][0]; } }",
+          "description": "使用二维数组实现动态规划解决股票问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int maxProfit(int[] prices) { int len = prices.length; int dp[][] = new int [2][4]; dp[0][0] = -prices[0]; for(int i = 1; i < len; i++){ dp[i % 2][0] = Math.max(Math.max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]), dp[(i - 1) % 2][3] - prices[i]); dp[i % 2][1] = Math.max(dp[(i - 1) % 2][1], dp[(i - 1) % 2][3]); dp[i % 2][2] = dp[(i - 1) % 2][0] + prices[i]; dp[i % 2][3] = dp[(i - 1) % 2][2]; } return Math.max(Math.max(dp[(len - 1) % 2][1], dp[(len - 1) % 2][2]), dp[(len - 1) % 2][3]); } }",
+          "description": "通过优化空间复杂度至2*4的二维数组来解决问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int maxProfit(int[] prices) { int[] dp=new int[4]; dp[0] = -prices[0]; dp[1] = 0; for(int i = 1; i <= prices.length; i++){ int temp = dp[0]; int temp1 = dp[2]; dp[0] = Math.max(dp[0], Math.max(dp[3], dp[1]) - prices[i]); dp[1] = Math.max(dp[1], dp[3]); dp[2] = temp + prices[i]; dp[3] = temp1; } return Math.max(dp[3],Math.max(dp[1],dp[2])); } }",
+          "description": "利用一维数组进行空间优化，解决股票买卖问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int maxProfit(int[] prices) { int[][] dp = new int[prices.length + 1][2]; dp[1][0] = -prices[0]; for (int i = 2; i <= prices.length; i++) { dp[i][0] = Math.max(dp[i - 1][0], dp[i - 2][1] - prices[i - 1]); dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] + prices[i - 1]); } return dp[prices.length][1]; } }",
+          "description": "采用不同策略定义动态规划状态，解决含冷冻期的最佳买卖股票时机问题"
+        },
+        {
+          "language": "python",
+          "code": "from typing import List class Solution: def maxProfit(self, prices: List[int]) -> int: n = len(prices) if n == 0: return 0 dp = [[0] * 4 for _ in range(n)] dp[0][0] = -prices[0] for i in range(1, n): dp[i][0] = max(dp[i-1][0], max(dp[i-1][3], dp[i-1][1]) - prices[i]) dp[i][1] = max(dp[i-1][1], dp[i-1][3]) dp[i][2] = dp[i-1][0] + prices[i] dp[i][3] = dp[i-1][2] return max(dp[n-1][3], dp[n-1][1], dp[n-1][2])",
+          "description": "基于Python的解决方案，使用四状态动态规划方法处理股票交易问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: n = len(prices) if n < 2: return 0 dp = [[0] * 3 for _ in range(n)] dp[0][0] = -prices[0] dp[0][1] = 0 dp[0][2] = 0 for i in range(1, n): dp[i][0] = max(dp[i-1][0], dp[i-1][2] - prices[i]) dp[i][1] = dp[i-1][0] + prices[i] dp[i][2] = max(dp[i-1][2], dp[i-1][1]) return max(dp[-1][1], dp[-1][2])",
+          "description": "Python版本二，简化了状态数量，仍然有效地解决了题目要求的问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: dp = [-prices[0], 0, 0, 0] for price in prices[1:]: dc = dp.copy() dp[0] = max(dc[0], dc[1] - price, dc[3] - price) dp[1] = max(dc[1], dc[3]) dp[2] = dc[0] + price dp[3] = dc[2] return max(dp)",
+          "description": "Python版本三，使用列表复制以保持前一天的状态信息，简化了代码逻辑"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int n = prices.size(); if (n == 0) return 0; vector<vector<int>> dp(n, vector<int>(4, 0)); dp[0][0] -= prices[0]; for (int i = 1; i < n; i++) {dp[i][0] = max(dp[i - 1][0], max(dp[i - 1][3] - prices[i], dp[i - 1][1] - prices[i])); dp[i][1] = max(dp[i - 1][1], dp[i - 1][3]); dp[i][2] = dp[i - 1][0] + prices[i]; dp[i][3] = dp[i - 1][2];} return max(dp[n - 1][3], max(dp[n - 1][1], dp[n - 1][2]));}};",
+          "description": "C++实现的股票买卖问题，包含冷冻期。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {if (prices == null || prices.length < 2) {return 0;} int[][] dp = new int[prices.length][2]; dp[0][0] = 0; dp[0][1] = -prices[0]; dp[1][0] = Math.max(dp[0][0], dp[0][1] + prices[1]); dp[1][1] = Math.max(dp[0][1], -prices[1]); for (int i = 2; i < prices.length; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]); dp[i][1] = Math.max(dp[i - 1][1], dp[i - 2][0] - prices[i]);} return dp[prices.length - 1][0];}}",
+          "description": "Java实现的股票买卖问题，包含冷冻期。使用二维数组存储状态。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int len = prices.length; int dp[][] = new int [2][4]; dp[0][0] = -prices[0]; for(int i = 1; i < len; i++){dp[i % 2][0] = Math.max(Math.max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]), dp[(i - 1) % 2][3] - prices[i]); dp[i % 2][1] = Math.max(dp[(i - 1) % 2][1], dp[(i - 1) % 2][3]); dp[i % 2][2] = dp[(i - 1) % 2][0] + prices[i]; dp[i % 2][3] = dp[(i - 1) % 2][2];} return Math.max(Math.max(dp[(len - 1) % 2][1], dp[(len - 1) % 2][2]), dp[(len - 1) % 2][3]);}}",
+          "description": "Java实现的股票买卖问题，通过使用2*4数组优化空间复杂度。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int[] dp=new int[4]; dp[0] = -prices[0]; dp[1] = 0; for(int i = 1; i <= prices.length; i++){int temp = dp[0]; int temp1 = dp[2]; dp[0] = Math.max(dp[0], Math.max(dp[3], dp[1]) - prices[i]); dp[1] = Math.max(dp[1], dp[3]); dp[2] = temp + prices[i]; dp[3] = temp1;} return Math.max(dp[3],Math.max(dp[1],dp[2]));}}",
+          "description": "Java实现的一维数组优化版本的股票买卖问题。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int[][] dp = new int[prices.length + 1][2]; dp[1][0] = -prices[0]; for (int i = 2; i <= prices.length; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 2][1] - prices[i - 1]); dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] + prices[i - 1]);} return dp[prices.length][1];}}",
+          "description": "另一种解题思路的Java实现，处理股票买卖问题。"
+        },
+        {
+          "language": "python",
+          "code": "from typing import List class Solution: def maxProfit(self, prices: List[int]) -> int: n = len(prices) if n == 0: return 0 dp = [[0] * 4 for _ in range(n)] dp[0][0] = -prices[0] for i in range(1, n): dp[i][0] = max(dp[i-1][0], max(dp[i-1][3], dp[i-1][1]) - prices[i]) dp[i][1] = max(dp[i-1][1], dp[i-1][3]) dp[i][2] = dp[i-1][0] + prices[i] dp[i][3] = dp[i-1][2] return max(dp[n-1][3], dp[n-1][1], dp[n-1][2])",
+          "description": "Python实现的股票买卖问题，包含冷冻期。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: n = len(prices) if n < 2: return 0 dp = [[0] * 3 for _ in range(n)] dp[0][0] = -prices[0] dp[0][1] = 0 dp[0][2] = 0 for i in range(1, n): dp[i][0] = max(dp[i-1][0], dp[i-1][2] - prices[i]) dp[i][1] = dp[i-1][0] + prices[i] dp[i][2] = max(dp[i-1][2], dp[i-1][1]) return max(dp[-1][1], dp[-1][2])",
+          "description": "另一个Python实现版本的股票买卖问题，通过简化状态来处理冷冻期。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: dp = [-prices[0], 0, 0, 0] for price in prices[1:]: dc = dp.copy() dp[0] = max(dc[0], dc[1] - price, dc[3] - price) dp[1] = max(dc[1], dc[3]) dp[2] = dc[0] + price dp[3] = dc[2] return max(dp)",
+          "description": "Python实现的第三种版本，使用一维列表优化空间复杂度。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "版本一",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int n = prices.size(); if (n == 0) return 0; vector<vector<int>> dp(n, vector<int>(4, 0)); dp[0][0] -= prices[0]; for (int i = 1; i < n; i++) {dp[i][0] = max(dp[i - 1][0], max(dp[i - 1][3] - prices[i], dp[i - 1][1] - prices[i])); dp[i][1] = max(dp[i - 1][1], dp[i - 1][3]); dp[i][2] = dp[i - 1][0] + prices[i]; dp[i][3] = dp[i - 1][2];} return max(dp[n - 1][3], max(dp[n - 1][1], dp[n - 1][2]));}};",
+          "description": "C++版本的解决方案，使用动态规划计算最大利润"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {if (prices == null || prices.length < 2) {return 0;} int[][] dp = new int[prices.length][2]; dp[0][0] = 0; dp[0][1] = -prices[0]; dp[1][0] = Math.max(dp[0][0], dp[0][1] + prices[1]); dp[1][1] = Math.max(dp[0][1], -prices[1]); for (int i = 2; i < prices.length; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]); dp[i][1] = Math.max(dp[i - 1][1], dp[i - 2][0] - prices[i]);} return dp[prices.length - 1][0];}}",
+          "description": "Java版本的解决方案，使用优化后的二维数组实现动态规划"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int len = prices.length; int dp[][] = new int [2][4]; dp[0][0] = -prices[0]; for(int i = 1; i < len; i++){dp[i % 2][0] = Math.max(Math.max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]), dp[(i - 1) % 2][3] - prices[i]); dp[i % 2][1] = Math.max(dp[(i - 1) % 2][1], dp[(i - 1) % 2][3]); dp[i % 2][2] = dp[(i - 1) % 2][0] + prices[i]; dp[i % 2][3] = dp[(i - 1) % 2][2];} return Math.max(Math.max(dp[(len - 1) % 2][1], dp[(len - 1) % 2][2]), dp[(len - 1) % 2][3]);}}",
+          "description": "Java版本的解决方案，使用空间优化后的二维数组进行动态规划"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int[] dp=new int[4]; dp[0] = -prices[0]; dp[1] = 0; for(int i = 1; i <= prices.length; i++){int temp = dp[0]; int temp1 = dp[2]; dp[0] = Math.max(dp[0], Math.max(dp[3], dp[1]) - prices[i]); dp[1] = Math.max(dp[1], dp[3]); dp[2] = temp + prices[i]; dp[3] = temp1;} return Math.max(dp[3],Math.max(dp[1],dp[2]));}}",
+          "description": "Java版本的解决方案，使用一维数组进一步优化空间复杂度"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int[][] dp = new int[prices.length + 1][2]; dp[1][0] = -prices[0]; for (int i = 2; i <= prices.length; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 2][1] - prices[i - 1]); dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] + prices[i - 1]);} return dp[prices.length][1];}}",
+          "description": "另一种解题思路的Java版本解决方案"
+        },
+        {
+          "language": "python",
+          "code": "from typing import List\nclass Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        n = len(prices)\n        if n == 0:\n            return 0\n        dp = [[0] * 4 for _ in range(n)]\n        dp[0][0] = -prices[0]\n        for i in range(1, n):\n            dp[i][0] = max(dp[i-1][0], max(dp[i-1][3], dp[i-1][1]) - prices[i])\n            dp[i][1] = max(dp[i-1][1], dp[i-1][3])\n            dp[i][2] = dp[i-1][0] + prices[i]\n            dp[i][3] = dp[i-1][2]\n        return max(dp[n-1][3], dp[n-1][1], dp[n-1][2])",
+          "description": "Python版本的解决方案，定义了四个状态来处理冷冻期"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        n = len(prices)\n        if n < 2:\n            return 0\n        dp = [[0] * 3 for _ in range(n)]\n        dp[0][0] = -prices[0]\n        dp[0][1] = 0\n        dp[0][2] = 0\n        for i in range(1, n):\n            dp[i][0] = max(dp[i-1][0], dp[i-1][2] - prices[i])\n            dp[i][1] = dp[i-1][0] + prices[i]\n            dp[i][2] = max(dp[i-1][2], dp[i-1][1])\n        return max(dp[-1][1], dp[-1][2])",
+          "description": "简化为三个状态的Python版本解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        dp = [-prices[0], 0, 0, 0]\n        for price in prices[1:]:\n            dc = dp.copy()\n            dp[0] = max(dc[0], dc[1] - price, dc[3] - price)\n            dp[1] = max(dc[1], dc[3])\n            dp[2] = dc[0] + price\n            dp[3] = dc[2]\n        return max(dp)",
+          "description": "使用一维数组存储状态的Python版本解决方案"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        int n = prices.size();\n        if (n == 0) return 0;\n        vector<vector<int>> dp(n, vector<int>(4, 0));\n        dp[0][0] -= prices[0]; // 持股票\n        for (int i = 1; i < n; i++) {\n            dp[i][0] = max(dp[i - 1][0], max(dp[i - 1][3] - prices[i], dp[i - 1][1] - prices[i]));\n            dp[i][1] = max(dp[i - 1][1], dp[i - 1][3]);\n            dp[i][2] = dp[i - 1][0] + prices[i];\n            dp[i][3] = dp[i - 1][2];\n        }\n        return max(dp[n - 1][3], max(dp[n - 1][1], dp[n - 1][2]));\n    }\n};",
+      "description": "C++实现的动态规划解法，计算最大利润。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {\n    public int maxProfit(int[] prices) {\n        if (prices == null || prices.length < 2) {\n            return 0;\n        }\n        int[][] dp = new int[prices.length][2];\n\n        // bad case\n        dp[0][0] = 0;\n        dp[0][1] = -prices[0];\n        dp[1][0] = Math.max(dp[0][0], dp[0][1] + prices[1]);\n        dp[1][1] = Math.max(dp[0][1], -prices[1]);\n\n        for (int i = 2; i < prices.length; i++) {\n            // dp公式\n            dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);\n            dp[i][1] = Math.max(dp[i - 1][1], dp[i - 2][0] - prices[i]);\n        }\n\n        return dp[prices.length - 1][0];\n    }\n}",
+      "description": "Java实现的动态规划解法，通过优化空间复杂度来计算最大利润。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {\n    public int maxProfit(int[] prices) {\n        int len = prices.length;\n        int dp[][] = new int [2][4];\n        dp[0][0] = -prices[0];\n\n        for(int i = 1; i < len; i++){\n            dp[i % 2][0] = Math.max(Math.max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]), dp[(i - 1) % 2][3] - prices[i]);\n            dp[i % 2][1] = Math.max(dp[(i - 1) % 2][1], dp[(i - 1) % 2][3]);\n            dp[i % 2][2] = dp[(i - 1) % 2][0] + prices[i];\n            dp[i % 2][3] = dp[(i - 1) % 2][2];\n        }\n        return Math.max(Math.max(dp[(len - 1) % 2][1], dp[(len - 1) % 2][2]), dp[(len - 1) % 2][3]);\n    }\n}",
+      "description": "另一种Java实现的动态规划解法，利用二维数组进行状态转移以计算最大利润。"
+    },
+    {
+      "language": "python",
+      "code": "from typing import List\n\nclass Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        n = len(prices)\n        if n == 0:\n            return 0\n        dp = [[0] * 4 for _ in range(n)]  # 创建动态规划数组，4个状态分别表示持有股票、不持有股票且处于冷冻期、不持有股票且不处于冷冻期、不持有股票且当天卖出后处于冷冻期\n        dp[0][0] = -prices[0]  # 初始状态：第一天持有股票的最大利润为买入股票的价格\n        for i in range(1, n):\n            dp[i][0] = max(dp[i-1][0], max(dp[i-1][3], dp[i-1][1]) - prices[i])  # 当前持有股票的最大利润等于前一天持有股票的最大利润或者前一天不持有股票且不处于冷冻期的最大利润减去当前股票的价格\n            dp[i][1] = max(dp[i-1][1], dp[i-1][3])  # 当前不持有股票且处于冷冻期的最大利润等于前一天持有股票的最大利润加上当前股票的价格\n            dp[i][2] = dp[i-1][0] + prices[i]  # 当前不持有股票且不处于冷冻期的最大利润等于前一天不持有股票的最大利润或者前一天处于冷冻期的最大利润\n            dp[i][3] = dp[i-1][2]  # 当前不持有股票且当天卖出后处于冷冻期的最大利润等于前一天不持有股票且不处于冷冻期的最大利润\n        return max(dp[n-1][3], dp[n-1][1], dp[n-1][2])  # 返回最后一天不持有股票的最大利润",
+      "description": "Python实现的动态规划解法，定义了四种状态来计算最大利润。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        n = len(prices)\n        if n < 2:\n            return 0\n\n        # 定义三种状态的动态规划数组\n        dp = [[0] * 3 for _ in range(n)]\n        dp[0][0] = -prices[0]  # 持有股票的最大利润\n        dp[0][1] = 0           # 不持有股票，且处于冷冻期的最大利润\n        dp[0][2] = 0           # 不持有股票，不处于冷冻期的最大利润\n\n        for i in range(1, n):\n            # 当前持有股票的最大利润等于前一天持有股票的最大利润或者前一天不持有股票且不处于冷冻期的最大利润减去当前股票的价格\n            dp[i][0] = max(dp[i-1][0], dp[i-1][2] - prices[i])\n            # 当前不持有股票且处于冷冻期的最大利润等于前一天持有股票的最大利润加上当前股票的价格\n            dp[i][1] = dp[i-1][0] + prices[i]\n            # 当前不持有股票且不处于冷冻期的最大利润等于前一天不持有股票的最大利润或者前一天处于冷冻期的最大利润\n            dp[i][2] = max(dp[i-1][2], dp[i-1][1])\n\n        # 返回最后一天不持有股票的最大利润\n        return max(dp[-1][1], dp[-1][2])",
+      "description": "另一个版本的Python实现，使用三种状态的动态规划方法来求解问题。"
+    }
+  ],
+  "common_mistakes": [
+    "忽略冷冻期对于第二天购买股票的影响。",
+    "初始化状态时没有考虑到特定情况下所需的具体数值设置，如状态二应初始化为0以保证后续计算正确。",
+    "在最终结果中忘记考虑冷冻期状态可能是最大收益的情况。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/518d5baaf33f4b2698064f8efb42edbf.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/518d5baaf33f4b2698064f8efb42edbf.png",
+      "context": "该图展示了股票买卖中四种不同状态的转换逻辑，帮助理解在特定条件下如何根据前一天的状态决定当天的操作。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/2021032317451040.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/2021032317451040.png",
+      "context": "该图片展示了以价格序列[1,2,3,0,2]为例时，动态规划数组dp的具体计算过程，帮助理解如何根据给定的股票价格来推导出最大利润。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/518d5baaf33f4b2698064f8efb42edbf.png",
+      "description": "GIF展示了动态规划解决买卖股票问题时，不同状态（持有、卖出、冷冻期）随时间变化的过程。",
+      "context": "GIF动画展示了在买卖股票过程中四个不同状态间的转换逻辑，帮助理解每个状态下可进行的操作及状态转移规则。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/2021032317451040.png",
+      "description": "GIF展示了通过动态规划解决股票买卖问题时，dp数组随每一天价格变化而更新的过程。",
+      "context": "GIF动画展示了以[1,2,3,0,2]为例的价格数组对应的dp数组推导过程，帮助理解如何通过动态规划计算最大利润。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\动态规划\\最佳买卖股票时机含冷冻期.txt",
+  "extracted_at": "2025-07-20T20:24:51.452965",
+  "raw_content": "最佳买卖股票时机含冷冻期\n力扣题目链接(https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-with-cooldown/)\n\n给定一个整数数组，其中第 i 个元素代表了第 i 天的股票价格 。\n\n设计一个算法计算出最大利润。在满足以下约束条件下，你可以尽可能地完成更多的交易（多次买卖一支股票）:\n\n你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。\n卖出股票后，你无法在第二天买入股票 (即冷冻期为 1 天)。\n示例:\n\n输入: [1,2,3,0,2]\n输出: 3\n解释: 对应的交易状态为: [买入, 卖出, 冷冻期, 买入, 卖出]\n\n#思路\n相对于动态规划：122.买卖股票的最佳时机II (https://programmercarl.com/0122.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BAII%EF%BC%88%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%89.html)，本题加上了一个冷冻期\n\n在动态规划：122.买卖股票的最佳时机II (https://programmercarl.com/0122.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BAII%EF%BC%88%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%89.html)中有两个状态，持有股票后的最多现金，和不持有股票的最多现金。\n\n动规五部曲，分析如下：\n\n确定dp数组以及下标的含义\ndp[i][j]，第i天状态为j，所剩的最多现金为dp[i][j]。\n\n其实本题很多同学搞的比较懵，是因为出现冷冻期之后，状态其实是比较复杂度，例如今天买入股票、今天卖出股票、今天是冷冻期，都是不能操作股票的。\n\n具体可以区分出如下四个状态：\n\n状态一：持有股票状态（今天买入股票，或者是之前就买入了股票然后没有操作，一直持有）\n不持有股票状态，这里就有两种卖出股票状态\n状态二：保持卖出股票的状态（两天前就卖出了股票，度过一天冷冻期。或者是前一天就是卖出股票状态，一直没操作）\n状态三：今天卖出股票\n状态四：今天为冷冻期状态，但冷冻期状态不可持续，只有一天！\n\nhttps://file1.kamacoder.com/i/algo/518d5baaf33f4b2698064f8efb42edbf.png\nj的状态为：\n\n0：状态一\n1：状态二\n2：状态三\n3：状态四\n很多题解为什么讲的比较模糊，是因为把这四个状态合并成三个状态了，其实就是把状态二和状态四合并在一起了。\n\n从代码上来看确实可以合并，但从逻辑上分析合并之后就很难理解了，所以我下面的讲解是按照这四个状态来的，把每一个状态分析清楚。\n\n如果大家按照代码随想录顺序来刷的话，会发现 买卖股票最佳时机 1，2，3，4 的题目讲解中\n\n动态规划：121.买卖股票的最佳时机(https://programmercarl.com/0121.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BA.html)\n动态规划：122.买卖股票的最佳时机II(https://programmercarl.com/0122.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BAII%EF%BC%88%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%89.html)\n动态规划：123.买卖股票的最佳时机III(https://programmercarl.com/0123.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BAIII.html)\n动态规划：188.买卖股票的最佳时机IV(https://programmercarl.com/0188.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BAIV.html)\n「今天卖出股票」我是没有单独列出一个状态的归类为「不持有股票的状态」，而本题为什么要单独列出「今天卖出股票」 一个状态呢？\n\n因为本题我们有冷冻期，而冷冻期的前一天，只能是 「今天卖出股票」状态，如果是 「不持有股票状态」那么就很模糊，因为不一定是 卖出股票的操作。\n\n如果没有按照 代码随想录 顺序去刷的录友，可能看这里的讲解 会有点困惑，建议把代码随想录本篇之前股票内容的讲解都看一下，领会一下每天 状态的设置。\n\n注意这里的每一个状态，例如状态一，是持有股票股票状态并不是说今天一定就买入股票，而是说保持买入股票的状态即：可能是前几天买入的，之后一直没操作，所以保持买入股票的状态。\n\n确定递推公式\n达到买入股票状态（状态一）即：dp[i][0]，有两个具体操作：\n\n操作一：前一天就是持有股票状态（状态一），dp[i][0] = dp[i - 1][0]\n操作二：今天买入了，有两种情况\n前一天是冷冻期（状态四），dp[i - 1][3] - prices[i]\n前一天是保持卖出股票的状态（状态二），dp[i - 1][1] - prices[i]\n那么dp[i][0] = max(dp[i - 1][0], dp[i - 1][3] - prices[i], dp[i - 1][1] - prices[i]);\n\n达到保持卖出股票状态（状态二）即：dp[i][1]，有两个具体操作：\n\n操作一：前一天就是状态二\n操作二：前一天是冷冻期（状态四）\ndp[i][1] = max(dp[i - 1][1], dp[i - 1][3]);\n\n达到今天就卖出股票状态（状态三），即：dp[i][2] ，只有一个操作：\n\n昨天一定是持有股票状态（状态一），今天卖出\n\n即：dp[i][2] = dp[i - 1][0] + prices[i];\n\n达到冷冻期状态（状态四），即：dp[i][3]，只有一个操作：\n\n昨天卖出了股票（状态三）\n\ndp[i][3] = dp[i - 1][2];\n\n综上分析，递推代码如下：\n\ndp[i][0] = max(dp[i - 1][0], max(dp[i - 1][3], dp[i - 1][1]) - prices[i]);\ndp[i][1] = max(dp[i - 1][1], dp[i - 1][3]);\ndp[i][2] = dp[i - 1][0] + prices[i];\ndp[i][3] = dp[i - 1][2];\ndp数组如何初始化\n这里主要讨论一下第0天如何初始化。\n\n如果是持有股票状态（状态一）那么：dp[0][0] = -prices[0]，一定是当天买入股票。\n\n保持卖出股票状态（状态二），这里其实从 「状态二」的定义来说 ，很难明确应该初始多少，这种情况我们就看递推公式需要我们给他初始成什么数值。\n\n如果i为1，第1天买入股票，那么递归公式中需要计算 dp[i - 1][1] - prices[i] ，即 dp[0][1] - prices[1]，那么大家感受一下 dp[0][1] （即第0天的状态二）应该初始成多少，只能初始为0。想一想如果初始为其他数值，是我们第1天买入股票后 手里还剩的现金数量是不是就不对了。\n\n今天卖出了股票（状态三），同上分析，dp[0][2]初始化为0，dp[0][3]也初始为0。\n\n确定遍历顺序\n从递归公式上可以看出，dp[i] 依赖于 dp[i-1]，所以是从前向后遍历。\n\n举例推导dp数组\n以 [1,2,3,0,2] 为例，dp数组如下：\n\nhttps://file1.kamacoder.com/i/algo/2021032317451040.png\n\n最后结果是取 状态二，状态三，和状态四的最大值，不少同学会把状态四忘了，状态四是冷冻期，最后一天如果是冷冻期也可能是最大值。\n\n代码如下：\n\nclass Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        int n = prices.size();\n        if (n == 0) return 0;\n        vector<vector<int>> dp(n, vector<int>(4, 0));\n        dp[0][0] -= prices[0]; // 持股票\n        for (int i = 1; i < n; i++) {\n            dp[i][0] = max(dp[i - 1][0], max(dp[i - 1][3] - prices[i], dp[i - 1][1] - prices[i]));\n            dp[i][1] = max(dp[i - 1][1], dp[i - 1][3]);\n            dp[i][2] = dp[i - 1][0] + prices[i];\n            dp[i][3] = dp[i - 1][2];\n        }\n        return max(dp[n - 1][3], max(dp[n - 1][1], dp[n - 1][2]));\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(n)\n当然，空间复杂度可以优化，定义一个dp[2][4]大小的数组就可以了，就保存前一天的当前的状态，感兴趣的同学可以自己去写一写，思路是一样的。\n\n#总结\n这次把冷冻期这道题目，讲的很透彻了，细分为四个状态，其状态转移也十分清晰，建议大家都按照四个状态来分析，如果只划分三个状态确实很容易给自己绕进去。\n\n#其他语言版本\n#Java：\nclass Solution {\n    public int maxProfit(int[] prices) {\n        if (prices == null || prices.length < 2) {\n            return 0;\n        }\n        int[][] dp = new int[prices.length][2];\n\n        // bad case\n        dp[0][0] = 0;\n        dp[0][1] = -prices[0];\n        dp[1][0] = Math.max(dp[0][0], dp[0][1] + prices[1]);\n        dp[1][1] = Math.max(dp[0][1], -prices[1]);\n\n        for (int i = 2; i < prices.length; i++) {\n            // dp公式\n            dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);\n            dp[i][1] = Math.max(dp[i - 1][1], dp[i - 2][0] - prices[i]);\n        }\n\n        return dp[prices.length - 1][0];\n    }\n}\n//using 2*4 array for space optimization\n//這裡稍微說一下，我在LeetCode提交的時候，2*4 2-D array的performance基本上和下面的1-D array performance差不多\n//都是time: 1ms, space: 40.X MB （其實 length*4 的 2-D array也僅僅是space:41.X MB，看起來不多）\n//股票累的DP題目大致上都是這樣，就當作是一個延伸就好了。真的有人問如何優化，最起碼有東西可以講。\nclass Solution {\n    /**\n    1. [i][0] holding the stock\n    2. [i][1] after cooldown but stil not buing the stock\n    3. [i][2] selling the stock\n    4. [i][3] cooldown\n     */\n    public int maxProfit(int[] prices) {\n        int len = prices.length;\n        int dp[][] = new int [2][4];\n        dp[0][0] = -prices[0];\n        \n        for(int i = 1; i < len; i++){\n            dp[i % 2][0] = Math.max(Math.max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]), dp[(i - 1) % 2][3] - prices[i]);\n            dp[i % 2][1] = Math.max(dp[(i - 1) % 2][1], dp[(i - 1) % 2][3]);\n            dp[i % 2][2] = dp[(i - 1) % 2][0] + prices[i];\n            dp[i % 2][3] = dp[(i - 1) % 2][2];\n        }\n        return Math.max(Math.max(dp[(len - 1) % 2][1], dp[(len - 1) % 2][2]), dp[(len - 1) % 2][3]);\n    }\n}\n// 一维数组优化\nclass Solution {\n    public int maxProfit(int[] prices) {\n        int[] dp=new int[4];\n\n        dp[0] = -prices[0];\n        dp[1] = 0;\n        for(int i = 1; i <= prices.length; i++){\n          \t// 使用临时变量来保存dp[0], dp[2]\n            // 因为马上dp[0]和dp[2]的数据都会变 \n            int temp = dp[0];\n            int temp1 = dp[2];\n            dp[0] = Math.max(dp[0], Math.max(dp[3], dp[1]) - prices[i]);\n            dp[1] = Math.max(dp[1], dp[3]);\n            dp[2] = temp + prices[i];\n            dp[3] = temp1;\n        }\n        return Math.max(dp[3],Math.max(dp[1],dp[2]));\n    }\n}\n//另一种解题思路\nclass Solution {\n    public int maxProfit(int[] prices) {\n        int[][] dp = new int[prices.length + 1][2];\n        dp[1][0] = -prices[0];\n\n        for (int i = 2; i <= prices.length; i++) {\n            /*\n            dp[i][0] 第i天持有股票收益;\n            dp[i][1] 第i天不持有股票收益;\n            情况一：第i天是冷静期，不能以dp[i-1][1]购买股票,所以以dp[i - 2][1]买股票，没问题\n            情况二：第i天不是冷静期，理论上应该以dp[i-1][1]购买股票，但是第i天不是冷静期说明，第i-1天没有卖出股票，\n                则dp[i-1][1]=dp[i-2][1],所以可以用dp[i-2][1]买股票，没问题\n             */\n            dp[i][0] = Math.max(dp[i - 1][0], dp[i - 2][1] - prices[i - 1]);\n            dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] + prices[i - 1]);\n        }\n\n        return dp[prices.length][1];\n    }\n}\n#Python：\n版本一\n\nfrom typing import List\n\nclass Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        n = len(prices)\n        if n == 0:\n            return 0\n        dp = [[0] * 4 for _ in range(n)]  # 创建动态规划数组，4个状态分别表示持有股票、不持有股票且处于冷冻期、不持有股票且不处于冷冻期、不持有股票且当天卖出后处于冷冻期\n        dp[0][0] = -prices[0]  # 初始状态：第一天持有股票的最大利润为买入股票的价格\n        for i in range(1, n):\n            dp[i][0] = max(dp[i-1][0], max(dp[i-1][3], dp[i-1][1]) - prices[i])  # 当前持有股票的最大利润等于前一天持有股票的最大利润或者前一天不持有股票且不处于冷冻期的最大利润减去当前股票的价格\n            dp[i][1] = max(dp[i-1][1], dp[i-1][3])  # 当前不持有股票且处于冷冻期的最大利润等于前一天持有股票的最大利润加上当前股票的价格\n            dp[i][2] = dp[i-1][0] + prices[i]  # 当前不持有股票且不处于冷冻期的最大利润等于前一天不持有股票的最大利润或者前一天处于冷冻期的最大利润\n            dp[i][3] = dp[i-1][2]  # 当前不持有股票且当天卖出后处于冷冻期的最大利润等于前一天不持有股票且不处于冷冻期的最大利润\n        return max(dp[n-1][3], dp[n-1][1], dp[n-1][2])  # 返回最后一天不持有股票的最大利润\n\n版本二\n\nclass Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        n = len(prices)\n        if n < 2:\n            return 0\n\n        # 定义三种状态的动态规划数组\n        dp = [[0] * 3 for _ in range(n)]\n        dp[0][0] = -prices[0]  # 持有股票的最大利润\n        dp[0][1] = 0           # 不持有股票，且处于冷冻期的最大利润\n        dp[0][2] = 0           # 不持有股票，不处于冷冻期的最大利润\n\n        for i in range(1, n):\n            # 当前持有股票的最大利润等于前一天持有股票的最大利润或者前一天不持有股票且不处于冷冻期的最大利润减去当前股票的价格\n            dp[i][0] = max(dp[i-1][0], dp[i-1][2] - prices[i])\n            # 当前不持有股票且处于冷冻期的最大利润等于前一天持有股票的最大利润加上当前股票的价格\n            dp[i][1] = dp[i-1][0] + prices[i]\n            # 当前不持有股票且不处于冷冻期的最大利润等于前一天不持有股票的最大利润或者前一天处于冷冻期的最大利润\n            dp[i][2] = max(dp[i-1][2], dp[i-1][1])\n\n        # 返回最后一天不持有股票的最大利润\n        return max(dp[-1][1], dp[-1][2])\n\n版本三\n\nclass Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        # 0: holding stocks \n        #    (1) keep holding stocks: dp[i][0] = dp[i - 1][0]\n        #    (2) buy stocks: dp[i][0] = dp[i - 1][1] - price, or dp[i - 1][3] - price\n        # 1: keep no stocks: dp[i][1] = dp[i - 1][1]\n        # 2: sell stocks: dp[i][2] = dp[i - 1][0] + price\n        # 3: cooldown day: dp[i][3] = dp[i - 1][2]\n        dp = [-prices[0], 0, 0, 0]\n\n        for price in prices[1:]:\n            dc = dp.copy() # 这句话是关键，把前一天的 dp 状态保存下来，防止被覆盖掉，后面只用它，不用 dp，逻辑简单易懂\n            dp[0] = max(\n                dc[0],\n                dc[1] - price,\n                dc[3] - price\n            )\n            dp[1] = max(\n                dc[1],\n                dc[3]\n            )\n            dp[2] = dc[0] + price\n            dp[3] = dc[2]\n\n        return max(dp)"
+}

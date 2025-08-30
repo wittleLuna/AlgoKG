@@ -1,0 +1,70 @@
+{
+  "name": "algokg-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@ant-design/icons": "^5.6.1",
+    "@ant-design/plots": "^2.0.2",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.5.1",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.68",
+    "@types/react": "^18.2.42",
+    "@types/react-dom": "^18.2.17",
+    "@types/styled-components": "^5.1.34",
+    "antd": "^5.26.7",
+    "axios": "^1.6.2",
+    "d3": "^7.8.5",
+    "framer-motion": "^12.23.12",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-markdown": "^9.0.1",
+    "react-query": "^3.39.3",
+    "react-router-dom": "^6.20.1",
+    "react-scripts": "5.0.1",
+    "react-syntax-highlighter": "^15.5.0",
+    "recharts": "^2.8.0",
+    "socket.io-client": "^4.7.4",
+    "styled-components": "^6.1.19",
+    "typescript": "^4.9.5",
+    "vis-network": "^9.1.6",
+    "web-vitals": "^2.1.4",
+    "zustand": "^4.4.7"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3",
+    "@types/react-syntax-highlighter": "^15.5.11",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "react-app-rewired": "^2.2.1",
+    "tailwindcss": "^3.3.6"
+  },
+  "scripts": {
+    "start": "set NODE_OPTIONS=--openssl-legacy-provider --max-old-space-size=8192 && react-app-rewired start",
+    "build": "set NODE_OPTIONS=--openssl-legacy-provider --max-old-space-size=8192 && react-app-rewired build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "proxy": "http://localhost:8000"
+}

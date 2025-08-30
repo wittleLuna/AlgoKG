@@ -1,0 +1,455 @@
+{
+  "id": "AP_1b0477cc",
+  "title": "斐波那契数",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/fibonacci-number/",
+  "description": "n ，请计算 F(n) 。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "动态规划",
+    "递归"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "状态压缩",
+    "记忆化搜索"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用动态规划方法求解斐波那契数列，通过定义dp数组存储每一个状态的结果，并利用递推公式更新每个状态。此外，还介绍了空间优化后的版本和纯递归的方法。",
+  "key_insights": [
+    {
+      "content": "题目已经直接给出了递推关系式F(n) = F(n - 1) + F(n - 2)，这使得问题可以直接转化为如何有效地实现这个递推过程。"
+    },
+    {
+      "content": "通过使用dp数组来存储中间结果，避免了重复计算相同子问题的情况，从而大大提高了算法效率。"
+    },
+    {
+      "content": "由于每次迭代只需要前两个状态的信息，因此可以进一步将空间复杂度从O(n)优化到O(1)。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "斐波那契数列大家应该非常熟悉不过了，非常适合作为动规第一道题目来练练手。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fib(int N) { if (N <= 1) return N; vector<int> dp(N + 1); dp[0] = 0; dp[1] = 1; for (int i = 2; i <= N; i++) { dp[i] = dp[i - 1] + dp[i - 2]; } return dp[N]; }};",
+          "description": "使用动态规划计算斐波那契数"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fib(int N) { if (N <= 1) return N; int dp[2]; dp[0] = 0; dp[1] = 1; for (int i = 2; i <= N; i++) { int sum = dp[0] + dp[1]; dp[0] = dp[1]; dp[1] = sum; } return dp[1]; }};",
+          "description": "优化空间复杂度的动态规划解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fib(int N) { if (N < 2) return N; return fib(N - 1) + fib(N - 2); }};",
+          "description": "递归方法求解斐波那契数"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int fib(int n) { if (n < 2) return n; int a = 0, b = 1, c = 0; for (int i = 1; i < n; i++) { c = a + b; a = b; b = c; } return c; }}",
+          "description": "Java实现，使用循环和三个变量存储中间结果"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int fib(int n) { if (n <= 1) return n; int[] dp = new int[n + 1]; dp[0] = 0; dp[1] = 1; for (int index = 2; index <= n; index++){ dp[index] = dp[index - 1] + dp[index - 2]; } return dp[n]; }}",
+          "description": "Java非压缩状态版本的动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n == 0: return 0 dp = [0] * (n + 1) dp[0] = 0 dp[1] = 1 for i in range(2, n + 1): dp[i] = dp[i - 1] + dp[i - 2] return dp[n]",
+          "description": "Python动态规划版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n <= 1: return n dp = [0, 1] for i in range(2, n + 1): total = dp[0] + dp[1] dp[0] = dp[1] dp[1] = total return dp[1]",
+          "description": "Python动态规划版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n <= 1: return n prev1, prev2 = 0, 1 for _ in range(2, n + 1): curr = prev1 + prev2 prev1, prev2 = prev2, curr return prev2",
+          "description": "Python动态规划版本三"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n < 2: return n return self.fib(n - 1) + self.fib(n - 2)",
+          "description": "Python递归版本"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "动态规划",
+      "text": "动规五部曲：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fib(int N) {if (N <= 1) return N;vector<int> dp(N + 1);dp[0] = 0;dp[1] = 1;for (int i = 2; i <= N; i++) {dp[i] = dp[i - 1] + dp[i - 2];}return dp[N];}};",
+          "description": "C++动态规划解法，使用数组存储斐波那契数"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fib(int N) {if (N <= 1) return N;int dp[2];dp[0] = 0;dp[1] = 1;for (int i = 2; i <= N; i++) {int sum = dp[0] + dp[1];dp[0] = dp[1];dp[1] = sum;}return dp[1];}};",
+          "description": "C++动态规划解法，仅使用两个变量存储斐波那契数"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fib(int N) {if (N < 2) return N;return fib(N - 1) + fib(N - 2);}};",
+          "description": "C++递归解法计算斐波那契数"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int fib(int n) {if (n < 2) return n;int a = 0, b = 1, c = 0;for (int i = 1; i < n; i++) {c = a + b;a = b;b = c;}return c;}}",
+          "description": "Java非递归解法，使用三个变量存储中间结果"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int fib(int n) {if (n <= 1) return n;int[] dp = new int[n + 1];dp[0] = 0;dp[1] = 1;for (int index = 2; index <= n; index++){dp[index] = dp[index - 1] + dp[index - 2];}return dp[n];}}",
+          "description": "Java动态规划解法，使用数组存储斐波那契数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n == 0: return 0 dp = [0] * (n + 1) dp[0] = 0 dp[1] = 1 for i in range(2, n + 1): dp[i] = dp[i - 1] + dp[i - 2] return dp[n]",
+          "description": "Python动态规划解法，版本一，使用列表存储斐波那契数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n <= 1: return n dp = [0, 1] for i in range(2, n + 1): total = dp[0] + dp[1] dp[0] = dp[1] dp[1] = total return dp[1]",
+          "description": "Python动态规划解法，版本二，使用固定长度的列表存储斐波那契数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n <= 1: return n prev1, prev2 = 0, 1 for _ in range(2, n + 1): curr = prev1 + prev2 prev1, prev2 = prev2, curr return prev2",
+          "description": "Python动态规划解法，版本三，使用两个变量存储斐波那契数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n < 2: return n return self.fib(n - 1) + self.fib(n - 2)",
+          "description": "Python递归解法计算斐波那契数"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "递归解法",
+      "text": "本题还可以使用递归解法来做",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fib(int N) {if (N <= 1) return N;vector<int> dp(N + 1);dp[0] = 0;dp[1] = 1;for (int i = 2; i <= N; i++) {dp[i] = dp[i - 1] + dp[i - 2];}return dp[N];}};",
+          "description": "C++动态规划解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fib(int N) {if (N <= 1) return N;int dp[2];dp[0] = 0;dp[1] = 1;for (int i = 2; i <= N; i++) {int sum = dp[0] + dp[1];dp[0] = dp[1];dp[1] = sum;}return dp[1];}};",
+          "description": "优化空间的C++动态规划解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fib(int N) {if (N < 2) return N;return fib(N - 1) + fib(N - 2);}};",
+          "description": "C++递归解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int fib(int n) {if (n < 2) return n;int a = 0, b = 1, c = 0;for (int i = 1; i < n; i++) {c = a + b;a = b;b = c;}return c;}}",
+          "description": "Java迭代解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int fib(int n) {if (n <= 1) return n;int[] dp = new int[n + 1];dp[0] = 0;dp[1] = 1;for (int index = 2; index <= n; index++){dp[index] = dp[index - 1] + dp[index - 2];}return dp[n];}}",
+          "description": "非压缩状态的Java动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n == 0: return 0 dp = [0] * (n + 1) dp[0] = 0 dp[1] = 1 for i in range(2, n + 1): dp[i] = dp[i - 1] + dp[i - 2] return dp[n]",
+          "description": "Python动态规划解法（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n <= 1: return n dp = [0, 1] for i in range(2, n + 1): total = dp[0] + dp[1] dp[0] = dp[1] dp[1] = total return dp[1]",
+          "description": "Python动态规划解法（版本二）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n <= 1: return n prev1, prev2 = 0, 1 for _ in range(2, n + 1): curr = prev1 + prev2 prev1, prev2 = prev2, curr return prev2",
+          "description": "Python动态规划解法（版本三）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n < 2: return n return self.fib(n - 1) + self.fib(n - 2)",
+          "description": "Python递归解法（版本一）"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "斐波那契数列这道题目是非常基础的题目，我在后面的动态规划的讲解中将会多次提到斐波那契数列！",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fib(int N) {if (N <= 1) return N;vector<int> dp(N + 1);dp[0] = 0;dp[1] = 1;for (int i = 2; i <= N; i++) {dp[i] = dp[i - 1] + dp[i - 2];}return dp[N];}};",
+          "description": "C++动态规划解法，使用数组存储中间结果"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fib(int N) {if (N <= 1) return N;int dp[2];dp[0] = 0;dp[1] = 1;for (int i = 2; i <= N; i++) {int sum = dp[0] + dp[1];dp[0] = dp[1];dp[1] = sum;}return dp[1];}};",
+          "description": "C++动态规划优化空间复杂度版本"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fib(int N) {if (N < 2) return N;return fib(N - 1) + fib(N - 2);}};",
+          "description": "C++递归解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int fib(int n) {if (n < 2) return n;int a = 0, b = 1, c = 0;for (int i = 1; i < n; i++) {c = a + b;a = b;b = c;}return c;}}",
+          "description": "Java迭代解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int fib(int n) {if (n <= 1) return n;int[] dp = new int[n + 1];dp[0] = 0;dp[1] = 1;for (int index = 2; index <= n; index++){dp[index] = dp[index - 1] + dp[index - 2];}return dp[n];}}",
+          "description": "Java动态规划非压缩状态版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n == 0: return 0 dp = [0] * (n + 1) dp[0] = 0 dp[1] = 1 for i in range(2, n + 1): dp[i] = dp[i - 1] + dp[i - 2] return dp[n]",
+          "description": "Python动态规划解法一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n <= 1: return n dp = [0, 1] for i in range(2, n + 1): total = dp[0] + dp[1] dp[0] = dp[1] dp[1] = total return dp[1]",
+          "description": "Python动态规划解法二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n <= 1: return n prev1, prev2 = 0, 1 for _ in range(2, n + 1): curr = prev1 + prev2 prev1, prev2 = prev2, curr return prev2",
+          "description": "Python动态规划解法三"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n < 2: return n return self.fib(n - 1) + self.fib(n - 2)",
+          "description": "Python递归解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution { public int fib(int n) { if (n < 2) return n; int a = 0, b = 1, c = 0; for (int i = 1; i < n; i++) { c = a + b; a = b; b = c; } return c; }}",
+          "description": "Java实现，使用循环计算斐波那契数"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int fib(int n) { if (n <= 1) return n; int[] dp = new int[n + 1]; dp[0] = 0; dp[1] = 1; for (int index = 2; index <= n; index++){ dp[index] = dp[index - 1] + dp[index - 2]; } return dp[n]; }}",
+          "description": "Java非压缩状态版本实现，使用数组存储中间结果"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n == 0: return 0 dp = [0] * (n + 1) dp[0] = 0 dp[1] = 1 for i in range(2, n + 1): dp[i] = dp[i - 1] + dp[i - 2] return dp[n]",
+          "description": "Python动态规划版本一实现，使用列表存储中间结果"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n <= 1: return n dp = [0, 1] for i in range(2, n + 1): total = dp[0] + dp[1] dp[0] = dp[1] dp[1] = total return dp[1]",
+          "description": "Python动态规划版本二实现，仅使用两个变量存储前两个值"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n <= 1: return n prev1, prev2 = 0, 1 for _ in range(2, n + 1): curr = prev1 + prev2 prev1, prev2 = prev2, curr return prev2",
+          "description": "Python动态规划版本三实现，使用两个变量存储前两个值"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n < 2: return n return self.fib(n - 1) + self.fib(n - 2)",
+          "description": "Python递归版本实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fib(int N) {if (N <= 1) return N;vector<int> dp(N + 1);dp[0] = 0;dp[1] = 1;for (int i = 2; i <= N; i++) {dp[i] = dp[i - 1] + dp[i - 2];}return dp[N];}};",
+          "description": "C++版本的斐波那契数列动态规划解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fib(int N) {if (N <= 1) return N;int dp[2];dp[0] = 0;dp[1] = 1;for (int i = 2; i <= N; i++) {int sum = dp[0] + dp[1];dp[0] = dp[1];dp[1] = sum;}return dp[1];}};",
+          "description": "C++版本的空间优化后的斐波那契数列动态规划解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fib(int N) {if (N < 2) return N;return fib(N - 1) + fib(N - 2);}};",
+          "description": "C++版本的斐波那契数列递归解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int fib(int n) {if (n < 2) return n;int a = 0, b = 1, c = 0;for (int i = 1; i < n; i++) {c = a + b;a = b;b = c;}return c;}}",
+          "description": "Java版本的空间优化后的斐波那契数列动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int fib(int n) {if (n <= 1) return n;int[] dp = new int[n + 1];dp[0] = 0;dp[1] = 1;for (int index = 2; index <= n; index++){dp[index] = dp[index - 1] + dp[index - 2];}return dp[n];}}",
+          "description": "Java版本的斐波那契数列动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n == 0: return 0 dp = [0] * (n + 1) dp[0] = 0 dp[1] = 1 for i in range(2, n + 1): dp[i] = dp[i - 1] + dp[i - 2] return dp[n]",
+          "description": "Python版本的斐波那契数列动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n <= 1: return n dp = [0, 1] for i in range(2, n + 1): total = dp[0] + dp[1] dp[0] = dp[1] dp[1] = total return dp[1]",
+          "description": "Python版本的空间优化后的斐波那契数列动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n <= 1: return n prev1, prev2 = 0, 1 for _ in range(2, n + 1): curr = prev1 + prev2 prev1, prev2 = prev2, curr return prev2",
+          "description": "Python版本的进一步空间优化后的斐波那契数列动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n < 2: return n return self.fib(n - 1) + self.fib(n - 2)",
+          "description": "Python版本的斐波那契数列递归解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "动态规划（版本一）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fib(int N) {if (N <= 1) return N;vector<int> dp(N + 1);dp[0] = 0;dp[1] = 1;for (int i = 2; i <= N; i++) {dp[i] = dp[i - 1] + dp[i - 2];}return dp[N];}};",
+          "description": "使用动态规划方法求解斐波那契数列，空间复杂度O(n)"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fib(int N) {if (N <= 1) return N;int dp[2];dp[0] = 0;dp[1] = 1;for (int i = 2; i <= N; i++) {int sum = dp[0] + dp[1];dp[0] = dp[1];dp[1] = sum;}return dp[1];}};",
+          "description": "优化后的动态规划方法求解斐波那契数列，空间复杂度降为O(1)"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fib(int N) {if (N < 2) return N;return fib(N - 1) + fib(N - 2);}};",
+          "description": "递归方法求解斐波那契数列"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int fib(int n) {if (n < 2) return n;int a = 0, b = 1, c = 0;for (int i = 1; i < n; i++) {c = a + b;a = b;b = c;}return c;}}",
+          "description": "Java实现的优化动态规划方法求解斐波那契数列"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int fib(int n) {if (n <= 1) return n;int[] dp = new int[n + 1];dp[0] = 0;dp[1] = 1;for (int index = 2; index <= n; index++){dp[index] = dp[index - 1] + dp[index - 2];}return dp[n];}}",
+          "description": "非压缩状态版本的Java实现求解斐波那契数列"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n == 0: return 0 dp = [0] * (n + 1) dp[0] = 0 dp[1] = 1 for i in range(2, n + 1): dp[i] = dp[i - 1] + dp[i - 2] return dp[n]",
+          "description": "Python实现的动态规划方法一求解斐波那契数列"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n <= 1: return n dp = [0, 1] for i in range(2, n + 1): total = dp[0] + dp[1] dp[0] = dp[1] dp[1] = total return dp[1]",
+          "description": "Python实现的动态规划方法二求解斐波那契数列"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n <= 1: return n prev1, prev2 = 0, 1 for _ in range(2, n + 1): curr = prev1 + prev2 prev1, prev2 = prev2, curr return prev2",
+          "description": "Python实现的动态规划方法三求解斐波那契数列，进一步优化空间复杂度至O(1)"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def fib(self, n: int) -> int: if n < 2: return n return self.fib(n - 1) + self.fib(n - 2)",
+          "description": "Python实现的递归方法求解斐波那契数列"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int fib(int N) {if (N <= 1) return N;vector<int> dp(N + 1);dp[0] = 0;dp[1] = 1;for (int i = 2; i <= N; i++) {dp[i] = dp[i - 1] + dp[i - 2];}return dp[N];}};",
+      "description": "使用动态规划计算斐波那契数"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int fib(int N) {if (N <= 1) return N;int dp[2];dp[0] = 0;dp[1] = 1;for (int i = 2; i <= N; i++) {int sum = dp[0] + dp[1];dp[0] = dp[1];dp[1] = sum;}return dp[1];}};",
+      "description": "优化空间复杂度的动态规划解法"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int fib(int N) {if (N < 2) return N;return fib(N - 1) + fib(N - 2);}};",
+      "description": "递归方法求解斐波那契数"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int fib(int n) {if (n < 2) return n;int a = 0, b = 1, c = 0;for (int i = 1; i < n; i++) {c = a + b;a = b;b = c;}return c;}}",
+      "description": "Java实现，使用循环求解斐波那契数"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int fib(int n) {if (n <= 1) return n;int[] dp = new int[n + 1];dp[0] = 0;dp[1] = 1;for (int index = 2; index <= n; index++){dp[index] = dp[index - 1] + dp[index - 2];}return dp[n];}}",
+      "description": "Java实现，非压缩状态版本的动态规划"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def fib(self, n: int) -> int: if n == 0: return 0 dp = [0] * (n + 1) dp[0] = 0 dp[1] = 1 for i in range(2, n + 1): dp[i] = dp[i - 1] + dp[i - 2] return dp[n]",
+      "description": "Python实现，使用动态规划求解斐波那契数"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def fib(self, n: int) -> int: if n <= 1: return n dp = [0, 1] for i in range(2, n + 1): total = dp[0] + dp[1] dp[0] = dp[1] dp[1] = total return dp[1]",
+      "description": "Python实现，优化存储空间的动态规划"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def fib(self, n: int) -> int: if n <= 1: return n prev1, prev2 = 0, 1 for _ in range(2, n + 1): curr = prev1 + prev2 prev1, prev2 = prev2, curr return prev2",
+      "description": "Python实现，进一步优化空间利用的动态规划"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def fib(self, n: int) -> int: if n < 2: return n return self.fib(n - 1) + self.fib(n - 2)",
+      "description": "Python实现，递归方式求解斐波那契数"
+    }
+  ],
+  "common_mistakes": [
+    "忽视边界条件处理，如n=0或n=1时的特殊返回值。",
+    "在没有优化的情况下直接使用递归，导致时间复杂度过高。",
+    "忽略了对于大数值可能需要考虑整数溢出的问题。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\动态规划\\斐波那契数.txt",
+  "extracted_at": "2025-07-20T18:27:46.986417",
+  "raw_content": "斐波那契数\n力扣题目链接(https://leetcode.cn/problems/fibonacci-number/)\n\n斐波那契数，通常用 F(n) 表示，形成的序列称为 斐波那契数列 。该数列由 0 和 1 开始，后面的每一项数字都是前面两项数字的和。也就是： F(0) = 0，F(1) = 1 F(n) = F(n - 1) + F(n - 2)，其中 n > 1 给你n ，请计算 F(n) 。\n\n示例 1：\n\n输入：2\n输出：1\n解释：F(2) = F(1) + F(0) = 1 + 0 = 1\n示例 2：\n\n输入：3\n输出：2\n解释：F(3) = F(2) + F(1) = 1 + 1 = 2\n示例 3：\n\n输入：4\n输出：3\n解释：F(4) = F(3) + F(2) = 2 + 1 = 3\n提示：\n\n0 <= n <= 30\n\n\n#思路\n斐波那契数列大家应该非常熟悉不过了，非常适合作为动规第一道题目来练练手。\n\n因为这道题目比较简单，可能一些同学并不需要做什么分析，直接顺手一写就过了。\n\n但「代码随想录」的风格是：简单题目是用来加深对解题方法论的理解的。\n\n通过这道题目让大家可以初步认识到，按照动规五部曲是如何解题的。\n\n对于动规，如果没有方法论的话，可能简单题目可以顺手一写就过，难一点就不知道如何下手了。\n\n所以我总结的动规五部曲，是要用来贯穿整个动态规划系列的，就像之前讲过二叉树系列的递归三部曲 (https://www.programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E9%80%92%E5%BD%92%E9%81%8D%E5%8E%86.html)，回溯法系列的回溯三部曲 (https://programmercarl.com/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html)一样。后面慢慢大家就会体会到，动规五部曲方法的重要性。\n\n#动态规划\n动规五部曲：\n\n这里我们要用一个一维dp数组来保存递归的结果\n\n确定dp数组以及下标的含义\ndp[i]的定义为：第i个数的斐波那契数值是dp[i]\n\n确定递推公式\n为什么这是一道非常简单的入门题目呢？\n\n因为题目已经把递推公式直接给我们了：状态转移方程 dp[i] = dp[i - 1] + dp[i - 2];\n\ndp数组如何初始化\n题目中把如何初始化也直接给我们了，如下：\n\ndp[0] = 0;\ndp[1] = 1;\n确定遍历顺序\n从递归公式dp[i] = dp[i - 1] + dp[i - 2];中可以看出，dp[i]是依赖 dp[i - 1] 和 dp[i - 2]，那么遍历的顺序一定是从前到后遍历的\n\n举例推导dp数组\n按照这个递推公式dp[i] = dp[i - 1] + dp[i - 2]，我们来推导一下，当N为10的时候，dp数组应该是如下的数列：\n\n0 1 1 2 3 5 8 13 21 34 55\n\n如果代码写出来，发现结果不对，就把dp数组打印出来看看和我们推导的数列是不是一致的。\n\n以上我们用动规的方法分析完了，C++代码如下：\n\nclass Solution {\npublic:\n    int fib(int N) {\n        if (N <= 1) return N;\n        vector<int> dp(N + 1);\n        dp[0] = 0;\n        dp[1] = 1;\n        for (int i = 2; i <= N; i++) {\n            dp[i] = dp[i - 1] + dp[i - 2];\n        }\n        return dp[N];\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(n)\n当然可以发现，我们只需要维护两个数值就可以了，不需要记录整个序列。\n\n代码如下：\n\nclass Solution {\npublic:\n    int fib(int N) {\n        if (N <= 1) return N;\n        int dp[2];\n        dp[0] = 0;\n        dp[1] = 1;\n        for (int i = 2; i <= N; i++) {\n            int sum = dp[0] + dp[1];\n            dp[0] = dp[1];\n            dp[1] = sum;\n        }\n        return dp[1];\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(1)\n#递归解法\n本题还可以使用递归解法来做\n\n代码如下：\n\nclass Solution {\npublic:\n    int fib(int N) {\n        if (N < 2) return N;\n        return fib(N - 1) + fib(N - 2);\n    }\n};\n时间复杂度：O(2^n)\n空间复杂度：O(n)，算上了编程语言中实现递归的系统栈所占空间\n这个递归的时间复杂度大家画一下树形图就知道了，如果不清晰的同学，可以看这篇：通过一道面试题目，讲一讲递归算法的时间复杂度！https://programmercarl.com/%E5%89%8D%E5%BA%8F/%E9%80%92%E5%BD%92%E7%AE%97%E6%B3%95%E7%9A%84%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6.html\n\n#总结\n斐波那契数列这道题目是非常基础的题目，我在后面的动态规划的讲解中将会多次提到斐波那契数列！\n\n这里我严格按照关于动态规划，你该了解这些！ (https://programmercarl.com/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html)中的动规五部曲来分析了这道题目，一些分析步骤可能同学感觉没有必要搞的这么复杂，代码其实上来就可以撸出来。\n\n但我还是强调一下，简单题是用来掌握方法论的，动规五部曲将在接下来的动态规划讲解中发挥重要作用，敬请期待！\n\n就酱，循序渐进学算法，认准「代码随想录」！\n\n#其他语言版本\n#Java\nclass Solution {\n    public int fib(int n) {\n        if (n < 2) return n;\n        int a = 0, b = 1, c = 0;\n        for (int i = 1; i < n; i++) {\n            c = a + b;\n            a = b;\n            b = c;\n        }\n        return c;\n    }\n}\n//非压缩状态的版本\nclass Solution {\n    public int fib(int n) {\n        if (n <= 1) return n;             \n        int[] dp = new int[n + 1];\n        dp[0] = 0;\n        dp[1] = 1;\n        for (int index = 2; index <= n; index++){\n            dp[index] = dp[index - 1] + dp[index - 2];\n        }\n        return dp[n];\n    }\n}\n#Python\n动态规划（版本一）\n\n\nclass Solution:\n    def fib(self, n: int) -> int:\n       \n        # 排除 Corner Case\n        if n == 0:\n            return 0\n        \n        # 创建 dp table \n        dp = [0] * (n + 1)\n\n        # 初始化 dp 数组\n        dp[0] = 0\n        dp[1] = 1\n\n        # 遍历顺序: 由前向后。因为后面要用到前面的状态\n        for i in range(2, n + 1):\n\n            # 确定递归公式/状态转移公式\n            dp[i] = dp[i - 1] + dp[i - 2]\n        \n        # 返回答案\n        return dp[n]\n\n动态规划（版本二）\n\n\nclass Solution:\n    def fib(self, n: int) -> int:\n        if n <= 1:\n            return n\n        \n        dp = [0, 1]\n        \n        for i in range(2, n + 1):\n            total = dp[0] + dp[1]\n            dp[0] = dp[1]\n            dp[1] = total\n        \n        return dp[1]\n\n\n动态规划（版本三）\n\nclass Solution:\n    def fib(self, n: int) -> int:\n        if n <= 1:\n            return n\n        \n        prev1, prev2 = 0, 1\n        \n        for _ in range(2, n + 1):\n            curr = prev1 + prev2\n            prev1, prev2 = prev2, curr\n        \n        return prev2\n\n\n\n\n递归（版本一）\n\n\nclass Solution:\n    def fib(self, n: int) -> int:\n        if n < 2:\n            return n\n        return self.fib(n - 1) + self.fib(n - 2)"
+}

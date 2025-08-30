@@ -1,0 +1,460 @@
+{
+  "id": "AP_7567b848",
+  "title": "开发商购买土地",
+  "alternative_titles": [],
+  "platform": "kamacoder",
+  "url": "https://kamacoder.com/problempage.php?pid=1044",
+  "description": "输出一个整数，代表两个子区域内土地总价值之间的最小差距。\n\n【输入",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "贪心算法"
+  ],
+  "data_structure_tags": [
+    "数组",
+    "向量"
+  ],
+  "technique_tags": [
+    "前缀和"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用前缀和方法预处理行与列的总价值，然后尝试所有可能的划分方式（横向或纵向），计算并更新最小的价值差。",
+  "key_insights": [
+    {
+      "content": "通过预先计算每一行和每一列的总价值，可以快速获取任意子区域的总价值，从而有效减少在寻找最优划分时的计算量。"
+    },
+    {
+      "content": "基于题目要求只能将地块按行或列分割成两个部分，因此只需检查这两种情况下的最佳划分方案。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "看到本题，大家如果想暴力求解，应该是 n^3 的时间复杂度，",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n    // 统计横向\n    vector<int> horizontal(n, 0);\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            horizontal[i] += vec[i][j];\n        }\n    }\n    // 统计纵向\n    vector<int> vertical(m , 0);\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            vertical[j] += vec[i][j];\n        }\n    }\n    int result = INT_MAX;\n    int horizontalCut = 0;\n    for (int i = 0 ; i < n; i++) {\n        horizontalCut += horizontal[i];\n        result = min(result, abs(sum - horizontalCut - horizontalCut));\n    }\n    int verticalCut = 0;\n    for (int j = 0; j < m; j++) {\n        verticalCut += vertical[j];\n        result = min(result, abs(sum - verticalCut - verticalCut));\n    }\n    cout << result << endl;\n}",
+          "description": "使用前缀和的思路解决土地分配问题"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n\n    int result = INT_MAX;\n    int count = 0; // 统计遍历过的行\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            count += vec[i][j];\n            // 遍历到行末尾时候开始统计\n            if (j == m - 1) result = min (result, abs(sum - count - count));\n\n        }\n    }\n\n    count = 0; // 统计遍历过的列\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            count += vec[i][j];\n            // 遍历到列末尾的时候开始统计\n            if (i == n - 1) result = min (result, abs(sum - count - count));\n        }\n    }\n    cout << result << endl;\n}",
+          "description": "优化暴力求解方法，减少计算量"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        // 统计横向\n        int[] horizontal = new int[n];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                horizontal[i] += vec[i][j];\n            }\n        }\n\n        // 统计纵向\n        int[] vertical = new int[m];\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                vertical[j] += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int horizontalCut = 0;\n        for (int i = 0; i < n; i++) {\n            horizontalCut += horizontal[i];\n            result = Math.min(result, Math.abs((sum - horizontalCut) - horizontalCut));\n        }\n\n        int verticalCut = 0;\n        for (int j = 0; j < m; j++) {\n            verticalCut += vertical[j];\n            result = Math.min(result, Math.abs((sum - verticalCut) - verticalCut));\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java版本的前缀和方法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int count = 0; // 统计遍历过的行\n\n        // 行切分\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                count += vec[i][j];\n                // 遍历到行末尾时候开始统计\n                if (j == m - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        count = 0;\n        // 列切分\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                count += vec[i][j];\n                // 遍历到列末尾时候开始统计\n                if (i == n - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java版本的优化暴力求解方法"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    # 统计横向\n    horizontal = [0] * n\n    for i in range(n):\n        for j in range(m):\n            horizontal[i] += vec[i][j]\n\n    # 统计纵向\n    vertical = [0] * m\n    for j in range(m):\n        for i in range(n):\n            vertical[j] += vec[i][j]\n\n    result = float('inf')\n    horizontalCut = 0\n    for i in range(n):\n        horizontalCut += horizontal[i]\n        result = min(result, abs(sum - 2 * horizontalCut))\n\n    verticalCut = 0\n    for j in range(m):\n        verticalCut += vertical[j]\n        result = min(result, abs(sum - 2 * verticalCut))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本的前缀和方法"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    result = float('inf')\n\n    count = 0\n    # 行切分\n    for i in range(n):\n\n        for j in range(m):\n            count += vec[i][j]\n            # 遍历到行末尾时候开始统计\n            if j == m - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    count = 0\n    # 列切分\n    for j in range(m):\n\n        for i in range(n):\n            count += vec[i][j]\n            # 遍历到列末尾时候开始统计\n            if i == n - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本的优化暴力求解方法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n    // 统计横向\n    vector<int> horizontal(n, 0);\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            horizontal[i] += vec[i][j];\n        }\n    }\n    // 统计纵向\n    vector<int> vertical(m , 0);\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            vertical[j] += vec[i][j];\n        }\n    }\n    int result = INT_MAX;\n    int horizontalCut = 0;\n    for (int i = 0 ; i < n; i++) {\n        horizontalCut += horizontal[i];\n        result = min(result, abs(sum - horizontalCut - horizontalCut));\n    }\n    int verticalCut = 0;\n    for (int j = 0; j < m; j++) {\n        verticalCut += vertical[j];\n        result = min(result, abs(sum - verticalCut - verticalCut));\n    }\n    cout << result << endl;\n}",
+          "description": "使用前缀和方法求解土地价值分配问题的C++实现"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n\n    int result = INT_MAX;\n    int count = 0; // 统计遍历过的行\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            count += vec[i][j];\n            // 遍历到行末尾时候开始统计\n            if (j == m - 1) result = min (result, abs(sum - count - count));\n        }\n    }\n\n    count = 0; // 统计遍历过的列\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            count += vec[i][j];\n            // 遍历到列末尾的时候开始统计\n            if (i == n - 1) result = min (result, abs(sum - count - count));\n        }\n    }\n    cout << result << endl;\n}",
+          "description": "优化暴力法解决土地价值分配问题的C++实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        // 统计横向\n        int[] horizontal = new int[n];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                horizontal[i] += vec[i][j];\n            }\n        }\n\n        // 统计纵向\n        int[] vertical = new int[m];\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                vertical[j] += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int horizontalCut = 0;\n        for (int i = 0; i < n; i++) {\n            horizontalCut += horizontal[i];\n            result = Math.min(result, Math.abs((sum - horizontalCut) - horizontalCut));\n        }\n\n        int verticalCut = 0;\n        for (int j = 0; j < m; j++) {\n            verticalCut += vertical[j];\n            result = Math.min(result, Math.abs((sum - verticalCut) - verticalCut));\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "使用前缀和方法求解土地价值分配问题的Java实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int count = 0; // 统计遍历过的行\n\n        // 行切分\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                count += vec[i][j];\n                // 遍历到行末尾时候开始统计\n                if (j == m - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        count = 0;\n        // 列切分\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                count += vec[i][j];\n                // 遍历到列末尾时候开始统计\n                if (i == n - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "优化暴力法解决土地价值分配问题的Java实现"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    # 统计横向\n    horizontal = [0] * n\n    for i in range(n):\n        for j in range(m):\n            horizontal[i] += vec[i][j]\n\n    # 统计纵向\n    vertical = [0] * m\n    for j in range(m):\n        for i in range(n):\n            vertical[j] += vec[i][j]\n\n    result = float('inf')\n    horizontalCut = 0\n    for i in range(n):\n        horizontalCut += horizontal[i]\n        result = min(result, abs(sum - 2 * horizontalCut))\n\n    verticalCut = 0\n    for j in range(m):\n        verticalCut += vertical[j]\n        result = min(result, abs(sum - 2 * verticalCut))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "使用前缀和方法求解土地价值分配问题的Python实现"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    result = float('inf')\n\n    count = 0\n    # 行切分\n    for i in range(n):\n        for j in range(m):\n            count += vec[i][j]\n            # 遍历到行末尾时候开始统计\n            if j == m - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    count = 0\n    # 列切分\n    for j in range(m):\n        for i in range(n):\n            count += vec[i][j]\n            # 遍历到列末尾时候开始统计\n            if i == n - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "优化暴力法解决土地价值分配问题的Python实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "#include <climits>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n    // 统计横向\n    vector<int> horizontal(n, 0);\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            horizontal[i] += vec[i][j];\n        }\n    }\n    // 统计纵向\n    vector<int> vertical(m , 0);\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            vertical[j] += vec[i][j];\n        }\n    }\n    int result = INT_MAX;\n    int horizontalCut = 0;\n    for (int i = 0 ; i < n; i++) {\n        horizontalCut += horizontal[i];\n        result = min(result, abs(sum - horizontalCut - horizontalCut));\n    }\n    int verticalCut = 0;\n    for (int j = 0; j < m; j++) {\n        verticalCut += vertical[j];\n        result = min(result, abs(sum - verticalCut - verticalCut));\n    }\n    cout << result << endl;\n}",
+          "description": "使用前缀和思路解决土地分配问题的C++版本"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n\n    int result = INT_MAX;\n    int count = 0; // 统计遍历过的行\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            count += vec[i][j];\n            // 遍历到行末尾时候开始统计\n            if (j == m - 1) result = min (result, abs(sum - count - count));\n\n        }\n    }\n\n    count = 0; // 统计遍历过的列\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            count += vec[i][j];\n            // 遍历到列末尾的时候开始统计\n            if (i == n - 1) result = min (result, abs(sum - count - count));\n        }\n    }\n    cout << result << endl;\n}",
+          "description": "优化暴力求解土地分配问题的C++版本"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        // 统计横向\n        int[] horizontal = new int[n];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                horizontal[i] += vec[i][j];\n            }\n        }\n\n        // 统计纵向\n        int[] vertical = new int[m];\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                vertical[j] += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int horizontalCut = 0;\n        for (int i = 0; i < n; i++) {\n            horizontalCut += horizontal[i];\n            result = Math.min(result, Math.abs((sum - horizontalCut) - horizontalCut));\n        }\n\n        int verticalCut = 0;\n        for (int j = 0; j < m; j++) {\n            verticalCut += vertical[j];\n            result = Math.min(result, Math.abs((sum - verticalCut) - verticalCut));\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "使用前缀和思路解决土地分配问题的Java版本"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int count = 0; // 统计遍历过的行\n\n        // 行切分\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                count += vec[i][j];\n                // 遍历到行末尾时候开始统计\n                if (j == m - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        count = 0;\n        // 列切分\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                count += vec[i][j];\n                // 遍历到列末尾时候开始统计\n                if (i == n - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "优化暴力求解土地分配问题的Java版本"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    # 统计横向\n    horizontal = [0] * n\n    for i in range(n):\n        for j in range(m):\n            horizontal[i] += vec[i][j]\n\n    # 统计纵向\n    vertical = [0] * m\n    for j in range(m):\n        for i in range(n):\n            vertical[j] += vec[i][j]\n\n    result = float('inf')\n    horizontalCut = 0\n    for i in range(n):\n        horizontalCut += horizontal[i]\n        result = min(result, abs(sum - 2 * horizontalCut))\n\n    verticalCut = 0\n    for j in range(m):\n        verticalCut += vertical[j]\n        result = min(result, abs(sum - 2 * verticalCut))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "使用前缀和思路解决土地分配问题的Python版本"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    \n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    result = float('inf')\n    \n    count = 0\n    # 行切分\n    for i in range(n):\n        \n        for j in range(m):\n            count += vec[i][j]\n            # 遍历到行末尾时候开始统计\n            if j == m - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    count = 0\n    # 列切分\n    for j in range(m):\n        \n        for i in range(n):\n            count += vec[i][j]\n            # 遍历到列末尾时候开始统计\n            if i == n - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "优化暴力求解土地分配问题的Python版本"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <climits>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "int main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n    // 统计横向\n    vector<int> horizontal(n, 0);\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            horizontal[i] += vec[i][j];\n        }\n    }\n    // 统计纵向\n    vector<int> vertical(m , 0);\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            vertical[j] += vec[i][j];\n        }\n    }\n    int result = INT_MAX;\n    int horizontalCut = 0;\n    for (int i = 0 ; i < n; i++) {\n        horizontalCut += horizontal[i];\n        result = min(result, abs(sum - horizontalCut - horizontalCut));\n    }\n    int verticalCut = 0;\n    for (int j = 0; j < m; j++) {\n        verticalCut += vertical[j];\n        result = min(result, abs(sum - verticalCut - verticalCut));\n    }\n    cout << result << endl;\n}",
+          "description": "C++前缀和版本"
+        },
+        {
+          "language": "cpp",
+          "code": "int main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n\n    int result = INT_MAX;\n    int count = 0; // 统计遍历过的行\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            count += vec[i][j];\n            // 遍历到行末尾时候开始统计\n            if (j == m - 1) result = min (result, abs(sum - count - count));\n\n        }\n    }\n\n    count = 0; // 统计遍历过的列\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            count += vec[i][j];\n            // 遍历到列末尾的时候开始统计\n            if (i == n - 1) result = min (result, abs(sum - count - count));\n        }\n    }\n    cout << result << endl;\n}",
+          "description": "C++优化暴力版本"
+        },
+        {
+          "language": "java",
+          "code": "public class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        // 统计横向\n        int[] horizontal = new int[n];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                horizontal[i] += vec[i][j];\n            }\n        }\n\n        // 统计纵向\n        int[] vertical = new int[m];\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                vertical[j] += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int horizontalCut = 0;\n        for (int i = 0; i < n; i++) {\n            horizontalCut += horizontal[i];\n            result = Math.min(result, Math.abs((sum - horizontalCut) - horizontalCut));\n        }\n\n        int verticalCut = 0;\n        for (int j = 0; j < m; j++) {\n            verticalCut += vertical[j];\n            result = Math.min(result, Math.abs((sum - verticalCut) - verticalCut));\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java前缀和版本"
+        },
+        {
+          "language": "java",
+          "code": "public class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int count = 0; // 统计遍历过的行\n\n        // 行切分\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                count += vec[i][j];\n                // 遍历到行末尾时候开始统计\n                if (j == m - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        count = 0;\n        // 列切分\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                count += vec[i][j];\n                // 遍历到列末尾时候开始统计\n                if (i == n - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java优化暴力版本"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    # 统计横向\n    horizontal = [0] * n\n    for i in range(n):\n        for j in range(m):\n            horizontal[i] += vec[i][j]\n\n    # 统计纵向\n    vertical = [0] * m\n    for j in range(m):\n        for i in range(n):\n            vertical[j] += vec[i][j]\n\n    result = float('inf')\n    horizontalCut = 0\n    for i in range(n):\n        horizontalCut += horizontal[i]\n        result = min(result, abs(sum - 2 * horizontalCut))\n\n    verticalCut = 0\n    for j in range(m):\n        verticalCut += vertical[j]\n        result = min(result, abs(sum - 2 * verticalCut))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python前缀和版本"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    \n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    result = float('inf')\n    \n    count = 0\n    # 行切分\n    for i in range(n):\n        \n        for j in range(m):\n            count += vec[i][j]\n            # 遍历到行末尾时候开始统计\n            if j == m - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    count = 0\n    # 列切分\n    for j in range(m):\n        \n        for i in range(n):\n            count += vec[i][j]\n            # 遍历到列末尾时候开始统计\n            if i == n - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python优化暴力版本"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n    // 统计横向\n    vector<int> horizontal(n, 0);\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            horizontal[i] += vec[i][j];\n        }\n    }\n    // 统计纵向\n    vector<int> vertical(m , 0);\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            vertical[j] += vec[i][j];\n        }\n    }\n    int result = INT_MAX;\n    int horizontalCut = 0;\n    for (int i = 0 ; i < n; i++) {\n        horizontalCut += horizontal[i];\n        result = min(result, abs(sum - horizontalCut - horizontalCut));\n    }\n    int verticalCut = 0;\n    for (int j = 0; j < m; j++) {\n        verticalCut += vertical[j];\n        result = min(result, abs(sum - verticalCut - verticalCut));\n    }\n    cout << result << endl;\n}",
+          "description": "前缀和方法实现"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n\n    int result = INT_MAX;\n    int count = 0; // 统计遍历过的行\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            count += vec[i][j];\n            // 遍历到行末尾时候开始统计\n            if (j == m - 1) result = min (result, abs(sum - count - count));\n\n        }\n    }\n\n    count = 0; // 统计遍历过的列\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            count += vec[i][j];\n            // 遍历到列末尾的时候开始统计\n            if (i == n - 1) result = min (result, abs(sum - count - count));\n        }\n    }\n    cout << result << endl;\n}",
+          "description": "优化暴力求解方法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        // 统计横向\n        int[] horizontal = new int[n];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                horizontal[i] += vec[i][j];\n            }\n        }\n\n        // 统计纵向\n        int[] vertical = new int[m];\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                vertical[j] += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int horizontalCut = 0;\n        for (int i = 0; i < n; i++) {\n            horizontalCut += horizontal[i];\n            result = Math.min(result, Math.abs((sum - horizontalCut) - horizontalCut));\n        }\n\n        int verticalCut = 0;\n        for (int j = 0; j < m; j++) {\n            verticalCut += vertical[j];\n            result = Math.min(result, Math.abs((sum - verticalCut) - verticalCut));\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java版本前缀和方法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int count = 0; // 统计遍历过的行\n\n        // 行切分\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                count += vec[i][j];\n                // 遍历到行末尾时候开始统计\n                if (j == m - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        count = 0;\n        // 列切分\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                count += vec[i][j];\n                // 遍历到列末尾时候开始统计\n                if (i == n - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java版本优化暴力求解方法"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    # 统计横向\n    horizontal = [0] * n\n    for i in range(n):\n        for j in range(m):\n            horizontal[i] += vec[i][j]\n\n    # 统计纵向\n    vertical = [0] * m\n    for j in range(m):\n        for i in range(n):\n            vertical[j] += vec[i][j]\n\n    result = float('inf')\n    horizontalCut = 0\n    for i in range(n):\n        horizontalCut += horizontal[i]\n        result = min(result, abs(sum - 2 * horizontalCut))\n\n    verticalCut = 0\n    for j in range(m):\n        verticalCut += vertical[j]\n        result = min(result, abs(sum - 2 * verticalCut))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本前缀和方法"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    \n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    result = float('inf')\n    \n    count = 0\n    # 行切分\n    for i in range(n):\n        \n        for j in range(m):\n            count += vec[i][j]\n            # 遍历到行末尾时候开始统计\n            if j == m - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    count = 0\n    # 列切分\n    for j in range(m):\n        \n        for i in range(n):\n            count += vec[i][j]\n            # 遍历到列末尾时候开始统计\n            if i == n - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本优化暴力求解方法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "#include <climits>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n    // 统计横向\n    vector<int> horizontal(n, 0);\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            horizontal[i] += vec[i][j];\n        }\n    }\n    // 统计纵向\n    vector<int> vertical(m , 0);\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            vertical[j] += vec[i][j];\n        }\n    }\n    int result = INT_MAX;\n    int horizontalCut = 0;\n    for (int i = 0 ; i < n; i++) {\n        horizontalCut += horizontal[i];\n        result = min(result, abs(sum - horizontalCut - horizontalCut));\n    }\n    int verticalCut = 0;\n    for (int j = 0; j < m; j++) {\n        verticalCut += vertical[j];\n        result = min(result, abs(sum - verticalCut - verticalCut));\n    }\n    cout << result << endl;\n}",
+          "description": "C++ 前缀和方案"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n\n    int result = INT_MAX;\n    int count = 0; // 统计遍历过的行\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            count += vec[i][j];\n            // 遍历到行末尾时候开始统计\n            if (j == m - 1) result = min (result, abs(sum - count - count));\n\n        }\n    }\n\n    count = 0; // 统计遍历过的列\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            count += vec[i][j];\n            // 遍历到列末尾的时候开始统计\n            if (i == n - 1) result = min (result, abs(sum - count - count));\n        }\n    }\n    cout << result << endl;\n}",
+          "description": "C++ 优化暴力方案"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        // 统计横向\n        int[] horizontal = new int[n];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                horizontal[i] += vec[i][j];\n            }\n        }\n\n        // 统计纵向\n        int[] vertical = new int[m];\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                vertical[j] += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int horizontalCut = 0;\n        for (int i = 0; i < n; i++) {\n            horizontalCut += horizontal[i];\n            result = Math.min(result, Math.abs((sum - horizontalCut) - horizontalCut));\n        }\n\n        int verticalCut = 0;\n        for (int j = 0; j < m; j++) {\n            verticalCut += vertical[j];\n            result = Math.min(result, Math.abs((sum - verticalCut) - verticalCut));\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java 前缀和方案"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int count = 0; // 统计遍历过的行\n\n        // 行切分\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                count += vec[i][j];\n                // 遍历到行末尾时候开始统计\n                if (j == m - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        count = 0;\n        // 列切分\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                count += vec[i][j];\n                // 遍历到列末尾时候开始统计\n                if (i == n - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java 优化暴力方案"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    # 统计横向\n    horizontal = [0] * n\n    for i in range(n):\n        for j in range(m):\n            horizontal[i] += vec[i][j]\n\n    # 统计纵向\n    vertical = [0] * m\n    for j in range(m):\n        for i in range(n):\n            vertical[j] += vec[i][j]\n\n    result = float('inf')\n    horizontalCut = 0\n    for i in range(n):\n        horizontalCut += horizontal[i]\n        result = min(result, abs(sum - 2 * horizontalCut))\n\n    verticalCut = 0\n    for j in range(m):\n        verticalCut += vertical[j]\n        result = min(result, abs(sum - 2 * verticalCut))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python 前缀和方案"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    result = float('inf')\n\n    count = 0\n    # 行切分\n    for i in range(n):\n\n        for j in range(m):\n            count += vec[i][j]\n            # 遍历到行末尾时候开始统计\n            if j == m - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    count = 0\n    # 列切分\n    for j in range(m):\n\n        for i in range(n):\n            count += vec[i][j]\n            # 遍历到列末尾时候开始统计\n            if i == n - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python 优化暴力方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <climits>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "using namespace std;int main () {int n, m;cin >> n >> m;int sum = 0;vector<vector<int>> vec(n, vector<int>(m, 0)) ;for (int i = 0; i < n; i++) {for (int j = 0; j < m; j++) {cin >> vec[i][j];sum += vec[i][j];}}vector<int> horizontal(n, 0);for (int i = 0; i < n; i++) {for (int j = 0 ; j < m; j++) {horizontal[i] += vec[i][j];}}vector<int> vertical(m , 0);for (int j = 0; j < m; j++) {for (int i = 0 ; i < n; i++) {vertical[j] += vec[i][j];}}int result = INT_MAX;int horizontalCut = 0;for (int i = 0 ; i < n; i++) {horizontalCut += horizontal[i];result = min(result, abs(sum - horizontalCut - horizontalCut));}int verticalCut = 0;for (int j = 0; j < m; j++) {verticalCut += vertical[j];result = min(result, abs(sum - verticalCut - verticalCut));}cout << result << endl;}",
+          "description": "使用C++实现的前缀和方法解决土地分配问题"
+        },
+        {
+          "language": "cpp",
+          "code": "using namespace std;int main () {int n, m;cin >> n >> m;int sum = 0;vector<vector<int>> vec(n, vector<int>(m, 0)) ;for (int i = 0; i < n; i++) {for (int j = 0; j < m; j++) {cin >> vec[i][j];sum += vec[i][j];}}int result = INT_MAX;int count = 0;for (int i = 0; i < n; i++) {for (int j = 0 ; j < m; j++) {count += vec[i][j];if (j == m - 1) result = min (result, abs(sum - count - count));}}count = 0;for (int j = 0; j < m; j++) {for (int i = 0 ; i < n; i++) {count += vec[i][j];if (i == n - 1) result = min (result, abs(sum - count - count));}}cout << result << endl;}",
+          "description": "使用C++实现的优化暴力方法解决土地分配问题"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;public class Main {public static void main(String[] args) {Scanner scanner = new Scanner(System.in);int n = scanner.nextInt();int m = scanner.nextInt();int sum = 0;int[][] vec = new int[n][m];for (int i = 0; i < n; i++) {for (int j = 0; j < m; j++) {vec[i][j] = scanner.nextInt();sum += vec[i][j];}}int[] horizontal = new int[n];for (int i = 0; i < n; i++) {for (int j = 0; j < m; j++) {horizontal[i] += vec[i][j];}}int[] vertical = new int[m];for (int j = 0; j < m; j++) {for (int i = 0; i < n; i++) {vertical[j] += vec[i][j];}}int result = Integer.MAX_VALUE;int horizontalCut = 0;for (int i = 0; i < n; i++) {horizontalCut += horizontal[i];result = Math.min(result, Math.abs((sum - horizontalCut) - horizontalCut));}int verticalCut = 0;for (int j = 0; j < m; j++) {verticalCut += vertical[j];result = Math.min(result, Math.abs((sum - verticalCut) - verticalCut));}System.out.println(result);scanner.close();}}",
+          "description": "使用Java实现的前缀和方法解决土地分配问题"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;public class Main {public static void main(String[] args) {Scanner scanner = new Scanner(System.in);int n = scanner.nextInt();int m = scanner.nextInt();int sum = 0;int[][] vec = new int[n][m];for (int i = 0; i < n; i++) {for (int j = 0; j < m; j++) {vec[i][j] = scanner.nextInt();sum += vec[i][j];}}int result = Integer.MAX_VALUE;int count = 0;for (int i = 0; i < n; i++) {for (int j = 0; j < m; j++) {count += vec[i][j];if (j == m - 1) {result = Math.min(result, Math.abs(sum - 2 * count));}}}count = 0;for (int j = 0; j < m; j++) {for (int i = 0; i < n; i++) {count += vec[i][j];if (i == n - 1) {result = Math.min(result, Math.abs(sum - 2 * count));}}}System.out.println(result);scanner.close();}}",
+          "description": "使用Java实现的优化暴力方法解决土地分配问题"
+        },
+        {
+          "language": "python",
+          "code": "def main():import sysinput = sys.stdin.readdata = input().split()idx = 0n = int(data[idx])idx += 1m = int(data[idx])idx += 1sum = 0vec = []for i in range(n):row = []for j in range(m):num = int(data[idx])idx += 1row.append(num)sum += numvec.append(row)horizontal = [0] * nfor i in range(n):for j in range(m):horizontal[i] += vec[i][j]vertical = [0] * mfor j in range(m):for i in range(n):vertical[j] += vec[i][j]result = float('inf')horizontalCut = 0for i in range(n):horizontalCut += horizontal[i]result = min(result, abs(sum - 2 * horizontalCut))verticalCut = 0for j in range(m):verticalCut += vertical[j]result = min(result, abs(sum - 2 * verticalCut))print(result)if __name__ == \"__main__\":main()",
+          "description": "使用Python实现的前缀和方法解决土地分配问题"
+        },
+        {
+          "language": "python",
+          "code": "def main():import sysinput = sys.stdin.readdata = input().split()idx = 0n = int(data[idx])idx += 1m = int(data[idx])idx += 1sum = 0vec = []for i in range(n):row = []for j in range(m):num = int(data[idx])idx += 1row.append(num)sum += numvec.append(row)result = float('inf')count = 0for i in range(n):for j in range(m):count += vec[i][j]if j == m - 1:result = min(result, abs(sum - 2 * count))count = 0for j in range(m):for i in range(n):count += vec[i][j]if i == n - 1:result = min(result, abs(sum - 2 * count))print(result)if __name__ == \"__main__\":main()",
+          "description": "使用Python实现的优化暴力方法解决土地分配问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n    // 统计横向\n    vector<int> horizontal(n, 0);\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            horizontal[i] += vec[i][j];\n        }\n    }\n    // 统计纵向\n    vector<int> vertical(m , 0);\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            vertical[j] += vec[i][j];\n        }\n    }\n    int result = INT_MAX;\n    int horizontalCut = 0;\n    for (int i = 0 ; i < n; i++) {\n        horizontalCut += horizontal[i];\n        result = min(result, abs(sum - horizontalCut - horizontalCut));\n    }\n    int verticalCut = 0;\n    for (int j = 0; j < m; j++) {\n        verticalCut += vertical[j];\n        result = min(result, abs(sum - verticalCut - verticalCut));\n    }\n    cout << result << endl;\n}",
+          "description": "使用前缀和的思路来求解，先将行方向和列方向的和求出来。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n\n    int result = INT_MAX;\n    int count = 0; // 统计遍历过的行\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            count += vec[i][j];\n            if (j == m - 1) result = min (result, abs(sum - count - count));\n        }\n    }\n\n    count = 0; // 统计遍历过的列\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            count += vec[i][j];\n            if (i == n - 1) result = min (result, abs(sum - count - count));\n        }\n    }\n    cout << result << endl;\n}",
+          "description": "在暴力求解的基础上进行优化，在行向或列向遍历的时候遇到末尾就统计一次。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        int[] horizontal = new int[n];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                horizontal[i] += vec[i][j];\n            }\n        }\n\n        int[] vertical = new int[m];\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                vertical[j] += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int horizontalCut = 0;\n        for (int i = 0; i < n; i++) {\n            horizontalCut += horizontal[i];\n            result = Math.min(result, Math.abs((sum - horizontalCut) - horizontalCut));\n        }\n\n        int verticalCut = 0;\n        for (int j = 0; j < m; j++) {\n            verticalCut += vertical[j];\n            result = Math.min(result, Math.abs((sum - verticalCut) - verticalCut));\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java版本使用前缀和的方法计算最小的土地价值差。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int count = 0; \n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                count += vec[i][j];\n                if (j == m - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        count = 0;\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                count += vec[i][j];\n                if (i == n - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java版本通过优化暴力方法计算最小的土地价值差。"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    horizontal = [0] * n\n    for i in range(n):\n        for j in range(m):\n            horizontal[i] += vec[i][j]\n\n    vertical = [0] * m\n    for j in range(m):\n        for i in range(n):\n            vertical[j] += vec[i][j]\n\n    result = float('inf')\n    horizontalCut = 0\n    for i in range(n):\n        horizontalCut += horizontal[i]\n        result = min(result, abs(sum - 2 * horizontalCut))\n\n    verticalCut = 0\n    for j in range(m):\n        verticalCut += vertical[j]\n        result = min(result, abs(sum - 2 * verticalCut))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本使用前缀和的方法计算最小的土地价值差。"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    result = float('inf')\n    count = 0\n    for i in range(n):\n        for j in range(m):\n            count += vec[i][j]\n            if j == m - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    count = 0\n    for j in range(m):\n        for i in range(n):\n            count += vec[i][j]\n            if i == n - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本通过优化暴力方法计算最小的土地价值差。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "前缀和",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n    // 统计横向\n    vector<int> horizontal(n, 0);\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            horizontal[i] += vec[i][j];\n        }\n    }\n    // 统计纵向\n    vector<int> vertical(m , 0);\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            vertical[j] += vec[i][j];\n        }\n    }\n    int result = INT_MAX;\n    int horizontalCut = 0;\n    for (int i = 0 ; i < n; i++) {\n        horizontalCut += horizontal[i];\n        result = min(result, abs(sum - horizontalCut - horizontalCut));\n    }\n    int verticalCut = 0;\n    for (int j = 0; j < m; j++) {\n        verticalCut += vertical[j];\n        result = min(result, abs(sum - verticalCut - verticalCut));\n    }\n    cout << result << endl;\n}",
+          "description": "前缀和方法的C++实现"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n\n    int result = INT_MAX;\n    int count = 0; // 统计遍历过的行\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            count += vec[i][j];\n            // 遍历到行末尾时候开始统计\n            if (j == m - 1) result = min (result, abs(sum - count - count));\n\n        }\n    }\n\n    count = 0; // 统计遍历过的列\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            count += vec[i][j];\n            // 遍历到列末尾的时候开始统计\n            if (i == n - 1) result = min (result, abs(sum - count - count));\n        }\n    }\n    cout << result << endl;\n}",
+          "description": "优化暴力求解的C++实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        // 统计横向\n        int[] horizontal = new int[n];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                horizontal[i] += vec[i][j];\n            }\n        }\n\n        // 统计纵向\n        int[] vertical = new int[m];\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                vertical[j] += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int horizontalCut = 0;\n        for (int i = 0; i < n; i++) {\n            horizontalCut += horizontal[i];\n            result = Math.min(result, Math.abs((sum - horizontalCut) - horizontalCut));\n        }\n\n        int verticalCut = 0;\n        for (int j = 0; j < m; j++) {\n            verticalCut += vertical[j];\n            result = Math.min(result, Math.abs((sum - verticalCut) - verticalCut));\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "前缀和方法的Java实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int count = 0; // 统计遍历过的行\n\n        // 行切分\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                count += vec[i][j];\n                // 遍历到行末尾时候开始统计\n                if (j == m - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        count = 0;\n        // 列切分\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                count += vec[i][j];\n                // 遍历到列末尾时候开始统计\n                if (i == n - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "优化暴力求解的Java实现"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    # 统计横向\n    horizontal = [0] * n\n    for i in range(n):\n        for j in range(m):\n            horizontal[i] += vec[i][j]\n\n    # 统计纵向\n    vertical = [0] * m\n    for j in range(m):\n        for i in range(n):\n            vertical[j] += vec[i][j]\n\n    result = float('inf')\n    horizontalCut = 0\n    for i in range(n):\n        horizontalCut += horizontal[i]\n        result = min(result, abs(sum - 2 * horizontalCut))\n\n    verticalCut = 0\n    for j in range(m):\n        verticalCut += vertical[j]\n        result = min(result, abs(sum - 2 * verticalCut))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "前缀和方法的Python实现"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    \n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    result = float('inf')\n    \n    count = 0\n    # 行切分\n    for i in range(n):\n        \n        for j in range(m):\n            count += vec[i][j]\n            # 遍历到行末尾时候开始统计\n            if j == m - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    count = 0\n    # 列切分\n    for j in range(m):\n        \n        for i in range(n):\n            count += vec[i][j]\n            # 遍历到列末尾时候开始统计\n            if i == n - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "优化暴力求解的Python实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "python",
+      "text": "前缀和",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n    // 统计横向\n    vector<int> horizontal(n, 0);\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            horizontal[i] += vec[i][j];\n        }\n    }\n    // 统计纵向\n    vector<int> vertical(m , 0);\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            vertical[j] += vec[i][j];\n        }\n    }\n    int result = INT_MAX;\n    int horizontalCut = 0;\n    for (int i = 0 ; i < n; i++) {\n        horizontalCut += horizontal[i];\n        result = min(result, abs(sum - horizontalCut - horizontalCut));\n    }\n    int verticalCut = 0;\n    for (int j = 0; j < m; j++) {\n        verticalCut += vertical[j];\n        result = min(result, abs(sum - verticalCut - verticalCut));\n    }\n    cout << result << endl;\n}",
+          "description": "前缀和"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n\n    int result = INT_MAX;\n    int count = 0; // 统计遍历过的行\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            count += vec[i][j];\n            // 遍历到行末尾时候开始统计\n            if (j == m - 1) result = min (result, abs(sum - count - count));\n\n        }\n    }\n\n    count = 0; // 统计遍历过的列\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            count += vec[i][j];\n            // 遍历到列末尾的时候开始统计\n            if (i == n - 1) result = min (result, abs(sum - count - count));\n        }\n    }\n    cout << result << endl;\n}",
+          "description": "优化暴力"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        // 统计横向\n        int[] horizontal = new int[n];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                horizontal[i] += vec[i][j];\n            }\n        }\n\n        // 统计纵向\n        int[] vertical = new int[m];\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                vertical[j] += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int horizontalCut = 0;\n        for (int i = 0; i < n; i++) {\n            horizontalCut += horizontal[i];\n            result = Math.min(result, Math.abs((sum - horizontalCut) - horizontalCut));\n        }\n\n        int verticalCut = 0;\n        for (int j = 0; j < m; j++) {\n            verticalCut += vertical[j];\n            result = Math.min(result, Math.abs((sum - verticalCut) - verticalCut));\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "前缀和"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int count = 0; // 统计遍历过的行\n\n        // 行切分\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                count += vec[i][j];\n                // 遍历到行末尾时候开始统计\n                if (j == m - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        count = 0;\n        // 列切分\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                count += vec[i][j];\n                // 遍历到列末尾时候开始统计\n                if (i == n - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "优化暴力"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    # 统计横向\n    horizontal = [0] * n\n    for i in range(n):\n        for j in range(m):\n            horizontal[i] += vec[i][j]\n\n    # 统计纵向\n    vertical = [0] * m\n    for j in range(m):\n        for i in range(n):\n            vertical[j] += vec[i][j]\n\n    result = float('inf')\n    horizontalCut = 0\n    for i in range(n):\n        horizontalCut += horizontal[i]\n        result = min(result, abs(sum - 2 * horizontalCut))\n\n    verticalCut = 0\n    for j in range(m):\n        verticalCut += vertical[j]\n        result = min(result, abs(sum - 2 * verticalCut))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "前缀和"
+        },
+        {
+          "language": "python",
+          "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    \n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    result = float('inf')\n    \n    count = 0\n    # 行切分\n    for i in range(n):\n        \n        for j in range(m):\n            count += vec[i][j]\n            # 遍历到行末尾时候开始统计\n            if j == m - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    count = 0\n    # 列切分\n    for j in range(m):\n        \n        for i in range(n):\n            count += vec[i][j]\n            # 遍历到列末尾时候开始统计\n            if i == n - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "优化暴力"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n^2)",
+    "space_complexity": null,
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n    // 统计横向\n    vector<int> horizontal(n, 0);\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            horizontal[i] += vec[i][j];\n        }\n    }\n    // 统计纵向\n    vector<int> vertical(m , 0);\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            vertical[j] += vec[i][j];\n        }\n    }\n    int result = INT_MAX;\n    int horizontalCut = 0;\n    for (int i = 0 ; i < n; i++) {\n        horizontalCut += horizontal[i];\n        result = min(result, abs(sum - horizontalCut - horizontalCut));\n    }\n    int verticalCut = 0;\n    for (int j = 0; j < m; j++) {\n        verticalCut += vertical[j];\n        result = min(result, abs(sum - verticalCut - verticalCut));\n    }\n    cout << result << endl;\n}",
+      "description": "使用前缀和的方法来计算两个子区域之间的最小差距。"
+    },
+    {
+      "language": "cpp",
+      "code": "#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n\n    int result = INT_MAX;\n    int count = 0; // 统计遍历过的行\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            count += vec[i][j];\n            // 遍历到行末尾时候开始统计\n            if (j == m - 1) result = min (result, abs(sum - count - count));\n\n        }\n    }\n\n    count = 0; // 统计遍历过的列\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            count += vec[i][j];\n            // 遍历到列末尾的时候开始统计\n            if (i == n - 1) result = min (result, abs(sum - count - count));\n        }\n    }\n    cout << result << endl;\n}",
+      "description": "通过优化暴力解法，在行向或列向遍历过程中直接进行统计，计算两个子区域之间的最小差距。"
+    },
+    {
+      "language": "java",
+      "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        // 统计横向\n        int[] horizontal = new int[n];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                horizontal[i] += vec[i][j];\n            }\n        }\n\n        // 统计纵向\n        int[] vertical = new int[m];\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                vertical[j] += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int horizontalCut = 0;\n        for (int i = 0; i < n; i++) {\n            horizontalCut += horizontal[i];\n            result = Math.min(result, Math.abs((sum - horizontalCut) - horizontalCut));\n        }\n\n        int verticalCut = 0;\n        for (int j = 0; j < m; j++) {\n            verticalCut += vertical[j];\n            result = Math.min(result, Math.abs((sum - verticalCut) - verticalCut));\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+      "description": "Java版本的前缀和方法实现，用于找出两个子区域土地总价值之差的最小值。"
+    },
+    {
+      "language": "java",
+      "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int count = 0; // 统计遍历过的行\n\n        // 行切分\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                count += vec[i][j];\n                // 遍历到行末尾时候开始统计\n                if (j == m - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        count = 0;\n        // 列切分\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                count += vec[i][j];\n                // 遍历到列末尾时候开始统计\n                if (i == n - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+      "description": "Java版本的优化暴力解法，通过在遍历过程中的特定位置进行统计，以找到两个子区域土地总价值之差的最小值。"
+    },
+    {
+      "language": "python",
+      "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    # 统计横向\n    horizontal = [0] * n\n    for i in range(n):\n        for j in range(m):\n            horizontal[i] += vec[i][j]\n\n    # 统计纵向\n    vertical = [0] * m\n    for j in range(m):\n        for i in range(n):\n            vertical[j] += vec[i][j]\n\n    result = float('inf')\n    horizontalCut = 0\n    for i in range(n):\n        horizontalCut += horizontal[i]\n        result = min(result, abs(sum - 2 * horizontalCut))\n\n    verticalCut = 0\n    for j in range(m):\n        verticalCut += vertical[j]\n        result = min(result, abs(sum - 2 * verticalCut))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+      "description": "Python版本的前缀和方法实现，旨在找出两个子区域之间土地总价值差异的最小值。"
+    },
+    {
+      "language": "python",
+      "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    \n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    result = float('inf')\n    \n    count = 0\n    # 行切分\n    for i in range(n):\n        \n        for j in range(m):\n            count += vec[i][j]\n            # 遍历到行末尾时候开始统计\n            if j == m - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    count = 0\n    # 列切分\n    for j in range(m):\n        \n        for i in range(n):\n            count += vec[i][j]\n            # 遍历到列末尾时候开始统计\n            if i == n - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+      "description": "Python版本的优化暴力解法，通过在遍历过程中直接统计，以求得两个子区域之间土地总价值差异的最小值。"
+    }
+  ],
+  "common_mistakes": [
+    "未考虑到边界条件，如n或m为1时的情况。",
+    "在计算不同分区的价值时忘记使用绝对值来确保始终得到正值。",
+    "忽视了在每次迭代中更新最小差异的重要性。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\数组\\开发商购买土地.txt",
+  "extracted_at": "2025-07-21T22:25:43.990136",
+  "raw_content": "开发商购买土地\n\n题目链接(https://kamacoder.com/problempage.php?pid=1044)\n\n【题目描述】\n\n在一个城市区域内，被划分成了n * m个连续的区块，每个区块都拥有不同的权值，代表着其土地价值。目前，有两家开发公司，A 公司和 B 公司，希望购买这个城市区域的土地。\n\n现在，需要将这个城市区域的所有区块分配给 A 公司和 B 公司。\n\n然而，由于城市规划的限制，只允许将区域按横向或纵向划分成两个子区域，而且每个子区域都必须包含一个或多个区块。\n\n为了确保公平竞争，你需要找到一种分配方式，使得 A 公司和 B 公司各自的子区域内的土地总价值之差最小。\n\n注意：区块不可再分。\n\n【输入描述】\n\n第一行输入两个正整数，代表 n 和 m。\n\n接下来的 n 行，每行输出 m 个正整数。\n\n输出描述\n\n请输出一个整数，代表两个子区域内土地总价值之间的最小差距。\n\n【输入示例】\n\n3 3 1 2 3 2 1 3 1 2 3\n\n【输出示例】\n\n0\n\n【提示信息】\n\n如果将区域按照如下方式划分：\n\n1 2 | 3 2 1 | 3 1 2 | 3\n\n两个子区域内土地总价值之间的最小差距可以达到 0。\n\n【数据范围】：\n\n1 <= n, m <= 100；\nn 和 m 不同时为 1。\n#思路\n看到本题，大家如果想暴力求解，应该是 n^3 的时间复杂度，\n\n一个 for 枚举分割线， 嵌套 两个for 去累加区间里的和。\n\n如果本题要求 任何两个行（或者列）之间的数值总和，大家在0058.区间和 的基础上 应该知道怎么求。\n\n就是前缀和的思路，先统计好，前n行的和 q[n]，如果要求矩阵 a行 到 b行 之间的总和，那么就 q[b] - q[a - 1]就好。\n\n至于为什么是 a - 1，大家去看 0058.区间和 的分析，使用 前缀和 要注意 区间左右边的开闭情况。\n\n本题也可以使用 前缀和的思路来求解，先将 行方向，和 列方向的和求出来，这样可以方便知道 划分的两个区间的和。\n\n代码如下：\n\n#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n    // 统计横向\n    vector<int> horizontal(n, 0);\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            horizontal[i] += vec[i][j];\n        }\n    }\n    // 统计纵向\n    vector<int> vertical(m , 0);\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            vertical[j] += vec[i][j];\n        }\n    }\n    int result = INT_MAX;\n    int horizontalCut = 0;\n    for (int i = 0 ; i < n; i++) {\n        horizontalCut += horizontal[i];\n        result = min(result, abs(sum - horizontalCut - horizontalCut));\n    }\n    int verticalCut = 0;\n    for (int j = 0; j < m; j++) {\n        verticalCut += vertical[j];\n        result = min(result, abs(sum - verticalCut - verticalCut));\n    }\n    cout << result << endl;\n}\n\n时间复杂度： O(n^2)\n\n其实本题可以在暴力求解的基础上，优化一下，就不用前缀和了，在行向遍历的时候，遇到行末尾就统一一下， 在列向遍历的时候，遇到列末尾就统计一下。\n\n时间复杂度也是 O(n^2)\n\n代码如下：\n\n#include <iostream>\n#include <vector>\n#include <climits>\n\nusing namespace std;\nint main () {\n    int n, m;\n    cin >> n >> m;\n    int sum = 0;\n    vector<vector<int>> vec(n, vector<int>(m, 0)) ;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> vec[i][j];\n            sum += vec[i][j];\n        }\n    }\n\n    int result = INT_MAX;\n    int count = 0; // 统计遍历过的行\n    for (int i = 0; i < n; i++) {\n        for (int j = 0 ; j < m; j++) {\n            count += vec[i][j];\n            // 遍历到行末尾时候开始统计\n            if (j == m - 1) result = min (result, abs(sum - count - count));\n\n        }\n    }\n\n    count = 0; // 统计遍历过的列\n    for (int j = 0; j < m; j++) {\n        for (int i = 0 ; i < n; i++) {\n            count += vec[i][j];\n            // 遍历到列末尾的时候开始统计\n            if (i == n - 1) result = min (result, abs(sum - count - count));\n        }\n    }\n    cout << result << endl;\n}\n \n#其他语言版本\n#Java\n前缀和\n\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        // 统计横向\n        int[] horizontal = new int[n];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                horizontal[i] += vec[i][j];\n            }\n        }\n\n        // 统计纵向\n        int[] vertical = new int[m];\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                vertical[j] += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int horizontalCut = 0;\n        for (int i = 0; i < n; i++) {\n            horizontalCut += horizontal[i];\n            result = Math.min(result, Math.abs((sum - horizontalCut) - horizontalCut));\n            // 更新result。其中，horizontalCut表示前i行的和，sum - horizontalCut表示剩下的和，作差、取绝对值，得到题目需要的“A和B各自的子区域内的土地总价值之差”。下同。\n        }\n\n        int verticalCut = 0;\n        for (int j = 0; j < m; j++) {\n            verticalCut += vertical[j];\n            result = Math.min(result, Math.abs((sum - verticalCut) - verticalCut));\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}\n\n优化暴力\n\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int sum = 0;\n        int[][] vec = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                vec[i][j] = scanner.nextInt();\n                sum += vec[i][j];\n            }\n        }\n\n        int result = Integer.MAX_VALUE;\n        int count = 0; // 统计遍历过的行\n\n        // 行切分\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                count += vec[i][j];\n                // 遍历到行末尾时候开始统计\n                if (j == m - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        count = 0;\n        // 列切分\n        for (int j = 0; j < m; j++) {\n            for (int i = 0; i < n; i++) {\n                count += vec[i][j];\n                // 遍历到列末尾时候开始统计\n                if (i == n - 1) {\n                    result = Math.min(result, Math.abs(sum - 2 * count));\n                }\n            }\n        }\n\n        System.out.println(result);\n        scanner.close();\n    }\n}\n\n#python\n前缀和\n\ndef main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    # 统计横向\n    horizontal = [0] * n\n    for i in range(n):\n        for j in range(m):\n            horizontal[i] += vec[i][j]\n\n    # 统计纵向\n    vertical = [0] * m\n    for j in range(m):\n        for i in range(n):\n            vertical[j] += vec[i][j]\n\n    result = float('inf')\n    horizontalCut = 0\n    for i in range(n):\n        horizontalCut += horizontal[i]\n        result = min(result, abs(sum - 2 * horizontalCut))\n\n    verticalCut = 0\n    for j in range(m):\n        verticalCut += vertical[j]\n        result = min(result, abs(sum - 2 * verticalCut))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()\n\n\n优化暴力\n\ndef main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    \n    idx = 0\n    n = int(data[idx])\n    idx += 1\n    m = int(data[idx])\n    idx += 1\n    sum = 0\n    vec = []\n    for i in range(n):\n        row = []\n        for j in range(m):\n            num = int(data[idx])\n            idx += 1\n            row.append(num)\n            sum += num\n        vec.append(row)\n\n    result = float('inf')\n    \n    count = 0\n    # 行切分\n    for i in range(n):\n        \n        for j in range(m):\n            count += vec[i][j]\n            # 遍历到行末尾时候开始统计\n            if j == m - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    count = 0\n    # 列切分\n    for j in range(m):\n        \n        for i in range(n):\n            count += vec[i][j]\n            # 遍历到列末尾时候开始统计\n            if i == n - 1:\n                result = min(result, abs(sum - 2 * count))\n\n    print(result)\n\nif __name__ == \"__main__\":\n    main()"
+}

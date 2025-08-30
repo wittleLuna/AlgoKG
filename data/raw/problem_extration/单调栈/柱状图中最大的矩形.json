@@ -1,0 +1,660 @@
+{
+  "id": "AP_a50fb9e1",
+  "title": "柱状图中最大的矩形",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/largest-rectangle-in-histogram/",
+  "description": "给定 n 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。\n\n求在该柱状图中，能够勾勒出来的矩形的最大面积。\n\n\nhttps://file1.kamacoder.com/i/algo/20210803220437.png\n\n\n1 <= heights.length <=10^5\n0 <= heights[i] <= 10^4",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "单调栈"
+  ],
+  "data_structure_tags": [
+    "栈",
+    "数组"
+  ],
+  "technique_tags": [
+    "动态规划思想",
+    "空间换时间"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过维护一个单调递增栈来追踪每个柱子左侧和右侧第一个小于该柱子的边界。当遇到一个比栈顶元素小的值时，开始计算以栈顶元素为高的矩形面积，并更新最大面积。",
+  "key_insights": [
+    {
+      "content": "利用单调栈可以有效地找到每个柱子左右两边第一个小于它的柱子，从而快速确定以当前柱子高度所能形成的最大矩形宽度。"
+    },
+    {
+      "content": "在数组两端添加0可以帮助简化边界条件处理，确保所有元素都能被正确处理。"
+    },
+    {
+      "content": "对于每种情况（当前遍历的元素大于、等于或小于栈顶元素）都有相应的处理逻辑，特别是当当前元素小于栈顶元素时，需要弹出栈顶并计算以其为高的矩形面积。"
+    },
+    {
+      "content": "这种方法通过一次遍历即可完成所有柱子的处理，时间复杂度为O(n)，其中n是heights的长度。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "本题和42. 接雨水 (https://programmercarl.com/0042.%E6%8E%A5%E9%9B%A8%E6%B0%B4.html)，是遥相呼应的两道题目，建议都要仔细做一做，原理上有很多相同的地方，但细节上又有差异，更可以加深对单调栈的理解！",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {int sum = 0;for (int i = 0; i < heights.size(); i++) {int left = i;int right = i;for (; left >= 0; left--) {if (heights[left] < heights[i]) break;}for (; right < heights.size(); right++) {if (heights[right] < heights[i]) break;}int w = right - left - 1;int h = heights[i];sum = max(sum, w * h);}return sum;}};",
+          "description": "暴力解法，时间复杂度为O(n^2)"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {vector<int> minLeftIndex(heights.size());vector<int> minRightIndex(heights.size());int size = heights.size();minLeftIndex[0] = -1;for (int i = 1; i < size; i++) {int t = i - 1;while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];minLeftIndex[i] = t;}minRightIndex[size - 1] = size;for (int i = size - 2; i >= 0; i--) {int t = i + 1;while (t < size && heights[t] >= heights[i]) t = minRightIndex[t];minRightIndex[i] = t;}int result = 0;for (int i = 0; i < size; i++) {int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);result = max(sum, result);}return result;}};",
+          "description": "双指针解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {int result = 0;stack<int> st;heights.insert(heights.begin(), 0);heights.push_back(0);st.push(0);for (int i = 1; i < heights.size(); i++) {if (heights[i] > heights[st.top()]) {st.push(i);} else if (heights[i] == heights[st.top()]) {st.pop();st.push(i);} else {while (!st.empty() && heights[i] < heights[st.top()]) {int mid = st.top();st.pop();if (!st.empty()) {int left = st.top();int right = i;int w = right - left - 1;int h = heights[mid];result = max(result, w * h);}}}st.push(i);}return result;}};",
+          "description": "单调栈版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {stack<int> st;heights.insert(heights.begin(), 0);heights.push_back(0);st.push(0);int result = 0;for (int i = 1; i < heights.size(); i++) {while (heights[i] < heights[st.top()]) {int mid = st.top();st.pop();int w = i - st.top() - 1;int h = heights[mid];result = max(result, w * h);}st.push(i);}return result;}};",
+          "description": "单调栈版本二"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestRectangleArea(int[] heights) {int length = heights.length;int[] minLeftIndex = new int [length];int[] minRightIndex = new int [length];minLeftIndex[0] = -1 ;for (int i = 1; i < length; i++) {int t = i - 1;while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];minLeftIndex[i] = t;}minRightIndex[length - 1] = length;for (int i = length - 2; i >= 0; i--) {int t = i + 1;while(t < length && heights[t] >= heights[i]) t = minRightIndex[t];minRightIndex[i] = t;}int result = 0;for (int i = 0; i < length; i++) {int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);result = Math.max(sum, result);}return result;}}",
+          "description": "Java双指针解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {int largestRectangleArea(int[] heights) {Stack<Integer> st = new Stack<>();int [] newHeights = new int[heights.length + 2];newHeights[0] = 0;newHeights[newHeights.length - 1] = 0;for (int index = 0; index < heights.length; index++){newHeights[index + 1] = heights[index];}heights = newHeights;st.push(0);int result = 0;for (int i = 1; i < heights.length; i++) {if (heights[i] > heights[st.peek()]) {st.push(i);} else if (heights[i] == heights[st.peek()]) {st.pop();st.push(i);} else {while (heights[i] < heights[st.peek()]) {int mid = st.peek();st.pop();int left = st.peek();int right = i;int w = right - left - 1;int h = heights[mid];result = Math.max(result, w * h);}}st.push(i);}return result;}}",
+          "description": "Java单调栈解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestRectangleArea(int[] heights) {int[] newHeight = new int[heights.length + 2];System.arraycopy(heights, 0, newHeight, 1, heights.length);newHeight[heights.length+1] = 0;newHeight[0] = 0;Stack<Integer> stack = new Stack<>();stack.push(0);int res = 0;for (int i = 1; i < newHeight.length; i++) {while (newHeight[i] < newHeight[stack.peek()]) {int mid = stack.pop();int w = i - stack.peek() - 1;int h = newHeight[mid];res = Math.max(res, w * h);}stack.push(i);}return res;}}",
+          "description": "Java单调栈精简版"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: res = 0 for i in range(len(heights)): left = i right = i for _ in range(left, -1, -1): if heights[left] < heights[i]: break left -= 1 for _ in range(right, len(heights)): if heights[right] < heights[i]: break right += 1 width = right - left - 1 height = heights[i] res = max(res, width * height) return res",
+          "description": "Python暴力解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: size = len(heights) min_left_index = [0] * size min_right_index = [0] * size result = 0 min_left_index[0] = -1 for i in range(1, size): temp = i - 1 while temp >= 0 and heights[temp] >= heights[i]: temp = min_left_index[temp] min_left_index[i] = temp min_right_index[size-1] = size for i in range(size-2, -1, -1): temp = i + 1 while temp < size and heights[temp] >= heights[i]: temp = min_right_index[temp] min_right_index[i] = temp for i in range(size): area = heights[i] * (min_right_index[i] - min_left_index[i] - 1) result = max(area, result) return result",
+          "description": "Python双指针解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: heights.insert(0, 0) heights.append(0) stack = [0] result = 0 for i in range(1, len(heights)): if heights[i] > heights[stack[-1]]: stack.append(i) elif heights[i] == heights[stack[-1]]: stack.pop() stack.append(i) else: while stack and heights[i] < heights[stack[-1]]: mid_index = stack[-1] stack.pop() if stack: left_index = stack[-1] right_index = i width = right_index - left_index - 1 height = heights[mid_index] result = max(result, width * height) stack.append(i) return result",
+          "description": "Python单调栈版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: heights.insert(0, 0) heights.append(0) stack = [0] result = 0 for i in range(1, len(heights)): while stack and heights[i] < heights[stack[-1]]: mid_height = heights[stack[-1]] stack.pop() if stack: area = (i - stack[-1] - 1) * mid_height result = max(area, result) stack.append(i) return result",
+          "description": "Python单调栈精简版"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "暴力解法",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {int sum = 0;for (int i = 0; i < heights.size(); i++) {int left = i;int right = i;for (; left >= 0; left--) {if (heights[left] < heights[i]) break;}for (; right < heights.size(); right++) {if (heights[right] < heights[i]) break;}int w = right - left - 1;int h = heights[i];sum = max(sum, w * h);}return sum;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {vector<int> minLeftIndex(heights.size());vector<int> minRightIndex(heights.size());int size = heights.size();minLeftIndex[0] = -1;for (int i = 1; i < size; i++) {int t = i - 1;while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];minLeftIndex[i] = t;}minRightIndex[size - 1] = size;for (int i = size - 2; i >= 0; i--) {int t = i + 1;while (t < size && heights[t] >= heights[i]) t = minRightIndex[t];minRightIndex[i] = t;}int result = 0;for (int i = 0; i < size; i++) {int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);result = max(sum, result);}return result;}};",
+          "description": "双指针解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {int result = 0;stack<int> st;heights.insert(heights.begin(), 0);heights.push_back(0);st.push(0);for (int i = 1; i < heights.size(); i++) {if (heights[i] > heights[st.top()]) {st.push(i);} else if (heights[i] == heights[st.top()]) {st.pop();st.push(i);} else {while (!st.empty() && heights[i] < heights[st.top()]) {int mid = st.top();st.pop();if (!st.empty()) {int left = st.top();int right = i;int w = right - left - 1;int h = heights[mid];result = max(result, w * h);}}st.push(i);}}return result;}};",
+          "description": "单调栈版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {stack<int> st;heights.insert(heights.begin(), 0);heights.push_back(0);st.push(0);int result = 0;for (int i = 1; i < heights.size(); i++) {while (heights[i] < heights[st.top()]) {int mid = st.top();st.pop();int w = i - st.top() - 1;int h = heights[mid];result = max(result, w * h);}st.push(i);}return result;}};",
+          "description": "单调栈版本二"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestRectangleArea(int[] heights) {int length = heights.length;int[] minLeftIndex = new int [length];int[] minRightIndex = new int [length];minLeftIndex[0] = -1 ;for (int i = 1; i < length; i++) {int t = i - 1;while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];minLeftIndex[i] = t;}minRightIndex[length - 1] = length;for (int i = length - 2; i >= 0; i--) {int t = i + 1;while(t < length && heights[t] >= heights[i]) t = minRightIndex[t];minRightIndex[i] = t;}int result = 0;for (int i = 0; i < length; i++) {int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);result = Math.max(sum, result);}return result;}}",
+          "description": "Java双指针解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {int largestRectangleArea(int[] heights) {Stack<Integer> st = new Stack<>();int [] newHeights = new int[heights.length + 2];newHeights[0] = 0;newHeights[newHeights.length - 1] = 0;for (int index = 0; index < heights.length; index++){newHeights[index + 1] = heights[index];}heights = newHeights;st.push(0);int result = 0;for (int i = 1; i < heights.length; i++) {if (heights[i] > heights[st.peek()]) {st.push(i);} else if (heights[i] == heights[st.peek()]) {st.pop();st.push(i);} else {while (heights[i] < heights[st.peek()]) {int mid = st.peek();st.pop();int left = st.peek();int right = i;int w = right - left - 1;int h = heights[mid];result = Math.max(result, w * h);}}st.push(i);}return result;}}",
+          "description": "Java单调栈"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestRectangleArea(int[] heights) {int[] newHeight = new int[heights.length + 2];System.arraycopy(heights, 0, newHeight, 1, heights.length);newHeight[heights.length+1] = 0;newHeight[0] = 0;Stack<Integer> stack = new Stack<>();stack.push(0);int res = 0;for (int i = 1; i < newHeight.length; i++) {while (newHeight[i] < newHeight[stack.peek()]) {int mid = stack.pop();int w = i - stack.peek() - 1;int h = newHeight[mid];res = Math.max(res, w * h);}stack.push(i);}return res;}}",
+          "description": "Java单调栈精简版"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: res = 0 for i in range(len(heights)): left = i right = i for _ in range(left, -1, -1): if heights[left] < heights[i]: break left -= 1 for _ in range(right, len(heights)): if heights[right] < heights[i]: break right += 1 width = right - left - 1 height = heights[i] res = max(res, width * height) return res",
+          "description": "Python暴力解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: size = len(heights) min_left_index = [0] * size min_right_index = [0] * size result = 0 min_left_index[0] = -1 for i in range(1, size): temp = i - 1 while temp >= 0 and heights[temp] >= heights[i]: temp = min_left_index[temp] min_left_index[i] = temp min_right_index[size-1] = size for i in range(size-2, -1, -1): temp = i + 1 while temp < size and heights[temp] >= heights[i]: temp = min_right_index[temp] min_right_index[i] = temp for i in range(size): area = heights[i] * (min_right_index[i] - min_left_index[i] - 1) result = max(area, result) return result",
+          "description": "Python双指针解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: heights.insert(0, 0) heights.append(0) stack = [0] result = 0 for i in range(1, len(heights)): if heights[i] > heights[stack[-1]]: stack.append(i) elif heights[i] == heights[stack[-1]]: stack.pop() stack.append(i) else: while stack and heights[i] < heights[stack[-1]]: mid_index = stack[-1] stack.pop() if stack: left_index = stack[-1] right_index = i width = right_index - left_index - 1 height = heights[mid_index] result = max(result, width * height) stack.append(i) return result",
+          "description": "Python单调栈版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: heights.insert(0, 0) heights.append(0) stack = [0] result = 0 for i in range(1, len(heights)): while stack and heights[i] < heights[stack[-1]]: mid_height = heights[stack[-1]] stack.pop() if stack: area = (i - stack[-1] - 1) * mid_height result = max(area, result) stack.append(i) return result",
+          "description": "Python单调栈版本二"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "双指针解法",
+      "text": "本题双指针的写法整体思路和42. 接雨水 (https://programmercarl.com/0042.%E6%8E%A5%E9%9B%A8%E6%B0%B4.html)是一致的，但要比42. 接雨水 (https://programmercarl.com/0042.%E6%8E%A5%E9%9B%A8%E6%B0%B4.html)难一些。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {int sum = 0;for (int i = 0; i < heights.size(); i++) {int left = i;int right = i;for (; left >= 0; left--) {if (heights[left] < heights[i]) break;}for (; right < heights.size(); right++) {if (heights[right] < heights[i]) break;}int w = right - left - 1;int h = heights[i];sum = max(sum, w * h);}return sum;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {vector<int> minLeftIndex(heights.size());vector<int> minRightIndex(heights.size());int size = heights.size();minLeftIndex[0] = -1;for (int i = 1; i < size; i++) {int t = i - 1;while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];minLeftIndex[i] = t;}minRightIndex[size - 1] = size;for (int i = size - 2; i >= 0; i--) {int t = i + 1;while (t < size && heights[t] >= heights[i]) t = minRightIndex[t];minRightIndex[i] = t;}int result = 0;for (int i = 0; i < size; i++) {int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);result = max(sum, result);}return result;}};",
+          "description": "双指针解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {int result = 0;stack<int> st;heights.insert(heights.begin(), 0);heights.push_back(0);st.push(0);for (int i = 1; i < heights.size(); i++) {if (heights[i] > heights[st.top()]) {st.push(i);} else if (heights[i] == heights[st.top()]) {st.pop();st.push(i);} else {while (!st.empty() && heights[i] < heights[st.top()]) {int mid = st.top();st.pop();if (!st.empty()) {int left = st.top();int right = i;int w = right - left - 1;int h = heights[mid];result = max(result, w * h);}}}st.push(i);}return result;}};",
+          "description": "单调栈版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {stack<int> st;heights.insert(heights.begin(), 0);heights.push_back(0);st.push(0);int result = 0;for (int i = 1; i < heights.size(); i++) {while (heights[i] < heights[st.top()]) {int mid = st.top();st.pop();int w = i - st.top() - 1;int h = heights[mid];result = max(result, w * h);}st.push(i);}return result;}};",
+          "description": "单调栈精简版"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestRectangleArea(int[] heights) {int length = heights.length;int[] minLeftIndex = new int [length];int[] minRightIndex = new int [length];minLeftIndex[0] = -1 ;for (int i = 1; i < length; i++) {int t = i - 1;while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];minLeftIndex[i] = t;}minRightIndex[length - 1] = length;for (int i = length - 2; i >= 0; i--) {int t = i + 1;while(t < length && heights[t] >= heights[i]) t = minRightIndex[t];minRightIndex[i] = t;}int result = 0;for (int i = 0; i < length; i++) {int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);result = Math.max(sum, result);}return result;}}",
+          "description": "Java双指针解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {int largestRectangleArea(int[] heights) {Stack<Integer> st = new Stack<Integer>();int [] newHeights = new int[heights.length + 2];newHeights[0] = 0;newHeights[newHeights.length - 1] = 0;for (int index = 0; index < heights.length; index++){newHeights[index + 1] = heights[index];}heights = newHeights;st.push(0);int result = 0;for (int i = 1; i < heights.length; i++) {if (heights[i] > heights[st.peek()]) {st.push(i);} else if (heights[i] == heights[st.peek()]) {st.pop();st.push(i);} else {while (heights[i] < heights[st.peek()]) {int mid = st.peek();st.pop();int left = st.peek();int right = i;int w = right - left - 1;int h = heights[mid];result = Math.max(result, w * h);}}st.push(i);}return result;}}",
+          "description": "Java单调栈解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestRectangleArea(int[] heights) {int[] newHeight = new int[heights.length + 2];System.arraycopy(heights, 0, newHeight, 1, heights.length);newHeight[heights.length+1] = 0;newHeight[0] = 0;Stack<Integer> stack = new Stack<>();stack.push(0);int res = 0;for (int i = 1; i < newHeight.length; i++) {while (newHeight[i] < newHeight[stack.peek()]) {int mid = stack.pop();int w = i - stack.peek() - 1;int h = newHeight[mid];res = Math.max(res, w * h);}stack.push(i);}return res;}}",
+          "description": "Java单调栈精简版"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: res = 0 for i in range(len(heights)): left = i right = i for _ in range(left, -1, -1): if heights[left] < heights[i]: break left -= 1 for _ in range(right, len(heights)): if heights[right] < heights[i]: break right += 1 width = right - left - 1 height = heights[i] res = max(res, width * height) return res",
+          "description": "Python暴力解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: size = len(heights) min_left_index = [0] * size min_right_index = [0] * size result = 0 min_left_index[0] = -1 for i in range(1, size): temp = i - 1 while temp >= 0 and heights[temp] >= heights[i]: temp = min_left_index[temp] min_left_index[i] = temp min_right_index[size-1] = size for i in range(size-2, -1, -1): temp = i + 1 while temp < size and heights[temp] >= heights[i]: temp = min_right_index[temp] min_right_index[i] = temp for i in range(size): area = heights[i] * (min_right_index[i] - min_left_index[i] - 1) result = max(area, result) return result",
+          "description": "Python双指针解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: heights.insert(0, 0) heights.append(0) stack = [0] result = 0 for i in range(1, len(heights)): if heights[i] > heights[stack[-1]]: stack.append(i) elif heights[i] == heights[stack[-1]]: stack.pop() stack.append(i) else: while stack and heights[i] < heights[stack[-1]]: mid_index = stack[-1] stack.pop() if stack: left_index = stack[-1] right_index = i width = right_index - left_index - 1 height = heights[mid_index] result = max(result, width * height) stack.append(i) return result",
+          "description": "Python单调栈解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: heights.insert(0, 0) heights.append(0) stack = [0] result = 0 for i in range(1, len(heights)): while stack and heights[i] < heights[stack[-1]]: mid_height = heights[stack[-1]] stack.pop() if stack: area = (i - stack[-1] - 1) * mid_height result = max(area, result) stack.append(i) return result",
+          "description": "Python单调栈精简版"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "单调栈",
+      "text": "本地单调栈的解法和接雨水的题目是遥相呼应的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {int sum = 0;for (int i = 0; i < heights.size(); i++) {int left = i;int right = i;for (; left >= 0; left--) {if (heights[left] < heights[i]) break;}for (; right < heights.size(); right++) {if (heights[right] < heights[i]) break;}int w = right - left - 1;int h = heights[i];sum = max(sum, w * h);}return sum;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {vector<int> minLeftIndex(heights.size());vector<int> minRightIndex(heights.size());int size = heights.size();minLeftIndex[0] = -1;for (int i = 1; i < size; i++) {int t = i - 1;while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];minLeftIndex[i] = t;}minRightIndex[size - 1] = size;for (int i = size - 2; i >= 0; i--) {int t = i + 1;while (t < size && heights[t] >= heights[i]) t = minRightIndex[t];minRightIndex[i] = t;}int result = 0;for (int i = 0; i < size; i++) {int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);result = max(sum, result);}return result;}};",
+          "description": "双指针解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {int result = 0;stack<int> st;heights.insert(heights.begin(), 0);heights.push_back(0);st.push(0);for (int i = 1; i < heights.size(); i++) {if (heights[i] > heights[st.top()]) {st.push(i);} else if (heights[i] == heights[st.top()]) {st.pop();st.push(i);} else {while (!st.empty() && heights[i] < heights[st.top()]) {int mid = st.top();st.pop();if (!st.empty()) {int left = st.top();int right = i;int w = right - left - 1;int h = heights[mid];result = max(result, w * h);}}}st.push(i);}return result;}};",
+          "description": "单调栈版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {stack<int> st;heights.insert(heights.begin(), 0);heights.push_back(0);st.push(0);int result = 0;for (int i = 1; i < heights.size(); i++) {while (heights[i] < heights[st.top()]) {int mid = st.top();st.pop();int w = i - st.top() - 1;int h = heights[mid];result = max(result, w * h);}st.push(i);}return result;}};",
+          "description": "单调栈版本二"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestRectangleArea(int[] heights) {int length = heights.length;int[] minLeftIndex = new int [length];int[] minRightIndex = new int [length];minLeftIndex[0] = -1 ;for (int i = 1; i < length; i++) {int t = i - 1;while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];minLeftIndex[i] = t;}minRightIndex[length - 1] = length;for (int i = length - 2; i >= 0; i--) {int t = i + 1;while(t < length && heights[t] >= heights[i]) t = minRightIndex[t];minRightIndex[i] = t;}int result = 0;for (int i = 0; i < length; i++) {int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);result = Math.max(sum, result);}return result;}}",
+          "description": "Java暴力解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {int largestRectangleArea(int[] heights) {Stack<Integer> st = new Stack<Integer>();int [] newHeights = new int[heights.length + 2];newHeights[0] = 0;newHeights[newHeights.length - 1] = 0;for (int index = 0; index < heights.length; index++){newHeights[index + 1] = heights[index];}heights = newHeights;st.push(0);int result = 0;for (int i = 1; i < heights.length; i++) {if (heights[i] > heights[st.peek()]) {st.push(i);} else if (heights[i] == heights[st.peek()]) {st.pop();st.push(i);} else {while (heights[i] < heights[st.peek()]) {int mid = st.peek();st.pop();int left = st.peek();int right = i;int w = right - left - 1;int h = heights[mid];result = Math.max(result, w * h);}st.push(i);}}return result;}}",
+          "description": "Java单调栈"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestRectangleArea(int[] heights) {int[] newHeight = new int[heights.length + 2];System.arraycopy(heights, 0, newHeight, 1, heights.length);newHeight[heights.length+1] = 0;newHeight[0] = 0;Stack<Integer> stack = new Stack<>();stack.push(0);int res = 0;for (int i = 1; i < newHeight.length; i++) {while (newHeight[i] < newHeight[stack.peek()]) {int mid = stack.pop();int w = i - stack.peek() - 1;int h = newHeight[mid];res = Math.max(res, w * h);}stack.push(i);}return res;}}",
+          "description": "Java单调栈精简"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def largestRectangleArea(self, heights: List[int]) -> int:res = 0for i in range(len(heights)):left = iright = i# 向左侧遍历：寻找第一个矮一级的柱子for _ in range(left, -1, -1):if heights[left] < heights[i]:breakleft -= 1# 向右侧遍历：寻找第一个矮一级的柱子for _ in range(right, len(heights)):if heights[right] < heights[i]:breakright += 1width = right - left - 1height = heights[i]res = max(res, width * height)return res",
+          "description": "Python暴力解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def largestRectangleArea(self, heights: List[int]) -> int:size = len(heights)min_left_index = [0] * sizemin_right_index = [0] * sizeresult = 0min_left_index[0] = -1for i in range(1, size):temp = i - 1while temp >= 0 and heights[temp] >= heights[i]:temp = min_left_index[temp]min_left_index[i] = tempmin_right_index[size-1] = sizefor i in range(size-2, -1, -1):temp = i + 1while temp < size and heights[temp] >= heights[i]:temp = min_right_index[temp]min_right_index[i] = tempfor i in range(size):area = heights[i] * (min_right_index[i] - min_left_index[i] - 1)result = max(area, result)return result",
+          "description": "Python双指针解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def largestRectangleArea(self, heights: List[int]) -> int:heights.insert(0, 0)heights.append(0)stack = [0]result = 0for i in range(1, len(heights)):if heights[i] > heights[stack[-1]]:stack.append(i)elif heights[i] == heights[stack[-1]]:stack.pop()stack.append(i)else:while stack and heights[i] < heights[stack[-1]]:mid_index = stack[-1]stack.pop()if stack:left_index = stack[-1]right_index = iwidth = right_index - left_index - 1height = heights[mid_index]result = max(result, width * height)stack.append(i)return result",
+          "description": "Python单调栈版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def largestRectangleArea(self, heights: List[int]) -> int:heights.insert(0, 0)heights.append(0)stack = [0]result = 0for i in range(1, len(heights)):while stack and heights[i] < heights[stack[-1]]:mid_height = heights[stack[-1]]stack.pop()if stack:area = (i - stack[-1] - 1) * mid_heightresult = max(area, result)stack.append(i)return result",
+          "description": "Python单调栈版本二"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {int sum = 0;for (int i = 0; i < heights.size(); i++) {int left = i;int right = i;for (; left >= 0; left--) {if (heights[left] < heights[i]) break;}for (; right < heights.size(); right++) {if (heights[right] < heights[i]) break;}int w = right - left - 1;int h = heights[i];sum = max(sum, w * h);}return sum;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {vector<int> minLeftIndex(heights.size());vector<int> minRightIndex(heights.size());int size = heights.size();minLeftIndex[0] = -1;for (int i = 1; i < size; i++) {int t = i - 1;while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];minLeftIndex[i] = t;}minRightIndex[size - 1] = size;for (int i = size - 2; i >= 0; i--) {int t = i + 1;while (t < size && heights[t] >= heights[i]) t = minRightIndex[t];minRightIndex[i] = t;}int result = 0;for (int i = 0; i < size; i++) {int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);result = max(sum, result);}return result;}};",
+          "description": "双指针解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {int result = 0;stack<int> st;heights.insert(heights.begin(), 0);heights.push_back(0);st.push(0);for (int i = 1; i < heights.size(); i++) {if (heights[i] > heights[st.top()]) {st.push(i);} else if (heights[i] == heights[st.top()]) {st.pop();st.push(i);} else {while (!st.empty() && heights[i] < heights[st.top()]) {int mid = st.top();st.pop();if (!st.empty()) {int left = st.top();int right = i;int w = right - left - 1;int h = heights[mid];result = max(result, w * h);}}}st.push(i);}return result;}};",
+          "description": "单调栈版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {stack<int> st;heights.insert(heights.begin(), 0);heights.push_back(0);st.push(0);int result = 0;for (int i = 1; i < heights.size(); i++) {while (heights[i] < heights[st.top()]) {int mid = st.top();st.pop();int w = i - st.top() - 1;int h = heights[mid];result = max(result, w * h);}st.push(i);}return result;}};",
+          "description": "单调栈版本二"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestRectangleArea(int[] heights) {int length = heights.length;int[] minLeftIndex = new int [length];int[] minRightIndex = new int [length];minLeftIndex[0] = -1 ;for (int i = 1; i < length; i++) {int t = i - 1;while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];minLeftIndex[i] = t;}minRightIndex[length - 1] = length;for (int i = length - 2; i >= 0; i--) {int t = i + 1;while(t < length && heights[t] >= heights[i]) t = minRightIndex[t];minRightIndex[i] = t;}int result = 0;for (int i = 0; i < length; i++) {int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);result = Math.max(sum, result);}return result;}}",
+          "description": "Java暴力解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {int largestRectangleArea(int[] heights) {Stack<Integer> st = new Stack<Integer>();int [] newHeights = new int[heights.length + 2];newHeights[0] = 0;newHeights[newHeights.length - 1] = 0;for (int index = 0; index < heights.length; index++){newHeights[index + 1] = heights[index];}heights = newHeights;st.push(0);int result = 0;for (int i = 1; i < heights.length; i++) {if (heights[i] > heights[st.peek()]) {st.push(i);} else if (heights[i] == heights[st.peek()]) {st.pop();st.push(i);} else {while (heights[i] < heights[st.peek()]) {int mid = st.peek();st.pop();int left = st.peek();int right = i;int w = right - left - 1;int h = heights[mid];result = Math.max(result, w * h);}st.push(i);}}return result;}}",
+          "description": "Java单调栈"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestRectangleArea(int[] heights) {int[] newHeight = new int[heights.length + 2];System.arraycopy(heights, 0, newHeight, 1, heights.length);newHeight[heights.length+1] = 0;newHeight[0] = 0;Stack<Integer> stack = new Stack<>();stack.push(0);int res = 0;for (int i = 1; i < newHeight.length; i++) {while (newHeight[i] < newHeight[stack.peek()]) {int mid = stack.pop();int w = i - stack.peek() - 1;int h = newHeight[mid];res = Math.max(res, w * h);}stack.push(i);}return res;}}",
+          "description": "Java单调栈精简版"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: res = 0 for i in range(len(heights)): left = i right = i for _ in range(left, -1, -1): if heights[left] < heights[i]: break left -= 1 for _ in range(right, len(heights)): if heights[right] < heights[i]: break right += 1 width = right - left - 1 height = heights[i] res = max(res, width * height) return res",
+          "description": "Python暴力解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: size = len(heights) min_left_index = [0] * size min_right_index = [0] * size result = 0 min_left_index[0] = -1 for i in range(1, size): temp = i - 1 while temp >= 0 and heights[temp] >= heights[i]: temp = min_left_index[temp] min_left_index[i] = temp min_right_index[size-1] = size for i in range(size-2, -1, -1): temp = i + 1 while temp < size and heights[temp] >= heights[i]: temp = min_right_index[temp] min_right_index[i] = temp for i in range(size): area = heights[i] * (min_right_index[i] - min_left_index[i] - 1) result = max(area, result) return result",
+          "description": "Python双指针解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: heights.insert(0, 0) heights.append(0) stack = [0] result = 0 for i in range(1, len(heights)): if heights[i] > heights[stack[-1]]: stack.append(i) elif heights[i] == heights[stack[-1]]: stack.pop() stack.append(i) else: while stack and heights[i] < heights[stack[-1]]: mid_index = stack[-1] stack.pop() if stack: left_index = stack[-1] right_index = i width = right_index - left_index - 1 height = heights[mid_index] result = max(result, width * height) stack.append(i) return result",
+          "description": "Python单调栈"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: heights.insert(0, 0) heights.append(0) stack = [0] result = 0 for i in range(1, len(heights)): while stack and heights[i] < heights[stack[-1]]: mid_height = heights[stack[-1]] stack.pop() if stack: area = (i - stack[-1] - 1) * mid_height result = max(area, result) stack.append(i) return result",
+          "description": "Python单调栈精简版"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java:",
+      "text": "暴力解法：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {int sum = 0;for (int i = 0; i < heights.size(); i++) {int left = i;int right = i;for (; left >= 0; left--) {if (heights[left] < heights[i]) break;}for (; right < heights.size(); right++) {if (heights[right] < heights[i]) break;}int w = right - left - 1;int h = heights[i];sum = max(sum, w * h);}return sum;}};",
+          "description": "暴力解法，时间复杂度为O(n^2)"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {vector<int> minLeftIndex(heights.size());vector<int> minRightIndex(heights.size());int size = heights.size();minLeftIndex[0] = -1;for (int i = 1; i < size; i++) {int t = i - 1;while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];minLeftIndex[i] = t;}minRightIndex[size - 1] = size;for (int i = size - 2; i >= 0; i--) {int t = i + 1;while (t < size && heights[t] >= heights[i]) t = minRightIndex[t];minRightIndex[i] = t;}int result = 0;for (int i = 0; i < size; i++) {int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);result = max(sum, result);}return result;}};",
+          "description": "双指针解法，记录每个柱子左右第一个小于该柱子的下标"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {int result = 0;stack<int> st;heights.insert(heights.begin(), 0);heights.push_back(0);st.push(0);for (int i = 1; i < heights.size(); i++) {if (heights[i] > heights[st.top()]) st.push(i);else if (heights[i] == heights[st.top()]) {st.pop();st.push(i);} else {while (!st.empty() && heights[i] < heights[st.top()]) {int mid = st.top();st.pop();if (!st.empty()) {int left = st.top();int right = i;int w = right - left - 1;int h = heights[mid];result = max(result, w * h);}}}st.push(i);}return result;}};",
+          "description": "单调栈解法版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {stack<int> st;heights.insert(heights.begin(), 0);heights.push_back(0);st.push(0);int result = 0;for (int i = 1; i < heights.size(); i++) {while (heights[i] < heights[st.top()]) {int mid = st.top();st.pop();int w = i - st.top() - 1;int h = heights[mid];result = max(result, w * h);}st.push(i);}return result;}};",
+          "description": "单调栈解法版本二，精简版"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestRectangleArea(int[] heights) {int length = heights.length;int[] minLeftIndex = new int [length];int[] minRightIndex = new int [length];minLeftIndex[0] = -1 ;for (int i = 1; i < length; i++) {int t = i - 1;while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];minLeftIndex[i] = t;}minRightIndex[length - 1] = length;for (int i = length - 2; i >= 0; i--) {int t = i + 1;while(t < length && heights[t] >= heights[i]) t = minRightIndex[t];minRightIndex[i] = t;}int result = 0;for (int i = 0; i < length; i++) {int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);result = Math.max(sum, result);}return result;}}",
+          "description": "Java实现的双指针解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {int largestRectangleArea(int[] heights) {Stack<Integer> st = new Stack<Integer>();int [] newHeights = new int[heights.length + 2];newHeights[0] = 0;newHeights[newHeights.length - 1] = 0;for (int index = 0; index < heights.length; index++){newHeights[index + 1] = heights[index];}heights = newHeights;st.push(0);int result = 0;for (int i = 1; i < heights.length; i++) {if (heights[i] > heights[st.peek()]) {st.push(i);} else if (heights[i] == heights[st.peek()]) {st.pop();st.push(i);} else {while (heights[i] < heights[st.peek()]) {int mid = st.peek();st.pop();int left = st.peek();int right = i;int w = right - left - 1;int h = heights[mid];result = Math.max(result, w * h);}}st.push(i);}return result;}}",
+          "description": "Java实现的单调栈解法版本一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestRectangleArea(int[] heights) {int[] newHeight = new int[heights.length + 2];System.arraycopy(heights, 0, newHeight, 1, heights.length);newHeight[heights.length+1] = 0;newHeight[0] = 0;Stack<Integer> stack = new Stack<>();stack.push(0);int res = 0;for (int i = 1; i < newHeight.length; i++) {while (newHeight[i] < newHeight[stack.peek()]) {int mid = stack.pop();int w = i - stack.peek() - 1;int h = newHeight[mid];res = Math.max(res, w * h);}stack.push(i);}return res;}}",
+          "description": "Java实现的单调栈解法版本二，精简版"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: res = 0 for i in range(len(heights)): left = i right = i for _ in range(left, -1, -1): if heights[left] < heights[i]: break left -= 1 for _ in range(right, len(heights)): if heights[right] < heights[i]: break right += 1 width = right - left - 1 height = heights[i] res = max(res, width * height) return res",
+          "description": "Python3实现的暴力解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: size = len(heights) min_left_index = [0] * size min_right_index = [0] * size result = 0 min_left_index[0] = -1 for i in range(1, size): temp = i - 1 while temp >= 0 and heights[temp] >= heights[i]: temp = min_left_index[temp] min_left_index[i] = temp min_right_index[size-1] = size for i in range(size-2, -1, -1): temp = i + 1 while temp < size and heights[temp] >= heights[i]: temp = min_right_index[temp] min_right_index[i] = temp for i in range(size): area = heights[i] * (min_right_index[i] - min_left_index[i] - 1) result = max(area, result) return result",
+          "description": "Python3实现的双指针解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: heights.insert(0, 0) heights.append(0) stack = [0] result = 0 for i in range(1, len(heights)): if heights[i] > heights[stack[-1]]: stack.append(i) elif heights[i] == heights[stack[-1]]: stack.pop() stack.append(i) else: while stack and heights[i] < heights[stack[-1]]: mid_index = stack[-1] stack.pop() if stack: left_index = stack[-1] right_index = i width = right_index - left_index - 1 height = heights[mid_index] result = max(result, width * height) stack.append(i) return result",
+          "description": "Python3实现的单调栈解法版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: heights.insert(0, 0) heights.append(0) stack = [0] result = 0 for i in range(1, len(heights)): while stack and heights[i] < heights[stack[-1]]: mid_height = heights[stack[-1]] stack.pop() if stack: area = (i - stack[-1] - 1) * mid_height result = max(area, result) stack.append(i) return result",
+          "description": "Python3实现的单调栈解法版本二，精简版"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python3:",
+      "text": "# 暴力解法（leetcode超时）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {int sum = 0;for (int i = 0; i < heights.size(); i++) {int left = i;int right = i;for (; left >= 0; left--) {if (heights[left] < heights[i]) break;}for (; right < heights.size(); right++) {if (heights[right] < heights[i]) break;}int w = right - left - 1;int h = heights[i];sum = max(sum, w * h);}return sum;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {vector<int> minLeftIndex(heights.size());vector<int> minRightIndex(heights.size());int size = heights.size();minLeftIndex[0] = -1;for (int i = 1; i < size; i++) {int t = i - 1;while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];minLeftIndex[i] = t;}minRightIndex[size - 1] = size;for (int i = size - 2; i >= 0; i--) {int t = i + 1;while (t < size && heights[t] >= heights[i]) t = minRightIndex[t];minRightIndex[i] = t;}int result = 0;for (int i = 0; i < size; i++) {int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);result = max(sum, result);}return result;}};",
+          "description": "双指针解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {int result = 0;stack<int> st;heights.insert(heights.begin(), 0);heights.push_back(0);st.push(0);for (int i = 1; i < heights.size(); i++) {if (heights[i] > heights[st.top()]) {st.push(i);} else if (heights[i] == heights[st.top()]) {st.pop();st.push(i);} else {while (!st.empty() && heights[i] < heights[st.top()]) {int mid = st.top();st.pop();if (!st.empty()) {int left = st.top();int right = i;int w = right - left - 1;int h = heights[mid];result = max(result, w * h);}}}st.push(i);}return result;}};",
+          "description": "单调栈版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {stack<int> st;heights.insert(heights.begin(), 0);heights.push_back(0);st.push(0);int result = 0;for (int i = 1; i < heights.size(); i++) {while (heights[i] < heights[st.top()]) {int mid = st.top();st.pop();int w = i - st.top() - 1;int h = heights[mid];result = max(result, w * h);}st.push(i);}return result;}};",
+          "description": "单调栈精简版本"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestRectangleArea(int[] heights) {int length = heights.length;int[] minLeftIndex = new int [length];int[] minRightIndex = new int [length];minLeftIndex[0] = -1 ;for (int i = 1; i < length; i++) {int t = i - 1;while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];minLeftIndex[i] = t;}minRightIndex[length - 1] = length;for (int i = length - 2; i >= 0; i--) {int t = i + 1;while(t < length && heights[t] >= heights[i]) t = minRightIndex[t];minRightIndex[i] = t;}int result = 0;for (int i = 0; i < length; i++) {int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);result = Math.max(sum, result);}return result;}}",
+          "description": "Java 暴力解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {int largestRectangleArea(int[] heights) {Stack<Integer> st = new Stack<Integer>();int [] newHeights = new int[heights.length + 2];newHeights[0] = 0;newHeights[newHeights.length - 1] = 0;for (int index = 0; index < heights.length; index++){newHeights[index + 1] = heights[index];}heights = newHeights;st.push(0);int result = 0;for (int i = 1; i < heights.length; i++) {if (heights[i] > heights[st.peek()]) {st.push(i);} else if (heights[i] == heights[st.peek()]) {st.pop();st.push(i);} else {while (heights[i] < heights[st.peek()]) {int mid = st.peek();st.pop();int left = st.peek();int right = i;int w = right - left - 1;int h = heights[mid];result = Math.max(result, w * h);}st.push(i);}}return result;}}",
+          "description": "Java 单调栈"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestRectangleArea(int[] heights) {int[] newHeight = new int[heights.length + 2];System.arraycopy(heights, 0, newHeight, 1, heights.length);newHeight[heights.length+1] = 0;newHeight[0] = 0;Stack<Integer> stack = new Stack<>();stack.push(0);int res = 0;for (int i = 1; i < newHeight.length; i++) {while (newHeight[i] < newHeight[stack.peek()]) {int mid = stack.pop();int w = i - stack.peek() - 1;int h = newHeight[mid];res = Math.max(res, w * h);}stack.push(i);}return res;}}",
+          "description": "Java 单调栈精简"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: res = 0 for i in range(len(heights)): left = i right = i for _ in range(left, -1, -1): if heights[left] < heights[i]: break left -= 1 for _ in range(right, len(heights)): if heights[right] < heights[i]: break right += 1 width = right - left - 1 height = heights[i] res = max(res, width * height) return res",
+          "description": "Python 暴力解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: size = len(heights) min_left_index = [0] * size min_right_index = [0] * size result = 0 min_left_index[0] = -1 for i in range(1, size): temp = i - 1 while temp >= 0 and heights[temp] >= heights[i]: temp = min_left_index[temp] min_left_index[i] = temp min_right_index[size-1] = size for i in range(size-2, -1, -1): temp = i + 1 while temp < size and heights[temp] >= heights[i]: temp = min_right_index[temp] min_right_index[i] = temp for i in range(size): area = heights[i] * (min_right_index[i] - min_left_index[i] - 1) result = max(area, result) return result",
+          "description": "Python 双指针解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: heights.insert(0, 0) heights.append(0) stack = [0] result = 0 for i in range(1, len(heights)): if heights[i] > heights[stack[-1]]: stack.append(i) elif heights[i] == heights[stack[-1]]: stack.pop() stack.append(i) else: while stack and heights[i] < heights[stack[-1]]: mid_index = stack[-1] stack.pop() if stack: left_index = stack[-1] right_index = i width = right_index - left_index - 1 height = heights[mid_index] result = max(result, width * height) stack.append(i) return result",
+          "description": "Python 单调栈"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: heights.insert(0, 0) heights.append(0) stack = [0] result = 0 for i in range(1, len(heights)): while stack and heights[i] < heights[stack[-1]]: mid_height = heights[stack[-1]] stack.pop() if stack: area = (i - stack[-1] - 1) * mid_height result = max(area, result) stack.append(i) return result",
+          "description": "Python 单调栈精简"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "单调栈",
+      "text": "本地单调栈的解法和接雨水的题目是遥相呼应的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {int sum = 0;for (int i = 0; i < heights.size(); i++) {int left = i;int right = i;for (; left >= 0; left--) {if (heights[left] < heights[i]) break;}for (; right < heights.size(); right++) {if (heights[right] < heights[i]) break;}int w = right - left - 1;int h = heights[i];sum = max(sum, w * h);}return sum;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {vector<int> minLeftIndex(heights.size());vector<int> minRightIndex(heights.size());int size = heights.size();minLeftIndex[0] = -1;for (int i = 1; i < size; i++) {int t = i - 1;while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];minLeftIndex[i] = t;}minRightIndex[size - 1] = size;for (int i = size - 2; i >= 0; i--) {int t = i + 1;while (t < size && heights[t] >= heights[i]) t = minRightIndex[t];minRightIndex[i] = t;}int result = 0;for (int i = 0; i < size; i++) {int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);result = max(sum, result);}return result;}};",
+          "description": "双指针解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {int result = 0;stack<int> st;heights.insert(heights.begin(), 0);heights.push_back(0);st.push(0);for (int i = 1; i < heights.size(); i++) {if (heights[i] > heights[st.top()]) {st.push(i);} else if (heights[i] == heights[st.top()]) {st.pop();st.push(i);} else {while (!st.empty() && heights[i] < heights[st.top()]) {int mid = st.top();st.pop();if (!st.empty()) {int left = st.top();int right = i;int w = right - left - 1;int h = heights[mid];result = max(result, w * h);}}}st.push(i);}return result;}};",
+          "description": "单调栈版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {stack<int> st;heights.insert(heights.begin(), 0);heights.push_back(0);st.push(0);int result = 0;for (int i = 1; i < heights.size(); i++) {while (heights[i] < heights[st.top()]) {int mid = st.top();st.pop();int w = i - st.top() - 1;int h = heights[mid];result = max(result, w * h);}st.push(i);}return result;}};",
+          "description": "单调栈版本二"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestRectangleArea(int[] heights) {int length = heights.length;int[] minLeftIndex = new int [length];int[] minRightIndex = new int [length];minLeftIndex[0] = -1 ;for (int i = 1; i < length; i++) {int t = i - 1;while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];minLeftIndex[i] = t;}minRightIndex[length - 1] = length;for (int i = length - 2; i >= 0; i--) {int t = i + 1;while(t < length && heights[t] >= heights[i]) t = minRightIndex[t];minRightIndex[i] = t;}int result = 0;for (int i = 0; i < length; i++) {int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);result = Math.max(sum, result);}return result;}}",
+          "description": "Java双指针解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {int largestRectangleArea(int[] heights) {Stack<Integer> st = new Stack<Integer>();int [] newHeights = new int[heights.length + 2];newHeights[0] = 0;newHeights[newHeights.length - 1] = 0;for (int index = 0; index < heights.length; index++){newHeights[index + 1] = heights[index];}heights = newHeights;st.push(0);int result = 0;for (int i = 1; i < heights.length; i++) {if (heights[i] > heights[st.peek()]) {st.push(i);} else if (heights[i] == heights[st.peek()]) {st.pop();st.push(i);} else {while (heights[i] < heights[st.peek()]) {int mid = st.peek();st.pop();int left = st.peek();int right = i;int w = right - left - 1;int h = heights[mid];result = Math.max(result, w * h);}}st.push(i);}return result;}}",
+          "description": "Java单调栈"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestRectangleArea(int[] heights) {int[] newHeight = new int[heights.length + 2];System.arraycopy(heights, 0, newHeight, 1, heights.length);newHeight[heights.length+1] = 0;newHeight[0] = 0;Stack<Integer> stack = new Stack<>();stack.push(0);int res = 0;for (int i = 1; i < newHeight.length; i++) {while (newHeight[i] < newHeight[stack.peek()]) {int mid = stack.pop();int w = i - stack.peek() - 1;int h = newHeight[mid];res = Math.max(res, w * h);}stack.push(i);}return res;}}",
+          "description": "Java单调栈精简版"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: res = 0 for i in range(len(heights)): left = i right = i for _ in range(left, -1, -1): if heights[left] < heights[i]: break left -= 1 for _ in range(right, len(heights)): if heights[right] < heights[i]: break right += 1 width = right - left - 1 height = heights[i] res = max(res, width * height) return res",
+          "description": "Python暴力解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: size = len(heights) min_left_index = [0] * size min_right_index = [0] * size result = 0 min_left_index[0] = -1 for i in range(1, size): temp = i - 1 while temp >= 0 and heights[temp] >= heights[i]: temp = min_left_index[temp] min_left_index[i] = temp min_right_index[size-1] = size for i in range(size-2, -1, -1): temp = i + 1 while temp < size and heights[temp] >= heights[i]: temp = min_right_index[temp] min_right_index[i] = temp for i in range(size): area = heights[i] * (min_right_index[i] - min_left_index[i] - 1) result = max(area, result) return result",
+          "description": "Python双指针解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: heights.insert(0, 0) heights.append(0) stack = [0] result = 0 for i in range(1, len(heights)): if heights[i] > heights[stack[-1]]: stack.append(i) elif heights[i] == heights[stack[-1]]: stack.pop() stack.append(i) else: while stack and heights[i] < heights[stack[-1]]: mid_index = stack[-1] stack.pop() if stack: left_index = stack[-1] right_index = i width = right_index - left_index - 1 height = heights[mid_index] result = max(result, width * height) stack.append(i) return result",
+          "description": "Python单调栈版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: heights.insert(0, 0) heights.append(0) stack = [0] result = 0 for i in range(1, len(heights)): while stack and heights[i] < heights[stack[-1]]: mid_height = heights[stack[-1]] stack.pop() if stack: area = (i - stack[-1] - 1) * mid_height result = max(area, result) stack.append(i) return result",
+          "description": "Python单调栈精简版"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {int sum = 0;for (int i = 0; i < heights.size(); i++) {int left = i;int right = i;for (; left >= 0; left--) {if (heights[left] < heights[i]) break;}for (; right < heights.size(); right++) {if (heights[right] < heights[i]) break;}int w = right - left - 1;int h = heights[i];sum = max(sum, w * h);}return sum;}};",
+      "description": "暴力解法"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {vector<int> minLeftIndex(heights.size());vector<int> minRightIndex(heights.size());int size = heights.size();minLeftIndex[0] = -1;for (int i = 1; i < size; i++) {int t = i - 1;while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];minLeftIndex[i] = t;}minRightIndex[size - 1] = size;for (int i = size - 2; i >= 0; i--) {int t = i + 1;while (t < size && heights[t] >= heights[i]) t = minRightIndex[t];minRightIndex[i] = t;}int result = 0;for (int i = 0; i < size; i++) {int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);result = max(sum, result);}return result;}};",
+      "description": "双指针解法"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {int result = 0;stack<int> st;heights.insert(heights.begin(), 0);heights.push_back(0);st.push(0);for (int i = 1; i < heights.size(); i++) {if (heights[i] > heights[st.top()]) {st.push(i);} else if (heights[i] == heights[st.top()]) {st.pop();st.push(i);} else {while (!st.empty() && heights[i] < heights[st.top()]) {int mid = st.top();st.pop();if (!st.empty()) {int left = st.top();int right = i;int w = right - left - 1;int h = heights[mid];result = max(result, w * h);}}}st.push(i);}return result;}};",
+      "description": "单调栈版本一"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int largestRectangleArea(vector<int>& heights) {stack<int> st;heights.insert(heights.begin(), 0);heights.push_back(0);st.push(0);int result = 0;for (int i = 1; i < heights.size(); i++) {while (heights[i] < heights[st.top()]) {int mid = st.top();st.pop();int w = i - st.top() - 1;int h = heights[mid];result = max(result, w * h);}st.push(i);}return result;}};",
+      "description": "单调栈版本二"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int largestRectangleArea(int[] heights) {int length = heights.length;int[] minLeftIndex = new int [length];int[] minRightIndex = new int [length];minLeftIndex[0] = -1 ;for (int i = 1; i < length; i++) {int t = i - 1;while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];minLeftIndex[i] = t;}minRightIndex[length - 1] = length;for (int i = length - 2; i >= 0; i--) {int t = i + 1;while(t < length && heights[t] >= heights[i]) t = minRightIndex[t];minRightIndex[i] = t;}int result = 0;for (int i = 0; i < length; i++) {int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);result = Math.max(sum, result);}return result;}}",
+      "description": "Java双指针解法"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {int largestRectangleArea(int[] heights) {Stack<Integer> st = new Stack<Integer>();int [] newHeights = new int[heights.length + 2];newHeights[0] = 0;newHeights[newHeights.length - 1] = 0;for (int index = 0; index < heights.length; index++){newHeights[index + 1] = heights[index];}heights = newHeights;st.push(0);int result = 0;for (int i = 1; i < heights.length; i++) {if (heights[i] > heights[st.peek()]) {st.push(i);} else if (heights[i] == heights[st.peek()]) {st.pop();st.push(i);} else {while (heights[i] < heights[st.peek()]) {int mid = st.peek();st.pop();int left = st.peek();int right = i;int w = right - left - 1;int h = heights[mid];result = Math.max(result, w * h);}st.push(i);}}return result;}}",
+      "description": "Java单调栈"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int largestRectangleArea(int[] heights) {int[] newHeight = new int[heights.length + 2];System.arraycopy(heights, 0, newHeight, 1, heights.length);newHeight[heights.length+1] = 0;newHeight[0] = 0;Stack<Integer> stack = new Stack<>();stack.push(0);int res = 0;for (int i = 1; i < newHeight.length; i++) {while (newHeight[i] < newHeight[stack.peek()]) {int mid = stack.pop();int w = i - stack.peek() - 1;int h = newHeight[mid];res = Math.max(res, w * h);}stack.push(i);}return res;}}",
+      "description": "Java单调栈精简"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: res = 0 for i in range(len(heights)): left = i right = i for _ in range(left, -1, -1): if heights[left] < heights[i]: break left -= 1 for _ in range(right, len(heights)): if heights[right] < heights[i]: break right += 1 width = right - left - 1 height = heights[i] res = max(res, width * height) return res",
+      "description": "Python暴力解法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: size = len(heights) min_left_index = [0] * size min_right_index = [0] * size result = 0 min_left_index[0] = -1 for i in range(1, size): temp = i - 1 while temp >= 0 and heights[temp] >= heights[i]: temp = min_left_index[temp] min_left_index[i] = temp min_right_index[size-1] = size for i in range(size-2, -1, -1): temp = i + 1 while temp < size and heights[temp] >= heights[i]: temp = min_right_index[temp] min_right_index[i] = temp for i in range(size): area = heights[i] * (min_right_index[i] - min_left_index[i] - 1) result = max(area, result) return result",
+      "description": "Python双指针解法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: heights.insert(0, 0) heights.append(0) stack = [0] result = 0 for i in range(1, len(heights)): if heights[i] > heights[stack[-1]]: stack.append(i) elif heights[i] == heights[stack[-1]]: stack.pop() stack.append(i) else: while stack and heights[i] < heights[stack[-1]]: mid_index = stack[-1] stack.pop() if stack: left_index = stack[-1] right_index = i width = right_index - left_index - 1 height = heights[mid_index] result = max(result, width * height) stack.append(i) return result",
+      "description": "Python单调栈"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def largestRectangleArea(self, heights: List[int]) -> int: heights.insert(0, 0) heights.append(0) stack = [0] result = 0 for i in range(1, len(heights)): while stack and heights[i] < heights[stack[-1]]: mid_height = heights[stack[-1]] stack.pop() if stack: area = (i - stack[-1] - 1) * mid_height result = max(area, result) stack.append(i) return result",
+      "description": "Python单调栈精简"
+    }
+  ],
+  "common_mistakes": [
+    "忽略对边缘情况的处理，如数组长度为1的情况。",
+    "未理解为何需要维护从大到小的顺序，导致无法准确找出左右边界。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210803220437.png",
+      "description": "该图片展示了在一个柱状图中寻找最大矩形面积的问题，通过输入高度数组 `[2,1,5,6,2,3]`，算法计算得到最大矩形面积为 10。",
+      "context": "该图片展示了柱状图中寻找能够勾勒出的最大矩形面积的问题实例。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230221165730.png",
+      "description": "这张图片展示了使用单调栈算法来找到柱状图中每个柱子左右第一个比它低的柱子的过程。",
+      "context": "此图示例展示了柱子按照从大到小的顺序排列在栈中的情况，用于说明如何通过单调栈找到每个柱子左右两边第一个小于该柱子高度的位置。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230221163936.png",
+      "description": "图片展示了一个栈结构，其中元素（8, 6, 4, 2）满足递减顺序，提示在算法实现中未触发计算结果的逻辑。",
+      "context": "该图展示了在数组末尾添加0元素后，如何促使栈中所有元素经历计算结果逻辑的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230221164533.png",
+      "description": "这张图片展示了在使用栈数据结构处理元素时，如何通过弹出和压入操作来寻找“left”值的过程，但因栈中缺乏足够元素导致无法得到计算结果。",
+      "context": "该图展示了在处理过程中，当特定元素被比较和栈操作时的状态变化，帮助理解为何最终计算结果为0。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210803220437.png",
+      "description": "GIF展示了通过单调栈算法计算柱状图中最大矩形面积的过程。",
+      "context": "GIF动画展示了如何通过遍历柱状图并使用特定算法来找到能够勾勒出的最大矩形面积的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230221165730.png",
+      "description": "GIF展示了使用单调栈寻找每个柱子左右两边第一个小于该柱子的过程，其中栈内元素保持从大到小的顺序。",
+      "context": "该GIF动画展示了如何通过维护一个从栈顶到栈底元素值由大到小的单调栈来寻找每个柱子左右两边第一个小于该柱子高度的过程，从而帮助理解计算柱状图中最大矩形面积的方法。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230221163936.png",
+      "description": "GIF展示了通过在数组末尾添加0元素来确保所有柱状图的高度都能被考虑到，从而正确计算出最大矩形面积的过程。",
+      "context": "该GIF动画展示了当数组元素全部入栈后，通过在末尾添加一个0值促使栈内所有剩余元素依次出栈并完成计算的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230221164533.png",
+      "description": "GIF展示了通过在数组前后添加0元素后，利用栈来计算最大矩形面积的过程。",
+      "context": "GIF动画展示了在处理数组元素时，通过比较与栈操作来计算最大矩形面积的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\单调栈\\柱状图中最大的矩形.txt",
+  "extracted_at": "2025-07-21T01:19:19.339115",
+  "raw_content": "柱状图中最大的矩形\n力扣题目链接(https://leetcode.cn/problems/largest-rectangle-in-histogram/)\n\n给定 n 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。\n\n求在该柱状图中，能够勾勒出来的矩形的最大面积。\n\n\nhttps://file1.kamacoder.com/i/algo/20210803220437.png\n\n\n1 <= heights.length <=10^5\n0 <= heights[i] <= 10^4\n\n\n#思路\n本题和42. 接雨水 (https://programmercarl.com/0042.%E6%8E%A5%E9%9B%A8%E6%B0%B4.html)，是遥相呼应的两道题目，建议都要仔细做一做，原理上有很多相同的地方，但细节上又有差异，更可以加深对单调栈的理解！\n\n其实这两道题目先做那一道都可以，但我先写的42.接雨水的题解，所以如果没做过接雨水的话，建议先做一做接雨水，可以参考我的题解：42. 接雨水(https://programmercarl.com/0042.%E6%8E%A5%E9%9B%A8%E6%B0%B4.html)\n\n我们先来看一下暴力解法的解法：\n\n#暴力解法\nclass Solution {\npublic:\n    int largestRectangleArea(vector<int>& heights) {\n        int sum = 0;\n        for (int i = 0; i < heights.size(); i++) {\n            int left = i;\n            int right = i;\n            for (; left >= 0; left--) {\n                if (heights[left] < heights[i]) break;\n            }\n            for (; right < heights.size(); right++) {\n                if (heights[right] < heights[i]) break;\n            }\n            int w = right - left - 1;\n            int h = heights[i];\n            sum = max(sum, w * h);\n        }\n        return sum;\n    }\n};\n如上代码并不能通过leetcode，超时了，因为时间复杂度是$O(n^2)$。\n\n#双指针解法\n本题双指针的写法整体思路和42. 接雨水 (https://programmercarl.com/0042.%E6%8E%A5%E9%9B%A8%E6%B0%B4.html)是一致的，但要比42. 接雨水 (https://programmercarl.com/0042.%E6%8E%A5%E9%9B%A8%E6%B0%B4.html)难一些。\n\n难就难在本题要记录记录每个柱子 左边第一个小于该柱子的下标，而不是左边第一个小于该柱子的高度。\n\n所以需要循环查找，也就是下面在寻找的过程中使用了while，详细请看下面注释，整理思路在题解：42. 接雨水 (https://programmercarl.com/0042.%E6%8E%A5%E9%9B%A8%E6%B0%B4.html)中已经介绍了。\n\nclass Solution {\npublic:\n    int largestRectangleArea(vector<int>& heights) {\n        vector<int> minLeftIndex(heights.size());\n        vector<int> minRightIndex(heights.size());\n        int size = heights.size();\n\n        // 记录每个柱子 左边第一个小于该柱子的下标\n        minLeftIndex[0] = -1; // 注意这里初始化，防止下面while死循环\n        for (int i = 1; i < size; i++) {\n            int t = i - 1;\n            // 这里不是用if，而是不断向左寻找的过程\n            while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];\n            minLeftIndex[i] = t;\n        }\n        // 记录每个柱子 右边第一个小于该柱子的下标\n        minRightIndex[size - 1] = size; // 注意这里初始化，防止下面while死循环\n        for (int i = size - 2; i >= 0; i--) {\n            int t = i + 1;\n            // 这里不是用if，而是不断向右寻找的过程\n            while (t < size && heights[t] >= heights[i]) t = minRightIndex[t];\n            minRightIndex[i] = t;\n        }\n        // 求和\n        int result = 0;\n        for (int i = 0; i < size; i++) {\n            int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);\n            result = max(sum, result);\n        }\n        return result;\n    }\n};\n#单调栈\n本地单调栈的解法和接雨水的题目是遥相呼应的。\n\n为什么这么说呢，42. 接雨水 (https://programmercarl.com/0042.%E6%8E%A5%E9%9B%A8%E6%B0%B4.html)是找每个柱子左右两边第一个大于该柱子高度的柱子，而本题是找每个柱子左右两边第一个小于该柱子的柱子。\n\n这里就涉及到了单调栈很重要的性质，就是单调栈里的顺序，是从小到大还是从大到小。\n\n在题解42. 接雨水 (https://programmercarl.com/0042.%E6%8E%A5%E9%9B%A8%E6%B0%B4.html)中我讲解了接雨水的单调栈从栈头（元素从栈头弹出）到栈底的顺序应该是从小到大的顺序。\n\n那么因为本题是要找每个柱子左右两边第一个小于该柱子的柱子，所以从栈头（元素从栈头弹出）到栈底的顺序应该是从大到小的顺序！\n\n我来举一个例子，如图：\n\nhttps://file1.kamacoder.com/i/algo/20230221165730.png\n\n只有栈里从大到小的顺序，才能保证栈顶元素找到左右两边第一个小于栈顶元素的柱子。\n\n所以本题单调栈的顺序正好与接雨水反过来。\n\n此时大家应该可以发现其实就是栈顶和栈顶的下一个元素以及要入栈的三个元素组成了我们要求最大面积的高度和宽度\n\n理解这一点，对单调栈就掌握的比较到位了。\n\n除了栈内元素顺序和接雨水不同，剩下的逻辑就都差不多了，在题解42. 接雨水 (opens new window)我已经对单调栈的各个方面做了详细讲解，这里就不赘述了。\n\n主要就是分析清楚如下三种情况：\n\n情况一：当前遍历的元素heights[i]大于栈顶元素heights[st.top()]的情况\n情况二：当前遍历的元素heights[i]等于栈顶元素heights[st.top()]的情况\n情况三：当前遍历的元素heights[i]小于栈顶元素heights[st.top()]的情况\nC++代码如下：\n\n// 版本一\nclass Solution {\npublic:\n    int largestRectangleArea(vector<int>& heights) {\n        int result = 0;\n        stack<int> st;\n        heights.insert(heights.begin(), 0); // 数组头部加入元素0\n        heights.push_back(0); // 数组尾部加入元素0\n        st.push(0);\n\n        // 第一个元素已经入栈，从下标1开始\n        for (int i = 1; i < heights.size(); i++) {\n            if (heights[i] > heights[st.top()]) { // 情况一\n                st.push(i);\n            } else if (heights[i] == heights[st.top()]) { // 情况二\n                st.pop(); // 这个可以加，可以不加，效果一样，思路不同\n                st.push(i);\n            } else { // 情况三\n                while (!st.empty() && heights[i] < heights[st.top()]) { // 注意是while\n                    int mid = st.top();\n                    st.pop();\n                    if (!st.empty()) {\n                        int left = st.top();\n                        int right = i;\n                        int w = right - left - 1;\n                        int h = heights[mid];\n                        result = max(result, w * h);\n                    }\n                }\n                st.push(i);\n            }\n        }\n        return result;\n    }\n};\n\n细心的录友会发现，我在 height数组上后，都加了一个元素0， 为什么这么做呢？\n\n首先来说末尾为什么要加元素0？\n\n如果数组本身就是升序的，例如[2,4,6,8]，那么入栈之后 都是单调递减，一直都没有走 情况三 计算结果的哪一步，所以最后输出的就是0了。 如图：\n\nhttps://file1.kamacoder.com/i/algo/20230221163936.png\n\n那么结尾加一个0，就会让栈里的所有元素，走到情况三的逻辑。\n\n开头为什么要加元素0？\n\n如果数组本身是降序的，例如 [8,6,4,2]，在 8 入栈后，6 开始与8 进行比较，此时我们得到 mid（8），right（6），但是得不到 left。\n\n（mid、left，right 都是对应版本一里的逻辑）\n\n因为 将 8 弹出之后，栈里没有元素了，那么为了避免空栈取值，直接跳过了计算结果的逻辑。\n\n之后又将6 加入栈（此时8已经弹出了），然后 就是 4 与 栈口元素 6 进行比较，周而复始，那么计算的最后结果result就是0。 如图所示：\n\nhttps://file1.kamacoder.com/i/algo/20230221164533.png\n\n所以我们需要在 height数组前后各加一个元素0。\n\n版本一代码精简之后：\n\n// 版本二\nclass Solution {\npublic:\n    int largestRectangleArea(vector<int>& heights) {\n        stack<int> st;\n        heights.insert(heights.begin(), 0); // 数组头部加入元素0\n        heights.push_back(0); // 数组尾部加入元素0\n        st.push(0);\n        int result = 0;\n        for (int i = 1; i < heights.size(); i++) {\n            while (heights[i] < heights[st.top()]) {\n                int mid = st.top();\n                st.pop();\n                int w = i - st.top() - 1;\n                int h = heights[mid];\n                result = max(result, w * h);\n            }\n            st.push(i);\n        }\n        return result;\n    }\n};\n这里我依然建议大家按部就班把版本一写出来，把情况一二三分析清楚，然后在精简代码到版本二。 直接看版本二容易忽略细节！\n\n#其他语言版本\n#Java:\n暴力解法：\n\nclass Solution {\n    public int largestRectangleArea(int[] heights) {\n        int length = heights.length;\n        int[] minLeftIndex = new int [length];\n        int[] minRightIndex = new int [length];\n        // 记录左边第一个小于该柱子的下标\n        minLeftIndex[0] = -1 ;\n        for (int i = 1; i < length; i++) {\n            int t = i - 1;\n            // 这里不是用if，而是不断向右寻找的过程\n            while (t >= 0 && heights[t] >= heights[i]) t = minLeftIndex[t];\n            minLeftIndex[i] = t;\n        }\n        // 记录每个柱子右边第一个小于该柱子的下标\n        minRightIndex[length - 1] = length;\n        for (int i = length - 2; i >= 0; i--) {\n            int t = i + 1;\n            while(t < length && heights[t] >= heights[i]) t = minRightIndex[t];\n            minRightIndex[i] = t;\n        }\n        // 求和\n        int result = 0;\n        for (int i = 0; i < length; i++) {\n            int sum = heights[i] * (minRightIndex[i] - minLeftIndex[i] - 1);\n            result = Math.max(sum, result);\n        }\n        return result;\n    }\n}\n单调栈:\n\nclass Solution {\n    int largestRectangleArea(int[] heights) {\n        Stack<Integer> st = new Stack<Integer>();\n        \n        // 数组扩容，在头和尾各加入一个元素\n        int [] newHeights = new int[heights.length + 2];\n        newHeights[0] = 0;\n        newHeights[newHeights.length - 1] = 0;\n        for (int index = 0; index < heights.length; index++){\n            newHeights[index + 1] = heights[index];\n        }\n\n        heights = newHeights;\n        \n        st.push(0);\n        int result = 0;\n        // 第一个元素已经入栈，从下标1开始\n        for (int i = 1; i < heights.length; i++) {\n            // 注意heights[i] 是和heights[st.top()] 比较 ，st.top()是下标\n            if (heights[i] > heights[st.peek()]) {\n                st.push(i);\n            } else if (heights[i] == heights[st.peek()]) {\n                st.pop(); // 这个可以加，可以不加，效果一样，思路不同\n                st.push(i);\n            } else {\n                while (heights[i] < heights[st.peek()]) { // 注意是while\n                    int mid = st.peek();\n                    st.pop();\n                    int left = st.peek();\n                    int right = i;\n                    int w = right - left - 1;\n                    int h = heights[mid];\n                    result = Math.max(result, w * h);\n                }\n                st.push(i);\n            }\n        }\n        return result;\n    }\n}\n单调栈精简\n\nclass Solution {\n    public int largestRectangleArea(int[] heights) {\n        int[] newHeight = new int[heights.length + 2];\n        System.arraycopy(heights, 0, newHeight, 1, heights.length);\n        newHeight[heights.length+1] = 0;\n        newHeight[0] = 0;\n\n        Stack<Integer> stack = new Stack<>();\n        stack.push(0);\n\n        int res = 0;\n        for (int i = 1; i < newHeight.length; i++) {\n            while (newHeight[i] < newHeight[stack.peek()]) {\n                int mid = stack.pop();\n                int w = i - stack.peek() - 1;\n                int h = newHeight[mid];\n                res = Math.max(res, w * h);\n            }\n            stack.push(i);\n\n        }\n        return res;\n    }\n}\n#Python3:\n\n# 暴力解法（leetcode超时）\nclass Solution:\n    def largestRectangleArea(self, heights: List[int]) -> int:\n        # 从左向右遍历：以每一根柱子为主心骨（当前轮最高的参照物），迭代直到找到左侧和右侧各第一个矮一级的柱子\n        res = 0\n\n        for i in range(len(heights)):\n            left = i\n            right = i\n            # 向左侧遍历：寻找第一个矮一级的柱子\n            for _ in range(left, -1, -1):\n                if heights[left] < heights[i]:\n                    break\n                left -= 1\n            # 向右侧遍历：寻找第一个矮一级的柱子\n            for _ in range(right, len(heights)):\n                if heights[right] < heights[i]:\n                    break\n                right += 1\n                \n            width = right - left - 1\n            height = heights[i]\n            res = max(res, width * height)\n\n        return res\n\n# 双指针 \nclass Solution:\n    def largestRectangleArea(self, heights: List[int]) -> int:\n        size = len(heights)\n        # 两个DP数列储存的均是下标index\n        min_left_index = [0] * size\n        min_right_index = [0] * size\n        result = 0\n\n        # 记录每个柱子的左侧第一个矮一级的柱子的下标\n        min_left_index[0] = -1  # 初始化防止while死循环\n        for i in range(1, size):\n            # 以当前柱子为主心骨，向左迭代寻找次级柱子\n            temp = i - 1\n            while temp >= 0 and heights[temp] >= heights[i]:\n                # 当左侧的柱子持续较高时，尝试这个高柱子自己的次级柱子（DP\n                temp = min_left_index[temp]\n            # 当找到左侧矮一级的目标柱子时\n            min_left_index[i] = temp\n        \n        # 记录每个柱子的右侧第一个矮一级的柱子的下标\n        min_right_index[size-1] = size  # 初始化防止while死循环\n        for i in range(size-2, -1, -1):\n            # 以当前柱子为主心骨，向右迭代寻找次级柱子\n            temp = i + 1\n            while temp < size and heights[temp] >= heights[i]:\n                # 当右侧的柱子持续较高时，尝试这个高柱子自己的次级柱子（DP\n                temp = min_right_index[temp]\n            # 当找到右侧矮一级的目标柱子时\n            min_right_index[i] = temp\n        \n        for i in range(size):\n            area = heights[i] * (min_right_index[i] - min_left_index[i] - 1)\n            result = max(area, result)\n        \n        return result\n\n# 单调栈\nclass Solution:\n    def largestRectangleArea(self, heights: List[int]) -> int:\n        # Monotonic Stack\n        '''\n        找每个柱子左右侧的第一个高度值小于该柱子的柱子\n        单调栈：栈顶到栈底：从大到小（每插入一个新的小数值时，都要弹出先前的大数值）\n        栈顶，栈顶的下一个元素，即将入栈的元素：这三个元素组成了最大面积的高度和宽度\n        情况一：当前遍历的元素heights[i]大于栈顶元素的情况\n        情况二：当前遍历的元素heights[i]等于栈顶元素的情况\n        情况三：当前遍历的元素heights[i]小于栈顶元素的情况\n        '''\n\n        # 输入数组首尾各补上一个0（与42.接雨水不同的是，本题原首尾的两个柱子可以作为核心柱进行最大面积尝试\n        heights.insert(0, 0)\n        heights.append(0)\n        stack = [0]\n        result = 0\n        for i in range(1, len(heights)):\n            # 情况一\n            if heights[i] > heights[stack[-1]]:\n                stack.append(i)\n            # 情况二\n            elif heights[i] == heights[stack[-1]]:\n                stack.pop()\n                stack.append(i)\n            # 情况三\n            else:\n                # 抛出所有较高的柱子\n                while stack and heights[i] < heights[stack[-1]]:\n                    # 栈顶就是中间的柱子，主心骨\n                    mid_index = stack[-1]\n                    stack.pop()\n                    if stack:\n                        left_index = stack[-1]\n                        right_index = i\n                        width = right_index - left_index - 1\n                        height = heights[mid_index]\n                        result = max(result, width * height)\n                stack.append(i)\n        return result\n\n# 单调栈精简\nclass Solution:\n    def largestRectangleArea(self, heights: List[int]) -> int:\n        heights.insert(0, 0)\n        heights.append(0)\n        stack = [0]\n        result = 0\n        for i in range(1, len(heights)):\n            while stack and heights[i] < heights[stack[-1]]:\n                mid_height = heights[stack[-1]]\n                stack.pop()\n                if stack:\n                    # area = width * height\n                    area = (i - stack[-1] - 1) * mid_height\n                    result = max(area, result)\n            stack.append(i)\n        return result"
+}

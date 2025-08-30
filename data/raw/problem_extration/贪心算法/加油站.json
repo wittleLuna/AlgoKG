@@ -1,0 +1,548 @@
+{
+  "id": "AP_2bac6963",
+  "title": "加油站",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/gas-station/",
+  "description": "在一条环路上有 N 个加油站，其中第 i 个加油站有汽油 gas[i] 升。\n\n你有一辆油箱容量无限的的汽车，从第 i 个加油站开往第 i+1 个加油站需要消耗汽油 cost[i] 升。你从其中的一个加油站出发，开始时油箱为空。\n\n如果你可以绕环路行驶一周，则返回出发时加油站的编号，否则返回 -1。\n\n说明:\n\n如果题目有解，该答案即为唯一答案。\n输入数组均为非空数组，且长度相同。\n输入数组中的元素均为非负数。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "Greedy",
+    "Simulation"
+  ],
+  "data_structure_tags": [
+    "Array"
+  ],
+  "technique_tags": [
+    "Prefix Sum",
+    "Optimization"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过遍历每个加油站作为起点的可能性来判断是否可以完成一圈。使用贪心算法优化，基于全局和局部最优的原则选择起始位置。",
+  "key_insights": [
+    {
+      "content": "如果所有加油站的汽油总量小于行驶所需的总成本，则无法完成一圈行程。"
+    },
+    {
+      "content": "在从某个点开始累加剩余油量时，如果发现累加值变为负数，说明从当前点之前的所有点出发都无法到达下一个点，因此需要更新起点为下一个点。通过这种方式不断调整起点，最终找到一个能够完成一圈的起点或确定不存在这样的起点。"
+    },
+    {
+      "content": "局部最优解可以推导出全局最优解，即当前累计剩余油量一旦小于0，则起始位置至少应为下一加油站。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "#暴力方法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {for (int i = 0; i < cost.size(); i++) {int rest = gas[i] - cost[i];int index = (i + 1) % cost.size();while (rest > 0 && index != i) {rest += gas[index] - cost[index];index = (index + 1) % cost.size();}if (rest >= 0 && index == i) return i;}return -1;}};",
+          "description": "暴力方法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {int curSum = 0;int min = INT_MAX;for (int i = 0; i < gas.size(); i++) {int rest = gas[i] - cost[i];curSum += rest;if (curSum < min) {min = curSum;}}if (curSum < 0) return -1;if (min >= 0) return 0;for (int i = gas.size() - 1; i >= 0; i--) {int rest = gas[i] - cost[i];min += rest;if (min >= 0) {return i;}}return -1;}};",
+          "description": "贪心算法（方法一）"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {int curSum = 0;int totalSum = 0;int start = 0;for (int i = 0; i < gas.size(); i++) {curSum += gas[i] - cost[i];totalSum += gas[i] - cost[i];if (curSum < 0) {start = i + 1;curSum = 0;}}if (totalSum < 0) return -1;return start;}};",
+          "description": "贪心算法（方法二）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int sum = 0;int min = 0;for (int i = 0; i < gas.length; i++) {sum += (gas[i] - cost[i]);min = Math.min(sum, min);}if (sum < 0) return -1;if (min >= 0) return 0;for (int i = gas.length - 1; i > 0; i--) {min += (gas[i] - cost[i]);if (min >= 0) return i;}return -1;}}",
+          "description": "解法1"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int curSum = 0;int totalSum = 0;int index = 0;for (int i = 0; i < gas.length; i++) {curSum += gas[i] - cost[i];totalSum += gas[i] - cost[i];if (curSum < 0) {index = (i + 1) % gas.length ;curSum = 0;}}if (totalSum < 0) return -1;return index;}}",
+          "description": "解法2"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int tank = 0;int totalGas = 0;int totalCost = 0;int start = 0;for (int i = 0; i < gas.length; i++) {totalGas += gas[i];totalCost += cost[i];tank += gas[i] - cost[i];if (tank < 0) {tank = 0;start = i + 1;}}if (totalCost > totalGas) return -1;return start;}}",
+          "description": "解法3"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: for i in range(len(cost)): rest = gas[i] - cost[i] index = (i + 1) % len(cost) while rest > 0 and index != i: rest += gas[index] - cost[index] index = (index + 1) % len(cost) if rest >= 0 and index == i: return i return -1",
+          "description": "暴力法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: curSum = 0 minFuel = float('inf') for i in range(len(gas)): rest = gas[i] - cost[i] curSum += rest if curSum < minFuel: minFuel = curSum if curSum < 0: return -1 if minFuel >= 0: return 0 for i in range(len(gas) - 1, -1, -1): rest = gas[i] - cost[i] minFuel += rest if minFuel >= 0: return i return -1",
+          "description": "贪心（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: curSum = 0 totalSum = 0 start = 0 for i in range(len(gas)): curSum += gas[i] - cost[i] totalSum += gas[i] - cost[i] if curSum < 0: start = i + 1 curSum = 0 if totalSum < 0: return -1 return start",
+          "description": "贪心（版本二）"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "暴力方法",
+      "text": "暴力的方法很明显就是O(n^2)的，遍历每一个加油站为起点的情况，模拟一圈。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {for (int i = 0; i < cost.size(); i++) {int rest = gas[i] - cost[i]; // 记录剩余油量int index = (i + 1) % cost.size();while (rest > 0 && index != i) { // 模拟以i为起点行驶一圈（如果有rest==0，那么答案就不唯一了）rest += gas[index] - cost[index];index = (index + 1) % cost.size();}// 如果以i为起点跑一圈，剩余油量>=0，返回该起始位置if (rest >= 0 && index == i) return i;}return -1;}};",
+          "description": "暴力方法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {int curSum = 0;int min = INT_MAX; // 从起点出发，油箱里的油量最小值for (int i = 0; i < gas.size(); i++) {int rest = gas[i] - cost[i];curSum += rest;if (curSum < min) {min = curSum;}}if (curSum < 0) return -1;  // 情况1if (min >= 0) return 0;     // 情况2// 情况3for (int i = gas.size() - 1; i >= 0; i--) {int rest = gas[i] - cost[i];min += rest;if (min >= 0) {return i;}}return -1;}};",
+          "description": "贪心算法版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {int curSum = 0;int totalSum = 0;int start = 0;for (int i = 0; i < gas.size(); i++) {curSum += gas[i] - cost[i];totalSum += gas[i] - cost[i];if (curSum < 0) {   // 当前累加rest[i]和 curSum一旦小于0start = i + 1;  // 起始位置更新为i+1curSum = 0;     // curSum从0开始}}if (totalSum < 0) return -1; // 说明怎么走都不可能跑一圈了return start;}};",
+          "description": "贪心算法版本二"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int sum = 0;int min = 0;for (int i = 0; i < gas.length; i++) {sum += (gas[i] - cost[i]);min = Math.min(sum, min);}if (sum < 0) return -1;if (min >= 0) return 0;for (int i = gas.length - 1; i > 0; i--) {min += (gas[i] - cost[i]);if (min >= 0) return i;}return -1;}}",
+          "description": "Java贪心算法版本一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int curSum = 0;int totalSum = 0;int index = 0;for (int i = 0; i < gas.length; i++) {curSum += gas[i] - cost[i];totalSum += gas[i] - cost[i];if (curSum < 0) {index = (i + 1) % gas.length ;curSum = 0;}}if (totalSum < 0) return -1;return index;}}",
+          "description": "Java贪心算法版本二"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int tank = 0;int totalGas = 0;int totalCost = 0;int start = 0;for (int i = 0; i < gas.length; i++) {totalGas += gas[i];totalCost += cost[i];tank += gas[i] - cost[i];if (tank < 0) {tank = 0;start = i + 1;}}if (totalCost > totalGas) return -1;return start;}}",
+          "description": "Java另一种解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: for i in range(len(cost)): rest = gas[i] - cost[i] index = (i + 1) % len(cost) while rest > 0 and index != i: rest += gas[index] - cost[index] index = (index + 1) % len(cost) if rest >= 0 and index == i: return i return -1",
+          "description": "Python暴力方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: curSum = 0 minFuel = float('inf') for i in range(len(gas)): rest = gas[i] - cost[i] curSum += rest if curSum < minFuel: minFuel = curSum if curSum < 0: return -1 if minFuel >= 0: return 0 for i in range(len(gas) - 1, -1, -1): rest = gas[i] - cost[i] minFuel += rest if minFuel >= 0: return i return -1",
+          "description": "Python贪心算法版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: curSum = 0 totalSum = 0 start = 0 for i in range(len(gas)): curSum += gas[i] - cost[i] totalSum += gas[i] - cost[i] if curSum < 0: start = i + 1 curSum = 0 if totalSum < 0: return -1 return start",
+          "description": "Python贪心算法版本二"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "贪心算法（方法一）",
+      "text": "直接从全局进行贪心选择，情况如下：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {for (int i = 0; i < cost.size(); i++) {int rest = gas[i] - cost[i]; // 记录剩余油量int index = (i + 1) % cost.size();while (rest > 0 && index != i) { // 模拟以i为起点行驶一圈（如果有rest==0，那么答案就不唯一了）rest += gas[index] - cost[index];index = (index + 1) % cost.size();}// 如果以i为起点跑一圈，剩余油量>=0，返回该起始位置if (rest >= 0 && index == i) return i;}return -1;}};",
+          "description": "暴力方法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {int curSum = 0;int min = INT_MAX; // 从起点出发，油箱里的油量最小值for (int i = 0; i < gas.size(); i++) {int rest = gas[i] - cost[i];curSum += rest;if (curSum < min) {min = curSum;}}if (curSum < 0) return -1;  // 情况1if (min >= 0) return 0;     // 情况2// 情况3for (int i = gas.size() - 1; i >= 0; i--) {int rest = gas[i] - cost[i];min += rest;if (min >= 0) {return i;}}return -1;}};",
+          "description": "贪心算法（方法一）"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {int curSum = 0;int totalSum = 0;int start = 0;for (int i = 0; i < gas.size(); i++) {curSum += gas[i] - cost[i];totalSum += gas[i] - cost[i];if (curSum < 0) {   // 当前累加rest[i]和 curSum一旦小于0start = i + 1;  // 起始位置更新为i+1curSum = 0;     // curSum从0开始}}if (totalSum < 0) return -1; // 说明怎么走都不可能跑一圈了return start;}};",
+          "description": "贪心算法（方法二）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int sum = 0;int min = 0;for (int i = 0; i < gas.length; i++) {sum += (gas[i] - cost[i]);min = Math.min(sum, min);}if (sum < 0) return -1;if (min >= 0) return 0;for (int i = gas.length - 1; i > 0; i--) {min += (gas[i] - cost[i]);if (min >= 0) return i;}return -1;}}",
+          "description": "解法1"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int curSum = 0;int totalSum = 0;int index = 0;for (int i = 0; i < gas.length; i++) {curSum += gas[i] - cost[i];totalSum += gas[i] - cost[i];if (curSum < 0) {index = (i + 1) % gas.length ; curSum = 0;}}if (totalSum < 0) return -1;return index;}}",
+          "description": "解法2"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int tank = 0; // 当前油量int totalGas = 0;  // 总加油量int totalCost = 0; // 总油耗int start = 0; // 起点for (int i = 0; i < gas.length; i++) {totalGas += gas[i];totalCost += cost[i];tank += gas[i] - cost[i];if (tank < 0) { // tank 变为负数 意味着 从0到i之间出发都不能顺利环路一周，因为在此i点必会没油tank = 0; // reset tank，类似于题目53.最大子树和reset sumstart = i + 1; // 起点变为i点往后一位}}if (totalCost > totalGas) return -1;return start;}}",
+          "description": "解法3"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: for i in range(len(cost)): rest = gas[i] - cost[i]  # 记录剩余油量 index = (i + 1) % len(cost)  # 下一个加油站的索引 while rest > 0 and index != i:  # 模拟以i为起点行驶一圈（如果有rest==0，那么答案就不唯一了） rest += gas[index] - cost[index]  # 更新剩余油量 index = (index + 1) % len(cost)  # 更新下一个加油站的索引 if rest >= 0 and index == i:  # 如果以i为起点跑一圈，剩余油量>=0，并且回到起始位置 return i  # 返回起始位置i return -1  # 所有起始位置都无法环绕一圈，返回-1",
+          "description": "暴力法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: curSum = 0  # 当前累计的剩余油量 minFuel = float('inf')  # 从起点出发，油箱里的油量最小值 for i in range(len(gas)): rest = gas[i] - cost[i] curSum += rest if curSum < minFuel: minFuel = curSum if curSum < 0: return -1  # 情况1：整个行程的总消耗大于总供给，无法完成一圈 if minFuel >= 0: return 0  # 情况2：从起点出发到任何一个加油站时油箱的剩余油量都不会小于0，可以从起点出发完成一圈 for i in range(len(gas) - 1, -1, -1): rest = gas[i] - cost[i] minFuel += rest if minFuel >= 0: return i  # 情况3：找到一个位置使得从该位置出发油箱的剩余油量不会小于0，返回该位置的索引 return -1  # 无法完成一圈",
+          "description": "贪心（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: curSum = 0  # 当前累计的剩余油量 totalSum = 0  # 总剩余油量 start = 0  # 起始位置 for i in range(len(gas)): curSum += gas[i] - cost[i] totalSum += gas[i] - cost[i] if curSum < 0:  # 当前累计剩余油量curSum小于0 start = i + 1  # 起始位置更新为i+1 curSum = 0  # curSum重新从0开始累计 if totalSum < 0: return -1  # 总剩余油量totalSum小于0，说明无法环绕一圈 return start",
+          "description": "贪心（版本二）"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "贪心算法（方法二）",
+      "text": "可以换一个思路，首先如果总油量减去总消耗大于等于零那么一定可以跑完一圈，说明 各个站点的加油站 剩油量rest[i]相加一定是大于等于零的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {for (int i = 0; i < cost.size(); i++) {int rest = gas[i] - cost[i]; // 记录剩余油量int index = (i + 1) % cost.size();while (rest > 0 && index != i) { // 模拟以i为起点行驶一圈（如果有rest==0，那么答案就不唯一了）rest += gas[index] - cost[index];index = (index + 1) % cost.size();}if (rest >= 0 && index == i) return i;}return -1;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {int curSum = 0;int min = INT_MAX;for (int i = 0; i < gas.size(); i++) {int rest = gas[i] - cost[i];curSum += rest;if (curSum < min) {min = curSum;}}if (curSum < 0) return -1;if (min >= 0) return 0;for (int i = gas.size() - 1; i >= 0; i--) {int rest = gas[i] - cost[i];min += rest;if (min >= 0) {return i;}}return -1;}};",
+          "description": "贪心算法方法一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {int curSum = 0;int totalSum = 0;int start = 0;for (int i = 0; i < gas.size(); i++) {curSum += gas[i] - cost[i];totalSum += gas[i] - cost[i];if (curSum < 0) {start = i + 1;curSum = 0;}}if (totalSum < 0) return -1;return start;}};",
+          "description": "贪心算法方法二"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int sum = 0;int min = 0;for (int i = 0; i < gas.length; i++) {sum += (gas[i] - cost[i]);min = Math.min(sum, min);}if (sum < 0) return -1;if (min >= 0) return 0;for (int i = gas.length - 1; i > 0; i--) {min += (gas[i] - cost[i]);if (min >= 0) return i;}return -1;}}",
+          "description": "Java版本解法一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int curSum = 0;int totalSum = 0;int index = 0;for (int i = 0; i < gas.length; i++) {curSum += gas[i] - cost[i];totalSum += gas[i] - cost[i];if (curSum < 0) {index = (i + 1) % gas.length ;curSum = 0;}}if (totalSum < 0) return -1;return index;}}",
+          "description": "Java版本解法二"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int tank = 0;int totalGas = 0;int totalCost = 0;int start = 0;for (int i = 0; i < gas.length; i++) {totalGas += gas[i];totalCost += cost[i];tank += gas[i] - cost[i];if (tank < 0) {tank = 0;start = i + 1;}}if (totalCost > totalGas) return -1;return start;}}",
+          "description": "Java版本解法三"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: for i in range(len(cost)): rest = gas[i] - cost[i] index = (i + 1) % len(cost) while rest > 0 and index != i: rest += gas[index] - cost[index] index = (index + 1) % len(cost) if rest >= 0 and index == i: return i return -1",
+          "description": "Python暴力解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: curSum = 0 minFuel = float('inf') for i in range(len(gas)): rest = gas[i] - cost[i] curSum += rest if curSum < minFuel: minFuel = curSum if curSum < 0: return -1 if minFuel >= 0: return 0 for i in range(len(gas) - 1, -1, -1): rest = gas[i] - cost[i] minFuel += rest if minFuel >= 0: return i return -1",
+          "description": "Python贪心解法一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: curSum = 0 totalSum = 0 start = 0 for i in range(len(gas)): curSum += gas[i] - cost[i] totalSum += gas[i] - cost[i] if curSum < 0: start = i + 1 curSum = 0 if totalSum < 0: return -1 return start",
+          "description": "Python贪心解法二"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "对于本题首先给出了暴力解法，暴力解法模拟跑一圈的过程其实比较考验代码技巧的，要对while使用的很熟练。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {for (int i = 0; i < cost.size(); i++) {int rest = gas[i] - cost[i]; // 记录剩余油量int index = (i + 1) % cost.size();while (rest > 0 && index != i) { // 模拟以i为起点行驶一圈（如果有rest==0，那么答案就不唯一了）rest += gas[index] - cost[index];index = (index + 1) % cost.size();} // 如果以i为起点跑一圈，剩余油量>=0，返回该起始位置if (rest >= 0 && index == i) return i;}return -1;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {int curSum = 0;int min = INT_MAX; // 从起点出发，油箱里的油量最小值for (int i = 0; i < gas.size(); i++) {int rest = gas[i] - cost[i];curSum += rest;if (curSum < min) {min = curSum;}}if (curSum < 0) return -1;  // 情况1if (min >= 0) return 0;     // 情况2                                    // 情况3for (int i = gas.size() - 1; i >= 0; i--) {int rest = gas[i] - cost[i];min += rest;if (min >= 0) {return i;}}return -1;}};",
+          "description": "贪心算法方法一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {int curSum = 0;int totalSum = 0;int start = 0;for (int i = 0; i < gas.size(); i++) {curSum += gas[i] - cost[i];totalSum += gas[i] - cost[i];if (curSum < 0) {   // 当前累加rest[i]和 curSum一旦小于0start = i + 1;  // 起始位置更新为i+1curSum = 0;     // curSum从0开始}}if (totalSum < 0) return -1; // 说明怎么走都不可能跑一圈了return start;}};",
+          "description": "贪心算法方法二"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int sum = 0;int min = 0;for (int i = 0; i < gas.length; i++) {sum += (gas[i] - cost[i]);min = Math.min(sum, min);}if (sum < 0) return -1;if (min >= 0) return 0;for (int i = gas.length - 1; i > 0; i--) {min += (gas[i] - cost[i]);if (min >= 0) return i;}return -1;}}",
+          "description": "Java版本贪心算法方法一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int curSum = 0;int totalSum = 0;int index = 0;for (int i = 0; i < gas.length; i++) {curSum += gas[i] - cost[i];totalSum += gas[i] - cost[i];if (curSum < 0) {index = (i + 1) % gas.length ; curSum = 0;}}if (totalSum < 0) return -1;return index;}}",
+          "description": "Java版本贪心算法方法二"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int tank = 0; // 当前油量int totalGas = 0;  // 总加油量int totalCost = 0; // 总油耗int start = 0; // 起点for (int i = 0; i < gas.length; i++) {totalGas += gas[i];totalCost += cost[i];tank += gas[i] - cost[i];if (tank < 0) { // tank 变为负数 意味着 从0到i之间出发都不能顺利环路一周，因为在此i点必会没油tank = 0; // reset tank，类似于题目53.最大子树和reset sumstart = i + 1; // 起点变为i点往后一位}}if (totalCost > totalGas) return -1;return start;}}",
+          "description": "Java版本贪心算法方法三"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: for i in range(len(cost)): rest = gas[i] - cost[i]  # 记录剩余油量 index = (i + 1) % len(cost)  # 下一个加油站的索引 while rest > 0 and index != i:  # 模拟以i为起点行驶一圈（如果有rest==0，那么答案就不唯一了） rest += gas[index] - cost[index]  # 更新剩余油量 index = (index + 1) % len(cost)  # 更新下一个加油站的索引 if rest >= 0 and index == i:  # 如果以i为起点跑一圈，剩余油量>=0，并且回到起始位置 return i  # 返回起始位置i return -1  # 所有起始位置都无法环绕一圈，返回-1",
+          "description": "Python版本暴力解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: curSum = 0  # 当前累计的剩余油量 minFuel = float('inf')  # 从起点出发，油箱里的油量最小值 for i in range(len(gas)): rest = gas[i] - cost[i] curSum += rest if curSum < minFuel: minFuel = curSum if curSum < 0: return -1  # 情况1：整个行程的总消耗大于总供给，无法完成一圈 if minFuel >= 0: return 0  # 情况2：从起点出发到任何一个加油站时油箱的剩余油量都不会小于0，可以从起点出发完成一圈 for i in range(len(gas) - 1, -1, -1): rest = gas[i] - cost[i] minFuel += rest if minFuel >= 0: return i  # 情况3：找到一个位置使得从该位置出发油箱的剩余油量不会小于0，返回该位置的索引 return -1  # 无法完成一圈",
+          "description": "Python版本贪心算法方法一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: curSum = 0  # 当前累计的剩余油量 totalSum = 0  # 总剩余油量 start = 0  # 起始位置 for i in range(len(gas)): curSum += gas[i] - cost[i] totalSum += gas[i] - cost[i] if curSum < 0:  # 当前累计剩余油量curSum小于0 start = i + 1  # 起始位置更新为i+1 curSum = 0  # curSum重新从0开始累计 if totalSum < 0: return -1  # 总剩余油量totalSum小于0，说明无法环绕一圈 return start",
+          "description": "Python版本贪心算法方法二"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {for (int i = 0; i < cost.size(); i++) {int rest = gas[i] - cost[i];int index = (i + 1) % cost.size();while (rest > 0 && index != i) {rest += gas[index] - cost[index];index = (index + 1) % cost.size();}if (rest >= 0 && index == i) return i;}return -1;}};",
+          "description": "暴力方法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {int curSum = 0;int min = INT_MAX;for (int i = 0; i < gas.size(); i++) {int rest = gas[i] - cost[i];curSum += rest;if (curSum < min) {min = curSum;}}if (curSum < 0) return -1;if (min >= 0) return 0;for (int i = gas.size() - 1; i >= 0; i--) {int rest = gas[i] - cost[i];min += rest;if (min >= 0) {return i;}}return -1;}};",
+          "description": "贪心算法（方法一）"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {int curSum = 0;int totalSum = 0;int start = 0;for (int i = 0; i < gas.size(); i++) {curSum += gas[i] - cost[i];totalSum += gas[i] - cost[i];if (curSum < 0) {start = i + 1;curSum = 0;}}if (totalSum < 0) return -1;return start;}};",
+          "description": "贪心算法（方法二）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int sum = 0;int min = 0;for (int i = 0; i < gas.length; i++) {sum += (gas[i] - cost[i]);min = Math.min(sum, min);}if (sum < 0) return -1;if (min >= 0) return 0;for (int i = gas.length - 1; i > 0; i--) {min += (gas[i] - cost[i]);if (min >= 0) return i;}return -1;}}",
+          "description": "解法1"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int curSum = 0;int totalSum = 0;int index = 0;for (int i = 0; i < gas.length; i++) {curSum += gas[i] - cost[i];totalSum += gas[i] - cost[i];if (curSum < 0) {index = (i + 1) % gas.length ;curSum = 0;}}if (totalSum < 0) return -1;return index;}}",
+          "description": "解法2"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int tank = 0;int totalGas = 0;int totalCost = 0;int start = 0;for (int i = 0; i < gas.length; i++) {totalGas += gas[i];totalCost += cost[i];tank += gas[i] - cost[i];if (tank < 0) {tank = 0;start = i + 1;}}if (totalCost > totalGas) return -1;return start;}}",
+          "description": "解法3"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: for i in range(len(cost)): rest = gas[i] - cost[i] index = (i + 1) % len(cost) while rest > 0 and index != i: rest += gas[index] - cost[index] index = (index + 1) % len(cost) if rest >= 0 and index == i: return i return -1",
+          "description": "暴力法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: curSum = 0 minFuel = float('inf') for i in range(len(gas)): rest = gas[i] - cost[i] curSum += rest if curSum < minFuel: minFuel = curSum if curSum < 0: return -1 if minFuel >= 0: return 0 for i in range(len(gas) - 1, -1, -1): rest = gas[i] - cost[i] minFuel += rest if minFuel >= 0: return i return -1",
+          "description": "贪心（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: curSum = 0 totalSum = 0 start = 0 for i in range(len(gas)): curSum += gas[i] - cost[i] totalSum += gas[i] - cost[i] if curSum < 0: start = i + 1 curSum = 0 if totalSum < 0: return -1 return start",
+          "description": "贪心（版本二）"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "// 解法1",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {for (int i = 0; i < cost.size(); i++) {int rest = gas[i] - cost[i]; // 记录剩余油量int index = (i + 1) % cost.size();while (rest > 0 && index != i) { // 模拟以i为起点行驶一圈（如果有rest==0，那么答案就不唯一了）rest += gas[index] - cost[index];index = (index + 1) % cost.size();}if (rest >= 0 && index == i) return i;}return -1;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {int curSum = 0;int min = INT_MAX; for (int i = 0; i < gas.size(); i++) {int rest = gas[i] - cost[i];curSum += rest;if (curSum < min) {min = curSum;}}if (curSum < 0) return -1;if (min >= 0) return 0;for (int i = gas.size() - 1; i >= 0; i--) {int rest = gas[i] - cost[i];min += rest;if (min >= 0) {return i;}}return -1;}};",
+          "description": "贪心算法版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {int curSum = 0;int totalSum = 0;int start = 0;for (int i = 0; i < gas.size(); i++) {curSum += gas[i] - cost[i];totalSum += gas[i] - cost[i];if (curSum < 0) {start = i + 1;curSum = 0;}}if (totalSum < 0) return -1;return start;}};",
+          "description": "贪心算法版本二"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int sum = 0;int min = 0;for (int i = 0; i < gas.length; i++) {sum += (gas[i] - cost[i]);min = Math.min(sum, min);}if (sum < 0) return -1;if (min >= 0) return 0;for (int i = gas.length - 1; i > 0; i--) {min += (gas[i] - cost[i]);if (min >= 0) return i;}return -1;}}",
+          "description": "Java版贪心算法版本一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int curSum = 0;int totalSum = 0;int index = 0;for (int i = 0; i < gas.length; i++) {curSum += gas[i] - cost[i];totalSum += gas[i] - cost[i];if (curSum < 0) {index = (i + 1) % gas.length ;curSum = 0;}}if (totalSum < 0) return -1;return index;}}",
+          "description": "Java版贪心算法版本二"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int tank = 0;int totalGas = 0;int totalCost = 0;int start = 0;for (int i = 0; i < gas.length; i++) {totalGas += gas[i];totalCost += cost[i];tank += gas[i] - cost[i];if (tank < 0) {tank = 0;start = i + 1;}}if (totalCost > totalGas) return -1;return start;}}",
+          "description": "Java版解法三"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: for i in range(len(cost)): rest = gas[i] - cost[i] index = (i + 1) % len(cost) while rest > 0 and index != i: rest += gas[index] - cost[index] index = (index + 1) % len(cost) if rest >= 0 and index == i: return i return -1",
+          "description": "Python版暴力解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: curSum = 0 minFuel = float('inf') for i in range(len(gas)): rest = gas[i] - cost[i] curSum += rest if curSum < minFuel: minFuel = curSum if curSum < 0: return -1 if minFuel >= 0: return 0 for i in range(len(gas) - 1, -1, -1): rest = gas[i] - cost[i] minFuel += rest if minFuel >= 0: return i return -1",
+          "description": "Python版贪心算法版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: curSum = 0 totalSum = 0 start = 0 for i in range(len(gas)): curSum += gas[i] - cost[i] totalSum += gas[i] - cost[i] if curSum < 0: start = i + 1 curSum = 0 if totalSum < 0: return -1 return start",
+          "description": "Python版贪心算法版本二"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "暴力法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {for (int i = 0; i < cost.size(); i++) {int rest = gas[i] - cost[i]; // 记录剩余油量int index = (i + 1) % cost.size();while (rest > 0 && index != i) { // 模拟以i为起点行驶一圈（如果有rest==0，那么答案就不唯一了）rest += gas[index] - cost[index];index = (index + 1) % cost.size();}// 如果以i为起点跑一圈，剩余油量>=0，返回该起始位置if (rest >= 0 && index == i) return i;}return -1;}};",
+          "description": "暴力方法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {int curSum = 0;int min = INT_MAX; // 从起点出发，油箱里的油量最小值for (int i = 0; i < gas.size(); i++) {int rest = gas[i] - cost[i];curSum += rest;if (curSum < min) {min = curSum;}}if (curSum < 0) return -1;  // 情况1if (min >= 0) return 0;     // 情况2// 情况3for (int i = gas.size() - 1; i >= 0; i--) {int rest = gas[i] - cost[i];min += rest;if (min >= 0) {return i;}}return -1;}};",
+          "description": "贪心算法（版本一）"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {int curSum = 0;int totalSum = 0;int start = 0;for (int i = 0; i < gas.size(); i++) {curSum += gas[i] - cost[i];totalSum += gas[i] - cost[i];if (curSum < 0) {   // 当前累加rest[i]和 curSum一旦小于0start = i + 1;  // 起始位置更新为i+1curSum = 0;     // curSum从0开始}}if (totalSum < 0) return -1; // 说明怎么走都不可能跑一圈了return start;}};",
+          "description": "贪心算法（版本二）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int sum = 0;int min = 0;for (int i = 0; i < gas.length; i++) {sum += (gas[i] - cost[i]);min = Math.min(sum, min);}if (sum < 0) return -1;if (min >= 0) return 0;for (int i = gas.length - 1; i > 0; i--) {min += (gas[i] - cost[i]);if (min >= 0) return i;}return -1;}}",
+          "description": "贪心算法（版本一）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int curSum = 0;int totalSum = 0;int index = 0;for (int i = 0; i < gas.length; i++) {curSum += gas[i] - cost[i];totalSum += gas[i] - cost[i];if (curSum < 0) {index = (i + 1) % gas.length ; curSum = 0;}}if (totalSum < 0) return -1;return index;}}",
+          "description": "贪心算法（版本二）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int tank = 0;int totalGas = 0;int totalCost = 0;int start = 0;for (int i = 0; i < gas.length; i++) {totalGas += gas[i];totalCost += cost[i];tank += gas[i] - cost[i];if (tank < 0) {tank = 0;start = i + 1;}}if (totalCost > totalGas) return -1;return start;}}",
+          "description": "另一种贪心解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: for i in range(len(cost)): rest = gas[i] - cost[i]  # 记录剩余油量 index = (i + 1) % len(cost)  # 下一个加油站的索引 while rest > 0 and index != i:  # 模拟以i为起点行驶一圈（如果有rest==0，那么答案就不唯一了） rest += gas[index] - cost[index]  # 更新剩余油量 index = (index + 1) % len(cost)  # 更新下一个加油站的索引 if rest >= 0 and index == i:  # 如果以i为起点跑一圈，剩余油量>=0，并且回到起始位置 return i  # 返回起始位置i return -1  # 所有起始位置都无法环绕一圈，返回-1",
+          "description": "暴力方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: curSum = 0  # 当前累计的剩余油量 minFuel = float('inf')  # 从起点出发，油箱里的油量最小值 for i in range(len(gas)): rest = gas[i] - cost[i] curSum += rest if curSum < minFuel: minFuel = curSum if curSum < 0: return -1  # 情况1：整个行程的总消耗大于总供给，无法完成一圈 if minFuel >= 0: return 0  # 情况2：从起点出发到任何一个加油站时油箱的剩余油量都不会小于0，可以从起点出发完成一圈 for i in range(len(gas) - 1, -1, -1): rest = gas[i] - cost[i] minFuel += rest if minFuel >= 0: return i  # 情况3：找到一个位置使得从该位置出发油箱的剩余油量不会小于0，返回该位置的索引 return -1  # 无法完成一圈",
+          "description": "贪心算法（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int: curSum = 0  # 当前累计的剩余油量 totalSum = 0  # 总剩余油量 start = 0  # 起始位置 for i in range(len(gas)): curSum += gas[i] - cost[i] totalSum += gas[i] - cost[i] if curSum < 0:  # 当前累计剩余油量curSum小于0 start = i + 1  # 起始位置更新为i+1 curSum = 0  # curSum重新从0开始累计 if totalSum < 0: return -1  # 总剩余油量totalSum小于0，说明无法环绕一圈 return start",
+          "description": "贪心算法（版本二）"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(1)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {for (int i = 0; i < cost.size(); i++) {int rest = gas[i] - cost[i]; int index = (i + 1) % cost.size();while (rest > 0 && index != i) {rest += gas[index] - cost[index];index = (index + 1) % cost.size();}if (rest >= 0 && index == i) return i;}return -1;}};",
+      "description": "暴力方法解决加油站问题"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {int curSum = 0;int min = INT_MAX;for (int i = 0; i < gas.size(); i++) {int rest = gas[i] - cost[i];curSum += rest;if (curSum < min) {min = curSum;}}if (curSum < 0) return -1;if (min >= 0) return 0;for (int i = gas.size() - 1; i >= 0; i--) {int rest = gas[i] - cost[i];min += rest;if (min >= 0) {return i;}}return -1;}};",
+      "description": "贪心算法（方法一）解决加油站问题"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {int curSum = 0;int totalSum = 0;int start = 0;for (int i = 0; i < gas.size(); i++) {curSum += gas[i] - cost[i];totalSum += gas[i] - cost[i];if (curSum < 0) {start = i + 1;curSum = 0;}}if (totalSum < 0) return -1;return start;}};",
+      "description": "贪心算法（方法二）解决加油站问题"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int sum = 0;int min = 0;for (int i = 0; i < gas.length; i++) {sum += (gas[i] - cost[i]);min = Math.min(sum, min);}if (sum < 0) return -1;if (min >= 0) return 0;for (int i = gas.length - 1; i > 0; i--) {min += (gas[i] - cost[i]);if (min >= 0) return i;}return -1;}}",
+      "description": "Java版贪心算法（方法一）解决加油站问题"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int curSum = 0;int totalSum = 0;int index = 0;for (int i = 0; i < gas.length; i++) {curSum += gas[i] - cost[i];totalSum += gas[i] - cost[i];if (curSum < 0) {index = (i + 1) % gas.length ;curSum = 0;}}if (totalSum < 0) return -1;return index;}}",
+      "description": "Java版贪心算法（方法二）解决加油站问题"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int canCompleteCircuit(int[] gas, int[] cost) {int tank = 0;int totalGas = 0;int totalCost = 0;int start = 0;for (int i = 0; i < gas.length; i++) {totalGas += gas[i];totalCost += cost[i];tank += gas[i] - cost[i];if (tank < 0) {tank = 0;start = i + 1;}}if (totalCost > totalGas) return -1;return start;}}",
+      "description": "Java版贪心算法（另一种实现）解决加油站问题"
+    },
+    {
+      "language": "python",
+      "code": "class Solution:def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:for i in range(len(cost)):rest = gas[i] - cost[i]index = (i + 1) % len(cost)while rest > 0 and index != i:rest += gas[index] - cost[index]index = (index + 1) % len(cost)if rest >= 0 and index == i:return ireturn -1",
+      "description": "Python版暴力法解决加油站问题"
+    },
+    {
+      "language": "python",
+      "code": "class Solution:def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:curSum = 0minFuel = float('inf')for i in range(len(gas)):rest = gas[i] - cost[i]curSum += restif curSum < minFuel:minFuel = curSumif curSum < 0:return -1if minFuel >= 0:return 0for i in range(len(gas) - 1, -1, -1):rest = gas[i] - cost[i]minFuel += restif minFuel >= 0:return ireturn -1",
+      "description": "Python版贪心算法（版本一）解决加油站问题"
+    },
+    {
+      "language": "python",
+      "code": "class Solution:def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:curSum = 0totalSum = 0start = 0for i in range(len(gas)):curSum += gas[i] - cost[i]totalSum += gas[i] - cost[i]if curSum < 0:start = i + 1curSum = 0if totalSum < 0:return -1return start",
+      "description": "Python版贪心算法（版本二）解决加油站问题"
+    }
+  ],
+  "common_mistakes": [
+    "忽略对总油量和总消耗量之间关系的检查直接尝试模拟过程。",
+    "未能正确理解为什么当累积油量变成负数时必须移动起点而不是继续尝试当前路径。",
+    "在实现循环数组索引处理上可能出现越界错误。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230117165628.png",
+      "description": "该图片展示了在一个数组中寻找可以完成一圈旅行的起始点的算法过程，通过对比“gas”和“cost”数组来计算“剩余”值，确定从下标3开始才能满足条件。",
+      "context": "此图展示了当从起点到某一站点i的累积剩余油量curSum小于零时，说明从0到i之间的任意站点作为起点都无法完成一圈，因此下一次尝试应从i+1开始。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230117170703.png",
+      "description": "该图展示了在求解最大子数组和问题时，通过判断当前和（curSum）是否小于0来决定是否重新开始计数的策略。",
+      "context": "该图展示了在数组中选择不同起点时累加和的变化情况，用以说明当累积和小于零时调整起始位置至当前索引后一位的合理性。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230117165628.png",
+      "description": "GIF展示了贪心算法执行过程中，通过累加加油站剩余油量来确定可行起始位置的过程。",
+      "context": "该GIF动画展示了当从任一站点开始到某站点时累计剩余油量（curSum）小于零，则说明这段区间内任意站点作为起点都无法完成一圈，因此新的可能起点应为导致累计剩余油量首次变为负值的那个站点之后的下一个站点。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230117170703.png",
+      "description": "GIF展示了在数组遍历过程中，当累积和小于零时更新起始位置的过程。",
+      "context": "该GIF动画展示了当区间和为负数时，如何通过将起始位置更新为当前索引的下一个位置来寻找可能的最大子数组和的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\贪心算法\\加油站.txt",
+  "extracted_at": "2025-07-22T15:29:02.870443",
+  "raw_content": "加油站\n力扣题目链接(https://leetcode.cn/problems/gas-station/)\n\n在一条环路上有 N 个加油站，其中第 i 个加油站有汽油 gas[i] 升。\n\n你有一辆油箱容量无限的的汽车，从第 i 个加油站开往第 i+1 个加油站需要消耗汽油 cost[i] 升。你从其中的一个加油站出发，开始时油箱为空。\n\n如果你可以绕环路行驶一周，则返回出发时加油站的编号，否则返回 -1。\n\n说明:\n\n如果题目有解，该答案即为唯一答案。\n输入数组均为非空数组，且长度相同。\n输入数组中的元素均为非负数。\n示例 1: 输入:\n\ngas = [1,2,3,4,5]\ncost = [3,4,5,1,2]\n输出: 3 解释:\n\n从 3 号加油站(索引为 3 处)出发，可获得 4 升汽油。此时油箱有 = 0 + 4 = 4 升汽油\n开往 4 号加油站，此时油箱有 4 - 1 + 5 = 8 升汽油\n开往 0 号加油站，此时油箱有 8 - 2 + 1 = 7 升汽油\n开往 1 号加油站，此时油箱有 7 - 3 + 2 = 6 升汽油\n开往 2 号加油站，此时油箱有 6 - 4 + 3 = 5 升汽油\n开往 3 号加油站，你需要消耗 5 升汽油，正好足够你返回到 3 号加油站。\n因此，3 可为起始索引。\n示例 2: 输入:\n\ngas = [2,3,4]\n\ncost = [3,4,3]\n\n输出: -1\n\n解释: 你不能从 0 号或 1 号加油站出发，因为没有足够的汽油可以让你行驶到下一个加油站。我们从 2 号加油站出发，可以获得 4 升汽油。 此时油箱有 = 0 + 4 = 4 升汽油。开往 0 号加油站，此时油箱有 4 - 3 + 2 = 3 升汽油。开往 1 号加油站，此时油箱有 3 - 3 + 3 = 3 升汽油。你无法返回 2 号加油站，因为返程需要消耗 4 升汽油，但是你的油箱只有 3 升汽油。因此，无论怎样，你都不可能绕环路行驶一周。\n\n\n\n#思路\n#暴力方法\n暴力的方法很明显就是O(n^2)的，遍历每一个加油站为起点的情况，模拟一圈。\n\n如果跑了一圈，中途没有断油，而且最后油量大于等于0，说明这个起点是ok的。\n\n暴力的方法思路比较简单，但代码写起来也不是很容易，关键是要模拟跑一圈的过程。\n\nfor循环适合模拟从头到尾的遍历，而while循环适合模拟环形遍历，要善于使用while！\n\nC++代码如下：\n\nclass Solution {\npublic:\n    int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {\n        for (int i = 0; i < cost.size(); i++) {\n            int rest = gas[i] - cost[i]; // 记录剩余油量\n            int index = (i + 1) % cost.size();\n            while (rest > 0 && index != i) { // 模拟以i为起点行驶一圈（如果有rest==0，那么答案就不唯一了）\n                rest += gas[index] - cost[index];\n                index = (index + 1) % cost.size();\n            }\n            // 如果以i为起点跑一圈，剩余油量>=0，返回该起始位置\n            if (rest >= 0 && index == i) return i;\n        }\n        return -1;\n    }\n};\n时间复杂度：O(n^2)\n空间复杂度：O(1)\n#贪心算法（方法一）\n直接从全局进行贪心选择，情况如下：\n\n情况一：如果gas的总和小于cost总和，那么无论从哪里出发，一定是跑不了一圈的\n\n情况二：rest[i] = gas[i]-cost[i]为一天剩下的油，i从0开始计算累加到最后一站，如果累加没有出现负数，说明从0出发，油就没有断过，那么0就是起点。\n\n情况三：如果累加的最小值是负数，汽车就要从非0节点出发，从后向前，看哪个节点能把这个负数填平，能把这个负数填平的节点就是出发节点。\n\nC++代码如下：\n\nclass Solution {\npublic:\n    int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {\n        int curSum = 0;\n        int min = INT_MAX; // 从起点出发，油箱里的油量最小值\n        for (int i = 0; i < gas.size(); i++) {\n            int rest = gas[i] - cost[i];\n            curSum += rest;\n            if (curSum < min) {\n                min = curSum;\n            }\n        }\n        if (curSum < 0) return -1;  // 情况1\n        if (min >= 0) return 0;     // 情况2\n                                    // 情况3\n        for (int i = gas.size() - 1; i >= 0; i--) {\n            int rest = gas[i] - cost[i];\n            min += rest;\n            if (min >= 0) {\n                return i;\n            }\n        }\n        return -1;\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(1)\n其实我不认为这种方式是贪心算法，因为没有找出局部最优，而是直接从全局最优的角度上思考问题。\n\n但这种解法又说不出是什么方法，这就是一个从全局角度选取最优解的模拟操作。\n\n所以对于本解法是贪心，我持保留意见！\n\n但不管怎么说，解法毕竟还是巧妙的，不用过于执着于其名字称呼。\n\n#贪心算法（方法二）\n可以换一个思路，首先如果总油量减去总消耗大于等于零那么一定可以跑完一圈，说明 各个站点的加油站 剩油量rest[i]相加一定是大于等于零的。\n\n每个加油站的剩余量rest[i]为gas[i] - cost[i]。\n\ni从0开始累加rest[i]，和记为curSum，一旦curSum小于零，说明[0, i]区间都不能作为起始位置，因为这个区间选择任何一个位置作为起点，到i这里都会断油，那么起始位置从i+1算起，再从0计算curSum。\n\n如图：\n\nhttps://file1.kamacoder.com/i/algo/20230117165628.png\n\n那么为什么一旦[0，i] 区间和为负数，起始位置就可以是i+1呢，i+1后面就不会出现更大的负数？\n\n如果出现更大的负数，就是更新i，那么起始位置又变成新的i+1了。\n\n那有没有可能 [0，i] 区间 选某一个作为起点，累加到 i这里 curSum是不会小于零呢？ 如图：\n\nhttps://file1.kamacoder.com/i/algo/20230117170703.png\n\n如果 curSum<0 说明 区间和1 + 区间和2 < 0， 那么 假设从上图中的位置开始计数curSum不会小于0的话，就是 区间和2>0。\n\n区间和1 + 区间和2 < 0 同时 区间和2>0，只能说明区间和1 < 0， 那么就会从假设的箭头初就开始从新选择起始位置了。\n\n那么局部最优：当前累加rest[i]的和curSum一旦小于0，起始位置至少要是i+1，因为从i之前开始一定不行。全局最优：找到可以跑一圈的起始位置。\n\n局部最优可以推出全局最优，找不出反例，试试贪心！\n\nC++代码如下：\n\nclass Solution {\npublic:\n    int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {\n        int curSum = 0;\n        int totalSum = 0;\n        int start = 0;\n        for (int i = 0; i < gas.size(); i++) {\n            curSum += gas[i] - cost[i];\n            totalSum += gas[i] - cost[i];\n            if (curSum < 0) {   // 当前累加rest[i]和 curSum一旦小于0\n                start = i + 1;  // 起始位置更新为i+1\n                curSum = 0;     // curSum从0开始\n            }\n        }\n        if (totalSum < 0) return -1; // 说明怎么走都不可能跑一圈了\n        return start;\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(1)\n说这种解法为贪心算法，才是有理有据的，因为全局最优解是根据局部最优推导出来的。\n\n#总结\n对于本题首先给出了暴力解法，暴力解法模拟跑一圈的过程其实比较考验代码技巧的，要对while使用的很熟练。\n\n然后给出了两种贪心算法，对于第一种贪心方法，其实我认为就是一种直接从全局选取最优的模拟操作，思路还是很巧妙的，值得学习一下。\n\n对于第二种贪心方法，才真正体现出贪心的精髓，用局部最优可以推出全局最优，进而求得起始位置。\n\n#其他语言版本\n#Java\n// 解法1\nclass Solution {\n    public int canCompleteCircuit(int[] gas, int[] cost) {\n        int sum = 0;\n        int min = 0;\n        for (int i = 0; i < gas.length; i++) {\n            sum += (gas[i] - cost[i]);\n            min = Math.min(sum, min);\n        }\n\n        if (sum < 0) return -1;\n        if (min >= 0) return 0;\n\n        for (int i = gas.length - 1; i > 0; i--) {\n            min += (gas[i] - cost[i]);\n            if (min >= 0) return i;\n        }\n\n        return -1;\n    }\n}\n// 解法2\nclass Solution {\n    public int canCompleteCircuit(int[] gas, int[] cost) {\n        int curSum = 0;\n        int totalSum = 0;\n        int index = 0;\n        for (int i = 0; i < gas.length; i++) {\n            curSum += gas[i] - cost[i];\n            totalSum += gas[i] - cost[i];\n            if (curSum < 0) {\n                index = (i + 1) % gas.length ; \n                curSum = 0;\n            }\n        }\n        if (totalSum < 0) return -1;\n        return index;\n    }\n}\n// 解法3\nclass Solution {\n    public int canCompleteCircuit(int[] gas, int[] cost) {\n        int tank = 0; // 当前油量\n        int totalGas = 0;  // 总加油量\n        int totalCost = 0; // 总油耗\n        int start = 0; // 起点\n        for (int i = 0; i < gas.length; i++) {\n            totalGas += gas[i];\n            totalCost += cost[i];\n            \n            tank += gas[i] - cost[i];\n            if (tank < 0) { // tank 变为负数 意味着 从0到i之间出发都不能顺利环路一周，因为在此i点必会没油\n                tank = 0; // reset tank，类似于题目53.最大子树和reset sum\n                start = i + 1; // 起点变为i点往后一位\n            }\n        }\n        if (totalCost > totalGas) return -1;\n        return start;\n    }\n}\n#Python\n暴力法\n\n\nclass Solution:\n    def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:\n        for i in range(len(cost)):\n            rest = gas[i] - cost[i]  # 记录剩余油量\n            index = (i + 1) % len(cost)  # 下一个加油站的索引\n\n            while rest > 0 and index != i:  # 模拟以i为起点行驶一圈（如果有rest==0，那么答案就不唯一了）\n                rest += gas[index] - cost[index]  # 更新剩余油量\n                index = (index + 1) % len(cost)  # 更新下一个加油站的索引\n\n            if rest >= 0 and index == i:  # 如果以i为起点跑一圈，剩余油量>=0，并且回到起始位置\n                return i  # 返回起始位置i\n\n        return -1  # 所有起始位置都无法环绕一圈，返回-1\n\n贪心（版本一）\n\nclass Solution:\n    def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:\n        curSum = 0  # 当前累计的剩余油量\n        minFuel = float('inf')  # 从起点出发，油箱里的油量最小值\n        \n        for i in range(len(gas)):\n            rest = gas[i] - cost[i]\n            curSum += rest\n            if curSum < minFuel:\n                minFuel = curSum\n        \n        if curSum < 0:\n            return -1  # 情况1：整个行程的总消耗大于总供给，无法完成一圈\n        \n        if minFuel >= 0:\n            return 0  # 情况2：从起点出发到任何一个加油站时油箱的剩余油量都不会小于0，可以从起点出发完成一圈\n        \n        for i in range(len(gas) - 1, -1, -1):\n            rest = gas[i] - cost[i]\n            minFuel += rest\n            if minFuel >= 0:\n                return i  # 情况3：找到一个位置使得从该位置出发油箱的剩余油量不会小于0，返回该位置的索引\n        \n        return -1  # 无法完成一圈\n\n贪心（版本二）\n\nclass Solution:\n    def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:\n        curSum = 0  # 当前累计的剩余油量\n        totalSum = 0  # 总剩余油量\n        start = 0  # 起始位置\n        \n        for i in range(len(gas)):\n            curSum += gas[i] - cost[i]\n            totalSum += gas[i] - cost[i]\n            \n            if curSum < 0:  # 当前累计剩余油量curSum小于0\n                start = i + 1  # 起始位置更新为i+1\n                curSum = 0  # curSum重新从0开始累计\n        \n        if totalSum < 0:\n            return -1  # 总剩余油量totalSum小于0，说明无法环绕一圈\n        return start"
+}

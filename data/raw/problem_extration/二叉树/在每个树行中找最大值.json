@@ -1,0 +1,162 @@
+{
+  "id": "AP_164291a0",
+  "title": "在每个树行中找最大值",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/find-largest-value-in-each-tree-row/",
+  "description": "您需要在二叉树的每一行中找到最大的值。\n\nhttps://file1.kamacoder.com/i/algo/20210203151532153.png",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "广度优先搜索",
+    "层次遍历"
+  ],
+  "data_structure_tags": [
+    "队列",
+    "列表"
+  ],
+  "technique_tags": [
+    "迭代",
+    "动态更新"
+  ],
+  "difficulty": null,
+  "solution_approach": "采用层序遍历的方法访问二叉树，对于每一层节点，记录其中的最大值，并将这些最大值收集起来作为结果。",
+  "key_insights": [
+    {
+      "content": "通过队列实现的广度优先搜索(BFS)可以帮助我们分层处理二叉树，使得能够逐层比较并找到每层的最大值。"
+    },
+    {
+      "content": "在遍历当前层的所有节点时，持续更新遇到的最大数值。这样可以确保每次循环结束时，保存的是当前层的最大值。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "层序遍历，取每一层的最大值",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> largestValues(TreeNode* root) { queue<TreeNode*> que; if (root != NULL) que.push(root); vector<int> result; while (!que.empty()) { int size = que.size(); int maxValue = INT_MIN; for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); maxValue = node->val > maxValue ? node->val : maxValue; if (node->left) que.push(node->left); if (node->right) que.push(node->right); } result.push_back(maxValue); } return result; }};",
+          "description": "C++实现层序遍历二叉树，取每一层的最大值"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestValues(self, root: TreeNode) -> List[int]: if not root: return [] result = [] queue = collections.deque([root]) while queue: level_size = len(queue) max_val = float('-inf') for _ in range(level_size): node = queue.popleft() max_val = max(max_val, node.val) if node.left: queue.append(node.left) if node.right: queue.append(node.right) result.append(max_val) return result",
+          "description": "Python实现层序遍历二叉树，取每一层的最大值"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<Integer> largestValues(TreeNode root) { if(root == null){ return Collections.emptyList(); } List<Integer> result = new ArrayList(); Queue<TreeNode> queue = new LinkedList(); queue.offer(root); while(!queue.isEmpty()){ int max = Integer.MIN_VALUE; for(int i = queue.size(); i > 0; i--){ TreeNode node = queue.poll(); max = Math.max(max, node.val); if(node.left != null) queue.offer(node.left); if(node.right != null) queue.offer(node.right); } result.add(max); } return result; }}",
+          "description": "Java实现层序遍历二叉树，取每一层的最大值"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Python：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> largestValues(TreeNode* root) { queue<TreeNode*> que; if (root != NULL) que.push(root); vector<int> result; while (!que.empty()) { int size = que.size(); int maxValue = INT_MIN; for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); maxValue = node->val > maxValue ? node->val : maxValue; if (node->left) que.push(node->left); if (node->right) que.push(node->right); } result.push_back(maxValue); } return result; }};",
+          "description": "C++实现层序遍历二叉树，找出每一行的最大值。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestValues(self, root: TreeNode) -> List[int]: if not root: return [] result = [] queue = collections.deque([root]) while queue: level_size = len(queue) max_val = float('-inf') for _ in range(level_size): node = queue.popleft() max_val = max(max_val, node.val) if node.left: queue.append(node.left) if node.right: queue.append(node.right) result.append(max_val) return result",
+          "description": "Python实现层序遍历二叉树，找出每一行的最大值。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<Integer> largestValues(TreeNode root) { if(root == null){ return Collections.emptyList(); } List<Integer> result = new ArrayList(); Queue<TreeNode> queue = new LinkedList(); queue.offer(root); while(!queue.isEmpty()){ int max = Integer.MIN_VALUE; for(int i = queue.size(); i > 0; i--){ TreeNode node = queue.poll(); max = Math.max(max, node.val); if(node.left != null) queue.offer(node.left); if(node.right != null) queue.offer(node.right); } result.add(max); } return result; }}",
+          "description": "Java实现层序遍历二叉树，找出每一行的最大值。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "# Definition for a binary tree node.",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> largestValues(TreeNode* root) { queue<TreeNode*> que; if (root != NULL) que.push(root); vector<int> result; while (!que.empty()) { int size = que.size(); int maxValue = INT_MIN; for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); maxValue = node->val > maxValue ? node->val : maxValue; if (node->left) que.push(node->left); if (node->right) que.push(node->right); } result.push_back(maxValue); } return result; }};",
+          "description": "C++版本的解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestValues(self, root: TreeNode) -> List[int]: if not root: return [] result = [] queue = collections.deque([root]) while queue: level_size = len(queue) max_val = float('-inf') for _ in range(level_size): node = queue.popleft() max_val = max(max_val, node.val) if node.left: queue.append(node.left) if node.right: queue.append(node.right) result.append(max_val) return result",
+          "description": "Python版本的解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<Integer> largestValues(TreeNode root) { if(root == null){ return Collections.emptyList(); } List<Integer> result = new ArrayList(); Queue<TreeNode> queue = new LinkedList(); queue.offer(root); while(!queue.isEmpty()){ int max = Integer.MIN_VALUE; for(int i = queue.size(); i > 0; i--){ TreeNode node = queue.poll(); max = Math.max(max, node.val); if(node.left != null) queue.offer(node.left); if(node.right != null) queue.offer(node.right); } result.add(max); } return result; }}",
+          "description": "Java版本的解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> largestValues(TreeNode* root) { queue<TreeNode*> que; if (root != NULL) que.push(root); vector<int> result; while (!que.empty()) { int size = que.size(); int maxValue = INT_MIN; for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); maxValue = node->val > maxValue ? node->val : maxValue; if (node->left) que.push(node->left); if (node->right) que.push(node->right); } result.push_back(maxValue); } return result; }};",
+          "description": "C++版本，使用队列进行层序遍历，记录每层最大值"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestValues(self, root: TreeNode) -> List[int]: if not root: return [] result = [] queue = collections.deque([root]) while queue: level_size = len(queue) max_val = float('-inf') for _ in range(level_size): node = queue.popleft() max_val = max(max_val, node.val) if node.left: queue.append(node.left) if node.right: queue.append(node.right) result.append(max_val) return result",
+          "description": "Python版本，利用双端队列实现层序遍历，并找出每一层的最大值"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<Integer> largestValues(TreeNode root) { if(root == null){ return Collections.emptyList(); } List<Integer> result = new ArrayList(); Queue<TreeNode> queue = new LinkedList(); queue.offer(root); while(!queue.isEmpty()){ int max = Integer.MIN_VALUE; for(int i = queue.size(); i > 0; i--){ TreeNode node = queue.poll(); max = Math.max(max, node.val); if(node.left != null) queue.offer(node.left); if(node.right != null) queue.offer(node.right); } result.add(max); } return result; }}",
+          "description": "Java版本，通过队列对二叉树进行层次遍历并计算每一层的最大值"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "C++",
+      "code": "class Solution {public: vector<int> largestValues(TreeNode* root) { queue<TreeNode*> que; if (root != NULL) que.push(root); vector<int> result; while (!que.empty()) { int size = que.size(); int maxValue = INT_MIN; for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); maxValue = node->val > maxValue ? node->val : maxValue; if (node->left) que.push(node->left); if (node->right) que.push(node->right); } result.push_back(maxValue); } return result; }};",
+      "description": "使用队列进行层次遍历，并记录每层的最大值。"
+    },
+    {
+      "language": "Python",
+      "code": "class Solution: def largestValues(self, root: TreeNode) -> List[int]: if not root: return [] result = [] queue = collections.deque([root]) while queue: level_size = len(queue) max_val = float('-inf') for _ in range(level_size): node = queue.popleft() max_val = max(max_val, node.val) if node.left: queue.append(node.left) if node.right: queue.append(node.right) result.append(max_val) return result",
+      "description": "使用双端队列进行层次遍历，同时追踪每一层中的最大值。"
+    },
+    {
+      "language": "Java",
+      "code": "class Solution { public List<Integer> largestValues(TreeNode root) { if(root == null){ return Collections.emptyList(); } List<Integer> result = new ArrayList(); Queue<TreeNode> queue = new LinkedList(); queue.offer(root); while(!queue.isEmpty()){ int max = Integer.MIN_VALUE; for(int i = queue.size(); i > 0; i--){ TreeNode node = queue.poll(); max = Math.max(max, node.val); if(node.left != null) queue.offer(node.left); if(node.right != null) queue.offer(node.right); } result.add(max); } return result; }}",
+      "description": "利用队列实现层次遍历，保存每一层的最大数值。"
+    }
+  ],
+  "common_mistakes": [
+    "忘记初始化队列或检查根节点是否为空，导致程序错误。",
+    "在处理每层节点时未正确重置最大值变量，可能导致跨层数据污染。",
+    "没有考虑到空树的情况，应该直接返回空数组而不是抛出异常或者返回其他非预期结果。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210203151532153.png",
+      "description": "该图片展示了一个二叉树结构的示例，要求输出从根节点到叶子节点的一条路径，具体为路径 [1, 3, 9]。",
+      "context": "该图片展示了用于解决“在每个树行中找最大值”问题的一个示例二叉树结构。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\在每个树行中找最大值.txt",
+  "extracted_at": "2025-07-19T20:36:12.619324",
+  "raw_content": "在每个树行中找最大值\n力扣题目链接(https://leetcode.cn/problems/find-largest-value-in-each-tree-row/)\n\n您需要在二叉树的每一行中找到最大的值。\n\nhttps://file1.kamacoder.com/i/algo/20210203151532153.png\n\n#思路\n层序遍历，取每一层的最大值\n\nC++代码：\n\nclass Solution {\npublic:\n    vector<int> largestValues(TreeNode* root) {\n        queue<TreeNode*> que;\n        if (root != NULL) que.push(root);\n        vector<int> result;\n        while (!que.empty()) {\n            int size = que.size();\n            int maxValue = INT_MIN; // 取每一层的最大值\n            for (int i = 0; i < size; i++) {\n                TreeNode* node = que.front();\n                que.pop();\n                maxValue = node->val > maxValue ? node->val : maxValue;\n                if (node->left) que.push(node->left);\n                if (node->right) que.push(node->right);\n            }\n            result.push_back(maxValue); // 把最大值放进数组\n        }\n        return result;\n    }\n};\n#其他语言版本\n#Python：\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def largestValues(self, root: TreeNode) -> List[int]:\n        if not root:\n            return []\n\n        result = []\n        queue = collections.deque([root])\n\n        while queue:\n            level_size = len(queue)\n            max_val = float('-inf')\n\n            for _ in range(level_size):\n                node = queue.popleft()\n                max_val = max(max_val, node.val)\n\n                if node.left:\n                    queue.append(node.left)\n\n                if node.right:\n                    queue.append(node.right)\n\n            result.append(max_val)\n\n        return result\n#Java：\nclass Solution {\n    public List<Integer> largestValues(TreeNode root) {\n        if(root == null){\n            return Collections.emptyList();\n        }\n        List<Integer> result = new ArrayList();\n        Queue<TreeNode> queue = new LinkedList();\n        queue.offer(root);\n        while(!queue.isEmpty()){\n            int max = Integer.MIN_VALUE;\n            for(int i = queue.size(); i > 0; i--){\n               TreeNode node = queue.poll();\n               max = Math.max(max, node.val);\n               if(node.left != null) queue.offer(node.left);\n               if(node.right != null) queue.offer(node.right);\n            }\n            result.add(max);\n        }\n        return result;\n    }\n}"
+}

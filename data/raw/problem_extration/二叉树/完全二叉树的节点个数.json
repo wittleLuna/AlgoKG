@@ -1,0 +1,549 @@
+{
+  "id": "AP_af576f66",
+  "title": "完全二叉树的节点个数",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/count-complete-tree-nodes/",
+  "description": "给出一个完全二叉树，求出该树的节点个数。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "递归",
+    "分治"
+  ],
+  "data_structure_tags": [
+    "二叉树",
+    "队列"
+  ],
+  "technique_tags": [
+    "深度优先搜索(DFS)",
+    "广度优先搜索(BFS)"
+  ],
+  "difficulty": null,
+  "solution_approach": "该问题主要通过两种方法解决：一种是将完全二叉树视为普通二叉树来处理，另一种则是利用完全二叉树的特殊性质优化计算过程。对于普通二叉树的方法，既可以通过递归法（后序遍历）也能通过迭代法（层序遍历）实现节点计数。而对于完全二叉树，则可通过比较左子树和右子树的高度差异来判断是否为满二叉树，并据此快速计算节点总数。",
+  "key_insights": [
+    {
+      "content": "无论是按照普通二叉树还是利用完全二叉树特性求解，都可以灵活选择递归或迭代方式。递归更直观地展示了树的分解过程，而迭代则在空间效率上可能更优。"
+    },
+    {
+      "content": "如果一棵完全二叉树的左右子树高度相同，那么这棵树就是满二叉树，其节点数可以直接用公式2^h - 1计算，其中h是树的高度。否则继续递归检查子树。这种方法大大减少了需要访问的节点数量。"
+    },
+    {
+      "content": "利用完全二叉树的特性可以显著提高算法效率，特别是当树非常大时，避免了对所有节点的逐一访问。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "普通二叉树",
+      "text": "首先按照普通二叉树的逻辑来求。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "int getNodesNum(TreeNode* cur) {\n    if (cur == NULL) return 0;\n    int leftNum = getNodesNum(cur->left);      // 左\n    int rightNum = getNodesNum(cur->right);    // 右\n    int treeNum = leftNum + rightNum + 1;      // 中\n    return treeNum;\n}",
+          "description": "递归计算节点数"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    int getNodesNum(TreeNode* cur) {\n        if (cur == NULL) return 0;\n        int leftNum = getNodesNum(cur->left);      // 左\n        int rightNum = getNodesNum(cur->right);    // 右\n        int treeNum = leftNum + rightNum + 1;      // 中\n        return treeNum;\n    }\npublic:\n    int countNodes(TreeNode* root) {\n        return getNodesNum(root);\n    }\n};",
+          "description": "完整版本一的C++解决方案"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int countNodes(TreeNode* root) {\n        if (root == NULL) return 0;\n        return 1 + countNodes(root->left) + countNodes(root->right);\n    }\n};",
+          "description": "精简版本的C++解决方案"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int countNodes(TreeNode* root) {\n        queue<TreeNode*> que;\n        if (root != NULL) que.push(root);\n        int result = 0;\n        while (!que.empty()) {\n            int size = que.size();\n            for (int i = 0; i < size; i++) {\n                TreeNode* node = que.front();\n                que.pop();\n                result++;   // 记录节点数量\n                if (node->left) que.push(node->left);\n                if (node->right) que.push(node->right);\n            }\n        }\n        return result;\n    }\n};",
+          "description": "使用队列实现迭代法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int countNodes(TreeNode* root) {\n        if (root == nullptr) return 0;\n        TreeNode* left = root->left;\n        TreeNode* right = root->right;\n        int leftDepth = 0, rightDepth = 0; // 这里初始为0是有目的的，为了下面求指数方便\n        while (left) {  // 求左子树深度\n            left = left->left;\n            leftDepth++;\n        }\n        while (right) { // 求右子树深度\n            right = right->right;\n            rightDepth++;\n        }\n        if (leftDepth == rightDepth) {\n            return (2 << leftDepth) - 1; // 注意(2<<1) 相当于2^2，所以leftDepth初始为0\n        }\n        return countNodes(root->left) + countNodes(root->right) + 1;\n    }\n};",
+          "description": "利用完全二叉树性质的C++解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int countNodes(TreeNode root) {\n        if(root == null) {\n            return 0;\n        }\n        return countNodes(root.left) + countNodes(root.right) + 1;\n    }\n}",
+          "description": "Java通用递归解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int countNodes(TreeNode root) {\n        if (root == null) return 0;\n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n        int result = 0;\n        while (!queue.isEmpty()) {\n            int size = queue.size();\n            while (size -- > 0) {\n                TreeNode cur = queue.poll();\n                result++;\n                if (cur.left != null) queue.offer(cur.left);\n                if (cur.right != null) queue.offer(cur.right);\n            }\n        }\n        return result;\n    }\n}",
+          "description": "Java迭代法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int countNodes(TreeNode root) {\n        if (root == null) return 0;\n        TreeNode left = root.left;\n        TreeNode right = root.right;\n        int leftDepth = 0, rightDepth = 0; // 这里初始为0是有目的的，为了下面求指数方便\n        while (left != null) {  // 求左子树深度\n            left = left.left;\n            leftDepth++;\n        }\n        while (right != null) { // 求右子树深度\n            right = right.right;\n            rightDepth++;\n        }\n        if (leftDepth == rightDepth) {\n            return (2 << leftDepth) - 1; // 注意(2<<1) 相当于2^2，所以leftDepth初始为0\n        }\n        return countNodes(root.left) + countNodes(root.right) + 1;\n    }\n}",
+          "description": "针对完全二叉树的Java解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        return self.getNodesNum(root)\n    \n    def getNodesNum(self, cur):\n        if not cur:\n            return 0\n        leftNum = self.getNodesNum(cur.left) #左\n        rightNum = self.getNodesNum(cur.right) #右\n        treeNum = leftNum + rightNum + 1 #中\n        return treeNum",
+          "description": "Python递归法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        if not root:\n            return 0\n        return 1 + self.countNodes(root.left) + self.countNodes(root.right)",
+          "description": "Python递归法：精简版"
+        },
+        {
+          "language": "python",
+          "code": "import collections\nclass Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        queue = collections.deque()\n        if root:\n            queue.append(root)\n        result = 0\n        while queue:\n            size = len(queue)\n            for i in range(size):\n                node = queue.popleft()\n                result += 1 #记录节点数量\n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n        return result",
+          "description": "Python迭代法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        if not root:\n            return 0\n        left = root.left\n        right = root.right\n        leftDepth = 0 #这里初始为0是有目的的，为了下面求指数方便\n        rightDepth = 0\n        while left: #求左子树深度\n            left = left.left\n            leftDepth += 1\n        while right: #求右子树深度\n            right = right.right\n            rightDepth += 1\n        if leftDepth == rightDepth:\n            return (2 << leftDepth) - 1 #注意(2<<1) 相当于2^2，所以leftDepth初始为0\n        return self.countNodes(root.left) + self.countNodes(root.right) + 1",
+          "description": "Python完全二叉树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "递归",
+      "text": "如果对求二叉树深度还不熟悉的话，看这篇：二叉树：看看这些树的最大深度 (opens new window)。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "int getNodesNum(TreeNode* cur) { if (cur == NULL) return 0; int leftNum = getNodesNum(cur->left); int rightNum = getNodesNum(cur->right); int treeNum = leftNum + rightNum + 1; return treeNum; }",
+          "description": "递归法计算二叉树节点数"
+        },
+        {
+          "language": "C++",
+          "code": "class Solution {public: int countNodes(TreeNode* root) { if (root == NULL) return 0; return 1 + countNodes(root->left) + countNodes(root->right); }};",
+          "description": "精简版递归法计算二叉树节点数"
+        },
+        {
+          "language": "C++",
+          "code": "class Solution {public: int countNodes(TreeNode* root) { queue<TreeNode*> que; if (root != NULL) que.push(root); int result = 0; while (!que.empty()) { int size = que.size(); for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); result++; if (node->left) que.push(node->left); if (node->right) que.push(node->right); }} return result;}};",
+          "description": "迭代法计算二叉树节点数"
+        },
+        {
+          "language": "C++",
+          "code": "class Solution {public: int countNodes(TreeNode* root) { if (root == nullptr) return 0; TreeNode* left = root->left; TreeNode* right = root->right; int leftDepth = 0, rightDepth = 0; while (left) { left = left->left; leftDepth++; } while (right) { right = right->right; rightDepth++; } if (leftDepth == rightDepth) { return (2 << leftDepth) - 1; } return countNodes(root->left) + countNodes(root->right) + 1;}};",
+          "description": "基于完全二叉树特性的节点计数"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public int countNodes(TreeNode root) { if(root == null) { return 0; } return countNodes(root.left) + countNodes(root.right) + 1;}}",
+          "description": "Java递归法计算二叉树节点数"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public int countNodes(TreeNode root) { if (root == null) return 0; Queue<TreeNode> queue = new LinkedList<>(); queue.offer(root); int result = 0; while (!queue.isEmpty()) { int size = queue.size(); while (size -- > 0) { TreeNode cur = queue.poll(); result++; if (cur.left != null) queue.offer(cur.left); if (cur.right != null) queue.offer(cur.right); }} return result;}}",
+          "description": "Java迭代法计算二叉树节点数"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public int countNodes(TreeNode root) { if (root == null) return 0; TreeNode left = root.left; TreeNode right = root.right; int leftDepth = 0, rightDepth = 0; while (left != null) { left = left.left; leftDepth++; } while (right != null) { right = right.right; rightDepth++; } if (leftDepth == rightDepth) { return (2 << leftDepth) - 1; } return countNodes(root.left) + countNodes(root.right) + 1;}}",
+          "description": "Java基于完全二叉树特性的节点计数"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def countNodes(self, root: TreeNode) -> int: return self.getNodesNum(root) def getNodesNum(self, cur): if not cur: return 0 leftNum = self.getNodesNum(cur.left) rightNum = self.getNodesNum(cur.right) treeNum = leftNum + rightNum + 1 return treeNum",
+          "description": "Python递归法计算二叉树节点数"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def countNodes(self, root: TreeNode) -> int: if not root: return 0 return 1 + self.countNodes(root.left) + self.countNodes(root.right)",
+          "description": "Python精简版递归法计算二叉树节点数"
+        },
+        {
+          "language": "Python",
+          "code": "import collections class Solution: def countNodes(self, root: TreeNode) -> int: queue = collections.deque() if root: queue.append(root) result = 0 while queue: size = len(queue) for i in range(size): node = queue.popleft() result += 1 if node.left: queue.append(node.left) if node.right: queue.append(node.right) return result",
+          "description": "Python迭代法计算二叉树节点数"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def countNodes(self, root: TreeNode) -> int: if not root: return 0 left = root.left right = root.right leftDepth = 0 rightDepth = 0 while left: left = left.left leftDepth += 1 while right: right = right.right rightDepth += 1 if leftDepth == rightDepth: return (2 << leftDepth) - 1 return self.countNodes(root.left) + self.countNodes(root.right) + 1",
+          "description": "Python基于完全二叉树特性的节点计数"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def countNodes(self, root: TreeNode) -> int: if not root: return 0 count = 1 left = root.left; right = root.right while left and right: count+=1 left = left.left; right = right.right if not left and not right: return 2**count-1 return 1+self.countNodes(root.left)+self.countNodes(root.right)",
+          "description": "另一种基于完全二叉树特性的Python节点计数"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def countNodes(self, root: TreeNode) -> int: if not root: return 0 count = 0 left = root.left; right = root.right while left and right: count+=1 left = left.left; right = right.right if not left and not right: return (2<<count)-1 return 1+self.countNodes(root.left)+self.countNodes(root.right)",
+          "description": "第三种基于完全二叉树特性的Python节点计数"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "迭代",
+      "text": "如果对求二叉树层序遍历还不熟悉的话，看这篇：二叉树：层序遍历登场！ (opens new window)。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "int getNodesNum(TreeNode* cur) {\n    if (cur == NULL) return 0;\n    int leftNum = getNodesNum(cur->left);      // 左\n    int rightNum = getNodesNum(cur->right);    // 右\n    int treeNum = leftNum + rightNum + 1;      // 中\n    return treeNum;\n}\nclass Solution {\nprivate:\n    int getNodesNum(TreeNode* cur) {\n        if (cur == NULL) return 0;\n        int leftNum = getNodesNum(cur->left);      // 左\n        int rightNum = getNodesNum(cur->right);    // 右\n        int treeNum = leftNum + rightNum + 1;      // 中\n        return treeNum;\n    }\npublic:\n    int countNodes(TreeNode* root) {\n        return getNodesNum(root);\n    }\n};\nclass Solution {\npublic:\n    int countNodes(TreeNode* root) {\n        if (root == NULL) return 0;\n        return 1 + countNodes(root->left) + countNodes(root->right);\n    }\n};\nclass Solution {\npublic:\n    int countNodes(TreeNode* root) {\n        queue<TreeNode*> que;\n        if (root != NULL) que.push(root);\n        int result = 0;\n        while (!que.empty()) {\n            int size = que.size();\n            for (int i = 0; i < size; i++) {\n                TreeNode* node = que.front();\n                que.pop();\n                result++;   // 记录节点数量\n                if (node->left) que.push(node->left);\n                if (node->right) que.push(node->right);\n            }\n        }\n        return result;\n    }\n};\nclass Solution {\npublic:\n    int countNodes(TreeNode* root) {\n        if (root == nullptr) return 0;\n        TreeNode* left = root->left;\n        TreeNode* right = root->right;\n        int leftDepth = 0, rightDepth = 0; \n        while (left) {  // 求左子树深度\n            left = left->left;\n            leftDepth++;\n        }\n        while (right) { // 求右子树深度\n            right = right->right;\n            rightDepth++;\n        }\n        if (leftDepth == rightDepth) {\n            return (2 << leftDepth) - 1; \n        }\n        return countNodes(root->left) + countNodes(root->right) + 1;\n    }\n};",
+          "description": "C++代码实现完全二叉树的节点个数计算"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int countNodes(TreeNode root) {\n        if(root == null) {\n            return 0;\n        }\n        return countNodes(root.left) + countNodes(root.right) + 1;\n    }\n}\nclass Solution {\n    public int countNodes(TreeNode root) {\n        if (root == null) return 0;\n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n        int result = 0;\n        while (!queue.isEmpty()) {\n            int size = queue.size();\n            while (size -- > 0) {\n                TreeNode cur = queue.poll();\n                result++;\n                if (cur.left != null) queue.offer(cur.left);\n                if (cur.right != null) queue.offer(cur.right);\n            }\n        }\n        return result;\n    }\n}\nclass Solution {\n    public int countNodes(TreeNode root) {\n        if (root == null) return 0;\n        TreeNode left = root.left;\n        TreeNode right = root.right;\n        int leftDepth = 0, rightDepth = 0; \n        while (left != null) {  // 求左子树深度\n            left = left.left;\n            leftDepth++;\n        }\n        while (right != null) { // 求右子树深度\n            right = right.right;\n            rightDepth++;\n        }\n        if (leftDepth == rightDepth) {\n            return (2 << leftDepth) - 1; \n        }\n        return countNodes(root.left) + countNodes(root.right) + 1;\n    }\n}",
+          "description": "Java代码实现完全二叉树的节点个数计算"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        return self.getNodesNum(root)\n    \n    def getNodesNum(self, cur):\n        if not cur:\n            return 0\n        leftNum = self.getNodesNum(cur.left) #左\n        rightNum = self.getNodesNum(cur.right) #右\n        treeNum = leftNum + rightNum + 1 #中\n        return treeNum\nclass Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        if not root:\n            return 0\n        return 1 + self.countNodes(root.left) + self.countNodes(root.right)\nimport collections\nclass Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        queue = collections.deque()\n        if root:\n            queue.append(root)\n        result = 0\n        while queue:\n            size = len(queue)\n            for i in range(size):\n                node = queue.popleft()\n                result += 1 #记录节点数量\n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n        return result\nclass Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        if not root:\n            return 0\n        left = root.left\n        right = root.right\n        leftDepth = 0 \n        rightDepth = 0\n        while left: #求左子树深度\n            left = left.left\n            leftDepth += 1\n        while right: #求右子树深度\n            right = right.right\n            rightDepth += 1\n        if leftDepth == rightDepth:\n            return (2 << leftDepth) - 1 \n        return self.countNodes(root.left) + self.countNodes(root.right) + 1\nclass Solution: # 利用完全二叉树特性\n    def countNodes(self, root: TreeNode) -> int:\n        if not root: return 0\n        count = 1\n        left = root.left; right = root.right\n        while left and right:\n            count+=1\n            left = left.left; right = right.right\n        if not left and not right: # 如果同时到底说明是满二叉树，反之则不是\n            return 2**count-1\n        return 1+self.countNodes(root.left)+self.countNodes(root.right)  \nclass Solution: # 利用完全二叉树特性\n    def countNodes(self, root: TreeNode) -> int:\n        if not root: return 0\n        count = 0\n        left = root.left; right = root.right\n        while left and right:\n            count+=1\n            left = left.left; right = right.right\n        if not left and not right: # 如果同时到底说明是满二叉树，反之则不是\n            return (2<<count)-1\n        return 1+self.countNodes(root.left)+self.countNodes(root.right)",
+          "description": "Python代码实现完全二叉树的节点个数计算"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "完全二叉树",
+      "text": "以上方法都是按照普通二叉树来做的，对于完全二叉树特性不了解的同学可以看这篇 关于二叉树，你该了解这些！ (opens new window)，这篇详细介绍了各种二叉树的特性。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "int getNodesNum(TreeNode* cur) {\n    if (cur == NULL) return 0;\n    int leftNum = getNodesNum(cur->left);\n    int rightNum = getNodesNum(cur->right);\n    int treeNum = leftNum + rightNum + 1;\n    return treeNum;\n}",
+          "description": "递归计算二叉树节点数"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    int getNodesNum(TreeNode* cur) {\n        if (cur == NULL) return 0;\n        int leftNum = getNodesNum(cur->left);\n        int rightNum = getNodesNum(cur->right);\n        int treeNum = leftNum + rightNum + 1;\n        return treeNum;\n    }\npublic:\n    int countNodes(TreeNode* root) {\n        return getNodesNum(root);\n    }\n};",
+          "description": "完全版C++代码实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int countNodes(TreeNode* root) {\n        if (root == NULL) return 0;\n        return 1 + countNodes(root->left) + countNodes(root->right);\n    }\n};",
+          "description": "精简版C++代码实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int countNodes(TreeNode* root) {\n        queue<TreeNode*> que;\n        if (root != NULL) que.push(root);\n        int result = 0;\n        while (!que.empty()) {\n            int size = que.size();\n            for (int i = 0; i < size; i++) {\n                TreeNode* node = que.front();\n                que.pop();\n                result++;\n                if (node->left) que.push(node->left);\n                if (node->right) que.push(node->right);\n            }\n        }\n        return result;\n    }\n};",
+          "description": "迭代法求解二叉树节点数"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int countNodes(TreeNode* root) {\n        if (root == nullptr) return 0;\n        TreeNode* left = root->left;\n        TreeNode* right = root->right;\n        int leftDepth = 0, rightDepth = 0;\n        while (left) {\n            left = left->left;\n            leftDepth++;\n        }\n        while (right) {\n            right = right->right;\n            rightDepth++;\n        }\n        if (leftDepth == rightDepth) {\n            return (2 << leftDepth) - 1;\n        }\n        return countNodes(root->left) + countNodes(root->right) + 1;\n    }\n};",
+          "description": "利用完全二叉树特性求解节点数"
+        },
+        {
+          "language": "java",
+          "code": "public int countNodes(TreeNode root) {\n    if(root == null) {\n        return 0;\n    }\n    return countNodes(root.left) + countNodes(root.right) + 1;\n}",
+          "description": "Java通用递归解法"
+        },
+        {
+          "language": "java",
+          "code": "public int countNodes(TreeNode root) {\n    if (root == null) return 0;\n    Queue<TreeNode> queue = new LinkedList<>();\n    queue.offer(root);\n    int result = 0;\n    while (!queue.isEmpty()) {\n        int size = queue.size();\n        while (size -- > 0) {\n            TreeNode cur = queue.poll();\n            result++;\n            if (cur.left != null) queue.offer(cur.left);\n            if (cur.right != null) queue.offer(cur.right);\n        }\n    }\n    return result;\n}",
+          "description": "Java迭代法求解"
+        },
+        {
+          "language": "java",
+          "code": "public int countNodes(TreeNode root) {\n    if (root == null) return 0;\n    TreeNode left = root.left;\n    TreeNode right = root.right;\n    int leftDepth = 0, rightDepth = 0;\n    while (left != null) {\n        left = left.left;\n        leftDepth++;\n    }\n    while (right != null) {\n        right = right.right;\n        rightDepth++;\n    }\n    if (leftDepth == rightDepth) {\n        return (2 << leftDepth) - 1;\n    }\n    return countNodes(root.left) + countNodes(root.right) + 1;\n}",
+          "description": "Java针对完全二叉树的解法"
+        },
+        {
+          "language": "python",
+          "code": "def countNodes(self, root: TreeNode) -> int:\n    return self.getNodesNum(root)\ndef getNodesNum(self, cur):\n    if not cur:\n        return 0\n    leftNum = self.getNodesNum(cur.left)\n    rightNum = self.getNodesNum(cur.right)\n    treeNum = leftNum + rightNum + 1\n    return treeNum",
+          "description": "Python递归计算二叉树节点数"
+        },
+        {
+          "language": "python",
+          "code": "def countNodes(self, root: TreeNode) -> int:\n    if not root:\n        return 0\n    return 1 + self.countNodes(root.left) + self.countNodes(root.right)",
+          "description": "Python精简版递归实现"
+        },
+        {
+          "language": "python",
+          "code": "import collections\ndef countNodes(self, root: TreeNode) -> int:\n    queue = collections.deque()\n    if root:\n        queue.append(root)\n    result = 0\n    while queue:\n        size = len(queue)\n        for i in range(size):\n            node = queue.popleft()\n            result += 1\n            if node.left:\n                queue.append(node.left)\n            if node.right:\n                queue.append(node.right)\n    return result",
+          "description": "Python迭代法求解"
+        },
+        {
+          "language": "python",
+          "code": "def countNodes(self, root: TreeNode) -> int:\n    if not root:\n        return 0\n    left = root.left\n    right = root.right\n    leftDepth = 0\n    rightDepth = 0\n    while left:\n        left = left.left\n        leftDepth += 1\n    while right:\n        right = right.right\n        rightDepth += 1\n    if leftDepth == rightDepth:\n        return (2 << leftDepth) - 1\n    return self.countNodes(root.left) + self.countNodes(root.right) + 1",
+          "description": "Python利用完全二叉树特性求解"
+        },
+        {
+          "language": "python",
+          "code": "def countNodes(self, root: TreeNode) -> int:\n    if not root: return 0\n    count = 1\n    left = root.left; right = root.right\n    while left and right:\n        count+=1\n        left = left.left; right = right.right\n    if not left and not right:\n        return 2**count-1\n    return 1+self.countNodes(root.left)+self.countNodes(root.right)",
+          "description": "Python完全二叉树写法2"
+        },
+        {
+          "language": "python",
+          "code": "def countNodes(self, root: TreeNode) -> int:\n    if not root: return 0\n    count = 0\n    left = root.left; right = root.right\n    while left and right:\n        count+=1\n        left = left.left; right = right.right\n    if not left and not right:\n        return (2<<count)-1\n    return 1+self.countNodes(root.left)+self.countNodes(root.right)",
+          "description": "Python完全二叉树写法3"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "class Solution {private: int getNodesNum(TreeNode* cur) {if (cur == NULL) return 0;int leftNum = getNodesNum(cur->left); int rightNum = getNodesNum(cur->right); int treeNum = leftNum + rightNum + 1;return treeNum;}public: int countNodes(TreeNode* root) {return getNodesNum(root);}};",
+          "description": "普通二叉树递归版本一"
+        },
+        {
+          "language": "C++",
+          "code": "class Solution {public: int countNodes(TreeNode* root) {if (root == NULL) return 0;return 1 + countNodes(root->left) + countNodes(root->right);}};",
+          "description": "普通二叉树递归版本二"
+        },
+        {
+          "language": "C++",
+          "code": "class Solution {public: int countNodes(TreeNode* root) {queue<TreeNode*> que;if (root != NULL) que.push(root);int result = 0;while (!que.empty()) {int size = que.size();for (int i = 0; i < size; i++) {TreeNode* node = que.front();que.pop();result++;if (node->left) que.push(node->left);if (node->right) que.push(node->right);}}return result;}};",
+          "description": "普通二叉树迭代版本"
+        },
+        {
+          "language": "C++",
+          "code": "class Solution {public: int countNodes(TreeNode* root) {if (root == nullptr) return 0;TreeNode* left = root->left;TreeNode* right = root->right;int leftDepth = 0, rightDepth = 0;while (left) {left = left->left;leftDepth++;}while (right) {right = right->right;rightDepth++;}if (leftDepth == rightDepth) {return (2 << leftDepth) - 1;}return countNodes(root->left) + countNodes(root->right) + 1;}};",
+          "description": "完全二叉树版本"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public int countNodes(TreeNode root) {if(root == null) {return 0;}return countNodes(root.left) + countNodes(root.right) + 1;}}",
+          "description": "普通二叉树通用递归解法"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public int countNodes(TreeNode root) {if (root == null) return 0;Queue<TreeNode> queue = new LinkedList<>();queue.offer(root);int result = 0;while (!queue.isEmpty()) {int size = queue.size();while (size -- > 0) {TreeNode cur = queue.poll();result++;if (cur.left != null) queue.offer(cur.left);if (cur.right != null) queue.offer(cur.right);}}return result;}}",
+          "description": "普通二叉树迭代法"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public int countNodes(TreeNode root) {if (root == null) return 0;TreeNode left = root.left;TreeNode right = root.right;int leftDepth = 0, rightDepth = 0;while (left != null) {left = left.left;leftDepth++;}while (right != null) {right = right.right;rightDepth++;}if (leftDepth == rightDepth) {return (2 << leftDepth) - 1;}return countNodes(root.left) + countNodes(root.right) + 1;}}",
+          "description": "完全二叉树解法"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def countNodes(self, root: TreeNode) -> int: return self.getNodesNum(root) def getNodesNum(self, cur): if not cur: return 0 leftNum = self.getNodesNum(cur.left) rightNum = self.getNodesNum(cur.right) treeNum = leftNum + rightNum + 1 return treeNum",
+          "description": "普通二叉树递归版本一"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def countNodes(self, root: TreeNode) -> int: if not root: return 0 return 1 + self.countNodes(root.left) + self.countNodes(root.right)",
+          "description": "普通二叉树递归版本二"
+        },
+        {
+          "language": "Python",
+          "code": "import collections class Solution: def countNodes(self, root: TreeNode) -> int: queue = collections.deque() if root: queue.append(root) result = 0 while queue: size = len(queue) for i in range(size): node = queue.popleft() result += 1 if node.left: queue.append(node.left) if node.right: queue.append(node.right) return result",
+          "description": "普通二叉树迭代版本"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def countNodes(self, root: TreeNode) -> int: if not root: return 0 left = root.left right = root.right leftDepth = 0 rightDepth = 0 while left: left = left.left leftDepth += 1 while right: right = right.right rightDepth += 1 if leftDepth == rightDepth: return (2 << leftDepth) - 1 return self.countNodes(root.left) + self.countNodes(root.right) + 1",
+          "description": "完全二叉树版本"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java:",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "int getNodesNum(TreeNode* cur) {\n    if (cur == NULL) return 0;\n    int leftNum = getNodesNum(cur->left);\n    int rightNum = getNodesNum(cur->right);\n    int treeNum = leftNum + rightNum + 1;\n    return treeNum;\n}",
+          "description": "递归计算二叉树节点数"
+        },
+        {
+          "language": "cpp",
+          "code": "int countNodes(TreeNode* root) {\n    if (root == NULL) return 0;\n    return 1 + countNodes(root->left) + countNodes(root->right);\n}",
+          "description": "精简版递归计算二叉树节点数"
+        },
+        {
+          "language": "cpp",
+          "code": "int countNodes(TreeNode* root) {\n    queue<TreeNode*> que;\n    if (root != NULL) que.push(root);\n    int result = 0;\n    while (!que.empty()) {\n        int size = que.size();\n        for (int i = 0; i < size; i++) {\n            TreeNode* node = que.front();\n            que.pop();\n            result++;\n            if (node->left) que.push(node->left);\n            if (node->right) que.push(node->right);\n        }\n    }\n    return result;\n}",
+          "description": "迭代法计算二叉树节点数"
+        },
+        {
+          "language": "cpp",
+          "code": "int countNodes(TreeNode* root) {\n    if (root == nullptr) return 0;\n    TreeNode* left = root->left;\n    TreeNode* right = root->right;\n    int leftDepth = 0, rightDepth = 0;\n    while (left) { left = left->left; leftDepth++; }\n    while (right) { right = right->right; rightDepth++; }\n    if (leftDepth == rightDepth) {\n        return (2 << leftDepth) - 1;\n    }\n    return countNodes(root->left) + countNodes(root->right) + 1;\n}",
+          "description": "针对完全二叉树优化的解法"
+        },
+        {
+          "language": "java",
+          "code": "public int countNodes(TreeNode root) {\n    if(root == null) {\n        return 0;\n    }\n    return countNodes(root.left) + countNodes(root.right) + 1;\n}",
+          "description": "Java实现递归计算二叉树节点数"
+        },
+        {
+          "language": "java",
+          "code": "public int countNodes(TreeNode root) {\n    if (root == null) return 0;\n    Queue<TreeNode> queue = new LinkedList<>();\n    queue.offer(root);\n    int result = 0;\n    while (!queue.isEmpty()) {\n        int size = queue.size();\n        while (size -- > 0) {\n            TreeNode cur = queue.poll();\n            result++;\n            if (cur.left != null) queue.offer(cur.left);\n            if (cur.right != null) queue.offer(cur.right);\n        }\n    }\n    return result;\n}",
+          "description": "Java实现迭代法计算二叉树节点数"
+        },
+        {
+          "language": "java",
+          "code": "public int countNodes(TreeNode root) {\n    if (root == null) return 0;\n    TreeNode left = root.left;\n    TreeNode right = root.right;\n    int leftDepth = 0, rightDepth = 0;\n    while (left != null) { left = left.left; leftDepth++; }\n    while (right != null) { right = right.right; rightDepth++; }\n    if (leftDepth == rightDepth) {\n        return (2 << leftDepth) - 1;\n    }\n    return countNodes(root.left) + countNodes(root.right) + 1;\n}",
+          "description": "Java实现针对完全二叉树优化的解法"
+        },
+        {
+          "language": "python",
+          "code": "def countNodes(self, root: TreeNode) -> int:\n    return self.getNodesNum(root)\n\ndef getNodesNum(self, cur):\n    if not cur:\n        return 0\n    leftNum = self.getNodesNum(cur.left)\n    rightNum = self.getNodesNum(cur.right)\n    treeNum = leftNum + rightNum + 1\n    return treeNum",
+          "description": "Python实现递归计算二叉树节点数"
+        },
+        {
+          "language": "python",
+          "code": "def countNodes(self, root: TreeNode) -> int:\n    if not root:\n        return 0\n    return 1 + self.countNodes(root.left) + self.countNodes(root.right)",
+          "description": "Python实现精简版递归计算二叉树节点数"
+        },
+        {
+          "language": "python",
+          "code": "def countNodes(self, root: TreeNode) -> int:\n    queue = collections.deque()\n    if root:\n        queue.append(root)\n    result = 0\n    while queue:\n        size = len(queue)\n        for i in range(size):\n            node = queue.popleft()\n            result += 1\n            if node.left:\n                queue.append(node.left)\n            if node.right:\n                queue.append(node.right)\n    return result",
+          "description": "Python实现迭代法计算二叉树节点数"
+        },
+        {
+          "language": "python",
+          "code": "def countNodes(self, root: TreeNode) -> int:\n    if not root:\n        return 0\n    left = root.left\n    right = root.right\n    leftDepth = 0\n    rightDepth = 0\n    while left: left = left.left; leftDepth += 1\n    while right: right = right.right; rightDepth += 1\n    if leftDepth == rightDepth:\n        return (2 << leftDepth) - 1\n    return self.countNodes(root.left) + self.countNodes(root.right) + 1",
+          "description": "Python实现针对完全二叉树优化的解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python:",
+      "text": "递归法：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "int getNodesNum(TreeNode* cur) {\n    if (cur == NULL) return 0;\n    int leftNum = getNodesNum(cur->left);      // 左\n    int rightNum = getNodesNum(cur->right);    // 右\n    int treeNum = leftNum + rightNum + 1;      // 中\n    return treeNum;\n}\n\nclass Solution {\nprivate:\n    int getNodesNum(TreeNode* cur) {\n        if (cur == NULL) return 0;\n        int leftNum = getNodesNum(cur->left);      // 左\n        int rightNum = getNodesNum(cur->right);    // 右\n        int treeNum = leftNum + rightNum + 1;      // 中\n        return treeNum;\n    }\npublic:\n    int countNodes(TreeNode* root) {\n        return getNodesNum(root);\n    }\n};",
+          "description": "C++版本一递归计算完全二叉树节点数"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int countNodes(TreeNode* root) {\n        if (root == NULL) return 0;\n        return 1 + countNodes(root->left) + countNodes(root->right);\n    }\n};",
+          "description": "C++版本二精简递归计算完全二叉树节点数"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int countNodes(TreeNode* root) {\n        queue<TreeNode*> que;\n        if (root != NULL) que.push(root);\n        int result = 0;\n        while (!que.empty()) {\n            int size = que.size();\n            for (int i = 0; i < size; i++) {\n                TreeNode* node = que.front();\n                que.pop();\n                result++;   // 记录节点数量\n                if (node->left) que.push(node->left);\n                if (node->right) que.push(node->right);\n            }\n        }\n        return result;\n    }\n};",
+          "description": "C++迭代法计算完全二叉树节点数"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int countNodes(TreeNode* root) {\n        if (root == nullptr) return 0;\n        TreeNode* left = root->left;\n        TreeNode* right = root->right;\n        int leftDepth = 0, rightDepth = 0; \n        while (left) {  // 求左子树深度\n            left = left->left;\n            leftDepth++;\n        }\n        while (right) { // 求右子树深度\n            right = right->right;\n            rightDepth++;\n        }\n        if (leftDepth == rightDepth) {\n            return (2 << leftDepth) - 1; \n        }\n        return countNodes(root->left) + countNodes(root->right) + 1;\n    }\n};",
+          "description": "C++针对完全二叉树优化的解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int countNodes(TreeNode root) {\n        if(root == null) {\n            return 0;\n        }\n        return countNodes(root.left) + countNodes(root.right) + 1;\n    }\n}\nclass Solution {\n    public int countNodes(TreeNode root) {\n        if (root == null) return 0;\n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n        int result = 0;\n        while (!queue.isEmpty()) {\n            int size = queue.size();\n            while (size -- > 0) {\n                TreeNode cur = queue.poll();\n                result++;\n                if (cur.left != null) queue.offer(cur.left);\n                if (cur.right != null) queue.offer(cur.right);\n            }\n        }\n        return result;\n    }\n}\nclass Solution {\n    public int countNodes(TreeNode root) {\n        if (root == null) return 0;\n        TreeNode left = root.left;\n        TreeNode right = root.right;\n        int leftDepth = 0, rightDepth = 0; \n        while (left != null) {  // 求左子树深度\n            left = left.left;\n            leftDepth++;\n        }\n        while (right != null) { // 求右子树深度\n            right = right.right;\n            rightDepth++;\n        }\n        if (leftDepth == rightDepth) {\n            return (2 << leftDepth) - 1; \n        }\n        return countNodes(root.left) + countNodes(root.right) + 1;\n    }\n}",
+          "description": "Java通用递归、迭代以及针对完全二叉树优化的解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        return self.getNodesNum(root)\n    \n    def getNodesNum(self, cur):\n        if not cur:\n            return 0\n        leftNum = self.getNodesNum(cur.left) #左\n        rightNum = self.getNodesNum(cur.right) #右\n        treeNum = leftNum + rightNum + 1 #中\n        return treeNum\nclass Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        if not root:\n            return 0\n        return 1 + self.countNodes(root.left) + self.countNodes(root.right)\nimport collections\nclass Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        queue = collections.deque()\n        if root:\n            queue.append(root)\n        result = 0\n        while queue:\n            size = len(queue)\n            for i in range(size):\n                node = queue.popleft()\n                result += 1 #记录节点数量\n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n        return result\nclass Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        if not root:\n            return 0\n        left = root.left\n        right = root.right\n        leftDepth = 0 #这里初始为0是有目的的，为了下面求指数方便\n        rightDepth = 0\n        while left: #求左子树深度\n            left = left.left\n            leftDepth += 1\n        while right: #求右子树深度\n            right = right.right\n            rightDepth += 1\n        if leftDepth == rightDepth:\n            return (2 << leftDepth) - 1 #注意(2<<1) 相当于2^2，所以leftDepth初始为0\n        return self.countNodes(root.left) + self.countNodes(root.right) + 1\nclass Solution: # 利用完全二叉树特性\n    def countNodes(self, root: TreeNode) -> int:\n        if not root: return 0\n        count = 1\n        left = root.left; right = root.right\n        while left and right:\n            count+=1\n            left = left.left; right = right.right\n        if not left and not right: # 如果同时到底说明是满二叉树，反之则不是\n            return 2**count-1\n        return 1+self.countNodes(root.left)+self.countNodes(root.right)  \nclass Solution: # 利用完全二叉树特性\n    def countNodes(self, root: TreeNode) -> int:\n        if not root: return 0\n        count = 0\n        left = root.left; right = root.right\n        while left and right:\n            count+=1\n            left = left.left; right = right.right\n        if not left and not right: # 如果同时到底说明是满二叉树，反之则不是\n            return (2<<count)-1\n        return 1+self.countNodes(root.left)+self.countNodes(root.right)",
+          "description": "Python递归（含精简版）、迭代以及针对完全二叉树优化的多种解法"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(log n)",
+    "explanation": "算上了递归系统栈占用的空间"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "int getNodesNum(TreeNode* cur) {\n    if (cur == NULL) return 0;\n    int leftNum = getNodesNum(cur->left);      // 左\n    int rightNum = getNodesNum(cur->right);    // 右\n    int treeNum = leftNum + rightNum + 1;      // 中\n    return treeNum;\n}\nclass Solution {\nprivate:\n    int getNodesNum(TreeNode* cur) {\n        if (cur == NULL) return 0;\n        int leftNum = getNodesNum(cur->left);      // 左\n        int rightNum = getNodesNum(cur->right);    // 右\n        int treeNum = leftNum + rightNum + 1;      // 中\n        return treeNum;\n    }\npublic:\n    int countNodes(TreeNode* root) {\n        return getNodesNum(root);\n    }\n};\n// 版本二\nclass Solution {\npublic:\n    int countNodes(TreeNode* root) {\n        if (root == NULL) return 0;\n        return 1 + countNodes(root->left) + countNodes(root->right);\n    }\n};\nclass Solution {\npublic:\n    int countNodes(TreeNode* root) {\n        queue<TreeNode*> que;\n        if (root != NULL) que.push(root);\n        int result = 0;\n        while (!que.empty()) {\n            int size = que.size();\n            for (int i = 0; i < size; i++) {\n                TreeNode* node = que.front();\n                que.pop();\n                result++;   // 记录节点数量\n                if (node->left) que.push(node->left);\n                if (node->right) que.push(node->right);\n            }\n        }\n        return result;\n    }\n};\nclass Solution {\npublic:\n    int countNodes(TreeNode* root) {\n        if (root == nullptr) return 0;\n        TreeNode* left = root->left;\n        TreeNode* right = root->right;\n        int leftDepth = 0, rightDepth = 0; \n        while (left) {  \n            left = left->left;\n            leftDepth++;\n        }\n        while (right) { \n            right = right->right;\n            rightDepth++;\n        }\n        if (leftDepth == rightDepth) {\n            return (2 << leftDepth) - 1; \n        }\n        return countNodes(root->left) + countNodes(root->right) + 1;\n    }\n};",
+      "description": "C++代码实现，包含递归和迭代两种方法求解完全二叉树的节点个数"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {\n    public int countNodes(TreeNode root) {\n        if(root == null) {\n            return 0;\n        }\n        return countNodes(root.left) + countNodes(root.right) + 1;\n    }\n}\nclass Solution {\n    public int countNodes(TreeNode root) {\n        if (root == null) return 0;\n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n        int result = 0;\n        while (!queue.isEmpty()) {\n            int size = queue.size();\n            while (size -- > 0) {\n                TreeNode cur = queue.poll();\n                result++;\n                if (cur.left != null) queue.offer(cur.left);\n                if (cur.right != null) queue.offer(cur.right);\n            }\n        }\n        return result;\n    }\n}\nclass Solution {\n    public int countNodes(TreeNode root) {\n        if (root == null) return 0;\n        TreeNode left = root.left;\n        TreeNode right = root.right;\n        int leftDepth = 0, rightDepth = 0; \n        while (left != null) {  \n            left = left.left;\n            leftDepth++;\n        }\n        while (right != null) { \n            right = right.right;\n            rightDepth++;\n        }\n        if (leftDepth == rightDepth) {\n            return (2 << leftDepth) - 1; \n        }\n        return countNodes(root.left) + countNodes(root.right) + 1;\n    }\n}",
+      "description": "Java代码实现，同样包含了递归与迭代的方法来计算完全二叉树中的节点总数。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        return self.getNodesNum(root)\n    \n    def getNodesNum(self, cur):\n        if not cur:\n            return 0\n        leftNum = self.getNodesNum(cur.left) #左\n        rightNum = self.getNodesNum(cur.right) #右\n        treeNum = leftNum + rightNum + 1 #中\n        return treeNum\nclass Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        if not root:\n            return 0\n        return 1 + self.countNodes(root.left) + self.countNodes(root.right)\nimport collections\nclass Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        queue = collections.deque()\n        if root:\n            queue.append(root)\n        result = 0\n        while queue:\n            size = len(queue)\n            for i in range(size):\n                node = queue.popleft()\n                result += 1 #记录节点数量\n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n        return result\nclass Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        if not root:\n            return 0\n        left = root.left\n        right = root.right\n        leftDepth = 0 #这里初始为0是有目的的，为了下面求指数方便\n        rightDepth = 0\n        while left: #求左子树深度\n            left = left.left\n            leftDepth += 1\n        while right: #求右子树深度\n            right = right.right\n            rightDepth += 1\n        if leftDepth == rightDepth:\n            return (2 << leftDepth) - 1 #注意(2<<1) 相当于2^2，所以leftDepth初始为0\n        return self.countNodes(root.left) + self.countNodes(root.right) + 1\nclass Solution: # 利用完全二叉树特性\n    def countNodes(self, root: TreeNode) -> int:\n        if not root: return 0\n        count = 1\n        left = root.left; right = root.right\n        while left and right:\n            count+=1\n            left = left.left; right = right.right\n        if not left and not right: # 如果同时到底说明是满二叉树，反之则不是\n            return 2**count-1\n        return 1+self.countNodes(root.left)+self.countNodes(root.right)\nclass Solution: # 利用完全二叉树特性\n    def countNodes(self, root: TreeNode) -> int:\n        if not root: return 0\n        count = 0\n        left = root.left; right = root.right\n        while left and right:\n            count+=1\n            left = left.left; right = right.right\n        if not left and not right: # 如果同时到底说明是满二叉树，反之则不是\n            return (2<<count)-1\n        return 1+self.countNodes(root.left)+self.countNodes(root.right)",
+      "description": "Python代码实现，使用了多种方法包括递归、迭代以及利用完全二叉树特性的算法来计算节点总数。"
+    }
+  ],
+  "common_mistakes": [
+    "忽视了完全二叉树与满二叉树之间的区别，导致错误地应用了只适用于满二叉树的解决方案。",
+    "在编写简洁版递归代码时，忽略了对初学者来说重要的细节，如清晰的遍历顺序指示。",
+    "没有正确理解如何通过比较左右子树的高度来判定当前子树是否为满二叉树。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20200920221638903-20230310123444151.png",
+      "description": "该图片展示了完全二叉树的定义和判断方法，通过三个示例树（两个正确一个错误）来说明完全二叉树的特性。",
+      "context": "该图展示了完全二叉树的一个典型例子，帮助理解完全二叉树的结构特点及其与满二叉树的区别。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201124092543662.png",
+      "description": "这张图片展示了完全二叉树的节点个数问题，通过标记满二叉树子结构来分析和计算节点数量。",
+      "context": "这张图片展示了情况一的完全二叉树，即满二叉树的样子，用来辅助说明如何通过2^树深度 - 1来计算节点数量。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201124092634138.png",
+      "description": "这张图片展示了完全二叉树的结构，特别标注了其中的满二叉树子结构，用于分析节点个数的算法问题。",
+      "context": "该图展示了完全二叉树的第二种情况，其中最后一层叶子节点没有满，用于说明在计算节点总数时需要递归其左右子树直到遇到满二叉树为止的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20220829163554.png",
+      "description": "这张图片展示了一棵二叉树，标注了向左和向右遍历的深度均为3，涉及树的深度遍历算法。",
+      "context": "该图展示了在完全二叉树中，当递归向左遍历的深度等于递归向右遍历的深度时，所对应的子树是满二叉树的情形。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20220829163709.png",
+      "description": "这张图片展示了一棵二叉树，标注了向左遍历的深度为3和向右遍历的深度为2，用于说明树的深度遍历算法。",
+      "context": "该图展示了在完全二叉树中，当递归向左遍历的深度不等于递归向右遍历的深度时的情况，说明这样的树不是满二叉树。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20220829163811.png",
+      "description": "这张图片展示了一棵二叉树，标注了向左和向右遍历的深度均为3，强调了树的深度遍历特性。",
+      "context": "这张图片展示了即使递归向左遍历的深度等于递归向右遍历的深度，也不一定是满二叉树的情况，用来说明对于完全二叉树的一个常见误解。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20200920221638903-20230310123444151.png",
+      "description": "GIF展示了完全二叉树中通过递归计算节点数量的过程。",
+      "context": "此GIF动画展示了完全二叉树的结构特征，帮助理解其定义以及两种情况下的形态。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201124092543662.png",
+      "description": "GIF展示了如何通过递归遍历判断完全二叉树中的子树是否为满二叉树的过程。",
+      "context": "该GIF动画展示了完全二叉树的第一种情况，即满二叉树的结构，帮助理解如何直接通过公式计算节点数量。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201124092634138.png",
+      "description": "GIF展示了通过递归左右子树来计算完全二叉树节点数量的过程，直到找到满二叉树为止。",
+      "context": "该GIF动画展示了在完全二叉树中，如何通过递归遍历左右子树来找到满二叉树，并据此计算节点数量的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20220829163554.png",
+      "description": "递归比较左右子树深度以判断是否为满二叉树的过程。",
+      "context": "该GIF动画展示了如何通过比较递归向左和向右遍历的深度来判断一个子树是否为满二叉树的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20220829163709.png",
+      "description": "GIF展示了通过比较左右子树的深度来判断当前子树是否为满二叉树的过程。",
+      "context": "GIF动画展示了在完全二叉树中，当递归向左遍历的深度不等于递归向右遍历时的情况，说明此时的子树不是满二叉树。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20220829163811.png",
+      "description": "递归检查二叉树的左右子树深度是否相等以判断其是否为满二叉树的过程。",
+      "context": "该GIF动画展示了即使递归向左遍历的深度等于递归向右遍历的深度，但若结构不符合完全二叉树定义，则仍不能被认为是满二叉树的情况。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\完全二叉树的节点个数.txt",
+  "extracted_at": "2025-07-19T20:51:19.971205",
+  "raw_content": "完全二叉树的节点个数\n力扣题目链接(https://leetcode.cn/problems/count-complete-tree-nodes/)\n\n给出一个完全二叉树，求出该树的节点个数。\n\n示例 1：\n\n输入：root = [1,2,3,4,5,6]\n输出：6\n示例 2：\n\n输入：root = []\n输出：0\n示例 3：\n\n输入：root = [1]\n输出：1\n提示：\n\n树中节点的数目范围是[0, 5 * 10^4]\n0 <= Node.val <= 5 * 10^4\n题目数据保证输入的树是 完全二叉树\n\n思路\n本篇给出按照普通二叉树的求法以及利用完全二叉树性质的求法。\n\n#普通二叉树\n首先按照普通二叉树的逻辑来求。\n\n这道题目的递归法和求二叉树的深度写法类似， 而迭代法，二叉树：层序遍历登场！ (opens new window)遍历模板稍稍修改一下，记录遍历的节点数量就可以了。\n\n递归遍历的顺序依然是后序（左右中）。\n\n#递归\n如果对求二叉树深度还不熟悉的话，看这篇：二叉树：看看这些树的最大深度 (opens new window)。\n\n确定递归函数的参数和返回值：参数就是传入树的根节点，返回就返回以该节点为根节点二叉树的节点数量，所以返回值为int类型。\n代码如下：\n\nint getNodesNum(TreeNode* cur) {\n确定终止条件：如果为空节点的话，就返回0，表示节点数为0。\n代码如下：\n\nif (cur == NULL) return 0;\n确定单层递归的逻辑：先求它的左子树的节点数量，再求右子树的节点数量，最后取总和再加一 （加1是因为算上当前中间节点）就是目前节点为根节点的节点数量。\n代码如下：\n\nint leftNum = getNodesNum(cur->left);      // 左\nint rightNum = getNodesNum(cur->right);    // 右\nint treeNum = leftNum + rightNum + 1;      // 中\nreturn treeNum;\n所以整体C++代码如下：\n\n// 版本一\nclass Solution {\nprivate:\n    int getNodesNum(TreeNode* cur) {\n        if (cur == NULL) return 0;\n        int leftNum = getNodesNum(cur->left);      // 左\n        int rightNum = getNodesNum(cur->right);    // 右\n        int treeNum = leftNum + rightNum + 1;      // 中\n        return treeNum;\n    }\npublic:\n    int countNodes(TreeNode* root) {\n        return getNodesNum(root);\n    }\n};\n代码精简之后C++代码如下：\n\n// 版本二\nclass Solution {\npublic:\n    int countNodes(TreeNode* root) {\n        if (root == NULL) return 0;\n        return 1 + countNodes(root->left) + countNodes(root->right);\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(log n)，算上了递归系统栈占用的空间\n网上基本都是这个精简的代码版本，其实不建议大家照着这个来写，代码确实精简，但隐藏了一些内容，连遍历的顺序都看不出来，所以初学者建议学习版本一的代码，稳稳的打基础。\n\n#迭代\n如果对求二叉树层序遍历还不熟悉的话，看这篇：二叉树：层序遍历登场！ (opens new window)。\n\n那么只要模板少做改动，加一个变量result，统计节点数量就可以了\n\nclass Solution {\npublic:\n    int countNodes(TreeNode* root) {\n        queue<TreeNode*> que;\n        if (root != NULL) que.push(root);\n        int result = 0;\n        while (!que.empty()) {\n            int size = que.size();\n            for (int i = 0; i < size; i++) {\n                TreeNode* node = que.front();\n                que.pop();\n                result++;   // 记录节点数量\n                if (node->left) que.push(node->left);\n                if (node->right) que.push(node->right);\n            }\n        }\n        return result;\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(n)\n#完全二叉树\n以上方法都是按照普通二叉树来做的，对于完全二叉树特性不了解的同学可以看这篇 关于二叉树，你该了解这些！ (opens new window)，这篇详细介绍了各种二叉树的特性。\n\n在完全二叉树中，除了最底层节点可能没填满外，其余每层节点数都达到最大值，并且最下面一层的节点都集中在该层最左边的若干位置。若最底层为第 h 层，则该层包含 1~ 2^(h-1)  个节点。\n\n大家要自己看完全二叉树的定义，很多同学对完全二叉树其实不是真正的懂了。\n\n我来举一个典型的例子如题：\n\nhttps://file1.kamacoder.com/i/algo/20200920221638903-20230310123444151.png\n\n完全二叉树只有两种情况，情况一：就是满二叉树，情况二：最后一层叶子节点没有满。\n\n对于情况一，可以直接用 2^树深度 - 1 来计算，注意这里根节点深度为1。\n\n对于情况二，分别递归左孩子，和右孩子，递归到某一深度一定会有左孩子或者右孩子为满二叉树，然后依然可以按照情况1来计算。\n\n完全二叉树（一）如图： https://file1.kamacoder.com/i/algo/20201124092543662.png\n\n完全二叉树（二）如图： https://file1.kamacoder.com/i/algo/20201124092634138.png\n\n可以看出如果整个树不是满二叉树，就递归其左右孩子，直到遇到满二叉树为止，用公式计算这个子树（满二叉树）的节点数量。\n\n这里关键在于如何去判断一个左子树或者右子树是不是满二叉树呢？\n\n在完全二叉树中，如果递归向左遍历的深度等于递归向右遍历的深度，那说明就是满二叉树。如图：\n\nhttps://file1.kamacoder.com/i/algo/20220829163554.png\n\n在完全二叉树中，如果递归向左遍历的深度不等于递归向右遍历的深度，则说明不是满二叉树，如图：\n\nhttps://file1.kamacoder.com/i/algo/20220829163709.png\n\n那有录友说了，这种情况，递归向左遍历的深度等于递归向右遍历的深度，但也不是满二叉树，如题：\n\nhttps://file1.kamacoder.com/i/algo/20220829163811.png\n\n如果这么想，大家就是对 完全二叉树理解有误区了，以上这棵二叉树，它根本就不是一个完全二叉树！\n\n判断其子树是不是满二叉树，如果是则利用公式计算这个子树（满二叉树）的节点数量，如果不是则继续递归，那么 在递归三部曲中，第二部：终止条件的写法应该是这样的：\n\nif (root == nullptr) return 0; \n// 开始根据左深度和右深度是否相同来判断该子树是不是满二叉树\nTreeNode* left = root->left;\nTreeNode* right = root->right;\nint leftDepth = 0, rightDepth = 0; // 这里初始为0是有目的的，为了下面求指数方便\nwhile (left) {  // 求左子树深度\n    left = left->left;\n    leftDepth++;\n}\nwhile (right) { // 求右子树深度\n    right = right->right;\n    rightDepth++;\n}\nif (leftDepth == rightDepth) {\n    return (2 << leftDepth) - 1; // 注意(2<<1) 相当于2^2，返回满足满二叉树的子树节点数量\n}\n递归三部曲，第三部，单层递归的逻辑：（可以看出使用后序遍历）\n\nint leftTreeNum = countNodes(root->left);       // 左\nint rightTreeNum = countNodes(root->right);     // 右\nint result = leftTreeNum + rightTreeNum + 1;    // 中\nreturn result;\n该部分精简之后代码为：\n\nreturn countNodes(root->left) + countNodes(root->right) + 1; \n最后整体C++代码如下：\n\nclass Solution {\npublic:\n    int countNodes(TreeNode* root) {\n        if (root == nullptr) return 0;\n        TreeNode* left = root->left;\n        TreeNode* right = root->right;\n        int leftDepth = 0, rightDepth = 0; // 这里初始为0是有目的的，为了下面求指数方便\n        while (left) {  // 求左子树深度\n            left = left->left;\n            leftDepth++;\n        }\n        while (right) { // 求右子树深度\n            right = right->right;\n            rightDepth++;\n        }\n        if (leftDepth == rightDepth) {\n            return (2 << leftDepth) - 1; // 注意(2<<1) 相当于2^2，所以leftDepth初始为0\n        }\n        return countNodes(root->left) + countNodes(root->right) + 1;\n    }\n};\n时间复杂度：O(log n × log n)\n空间复杂度：O(log n)\n#其他语言版本\n#Java:\nclass Solution {\n    // 通用递归解法\n    public int countNodes(TreeNode root) {\n        if(root == null) {\n            return 0;\n        }\n        return countNodes(root.left) + countNodes(root.right) + 1;\n    }\n}\nclass Solution {\n    // 迭代法\n    public int countNodes(TreeNode root) {\n        if (root == null) return 0;\n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n        int result = 0;\n        while (!queue.isEmpty()) {\n            int size = queue.size();\n            while (size -- > 0) {\n                TreeNode cur = queue.poll();\n                result++;\n                if (cur.left != null) queue.offer(cur.left);\n                if (cur.right != null) queue.offer(cur.right);\n            }\n        }\n        return result;\n    }\n}\nclass Solution {\n    /**\n     * 针对完全二叉树的解法\n     *\n     * 满二叉树的结点数为：2^depth - 1\n     */\n    public int countNodes(TreeNode root) {\n        if (root == null) return 0;\n        TreeNode left = root.left;\n        TreeNode right = root.right;\n        int leftDepth = 0, rightDepth = 0; // 这里初始为0是有目的的，为了下面求指数方便\n        while (left != null) {  // 求左子树深度\n            left = left.left;\n            leftDepth++;\n        }\n        while (right != null) { // 求右子树深度\n            right = right.right;\n            rightDepth++;\n        }\n        if (leftDepth == rightDepth) {\n            return (2 << leftDepth) - 1; // 注意(2<<1) 相当于2^2，所以leftDepth初始为0\n        }\n        return countNodes(root.left) + countNodes(root.right) + 1;\n    }\n}\n#Python:\n递归法：\n\nclass Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        return self.getNodesNum(root)\n        \n    def getNodesNum(self, cur):\n        if not cur:\n            return 0\n        leftNum = self.getNodesNum(cur.left) #左\n        rightNum = self.getNodesNum(cur.right) #右\n        treeNum = leftNum + rightNum + 1 #中\n        return treeNum\n递归法：精简版\n\nclass Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        if not root:\n            return 0\n        return 1 + self.countNodes(root.left) + self.countNodes(root.right)\n迭代法：\n\nimport collections\nclass Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        queue = collections.deque()\n        if root:\n            queue.append(root)\n        result = 0\n        while queue:\n            size = len(queue)\n            for i in range(size):\n                node = queue.popleft()\n                result += 1 #记录节点数量\n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n        return result\n完全二叉树\n\nclass Solution:\n    def countNodes(self, root: TreeNode) -> int:\n        if not root:\n            return 0\n        left = root.left\n        right = root.right\n        leftDepth = 0 #这里初始为0是有目的的，为了下面求指数方便\n        rightDepth = 0\n        while left: #求左子树深度\n            left = left.left\n            leftDepth += 1\n        while right: #求右子树深度\n            right = right.right\n            rightDepth += 1\n        if leftDepth == rightDepth:\n            return (2 << leftDepth) - 1 #注意(2<<1) 相当于2^2，所以leftDepth初始为0\n        return self.countNodes(root.left) + self.countNodes(root.right) + 1\n完全二叉树写法2\n\nclass Solution: # 利用完全二叉树特性\n    def countNodes(self, root: TreeNode) -> int:\n        if not root: return 0\n        count = 1\n        left = root.left; right = root.right\n        while left and right:\n            count+=1\n            left = left.left; right = right.right\n        if not left and not right: # 如果同时到底说明是满二叉树，反之则不是\n            return 2**count-1\n        return 1+self.countNodes(root.left)+self.countNodes(root.right)  \n完全二叉树写法3\n\nclass Solution: # 利用完全二叉树特性\n    def countNodes(self, root: TreeNode) -> int:\n        if not root: return 0\n        count = 0\n        left = root.left; right = root.right\n        while left and right:\n            count+=1\n            left = left.left; right = right.right\n        if not left and not right: # 如果同时到底说明是满二叉树，反之则不是\n            return (2<<count)-1\n        return 1+self.countNodes(root.left)+self.countNodes(root.right)"
+}

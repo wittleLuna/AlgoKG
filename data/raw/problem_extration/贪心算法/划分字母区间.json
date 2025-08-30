@@ -1,0 +1,324 @@
+{
+  "id": "AP_fd0d2103",
+  "title": "划分字母区间",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/partition-labels/",
+  "description": "字符串 S 由小写字母组成。我们要把这个字符串划分为尽可能多的片段，同一字母最多出现在一个片段中。返回一个表示每个字符串片段的长度的列表。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "贪心算法"
+  ],
+  "data_structure_tags": [
+    "数组",
+    "哈希表"
+  ],
+  "technique_tags": [
+    "双指针",
+    "预处理"
+  ],
+  "difficulty": null,
+  "solution_approach": "首先遍历字符串，记录每个字符最后出现的位置。然后再次遍历字符串，同时维护当前最大右边界。当遍历位置等于当前最大右边界时，找到了一个分割点。",
+  "key_insights": [
+    {
+      "content": "确定每个字符在字符串中的最后出现位置是关键步骤，这有助于定义每个片段的边界。"
+    },
+    {
+      "content": "通过维护一个动态更新的最大右边界值，可以确保所有先前遇到的字符都被正确地包含在一个连续的片段内。"
+    },
+    {
+      "content": "这种方法利用了字符最后一次出现的位置信息来决定何时可以进行有效的字符串分割，从而保证同一字母最多出现在一个片段中。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "一想到分割字符串就想到了回溯，但本题其实不用回溯去暴力搜索。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> partitionLabels(string S) { int hash[27] = {0}; for (int i = 0; i < S.size(); i++) { hash[S[i] - 'a'] = i; } vector<int> result; int left = 0; int right = 0; for (int i = 0; i < S.size(); i++) { right = max(right, hash[S[i] - 'a']); if (i == right) { result.push_back(right - left + 1); left = i + 1; } } return result; }};",
+          "description": "C++实现，通过统计每个字符最后出现的位置来划分字符串"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp(vector<int> &a, vector<int> &b) {return a[0] < b[0];} vector<vector<int>> countLabels(string s) {vector<vector<int>> hash(26, vector<int>(2, INT_MIN)); vector<vector<int>> hash_filter; for (int i = 0; i < s.size(); ++i) {if (hash[s[i] - 'a'][0] == INT_MIN) {hash[s[i] - 'a'][0] = i;} hash[s[i] - 'a'][1] = i;} for (int i = 0; i < hash.size(); ++i) {if (hash[i][0] != INT_MIN) {hash_filter.push_back(hash[i]);}} return hash_filter;} vector<int> partitionLabels(string s) {vector<int> res; vector<vector<int>> hash = countLabels(s); sort(hash.begin(), hash.end(), cmp); int rightBoard = hash[0][1]; int leftBoard = 0; for (int i = 1; i < hash.size(); ++i) {if (hash[i][0] > rightBoard) {res.push_back(rightBoard - leftBoard + 1); leftBoard = hash[i][0];} rightBoard = max(rightBoard, hash[i][1]);} res.push_back(rightBoard - leftBoard + 1); return res;}};",
+          "description": "C++实现，通过记录每个字母的起始和结束位置，并按左边界排序来划分字符串"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<Integer> partitionLabels(String S) {List<Integer> list = new LinkedList<>(); int[] edge = new int[26]; char[] chars = S.toCharArray(); for (int i = 0; i < chars.length; i++) {edge[chars[i] - 'a'] = i;} int idx = 0; int last = -1; for (int i = 0; i < chars.length; i++) {idx = Math.max(idx,edge[chars[i] - 'a']); if (i == idx) {list.add(i - last); last = i;}} return list;}}",
+          "description": "Java实现，通过统计每个字符最后出现的位置来划分字符串"
+        },
+        {
+          "language": "java",
+          "code": "class Solution{public int[][] findPartitions(String s) {List<Integer> temp = new ArrayList<>(); int[][] hash = new int[26][2]; for (int i = 0; i < s.length(); i++) {char c = s.charAt(i); if (hash[c - 'a'][0] == 0) hash[c - 'a'][0] = i; hash[c - 'a'][1] = i; hash[s.charAt(0) - 'a'][0] = 0;} List<List<Integer>> h = new LinkedList<>(); for (int i = 0; i < 26; i++) {temp.clear(); temp.add(hash[i][0]); temp.add(hash[i][1]); h.add(new ArrayList<>(temp));} int[][] res = new int[h.size()][2]; for (int i = 0; i < h.size(); i++) {List<Integer> list = h.get(i); res[i][0] = list.get(0); res[i][1] = list.get(1);} return res;} public List<Integer> partitionLabels(String s) {int[][] partitions = findPartitions(s); List<Integer> res = new ArrayList<>(); Arrays.sort(partitions, (o1, o2) -> Integer.compare(o1[0], o2[0])); int right = partitions[0][1]; int left = 0; for (int i = 0; i < partitions.length; i++) {if (partitions[i][0] > right) {res.add(right - left + 1); left = partitions[i][0];} right = Math.max(right, partitions[i][1]);} res.add(right - left + 1); return res;}}",
+          "description": "Java实现，通过记录每个字母的起始和结束位置，并按左边界排序来划分字符串"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partitionLabels(self, s: str) -> List[int]: last_occurrence = {} for i, ch in enumerate(s): last_occurrence[ch] = i result = [] start = 0 end = 0 for i, ch in enumerate(s): end = max(end, last_occurrence[ch]) if i == end: result.append(end - start + 1) start = i + 1 return result",
+          "description": "Python实现，通过统计每个字符最后出现的位置来划分字符串"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countLabels(self, s): hash = [[float('-inf'), float('-inf')] for _ in range(26)] hash_filter = [] for i in range(len(s)): if hash[ord(s[i]) - ord('a')][0] == float('-inf'): hash[ord(s[i]) - ord('a')][0] = i hash[ord(s[i]) - ord('a')][1] = i for i in range(len(hash)): if hash[i][0] != float('-inf'): hash_filter.append(hash[i]) return hash_filter def partitionLabels(self, s): res = [] hash = self.countLabels(s) hash.sort(key=lambda x: x[0]) rightBoard = hash[0][1] leftBoard = 0 for i in range(1, len(hash)): if hash[i][0] > rightBoard: res.append(rightBoard - leftBoard + 1) leftBoard = hash[i][0] rightBoard = max(rightBoard, hash[i][1]) res.append(rightBoard - leftBoard + 1) return res",
+          "description": "Python实现，通过记录每个字母的起始和结束位置，并按左边界排序来划分字符串"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "这道题目leetcode标记为贪心算法，说实话，我没有感受到贪心，找不出局部最优推出全局最优的过程。就是用最远出现距离模拟了圈字符的行为。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> partitionLabels(string S) { int hash[27] = {0}; for (int i = 0; i < S.size(); i++) { hash[S[i] - 'a'] = i; } vector<int> result; int left = 0; int right = 0; for (int i = 0; i < S.size(); i++) { right = max(right, hash[S[i] - 'a']); if (i == right) { result.push_back(right - left + 1); left = i + 1; } } return result; }};",
+          "description": "统计每个字符最后出现的位置，遍历字符串以找到分割点。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp(vector<int> &a, vector<int> &b) { return a[0] < b[0]; } vector<vector<int>> countLabels(string s) { vector<vector<int>> hash(26, vector<int>(2, INT_MIN)); vector<vector<int>> hash_filter; for (int i = 0; i < s.size(); ++i) { if (hash[s[i] - 'a'][0] == INT_MIN) { hash[s[i] - 'a'][0] = i; } hash[s[i] - 'a'][1] = i; } for (int i = 0; i < hash.size(); ++i) { if (hash[i][0] != INT_MIN) { hash_filter.push_back(hash[i]); } } return hash_filter; } vector<int> partitionLabels(string s) { vector<int> res; vector<vector<int>> hash = countLabels(s); sort(hash.begin(), hash.end(), cmp); int rightBoard = hash[0][1]; int leftBoard = 0; for (int i = 1; i < hash.size(); ++i) { if (hash[i][0] > rightBoard) { res.push_back(rightBoard - leftBoard + 1); leftBoard = hash[i][0]; } rightBoard = max(rightBoard, hash[i][1]); } res.push_back(rightBoard - leftBoard + 1); return res; }};",
+          "description": "通过记录每个字母出现的区间来划分字符串，并按左边界排序后处理。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<Integer> partitionLabels(String S) { List<Integer> list = new LinkedList<>(); int[] edge = new int[26]; char[] chars = S.toCharArray(); for (int i = 0; i < chars.length; i++) { edge[chars[i] - 'a'] = i; } int idx = 0; int last = -1; for (int i = 0; i < chars.length; i++) { idx = Math.max(idx,edge[chars[i] - 'a']); if (i == idx) { list.add(i - last); last = i; } } return list; }}",
+          "description": "Java实现，使用数组存储每个字符最后出现位置，然后遍历字符串确定分割点。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution{ public int[][] findPartitions(String s) { List<Integer> temp = new ArrayList<>(); int[][] hash = new int[26][2]; for (int i = 0; i < s.length(); i++) { char c = s.charAt(i); if (hash[c - 'a'][0] == 0) hash[c - 'a'][0] = i; hash[c - 'a'][1] = i; hash[s.charAt(0) - 'a'][0] = 0; } List<List<Integer>> h = new LinkedList<>(); for (int i = 0; i < 26; i++) { temp.clear(); temp.add(hash[i][0]); temp.add(hash[i][1]); h.add(new ArrayList<>(temp)); } int[][] res = new int[h.size()][2]; for (int i = 0; i < h.size(); i++) { List<Integer> list = h.get(i); res[i][0] = list.get(0); res[i][1] = list.get(1); } return res; } public List<Integer> partitionLabels(String s) { int[][] partitions = findPartitions(s); List<Integer> res = new ArrayList<>(); Arrays.sort(partitions, (o1, o2) -> Integer.compare(o1[0], o2[0])); int right = partitions[0][1]; int left = 0; for (int i = 0; i < partitions.length; i++) { if (partitions[i][0] > right) { res.add(right - left + 1); left = partitions[i][0]; } right = Math.max(right, partitions[i][1]); } res.add(right - left + 1); return res; }}",
+          "description": "Java版本，先找出每个字符的起始和结束位置，再根据这些信息进行区间划分。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partitionLabels(self, s: str) -> List[int]: last_occurrence = {} for i, ch in enumerate(s): last_occurrence[ch] = i result = [] start = 0 end = 0 for i, ch in enumerate(s): end = max(end, last_occurrence[ch]) if i == end: result.append(end - start + 1) start = i + 1 return result",
+          "description": "Python实现，首先统计每个字符最后出现的位置，接着遍历字符串寻找合适的分割点。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countLabels(self, s): hash = [[float('-inf'), float('-inf')] for _ in range(26)] hash_filter = [] for i in range(len(s)): if hash[ord(s[i]) - ord('a')][0] == float('-inf'): hash[ord(s[i]) - ord('a')][0] = i hash[ord(s[i]) - ord('a')][1] = i for i in range(len(hash)): if hash[i][0] != float('-inf'): hash_filter.append(hash[i]) return hash_filter def partitionLabels(self, s): res = [] hash = self.countLabels(s) hash.sort(key=lambda x: x[0]) rightBoard = hash[0][1] leftBoard = 0 for i in range(1, len(hash)): if hash[i][0] > rightBoard: res.append(rightBoard - leftBoard + 1) leftBoard = hash[i][0] rightBoard = max(rightBoard, hash[i][1]) res.append(rightBoard - leftBoard + 1) return res",
+          "description": "另一种Python方法，通过计算每个字符的区间并排序来解决问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "补充",
+      "text": "这里提供一种与452.用最少数量的箭引爆气球 (https://programmercarl.com/0452.%E7%94%A8%E6%9C%80%E5%B0%91%E6%95%B0%E9%87%8F%E7%9A%84%E7%AE%AD%E5%BC%95%E7%88%86%E6%B0%94%E7%90%83.html)、435.无重叠区间 (https://programmercarl.com/0435.%E6%97%A0%E9%87%8D%E5%8F%A0%E5%8C%BA%E9%97%B4.html)相同的思路。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> partitionLabels(string S) { int hash[27] = {0}; for (int i = 0; i < S.size(); i++) { hash[S[i] - 'a'] = i; } vector<int> result; int left = 0; int right = 0; for (int i = 0; i < S.size(); i++) { right = max(right, hash[S[i] - 'a']); if (i == right) { result.push_back(right - left + 1); left = i + 1; } } return result; }};",
+          "description": "C++实现的划分字母区间"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp(vector<int> &a, vector<int> &b) {return a[0] < b[0];} vector<vector<int>> countLabels(string s) {vector<vector<int>> hash(26, vector<int>(2, INT_MIN)); vector<vector<int>> hash_filter; for (int i = 0; i < s.size(); ++i) {if (hash[s[i] - 'a'][0] == INT_MIN) {hash[s[i] - 'a'][0] = i;} hash[s[i] - 'a'][1] = i;} for (int i = 0; i < hash.size(); ++i) {if (hash[i][0] != INT_MIN) {hash_filter.push_back(hash[i]);}} return hash_filter;} vector<int> partitionLabels(string s) {vector<int> res; vector<vector<int>> hash = countLabels(s); sort(hash.begin(), hash.end(), cmp); int rightBoard = hash[0][1]; int leftBoard = 0; for (int i = 1; i < hash.size(); ++i) {if (hash[i][0] > rightBoard) {res.push_back(rightBoard - leftBoard + 1); leftBoard = hash[i][0];} rightBoard = max(rightBoard, hash[i][1]);} res.push_back(rightBoard - leftBoard + 1); return res;}};",
+          "description": "C++实现的另一种划分字母区间的解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<Integer> partitionLabels(String S) {List<Integer> list = new LinkedList<>(); int[] edge = new int[26]; char[] chars = S.toCharArray(); for (int i = 0; i < chars.length; i++) {edge[chars[i] - 'a'] = i;} int idx = 0; int last = -1; for (int i = 0; i < chars.length; i++) {idx = Math.max(idx,edge[chars[i] - 'a']); if (i == idx) {list.add(i - last); last = i;}} return list;}}",
+          "description": "Java实现的划分字母区间"
+        },
+        {
+          "language": "java",
+          "code": "class Solution{public int[][] findPartitions(String s) {List<Integer> temp = new ArrayList<>(); int[][] hash = new int[26][2]; for (int i = 0; i < s.length(); i++) {char c = s.charAt(i); if (hash[c - 'a'][0] == 0) hash[c - 'a'][0] = i; hash[c - 'a'][1] = i; hash[s.charAt(0) - 'a'][0] = 0;} List<List<Integer>> h = new LinkedList<>(); for (int i = 0; i < 26; i++) {temp.clear(); temp.add(hash[i][0]); temp.add(hash[i][1]); h.add(new ArrayList<>(temp));} int[][] res = new int[h.size()][2]; for (int i = 0; i < h.size(); i++) {List<Integer> list = h.get(i); res[i][0] =  list.get(0); res[i][1] =  list.get(1);} return res;} public List<Integer> partitionLabels(String s) {int[][] partitions = findPartitions(s); List<Integer> res = new ArrayList<>(); Arrays.sort(partitions, (o1, o2) -> Integer.compare(o1[0], o2[0])); int right = partitions[0][1]; int left = 0; for (int i = 0; i < partitions.length; i++) {if (partitions[i][0] > right) {res.add(right - left + 1); left = partitions[i][0];} right = Math.max(right, partitions[i][1]);} res.add(right - left + 1); return res;}}",
+          "description": "Java实现的另一种划分字母区间的解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partitionLabels(self, s: str) -> List[int]: last_occurrence = {} for i, ch in enumerate(s): last_occurrence[ch] = i result = [] start = 0 end = 0 for i, ch in enumerate(s): end = max(end, last_occurrence[ch]) if i == end: result.append(end - start + 1) start = i + 1 return result",
+          "description": "Python实现的划分字母区间"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countLabels(self, s): hash = [[float('-inf'), float('-inf')] for _ in range(26)] hash_filter = [] for i in range(len(s)): if hash[ord(s[i]) - ord('a')][0] == float('-inf'): hash[ord(s[i]) - ord('a')][0] = i hash[ord(s[i]) - ord('a')][1] = i for i in range(len(hash)): if hash[i][0] != float('-inf'): hash_filter.append(hash[i]) return hash_filter def partitionLabels(self, s): res = [] hash = self.countLabels(s) hash.sort(key=lambda x: x[0]) rightBoard = hash[0][1] leftBoard = 0 for i in range(1, len(hash)): if hash[i][0] > rightBoard: res.append(rightBoard - leftBoard + 1) leftBoard = hash[i][0] rightBoard = max(rightBoard, hash[i][1]) res.append(rightBoard - leftBoard + 1) return res",
+          "description": "Python实现的另一种划分字母区间的解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> partitionLabels(string S) { int hash[27] = {0}; for (int i = 0; i < S.size(); i++) { hash[S[i] - 'a'] = i; } vector<int> result; int left = 0; int right = 0; for (int i = 0; i < S.size(); i++) { right = max(right, hash[S[i] - 'a']); if (i == right) { result.push_back(right - left + 1); left = i + 1; }} return result; }};",
+          "description": "C++实现，通过记录每个字符最后出现的位置来划分字符串"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp(vector<int> &a, vector<int> &b) { return a[0] < b[0]; }vector<vector<int>> countLabels(string s) {vector<vector<int>> hash(26, vector<int>(2, INT_MIN));vector<vector<int>> hash_filter;for (int i = 0; i < s.size(); ++i) {if (hash[s[i] - 'a'][0] == INT_MIN) {hash[s[i] - 'a'][0] = i;}hash[s[i] - 'a'][1] = i;}for (int i = 0; i < hash.size(); ++i) {if (hash[i][0] != INT_MIN) {hash_filter.push_back(hash[i]);}}return hash_filter;}vector<int> partitionLabels(string s) {vector<int> res;vector<vector<int>> hash = countLabels(s);sort(hash.begin(), hash.end(), cmp);int rightBoard = hash[0][1];int leftBoard = 0;for (int i = 1; i < hash.size(); ++i) {if (hash[i][0] > rightBoard) {res.push_back(rightBoard - leftBoard + 1);leftBoard = hash[i][0];}rightBoard = max(rightBoard, hash[i][1]);}res.push_back(rightBoard - leftBoard + 1);return res;}};",
+          "description": "C++实现，通过记录每个字母的起始和结束位置来划分字符串"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<Integer> partitionLabels(String S) {List<Integer> list = new LinkedList<>();int[] edge = new int[26];char[] chars = S.toCharArray();for (int i = 0; i < chars.length; i++) {edge[chars[i] - 'a'] = i;}int idx = 0;int last = -1;for (int i = 0; i < chars.length; i++) {idx = Math.max(idx,edge[chars[i] - 'a']);if (i == idx) {list.add(i - last);last = i;}}return list;}}",
+          "description": "Java实现，通过记录每个字符最后出现的位置来划分字符串"
+        },
+        {
+          "language": "java",
+          "code": "class Solution{public  int[][] findPartitions(String s) {List<Integer> temp = new ArrayList<>();int[][] hash = new int[26][2];for (int i = 0; i < s.length(); i++) {char c = s.charAt(i);if (hash[c - 'a'][0] == 0) hash[c - 'a'][0] = i;hash[c - 'a'][1] = i;hash[s.charAt(0) - 'a'][0] = 0;}List<List<Integer>> h = new LinkedList<>();for (int i = 0; i < 26; i++) {temp.clear();temp.add(hash[i][0]);temp.add(hash[i][1]);h.add(new ArrayList<>(temp));}int[][] res = new int[h.size()][2];for (int i = 0; i < h.size(); i++) {List<Integer> list = h.get(i);res[i][0] =  list.get(0);res[i][1] =  list.get(1);}return res;}public  List<Integer> partitionLabels(String s) {int[][] partitions = findPartitions(s);List<Integer> res = new ArrayList<>();Arrays.sort(partitions, (o1, o2) -> Integer.compare(o1[0], o2[0]));int right = partitions[0][1];int left = 0;for (int i = 0; i < partitions.length; i++) {if (partitions[i][0] > right) {res.add(right - left + 1);left = partitions[i][0];}right = Math.max(right, partitions[i][1]);}res.add(right - left + 1);return res;}}",
+          "description": "Java实现，通过记录每个字母的起始和结束位置来划分字符串"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partitionLabels(self, s: str) -> List[int]: last_occurrence = {} for i, ch in enumerate(s): last_occurrence[ch] = i result = [] start = 0 end = 0 for i, ch in enumerate(s): end = max(end, last_occurrence[ch]) if i == end: result.append(end - start + 1) start = i + 1 return result",
+          "description": "Python实现，通过记录每个字符最后出现的位置来划分字符串"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countLabels(self, s): hash = [[float('-inf'), float('-inf')] for _ in range(26)] hash_filter = [] for i in range(len(s)): if hash[ord(s[i]) - ord('a')][0] == float('-inf'): hash[ord(s[i]) - ord('a')][0] = i hash[ord(s[i]) - ord('a')][1] = i for i in range(len(hash)): if hash[i][0] != float('-inf'): hash_filter.append(hash[i]) return hash_filter def partitionLabels(self, s): res = [] hash = self.countLabels(s) hash.sort(key=lambda x: x[0]) rightBoard = hash[0][1] leftBoard = 0 for i in range(1, len(hash)): if hash[i][0] > rightBoard: res.append(rightBoard - leftBoard + 1) leftBoard = hash[i][0] rightBoard = max(rightBoard, hash[i][1]) res.append(rightBoard - leftBoard + 1) return res",
+          "description": "Python实现，通过记录每个字母的起始和结束位置来划分字符串"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    vector<int> partitionLabels(string S) {\n        int hash[27] = {0};\n        for (int i = 0; i < S.size(); i++) {\n            hash[S[i] - 'a'] = i;\n        }\n        vector<int> result;\n        int left = 0;\n        int right = 0;\n        for (int i = 0; i < S.size(); i++) {\n            right = max(right, hash[S[i] - 'a']);\n            if (i == right) {\n                result.push_back(right - left + 1);\n                left = i + 1;\n            }\n        }\n        return result;\n    }\n};",
+          "description": "C++实现，统计每个字符最后出现位置，并根据此信息划分字符串。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    static bool cmp(vector<int> &a, vector<int> &b) {\n        return a[0] < b[0];\n    }\n    vector<vector<int>> countLabels(string s) {\n        vector<vector<int>> hash(26, vector<int>(2, INT_MIN));\n        vector<vector<int>> hash_filter;\n        for (int i = 0; i < s.size(); ++i) {\n            if (hash[s[i] - 'a'][0] == INT_MIN) {\n                hash[s[i] - 'a'][0] = i;\n            }\n            hash[s[i] - 'a'][1] = i;\n        }\n        for (int i = 0; i < hash.size(); ++i) {\n            if (hash[i][0] != INT_MIN) {\n                hash_filter.push_back(hash[i]);\n            }\n        }\n        return hash_filter;\n    }\n    vector<int> partitionLabels(string s) {\n        vector<int> res;\n        vector<vector<int>> hash = countLabels(s);\n        sort(hash.begin(), hash.end(), cmp);\n        int rightBoard = hash[0][1];\n        int leftBoard = 0;\n        for (int i = 1; i < hash.size(); ++i) {\n            if (hash[i][0] > rightBoard) {\n                res.push_back(rightBoard - leftBoard + 1);\n                leftBoard = hash[i][0];\n            }\n            rightBoard = max(rightBoard, hash[i][1]);\n        }\n        res.push_back(rightBoard - leftBoard + 1);\n        return res;\n    }\n};",
+          "description": "C++补充思路实现，通过记录字母区间并排序来划分字符串。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public List<Integer> partitionLabels(String S) {\n        List<Integer> list = new LinkedList<>();\n        int[] edge = new int[26];\n        char[] chars = S.toCharArray();\n        for (int i = 0; i < chars.length; i++) {\n            edge[chars[i] - 'a'] = i;\n        }\n        int idx = 0;\n        int last = -1;\n        for (int i = 0; i < chars.length; i++) {\n            idx = Math.max(idx,edge[chars[i] - 'a']);\n            if (i == idx) {\n                list.add(i - last);\n                last = i;\n            }\n        }\n        return list;\n    }\n}",
+          "description": "Java版本实现，与C++基本逻辑一致。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution{\n    public  int[][] findPartitions(String s) {\n        List<Integer> temp = new ArrayList<>();\n        int[][] hash = new int[26][2];\n        for (int i = 0; i < s.length(); i++) {\n            char c = s.charAt(i);\n            if (hash[c - 'a'][0] == 0) hash[c - 'a'][0] = i;\n            hash[c - 'a'][1] = i;\n            hash[s.charAt(0) - 'a'][0] = 0;\n        }\n        List<List<Integer>> h = new LinkedList<>();\n        for (int i = 0; i < 26; i++) {\n            temp.clear();\n            temp.add(hash[i][0]);\n            temp.add(hash[i][1]);\n            h.add(new ArrayList<>(temp));\n        }\n        int[][] res = new int[h.size()][2];\n        for (int i = 0; i < h.size(); i++) {\n            List<Integer> list = h.get(i);\n            res[i][0] =  list.get(0);\n            res[i][1] =  list.get(1);\n        }\n        return res;\n    }\n    public  List<Integer> partitionLabels(String s) {\n        int[][] partitions = findPartitions(s);\n        List<Integer> res = new ArrayList<>();\n        Arrays.sort(partitions, (o1, o2) -> Integer.compare(o1[0], o2[0]));\n        int right = partitions[0][1];\n        int left = 0;\n        for (int i = 0; i < partitions.length; i++) {\n            if (partitions[i][0] > right) {\n                res.add(right - left + 1);\n                left = partitions[i][0];\n            }\n            right = Math.max(right, partitions[i][1]);\n        }\n        res.add(right - left + 1);\n        return res;\n    }\n}",
+          "description": "Java版本补充思路实现，通过记录字母区间并排序来划分字符串。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def partitionLabels(self, s: str) -> List[int]:\n        last_occurrence = {}\n        for i, ch in enumerate(s):\n            last_occurrence[ch] = i\n\n        result = []\n        start = 0\n        end = 0\n        for i, ch in enumerate(s):\n            end = max(end, last_occurrence[ch])\n            if i == end:\n                result.append(end - start + 1)\n                start = i + 1\n\n        return result",
+          "description": "Python贪心算法版本一，统计每个字符最后出现位置，并据此划分字符串。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def countLabels(self, s):\n        hash = [[float('-inf'), float('-inf')] for _ in range(26)]\n        hash_filter = []\n        for i in range(len(s)):\n            if hash[ord(s[i]) - ord('a')][0] == float('-inf'):\n                hash[ord(s[i]) - ord('a')][0] = i\n            hash[ord(s[i]) - ord('a')][1] = i\n        for i in range(len(hash)):\n            if hash[i][0] != float('-inf'):\n                hash_filter.append(hash[i])\n        return hash_filter\n\n    def partitionLabels(self, s):\n        res = []\n        hash = self.countLabels(s)\n        hash.sort(key=lambda x: x[0])\n        rightBoard = hash[0][1]\n        leftBoard = 0\n        for i in range(1, len(hash)):\n            if hash[i][0] > rightBoard:\n                res.append(rightBoard - leftBoard + 1)\n                leftBoard = hash[i][0]\n            rightBoard = max(rightBoard, hash[i][1])\n        res.append(rightBoard - leftBoard + 1)\n        return res",
+          "description": "Python贪心算法版本二，通过记录字母区间并排序来划分字符串。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "贪心（版本一）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> partitionLabels(string S) { int hash[27] = {0}; for (int i = 0; i < S.size(); i++) { hash[S[i] - 'a'] = i; } vector<int> result; int left = 0; int right = 0; for (int i = 0; i < S.size(); i++) { right = max(right, hash[S[i] - 'a']); if (i == right) { result.push_back(right - left + 1); left = i + 1; } } return result; }};",
+          "description": "C++实现的贪心算法版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: static bool cmp(vector<int> &a, vector<int> &b) {return a[0] < b[0];} vector<vector<int>> countLabels(string s) {vector<vector<int>> hash(26, vector<int>(2, INT_MIN)); vector<vector<int>> hash_filter; for (int i = 0; i < s.size(); ++i) {if (hash[s[i] - 'a'][0] == INT_MIN) {hash[s[i] - 'a'][0] = i;} hash[s[i] - 'a'][1] = i;} for (int i = 0; i < hash.size(); ++i) {if (hash[i][0] != INT_MIN) {hash_filter.push_back(hash[i]);}} return hash_filter;} vector<int> partitionLabels(string s) {vector<int> res; vector<vector<int>> hash = countLabels(s); sort(hash.begin(), hash.end(), cmp); int rightBoard = hash[0][1]; int leftBoard = 0; for (int i = 1; i < hash.size(); ++i) {if (hash[i][0] > rightBoard) {res.push_back(rightBoard - leftBoard + 1); leftBoard = hash[i][0];} rightBoard = max(rightBoard, hash[i][1]);} res.push_back(rightBoard - leftBoard + 1); return res;}};",
+          "description": "C++实现的补充思路"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<Integer> partitionLabels(String S) {List<Integer> list = new LinkedList<>(); int[] edge = new int[26]; char[] chars = S.toCharArray(); for (int i = 0; i < chars.length; i++) {edge[chars[i] - 'a'] = i;} int idx = 0; int last = -1; for (int i = 0; i < chars.length; i++) {idx = Math.max(idx,edge[chars[i] - 'a']); if (i == idx) {list.add(i - last); last = i;}} return list;}}",
+          "description": "Java实现的贪心算法版本一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution{public  int[][] findPartitions(String s) {List<Integer> temp = new ArrayList<>(); int[][] hash = new int[26][2]; for (int i = 0; i < s.length(); i++) {char c = s.charAt(i); if (hash[c - 'a'][0] == 0) hash[c - 'a'][0] = i; hash[c - 'a'][1] = i; hash[s.charAt(0) - 'a'][0] = 0;} List<List<Integer>> h = new LinkedList<>(); for (int i = 0; i < 26; i++) {temp.clear(); temp.add(hash[i][0]); temp.add(hash[i][1]); h.add(new ArrayList<>(temp));} int[][] res = new int[h.size()][2]; for (int i = 0; i < h.size(); i++) {List<Integer> list = h.get(i); res[i][0] =  list.get(0); res[i][1] =  list.get(1);} return res;} public  List<Integer> partitionLabels(String s) {int[][] partitions = findPartitions(s); List<Integer> res = new ArrayList<>(); Arrays.sort(partitions, (o1, o2) -> Integer.compare(o1[0], o2[0])); int right = partitions[0][1]; int left = 0; for (int i = 0; i < partitions.length; i++) {if (partitions[i][0] > right) {res.add(right - left + 1); left = partitions[i][0];} right = Math.max(right, partitions[i][1]);} res.add(right - left + 1); return res;}}",
+          "description": "Java实现的补充思路"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partitionLabels(self, s: str) -> List[int]: last_occurrence = {} for i, ch in enumerate(s): last_occurrence[ch] = i result = [] start = 0 end = 0 for i, ch in enumerate(s): end = max(end, last_occurrence[ch]) if i == end: result.append(end - start + 1) start = i + 1 return result",
+          "description": "Python实现的贪心算法版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countLabels(self, s): hash = [[float('-inf'), float('-inf')] for _ in range(26)] hash_filter = [] for i in range(len(s)): if hash[ord(s[i]) - ord('a')][0] == float('-inf'): hash[ord(s[i]) - ord('a')][0] = i hash[ord(s[i]) - ord('a')][1] = i for i in range(len(hash)): if hash[i][0] != float('-inf'): hash_filter.append(hash[i]) return hash_filter def partitionLabels(self, s): res = [] hash = self.countLabels(s) hash.sort(key=lambda x: x[0]) rightBoard = hash[0][1] leftBoard = 0 for i in range(1, len(hash)): if hash[i][0] > rightBoard: res.append(rightBoard - leftBoard + 1) leftBoard = hash[i][0] rightBoard = max(rightBoard, hash[i][1]) res.append(rightBoard - leftBoard + 1) return res",
+          "description": "Python实现的补充思路"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "explanation": "使用的hash数组是固定大小"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: vector<int> partitionLabels(string S) { int hash[27] = {0}; for (int i = 0; i < S.size(); i++) { hash[S[i] - 'a'] = i; } vector<int> result; int left = 0; int right = 0; for (int i = 0; i < S.size(); i++) { right = max(right, hash[S[i] - 'a']); if (i == right) { result.push_back(right - left + 1); left = i + 1; } } return result; }};",
+      "description": "通过记录每个字符最后出现的位置，来确定字符串的分割点。"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: static bool cmp(vector<int> &a, vector<int> &b) { return a[0] < b[0]; } vector<vector<int>> countLabels(string s) { vector<vector<int>> hash(26, vector<int>(2, INT_MIN)); vector<vector<int>> hash_filter; for (int i = 0; i < s.size(); ++i) { if (hash[s[i] - 'a'][0] == INT_MIN) { hash[s[i] - 'a'][0] = i; } hash[s[i] - 'a'][1] = i; } for (int i = 0; i < hash.size(); ++i) { if (hash[i][0] != INT_MIN) { hash_filter.push_back(hash[i]); } } return hash_filter; } vector<int> partitionLabels(string s) { vector<int> res; vector<vector<int>> hash = countLabels(s); sort(hash.begin(), hash.end(), cmp); int rightBoard = hash[0][1]; int leftBoard = 0; for (int i = 1; i < hash.size(); ++i) { if (hash[i][0] > rightBoard) { res.push_back(rightBoard - leftBoard + 1); leftBoard = hash[i][0]; } rightBoard = max(rightBoard, hash[i][1]); } res.push_back(rightBoard - leftBoard + 1); return res; }};",
+      "description": "先统计每个字母出现的区间，然后对这些区间进行排序并找到分割点。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public List<Integer> partitionLabels(String S) { List<Integer> list = new LinkedList<>(); int[] edge = new int[26]; char[] chars = S.toCharArray(); for (int i = 0; i < chars.length; i++) { edge[chars[i] - 'a'] = i; } int idx = 0; int last = -1; for (int i = 0; i < chars.length; i++) { idx = Math.max(idx,edge[chars[i] - 'a']); if (i == idx) { list.add(i - last); last = i; } } return list; }}",
+      "description": "Java实现，通过记录每个字符最后出现的位置来确定字符串的分割点。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution{ public int[][] findPartitions(String s) { List<Integer> temp = new ArrayList<>(); int[][] hash = new int[26][2]; for (int i = 0; i < s.length(); i++) { char c = s.charAt(i); if (hash[c - 'a'][0] == 0) hash[c - 'a'][0] = i; hash[c - 'a'][1] = i; hash[s.charAt(0) - 'a'][0] = 0; } List<List<Integer>> h = new LinkedList<>(); for (int i = 0; i < 26; i++) { temp.clear(); temp.add(hash[i][0]); temp.add(hash[i][1]); h.add(new ArrayList<>(temp)); } int[][] res = new int[h.size()][2]; for (int i = 0; i < h.size(); i++) { List<Integer> list = h.get(i); res[i][0] = list.get(0); res[i][1] = list.get(1); } return res; } public List<Integer> partitionLabels(String s) { int[][] partitions = findPartitions(s); Arrays.sort(partitions, (o1, o2) -> Integer.compare(o1[0], o2[0])); int right = partitions[0][1]; int left = 0; List<Integer> res = new ArrayList<>(); for (int i = 0; i < partitions.length; i++) { if (partitions[i][0] > right) { res.add(right - left + 1); left = partitions[i][0]; } right = Math.max(right, partitions[i][1]); } res.add(right - left + 1); return res; }}",
+      "description": "Java版本，首先找到每个字母的起始和结束位置，然后按左边界从小到大排序，最终确定分割点。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def partitionLabels(self, s: str) -> List[int]: last_occurrence = {} for i, ch in enumerate(s): last_occurrence[ch] = i result = [] start = 0 end = 0 for i, ch in enumerate(s): end = max(end, last_occurrence[ch]) if i == end: result.append(end - start + 1) start = i + 1 return result",
+      "description": "Python实现，通过记录每个字符最后出现的位置来确定字符串的分割点。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def countLabels(self, s): hash = [[float('-inf'), float('-inf')] for _ in range(26)] hash_filter = [] for i in range(len(s)): if hash[ord(s[i]) - ord('a')][0] == float('-inf'): hash[ord(s[i]) - ord('a')][0] = i hash[ord(s[i]) - ord('a')][1] = i for i in range(len(hash)): if hash[i][0] != float('-inf'): hash_filter.append(hash[i]) return hash_filter def partitionLabels(self, s): res = [] hash = self.countLabels(s) hash.sort(key=lambda x: x[0]) rightBoard = hash[0][1] leftBoard = 0 for i in range(1, len(hash)): if hash[i][0] > rightBoard: res.append(rightBoard - leftBoard + 1) leftBoard = hash[i][0] rightBoard = max(rightBoard, hash[i][1]) res.append(rightBoard - leftBoard + 1) return res",
+      "description": "Python版本，先统计每个字母出现的区间，然后对这些区间进行排序并找到分割点。"
+    }
+  ],
+  "common_mistakes": [
+    "忘记更新或错误设置最远边界值。",
+    "没有考虑到字符可能重复出现于不同部分的情况。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201222191924417.png",
+      "description": "这张图片展示了使用滑动窗口算法来寻找字符串中无重复字符的最长子串的过程。",
+      "context": "该图展示了如何通过确定每个字母的最后出现位置来找到字符串中的分割点。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201222191924417.png",
+      "description": "GIF展示了字符串分割过程中，如何通过追踪每个字符最远出现位置来确定分割点的过程。",
+      "context": "该GIF动画展示了如何通过遍历字符串并追踪每个字符最后出现的位置来确定分割点的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\贪心算法\\划分字母区间.txt",
+  "extracted_at": "2025-07-22T15:09:58.403606",
+  "raw_content": "划分字母区间\n力扣题目链接(https://leetcode.cn/problems/partition-labels/)\n\n字符串 S 由小写字母组成。我们要把这个字符串划分为尽可能多的片段，同一字母最多出现在一个片段中。返回一个表示每个字符串片段的长度的列表。\n\n示例：\n\n输入：S = \"ababcbacadefegdehijhklij\"\n输出：[9,7,8] 解释： 划分结果为 \"ababcbaca\", \"defegde\", \"hijhklij\"。 每个字母最多出现在一个片段中。 像 \"ababcbacadefegde\", \"hijhklij\" 的划分是错误的，因为划分的片段数较少。\n提示：\n\nS的长度在[1, 500]之间。\nS只包含小写字母 'a' 到 'z' 。\n\n#思路\n一想到分割字符串就想到了回溯，但本题其实不用回溯去暴力搜索。\n\n题目要求同一字母最多出现在一个片段中，那么如何把同一个字母的都圈在同一个区间里呢？\n\n如果没有接触过这种题目的话，还挺有难度的。\n\n在遍历的过程中相当于是要找每一个字母的边界，如果找到之前遍历过的所有字母的最远边界，说明这个边界就是分割点了。此时前面出现过所有字母，最远也就到这个边界了。\n\n可以分为如下两步：\n\n统计每一个字符最后出现的位置\n从头遍历字符，并更新字符的最远出现下标，如果找到字符最远出现位置下标和当前下标相等了，则找到了分割点\n如图：\n\nhttps://file1.kamacoder.com/i/algo/20201222191924417.png\n\n明白原理之后，代码并不复杂，如下：\n\nclass Solution {\npublic:\n    vector<int> partitionLabels(string S) {\n        int hash[27] = {0}; // i为字符，hash[i]为字符出现的最后位置\n        for (int i = 0; i < S.size(); i++) { // 统计每一个字符最后出现的位置\n            hash[S[i] - 'a'] = i;\n        }\n        vector<int> result;\n        int left = 0;\n        int right = 0;\n        for (int i = 0; i < S.size(); i++) {\n            right = max(right, hash[S[i] - 'a']); // 找到字符出现的最远边界\n            if (i == right) {\n                result.push_back(right - left + 1);\n                left = i + 1;\n            }\n        }\n        return result;\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(1)，使用的hash数组是固定大小\n#总结\n这道题目leetcode标记为贪心算法，说实话，我没有感受到贪心，找不出局部最优推出全局最优的过程。就是用最远出现距离模拟了圈字符的行为。\n\n但这道题目的思路是很巧妙的，所以有必要介绍给大家做一做，感受一下。\n\n#补充\n这里提供一种与452.用最少数量的箭引爆气球 (https://programmercarl.com/0452.%E7%94%A8%E6%9C%80%E5%B0%91%E6%95%B0%E9%87%8F%E7%9A%84%E7%AE%AD%E5%BC%95%E7%88%86%E6%B0%94%E7%90%83.html)、435.无重叠区间 (https://programmercarl.com/0435.%E6%97%A0%E9%87%8D%E5%8F%A0%E5%8C%BA%E9%97%B4.html)相同的思路。\n\n统计字符串中所有字符的起始和结束位置，记录这些区间(实际上也就是435.无重叠区间 (https://programmercarl.com/0435.%E6%97%A0%E9%87%8D%E5%8F%A0%E5%8C%BA%E9%97%B4.html)题目里的输入)，将区间按左边界从小到大排序，找到边界将区间划分成组，互不重叠。找到的边界就是答案。\n\nclass Solution {\npublic:\n    static bool cmp(vector<int> &a, vector<int> &b) {\n        return a[0] < b[0];\n    }\n    // 记录每个字母出现的区间\n    vector<vector<int>> countLabels(string s) {\n        vector<vector<int>> hash(26, vector<int>(2, INT_MIN));\n        vector<vector<int>> hash_filter;\n        for (int i = 0; i < s.size(); ++i) {\n            if (hash[s[i] - 'a'][0] == INT_MIN) {\n                hash[s[i] - 'a'][0] = i;\n            }\n            hash[s[i] - 'a'][1] = i;\n        }\n        // 去除字符串中未出现的字母所占用区间\n        for (int i = 0; i < hash.size(); ++i) {\n            if (hash[i][0] != INT_MIN) {\n                hash_filter.push_back(hash[i]);\n            }\n        }\n        return hash_filter;\n    }\n    vector<int> partitionLabels(string s) {\n        vector<int> res;\n        // 这一步得到的 hash 即为无重叠区间题意中的输入样例格式：区间列表\n        // 只不过现在我们要求的是区间分割点\n        vector<vector<int>> hash = countLabels(s);\n        // 按照左边界从小到大排序\n        sort(hash.begin(), hash.end(), cmp);\n        // 记录最大右边界\n        int rightBoard = hash[0][1];\n        int leftBoard = 0;\n        for (int i = 1; i < hash.size(); ++i) {\n            // 由于字符串一定能分割，因此,\n            // 一旦下一区间左边界大于当前右边界，即可认为出现分割点\n            if (hash[i][0] > rightBoard) {\n                res.push_back(rightBoard - leftBoard + 1);\n                leftBoard = hash[i][0];\n            }\n            rightBoard = max(rightBoard, hash[i][1]);\n        }\n        // 最右端\n        res.push_back(rightBoard - leftBoard + 1);\n        return res;\n    }\n};\n#其他语言版本\n#Java\nclass Solution {\n    public List<Integer> partitionLabels(String S) {\n        List<Integer> list = new LinkedList<>();\n        int[] edge = new int[26];\n        char[] chars = S.toCharArray();\n        for (int i = 0; i < chars.length; i++) {\n            edge[chars[i] - 'a'] = i;\n        }\n        int idx = 0;\n        int last = -1;\n        for (int i = 0; i < chars.length; i++) {\n            idx = Math.max(idx,edge[chars[i] - 'a']);\n            if (i == idx) {\n                list.add(i - last);\n                last = i;\n            }\n        }\n        return list;\n    }\n}\n\nclass Solution{\n    /*解法二： 上述c++补充思路的Java代码实现*/\n    \n    public  int[][] findPartitions(String s) {\n        List<Integer> temp = new ArrayList<>();\n        int[][] hash = new int[26][2];//26个字母2列 表示该字母对应的区间\n\n        for (int i = 0; i < s.length(); i++) {\n            //更新字符c对应的位置i\n            char c = s.charAt(i);\n            if (hash[c - 'a'][0] == 0) hash[c - 'a'][0] = i;\n\n            hash[c - 'a'][1] = i;\n\n            //第一个元素区别对待一下\n            hash[s.charAt(0) - 'a'][0] = 0;\n        }\n\n\n        List<List<Integer>> h = new LinkedList<>();\n        //组装区间\n        for (int i = 0; i < 26; i++) {\n            //if (hash[i][0] != hash[i][1]) {\n            temp.clear();\n            temp.add(hash[i][0]);\n            temp.add(hash[i][1]);\n            //System.out.println(temp);\n            h.add(new ArrayList<>(temp));\n            // }\n        }\n        // System.out.println(h);\n        // System.out.println(h.size());\n        int[][] res = new int[h.size()][2];\n        for (int i = 0; i < h.size(); i++) {\n            List<Integer> list = h.get(i);\n            res[i][0] =  list.get(0);\n            res[i][1] =  list.get(1);\n        }\n\n        return res;\n\n    }\n\n    public  List<Integer> partitionLabels(String s) {\n        int[][] partitions = findPartitions(s);\n        List<Integer> res = new ArrayList<>();\n        Arrays.sort(partitions, (o1, o2) -> Integer.compare(o1[0], o2[0]));\n        int right = partitions[0][1];\n        int left = 0;\n        for (int i = 0; i < partitions.length; i++) {\n            if (partitions[i][0] > right) {\n                //左边界大于右边界即可纪委一次分割\n                res.add(right - left + 1);\n                left = partitions[i][0];\n            }\n            right = Math.max(right, partitions[i][1]);\n\n        }\n        //最右端\n        res.add(right - left + 1);\n        return res;\n\n    }\n}\n#Python\n贪心（版本一）\n\nclass Solution:\n    def partitionLabels(self, s: str) -> List[int]:\n        last_occurrence = {}  # 存储每个字符最后出现的位置\n        for i, ch in enumerate(s):\n            last_occurrence[ch] = i\n\n        result = []\n        start = 0\n        end = 0\n        for i, ch in enumerate(s):\n            end = max(end, last_occurrence[ch])  # 找到当前字符出现的最远位置\n            if i == end:  # 如果当前位置是最远位置，表示可以分割出一个区间\n                result.append(end - start + 1)\n                start = i + 1\n\n        return result\n         \n贪心（版本二）与452.用最少数量的箭引爆气球 (opens new window)、435.无重叠区间 (opens new window)相同的思路。\n\nclass Solution:\n    def countLabels(self, s):\n        # 初始化一个长度为26的区间列表，初始值为负无穷\n        hash = [[float('-inf'), float('-inf')] for _ in range(26)]\n        hash_filter = []\n        for i in range(len(s)):\n            if hash[ord(s[i]) - ord('a')][0] == float('-inf'):\n                hash[ord(s[i]) - ord('a')][0] = i\n            hash[ord(s[i]) - ord('a')][1] = i\n        for i in range(len(hash)):\n            if hash[i][0] != float('-inf'):\n                hash_filter.append(hash[i])\n        return hash_filter\n\n    def partitionLabels(self, s):\n        res = []\n        hash = self.countLabels(s)\n        hash.sort(key=lambda x: x[0])  # 按左边界从小到大排序\n        rightBoard = hash[0][1]  # 记录最大右边界\n        leftBoard = 0\n        for i in range(1, len(hash)):\n            if hash[i][0] > rightBoard:  # 出现分割点\n                res.append(rightBoard - leftBoard + 1)\n                leftBoard = hash[i][0]\n            rightBoard = max(rightBoard, hash[i][1])\n        res.append(rightBoard - leftBoard + 1)  # 最右端\n        return res"
+}

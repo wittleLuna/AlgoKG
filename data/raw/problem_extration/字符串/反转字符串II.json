@@ -1,0 +1,434 @@
+{
+  "id": "AP_f8fb203f",
+  "title": "反转字符串II",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/reverse-string-ii/",
+  "description": "一个字符串 s 和一个整数 k，从字符串开头算起, 每计数至 2k 个字符，就反转这 2k 个字符中的前 k 个字符。\n\n如果剩余字符少于 k 个，则将剩余字符全部反转。\n\n如果剩余字符小于 2k 但大于或等于 k 个，则反转前 k 个字符，其余字符保持原样。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "模拟",
+    "字符串处理"
+  ],
+  "data_structure_tags": [
+    "字符串"
+  ],
+  "technique_tags": [
+    "双指针技术",
+    "区间翻转"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过遍历字符串，并每隔2k个字符反转前k个字符来实现题目要求。当剩余字符少于k时，则将剩余字符全部反转；如果剩余字符小于2k但大于或等于k，则只反转前k个字符。",
+  "key_insights": [
+    {
+      "content": "使用i += (2 * k)作为循环中的步进值可以直接定位到每段需要处理的起点，简化了逻辑处理。"
+    },
+    {
+      "content": "对于不足k个字符或在k与2k之间的字符部分，采用条件判断来决定是否及如何执行反转操作，确保所有情况下都能正确处理。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目其实也是模拟，实现题目中规定的反转规则就可以了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: string reverseStr(string s, int k) {for (int i = 0; i < s.size(); i += (2 * k)) {if (i + k <= s.size()) {reverse(s.begin() + i, s.begin() + i + k);} else {reverse(s.begin() + i, s.end());}}return s;}};",
+          "description": "C++版本，使用库函数reverse"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void reverse(string& s, int start, int end) {for (int i = start, j = end; i < j; i++, j--) {swap(s[i], s[j]);}}string reverseStr(string s, int k) {for (int i = 0; i < s.size(); i += (2 * k)) {if (i + k <= s.size()) {reverse(s, i, i + k - 1);continue;}reverse(s, i, s.size() - 1);}return s;}};",
+          "description": "C++版本，自定义反转函数"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: string reverseStr(string s, int k) {int n = s.size(), pos = 0;while(pos < n){if(pos + k < n) reverse(s.begin() + pos, s.begin() + pos + k);else reverse(s.begin() + pos, s.end());pos += 2 * k;}return s;}};",
+          "description": "C++另一种思路的解法"
+        },
+        {
+          "language": "c",
+          "code": "char * reverseStr(char * s, int k){int len = strlen(s);for (int i = 0; i < len; i += (2 * k)) {k = i + k > len ? len - i : k;int left = i;int right = i + k - 1;while (left < right) {char temp = s[left];s[left++] = s[right];s[right--] = temp;}}return s;}",
+          "description": "C语言版本"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {StringBuffer res = new StringBuffer();int length = s.length();int start = 0;while (start < length) {StringBuffer temp = new StringBuffer();int firstK = (start + k > length) ? length : start + k;int secondK = (start + (2 * k) > length) ? length : start + (2 * k);temp.append(s.substring(start, firstK));res.append(temp.reverse());if (firstK < secondK) {res.append(s.substring(firstK, secondK));}start += (2 * k);}return res.toString();}}",
+          "description": "Java解法一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {char[] ch = s.toCharArray();for(int i = 0; i < ch.length; i += 2 * k){int start = i;int end = Math.min(ch.length - 1, start + k - 1);while(start < end){ch[start] ^= ch[end];ch[end] ^= ch[start];ch[start] ^= ch[end];start++;end--;}}return new String(ch);}}",
+          "description": "Java解法二，使用异或运算"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {char[] ch = s.toCharArray();for(int i = 0;i < ch.length;i += 2 * k){int start = i;int end = Math.min(ch.length - 1,start + k - 1);while(start < end){char temp = ch[start];ch[start] = ch[end];ch[end] = temp;start++;end--;}}return new String(ch);}}",
+          "description": "Java解法三，使用临时变量交换"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {char[] ch = s.toCharArray();for (int i = 0; i< ch.length; i += 2 * k) {if (i + k <= ch.length) {reverse(ch, i, i + k -1);continue;}reverse(ch, i, ch.length - 1);}return new String(ch);}public void reverse(char[] ch, int i, int j) {for (; i < j; i++, j--) {char temp  = ch[i];ch[i] = ch[j];ch[j] = temp;}}}",
+          "description": "Java解法四，定义翻转函数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseStr(self, s: str, k: int) -> str: def reverse_substring(text): left, right = 0, len(text) - 1 while left < right: text[left], text[right] = text[right], text[left] left += 1 right -= 1 return text res = list(s) for cur in range(0, len(s), 2 * k): res[cur: cur + k] = reverse_substring(res[cur: cur + k]) return ''.join(res)",
+          "description": "Python版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseStr(self, s: str, k: int) -> str: p = 0 while p < len(s): p2 = p + k s = s[:p] + s[p: p2][::-1] + s[p2:] p = p + 2 * k return s",
+          "description": "Python3版本v2"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseStr(self, s: str, k: int) -> str: i = 0 chars = list(s) while i < len(chars): chars[i:i + k] = chars[i:i + k][::-1] i += k * 2 return ''.join(chars)",
+          "description": "Python3版本v3"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#C：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: string reverseStr(string s, int k) {for (int i = 0; i < s.size(); i += (2 * k)) {if (i + k <= s.size()) {reverse(s.begin() + i, s.begin() + i + k);} else {reverse(s.begin() + i, s.end());}}return s;}};",
+          "description": "使用C++库函数reverse实现字符串反转"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void reverse(string& s, int start, int end) {for (int i = start, j = end; i < j; i++, j--) {swap(s[i], s[j]);}}string reverseStr(string s, int k) {for (int i = 0; i < s.size(); i += (2 * k)) {if (i + k <= s.size()) {reverse(s, i, i + k - 1);continue;}reverse(s, i, s.size() - 1);}return s;}};",
+          "description": "自定义reverse函数实现字符串反转"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: string reverseStr(string s, int k) {int n = s.size(),pos = 0;while(pos < n){if(pos + k < n) reverse(s.begin() + pos, s.begin() + pos + k);else reverse(s.begin() + pos,s.end());pos += 2 * k;}return s;}};",
+          "description": "另一种思路的解法"
+        },
+        {
+          "language": "c",
+          "code": "char * reverseStr(char * s, int k){int len = strlen(s);for (int i = 0; i < len; i += (2 * k)) {k = i + k > len ? len - i : k;int left = i;int right = i + k - 1;while (left < right) {char temp = s[left];s[left++] = s[right];s[right--] = temp;}}return s;}",
+          "description": "C语言实现字符串反转"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {StringBuffer res = new StringBuffer();int length = s.length();int start = 0;while (start < length) {StringBuffer temp = new StringBuffer();int firstK = (start + k > length) ? length : start + k;int secondK = (start + (2 * k) > length) ? length : start + (2 * k);temp.append(s.substring(start, firstK));res.append(temp.reverse());if (firstK < secondK) {res.append(s.substring(firstK, secondK));}start += (2 * k);}return res.toString();}}",
+          "description": "Java解法一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {char[] ch = s.toCharArray();for(int i = 0; i < ch.length; i += 2 * k){int start = i;int end = Math.min(ch.length - 1, start + k - 1);while(start < end){ch[start] ^= ch[end];ch[end] ^= ch[start];ch[start] ^= ch[end];start++;end--;}}return new String(ch);}}",
+          "description": "Java解法二（异或运算）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {char[] ch = s.toCharArray();for(int i = 0;i < ch.length;i += 2 * k){int start = i;int end = Math.min(ch.length - 1,start + k - 1);while(start < end){char temp = ch[start];ch[start] = ch[end];ch[end] = temp;start++;end--;}}return new String(ch);}}",
+          "description": "Java解法三（临时变量交换）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {char[] ch = s.toCharArray();for (int i = 0; i< ch.length; i += 2 * k) {if (i + k <= ch.length) {reverse(ch, i, i + k -1);continue;}reverse(ch, i, ch.length - 1);}return  new String(ch);}public void reverse(char[] ch, int i, int j) {for (; i < j; i++, j--) {char temp  = ch[i];ch[i] = ch[j];ch[j] = temp;}}}",
+          "description": "Java解法四（定义翻转函数）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseStr(self, s: str, k: int) -> str: def reverse_substring(text): left, right = 0, len(text) - 1 while left < right: text[left], text[right] = text[right], text[left] left += 1 right -= 1 return text res = list(s) for cur in range(0, len(s), 2 * k): res[cur: cur + k] = reverse_substring(res[cur: cur + k]) return ''.join(res)",
+          "description": "Python解法一"
+        },
+        {
+          "language": "python3",
+          "code": "class Solution: def reverseStr(self, s: str, k: int) -> str: p = 0 while p < len(s): p2 = p + k s = s[:p] + s[p: p2][::-1] + s[p2:] p = p + 2 * k return s",
+          "description": "Python3解法二"
+        },
+        {
+          "language": "python3",
+          "code": "class Solution: def reverseStr(self, s: str, k: int) -> str: i = 0 chars = list(s) while i < len(chars): chars[i:i + k] = chars[i:i + k][::-1] i += k * 2 return ''.join(chars)",
+          "description": "Python3解法三"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "C：",
+      "text": "char * reverseStr(char * s, int k){",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: string reverseStr(string s, int k) {for (int i = 0; i < s.size(); i += (2 * k)) {if (i + k <= s.size()) {reverse(s.begin() + i, s.begin() + i + k);} else {reverse(s.begin() + i, s.end());}}return s;}};",
+          "description": "使用C++库函数reverse实现字符串反转"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void reverse(string& s, int start, int end) {for (int i = start, j = end; i < j; i++, j--) {swap(s[i], s[j]);}}string reverseStr(string s, int k) {for (int i = 0; i < s.size(); i += (2 * k)) {if (i + k <= s.size()) {reverse(s, i, i + k - 1);continue;}reverse(s, i, s.size() - 1);}return s;}};",
+          "description": "自定义reverse函数实现字符串反转"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: string reverseStr(string s, int k) {int n = s.size(),pos = 0;while(pos < n){if(pos + k < n) reverse(s.begin() + pos, s.begin() + pos + k);else reverse(s.begin() + pos,s.end());pos += 2 * k;}return s;}};",
+          "description": "通过循环和条件判断实现字符串反转"
+        },
+        {
+          "language": "c",
+          "code": "char * reverseStr(char * s, int k){int len = strlen(s);for (int i = 0; i < len; i += (2 * k)) {k = i + k > len ? len - i : k;int left = i;int right = i + k - 1;while (left < right) {char temp = s[left];s[left++] = s[right];s[right--] = temp;}}return s;}",
+          "description": "C语言版本的字符串反转"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {StringBuffer res = new StringBuffer();int length = s.length();int start = 0;while (start < length) {StringBuffer temp = new StringBuffer();int firstK = (start + k > length) ? length : start + k;int secondK = (start + (2 * k) > length) ? length : start + (2 * k);temp.append(s.substring(start, firstK));res.append(temp.reverse());if (firstK < secondK) {res.append(s.substring(firstK, secondK));}start += (2 * k);}return res.toString();}}",
+          "description": "Java解法一，使用StringBuffer实现字符串反转"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {char[] ch = s.toCharArray();for(int i = 0; i < ch.length; i += 2 * k){int start = i;int end = Math.min(ch.length - 1, start + k - 1);while(start < end){ch[start] ^= ch[end];ch[end] ^= ch[start];ch[start] ^= ch[end];start++;end--;}}return new String(ch);}}",
+          "description": "Java解法二，使用异或运算实现字符串反转"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {char[] ch = s.toCharArray();for(int i = 0;i < ch.length;i += 2 * k){int start = i;int end = Math.min(ch.length - 1,start + k - 1);while(start < end){char temp = ch[start];ch[start] = ch[end];ch[end] = temp;start++;end--;}}return new String(ch);}}",
+          "description": "Java解法三，使用临时变量交换实现字符串反转"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {char[] ch = s.toCharArray();for (int i = 0; i< ch.length; i += 2 * k) {if (i + k <= ch.length) {reverse(ch, i, i + k -1);continue;}reverse(ch, i, ch.length - 1);}return  new String(ch);}public void reverse(char[] ch, int i, int j) {for (; i < j; i++, j--) {char temp  = ch[i];ch[i] = ch[j];ch[j] = temp;}}}",
+          "description": "Java解法四，定义翻转函数实现字符串反转"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseStr(self, s: str, k: int) -> str: def reverse_substring(text): left, right = 0, len(text) - 1 while left < right: text[left], text[right] = text[right], text[left] left += 1 right -= 1 return text res = list(s) for cur in range(0, len(s), 2 * k): res[cur: cur + k] = reverse_substring(res[cur: cur + k]) return ''.join(res)",
+          "description": "Python版本，通过切片和辅助函数实现字符串反转"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseStr(self, s: str, k: int) -> str: p = 0 while p < len(s): p2 = p + k s = s[:p] + s[p: p2][::-1] + s[p2:] p = p + 2 * k return s",
+          "description": "Python3版本，使用切片操作实现字符串反转"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseStr(self, s: str, k: int) -> str: i = 0 chars = list(s) while i < len(chars): chars[i:i + k] = chars[i:i + k][::-1] i += k * 2 return ''.join(chars)",
+          "description": "Python3版本，直接修改列表内容实现字符串反转"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "//解法一",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: string reverseStr(string s, int k) {for (int i = 0; i < s.size(); i += (2 * k)) {if (i + k <= s.size()) {reverse(s.begin() + i, s.begin() + i + k);} else {reverse(s.begin() + i, s.end());}} return s;}};",
+          "description": "使用C++库函数reverse实现字符串反转"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void reverse(string& s, int start, int end) {for (int i = start, j = end; i < j; i++, j--) {swap(s[i], s[j]);}} string reverseStr(string s, int k) {for (int i = 0; i < s.size(); i += (2 * k)) {if (i + k <= s.size()) {reverse(s, i, i + k - 1); continue;}reverse(s, i, s.size() - 1);}return s;}};",
+          "description": "自定义reverse函数实现字符串反转"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: string reverseStr(string s, int k) {int n = s.size(),pos = 0;while(pos < n){if(pos + k < n) reverse(s.begin() + pos, s.begin() + pos + k);else reverse(s.begin() + pos,s.end());pos += 2 * k;}return s;}};",
+          "description": "另一种思路的解法"
+        },
+        {
+          "language": "c",
+          "code": "char * reverseStr(char * s, int k){int len = strlen(s);for (int i = 0; i < len; i += (2 * k)) {k = i + k > len ? len - i : k;int left = i;int right = i + k - 1;while (left < right) {char temp = s[left];s[left++] = s[right];s[right--] = temp;}}return s;}",
+          "description": "C语言版本实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {StringBuffer res = new StringBuffer();int length = s.length();int start = 0;while (start < length) {StringBuffer temp = new StringBuffer();int firstK = (start + k > length) ? length : start + k;int secondK = (start + (2 * k) > length) ? length : start + (2 * k);temp.append(s.substring(start, firstK));res.append(temp.reverse());if (firstK < secondK) {res.append(s.substring(firstK, secondK));}start += (2 * k);}return res.toString();}}",
+          "description": "Java版本解法一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {char[] ch = s.toCharArray();for(int i = 0; i < ch.length; i += 2 * k){int start = i;int end = Math.min(ch.length - 1, start + k - 1);while(start < end){ch[start] ^= ch[end];ch[end] ^= ch[start];ch[start] ^= ch[end];start++;end--;}}return new String(ch);}}",
+          "description": "Java版本解法二，使用异或运算反转"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {char[] ch = s.toCharArray();for(int i = 0;i < ch.length;i += 2 * k){int start = i;int end = Math.min(ch.length - 1,start + k - 1);while(start < end){char temp = ch[start];ch[start] = ch[end];ch[end] = temp;start++;end--;}}return new String(ch);}}",
+          "description": "Java版本解法三，使用临时变量交换字符"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {char[] ch = s.toCharArray();for (int i = 0; i< ch.length; i += 2 * k) {if (i + k <= ch.length) {reverse(ch, i, i + k -1);continue;}reverse(ch, i, ch.length - 1);}return new String(ch);}public void reverse(char[] ch, int i, int j) {for (; i < j; i++, j--) {char temp  = ch[i];ch[i] = ch[j];ch[j] = temp;}}}",
+          "description": "Java版本解法四，定义翻转函数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseStr(self, s: str, k: int) -> str: def reverse_substring(text): left, right = 0, len(text) - 1 while left < right: text[left], text[right] = text[right], text[left] left += 1 right -= 1 return text res = list(s) for cur in range(0, len(s), 2 * k): res[cur: cur + k] = reverse_substring(res[cur: cur + k]) return ''.join(res)",
+          "description": "Python版本实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseStr(self, s: str, k: int) -> str: p = 0 while p < len(s): p2 = p + k s = s[:p] + s[p: p2][::-1] + s[p2:] p = p + 2 * k return s",
+          "description": "Python3版本实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def reverseStr(self, s: str, k: int) -> str: i = 0 chars = list(s) while i < len(chars): chars[i:i + k] = chars[i:i + k][::-1] i += k * 2 return ''.join(chars)",
+          "description": "Python3版本实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "class Solution:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: string reverseStr(string s, int k) {for (int i = 0; i < s.size(); i += (2 * k)) {if (i + k <= s.size()) {reverse(s.begin() + i, s.begin() + i + k);} else {reverse(s.begin() + i, s.end());}}return s;}};",
+          "description": "C++版本，使用库函数reverse实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void reverse(string& s, int start, int end) {for (int i = start, j = end; i < j; i++, j--) {swap(s[i], s[j]);}}string reverseStr(string s, int k) {for (int i = 0; i < s.size(); i += (2 * k)) {if (i + k <= s.size()) {reverse(s, i, i + k - 1);continue;}reverse(s, i, s.size() - 1);}return s;}};",
+          "description": "C++版本，自定义反转函数"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: string reverseStr(string s, int k) {int n = s.size(),pos = 0;while(pos < n){if(pos + k < n) reverse(s.begin() + pos, s.begin() + pos + k);else reverse(s.begin() + pos,s.end());pos += 2 * k;}return s;}};",
+          "description": "C++版本，另一种思路"
+        },
+        {
+          "language": "c",
+          "code": "char * reverseStr(char * s, int k){int len = strlen(s);for (int i = 0; i < len; i += (2 * k)) {k = i + k > len ? len - i : k;int left = i;int right = i + k - 1;while (left < right) {char temp = s[left];s[left++] = s[right];s[right--] = temp;}}return s;}",
+          "description": "C语言版本"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {StringBuffer res = new StringBuffer();int length = s.length();int start = 0;while (start < length) {StringBuffer temp = new StringBuffer();int firstK = (start + k > length) ? length : start + k;int secondK = (start + (2 * k) > length) ? length : start + (2 * k);temp.append(s.substring(start, firstK));res.append(temp.reverse());if (firstK < secondK) res.append(s.substring(firstK, secondK));start += (2 * k);}return res.toString();}}",
+          "description": "Java版本，解法一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {char[] ch = s.toCharArray();for(int i = 0; i < ch.length; i += 2 * k){int start = i;int end = Math.min(ch.length - 1, start + k - 1);while(start < end){ch[start] ^= ch[end];ch[end] ^= ch[start];ch[start] ^= ch[end];start++;end--;}}return new String(ch);}}",
+          "description": "Java版本，解法二，使用异或运算"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {char[] ch = s.toCharArray();for(int i = 0;i < ch.length;i += 2 * k){int start = i;int end = Math.min(ch.length - 1,start + k - 1);while(start < end){char temp = ch[start];ch[start] = ch[end];ch[end] = temp;start++;end--;}}return new String(ch);}}",
+          "description": "Java版本，解法二，使用临时变量交换"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String reverseStr(String s, int k) {char[] ch = s.toCharArray();for (int i = 0; i< ch.length; i += 2 * k) {if (i + k <= ch.length) {reverse(ch, i, i + k -1);continue;}reverse(ch, i, ch.length - 1);}return  new String(ch);}public void reverse(char[] ch, int i, int j) {for (; i < j; i++, j--) {char temp  = ch[i];ch[i] = ch[j];ch[j] = temp;}}}",
+          "description": "Java版本，解法三，定义翻转函数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def reverseStr(self, s: str, k: int) -> str:def reverse_substring(text):left, right = 0, len(text) - 1while left < right:text[left], text[right] = text[right], text[left]left += 1right -= 1return textres = list(s)for cur in range(0, len(s), 2 * k):res[cur: cur + k] = reverse_substring(res[cur: cur + k])return ''.join(res)",
+          "description": "Python版本，使用辅助函数reverse_substring"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def reverseStr(self, s: str, k: int) -> str:p = 0while p < len(s):p2 = p + ks = s[:p] + s[p: p2][::-1] + s[p2:]p = p + 2 * kreturn s",
+          "description": "Python版本，v2"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def reverseStr(self, s: str, k: int) -> str:i = 0chars = list(s)while i < len(chars):chars[i:i + k] = chars[i:i + k][::-1]i += k * 2return ''.join(chars)",
+          "description": "Python版本，v3"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "C++",
+      "code": "class Solution {public: string reverseStr(string s, int k) { for (int i = 0; i < s.size(); i += (2 * k)) { if (i + k <= s.size()) { reverse(s.begin() + i, s.begin() + i + k); } else { reverse(s.begin() + i, s.end()); } } return s; }};",
+      "description": "使用C++库函数reverse实现字符串反转"
+    },
+    {
+      "language": "C++",
+      "code": "class Solution {public: void reverse(string& s, int start, int end) { for (int i = start, j = end; i < j; i++, j--) { swap(s[i], s[j]); } } string reverseStr(string s, int k) { for (int i = 0; i < s.size(); i += (2 * k)) { if (i + k <= s.size()) { reverse(s, i, i + k - 1); continue; } reverse(s, i, s.size() - 1); } return s; }};",
+      "description": "自定义reverse函数实现字符串反转"
+    },
+    {
+      "language": "C++",
+      "code": "class Solution {public: string reverseStr(string s, int k) { int n = s.size(),pos = 0; while(pos < n){ if(pos + k < n) reverse(s.begin() + pos, s.begin() + pos + k); else reverse(s.begin() + pos,s.end()); pos += 2 * k; } return s; }};",
+      "description": "另一种思路的解法，使用while循环实现字符串反转"
+    },
+    {
+      "language": "C",
+      "code": "char * reverseStr(char * s, int k){ int len = strlen(s); for (int i = 0; i < len; i += (2 * k)) { k = i + k > len ? len - i : k; int left = i; int right = i + k - 1; while (left < right) { char temp = s[left]; s[left++] = s[right]; s[right--] = temp; } } return s;}",
+      "description": "C语言版本的字符串反转实现"
+    },
+    {
+      "language": "Java",
+      "code": "class Solution { public String reverseStr(String s, int k) { StringBuffer res = new StringBuffer(); int length = s.length(); int start = 0; while (start < length) { StringBuffer temp = new StringBuffer(); int firstK = (start + k > length) ? length : start + k; int secondK = (start + (2 * k) > length) ? length : start + (2 * k); temp.append(s.substring(start, firstK)); res.append(temp.reverse()); if (firstK < secondK) { res.append(s.substring(firstK, secondK)); } start += (2 * k); } return res.toString(); }}",
+      "description": "Java版本，使用StringBuffer实现字符串反转"
+    },
+    {
+      "language": "Java",
+      "code": "class Solution { public String reverseStr(String s, int k) { char[] ch = s.toCharArray(); for(int i = 0; i < ch.length; i += 2 * k){ int start = i; int end = Math.min(ch.length - 1, start + k - 1); while(start < end){ ch[start] ^= ch[end]; ch[end] ^= ch[start]; ch[start] ^= ch[end]; start++; end--; } } return new String(ch); }}",
+      "description": "Java版本，使用异或运算实现字符串反转"
+    },
+    {
+      "language": "Java",
+      "code": "class Solution { public String reverseStr(String s, int k) { char[] ch = s.toCharArray(); for(int i = 0;i < ch.length;i += 2 * k){ int start = i; int end = Math.min(ch.length - 1,start + k - 1); while(start < end){ char temp = ch[start]; ch[start] = ch[end]; ch[end] = temp; start++; end--; } } return new String(ch); }}",
+      "description": "Java版本，使用临时变量实现字符串反转"
+    },
+    {
+      "language": "Java",
+      "code": "class Solution { public String reverseStr(String s, int k) { char[] ch = s.toCharArray(); for (int i = 0; i< ch.length; i += 2 * k) { if (i + k <= ch.length) { reverse(ch, i, i + k -1); continue; } reverse(ch, i, ch.length - 1); } return new String(ch); } public void reverse(char[] ch, int i, int j) { for (; i < j; i++, j--) { char temp = ch[i]; ch[i] = ch[j]; ch[j] = temp; } }}",
+      "description": "Java版本，定义翻转函数实现字符串反转"
+    },
+    {
+      "language": "Python",
+      "code": "class Solution: def reverseStr(self, s: str, k: int) -> str: def reverse_substring(text): left, right = 0, len(text) - 1 while left < right: text[left], text[right] = text[right], text[left] left += 1 right -= 1 return text res = list(s) for cur in range(0, len(s), 2 * k): res[cur: cur + k] = reverse_substring(res[cur: cur + k]) return ''.join(res)",
+      "description": "Python版本，使用辅助函数实现字符串反转"
+    },
+    {
+      "language": "Python3",
+      "code": "class Solution: def reverseStr(self, s: str, k: int) -> str: p = 0 while p < len(s): p2 = p + k s = s[:p] + s[p: p2][::-1] + s[p2:] p = p + 2 * k return s",
+      "description": "Python3版本，使用切片和步长实现字符串反转"
+    },
+    {
+      "language": "Python3",
+      "code": "class Solution: def reverseStr(self, s: str, k: int) -> str: i = 0 chars = list(s) while i < len(chars): chars[i:i + k] = chars[i:i + k][::-1] i += k * 2 return ''.join(chars)",
+      "description": "Python3版本，使用列表切片实现字符串反转"
+    }
+  ],
+  "common_mistakes": [
+    "未正确处理字符串长度不是2k整数倍的情况。",
+    "在处理最后一个片段时，可能忽略了剩余字符数量不足k的情形。",
+    "忽略直接利用语言内置函数（如C++中的reverse）简化代码实现。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/541_%E5%8F%8D%E8%BD%AC%E5%AD%97%E7%AC%A6%E4%B8%B2II.png",
+      "description": "该图片展示了一个C++程序的执行结果，算法在4 ms内完成且内存消耗为7.2 MB，表现优异，分别击败了94.50%和100.00%的用户。",
+      "context": "该图片展示了按照特定算法处理字符串后的性能表现，用以说明上述优化遍历和反转逻辑的有效性。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/541_%E5%8F%8D%E8%BD%AC%E5%AD%97%E7%AC%A6%E4%B8%B2II.png",
+      "description": "GIF展示了每隔2k个字符反转前k个字符的过程，直观地演示了字符串如何根据给定规则被逐步修改。",
+      "context": "GIF动画展示了按照每隔2k个字符反转前k个字符的算法执行过程及性能表现。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\字符串\\反转字符串II.txt",
+  "extracted_at": "2025-07-21T18:58:42.164202",
+  "raw_content": "反转字符串II\n力扣题目链接(https://leetcode.cn/problems/reverse-string-ii/)\n\n给定一个字符串 s 和一个整数 k，从字符串开头算起, 每计数至 2k 个字符，就反转这 2k 个字符中的前 k 个字符。\n\n如果剩余字符少于 k 个，则将剩余字符全部反转。\n\n如果剩余字符小于 2k 但大于或等于 k 个，则反转前 k 个字符，其余字符保持原样。\n\n示例:\n\n输入: s = \"abcdefg\", k = 2\n输出: \"bacdfeg\"\n\n\n#思路\n这道题目其实也是模拟，实现题目中规定的反转规则就可以了。\n\n一些同学可能为了处理逻辑：每隔2k个字符的前k的字符，写了一堆逻辑代码或者再搞一个计数器，来统计2k，再统计前k个字符。\n\n其实在遍历字符串的过程中，只要让 i += (2 * k)，i 每次移动 2 * k 就可以了，然后判断是否需要有反转的区间。\n\n因为要找的也就是每2 * k 区间的起点，这样写，程序会高效很多。\n\n所以当需要固定规律一段一段去处理字符串的时候，要想想在for循环的表达式上做做文章。\n\n性能如下： \nhttps://file1.kamacoder.com/i/algo/541_%E5%8F%8D%E8%BD%AC%E5%AD%97%E7%AC%A6%E4%B8%B2II.png\n\n那么这里具体反转的逻辑我们要不要使用库函数呢，其实用不用都可以，使用reverse来实现反转也没毛病，毕竟不是解题关键部分。\n\n使用C++库函数reverse的版本如下：\n\nclass Solution {\npublic:\n    string reverseStr(string s, int k) {\n        for (int i = 0; i < s.size(); i += (2 * k)) {\n            // 1. 每隔 2k 个字符的前 k 个字符进行反转\n            // 2. 剩余字符小于 2k 但大于或等于 k 个，则反转前 k 个字符\n            if (i + k <= s.size()) {\n                reverse(s.begin() + i, s.begin() + i + k );\n            } else {\n                // 3. 剩余字符少于 k 个，则将剩余字符全部反转。\n                reverse(s.begin() + i, s.end());\n            }\n        }\n        return s;\n    }\n};\n时间复杂度: O(n)\n空间复杂度: O(1)\n那么我们也可以实现自己的reverse函数，其实和题目344. 反转字符串 (opens new window)道理是一样的。\n\n下面我实现的reverse函数区间是左闭右闭区间，代码如下：\n\nclass Solution {\npublic:\n    void reverse(string& s, int start, int end) {\n        for (int i = start, j = end; i < j; i++, j--) {\n            swap(s[i], s[j]);\n        }\n    }\n    string reverseStr(string s, int k) {\n        for (int i = 0; i < s.size(); i += (2 * k)) {\n            // 1. 每隔 2k 个字符的前 k 个字符进行反转\n            // 2. 剩余字符小于 2k 但大于或等于 k 个，则反转前 k 个字符\n            if (i + k <= s.size()) {\n                reverse(s, i, i + k - 1);\n                continue;\n            }\n            // 3. 剩余字符少于 k 个，则将剩余字符全部反转。\n            reverse(s, i, s.size() - 1);\n        }\n        return s;\n    }\n};\n时间复杂度: O(n)\n空间复杂度: O(1)或O(n), 取决于使用的语言中字符串是否可以修改.\n另一种思路的解法\n\nclass Solution {\npublic:\n    string reverseStr(string s, int k) {\n        int n = s.size(),pos = 0;\n        while(pos < n){\n            //剩余字符串大于等于k的情况\n            if(pos + k < n) reverse(s.begin() + pos, s.begin() + pos + k);\n            //剩余字符串不足k的情况 \n            else reverse(s.begin() + pos,s.end());\n            pos += 2 * k;\n        }\n        return s;\n    }\n};\n时间复杂度: O(n)\n空间复杂度: O(1)\n#其他语言版本\n#C：\nchar * reverseStr(char * s, int k){\n    int len = strlen(s);\n\n    for (int i = 0; i < len; i += (2 * k)) {\n        //判断剩余字符是否少于 k\n        k = i + k > len ? len - i : k;\n\n        int left = i;\n        int right = i + k - 1;\n        while (left < right) {\n            char temp = s[left];\n            s[left++] = s[right];\n            s[right--] = temp;\n        }\n    }\n\n    return s;\n}\n#Java：\n//解法一\nclass Solution {\n    public String reverseStr(String s, int k) {\n        StringBuffer res = new StringBuffer();\n        int length = s.length();\n        int start = 0;\n        while (start < length) {\n            // 找到k处和2k处\n            StringBuffer temp = new StringBuffer();\n            // 与length进行判断，如果大于length了，那就将其置为length\n            int firstK = (start + k > length) ? length : start + k;\n            int secondK = (start + (2 * k) > length) ? length : start + (2 * k);\n\n            //无论start所处位置，至少会反转一次\n            temp.append(s.substring(start, firstK));\n            res.append(temp.reverse());\n\n            // 如果firstK到secondK之间有元素，这些元素直接放入res里即可。\n            if (firstK < secondK) { //此时剩余长度一定大于k。\n                res.append(s.substring(firstK, secondK));\n            }\n            start += (2 * k);\n        }\n        return res.toString();\n    }\n}\n\n//解法二（似乎更容易理解点）\n//题目的意思其实概括为 每隔2k个反转前k个，尾数不够k个时候全部反转\nclass Solution {\n    public String reverseStr(String s, int k) {\n        char[] ch = s.toCharArray();\n        for(int i = 0; i < ch.length; i += 2 * k){\n            int start = i;\n            //这里是判断尾数够不够k个来取决end指针的位置\n            int end = Math.min(ch.length - 1, start + k - 1);\n            //用异或运算反转 \n            while(start < end){\n                ch[start] ^= ch[end];\n                ch[end] ^= ch[start];\n                ch[start] ^= ch[end];\n                start++;\n                end--;\n            }\n        }\n        return new String(ch);\n    }\n}\n\n\n// 解法二还可以用temp来交换数值，会的人更多些\nclass Solution {\n    public String reverseStr(String s, int k) {\n        char[] ch = s.toCharArray();\n        for(int i = 0;i < ch.length;i += 2 * k){\n            int start = i;\n            // 判断尾数够不够k个来取决end指针的位置\n            int end = Math.min(ch.length - 1,start + k - 1);\n            while(start < end){\n                \n                char temp = ch[start];\n                ch[start] = ch[end];\n                ch[end] = temp;\n\n                start++;\n                end--;\n            }\n        }\n        return new String(ch);\n    }\n}\n// 解法3\nclass Solution {\n    public String reverseStr(String s, int k) {\n        char[] ch = s.toCharArray();\n        // 1. 每隔 2k 个字符的前 k 个字符进行反转\n        for (int i = 0; i< ch.length; i += 2 * k) {\n            // 2. 剩余字符小于 2k 但大于或等于 k 个，则反转前 k 个字符\n            if (i + k <= ch.length) {\n                reverse(ch, i, i + k -1);\n                continue;\n            }\n            // 3. 剩余字符少于 k 个，则将剩余字符全部反转\n            reverse(ch, i, ch.length - 1);\n        }\n        return  new String(ch);\n\n    }\n    // 定义翻转函数\n    public void reverse(char[] ch, int i, int j) {\n    for (; i < j; i++, j--) {\n        char temp  = ch[i];\n        ch[i] = ch[j];\n        ch[j] = temp;\n    }\n\n    }\n}\n#Python：\nclass Solution:\n    def reverseStr(self, s: str, k: int) -> str:\n        \"\"\"\n        1. 使用range(start, end, step)来确定需要调换的初始位置\n        2. 对于字符串s = 'abc'，如果使用s[0:999] ===> 'abc'。字符串末尾如果超过最大长度，则会返回至字符串最后一个值，这个特性可以避免一些边界条件的处理。\n        3. 用切片整体替换，而不是一个个替换.\n        \"\"\"\n        def reverse_substring(text):\n            left, right = 0, len(text) - 1\n            while left < right:\n                text[left], text[right] = text[right], text[left]\n                left += 1\n                right -= 1\n            return text\n        \n        res = list(s)\n\n        for cur in range(0, len(s), 2 * k):\n            res[cur: cur + k] = reverse_substring(res[cur: cur + k])\n        \n        return ''.join(res)\n#Python3 (v2):\nclass Solution:\n    def reverseStr(self, s: str, k: int) -> str:\n        # Two pointers. Another is inside the loop.\n        p = 0\n        while p < len(s):\n            p2 = p + k\n            # Written in this could be more pythonic.\n            s = s[:p] + s[p: p2][::-1] + s[p2:]\n            p = p + 2 * k\n        return s\n#Python3 (v3):\nclass Solution:\n    def reverseStr(self, s: str, k: int) -> str:\n        i = 0\n        chars = list(s)\n        \n        while i < len(chars):\n            chars[i:i + k] = chars[i:i + k][::-1] # 反转后，更改原值为反转后值\n            i += k * 2\n\n        return ''.join(chars)"
+}

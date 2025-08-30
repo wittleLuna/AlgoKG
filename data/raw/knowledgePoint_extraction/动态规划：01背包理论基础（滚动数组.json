@@ -1,0 +1,53 @@
+{
+  "id": "PT913",
+  "name": "01背包问题",
+  "alias": [
+    "0-1 Knapsack Problem"
+  ],
+  "type": "problem_type",
+  "description": "在给定的物品集合中，每个物品都有一个重量和价值，在限定的总重量内，如何选择物品使得总价值最大。",
+  "key_concepts": [
+    "动态规划",
+    "状态转移",
+    "最优子结构"
+  ],
+  "applications": [
+    "资源分配",
+    "投资组合优化"
+  ],
+  "created_at": "2025-07-19T12:57:46Z",
+  "updated_at": "2025-07-19T12:57:46Z",
+  "source_files": [
+    "动态规划：01背包理论基础（滚动数组_kama.txt"
+  ],
+  "spacy_entities": {
+    "PROBLEM_TYPE": [
+      "背包问题",
+      "01背包问题"
+    ],
+    "ALGORITHM_PARADIGM": [
+      "动态规划",
+      "动规",
+      "dp",
+      "递归"
+    ],
+    "DATA_STRUCTURE": [
+      "数组",
+      "一维数组",
+      "二维数组",
+      "String"
+    ],
+    "CORE_CONCEPT": [
+      "递归",
+      "动态规划",
+      "初始化",
+      "空间复杂度",
+      "遍历顺序",
+      "递推公式",
+      "状态压缩"
+    ],
+    "TECHNIQUE": [
+      "滚动数组"
+    ]
+  }
+}

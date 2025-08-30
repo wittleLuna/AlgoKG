@@ -1,0 +1,416 @@
+{
+  "id": "AP_ea9fef55",
+  "title": "赎金信",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/ransom-note/",
+  "description": "给定一个赎金信 (ransom) 字符串和一个杂志(magazine)字符串，判断第一个字符串 ransom 能不能由第二个字符串 magazines 里面的字符构成。如果可以构成，返回 true ；否则返回 false。\n\n(题目说明：为了不暴露赎金信字迹，要从杂志上搜索各个需要的字母，组成单词来表达意思。杂志字符串中的每个字符只能在赎金信字符串中使用一次。)\n\n注意：\n\n你可以假设两个字符串均只含有小写字母。\n\ncanConstruct(\"a\", \"b\") -> false\ncanConstruct(\"aa\", \"ab\") -> false\ncanConstruct(\"aa\", \"aab\") -> true",
+  "examples": [],
+  "constraints": [
+    "你可以假设两个字符串均只含有小写字母。"
+  ],
+  "algorithm_tags": [
+    "哈希",
+    "计数"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "字符映射",
+    "频率统计"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过比较两个字符串中字符出现的频率来判断是否可以从一个字符串构建另一个。首先统计杂志字符串中每个字符的数量，然后遍历赎金信字符串，检查每个所需字符是否能在杂志字符串中找到足够的数量。",
+  "key_insights": [
+    {
+      "content": "通过记录每个字符在杂志中的出现次数，并且根据赎金信的需求逐个减少这些计数，可以有效判断是否存在足够的字符来构建赎金信。"
+    },
+    {
+      "content": "使用固定大小（如26个字母）的数组来存储字符出现的频次，比直接使用map更加高效，在处理大量数据时尤其明显。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目和242.有效的字母异位词 (opens new window)很像，242.有效的字母异位词 (opens new window)相当于求 字符串a 和 字符串b 是否可以相互组成 ，而这道题目是求 字符串a能否组成字符串b，而不用管字符串b 能不能组成字符串a。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canConstruct(string ransomNote, string magazine) {for (int i = 0; i < magazine.length(); i++) {for (int j = 0; j < ransomNote.length(); j++) {if (magazine[i] == ransomNote[j]) {ransomNote.erase(ransomNote.begin() + j); break;}}}if (ransomNote.length() == 0) {return true;} return false;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canConstruct(string ransomNote, string magazine) {int record[26] = {0};if (ransomNote.size() > magazine.size()) {return false;}for (int i = 0; i < magazine.length(); i++) {record[magazine[i]-'a'] ++;}for (int j = 0; j < ransomNote.length(); j++) {record[ransomNote[j]-'a']--;if(record[ransomNote[j]-'a'] < 0) {return false;}}return true;}};",
+          "description": "哈希解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canConstruct(String ransomNote, String magazine) {if (ransomNote.length() > magazine.length()) {return false;}int[] record = new int[26];for(char c : magazine.toCharArray()){record[c - 'a'] += 1;}for(char c : ransomNote.toCharArray()){record[c - 'a'] -= 1;}for(int i : record){if(i < 0){return false;}}return true;}}",
+          "description": "Java版本哈希解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: ransom_count = [0] * 26 magazine_count = [0] * 26 for c in ransomNote: ransom_count[ord(c) - ord('a')] += 1 for c in magazine: magazine_count[ord(c) - ord('a')] += 1 return all(ransom_count[i] <= magazine_count[i] for i in range(26))",
+          "description": "Python使用数组"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: hashmap = defaultdict(int) for x in magazine: hashmap[x] += 1 for x in ransomNote: value = hashmap.get(x) if not value: return False else: hashmap[x] -= 1 return True",
+          "description": "Python使用defaultdict"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: counts = {} for c in magazine: counts[c] = counts.get(c, 0) + 1 for c in ransomNote: if c not in counts or counts[c] == 0: return False counts[c] -= 1 return True",
+          "description": "Python使用字典"
+        },
+        {
+          "language": "python",
+          "code": "from collections import Counter class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: return not Counter(ransomNote) - Counter(magazine)",
+          "description": "Python使用Counter"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: return all(ransomNote.count(c) <= magazine.count(c) for c in set(ransomNote))",
+          "description": "Python使用count"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: for char in ransomNote: if char in magazine and ransomNote.count(char) <= magazine.count(char): continue else: return False return True",
+          "description": "Python简单易懂的count方法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "暴力解法",
+      "text": "那么第一个思路其实就是暴力枚举了，两层for循环，不断去寻找，代码如下：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canConstruct(string ransomNote, string magazine) {for (int i = 0; i < magazine.length(); i++) {for (int j = 0; j < ransomNote.length(); j++) {if (magazine[i] == ransomNote[j]) {ransomNote.erase(ransomNote.begin() + j);break;}}}if (ransomNote.length() == 0) {return true;}return false;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canConstruct(string ransomNote, string magazine) {int record[26] = {0};if (ransomNote.size() > magazine.size()) {return false;}for (int i = 0; i < magazine.length(); i++) {record[magazine[i]-'a'] ++;}for (int j = 0; j < ransomNote.length(); j++) {record[ransomNote[j]-'a']--;if(record[ransomNote[j]-'a'] < 0) {return false;}}return true;}};",
+          "description": "哈希解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canConstruct(String ransomNote, String magazine) {if (ransomNote.length() > magazine.length()) {return false;}int[] record = new int[26];for(char c : magazine.toCharArray()){record[c - 'a'] += 1;}for(char c : ransomNote.toCharArray()){record[c - 'a'] -= 1;}for(int i : record){if(i < 0){return false;}}return true;}}",
+          "description": "Java实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: ransom_count = [0] * 26 magazine_count = [0] * 26 for c in ransomNote: ransom_count[ord(c) - ord('a')] += 1 for c in magazine: magazine_count[ord(c) - ord('a')] += 1 return all(ransom_count[i] <= magazine_count[i] for i in range(26))",
+          "description": "Python使用数组"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict\nclass Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: hashmap = defaultdict(int) for x in magazine: hashmap[x] += 1 for x in ransomNote: value = hashmap.get(x) if not value: return False else: hashmap[x] -= 1 return True",
+          "description": "Python使用defaultdict"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: counts = {} for c in magazine: counts[c] = counts.get(c, 0) + 1 for c in ransomNote: if c not in counts or counts[c] == 0: return False counts[c] -= 1 return True",
+          "description": "Python使用字典"
+        },
+        {
+          "language": "python",
+          "code": "from collections import Counter\nclass Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: return not Counter(ransomNote) - Counter(magazine)",
+          "description": "Python使用Counter"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: return all(ransomNote.count(c) <= magazine.count(c) for c in set(ransomNote))",
+          "description": "Python使用count"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: for char in ransomNote: if char in magazine and ransomNote.count(char) <= magazine.count(char): continue else: return False return True",
+          "description": "Python简单易懂的count方法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "哈希解法",
+      "text": "因为题目说只有小写字母，那可以采用空间换取时间的哈希策略，用一个长度为26的数组来记录magazine里字母出现的次数。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canConstruct(string ransomNote, string magazine) {for (int i = 0; i < magazine.length(); i++) {for (int j = 0; j < ransomNote.length(); j++) {if (magazine[i] == ransomNote[j]) {ransomNote.erase(ransomNote.begin() + j);break;}}}return ransomNote.length() == 0;} };",
+          "description": ""
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canConstruct(string ransomNote, string magazine) {int record[26] = {0};if (ransomNote.size() > magazine.size()) {return false;}for (int i = 0; i < magazine.length(); i++) {record[magazine[i]-'a'] ++;}for (int j = 0; j < ransomNote.length(); j++) {record[ransomNote[j]-'a']--;if(record[ransomNote[j]-'a'] < 0) {return false;}}return true;}};",
+          "description": ""
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canConstruct(String ransomNote, String magazine) {if (ransomNote.length() > magazine.length()) {return false;}int[] record = new int[26];for(char c : magazine.toCharArray()){record[c - 'a'] += 1;}for(char c : ransomNote.toCharArray()){record[c - 'a'] -= 1;}for(int i : record){if(i < 0){return false;}}return true;}}",
+          "description": ""
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: ransom_count = [0] * 26 magazine_count = [0] * 26 for c in ransomNote: ransom_count[ord(c) - ord('a')] += 1 for c in magazine: magazine_count[ord(c) - ord('a')] += 1 return all(ransom_count[i] <= magazine_count[i] for i in range(26))",
+          "description": ""
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: hashmap = defaultdict(int) for x in magazine: hashmap[x] += 1 for x in ransomNote: value = hashmap.get(x) if not value: return False else: hashmap[x] -= 1 return True",
+          "description": ""
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: counts = {} for c in magazine: counts[c] = counts.get(c, 0) + 1 for c in ransomNote: if c not in counts or counts[c] == 0: return False counts[c] -= 1 return True",
+          "description": ""
+        },
+        {
+          "language": "python",
+          "code": "from collections import Counter class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: return not Counter(ransomNote) - Counter(magazine)",
+          "description": ""
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: return all(ransomNote.count(c) <= magazine.count(c) for c in set(ransomNote))",
+          "description": ""
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: for char in ransomNote: if char in magazine and ransomNote.count(char) <= magazine.count(char): continue else: return False return True",
+          "description": ""
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canConstruct(string ransomNote, string magazine) {for (int i = 0; i < magazine.length(); i++) {for (int j = 0; j < ransomNote.length(); j++) {if (magazine[i] == ransomNote[j]) {ransomNote.erase(ransomNote.begin() + j); break;}}} if (ransomNote.length() == 0) {return true;} return false;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canConstruct(string ransomNote, string magazine) {int record[26] = {0}; if (ransomNote.size() > magazine.size()) {return false;} for (int i = 0; i < magazine.length(); i++) {record[magazine[i]-'a'] ++;} for (int j = 0; j < ransomNote.length(); j++) {record[ransomNote[j]-'a']--; if(record[ransomNote[j]-'a'] < 0) {return false;}} return true;}};",
+          "description": "哈希解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canConstruct(String ransomNote, String magazine) {if (ransomNote.length() > magazine.length()) {return false;} int[] record = new int[26]; for(char c : magazine.toCharArray()){record[c - 'a'] += 1;} for(char c : ransomNote.toCharArray()){record[c - 'a'] -= 1;} for(int i : record){if(i < 0){return false;}} return true;}}",
+          "description": "哈希映射数组"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: ransom_count = [0] * 26 magazine_count = [0] * 26 for c in ransomNote: ransom_count[ord(c) - ord('a')] += 1 for c in magazine: magazine_count[ord(c) - ord('a')] += 1 return all(ransom_count[i] <= magazine_count[i] for i in range(26))",
+          "description": "使用数组"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: hashmap = defaultdict(int) for x in magazine: hashmap[x] += 1 for x in ransomNote: value = hashmap.get(x) if not value: return False else: hashmap[x] -= 1 return True",
+          "description": "使用defaultdict"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: counts = {} for c in magazine: counts[c] = counts.get(c, 0) + 1 for c in ransomNote: if c not in counts or counts[c] == 0: return False counts[c] -= 1 return True",
+          "description": "使用字典"
+        },
+        {
+          "language": "python",
+          "code": "from collections import Counter class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: return not Counter(ransomNote) - Counter(magazine)",
+          "description": "使用Counter"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: return all(ransomNote.count(c) <= magazine.count(c) for c in set(ransomNote))",
+          "description": "使用count"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: for char in ransomNote: if char in magazine and ransomNote.count(char) <= magazine.count(char): continue else: return False return True",
+          "description": "使用count（简单易懂）"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canConstruct(string ransomNote, string magazine) {for (int i = 0; i < magazine.length(); i++) {for (int j = 0; j < ransomNote.length(); j++) {if (magazine[i] == ransomNote[j]) {ransomNote.erase(ransomNote.begin() + j);break;}}}if (ransomNote.length() == 0) {return true;}return false;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canConstruct(string ransomNote, string magazine) {int record[26] = {0};if (ransomNote.size() > magazine.size()) {return false;}for (int i = 0; i < magazine.length(); i++) {record[magazine[i]-'a'] ++;}for (int j = 0; j < ransomNote.length(); j++) {record[ransomNote[j]-'a']--;if(record[ransomNote[j]-'a'] < 0) {return false;}}return true;}};",
+          "description": "哈希解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canConstruct(String ransomNote, String magazine) {if (ransomNote.length() > magazine.length()) {return false;}int[] record = new int[26];for(char c : magazine.toCharArray()){record[c - 'a'] += 1;}for(char c : ransomNote.toCharArray()){record[c - 'a'] -= 1;}for(int i : record){if(i < 0){return false;}}return true;}}",
+          "description": "Java版哈希解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: ransom_count = [0] * 26 magazine_count = [0] * 26 for c in ransomNote: ransom_count[ord(c) - ord('a')] += 1 for c in magazine: magazine_count[ord(c) - ord('a')] += 1 return all(ransom_count[i] <= magazine_count[i] for i in range(26))",
+          "description": "Python数组版本"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: hashmap = defaultdict(int) for x in magazine: hashmap[x] += 1 for x in ransomNote: value = hashmap.get(x) if not value: return False else: hashmap[x] -= 1 return True",
+          "description": "Python使用defaultdict"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: counts = {} for c in magazine: counts[c] = counts.get(c, 0) + 1 for c in ransomNote: if c not in counts or counts[c] == 0: return False counts[c] -= 1 return True",
+          "description": "Python使用字典"
+        },
+        {
+          "language": "python",
+          "code": "from collections import Counter class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: return not Counter(ransomNote) - Counter(magazine)",
+          "description": "Python使用Counter"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: return all(ransomNote.count(c) <= magazine.count(c) for c in set(ransomNote))",
+          "description": "Python使用count"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: for char in ransomNote: if char in magazine and ransomNote.count(char) <= magazine.count(char): continue else: return False return True",
+          "description": "Python简单易懂的count方法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "（版本一）使用数组",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canConstruct(string ransomNote, string magazine) {for (int i = 0; i < magazine.length(); i++) {for (int j = 0; j < ransomNote.length(); j++) {if (magazine[i] == ransomNote[j]) {ransomNote.erase(ransomNote.begin() + j); break;}}} if (ransomNote.length() == 0) {return true;} return false;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canConstruct(string ransomNote, string magazine) {int record[26] = {0}; if (ransomNote.size() > magazine.size()) {return false;} for (int i = 0; i < magazine.length(); i++) {record[magazine[i]-'a'] ++;} for (int j = 0; j < ransomNote.length(); j++) {record[ransomNote[j]-'a']--; if(record[ransomNote[j]-'a'] < 0) {return false;}} return true;}};",
+          "description": "哈希解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canConstruct(String ransomNote, String magazine) {if (ransomNote.length() > magazine.length()) {return false;} int[] record = new int[26]; for(char c : magazine.toCharArray()){record[c - 'a'] += 1;} for(char c : ransomNote.toCharArray()){record[c - 'a'] -= 1;} for(int i : record){if(i < 0){return false;}} return true;}}",
+          "description": "Java版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: ransom_count = [0] * 26 magazine_count = [0] * 26 for c in ransomNote: ransom_count[ord(c) - ord('a')] += 1 for c in magazine: magazine_count[ord(c) - ord('a')] += 1 return all(ransom_count[i] <= magazine_count[i] for i in range(26))",
+          "description": "Python使用数组"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: hashmap = defaultdict(int) for x in magazine: hashmap[x] += 1 for x in ransomNote: value = hashmap.get(x) if not value: return False else: hashmap[x] -= 1 return True",
+          "description": "Python使用defaultdict"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: counts = {} for c in magazine: counts[c] = counts.get(c, 0) + 1 for c in ransomNote: if c not in counts or counts[c] == 0: return False counts[c] -= 1 return True",
+          "description": "Python使用字典"
+        },
+        {
+          "language": "python",
+          "code": "from collections import Counter class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: return not Counter(ransomNote) - Counter(magazine)",
+          "description": "Python使用Counter"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: return all(ransomNote.count(c) <= magazine.count(c) for c in set(ransomNote))",
+          "description": "Python使用count"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: for char in ransomNote: if char in magazine and ransomNote.count(char) <= magazine.count(char): continue else: return False return True",
+          "description": "Python简单易懂"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(1)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: bool canConstruct(string ransomNote, string magazine) {for (int i = 0; i < magazine.length(); i++) {for (int j = 0; j < ransomNote.length(); j++) {if (magazine[i] == ransomNote[j]) {ransomNote.erase(ransomNote.begin() + j);break;}}}if (ransomNote.length() == 0) {return true;}return false;}};",
+      "description": "暴力解法"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: bool canConstruct(string ransomNote, string magazine) {int record[26] = {0};if (ransomNote.size() > magazine.size()) {return false;}for (int i = 0; i < magazine.length(); i++) {record[magazine[i]-'a'] ++;}for (int j = 0; j < ransomNote.length(); j++) {record[ransomNote[j]-'a']--;if(record[ransomNote[j]-'a'] < 0) {return false;}}return true;}};",
+      "description": "哈希解法"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public boolean canConstruct(String ransomNote, String magazine) {if (ransomNote.length() > magazine.length()) {return false;}int[] record = new int[26];for(char c : magazine.toCharArray()){record[c - 'a'] += 1;}for(char c : ransomNote.toCharArray()){record[c - 'a'] -= 1;}for(int i : record){if(i < 0){return false;}}return true;}}",
+      "description": "哈希解法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: ransom_count = [0] * 26 magazine_count = [0] * 26 for c in ransomNote: ransom_count[ord(c) - ord('a')] += 1 for c in magazine: magazine_count[ord(c) - ord('a')] += 1 return all(ransom_count[i] <= magazine_count[i] for i in range(26))",
+      "description": "使用数组"
+    },
+    {
+      "language": "python",
+      "code": "from collections import defaultdict class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: hashmap = defaultdict(int) for x in magazine: hashmap[x] += 1 for x in ransomNote: value = hashmap.get(x) if not value: return False else: hashmap[x] -= 1 return True",
+      "description": "使用defaultdict"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: counts = {} for c in magazine: counts[c] = counts.get(c, 0) + 1 for c in ransomNote: if c not in counts or counts[c] == 0: return False counts[c] -= 1 return True",
+      "description": "使用字典"
+    },
+    {
+      "language": "python",
+      "code": "from collections import Counter class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: return not Counter(ransomNote) - Counter(magazine)",
+      "description": "使用Counter"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: return all(ransomNote.count(c) <= magazine.count(c) for c in set(ransomNote))",
+      "description": "使用count"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def canConstruct(self, ransomNote: str, magazine: str) -> bool: for char in ransomNote: if char in magazine and ransomNote.count(char) <= magazine.count(char): continue else: return False return True",
+      "description": "使用count(简单易懂)"
+    }
+  ],
+  "common_mistakes": [
+    "忽略大小写一致性问题，虽然题目已经说明只含小写字母。",
+    "不考虑性能优化，直接采用暴力搜索方法可能导致超时。",
+    "没有预先检查ransomNote长度是否大于magazine长度，这一步可以在某些情况下提前返回结果，节省计算资源。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\哈希表\\赎金信.txt",
+  "extracted_at": "2025-07-21T03:54:03.955461",
+  "raw_content": "赎金信\n力扣题目链接(https://leetcode.cn/problems/ransom-note/\n\n给定一个赎金信 (ransom) 字符串和一个杂志(magazine)字符串，判断第一个字符串 ransom 能不能由第二个字符串 magazines 里面的字符构成。如果可以构成，返回 true ；否则返回 false。\n\n(题目说明：为了不暴露赎金信字迹，要从杂志上搜索各个需要的字母，组成单词来表达意思。杂志字符串中的每个字符只能在赎金信字符串中使用一次。)\n\n注意：\n\n你可以假设两个字符串均只含有小写字母。\n\ncanConstruct(\"a\", \"b\") -> false\ncanConstruct(\"aa\", \"ab\") -> false\ncanConstruct(\"aa\", \"aab\") -> true\n\n#思路\n这道题目和242.有效的字母异位词 (opens new window)很像，242.有效的字母异位词 (opens new window)相当于求 字符串a 和 字符串b 是否可以相互组成 ，而这道题目是求 字符串a能否组成字符串b，而不用管字符串b 能不能组成字符串a。\n\n本题判断第一个字符串ransom能不能由第二个字符串magazines里面的字符构成，但是这里需要注意两点。\n\n第一点“为了不暴露赎金信字迹，要从杂志上搜索各个需要的字母，组成单词来表达意思”  这里说明杂志里面的字母不可重复使用。\n\n第二点 “你可以假设两个字符串均只含有小写字母。” 说明只有小写字母，这一点很重要\n\n#暴力解法\n那么第一个思路其实就是暴力枚举了，两层for循环，不断去寻找，代码如下：\n\nclass Solution {\npublic:\n    bool canConstruct(string ransomNote, string magazine) {\n        for (int i = 0; i < magazine.length(); i++) {\n            for (int j = 0; j < ransomNote.length(); j++) {\n                // 在ransomNote中找到和magazine相同的字符\n                if (magazine[i] == ransomNote[j]) {\n                    ransomNote.erase(ransomNote.begin() + j); // ransomNote删除这个字符\n                    break;\n                }\n            }\n        }\n        // 如果ransomNote为空，则说明magazine的字符可以组成ransomNote\n        if (ransomNote.length() == 0) {\n            return true;\n        }\n        return false;\n    }\n};\n时间复杂度: O(n^2)\n空间复杂度: O(1)\n这里时间复杂度是比较高的，而且里面还有一个字符串删除也就是erase的操作，也是费时的，当然这段代码也可以过这道题。\n\n#哈希解法\n因为题目说只有小写字母，那可以采用空间换取时间的哈希策略，用一个长度为26的数组来记录magazine里字母出现的次数。\n\n然后再用ransomNote去验证这个数组是否包含了ransomNote所需要的所有字母。\n\n依然是数组在哈希法中的应用。\n\n一些同学可能想，用数组干啥，都用map完事了，其实在本题的情况下，使用map的空间消耗要比数组大一些的，因为map要维护红黑树或者哈希表，而且还要做哈希函数，是费时的！数据量大的话就能体现出来差别了。 所以数组更加简单直接有效！\n\n代码如下：\n\nclass Solution {\npublic:\n    bool canConstruct(string ransomNote, string magazine) {\n        int record[26] = {0};\n        //add\n        if (ransomNote.size() > magazine.size()) {\n            return false;\n        }\n        for (int i = 0; i < magazine.length(); i++) {\n            // 通过record数据记录 magazine里各个字符出现次数\n            record[magazine[i]-'a'] ++;\n        }\n        for (int j = 0; j < ransomNote.length(); j++) {\n            // 遍历ransomNote，在record里对应的字符个数做--操作\n            record[ransomNote[j]-'a']--;\n            // 如果小于零说明ransomNote里出现的字符，magazine没有\n            if(record[ransomNote[j]-'a'] < 0) {\n                return false;\n            }\n        }\n        return true;\n    }\n};\n时间复杂度: O(m+n)，其中m表示ransomNote的长度，n表示magazine的长度\n空间复杂度: O(1)\n#其他语言版本\n#Java：\nclass Solution {\n    public boolean canConstruct(String ransomNote, String magazine) {\n        // shortcut\n        if (ransomNote.length() > magazine.length()) {\n            return false;\n        }\n        // 定义一个哈希映射数组\n        int[] record = new int[26];\n\n        // 遍历\n        for(char c : magazine.toCharArray()){\n            record[c - 'a'] += 1;\n        }\n\n        for(char c : ransomNote.toCharArray()){\n            record[c - 'a'] -= 1;\n        }\n        \n        // 如果数组中存在负数，说明ransomNote字符串中存在magazine中没有的字符\n        for(int i : record){\n            if(i < 0){\n                return false;\n            }\n        }\n\n        return true;\n    }\n}\n\n#Python：\n（版本一）使用数组\n\nclass Solution:\n    def canConstruct(self, ransomNote: str, magazine: str) -> bool:\n        ransom_count = [0] * 26\n        magazine_count = [0] * 26\n        for c in ransomNote:\n            ransom_count[ord(c) - ord('a')] += 1\n        for c in magazine:\n            magazine_count[ord(c) - ord('a')] += 1\n        return all(ransom_count[i] <= magazine_count[i] for i in range(26))\n（版本二）使用defaultdict\n\nfrom collections import defaultdict\n\nclass Solution:\n    def canConstruct(self, ransomNote: str, magazine: str) -> bool:\n\n        hashmap = defaultdict(int)\n\n        for x in magazine:\n            hashmap[x] += 1\n\n        for x in ransomNote:\n            value = hashmap.get(x)\n            if not value:\n                return False\n            else:\n                hashmap[x] -= 1\n\n        return True\n（版本三）使用字典\n\nclass Solution:\n    def canConstruct(self, ransomNote: str, magazine: str) -> bool:\n        counts = {}\n        for c in magazine:\n            counts[c] = counts.get(c, 0) + 1\n        for c in ransomNote:\n            if c not in counts or counts[c] == 0:\n                return False\n            counts[c] -= 1\n        return True\n（版本四）使用Counter\n\nfrom collections import Counter\n\nclass Solution:\n    def canConstruct(self, ransomNote: str, magazine: str) -> bool:\n        return not Counter(ransomNote) - Counter(magazine)\n（版本五）使用count\n\nclass Solution:\n    def canConstruct(self, ransomNote: str, magazine: str) -> bool:\n        return all(ransomNote.count(c) <= magazine.count(c) for c in set(ransomNote))\n(版本六）使用count(简单易懂)\n\nclass Solution:\n    def canConstruct(self, ransomNote: str, magazine: str) -> bool:\n        for char in ransomNote:\n            if char in magazine and ransomNote.count(char) <= magazine.count(char):\n                continue\n            else:\n                return False\n        return True"
+}

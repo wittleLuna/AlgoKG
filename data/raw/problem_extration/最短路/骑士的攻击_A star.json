@@ -1,0 +1,410 @@
+{
+  "id": "AP_ab0cc319",
+  "title": "A * 算法精讲 （A star算法）",
+  "alternative_titles": [],
+  "platform": "kamacoder",
+  "url": "https://kamacoder.com/problempage.php?pid=1203",
+  "description": "骑士的起始坐标和目标坐标，要求根据骑士的移动规则，计算从起点到达目标点所需的最短步数。\n\n骑士移动规则如图，红色是起始位置，黄色是骑士可以走的地方。\n\nhttps://file1.kamacoder.com/i/algo/20240626104833.png\n\n棋盘大小 1000 x 1000（棋盘的 x 和 y 坐标均在 [1, 1000] 区间内，包含边界）\n\n输入描述\n\n第一行包含一个整数 n，表示测试用例的数量。\n\n接下来的 n 行，每行包含四个整数 a1, a2, b1, b2，分别表示骑士的起始位置 (a1, a2) 和目标位置 (b1, b2)。\n\n输出描述\n\n输出共 n 行，每行输出一个整数，表示骑士从起点到目标点的最短路径长度。\n\n输入",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "Breadth-First Search",
+    "A* Algorithm"
+  ],
+  "data_structure_tags": [
+    "Queue",
+    "Priority Queue"
+  ],
+  "technique_tags": [
+    "Heuristic Function",
+    "Distance Calculation",
+    "Priority Queue Optimization"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过使用A*算法改进了广度优先搜索方法，利用启发式函数来引导搜索过程，减少不必要的节点遍历，从而提高效率。具体来说，采用欧拉距离作为启发式函数，并结合优先队列来选择最有可能接近目标的节点进行扩展。",
+  "key_insights": [
+    {
+      "content": "在标准BFS中，搜索没有特定的方向性，导致大量无用节点被探索；而A*算法通过引入启发式函数H指导搜索方向，优先考虑更接近目标的节点。"
+    },
+    {
+      "content": "选择合适的启发式函数对于A*算法至关重要，本题选用欧拉距离作为启发式函数，能够有效估计从当前点到终点的实际成本。"
+    },
+    {
+      "content": "A*算法虽然提高了搜索效率，但其性能仍依赖于启发式函数的设计，在某些情况下可能无法保证找到绝对最短路径。"
+    },
+    {
+      "content": "使用优先队列管理待处理节点，确保每次取出的是目前看起来最优的节点，进一步优化了搜索过程。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "我们看到这道题目的第一个想法就是广搜，这也是最经典的广搜类型题目。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nvoid bfs(int a1,int a2, int b1, int b2)\n{\n\tqueue<int> q;\n\tq.push(a1);\n\tq.push(a2);\n\twhile(!q.empty())\n\t{\n\t\tint m=q.front(); q.pop();\n\t\tint n=q.front(); q.pop();\n\t\tif(m == b1 && n == b2)\n\t\tbreak;\n\t\tfor(int i=0;i<8;i++)\n\t\t{\n\t\t\tint mm=m + dir[i][0];\n\t\t\tint nn=n + dir[i][1];\n\t\t\tif(mm < 1 || mm > 1000 || nn < 1 || nn > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[mm][nn])\n\t\t\t{\n\t\t\t\tmoves[mm][nn]=moves[m][n]+1;\n\t\t\t\tq.push(mm);\n\t\t\t\tq.push(nn);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2, b1, b2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n\tbfs(a1, a2, b1, b2);\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "使用广度优先搜索（BFS）计算骑士从起点到终点的最短路径长度"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nint b1, b2;\n// F = G + H\n// G = 从起点到该节点路径消耗\n// H = 该节点到终点的预估消耗\n\nstruct Knight{\n    int x,y;\n    int g,h,f;\n    bool operator < (const Knight & k) const{  // 重载运算符， 从小到大排序\n     return k.f < f;\n    }\n};\npriority_queue<Knight> que;\n\nint Heuristic(const Knight& k) { // 欧拉距离\n    return (k.x - b1) * (k.x - b1) + (k.y - b2) * (k.y - b2); // 统一不开根号，这样可以提高精度\n}\nvoid astar(const Knight& k)\n{\n    Knight cur, next;\n\tque.push(k);\n\twhile(!que.empty())\n\t{\n\t\tcur=que.top(); que.pop();\n\t\tif(cur.x == b1 && cur.y == b2)\n\t\tbreak;\n\t\tfor(int i = 0; i < 8; i++)\n\t\t{\n\t\t\tnext.x = cur.x + dir[i][0];\n\t\t\tnext.y = cur.y + dir[i][1];\n\t\t\tif(next.x < 1 || next.x > 1000 || next.y < 1 || next.y > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[next.x][next.y])\n\t\t\t{\n\t\t\t\tmoves[next.x][next.y] = moves[cur.x][cur.y] + 1;\n\n                // 开始计算F\n\t\t\t\tnext.g = cur.g + 5; // 统一不开根号，这样可以提高精度，马走日，1 * 1 + 2 * 2 = 5\n                next.h = Heuristic(next);\n                next.f = next.g + next.h;\n                que.push(next);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n        Knight start;\n        start.x = a1;\n        start.y = a2;\n        start.g = 0;\n        start.h = Heuristic(start);\n        start.f = start.g + start.h;\n\tastar(start);\n        while(!que.empty()) que.pop(); // 队列清空\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "使用A*算法计算骑士从起点到终点的最短路径长度，其中启发式函数采用欧氏距离"
+        },
+        {
+          "language": "python",
+          "code": "import heapq\n\nn = int(input())\nmoves = [(1, 2), (2, 1), (-1, 2), (2, -1), (1, -2), (-2, 1), (-1, -2), (-2, -1)]\n\ndef distance(a, b):\n    return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5\n\ndef bfs(start, end):\n    q = [(distance(start, end), start)]\n    step = {start: 0}\n    \n    while q:\n        d, cur = heapq.heappop(q)\n        if cur == end:\n            return step[cur]\n        for move in moves:\n            new = (move[0] + cur[0], move[1] + cur[1])\n            if 1 <= new[0] <= 1000 and 1 <= new[1] <= 1000:\n                step_new = step[cur] + 1\n                if step_new < step.get(new, float('inf')):\n                    step[new] = step_new\n                    heapq.heappush(q, (distance(new, end) + step_new, new))\n    return False\n                      \nfor _ in range(n):\n    a1, a2, b1, b2 = map(int, input().split())\n    print(bfs((a1, a2), (b1, b2)))",
+          "description": "Python实现的A*算法来解决骑士移动问题，利用了heapq库来维护优先队列。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include<iostream>",
+      "text": "#include<queue>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nvoid bfs(int a1,int a2, int b1, int b2)\n{\n\tqueue<int> q;\n\tq.push(a1);\n\tq.push(a2);\n\twhile(!q.empty())\n\t{\n\t\tint m=q.front(); q.pop();\n\t\tint n=q.front(); q.pop();\n\t\tif(m == b1 && n == b2)\n\t\tbreak;\n\t\tfor(int i=0;i<8;i++)\n\t\t{\n\t\t\tint mm=m + dir[i][0];\n\t\t\tint nn=n + dir[i][1];\n\t\t\tif(mm < 1 || mm > 1000 || nn < 1 || nn > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[mm][nn])\n\t\t\t{\n\t\t\t\tmoves[mm][nn]=moves[m][n]+1;\n\t\t\t\tq.push(mm);\n\t\t\t\tq.push(nn);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2, b1, b2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n\tbfs(a1, a2, b1, b2);\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "使用广度优先搜索算法计算骑士从起点到终点的最短路径长度。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nint b1, b2;\n// F = G + H\n// G = 从起点到该节点路径消耗\n// H = 该节点到终点的预估消耗\nstruct Knight{\n    int x,y;\n    int g,h,f;\n    bool operator < (const Knight & k) const{  // 重载运算符， 从小到大排序\n     return k.f < f;\n    }\n};\npriority_queue<Knight> que;\nint Heuristic(const Knight& k) { // 欧拉距离\n    return (k.x - b1) * (k.x - b1) + (k.y - b2) * (k.y - b2); // 统一不开根号，这样可以提高精度\n}\nvoid astar(const Knight& k)\n{\n    Knight cur, next;\n\tque.push(k);\n\twhile(!que.empty())\n\t{\n\t\tcur=que.top(); que.pop();\n\t\tif(cur.x == b1 && cur.y == b2)\n\t\tbreak;\n\t\tfor(int i = 0; i < 8; i++)\n\t\t{\n\t\t\tnext.x = cur.x + dir[i][0];\n\t\t\tnext.y = cur.y + dir[i][1];\n\t\t\tif(next.x < 1 || next.x > 1000 || next.y < 1 || next.y > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[next.x][next.y])\n\t\t\t{\n\t\t\t\tmoves[next.x][next.y] = moves[cur.x][cur.y] + 1;\n\n                // 开始计算F\n\t\t\t\tnext.g = cur.g + 5; // 统一不开根号，这样可以提高精度，马走日，1 * 1 + 2 * 2 = 5\n                next.h = Heuristic(next);\n                next.f = next.g + next.h;\n                que.push(next);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n        Knight start;\n        start.x = a1;\n        start.y = a2;\n        start.g = 0;\n        start.h = Heuristic(start);\n        start.f = start.g + start.h;\n\tastar(start);\n        while(!que.empty()) que.pop(); // 队列清空\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "采用A*算法计算骑士从起点到终点的最短路径长度，启发式函数使用欧拉距离。"
+        },
+        {
+          "language": "python",
+          "code": "import heapq\n\nn = int(input())\n\nmoves = [(1, 2), (2, 1), (-1, 2), (2, -1), (1, -2), (-2, 1), (-1, -2), (-2, -1)]\n\ndef distance(a, b):\n    return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5\n\ndef bfs(start, end):\n    q = [(distance(start, end), start)]\n    step = {start: 0}\n    \n    while q:\n        d, cur = heapq.heappop(q)\n        if cur == end:\n            return step[cur]\n        for move in moves:\n            new = (move[0] + cur[0], move[1] + cur[1])\n            if 1 <= new[0] <= 1000 and 1 <= new[1] <= 1000:\n                step_new = step[cur] + 1\n                if step_new < step.get(new, float('inf')):\n                    step[new] = step_new\n                    heapq.heappush(q, (distance(new, end) + step_new, new))\n    return False\n                     \nfor _ in range(n):\n    a1, a2, b1, b2 = map(int, input().split())\n    print(bfs((a1, a2), (b1, b2)))",
+          "description": "Python版本的A*算法实现，用于计算骑士从起点到终点的最短路径长度，其中启发式函数基于欧拉距离。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include<queue>",
+      "text": "#include<string.h>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nvoid bfs(int a1,int a2, int b1, int b2)\n{\n\tqueue<int> q;\n\tq.push(a1);\n\tq.push(a2);\n\twhile(!q.empty())\n\t{\n\t\tint m=q.front(); q.pop();\n\t\tint n=q.front(); q.pop();\n\t\tif(m == b1 && n == b2)\n\t\tbreak;\n\t\tfor(int i=0;i<8;i++)\n\t\t{\n\t\t\tint mm=m + dir[i][0];\n\t\t\tint nn=n + dir[i][1];\n\t\t\tif(mm < 1 || mm > 1000 || nn < 1 || nn > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[mm][nn])\n\t\t\t{\n\t\t\t\tmoves[mm][nn]=moves[m][n]+1;\n\t\t\t\tq.push(mm);\n\t\t\t\tq.push(nn);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2, b1, b2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n\tbfs(a1, a2, b1, b2);\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "广度优先搜索（BFS）实现"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nint b1, b2;\n// F = G + H\n// G = 从起点到该节点路径消耗\n// H = 该节点到终点的预估消耗\n\nstruct Knight{\n    int x,y;\n    int g,h,f;\n    bool operator < (const Knight & k) const{  // 重载运算符， 从小到大排序\n     return k.f < f;\n    }\n};\n\npriority_queue<Knight> que;\n\nint Heuristic(const Knight& k) { // 欧拉距离\n    return (k.x - b1) * (k.x - b1) + (k.y - b2) * (k.y - b2); // 统一不开根号，这样可以提高精度\n}\nvoid astar(const Knight& k)\n{\n    Knight cur, next;\n\tque.push(k);\n\twhile(!que.empty())\n\t{\n\t\tcur=que.top(); que.pop();\n\t\tif(cur.x == b1 && cur.y == b2)\n\t\tbreak;\n\t\tfor(int i = 0; i < 8; i++)\n\t\t{\n\t\t\tnext.x = cur.x + dir[i][0];\n\t\t\tnext.y = cur.y + dir[i][1];\n\t\t\tif(next.x < 1 || next.x > 1000 || next.y < 1 || next.y > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[next.x][next.y])\n\t\t\t{\n\t\t\t\tmoves[next.x][next.y] = moves[cur.x][cur.y] + 1;\n\n                // 开始计算F\n\t\t\t\tnext.g = cur.g + 5; // 统一不开根号，这样可以提高精度，马走日，1 * 1 + 2 * 2 = 5\n                next.h = Heuristic(next);\n                next.f = next.g + next.h;\n                que.push(next);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n        Knight start;\n        start.x = a1;\n        start.y = a2;\n        start.g = 0;\n        start.h = Heuristic(start);\n        start.f = start.g + start.h;\n\tastar(start);\n        while(!que.empty()) que.pop(); // 队列清空\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "A*算法实现"
+        },
+        {
+          "language": "python",
+          "code": "import heapq\n\nn = int(input())\n\nmoves = [(1, 2), (2, 1), (-1, 2), (2, -1), (1, -2), (-2, 1), (-1, -2), (-2, -1)]\n\ndef distance(a, b):\n    return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5\n\ndef bfs(start, end):\n    q = [(distance(start, end), start)]\n    step = {start: 0}\n    \n    while q:\n        d, cur = heapq.heappop(q)\n        if cur == end:\n            return step[cur]\n        for move in moves:\n            new = (move[0] + cur[0], move[1] + cur[1])\n            if 1 <= new[0] <= 1000 and 1 <= new[1] <= 1000:\n                step_new = step[cur] + 1\n                if step_new < step.get(new, float('inf')):\n                    step[new] = step_new\n                    heapq.heappush(q, (distance(new, end) + step_new, new))\n    return False\n                      \nfor _ in range(n):\n    a1, a2, b1, b2 = map(int, input().split())\n    print(bfs((a1, a2), (b1, b2)))",
+          "description": "Python版本的A*算法实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include<string.h>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nvoid bfs(int a1,int a2, int b1, int b2)\n{\n\tqueue<int> q;\n\tq.push(a1);\n\tq.push(a2);\n\twhile(!q.empty())\n\t{\n\t\tint m=q.front(); q.pop();\n\t\tint n=q.front(); q.pop();\n\t\tif(m == b1 && n == b2)\n\t\tbreak;\n\t\tfor(int i=0;i<8;i++)\n\t\t{\n\t\t\tint mm=m + dir[i][0];\n\t\t\tint nn=n + dir[i][1];\n\t\t\tif(mm < 1 || mm > 1000 || nn < 1 || nn > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[mm][nn])\n\t\t\t{\n\t\t\t\tmoves[mm][nn]=moves[m][n]+1;\n\t\t\t\tq.push(mm);\n\t\t\t\tq.push(nn);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2, b1, b2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n\tbfs(a1, a2, b1, b2);\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "使用广度优先搜索（BFS）求解骑士从起点到目标点的最短路径长度。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nint b1, b2;\n// F = G + H\n// G = 从起点到该节点路径消耗\n// H = 该节点到终点的预估消耗\nstruct Knight{\n    int x,y;\n    int g,h,f;\n    bool operator < (const Knight & k) const{  // 重载运算符， 从小到大排序\n     return k.f < f;\n    }\n};\npriority_queue<Knight> que;\nint Heuristic(const Knight& k) { // 欧拉距离\n    return (k.x - b1) * (k.x - b1) + (k.y - b2) * (k.y - b2); // 统一不开根号，这样可以提高精度\n}\nvoid astar(const Knight& k)\n{\n    Knight cur, next;\n\tque.push(k);\n\twhile(!que.empty())\n\t{\n\t\tcur=que.top(); que.pop();\n\t\tif(cur.x == b1 && cur.y == b2)\n\t\tbreak;\n\t\tfor(int i = 0; i < 8; i++)\n\t\t{\n\t\t\tnext.x = cur.x + dir[i][0];\n\t\t\tnext.y = cur.y + dir[i][1];\n\t\t\tif(next.x < 1 || next.x > 1000 || next.y < 1 || next.y > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[next.x][next.y])\n\t\t\t{\n\t\t\t\tmoves[next.x][next.y] = moves[cur.x][cur.y] + 1;\n                // 开始计算F\n\t\t\t\tnext.g = cur.g + 5; // 统一不开根号，这样可以提高精度，马走日，1 * 1 + 2 * 2 = 5\n                next.h = Heuristic(next);\n                next.f = next.g + next.h;\n                que.push(next);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n        Knight start;\n        start.x = a1;\n        start.y = a2;\n        start.g = 0;\n        start.h = Heuristic(start);\n        start.f = start.g + start.h;\n\tastar(start);\n        while(!que.empty()) que.pop(); // 队列清空\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "采用A*算法（启发式搜索），通过欧拉距离作为启发式函数来优化骑士从起点到目标点的最短路径搜索过程。"
+        },
+        {
+          "language": "python",
+          "code": "import heapq\n\nn = int(input())\n\nmoves = [(1, 2), (2, 1), (-1, 2), (2, -1), (1, -2), (-2, 1), (-1, -2), (-2, -1)]\n\ndef distance(a, b):\n    return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5\n\ndef bfs(start, end):\n    q = [(distance(start, end), start)]\n    step = {start: 0}\n    \n    while q:\n        d, cur = heapq.heappop(q)\n        if cur == end:\n            return step[cur]\n        for move in moves:\n            new = (move[0] + cur[0], move[1] + cur[1])\n            if 1 <= new[0] <= 1000 and 1 <= new[1] <= 1000:\n                step_new = step[cur] + 1\n                if step_new < step.get(new, float('inf')):\n                    step[new] = step_new\n                    heapq.heappush(q, (distance(new, end) + step_new, new))\n    return False\n                     \nfor _ in range(n):\n    a1, a2, b1, b2 = map(int, input().split())\n    print(bfs((a1, a2), (b1, b2)))",
+          "description": "使用Python实现的A*算法版本，用于计算骑士从起点到目标点的最短移动步数。此版本同样使用了欧拉距离作为启发式函数。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Astar",
+      "text": "Astar 是一种 广搜的改良版。 有的是 Astar是 dijkstra 的改良版。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nvoid bfs(int a1,int a2, int b1, int b2)\n{\n\tqueue<int> q;\n\tq.push(a1);\n\tq.push(a2);\n\twhile(!q.empty())\n\t{\n\t\tint m=q.front(); q.pop();\n\t\tint n=q.front(); q.pop();\n\t\tif(m == b1 && n == b2)\n\t\tbreak;\n\t\tfor(int i=0;i<8;i++)\n\t\t{\n\t\t\tint mm=m + dir[i][0];\n\t\t\tint nn=n + dir[i][1];\n\t\t\tif(mm < 1 || mm > 1000 || nn < 1 || nn > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[mm][nn])\n\t\t\t{\n\t\t\t\tmoves[mm][nn]=moves[m][n]+1;\n\t\t\t\tq.push(mm);\n\t\t\t\tq.push(nn);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2, b1, b2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n\tbfs(a1, a2, b1, b2);\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "使用广度优先搜索解决骑士的攻击问题"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nint b1, b2;\n// F = G + H\n// G = 从起点到该节点路径消耗\n// H = 该节点到终点的预估消耗\n\nstruct Knight{\n    int x,y;\n    int g,h,f;\n    bool operator < (const Knight & k) const{  // 重载运算符， 从小到大排序\n     return k.f < f;\n    }\n};\npriority_queue<Knight> que;\n\nint Heuristic(const Knight& k) { // 欧拉距离\n    return (k.x - b1) * (k.x - b1) + (k.y - b2) * (k.y - b2); // 统一不开根号，这样可以提高精度\n}\nvoid astar(const Knight& k)\n{\n    Knight cur, next;\n\tque.push(k);\n\twhile(!que.empty())\n\t{\n\t\tcur=que.top(); que.pop();\n\t\tif(cur.x == b1 && cur.y == b2)\n\t\tbreak;\n\t\tfor(int i = 0; i < 8; i++)\n\t\t{\n\t\t\tnext.x = cur.x + dir[i][0];\n\t\t\tnext.y = cur.y + dir[i][1];\n\t\t\tif(next.x < 1 || next.x > 1000 || next.y < 1 || next.y > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[next.x][next.y])\n\t\t\t{\n\t\t\t\tmoves[next.x][next.y] = moves[cur.x][cur.y] + 1;\n\n                // 开始计算F\n\t\t\t\tnext.g = cur.g + 5; // 统一不开根号，这样可以提高精度，马走日，1 * 1 + 2 * 2 = 5\n                next.h = Heuristic(next);\n                next.f = next.g + next.h;\n                que.push(next);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n        Knight start;\n        start.x = a1;\n        start.y = a2;\n        start.g = 0;\n        start.h = Heuristic(start);\n        start.f = start.g + start.h;\n\tastar(start);\n        while(!que.empty()) que.pop(); // 队列清空\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "使用A*算法（启发式搜索）解决骑士的攻击问题"
+        },
+        {
+          "language": "python",
+          "code": "import heapq\n\nn = int(input())\n\nmoves = [(1, 2), (2, 1), (-1, 2), (2, -1), (1, -2), (-2, 1), (-1, -2), (-2, -1)]\n\ndef distance(a, b):\n    return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5\n\ndef bfs(start, end):\n    q = [(distance(start, end), start)]\n    step = {start: 0}\n    \n    while q:\n        d, cur = heapq.heappop(q)\n        if cur == end:\n            return step[cur]\n        for move in moves:\n            new = (move[0] + cur[0], move[1] + cur[1])\n            if 1 <= new[0] <= 1000 and 1 <= new[1] <= 1000:\n                step_new = step[cur] + 1\n                if step_new < step.get(new, float('inf')):\n                    step[new] = step_new\n                    heapq.heappush(q, (distance(new, end) + step_new, new))\n    return False\n                     \nfor _ in range(n):\n    a1, a2, b1, b2 = map(int, input().split())\n    print(bfs((a1, a2), (b1, b2)))",
+          "description": "Python版本的A*算法实现来解决骑士的攻击问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include<iostream>",
+      "text": "#include<queue>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nvoid bfs(int a1,int a2, int b1, int b2)\n{\n\tqueue<int> q;\n\tq.push(a1);\n\tq.push(a2);\n\twhile(!q.empty())\n\t{\n\t\tint m=q.front(); q.pop();\n\t\tint n=q.front(); q.pop();\n\t\tif(m == b1 && n == b2)\n\t\tbreak;\n\t\tfor(int i=0;i<8;i++)\n\t\t{\n\t\t\tint mm=m + dir[i][0];\n\t\t\tint nn=n + dir[i][1];\n\t\t\tif(mm < 1 || mm > 1000 || nn < 1 || nn > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[mm][nn])\n\t\t\t{\n\t\t\t\tmoves[mm][nn]=moves[m][n]+1;\n\t\t\t\tq.push(mm);\n\t\t\t\tq.push(nn);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2, b1, b2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n\tbfs(a1, a2, b1, b2);\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "使用广度优先搜索（BFS）解决骑士从起点到终点的最短路径问题。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nint b1, b2;\nstruct Knight{\n    int x,y;\n    int g,h,f;\n    bool operator < (const Knight & k) const{  \n     return k.f < f;\n    }\n};\npriority_queue<Knight> que;\nint Heuristic(const Knight& k) { \n    return (k.x - b1) * (k.x - b1) + (k.y - b2) * (k.y - b2); \n}\nvoid astar(const Knight& k)\n{\n    Knight cur, next;\n\tque.push(k);\n\twhile(!que.empty())\n\t{\n\t\tcur=que.top(); que.pop();\n\t\tif(cur.x == b1 && cur.y == b2)\n\t\tbreak;\n\t\tfor(int i = 0; i < 8; i++)\n\t\t{\n\t\t\tnext.x = cur.x + dir[i][0];\n\t\t\tnext.y = cur.y + dir[i][1];\n\t\t\tif(next.x < 1 || next.x > 1000 || next.y < 1 || next.y > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[next.x][next.y])\n\t\t\t{\n\t\t\t\tmoves[next.x][next.y] = moves[cur.x][cur.y] + 1;\n                next.g = cur.g + 5; \n                next.h = Heuristic(next);\n                next.f = next.g + next.h;\n                que.push(next);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n        Knight start;\n        start.x = a1;\n        start.y = a2;\n        start.g = 0;\n        start.h = Heuristic(start);\n        start.f = start.g + start.h;\n\tastar(start);\n        while(!que.empty()) que.pop();\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "使用A*算法解决骑士从起点到终点的最短路径问题，通过启发式函数优化搜索过程。"
+        },
+        {
+          "language": "python",
+          "code": "import heapq\n\nn = int(input())\n\nmoves = [(1, 2), (2, 1), (-1, 2), (2, -1), (1, -2), (-2, 1), (-1, -2), (-2, -1)]\n\ndef distance(a, b):\n    return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5\n\ndef bfs(start, end):\n    q = [(distance(start, end), start)]\n    step = {start: 0}\n    \n    while q:\n        d, cur = heapq.heappop(q)\n        if cur == end:\n            return step[cur]\n        for move in moves:\n            new = (move[0] + cur[0], move[1] + cur[1])\n            if 1 <= new[0] <= 1000 and 1 <= new[1] <= 1000:\n                step_new = step[cur] + 1\n                if step_new < step.get(new, float('inf')):\n                    step[new] = step_new\n                    heapq.heappush(q, (distance(new, end) + step_new, new))\n    return False\n                     \nfor _ in range(n):\n    a1, a2, b1, b2 = map(int, input().split())\n    print(bfs((a1, a2), (b1, b2)))",
+          "description": "Python版本的A*算法实现，用于计算骑士从起点到终点的最短路径。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include<queue>",
+      "text": "#include<string.h>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nvoid bfs(int a1,int a2, int b1, int b2)\n{\n\tqueue<int> q;\n\tq.push(a1);\n\tq.push(a2);\n\twhile(!q.empty())\n\t{\n\t\tint m=q.front(); q.pop();\n\t\tint n=q.front(); q.pop();\n\t\tif(m == b1 && n == b2)\n\t\tbreak;\n\t\tfor(int i=0;i<8;i++)\n\t\t{\n\t\t\tint mm=m + dir[i][0];\n\t\t\tint nn=n + dir[i][1];\n\t\t\tif(mm < 1 || mm > 1000 || nn < 1 || nn > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[mm][nn])\n\t\t\t{\n\t\t\t\tmoves[mm][nn]=moves[m][n]+1;\n\t\t\t\tq.push(mm);\n\t\t\t\tq.push(nn);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2, b1, b2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n\tbfs(a1, a2, b1, b2);\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "广度优先搜索算法实现"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nint b1, b2;\n// F = G + H\n// G = 从起点到该节点路径消耗\n// H = 该节点到终点的预估消耗\n\nstruct Knight{\n    int x,y;\n    int g,h,f;\n    bool operator < (const Knight & k) const{  // 重载运算符， 从小到大排序\n     return k.f < f;\n    }\n};\npriority_queue<Knight> que;\n\nint Heuristic(const Knight& k) { // 欧拉距离\n    return (k.x - b1) * (k.x - b1) + (k.y - b2) * (k.y - b2); // 统一不开根号，这样可以提高精度\n}\nvoid astar(const Knight& k)\n{\n    Knight cur, next;\n\tque.push(k);\n\twhile(!que.empty())\n\t{\n\t\tcur=que.top(); que.pop();\n\t\tif(cur.x == b1 && cur.y == b2)\n\t\tbreak;\n\t\tfor(int i = 0; i < 8; i++)\n\t\t{\n\t\t\tnext.x = cur.x + dir[i][0];\n\t\t\tnext.y = cur.y + dir[i][1];\n\t\t\tif(next.x < 1 || next.x > 1000 || next.y < 1 || next.y > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[next.x][next.y])\n\t\t\t{\n\t\t\t\tmoves[next.x][next.y] = moves[cur.x][cur.y] + 1;\n\n                // 开始计算F\n\t\t\t\tnext.g = cur.g + 5; // 统一不开根号，这样可以提高精度，马走日，1 * 1 + 2 * 2 = 5\n                next.h = Heuristic(next);\n                next.f = next.g + next.h;\n                que.push(next);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n        Knight start;\n        start.x = a1;\n        start.y = a2;\n        start.g = 0;\n        start.h = Heuristic(start);\n        start.f = start.g + start.h;\n\tastar(start);\n        while(!que.empty()) que.pop(); // 队列清空\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "A* 算法实现"
+        },
+        {
+          "language": "python",
+          "code": "import heapq\n\nn = int(input())\n\nmoves = [(1, 2), (2, 1), (-1, 2), (2, -1), (1, -2), (-2, 1), (-1, -2), (-2, -1)]\n\ndef distance(a, b):\n    return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5\n\ndef bfs(start, end):\n    q = [(distance(start, end), start)]\n    step = {start: 0}\n    \n    while q:\n        d, cur = heapq.heappop(q)\n        if cur == end:\n            return step[cur]\n        for move in moves:\n            new = (move[0] + cur[0], move[1] + cur[1])\n            if 1 <= new[0] <= 1000 and 1 <= new[1] <= 1000:\n                step_new = step[cur] + 1\n                if step_new < step.get(new, float('inf')):\n                    step[new] = step_new\n                    heapq.heappush(q, (distance(new, end) + step_new, new))\n    return False\n                     \nfor _ in range(n):\n    a1, a2, b1, b2 = map(int, input().split())\n    print(bfs((a1, a2), (b1, b2)))",
+          "description": "Python版本的A*算法实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include<string.h>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nvoid bfs(int a1,int a2, int b1, int b2)\n{\n\tqueue<int> q;\n\tq.push(a1);\n\tq.push(a2);\n\twhile(!q.empty())\n\t{\n\t\tint m=q.front(); q.pop();\n\t\tint n=q.front(); q.pop();\n\t\tif(m == b1 && n == b2)\n\t\tbreak;\n\t\tfor(int i=0;i<8;i++)\n\t\t{\n\t\t\tint mm=m + dir[i][0];\n\t\t\tint nn=n + dir[i][1];\n\t\t\tif(mm < 1 || mm > 1000 || nn < 1 || nn > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[mm][nn])\n\t\t\t{\n\t\t\t\tmoves[mm][nn]=moves[m][n]+1;\n\t\t\t\tq.push(mm);\n\t\t\t\tq.push(nn);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2, b1, b2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n\tbfs(a1, a2, b1, b2);\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "广搜实现"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nint b1, b2;\n// F = G + H\n// G = 从起点到该节点路径消耗\n// H = 该节点到终点的预估消耗\n\nstruct Knight{\n    int x,y;\n    int g,h,f;\n    bool operator < (const Knight & k) const{  // 重载运算符， 从小到大排序\n     return k.f < f;\n    }\n};\npriority_queue<Knight> que;\n\nint Heuristic(const Knight& k) { // 欧拉距离\n    return (k.x - b1) * (k.x - b1) + (k.y - b2) * (k.y - b2); // 统一不开根号，这样可以提高精度\n}\nvoid astar(const Knight& k)\n{\n    Knight cur, next;\n\tque.push(k);\n\twhile(!que.empty())\n\t{\n\t\tcur=que.top(); que.pop();\n\t\tif(cur.x == b1 && cur.y == b2)\n\t\tbreak;\n\t\tfor(int i = 0; i < 8; i++)\n\t\t{\n\t\t\tnext.x = cur.x + dir[i][0];\n\t\t\tnext.y = cur.y + dir[i][1];\n\t\t\tif(next.x < 1 || next.x > 1000 || next.y < 1 || next.y > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[next.x][next.y])\n\t\t\t{\n\t\t\t\tmoves[next.x][next.y] = moves[cur.x][cur.y] + 1;\n\n                // 开始计算F\n\t\t\t\tnext.g = cur.g + 5; // 统一不开根号，这样可以提高精度，马走日，1 * 1 + 2 * 2 = 5\n                next.h = Heuristic(next);\n                next.f = next.g + next.h;\n                que.push(next);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n        Knight start;\n        start.x = a1;\n        start.y = a2;\n        start.g = 0;\n        start.h = Heuristic(start);\n        start.f = start.g + start.h;\n\tastar(start);\n        while(!que.empty()) que.pop(); // 队列清空\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "A*算法实现"
+        },
+        {
+          "language": "python",
+          "code": "import heapq\n\nn = int(input())\n\nmoves = [(1, 2), (2, 1), (-1, 2), (2, -1), (1, -2), (-2, 1), (-1, -2), (-2, -1)]\n\ndef distance(a, b):\n    return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5\n\ndef bfs(start, end):\n    q = [(distance(start, end), start)]\n    step = {start: 0}\n    \n    while q:\n        d, cur = heapq.heappop(q)\n        if cur == end:\n            return step[cur]\n        for move in moves:\n            new = (move[0] + cur[0], move[1] + cur[1])\n            if 1 <= new[0] <= 1000 and 1 <= new[1] <= 1000:\n                step_new = step[cur] + 1\n                if step_new < step.get(new, float('inf')):\n                    step[new] = step_new\n                    heapq.heappush(q, (distance(new, end) + step_new, new))\n    return False\n                         \nfor _ in range(n):\n    a1, a2, b1, b2 = map(int, input().split())\n    print(bfs((a1, a2), (b1, b2)))",
+          "description": "Python版本A*算法实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "复杂度分析",
+      "text": "A * 算法的时间复杂度 其实是不好去量化的，因为他取决于 启发式函数怎么写。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nvoid bfs(int a1,int a2, int b1, int b2)\n{\n\tqueue<int> q;\n\tq.push(a1);\n\tq.push(a2);\n\twhile(!q.empty())\n\t{\n\t\tint m=q.front(); q.pop();\n\t\tint n=q.front(); q.pop();\n\t\tif(m == b1 && n == b2)\n\t\tbreak;\n\t\tfor(int i=0;i<8;i++)\n\t\t{\n\t\t\tint mm=m + dir[i][0];\n\t\t\tint nn=n + dir[i][1];\n\t\t\tif(mm < 1 || mm > 1000 || nn < 1 || nn > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[mm][nn])\n\t\t\t{\n\t\t\t\tmoves[mm][nn]=moves[m][n]+1;\n\t\t\t\tq.push(mm);\n\t\t\t\tq.push(nn);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2, b1, b2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n\tbfs(a1, a2, b1, b2);\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "使用广度优先搜索(BFS)来解决骑士最短路径问题的C++实现。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nint b1, b2;\n// F = G + H\n// G = 从起点到该节点路径消耗\n// H = 该节点到终点的预估消耗\n\nstruct Knight{\n    int x,y;\n    int g,h,f;\n    bool operator < (const Knight & k) const{  // 重载运算符， 从小到大排序\n     return k.f < f;\n    }\n};\n\npriority_queue<Knight> que;\n\nint Heuristic(const Knight& k) { // 欧拉距离\n    return (k.x - b1) * (k.x - b1) + (k.y - b2) * (k.y - b2); // 统一不开根号，这样可以提高精度\n}\nvoid astar(const Knight& k)\n{\n    Knight cur, next;\n\tque.push(k);\n\twhile(!que.empty())\n\t{\n\t\tcur=que.top(); que.pop();\n\t\tif(cur.x == b1 && cur.y == b2)\n\t\tbreak;\n\t\tfor(int i = 0; i < 8; i++)\n\t\t{\n\t\t\tnext.x = cur.x + dir[i][0];\n\t\t\tnext.y = cur.y + dir[i][1];\n\t\t\tif(next.x < 1 || next.x > 1000 || next.y < 1 || next.y > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[next.x][next.y])\n\t\t\t{\n\t\t\t\tmoves[next.x][next.y] = moves[cur.x][cur.y] + 1;\n\n                // 开始计算F\n\t\t\t\tnext.g = cur.g + 5; // 统一不开根号，这样可以提高精度，马走日，1 * 1 + 2 * 2 = 5\n                next.h = Heuristic(next);\n                next.f = next.g + next.h;\n                que.push(next);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n        Knight start;\n        start.x = a1;\n        start.y = a2;\n        start.g = 0;\n        start.h = Heuristic(start);\n        start.f = start.g + start.h;\n\tastar(start);\n        while(!que.empty()) que.pop(); // 队列清空\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "使用A*算法来解决骑士最短路径问题的C++实现，其中启发式函数采用欧拉距离。"
+        },
+        {
+          "language": "python",
+          "code": "import heapq\n\nn = int(input())\n\nmoves = [(1, 2), (2, 1), (-1, 2), (2, -1), (1, -2), (-2, 1), (-1, -2), (-2, -1)]\n\ndef distance(a, b):\n    return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5\n\ndef bfs(start, end):\n    q = [(distance(start, end), start)]\n    step = {start: 0}\n    \n    while q:\n        d, cur = heapq.heappop(q)\n        if cur == end:\n            return step[cur]\n        for move in moves:\n            new = (move[0] + cur[0], move[1] + cur[1])\n            if 1 <= new[0] <= 1000 and 1 <= new[1] <= 1000:\n                step_new = step[cur] + 1\n                if step_new < step.get(new, float('inf')):\n                    step[new] = step_new\n                    heapq.heappush(q, (distance(new, end) + step_new, new))\n    return False\n                     \nfor _ in range(n):\n    a1, a2, b1, b2 = map(int, input().split())\n    print(bfs((a1, a2), (b1, b2)))",
+          "description": "使用Python实现A*算法解决骑士最短路径问题，其中启发式函数同样采用了欧拉距离。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "拓展",
+      "text": "如果本题大家使用 曼哈顿距离 或者 切比雪夫距离 计算的话，可以提交试一试，有的最短路结果是并不是最短的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nvoid bfs(int a1,int a2, int b1, int b2)\n{\n\tqueue<int> q;\n\tq.push(a1);\n\tq.push(a2);\n\twhile(!q.empty())\n\t{\n\t\tint m=q.front(); q.pop();\n\t\tint n=q.front(); q.pop();\n\t\tif(m == b1 && n == b2)\n\t\tbreak;\n\t\tfor(int i=0;i<8;i++)\n\t\t{\n\t\t\tint mm=m + dir[i][0];\n\t\t\tint nn=n + dir[i][1];\n\t\t\tif(mm < 1 || mm > 1000 || nn < 1 || nn > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[mm][nn])\n\t\t\t{\n\t\t\t\tmoves[mm][nn]=moves[m][n]+1;\n\t\t\t\tq.push(mm);\n\t\t\t\tq.push(nn);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2, b1, b2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n\tbfs(a1, a2, b1, b2);\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "C++代码实现使用BFS计算骑士从起点到目标点的最短路径长度。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nint b1, b2;\n// F = G + H\n// G = 从起点到该节点路径消耗\n// H = 该节点到终点的预估消耗\n\nstruct Knight{\n    int x,y;\n    int g,h,f;\n    bool operator < (const Knight & k) const{  // 重载运算符， 从小到大排序\n     return k.f < f;\n    }\n};\n\npriority_queue<Knight> que;\n\nint Heuristic(const Knight& k) { // 欧拉距离\n    return (k.x - b1) * (k.x - b1) + (k.y - b2) * (k.y - b2); // 统一不开根号，这样可以提高精度\n}\nvoid astar(const Knight& k)\n{\n    Knight cur, next;\n\tque.push(k);\n\twhile(!que.empty())\n\t{\n\t\tcur=que.top(); que.pop();\n\t\tif(cur.x == b1 && cur.y == b2)\n\t\tbreak;\n\t\tfor(int i = 0; i < 8; i++)\n\t\t{\n\t\t\tnext.x = cur.x + dir[i][0];\n\t\t\tnext.y = cur.y + dir[i][1];\n\t\t\tif(next.x < 1 || next.x > 1000 || next.y < 1 || next.y > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[next.x][next.y])\n\t\t\t{\n\t\t\t\tmoves[next.x][next.y] = moves[cur.x][cur.y] + 1;\n\n                // 开始计算F\n\t\t\t\tnext.g = cur.g + 5; // 统一不开根号，这样可以提高精度，马走日，1 * 1 + 2 * 2 = 5\n                next.h = Heuristic(next);\n                next.f = next.g + next.h;\n                que.push(next);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n        Knight start;\n        start.x = a1;\n        start.y = a2;\n        start.g = 0;\n        start.h = Heuristic(start);\n        start.f = start.g + start.h;\n\tastar(start);\n        while(!que.empty()) que.pop(); // 队列清空\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "C++代码实现使用A*算法计算骑士从起点到目标点的最短路径长度。启发式函数采用欧拉距离。"
+        },
+        {
+          "language": "python",
+          "code": "import heapq\n\nn = int(input())\n\nmoves = [(1, 2), (2, 1), (-1, 2), (2, -1), (1, -2), (-2, 1), (-1, -2), (-2, -1)]\n\ndef distance(a, b):\n    return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5\n\ndef bfs(start, end):\n    q = [(distance(start, end), start)]\n    step = {start: 0}\n    \n    while q:\n        d, cur = heapq.heappop(q)\n        if cur == end:\n            return step[cur]\n        for move in moves:\n            new = (move[0] + cur[0], move[1] + cur[1])\n            if 1 <= new[0] <= 1000 and 1 <= new[1] <= 1000:\n                step_new = step[cur] + 1\n                if step_new < step.get(new, float('inf')):\n                    step[new] = step_new\n                    heapq.heappush(q, (distance(new, end) + step_new, new))\n    return False\n                      \nfor _ in range(n):\n    a1, a2, b1, b2 = map(int, input().split())\n    print(bfs((a1, a2), (b1, b2)))",
+          "description": "Python代码实现使用A*算法计算骑士从起点到目标点的最短路径长度。启发式函数采用欧拉距离。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nvoid bfs(int a1,int a2, int b1, int b2)\n{\n\tqueue<int> q;\n\tq.push(a1);\n\tq.push(a2);\n\twhile(!q.empty())\n\t{\n\t\tint m=q.front(); q.pop();\n\t\tint n=q.front(); q.pop();\n\t\tif(m == b1 && n == b2)\n\t\tbreak;\n\t\tfor(int i=0;i<8;i++)\n\t\t{\n\t\t\tint mm=m + dir[i][0];\n\t\t\tint nn=n + dir[i][1];\n\t\t\tif(mm < 1 || mm > 1000 || nn < 1 || nn > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[mm][nn])\n\t\t\t{\n\t\t\t\tmoves[mm][nn]=moves[m][n]+1;\n\t\t\t\tq.push(mm);\n\t\t\t\tq.push(nn);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2, b1, b2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n\tbfs(a1, a2, b1, b2);\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "使用广搜算法解决骑士的攻击问题"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nint b1, b2;\n// F = G + H\n// G = 从起点到该节点路径消耗\n// H = 该节点到终点的预估消耗\n\nstruct Knight{\n    int x,y;\n    int g,h,f;\n    bool operator < (const Knight & k) const{  // 重载运算符， 从小到大排序\n     return k.f < f;\n    }\n};\n\npriority_queue<Knight> que;\n\nint Heuristic(const Knight& k) { // 欧拉距离\n    return (k.x - b1) * (k.x - b1) + (k.y - b2) * (k.y - b2); // 统一不开根号，这样可以提高精度\n}\nvoid astar(const Knight& k)\n{\n    Knight cur, next;\n\tque.push(k);\n\twhile(!que.empty())\n\t{\n\t\tcur=que.top(); que.pop();\n\t\tif(cur.x == b1 && cur.y == b2)\n\t\tbreak;\n\t\tfor(int i = 0; i < 8; i++)\n\t\t{\n\t\t\tnext.x = cur.x + dir[i][0];\n\t\t\tnext.y = cur.y + dir[i][1];\n\t\t\tif(next.x < 1 || next.x > 1000 || next.y < 1 || next.y > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[next.x][next.y])\n\t\t\t{\n\t\t\t\tmoves[next.x][next.y] = moves[cur.x][cur.y] + 1;\n\n                // 开始计算F\n\t\t\t\tnext.g = cur.g + 5; // 统一不开根号，这样可以提高精度，马走日，1 * 1 + 2 * 2 = 5\n                next.h = Heuristic(next);\n                next.f = next.g + next.h;\n                que.push(next);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n        Knight start;\n        start.x = a1;\n        start.y = a2;\n        start.g = 0;\n        start.h = Heuristic(start);\n        start.f = start.g + start.h;\n\tastar(start);\n        while(!que.empty()) que.pop(); // 队列清空\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "使用A*算法（启发式搜索）解决骑士的攻击问题"
+        },
+        {
+          "language": "python",
+          "code": "import heapq\n\nn = int(input())\n\nmoves = [(1, 2), (2, 1), (-1, 2), (2, -1), (1, -2), (-2, 1), (-1, -2), (-2, -1)]\n\ndef distance(a, b):\n    return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5\n\ndef bfs(start, end):\n    q = [(distance(start, end), start)]\n    step = {start: 0}\n    \n    while q:\n        d, cur = heapq.heappop(q)\n        if cur == end:\n            return step[cur]\n        for move in moves:\n            new = (move[0] + cur[0], move[1] + cur[1])\n            if 1 <= new[0] <= 1000 and 1 <= new[1] <= 1000:\n                step_new = step[cur] + 1\n                if step_new < step.get(new, float('inf')):\n                    step[new] = step_new\n                    heapq.heappush(q, (distance(new, end) + step_new, new))\n    return False\n                     \nfor _ in range(n):\n    a1, a2, b1, b2 = map(int, input().split())\n    print(bfs((a1, a2), (b1, b2)))",
+          "description": "Python版本，使用优先队列和启发式函数实现A*算法解决骑士的攻击问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "#Python",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nvoid bfs(int a1,int a2, int b1, int b2)\n{\n\tqueue<int> q;\n\tq.push(a1);\n\tq.push(a2);\n\twhile(!q.empty())\n\t{\n\t\tint m=q.front(); q.pop();\n\t\tint n=q.front(); q.pop();\n\t\tif(m == b1 && n == b2)\n\t\tbreak;\n\t\tfor(int i=0;i<8;i++)\n\t\t{\n\t\t\tint mm=m + dir[i][0];\n\t\t\tint nn=n + dir[i][1];\n\t\t\tif(mm < 1 || mm > 1000 || nn < 1 || nn > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[mm][nn])\n\t\t\t{\n\t\t\t\tmoves[mm][nn]=moves[m][n]+1;\n\t\t\t\tq.push(mm);\n\t\t\t\tq.push(nn);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2, b1, b2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n\tbfs(a1, a2, b1, b2);\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "使用广搜算法寻找骑士从起点到终点的最短路径"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nint b1, b2;\n// F = G + H\n// G = 从起点到该节点路径消耗\n// H = 该节点到终点的预估消耗\n\nstruct Knight{\n    int x,y;\n    int g,h,f;\n    bool operator < (const Knight & k) const{  // 重载运算符， 从小到大排序\n     return k.f < f;\n    }\n};\npriority_queue<Knight> que;\n\nint Heuristic(const Knight& k) { // 欧拉距离\n    return (k.x - b1) * (k.x - b1) + (k.y - b2) * (k.y - b2); // 统一不开根号，这样可以提高精度\n}\nvoid astar(const Knight& k)\n{\n    Knight cur, next;\n\tque.push(k);\n\twhile(!que.empty())\n\t{\n\t\tcur=que.top(); que.pop();\n\t\tif(cur.x == b1 && cur.y == b2)\n\t\tbreak;\n\t\tfor(int i = 0; i < 8; i++)\n\t\t{\n\t\t\tnext.x = cur.x + dir[i][0];\n\t\t\tnext.y = cur.y + dir[i][1];\n\t\t\tif(next.x < 1 || next.x > 1000 || next.y < 1 || next.y > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[next.x][next.y])\n\t\t\t{\n\t\t\t\tmoves[next.x][next.y] = moves[cur.x][cur.y] + 1;\n\n                // 开始计算F\n\t\t\t\tnext.g = cur.g + 5; // 统一不开根号，这样可以提高精度，马走日，1 * 1 + 2 * 2 = 5\n                next.h = Heuristic(next);\n                next.f = next.g + next.h;\n                que.push(next);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n        Knight start;\n        start.x = a1;\n        start.y = a2;\n        start.g = 0;\n        start.h = Heuristic(start);\n        start.f = start.g + start.h;\n\tastar(start);\n        while(!que.empty()) que.pop(); // 队列清空\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "使用A*算法（启发式搜索）寻找骑士从起点到终点的最短路径"
+        },
+        {
+          "language": "python",
+          "code": "import heapq\n\nn = int(input())\nmoves = [(1, 2), (2, 1), (-1, 2), (2, -1), (1, -2), (-2, 1), (-1, -2), (-2, -1)]\n\ndef distance(a, b):\n    return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5\ndef bfs(start, end):\n    q = [(distance(start, end), start)]\n    step = {start: 0}\n    \n    while q:\n        d, cur = heapq.heappop(q)\n        if cur == end:\n            return step[cur]\n        for move in moves:\n            new = (move[0] + cur[0], move[1] + cur[1])\n            if 1 <= new[0] <= 1000 and 1 <= new[1] <= 1000:\n                step_new = step[cur] + 1\n                if step_new < step.get(new, float('inf')):\n                    step[new] = step_new\n                    heapq.heappush(q, (distance(new, end) + step_new, new))\n    return False\n\nfor _ in range(n):\n    a1, a2, b1, b2 = map(int, input().split())\n    print(bfs((a1, a2), (b1, b2)))",
+          "description": "Python版本的A*算法实现，用于解决骑士从起点到终点的最短路径问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "import heapq",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nvoid bfs(int a1,int a2, int b1, int b2)\n{\n\tqueue<int> q;\n\tq.push(a1);\n\tq.push(a2);\n\twhile(!q.empty())\n\t{\n\t\tint m=q.front(); q.pop();\n\t\tint n=q.front(); q.pop();\n\t\tif(m == b1 && n == b2)\n\t\tbreak;\n\t\tfor(int i=0;i<8;i++)\n\t\t{\n\t\t\tint mm=m + dir[i][0];\n\t\t\tint nn=n + dir[i][1];\n\t\t\tif(mm < 1 || mm > 1000 || nn < 1 || nn > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[mm][nn])\n\t\t\t{\n\t\t\t\tmoves[mm][nn]=moves[m][n]+1;\n\t\t\t\tq.push(mm);\n\t\t\t\tq.push(nn);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2, b1, b2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n\tbfs(a1, a2, b1, b2);\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "C++ BFS实现骑士最短路径搜索"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nint b1, b2;\nstruct Knight{\n    int x,y;\n    int g,h,f;\n    bool operator < (const Knight & k) const{  // 重载运算符， 从小到大排序\n     return k.f < f;\n    }\n};\npriority_queue<Knight> que;\nint Heuristic(const Knight& k) { // 欧拉距离\n    return (k.x - b1) * (k.x - b1) + (k.y - b2) * (k.y - b2); \n}\nvoid astar(const Knight& k)\n{\n    Knight cur, next;\n\tque.push(k);\n\twhile(!que.empty())\n\t{\n\t\tcur=que.top(); que.pop();\n\t\tif(cur.x == b1 && cur.y == b2)\n\t\tbreak;\n\t\tfor(int i = 0; i < 8; i++)\n\t\t{\n\t\t\tnext.x = cur.x + dir[i][0];\n\t\t\tnext.y = cur.y + dir[i][1];\n\t\t\tif(next.x < 1 || next.x > 1000 || next.y < 1 || next.y > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[next.x][next.y])\n\t\t\t{\n\t\t\t\tmoves[next.x][next.y] = moves[cur.x][cur.y] + 1;\n                next.g = cur.g + 5; \n                next.h = Heuristic(next);\n                next.f = next.g + next.h;\n                que.push(next);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n        Knight start;\n        start.x = a1;\n        start.y = a2;\n        start.g = 0;\n        start.h = Heuristic(start);\n        start.f = start.g + start.h;\n\tastar(start);\n        while(!que.empty()) que.pop(); \n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+          "description": "C++ A*算法实现骑士最短路径搜索"
+        },
+        {
+          "language": "python",
+          "code": "import heapq\nn = int(input())\nmoves = [(1, 2), (2, 1), (-1, 2), (2, -1), (1, -2), (-2, 1), (-1, -2), (-2, -1)]\ndef distance(a, b):\n    return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5\ndef bfs(start, end):\n    q = [(distance(start, end), start)]\n    step = {start: 0}\n    while q:\n        d, cur = heapq.heappop(q)\n        if cur == end:\n            return step[cur]\n        for move in moves:\n            new = (move[0] + cur[0], move[1] + cur[1])\n            if 1 <= new[0] <= 1000 and 1 <= new[1] <= 1000:\n                step_new = step[cur] + 1\n                if step_new < step.get(new, float('inf')):\n                    step[new] = step_new\n                    heapq.heappush(q, (distance(new, end) + step_new, new))\n    return False\nfor _ in range(n):\n    a1, a2, b1, b2 = map(int, input().split())\n    print(bfs((a1, a2), (b1, b2)))",
+          "description": "Python使用A*算法实现骑士最短路径搜索"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": null,
+    "space_complexity": "O(b ^ d)",
+    "explanation": "因为他取决于 启发式函数怎么写。"
+  },
+  "code_solutions": [
+    {
+      "language": "C++",
+      "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nvoid bfs(int a1,int a2, int b1, int b2)\n{\n\tqueue<int> q;\n\tq.push(a1);\n\tq.push(a2);\n\twhile(!q.empty())\n\t{\n\t\tint m=q.front(); q.pop();\n\t\tint n=q.front(); q.pop();\n\t\tif(m == b1 && n == b2)\n\t\tbreak;\n\t\tfor(int i=0;i<8;i++)\n\t\t{\n\t\t\tint mm=m + dir[i][0];\n\t\t\tint nn=n + dir[i][1];\n\t\t\tif(mm < 1 || mm > 1000 || nn < 1 || nn > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[mm][nn])\n\t\t\t{\n\t\t\t\tmoves[mm][nn]=moves[m][n]+1;\n\t\t\t\tq.push(mm);\n\t\t\t\tq.push(nn);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2, b1, b2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n\tbfs(a1, a2, b1, b2);\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+      "description": "广搜的C++代码实现，用于计算骑士从起点到目标点的最短路径长度。"
+    },
+    {
+      "language": "C++",
+      "code": "#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nint b1, b2;\n// F = G + H\n// G = 从起点到该节点路径消耗\n// H = 该节点到终点的预估消耗\nstruct Knight{\n    int x,y;\n    int g,h,f;\n    bool operator < (const Knight & k) const{  // 重载运算符， 从小到大排序\n     return k.f < f;\n    }\n};\npriority_queue<Knight> que;\nint Heuristic(const Knight& k) { // 欧拉距离\n    return (k.x - b1) * (k.x - b1) + (k.y - b2) * (k.y - b2); // 统一不开根号，这样可以提高精度\n}\nvoid astar(const Knight& k)\n{\n    Knight cur, next;\n\tque.push(k);\n\twhile(!que.empty())\n\t{\n\t\tcur=que.top(); que.pop();\n\t\tif(cur.x == b1 && cur.y == b2)\n\t\tbreak;\n\t\tfor(int i = 0; i < 8; i++)\n\t\t{\n\t\t\tnext.x = cur.x + dir[i][0];\n\t\t\tnext.y = cur.y + dir[i][1];\n\t\t\tif(next.x < 1 || next.x > 1000 || next.y < 1 || next.y > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[next.x][next.y])\n\t\t\t{\n\t\t\t\tmoves[next.x][next.y] = moves[cur.x][cur.y] + 1;\n\n                // 开始计算F\n\t\t\t\tnext.g = cur.g + 5; // 统一不开根号，这样可以提高精度，马走日，1 * 1 + 2 * 2 = 5\n                next.h = Heuristic(next);\n                next.f = next.g + next.h;\n                que.push(next);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n        Knight start;\n        start.x = a1;\n        start.y = a2;\n        start.g = 0;\n        start.h = Heuristic(start);\n        start.f = start.g + start.h;\n\tastar(start);\n        while(!que.empty()) que.pop(); // 队列清空\n\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}",
+      "description": "A*算法的C++代码实现，通过启发式函数（采用欧氏距离）来优化搜索过程，以找到从起点到目标点的最短路径。"
+    },
+    {
+      "language": "Python",
+      "code": "import heapq\n\nn = int(input())\n\nmoves = [(1, 2), (2, 1), (-1, 2), (2, -1), (1, -2), (-2, 1), (-1, -2), (-2, -1)]\n\ndef distance(a, b):\n    return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5\n\ndef bfs(start, end):\n    q = [(distance(start, end), start)]\n    step = {start: 0}\n    \n    while q:\n        d, cur = heapq.heappop(q)\n        if cur == end:\n            return step[cur]\n        for move in moves:\n            new = (move[0] + cur[0], move[1] + cur[1])\n            if 1 <= new[0] <= 1000 and 1 <= new[1] <= 1000:\n                step_new = step[cur] + 1\n                if step_new < step.get(new, float('inf')):\n                    step[new] = step_new\n                    heapq.heappush(q, (distance(new, end) + step_new, new))\n    return False\n                     \nfor _ in range(n):\n    a1, a2, b1, b2 = map(int, input().split())\n    print(bfs((a1, a2), (b1, b2)))",
+      "description": "使用Python实现的A*算法版本，通过优先级队列和启发式函数（欧氏距离）来寻找从起点到目标点的最短路径。"
+    }
+  ],
+  "common_mistakes": [
+    "直接应用BFS可能导致性能瓶颈，特别是在处理大规模输入或多次查询情况下。",
+    "错误地选择启发式函数可能会导致算法表现不佳或者不准确的结果。",
+    "忽视对队列操作的复杂度管理，比如使用普通队列而非优先级队列进行节点排序。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240626104833.png",
+      "description": "这张图片展示了一个5x5的网格，其中黄色和红色方块可能代表特定状态或节点，适用于图论、路径查找或矩阵操作等算法问题。",
+      "context": "该图展示了骑士（马）在棋盘上的移动规则，其中红色标记了起始位置，黄色标记了骑士一次可以到达的所有位置。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240611143712.png",
+      "description": "这张图片展示了一个网格中的路径寻找问题，红色起点和绿色终点之间的橙色方块可能代表了一条路径，涉及算法如深度优先搜索或广度优先搜索。",
+      "context": "该图片展示了广搜算法在寻找从红色起点到绿色终点最短路径时的遍历过程，其中黄色表示遍历过的点，棕色表示找到的最短路径。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240611195223.png",
+      "description": "这张图片展示了一个像素化的图案，类似于算法中的路径寻找或数据结构中的节点连接示意图。",
+      "context": "该图片展示了使用A*算法进行搜索时的过程，图中着色的部分表示遍历到的节点，与BFS相比，A*算法更具有方向性，能够有效减少不必要的遍历。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240626104833.png",
+      "description": "GIF展示了骑士在棋盘上从起始位置到目标位置按照“马走日”规则寻找最短路径的过程。",
+      "context": "GIF动画展示了骑士根据“马走日”规则在棋盘上可能的移动位置，帮助理解题目中骑士从起始点到目标点的移动方式。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240611143712.png",
+      "description": "GIF展示了从起点到终点使用广度优先搜索算法探索最短路径的过程，其中黄色标记了遍历过的节点，棕色标记了最终找到的最短路径。",
+      "context": "GIF动画展示了广搜算法在寻找从起点到终点最短路径过程中的遍历情况，其中红色表示起点、绿色表示终点、黄色表示遍历过的点，棕色最终标示出找到的最短路径。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240611195223.png",
+      "description": "GIF展示了A*算法在寻找从起点到终点最短路径时，如何利用启发式函数有方向性地遍历图中的节点。",
+      "context": "该GIF动画展示了A*算法如何有方向性地搜索从起点到终点的路径，与无目的性的BFS形成对比，突出A*在寻找最短路径时能够更高效地减少不必要的遍历步骤。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\最短路\\骑士的攻击_A star.txt",
+  "extracted_at": "2025-07-22T13:10:15.704044",
+  "raw_content": "A * 算法精讲 （A star算法）\n卡码网：126. 骑士的攻击(https://kamacoder.com/problempage.php?pid=1203)\n\n题目描述\n\n在象棋中，马和象的移动规则分别是“马走日”和“象走田”。现给定骑士的起始坐标和目标坐标，要求根据骑士的移动规则，计算从起点到达目标点所需的最短步数。\n\n骑士移动规则如图，红色是起始位置，黄色是骑士可以走的地方。\n\nhttps://file1.kamacoder.com/i/algo/20240626104833.png\n\n棋盘大小 1000 x 1000（棋盘的 x 和 y 坐标均在 [1, 1000] 区间内，包含边界）\n\n输入描述\n\n第一行包含一个整数 n，表示测试用例的数量。\n\n接下来的 n 行，每行包含四个整数 a1, a2, b1, b2，分别表示骑士的起始位置 (a1, a2) 和目标位置 (b1, b2)。\n\n输出描述\n\n输出共 n 行，每行输出一个整数，表示骑士从起点到目标点的最短路径长度。\n\n输入示例\n\n6\n5 2 5 4\n1 1 2 2\n1 1 8 8\n1 1 8 7\n2 1 3 3\n4 6 4 6\n输出示例\n\n2\n4\n6\n5\n1\n0\n#思路\n我们看到这道题目的第一个想法就是广搜，这也是最经典的广搜类型题目。\n\n这里我直接给出广搜的C++代码：\n\n#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nvoid bfs(int a1,int a2, int b1, int b2)\n{\n\tqueue<int> q;\n\tq.push(a1);\n\tq.push(a2);\n\twhile(!q.empty())\n\t{\n\t\tint m=q.front(); q.pop();\n\t\tint n=q.front(); q.pop();\n\t\tif(m == b1 && n == b2)\n\t\tbreak;\n\t\tfor(int i=0;i<8;i++)\n\t\t{\n\t\t\tint mm=m + dir[i][0];\n\t\t\tint nn=n + dir[i][1];\n\t\t\tif(mm < 1 || mm > 1000 || nn < 1 || nn > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[mm][nn])\n\t\t\t{\n\t\t\t\tmoves[mm][nn]=moves[m][n]+1;\n\t\t\t\tq.push(mm);\n\t\t\t\tq.push(nn);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2, b1, b2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n\t\tbfs(a1, a2, b1, b2);\n\t\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}\n\n提交后，大家会发现，超时了。\n\n因为本题地图足够大，且 n 也有可能很大，导致有非常多的查询。\n\n我们来看一下广搜的搜索过程，如图，红色是起点，绿色是终点，黄色是要遍历的点，最后从 起点 找到 达到终点的最短路径是棕色。\n\nhttps://file1.kamacoder.com/i/algo/20240611143712.png\n\n可以看出 广搜中，做了很多无用的遍历， 黄色的格子是广搜遍历到的点。\n\n这里我们能不能让便利方向，向这终点的方向去遍历呢？\n\n这样我们就可以避免很多无用遍历。\n\n#Astar\nAstar 是一种 广搜的改良版。 有的是 Astar是 dijkstra 的改良版。\n\n其实只是场景不同而已 我们在搜索最短路的时候， 如果是无权图（边的权值都是1） 那就用广搜，代码简洁，时间效率和 dijkstra 差不多 （具体要取决于图的稠密）\n\n如果是有权图（边有不同的权值），优先考虑 dijkstra。\n\n而 Astar 关键在于 启发式函数， 也就是 影响 广搜或者 dijkstra 从 容器（队列）里取元素的优先顺序。\n\n以下，我用BFS版本的A * 来进行讲解。\n\n在BFS中，我们想搜索，从起点到终点的最短路径，要一层一层去遍历。\nhttps://file1.kamacoder.com/i/algo/20240611143712.png\n\n\n如果 使用A * 的话，其搜索过程是这样的，如图，图中着色的都是我们要遍历的点。\nhttps://file1.kamacoder.com/i/algo/20240611195223.png\n\n\n（上面两图中 最短路长度都是8，只是走的方式不同而已）\n\n大家可以发现 BFS 是没有目的性的 一圈一圈去搜索， 而 A * 是有方向性的去搜索。\n\n看出 A * 可以节省很多没有必要的遍历步骤。\n\n为了让大家可以明显看到区别，我将 BFS 和 A * 制作成可视化动图，大家可以自己看看动图，效果更好。\n\n地址：https://kamacoder.com/tools/knight.html\n\n那么 A * 为什么可以有方向性的去搜索，它的如何知道方向呢？\n\n其关键在于 启发式函数。\n\n那么启发式函数落实到代码处，如果指引搜索的方向？\n\n在本篇开篇中给出了BFS代码，指引 搜索的方向的关键代码在这里：\n\nint m=q.front();q.pop();\nint n=q.front();q.pop();\n从队列里取出什么元素，接下来就是从哪里开始搜索。\n\n所以 启发式函数 要影响的就是队列里元素的排序！\n\n这是影响BFS搜索方向的关键。\n\n对队列里节点进行排序，就需要给每一个节点权值，如何计算权值呢？\n\n每个节点的权值为F，给出公式为：F = G + H\n\nG：起点达到目前遍历节点的距离\n\nH：目前遍历的节点到达终点的距离\n\n起点达到目前遍历节点的距离 + 目前遍历的节点到达终点的距离 就是起点到达终点的距离。\n\n本题的图是无权网格状，在计算两点距离通常有如下三种计算方式：\n\n曼哈顿距离，计算方式： d = abs(x1-x2)+abs(y1-y2)\n欧氏距离（欧拉距离） ，计算方式：d = sqrt( (x1-x2)^2 + (y1-y2)^2 )\n切比雪夫距离，计算方式：d = max(abs(x1 - x2), abs(y1 - y2))\nx1, x2 为起点坐标，y1, y2 为终点坐标 ，abs 为求绝对值，sqrt 为求开根号，\n\n选择哪一种距离计算方式 也会导致 A * 算法的结果不同。\n\n本题，采用欧拉距离才能最大程度体现 点与点之间的距离。\n\n所以 使用欧拉距离计算 和 广搜搜出来的最短路的节点数是一样的。 （路径可能不同，但路径上的节点数是相同的）\n\n我在制作动画演示的过程中，分别给出了曼哈顿、欧拉以及契比雪夫 三种计算方式下，A * 算法的寻路过程，大家可以自己看看看其区别。\n\n动画地址：https://kamacoder.com/tools/knight.html\n\n计算出来 F 之后，按照 F 的 大小，来选去出队列的节点。\n\n可以使用 优先级队列 帮我们排好序，每次出队列，就是F最小的节点。\n\n实现代码如下：（启发式函数 采用 欧拉距离计算方式）\n\n#include<iostream>\n#include<queue>\n#include<string.h>\nusing namespace std;\nint moves[1001][1001];\nint dir[8][2]={-2,-1,-2,1,-1,2,1,2,2,1,2,-1,1,-2,-1,-2};\nint b1, b2;\n// F = G + H\n// G = 从起点到该节点路径消耗\n// H = 该节点到终点的预估消耗\n\nstruct Knight{\n    int x,y;\n    int g,h,f;\n    bool operator < (const Knight & k) const{  // 重载运算符， 从小到大排序\n     return k.f < f;\n    }\n};\n\npriority_queue<Knight> que;\n\nint Heuristic(const Knight& k) { // 欧拉距离\n    return (k.x - b1) * (k.x - b1) + (k.y - b2) * (k.y - b2); // 统一不开根号，这样可以提高精度\n}\nvoid astar(const Knight& k)\n{\n    Knight cur, next;\n\tque.push(k);\n\twhile(!que.empty())\n\t{\n\t\tcur=que.top(); que.pop();\n\t\tif(cur.x == b1 && cur.y == b2)\n\t\tbreak;\n\t\tfor(int i = 0; i < 8; i++)\n\t\t{\n\t\t\tnext.x = cur.x + dir[i][0];\n\t\t\tnext.y = cur.y + dir[i][1];\n\t\t\tif(next.x < 1 || next.x > 1000 || next.y < 1 || next.y > 1000)\n\t\t\tcontinue;\n\t\t\tif(!moves[next.x][next.y])\n\t\t\t{\n\t\t\t\tmoves[next.x][next.y] = moves[cur.x][cur.y] + 1;\n\n                // 开始计算F\n\t\t\t\tnext.g = cur.g + 5; // 统一不开根号，这样可以提高精度，马走日，1 * 1 + 2 * 2 = 5\n                next.h = Heuristic(next);\n                next.f = next.g + next.h;\n                que.push(next);\n\t\t\t}\n\t\t}\n\t}\n}\n\nint main()\n{\n    int n, a1, a2;\n    cin >> n;\n    while (n--) {\n        cin >> a1 >> a2 >> b1 >> b2;\n        memset(moves,0,sizeof(moves));\n        Knight start;\n        start.x = a1;\n        start.y = a2;\n        start.g = 0;\n        start.h = Heuristic(start);\n        start.f = start.g + start.h;\n\t\tastar(start);\n        while(!que.empty()) que.pop(); // 队列清空\n\t\tcout << moves[b1][b2] << endl;\n\t}\n\treturn 0;\n}\n\n#复杂度分析\nA * 算法的时间复杂度 其实是不好去量化的，因为他取决于 启发式函数怎么写。\n\n最坏情况下，A * 退化成广搜，算法的时间复杂度 是 O(n * 2)，n 为节点数量。\n\n最佳情况，是从起点直接到终点，时间复杂度为 O(dlogd)，d 为起点到终点的深度。\n\n因为在搜索的过程中也需要堆排序，所以是 O(dlogd)。\n\n实际上 A * 的时间复杂度是介于 最优 和最坏 情况之间， 可以 非常粗略的认为 A * 算法的时间复杂度是 O(nlogn) ，n 为节点数量。\n\nA * 算法的空间复杂度 O(b ^ d) ,d 为起点到终点的深度，b 是 图中节点间的连接数量，本题因为是无权网格图，所以 节点间连接数量为 4。\n\n#拓展\n如果本题大家使用 曼哈顿距离 或者 切比雪夫距离 计算的话，可以提交试一试，有的最短路结果是并不是最短的。\n\n原因也是 曼哈顿 和 切比雪夫这两种计算方式在 本题的网格地图中，都没有体现出点到点的真正距离！\n\n可能有些录友找到类似的题目，例如 poj 2243 (opens new window)，使用 曼哈顿距离 提交也过了， 那是因为题目中的地图太小了，仅仅是一张 8 * 8的地图，根本看不出来 不同启发式函数写法的区别。\n\nA * 算法 并不是一个明确的最短路算法，A * 算法搜的路径如何，完全取决于 启发式函数怎么写。\n\nA * 算法并不能保证一定是最短路，因为在设计 启发式函数的时候，要考虑 时间效率与准确度之间的一个权衡。\n\n虽然本题中，A * 算法得到是最短路，也是因为本题 启发式函数 和 地图结构都是最简单的。\n\n例如在游戏中，在地图很大、不同路径权值不同、有障碍 且多个游戏单位在地图中寻路的情况，如果要计算准确最短路，耗时很大，会给玩家一种卡顿的感觉。\n\n而真实玩家在玩游戏的时候，并不要求一定是最短路，次短路也是可以的 （玩家不一定能感受出来，及时感受出来也不是很在意），只要奔着目标走过去 大体就可以接受。\n\n所以 在游戏开发设计中，保证运行效率的情况下，A * 算法中的启发式函数 设计往往不是最短路，而是接近最短路的 次短路设计。\n\n大家如果玩 LOL，或者 王者荣耀 可以回忆一下：如果 从很远的地方点击 让英雄直接跑过去 是 跑的路径是不靠谱的，所以玩家们才会在 距离英雄尽可能近的位置去点击 让英雄跑过去。\n\n#A * 的缺点\n大家看上述 A * 代码的时候，可以看到 我们想 队列里添加了很多节点，但真正从队列里取出来的 仅仅是 靠启发式函数判断 距离终点最近的节点。\n\n相对了 普通BFS，A * 算法只从 队列里取出 距离终点最近的节点。\n\n那么问题来了，A * 在一次路径搜索中，大量不需要访问的节点都在队列里，会造成空间的过度消耗。\n\nIDA * 算法 对这一空间增长问题进行了优化，关于 IDA * 算法，本篇不再做讲解，感兴趣的录友可以自行找资料学习。\n\n另外还有一种场景 是 A * 解决不了的。\n\n如果题目中，给出 多个可能的目标，然后在这多个目标中 选择最近的目标，这种 A * 就不擅长了， A * 只擅长给出明确的目标 然后找到最短路径。\n\n如果是多个目标找最近目标（特别是潜在目标数量很多的时候），可以考虑 Dijkstra ，BFS 或者 Floyd。\n\n#其他语言版本\n#Java\n#Python\nimport heapq\n \nn = int(input())\n \nmoves = [(1, 2), (2, 1), (-1, 2), (2, -1), (1, -2), (-2, 1), (-1, -2), (-2, -1)]\n \ndef distance(a, b):\n    return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5\n \ndef bfs(start, end):\n    q = [(distance(start, end), start)]\n    step = {start: 0}\n     \n    while q:\n        d, cur = heapq.heappop(q)\n        if cur == end:\n            return step[cur]\n        for move in moves:\n            new = (move[0] + cur[0], move[1] + cur[1])\n            if 1 <= new[0] <= 1000 and 1 <= new[1] <= 1000:\n                step_new = step[cur] + 1\n                if step_new < step.get(new, float('inf')):\n                    step[new] = step_new\n                    heapq.heappush(q, (distance(new, end) + step_new, new))\n    return False\n                     \nfor _ in range(n):\n    a1, a2, b1, b2 = map(int, input().split())\n    print(bfs((a1, a2), (b1, b2)))"
+}

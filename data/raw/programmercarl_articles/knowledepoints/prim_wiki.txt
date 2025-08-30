@@ -1,0 +1,131 @@
+Prim 算法
+
+Prim 算法是另一种常见并且好写的最小生成树算法。该算法的基本思想是从一个结点开始，不断加点（而不是 Kruskal 算法的加边）。
+
+实现
+图示：
+https://oi-wiki.org/graph/images/mst-3.apng
+
+
+具体来说，每次要选择距离最小的一个结点，以及用新的边更新其他结点的距离。
+
+其实跟 Dijkstra 算法一样，每次找到距离最小的一个点，可以暴力找也可以用堆维护。
+
+堆优化的方式类似 Dijkstra 的堆优化，但如果使用二叉堆等不支持 O(1) decrease-key 的堆，复杂度就不优于 Kruskal，常数也比 Kruskal 大。所以，一般情况下都使用 Kruskal 算法，在稠密图尤其是完全图上，暴力 Prim 的复杂度比 Kruskal 优，但 不一定 实际跑得更快。
+
+暴力：O(n^2+m)。
+
+二叉堆：O((n+m) \log n)。
+
+Fib 堆：O(n \log n + m)。
+
+伪代码：
+
+ 
+\begin{array}{ll}
+1 &  \textbf{Input. } \text{The nodes of the graph }V\text{ ; the function }g(u, v)\text{ which}\\
+  &  \text{means the weight of the edge }(u, v)\text{; the function }adj(v)\text{ which}\\
+  &  \text{means the nodes adjacent to }v.\\
+2 &  \textbf{Output. } \text{The sum of weights of the MST of the input graph.} \\
+3 &  \textbf{Method.} \\
+4 &  result \gets 0 \\
+5 & \text{choose an arbitrary node in }V\text{ to be the }root \\
+6 &  dis(root)\gets 0 \\
+7 &  \textbf{for } \text{each node }v\in(V-\{root\}) \\
+8 &  \qquad  dis(v)\gets\infty \\
+9 &  rest\gets V \\
+10 &  \textbf{while }  rest\ne\varnothing \\
+11 &  \qquad cur\gets \text{the node with the minimum }dis\text{ in }rest \\
+12 &  \qquad  result\gets result+dis(cur) \\
+13 &  \qquad  rest\gets rest-\{cur\} \\
+14 &  \qquad  \textbf{for}\text{ each node }v\in adj(cur) \\
+15 &  \qquad\qquad  dis(v)\gets\min(dis(v), g(cur, v)) \\
+16 &  \textbf{return }  result 
+\end{array}
+注意：上述代码只是求出了最小生成树的权值，如果要输出方案还需要记录每个点的 dis 代表的是哪条边。
+
+代码实现
+// 使用二叉堆优化的 Prim 算法。
+#include <cstring>
+#include <iostream>
+#include <queue>
+using namespace std;
+constexpr int N = 5050, M = 2e5 + 10;
+
+struct E {
+  int v, w, x;
+} e[M * 2];
+
+int n, m, h[N], cnte;
+
+void adde(int u, int v, int w) { e[++cnte] = E{v, w, h[u]}, h[u] = cnte; }
+
+struct S {
+  int u, d;
+};
+
+bool operator<(const S &x, const S &y) { return x.d > y.d; }
+
+priority_queue<S> q;
+int dis[N];
+bool vis[N];
+
+int res = 0, cnt = 0;
+
+void Prim() {
+  memset(dis, 0x3f, sizeof(dis));
+  dis[1] = 0;
+  q.push({1, 0});
+  while (!q.empty()) {
+    if (cnt >= n) break;
+    int u = q.top().u, d = q.top().d;
+    q.pop();
+    if (vis[u]) continue;
+    vis[u] = true;
+    ++cnt;
+    res += d;
+    for (int i = h[u]; i; i = e[i].x) {
+      int v = e[i].v, w = e[i].w;
+      if (w < dis[v]) {
+        dis[v] = w, q.push({v, w});
+      }
+    }
+  }
+}
+
+int main() {
+  cin >> n >> m;
+  for (int i = 1, u, v, w; i <= m; ++i) {
+    cin >> u >> v >> w, adde(u, v, w), adde(v, u, w);
+  }
+  Prim();
+  if (cnt == n)
+    cout << res;
+  else
+    cout << "No MST.";
+  return 0;
+}
+证明
+从任意一个结点开始，将结点分成两类：已加入的，未加入的。
+
+每次从未加入的结点中，找一个与已加入的结点之间边权最小值最小的结点。
+
+然后将这个结点加入，并连上那条边权最小的边。
+
+重复 n-1 次即可。
+
+证明：还是说明在每一步，都存在一棵最小生成树包含已选边集。
+
+基础：只有一个结点的时候，显然成立。
+
+归纳：如果某一步成立，当前边集为 F，属于 T 这棵 MST，接下来要加入边 e。
+
+如果 e 属于 T，那么成立。
+
+否则考虑 T+e 中环上另一条可以加入当前边集的边 f。
+
+首先，f 的权值一定不小于 e 的权值，否则就会选择 f 而不是 e 了。
+
+然后，f 的权值一定不大于 e 的权值，否则 T+e-f 就是一棵更小的生成树了。
+
+因此，e 和 f 的权值相等，T+e-f 也是一棵最小生成树，且包含了 F。

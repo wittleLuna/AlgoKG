@@ -1,0 +1,205 @@
+{
+  "id": "AP_b21bd136",
+  "title": "四数相加II",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/4sum-ii/",
+  "description": "给定四个包含整数的数组列表 A , B , C , D ,计算有多少个元组 (i, j, k, l) ，使得 A[i] + B[j] + C[k] + D[l] = 0。\n\n为了使问题简单化，所有的 A, B, C, D 具有相同的长度 N，且 0 ≤ N ≤ 500 。所有整数的范围在 -2^28 到 2^28 - 1 之间，最终结果不会超过 2^31 - 1 。\n\n例如:\n\n输入:\n\nA = [ 1, 2]\nB = [-2,-1]\nC = [-1, 2]\nD = [ 0, 2]\n输出:\n\n2\n\n解释:\n\n两个元组如下:\n\n(0, 0, 0, 1) -> A[0] + B[0] + C[0] + D[1] = 1 + (-2) + (-1) + 2 = 0\n(1, 1, 0, 0) -> A[1] + B[1] + C[0] + D[0] = 2 + (-1) + (-1) + 0 = 0",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "哈希"
+  ],
+  "data_structure_tags": [
+    "哈希表"
+  ],
+  "technique_tags": [
+    "空间换时间"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过哈希表存储两个数组元素之和及其出现次数，然后遍历另外两个数组查找是否存在相反数使得四数之和为0，并统计满足条件的组合数量。",
+  "key_insights": [
+    {
+      "content": "将A和B中所有可能的两数之和存储在哈希表中，这样可以在O(1)时间内检查C和D中的任何两数之和是否与哈希表中的某个值互为相反数。"
+    },
+    {
+      "content": "本题涉及到四个不同的数组，因此不需要考虑去重问题，这大大简化了处理过程。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "本题乍眼一看好像和0015.三数之和 (opens new window)，0018.四数之和 (opens new window)差不多，其实差很多。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fourSumCount(vector<int>& A, vector<int>& B, vector<int>& C, vector<int>& D) {unordered_map<int, int> umap; for (int a : A) {for (int b : B) {umap[a + b]++;}} int count = 0; for (int c : C) {for (int d : D) {if (umap.find(0 - (c + d)) != umap.end()) {count += umap[0 - (c + d)];}}} return count;}};",
+          "description": "C++实现四数相加II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int fourSumCount(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {int res = 0; Map<Integer, Integer> map = new HashMap<Integer, Integer>(); for (int i : nums1) {for (int j : nums2) {int sum = i + j; map.put(sum, map.getOrDefault(sum, 0) + 1);}} for (int i : nums3) {for (int j : nums4) {res += map.getOrDefault(0 - i - j, 0);}} return res;}}",
+          "description": "Java实现四数相加II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def fourSumCount(self, nums1, nums2, nums3, nums4): hashmap = dict() for n1 in nums1: for n2 in nums2: if n1 + n2 in hashmap: hashmap[n1+n2] += 1 else: hashmap[n1+n2] = 1 count = 0 for n3 in nums3: for n4 in nums4: key = - n3 - n4 if key in hashmap: count += hashmap[key] return count",
+          "description": "Python实现四数相加II（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def fourSumCount(self, nums1, nums2, nums3, nums4): hashmap = dict() for n1 in nums1: for n2 in nums2: hashmap[n1+n2] = hashmap.get(n1+n2, 0) + 1 count = 0 for n3 in nums3: for n4 in nums4: key = - n3 - n4 if key in hashmap: count += hashmap[key] return count",
+          "description": "Python实现四数相加II（版本二）"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict class Solution: def fourSumCount(self, nums1: list, nums2: list, nums3: list, nums4: list) -> int: rec, cnt = defaultdict(lambda : 0), 0 for i in nums1: for j in nums2: rec[i+j] += 1 for i in nums3: for j in nums4: cnt += rec.get(-(i+j), 0) return cnt",
+          "description": "Python实现四数相加II（版本三，使用defaultdict）"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fourSumCount(vector<int>& A, vector<int>& B, vector<int>& C, vector<int>& D) {unordered_map<int, int> umap; for (int a : A) {for (int b : B) {umap[a + b]++;}} int count = 0; for (int c : C) {for (int d : D) {if (umap.find(0 - (c + d)) != umap.end()) {count += umap[0 - (c + d)];}}} return count;}};",
+          "description": "C++实现四数相加II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int fourSumCount(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {int res = 0; Map<Integer, Integer> map = new HashMap<>(); for (int i : nums1) {for (int j : nums2) {int sum = i + j; map.put(sum, map.getOrDefault(sum, 0) + 1);}} for (int i : nums3) {for (int j : nums4) {res += map.getOrDefault(0 - i - j, 0);}} return res;}}",
+          "description": "Java实现四数相加II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def fourSumCount(self, nums1, nums2, nums3, nums4): hashmap = dict() for n1 in nums1: for n2 in nums2: if n1 + n2 in hashmap: hashmap[n1+n2] += 1 else: hashmap[n1+n2] = 1 count = 0 for n3 in nums3: for n4 in nums4: key = - n3 - n4 if key in hashmap: count += hashmap[key] return count",
+          "description": "Python版本一实现四数相加II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def fourSumCount(self, nums1, nums2, nums3, nums4): hashmap = dict() for n1 in nums1: for n2 in nums2: hashmap[n1+n2] = hashmap.get(n1+n2, 0) + 1 count = 0 for n3 in nums3: for n4 in nums4: key = - n3 - n4 if key in hashmap: count += hashmap[key] return count",
+          "description": "Python版本二实现四数相加II"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict class Solution: def fourSumCount(self, nums1: list, nums2: list, nums3: list, nums4: list) -> int: rec, cnt = defaultdict(lambda : 0), 0 for i in nums1: for j in nums2: rec[i+j] += 1 for i in nums3: for j in nums4: cnt += rec.get(-(i+j), 0) return cnt",
+          "description": "Python使用defaultdict实现四数相加II"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fourSumCount(vector<int>& A, vector<int>& B, vector<int>& C, vector<int>& D) {unordered_map<int, int> umap; for (int a : A) {for (int b : B) {umap[a + b]++;}} int count = 0; for (int c : C) {for (int d : D) {if (umap.find(0 - (c + d)) != umap.end()) {count += umap[0 - (c + d)];}}} return count;}};",
+          "description": "C++实现四数相加II问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int fourSumCount(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {int res = 0; Map<Integer, Integer> map = new HashMap<Integer, Integer>(); for (int i : nums1) {for (int j : nums2) {int sum = i + j; map.put(sum, map.getOrDefault(sum, 0) + 1);}} for (int i : nums3) {for (int j : nums4) {res += map.getOrDefault(0 - i - j, 0);}} return res;}}",
+          "description": "Java实现四数相加II问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def fourSumCount(self, nums1, nums2, nums3, nums4): hashmap = dict() for n1 in nums1: for n2 in nums2: if n1 + n2 in hashmap: hashmap[n1+n2] += 1 else: hashmap[n1+n2] = 1 count = 0 for n3 in nums3: for n4 in nums4: key = - n3 - n4 if key in hashmap: count += hashmap[key] return count",
+          "description": "Python版本一实现四数相加II问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def fourSumCount(self, nums1, nums2, nums3, nums4): hashmap = dict() for n1 in nums1: for n2 in nums2: hashmap[n1+n2] = hashmap.get(n1+n2, 0) + 1 count = 0 for n3 in nums3: for n4 in nums4: key = - n3 - n4 if key in hashmap: count += hashmap[key] return count",
+          "description": "Python版本二实现四数相加II问题"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict class Solution: def fourSumCount(self, nums1: list, nums2: list, nums3: list, nums4: list) -> int: rec, cnt = defaultdict(lambda : 0), 0 for i in nums1: for j in nums2: rec[i+j] += 1 for i in nums3: for j in nums4: cnt += rec.get(-(i+j), 0) return cnt",
+          "description": "Python使用defaultdict实现四数相加II问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "（版本一） 使用字典",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int fourSumCount(vector<int>& A, vector<int>& B, vector<int>& C, vector<int>& D) { unordered_map<int, int> umap; for (int a : A) {for (int b : B) {umap[a + b]++;}} int count = 0; for (int c : C) {for (int d : D) {if (umap.find(0 - (c + d)) != umap.end()) {count += umap[0 - (c + d)];}}} return count;}};",
+          "description": "C++解决方案，使用哈希表来统计两个数组元素之和及其出现次数，然后通过遍历另外两个数组找到满足条件的组合数。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int fourSumCount(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {int res = 0;Map<Integer, Integer> map = new HashMap<>();for (int i : nums1) {for (int j : nums2) {int sum = i + j;map.put(sum, map.getOrDefault(sum, 0) + 1);}}for (int i : nums3) {for (int j : nums4) {res += map.getOrDefault(0 - i - j, 0);}}return res;}}",
+          "description": "Java解决方案，利用HashMap存储两数组元素之和及其次数，并查找是否存在与另两数组元素之和相加为零的情况。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def fourSumCount(self, nums1, nums2, nums3, nums4): hashmap = dict() for n1 in nums1: for n2 in nums2: if n1 + n2 in hashmap: hashmap[n1+n2] += 1 else: hashmap[n1+n2] = 1 count = 0 for n3 in nums3: for n4 in nums4: key = - n3 - n4 if key in hashmap: count += hashmap[key] return count",
+          "description": "Python版本一，通过字典记录前两个列表中所有可能的和及其频率，再检查后两个列表中的值是否与字典中的键匹配以形成总和为零的组合。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def fourSumCount(self, nums1, nums2, nums3, nums4): hashmap = dict() for n1 in nums1: for n2 in nums2: hashmap[n1+n2] = hashmap.get(n1+n2, 0) + 1 count = 0 for n3 in nums3: for n4 in nums4: key = - n3 - n4 if key in hashmap: count += hashmap[key] return count",
+          "description": "Python版本二，采用类似的方法但使用了字典的get方法简化了代码逻辑，同样实现了四数之和等于零的计数功能。"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict class Solution: def fourSumCount(self, nums1: list, nums2: list, nums3: list, nums4: list) -> int: rec, cnt = defaultdict(lambda : 0), 0 for i in nums1: for j in nums2: rec[i+j] += 1 for i in nums3: for j in nums4: cnt += rec.get(-(i+j), 0) return cnt",
+          "description": "Python版本三，引入了defaultdict来简化字典初始化过程，使得代码更加简洁高效地完成了题目要求的功能。"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(n^2)",
+    "explanation": "最坏情况下A和B的值各不相同，相加产生的数字个数为 n^2"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int fourSumCount(vector<int>& A, vector<int>& B, vector<int>& C, vector<int>& D) {unordered_map<int, int> umap; for (int a : A) {for (int b : B) {umap[a + b]++;}} int count = 0; for (int c : C) {for (int d : D) {if (umap.find(0 - (c + d)) != umap.end()) {count += umap[0 - (c + d)];}}} return count;}};",
+      "description": ""
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int fourSumCount(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {int res = 0; Map<Integer, Integer> map = new HashMap<Integer, Integer>(); for (int i : nums1) {for (int j : nums2) {int sum = i + j; map.put(sum, map.getOrDefault(sum, 0) + 1);}} for (int i : nums3) {for (int j : nums4) {res += map.getOrDefault(0 - i - j, 0);}} return res;}}",
+      "description": ""
+    },
+    {
+      "language": "python",
+      "code": "class Solution(object): def fourSumCount(self, nums1, nums2, nums3, nums4): hashmap = dict() for n1 in nums1: for n2 in nums2: if n1 + n2 in hashmap: hashmap[n1+n2] += 1 else: hashmap[n1+n2] = 1 count = 0 for n3 in nums3: for n4 in nums4: key = - n3 - n4 if key in hashmap: count += hashmap[key] return count",
+      "description": ""
+    },
+    {
+      "language": "python",
+      "code": "class Solution(object): def fourSumCount(self, nums1, nums2, nums3, nums4): hashmap = dict() for n1 in nums1: for n2 in nums2: hashmap[n1+n2] = hashmap.get(n1+n2, 0) + 1 count = 0 for n3 in nums3: for n4 in nums4: key = - n3 - n4 if key in hashmap: count += hashmap[key] return count",
+      "description": ""
+    },
+    {
+      "language": "python",
+      "code": "from collections import defaultdict class Solution: def fourSumCount(self, nums1: list, nums2: list, nums3: list, nums4: list) -> int: rec, cnt = defaultdict(lambda : 0), 0 for i in nums1: for j in nums2: rec[i+j] += 1 for i in nums3: for j in nums4: cnt += rec.get(-(i+j), 0) return cnt",
+      "description": ""
+    }
+  ],
+  "common_mistakes": [
+    "忽略对哈希表中键值对更新的正确性检查，可能会导致计数错误。",
+    "没有考虑到负数作为哈希表键的情况，这可能导致某些情况下的漏检。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\哈希表\\四数相加II.txt",
+  "extracted_at": "2025-07-21T03:40:34.311358",
+  "raw_content": "四数相加II\n力扣题目链接(https://leetcode.cn/problems/4sum-ii/)\n\n给定四个包含整数的数组列表 A , B , C , D ,计算有多少个元组 (i, j, k, l) ，使得 A[i] + B[j] + C[k] + D[l] = 0。\n\n为了使问题简单化，所有的 A, B, C, D 具有相同的长度 N，且 0 ≤ N ≤ 500 。所有整数的范围在 -2^28 到 2^28 - 1 之间，最终结果不会超过 2^31 - 1 。\n\n例如:\n\n输入:\n\nA = [ 1, 2]\nB = [-2,-1]\nC = [-1, 2]\nD = [ 0, 2]\n输出:\n\n2\n\n解释:\n\n两个元组如下:\n\n(0, 0, 0, 1) -> A[0] + B[0] + C[0] + D[1] = 1 + (-2) + (-1) + 2 = 0\n(1, 1, 0, 0) -> A[1] + B[1] + C[0] + D[0] = 2 + (-1) + (-1) + 0 = 0\n\n\n#思路\n本题乍眼一看好像和0015.三数之和 (opens new window)，0018.四数之和 (opens new window)差不多，其实差很多。\n\n本题是使用哈希法的经典题目，而0015.三数之和 (opens new window)，0018.四数之和 (opens new window)并不合适使用哈希法，因为三数之和和四数之和这两道题目使用哈希法在不超时的情况下做到对结果去重是很困难的，很有多细节需要处理。\n\n而这道题目是四个独立的数组，只要找到A[i] + B[j] + C[k] + D[l] = 0就可以，不用考虑有重复的四个元素相加等于0的情况，所以相对于题目18. 四数之和，题目15.三数之和，还是简单了不少！\n\n如果本题想难度升级：就是给出一个数组（而不是四个数组），在这里找出四个元素相加等于0，答案中不可以包含重复的四元组，大家可以思考一下，后续的文章我也会讲到的。\n\n本题解题步骤：\n\n首先定义 一个unordered_map，key放a和b两数之和，value 放a和b两数之和出现的次数。\n遍历大A和大B数组，统计两个数组元素之和，和出现的次数，放到map中。\n定义int变量count，用来统计 a+b+c+d = 0 出现的次数。\n再遍历大C和大D数组，找到如果 0-(c+d) 在map中出现过的话，就用count把map中key对应的value也就是出现次数统计出来。\n最后返回统计值 count 就可以了\nC++代码:\n\nclass Solution {\npublic:\n    int fourSumCount(vector<int>& A, vector<int>& B, vector<int>& C, vector<int>& D) {\n        unordered_map<int, int> umap; //key:a+b的数值，value:a+b数值出现的次数\n        // 遍历大A和大B数组，统计两个数组元素之和，和出现的次数，放到map中\n        for (int a : A) {\n            for (int b : B) {\n                umap[a + b]++;\n            }\n        }\n        int count = 0; // 统计a+b+c+d = 0 出现的次数\n        // 再遍历大C和大D数组，找到如果 0-(c+d) 在map中出现过的话，就把map中key对应的value也就是出现次数统计出来。\n        for (int c : C) {\n            for (int d : D) {\n                if (umap.find(0 - (c + d)) != umap.end()) {\n                    count += umap[0 - (c + d)];\n                }\n            }\n        }\n        return count;\n    }\n};\n\n时间复杂度: O(n^2)\n空间复杂度: O(n^2)，最坏情况下A和B的值各不相同，相加产生的数字个数为 n^2\n#其他语言版本\n#Java：\nclass Solution {\n    public int fourSumCount(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {\n        int res = 0;\n        Map<Integer, Integer> map = new HashMap<Integer, Integer>();\n        //统计两个数组中的元素之和，同时统计出现的次数，放入map\n        for (int i : nums1) {\n            for (int j : nums2) {\n                int sum = i + j;\n                map.put(sum, map.getOrDefault(sum, 0) + 1);\n            }\n        }\n        //统计剩余的两个元素的和，在map中找是否存在相加为0的情况，同时记录次数\n        for (int i : nums3) {\n            for (int j : nums4) {\n                res += map.getOrDefault(0 - i - j, 0);\n            }\n        }\n        return res;\n    }\n}\n#Python：\n（版本一） 使用字典\n\nclass Solution(object):\n    def fourSumCount(self, nums1, nums2, nums3, nums4):\n        # 使用字典存储nums1和nums2中的元素及其和\n        hashmap = dict()\n        for n1 in nums1:\n            for n2 in nums2:\n                if n1 + n2 in hashmap:\n                    hashmap[n1+n2] += 1\n                else:\n                    hashmap[n1+n2] = 1\n        \n        # 如果 -(n1+n2) 存在于nums3和nums4, 存入结果\n        count = 0\n        for n3 in nums3:\n            for n4 in nums4:\n                key = - n3 - n4\n                if key in hashmap:\n                    count += hashmap[key]\n        return count\n \n\n（版本二） 使用字典\n\nclass Solution(object):\n    def fourSumCount(self, nums1, nums2, nums3, nums4):\n        # 使用字典存储nums1和nums2中的元素及其和\n        hashmap = dict()\n        for n1 in nums1:\n            for n2 in nums2:\n                hashmap[n1+n2] = hashmap.get(n1+n2, 0) + 1\n        \n        # 如果 -(n1+n2) 存在于nums3和nums4, 存入结果\n        count = 0\n        for n3 in nums3:\n            for n4 in nums4:\n                key = - n3 - n4\n                if key in hashmap:\n                    count += hashmap[key]\n        return count\n \n \n\n（版本三）使用 defaultdict\n\nfrom collections import defaultdict \nclass Solution:\n    def fourSumCount(self, nums1: list, nums2: list, nums3: list, nums4: list) -> int:\n        rec, cnt = defaultdict(lambda : 0), 0\n        for i in nums1:\n            for j in nums2:\n                rec[i+j] += 1\n        for i in nums3:\n            for j in nums4:\n                cnt += rec.get(-(i+j), 0) \n        return cnt"
+}

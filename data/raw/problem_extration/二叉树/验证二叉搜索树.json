@@ -1,0 +1,621 @@
+{
+  "id": "AP_946dc6ad",
+  "title": "验证二叉搜索树",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/validate-binary-search-tree/",
+  "description": "给定一个二叉树，判断其是否是一个有效的二叉搜索树。\n\n假设一个二叉搜索树具有如下特征：\n\n节点的左子树只包含小于当前节点的数。\n节点的右子树只包含大于当前节点的数。\n所有左子树和右子树自身必须也是二叉搜索树。\n\nhttps://file1.kamacoder.com/i/algo/20230310000750.png",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "深度优先搜索",
+    "中序遍历"
+  ],
+  "data_structure_tags": [
+    "二叉树",
+    "栈"
+  ],
+  "technique_tags": [
+    "递归",
+    "迭代"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过递归或迭代的中序遍历方法验证给定的二叉树是否为有效的二叉搜索树。在遍历过程中，直接比较当前节点与前一个节点的值以确保满足二叉搜索树的特性，即左子树所有节点小于根节点且右子树所有节点大于根节点。",
+  "key_insights": [
+    {
+      "content": "二叉搜索树的中序遍历结果是一个严格递增的序列。基于这一点，可以通过判断遍历时节点值是否满足此条件来验证树的有效性。"
+    },
+    {
+      "content": "在遍历过程中实时更新最大（或最小）值，并与当前访问节点进行比较，避免了将所有节点值存入数组后再次比较的操作，从而节省空间。"
+    },
+    {
+      "content": "需要注意的是，对于含有整型最小值的情况，需要使用更大范围的数据类型（如long long）或采用其他策略（如记住前一个节点）来避免越界问题。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "要知道中序遍历下，输出的二叉搜索树节点的数值是有序序列。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<int> vec; void traversal(TreeNode* root) { if (root == NULL) return; traversal(root->left); vec.push_back(root->val); // 将二叉搜索树转换为有序数组 traversal(root->right); } public: bool isValidBST(TreeNode* root) { vec.clear(); // 不加这句在leetcode上也可以过，但最好加上 traversal(root); for (int i = 1; i < vec.size(); i++) { // 注意要小于等于，搜索树里不能有相同元素 if (vec[i] <= vec[i - 1]) return false; } return true; }};",
+          "description": "C++递归法实现验证二叉搜索树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: long long maxVal = LONG_MIN; // 因为后台测试数据中有int最小值 bool isValidBST(TreeNode* root) { if (root == NULL) return true; bool left = isValidBST(root->left); // 中序遍历，验证遍历的元素是不是从小到大 if (maxVal < root->val) maxVal = root->val; else return false; bool right = isValidBST(root->right); return left && right; }};",
+          "description": "C++递归法改进版，使用long long存储最大值"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* pre = NULL; // 用来记录前一个节点 bool isValidBST(TreeNode* root) { if (root == NULL) return true; bool left = isValidBST(root->left); if (pre != NULL && pre->val >= root->val) return false; pre = root; // 记录前一个节点 bool right = isValidBST(root->right); return left && right; }};",
+          "description": "C++递归法版本三，直接取该树的最小值"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool isValidBST(TreeNode* root) { stack<TreeNode*> st; TreeNode* cur = root; TreeNode* pre = NULL; // 记录前一个节点 while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->left;                // 左 } else { cur = st.top();                 // 中 st.pop(); if (pre != NULL && cur->val <= pre->val) return false; pre = cur; //保存前一个访问的结点 cur = cur->right;               // 右 } } return true; }};",
+          "description": "C++迭代法实现验证二叉搜索树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean isValidBST(TreeNode root) { Stack<TreeNode> stack = new Stack<>(); TreeNode pre = null; if(root != null) stack.add(root); while(!stack.isEmpty()){ TreeNode curr = stack.peek(); if(curr != null){ stack.pop(); if(curr.right != null) stack.add(curr.right); stack.add(curr); stack.add(null); if(curr.left != null) stack.add(curr.left); }else{ stack.pop(); TreeNode temp = stack.pop(); if(pre != null && pre.val >= temp.val) return false; pre = temp; } } return true; }}",
+          "description": "Java统一迭代法实现验证二叉搜索树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { TreeNode max; public boolean isValidBST(TreeNode root) { if (root == null) { return true; } boolean left = isValidBST(root.left); if (!left) { return false; } if (max != null && root.val <= max.val) { return false; } max = root; boolean right = isValidBST(root.right); return right; }}",
+          "description": "Java递归法实现验证二叉搜索树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean isValidBST(TreeNode root) { if (root == null) { return true; } Stack<TreeNode> stack = new Stack<>(); TreeNode pre = null; while (root != null || !stack.isEmpty()) { while (root != null) { stack.push(root); root = root.left;// 左 } TreeNode pop = stack.pop(); if (pre != null && pop.val <= pre.val) { return false; } pre = pop; root = pop.right;// 右 } return true; }}",
+          "description": "Java迭代法实现验证二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.vec = [] def traversal(self, root): if root is None: return self.traversal(root.left) self.vec.append(root.val)  # 将二叉搜索树转换为有序数组 self.traversal(root.right) def isValidBST(self, root): self.vec = []  # 清空数组 self.traversal(root) for i in range(1, len(self.vec)): # 注意要小于等于，搜索树里不能有相同元素 if self.vec[i] <= self.vec[i - 1]: return False return True",
+          "description": "Python递归法实现验证二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.maxVal = float('-inf')  # 因为后台测试数据中有int最小值 def isValidBST(self, root): if root is None: return True left = self.isValidBST(root.left) # 中序遍历，验证遍历的元素是不是从小到大 if self.maxVal < root.val: self.maxVal = root.val else: return False right = self.isValidBST(root.right) return left and right",
+          "description": "Python递归法改进版，使用极小值进行比较"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.pre = None  # 用来记录前一个节点 def isValidBST(self, root): if root is None: return True left = self.isValidBST(root.left) if self.pre is not None and self.pre.val >= root.val: return False self.pre = root  # 记录前一个节点 right = self.isValidBST(root.right) return left and right",
+          "description": "Python递归法版本三，直接取该树的最小值"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isValidBST(self, root): stack = [] cur = root pre = None  # 记录前一个节点 while cur is not None or len(stack) > 0: if cur is not None: stack.append(cur) cur = cur.left  # 左 else: cur = stack.pop()  # 中 if pre is not None and cur.val <= pre.val: return False pre = cur  # 保存前一个访问的结点 cur = cur.right  # 右 return True",
+          "description": "Python迭代法实现验证二叉搜索树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "递归法",
+      "text": "可以递归中序遍历将二叉搜索树转变成一个数组，代码如下：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "vector<int> vec; void traversal(TreeNode* root) { if (root == NULL) return; traversal(root->left); vec.push_back(root->val); // 将二叉搜索树转换为有序数组 traversal(root->right); }",
+          "description": "中序遍历将二叉搜索树的节点值存入数组"
+        },
+        {
+          "language": "cpp",
+          "code": "traversal(root); for (int i = 1; i < vec.size(); i++) { if (vec[i] <= vec[i - 1]) return false; } return true;",
+          "description": "检查数组是否严格递增以验证BST"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution { private: vector<int> vec; void traversal(TreeNode* root) { if (root == NULL) return; traversal(root->left); vec.push_back(root->val); traversal(root->right); } public: bool isValidBST(TreeNode* root) { vec.clear(); traversal(root); for (int i = 1; i < vec.size(); i++) { if (vec[i] <= vec[i - 1]) return false; } return true; } };",
+          "description": "完整的使用数组验证BST的方法"
+        },
+        {
+          "language": "cpp",
+          "code": "long long maxVal = LONG_MIN; // 因为后台测试数据中有int最小值 bool isValidBST(TreeNode* root) { if (root == NULL) return true; bool left = isValidBST(root->left); if (maxVal < root->val) maxVal = root->val; else return false; bool right = isValidBST(root->right); return left && right; }",
+          "description": "直接通过递归中序遍历比较节点值验证BST"
+        },
+        {
+          "language": "cpp",
+          "code": "TreeNode* pre = NULL; bool isValidBST(TreeNode* root) { if (root == NULL) return true; bool left = isValidBST(root->left); if (pre != NULL && pre->val >= root->val) return false; pre = root; bool right = isValidBST(root->right); return left && right; }",
+          "description": "记录前一个节点来验证BST"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution { public: bool isValidBST(TreeNode* root) { stack<TreeNode*> st; TreeNode* cur = root; TreeNode* pre = NULL; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->left; } else { cur = st.top(); st.pop(); if (pre != NULL && cur->val <= pre->val) return false; pre = cur; cur = cur->right; } } return true; } };",
+          "description": "迭代法中序遍历验证BST"
+        },
+        {
+          "language": "java",
+          "code": "public boolean isValidBST(TreeNode root) { Stack<TreeNode> stack = new Stack<>(); TreeNode pre = null; if(root != null) stack.add(root); while(!stack.isEmpty()){ TreeNode curr = stack.peek(); if(curr != null){ stack.pop(); if(curr.right != null) stack.add(curr.right); stack.add(curr); stack.add(null); if(curr.left != null) stack.add(curr.left); }else{ stack.pop(); TreeNode temp = stack.pop(); if(pre != null && pre.val >= temp.val) return false; pre = temp; } } return true; }",
+          "description": "Java版本统一迭代法验证BST"
+        },
+        {
+          "language": "java",
+          "code": "TreeNode max; public boolean isValidBST(TreeNode root) { if (root == null) { return true; } boolean left = isValidBST(root.left); if (!left) { return false; } if (max != null && root.val <= max.val) { return false; } max = root; boolean right = isValidBST(root.right); return right; }",
+          "description": "Java版本递归验证BST"
+        },
+        {
+          "language": "java",
+          "code": "public boolean isValidBST(TreeNode root) { if (root == null) { return true; } Stack<TreeNode> stack = new Stack<>(); TreeNode pre = null; while (root != null || !stack.isEmpty()) { while (root != null) { stack.push(root); root = root.left; } TreeNode pop = stack.pop(); if (pre != null && pop.val <= pre.val) { return false; } pre = pop; root = pop.right; } return true; }",
+          "description": "Java版本迭代法验证BST"
+        },
+        {
+          "language": "java",
+          "code": "public boolean isValidBST(TreeNode root) { return validBST(Long.MIN_VALUE, Long.MAX_VALUE, root); } boolean validBST(long lower, long upper, TreeNode root) { if (root == null) return true; if (root.val <= lower || root.val >= upper) return false; return validBST(lower, root.val, root.left) && validBST(root.val, upper, root.right); }",
+          "description": "简洁实现递归解法验证BST"
+        },
+        {
+          "language": "java",
+          "code": "private long prev = Long.MIN_VALUE; public boolean isValidBST(TreeNode root) { if (root == null) { return true; } if (!isValidBST(root.left)) { return false; } if (root.val <= prev) { return false; } prev = root.val; return isValidBST(root.right); }",
+          "description": "简洁实现中序遍历验证BST"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.vec = [] def traversal(self, root): if root is None: return self.traversal(root.left) self.vec.append(root.val) self.traversal(root.right) def isValidBST(self, root): self.vec = [] self.traversal(root) for i in range(1, len(self.vec)): if self.vec[i] <= self.vec[i - 1]: return False return True",
+          "description": "Python版本利用中序递增性质转换成数组验证BST"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.maxVal = float('-inf') def isValidBST(self, root): if root is None: return True left = self.isValidBST(root.left) if self.maxVal < root.val: self.maxVal = root.val else: return False right = self.isValidBST(root.right) return left and right",
+          "description": "Python版本设定极小值比较验证BST"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.pre = None def isValidBST(self, root): if root is None: return True left = self.isValidBST(root.left) if self.pre is not None and self.pre.val >= root.val: return False self.pre = root right = self.isValidBST(root.right) return left and right",
+          "description": "Python版本直接取该树的最小值验证BST"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isValidBST(self, root): stack = [] cur = root pre = None while cur is not None or len(stack) > 0: if cur is not None: stack.append(cur) cur = cur.left else: cur = stack.pop() if pre is not None and cur.val <= pre.val: return False pre = cur cur = cur.right return True",
+          "description": "Python版本迭代法验证BST"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "迭代法",
+      "text": "可以用迭代法模拟二叉树中序遍历，对前中后序迭代法生疏的同学可以看这两篇二叉树：听说递归能做的，栈也能做！ (https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E8%BF%AD%E4%BB%A3%E9%81%8D%E5%8E%86.html)，二叉树：前中后序迭代方式统一写法(https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E7%BB%9F%E4%B8%80%E8%BF%AD%E4%BB%A3%E6%B3%95.html)",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<int> vec; void traversal(TreeNode* root) { if (root == NULL) return; traversal(root->left); vec.push_back(root->val); // 将二叉搜索树转换为有序数组 traversal(root->right); } public: bool isValidBST(TreeNode* root) { vec.clear(); // 不加这句在leetcode上也可以过，但最好加上 traversal(root); for (int i = 1; i < vec.size(); i++) { // 注意要小于等于，搜索树里不能有相同元素 if (vec[i] <= vec[i - 1]) return false; } return true; }};",
+          "description": "将二叉搜索树转换成有序数组，并检查是否递增。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: long long maxVal = LONG_MIN; // 因为后台测试数据中有int最小值 bool isValidBST(TreeNode* root) { if (root == NULL) return true; bool left = isValidBST(root->left); if (maxVal < root->val) maxVal = root->val; else return false; bool right = isValidBST(root->right); return left && right; }};",
+          "description": "使用全局变量记录最大值来判断是否为有效的二叉搜索树。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* pre = NULL; // 用来记录前一个节点 bool isValidBST(TreeNode* root) { if (root == NULL) return true; bool left = isValidBST(root->left); if (pre != NULL && pre->val >= root->val) return false; pre = root; // 记录前一个节点 bool right = isValidBST(root->right); return left && right; }};",
+          "description": "通过记录前一个节点的值来判断当前节点是否满足二叉搜索树的要求。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool isValidBST(TreeNode* root) { stack<TreeNode*> st; TreeNode* cur = root; TreeNode* pre = NULL; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->left; } else { cur = st.top(); st.pop(); if (pre != NULL && cur->val <= pre->val) return false; pre = cur; cur = cur->right; } } return true; }};",
+          "description": "迭代法中序遍历验证二叉搜索树。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isValidBST(TreeNode root) { Stack<TreeNode> stack = new Stack<>(); TreeNode pre = null; if(root != null) stack.add(root); while(!stack.isEmpty()){ TreeNode curr = stack.peek(); if(curr != null){ stack.pop(); if(curr.right != null) stack.add(curr.right); stack.add(curr); stack.add(null); if(curr.left != null) stack.add(curr.left); }else{ stack.pop(); TreeNode temp = stack.pop(); if(pre != null && pre.val >= temp.val) return false; pre = temp; }} return true;}}",
+          "description": "使用栈进行统一迭代法实现中序遍历验证二叉搜索树。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {TreeNode max; public boolean isValidBST(TreeNode root) { if (root == null) {return true;} boolean left = isValidBST(root.left); if (!left) {return false;} if (max != null && root.val <= max.val) {return false;} max = root; boolean right = isValidBST(root.right); return right;}}",
+          "description": "递归方式验证二叉搜索树。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isValidBST(TreeNode root) { if (root == null) {return true;} Stack<TreeNode> stack = new Stack<>(); TreeNode pre = null; while (root != null || !stack.isEmpty()) { while (root != null) {stack.push(root); root = root.left;} TreeNode pop = stack.pop(); if (pre != null && pop.val <= pre.val) {return false;} pre = pop; root = pop.right;} return true;}}",
+          "description": "迭代方式验证二叉搜索树。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isValidBST(TreeNode root) { return validBST(Long.MIN_VALUE, Long.MAX_VALUE, root);} private boolean validBST(long lower, long upper, TreeNode root) { if (root == null) return true; if (root.val <= lower || root.val >= upper) return false; return validBST(lower, root.val, root.left) && validBST(root.val, upper, root.right);}}",
+          "description": "简洁递归解法验证二叉搜索树。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {private long prev = Long.MIN_VALUE; public boolean isValidBST(TreeNode root) { if (root == null) {return true;} if (!isValidBST(root.left)) {return false;} if (root.val <= prev) {return false;} prev = root.val; return isValidBST(root.right);}}",
+          "description": "简洁中序遍历方法验证二叉搜索树。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.vec = [] def traversal(self, root): if root is None: return self.traversal(root.left) self.vec.append(root.val) self.traversal(root.right) def isValidBST(self, root): self.vec = [] self.traversal(root) for i in range(1, len(self.vec)): if self.vec[i] <= self.vec[i - 1]: return False return True",
+          "description": "Python版本：将二叉搜索树转换成有序数组并检查是否递增。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.maxVal = float('-inf') def isValidBST(self, root): if root is None: return True left = self.isValidBST(root.left) if self.maxVal < root.val: self.maxVal = root.val else: return False right = self.isValidBST(root.right) return left and right",
+          "description": "Python版本：使用全局变量记录最大值来判断是否为有效的二叉搜索树。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.pre = None def isValidBST(self, root): if root is None: return True left = self.isValidBST(root.left) if self.pre is not None and self.pre.val >= root.val: return False self.pre = root right = self.isValidBST(root.right) return left and right",
+          "description": "Python版本：通过记录前一个节点的值来判断当前节点是否满足二叉搜索树的要求。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isValidBST(self, root): stack = [] cur = root pre = None while cur is not None or len(stack) > 0: if cur is not None: stack.append(cur) cur = cur.left else: cur = stack.pop() if pre is not None and cur.val <= pre.val: return False pre = cur cur = cur.right return True",
+          "description": "Python版本：迭代法中序遍历验证二叉搜索树。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "这道题目是一个简单题，但对于没接触过的同学还是有难度的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<int> vec;\n    void traversal(TreeNode* root) {\n        if (root == NULL) return;\n        traversal(root->left);\n        vec.push_back(root->val); \n        traversal(root->right);\n    }\npublic:\n    bool isValidBST(TreeNode* root) {\n        vec.clear(); \n        traversal(root);\n        for (int i = 1; i < vec.size(); i++) {\n            if (vec[i] <= vec[i - 1]) return false;\n        }\n        return true;\n    }\n};",
+          "description": "使用中序遍历将二叉搜索树转换为有序数组，然后检查数组是否严格递增"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    long long maxVal = LONG_MIN; \n    bool isValidBST(TreeNode* root) {\n        if (root == NULL) return true;\n\n        bool left = isValidBST(root->left);\n        if (maxVal < root->val) maxVal = root->val;\n        else return false;\n        bool right = isValidBST(root->right);\n\n        return left && right;\n    }\n};",
+          "description": "递归法，利用一个long long型变量记录前一个节点的值来判断当前节点是否满足条件"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* pre = NULL; \n    bool isValidBST(TreeNode* root) {\n        if (root == NULL) return true;\n        bool left = isValidBST(root->left);\n\n        if (pre != NULL && pre->val >= root->val) return false;\n        pre = root; \n\n        bool right = isValidBST(root->right);\n        return left && right;\n    }\n};",
+          "description": "递归法，通过跟踪前一个访问过的节点来验证当前节点是否满足条件"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    bool isValidBST(TreeNode* root) {\n        stack<TreeNode*> st;\n        TreeNode* cur = root;\n        TreeNode* pre = NULL; \n        while (cur != NULL || !st.empty()) {\n            if (cur != NULL) {\n                st.push(cur);\n                cur = cur->left; \n            } else {\n                cur = st.top(); \n                st.pop();\n                if (pre != NULL && cur->val <= pre->val)\n                    return false;\n                pre = cur; \n\n                cur = cur->right; \n            }\n        }\n        return true;\n    }\n};",
+          "description": "迭代法，模拟中序遍历过程，并在过程中检查节点值是否满足条件"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean isValidBST(TreeNode root) {\n        Stack<TreeNode> stack = new Stack<>();\n        TreeNode pre = null;\n        if(root != null)\n            stack.add(root); \n        while(!stack.isEmpty()){\n            TreeNode curr = stack.peek();\n            if(curr != null){\n                stack.pop();\n                if(curr.right != null)\n                    stack.add(curr.right);\n                stack.add(curr);\n                stack.add(null);\n                if(curr.left != null)\n                    stack.add(curr.left);\n            }else{\n                stack.pop();\n                TreeNode temp = stack.pop();\n                if(pre != null && pre.val >= temp.val)\n                    return false;\n                pre = temp;\n            }\n        }\n        return true;\n    }\n}",
+          "description": "Java实现的迭代方法，通过栈来进行中序遍历，并检查节点值是否符合二叉搜索树的定义"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    TreeNode max;\n    public boolean isValidBST(TreeNode root) {\n        if (root == null) {\n            return true;\n        }\n        boolean left = isValidBST(root.left);\n        if (!left) {\n            return false;\n        }\n        if (max != null && root.val <= max.val) {\n            return false;\n        }\n        max = root;\n        boolean right = isValidBST(root.right);\n        return right;\n    }\n}",
+          "description": "Java递归方法，利用额外的变量存储最大值以确保左子树的所有节点小于根节点且右子树的所有节点大于根节点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean isValidBST(TreeNode root) {\n        if (root == null) {\n            return true;\n        }\n        Stack<TreeNode> stack = new Stack<>();\n        TreeNode pre = null;\n        while (root != null || !stack.isEmpty()) {\n            while (root != null) {\n                stack.push(root);\n                root = root.left; \n            }\n            TreeNode pop = stack.pop();\n            if (pre != null && pop.val <= pre.val) {\n                return false;\n            }\n            pre = pop;\n\n            root = pop.right; \n        }\n        return true;\n    }\n}",
+          "description": "Java迭代方法，使用栈进行中序遍历，并在遍历过程中检查节点值是否按顺序排列"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.vec = []\n\n    def traversal(self, root):\n        if root is None:\n            return\n        self.traversal(root.left)\n        self.vec.append(root.val)  \n        self.traversal(root.right)\n\n    def isValidBST(self, root):\n        self.vec = []  \n        self.traversal(root)\n        for i in range(1, len(self.vec)):\n            if self.vec[i] <= self.vec[i - 1]:\n                return False\n        return True",
+          "description": "Python实现的递归方法，先将二叉搜索树转为有序列表再检查列表是否严格递增"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.maxVal = float('-inf')  \n\n    def isValidBST(self, root):\n        if root is None:\n            return True\n\n        left = self.isValidBST(root.left)\n        if self.maxVal < root.val:\n            self.maxVal = root.val\n        else:\n            return False\n        right = self.isValidBST(root.right)\n\n        return left and right",
+          "description": "Python递归方法，通过维护一个最大值变量来验证二叉搜索树的有效性"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.pre = None  \n\n    def isValidBST(self, root):\n        if root is None:\n            return True\n\n        left = self.isValidBST(root.left)\n\n        if self.pre is not None and self.pre.val >= root.val:\n            return False\n        self.pre = root  \n\n        right = self.isValidBST(root.right)\n        return left and right",
+          "description": "Python递归方法，通过追踪前一节点来保证节点值的正确排序"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def isValidBST(self, root):\n        stack = []\n        cur = root\n        pre = None  \n        while cur is not None or len(stack) > 0:\n            if cur is not None:\n                stack.append(cur)\n                cur = cur.left  \n            else:\n                cur = stack.pop()  \n                if pre is not None and cur.val <= pre.val:\n                    return False\n                pre = cur  \n                cur = cur.right  \n        return True",
+          "description": "Python迭代方法，采用栈结构执行中序遍历并验证节点值"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "vector<int> vec; void traversal(TreeNode* root) { if (root == NULL) return; traversal(root->left); vec.push_back(root->val); traversal(root->right); }",
+          "description": "递归中序遍历将二叉搜索树转变成一个数组"
+        },
+        {
+          "language": "cpp",
+          "code": "traversal(root); for (int i = 1; i < vec.size(); i++) { if (vec[i] <= vec[i - 1]) return false; } return true;",
+          "description": "比较数组是否是有序的"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution { private: vector<int> vec; void traversal(TreeNode* root) { if (root == NULL) return; traversal(root->left); vec.push_back(root->val); traversal(root->right); } public: bool isValidBST(TreeNode* root) { vec.clear(); traversal(root); for (int i = 1; i < vec.size(); i++) { if (vec[i] <= vec[i - 1]) return false; } return true; } };",
+          "description": "完整递归方法验证二叉搜索树"
+        },
+        {
+          "language": "cpp",
+          "code": "long long maxVal = LONG_MIN; // 因为后台测试数据中有int最小值 bool isValidBST(TreeNode* root) { if (root == NULL) return true; bool left = isValidBST(root->left); if (maxVal < root->val) maxVal = root->val; else return false; bool right = isValidBST(root->right); return left && right; }",
+          "description": "使用long long类型变量追踪最大值来判断"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution { public: TreeNode* pre = NULL; bool isValidBST(TreeNode* root) { if (root == NULL) return true; bool left = isValidBST(root->left); if (pre != NULL && pre->val >= root->val) return false; pre = root; bool right = isValidBST(root->right); return left && right; } };",
+          "description": "记录前一个节点以避免初始化最小值问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution { public: bool isValidBST(TreeNode* root) { stack<TreeNode*> st; TreeNode* cur = root; TreeNode* pre = NULL; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->left; } else { cur = st.top(); st.pop(); if (pre != NULL && cur->val <= pre->val) return false; pre = cur; cur = cur->right; } } return true; } };",
+          "description": "迭代法模拟二叉树中序遍历验证"
+        },
+        {
+          "language": "java",
+          "code": "public boolean isValidBST(TreeNode root) { Stack<TreeNode> stack = new Stack<>(); TreeNode pre = null; if(root != null) stack.add(root); while(!stack.isEmpty()){ TreeNode curr = stack.peek(); if(curr != null){ stack.pop(); if(curr.right != null) stack.add(curr.right); stack.add(curr); stack.add(null); if(curr.left != null) stack.add(curr.left); }else{ stack.pop(); TreeNode temp = stack.pop(); if(pre != null && pre.val >= temp.val) return false; pre = temp; } } return true; }",
+          "description": "Java版本统一迭代法实现"
+        },
+        {
+          "language": "java",
+          "code": "TreeNode max; public boolean isValidBST(TreeNode root) { if (root == null) { return true; } boolean left = isValidBST(root.left); if (!left) { return false; } if (max != null && root.val <= max.val) { return false; } max = root; boolean right = isValidBST(root.right); return right; }",
+          "description": "Java版本递归实现"
+        },
+        {
+          "language": "java",
+          "code": "public boolean isValidBST(TreeNode root) { if (root == null) { return true; } Stack<TreeNode> stack = new Stack<>(); TreeNode pre = null; while (root != null || !stack.isEmpty()) { while (root != null) { stack.push(root); root = root.left; } TreeNode pop = stack.pop(); if (pre != null && pop.val <= pre.val) { return false; } pre = pop; root = pop.right; } return true; }",
+          "description": "Java版本迭代实现"
+        },
+        {
+          "language": "java",
+          "code": "public boolean isValidBST(TreeNode root) { return validBST(Long.MIN_VALUE, Long.MAX_VALUE, root); } boolean validBST(long lower, long upper, TreeNode root) { if (root == null) return true; if (root.val <= lower || root.val >= upper) return false; return validBST(lower, root.val, root.left) && validBST(root.val, upper, root.right); }",
+          "description": "简洁递归解法"
+        },
+        {
+          "language": "java",
+          "code": "private long prev = Long.MIN_VALUE; public boolean isValidBST(TreeNode root) { if (root == null) { return true; } if (!isValidBST(root.left)) { return false; } if (root.val <= prev) { return false; } prev = root.val; return isValidBST(root.right); }",
+          "description": "简洁中序遍历实现"
+        },
+        {
+          "language": "python",
+          "code": "def __init__(self): self.vec = [] def traversal(self, root): if root is None: return self.traversal(root.left) self.vec.append(root.val) self.traversal(root.right) def isValidBST(self, root): self.vec = [] self.traversal(root) for i in range(1, len(self.vec)): if self.vec[i] <= self.vec[i - 1]: return False return True",
+          "description": "Python递归法（版本一）利用中序递增性质转换成数组"
+        },
+        {
+          "language": "python",
+          "code": "def __init__(self): self.maxVal = float('-inf') def isValidBST(self, root): if root is None: return True left = self.isValidBST(root.left) if self.maxVal < root.val: self.maxVal = root.val else: return False right = self.isValidBST(root.right) return left and right",
+          "description": "Python递归法（版本二）设定极小值进行比较"
+        },
+        {
+          "language": "python",
+          "code": "def __init__(self): self.pre = None def isValidBST(self, root): if root is None: return True left = self.isValidBST(root.left) if self.pre is not None and self.pre.val >= root.val: return False self.pre = root right = self.isValidBST(root.right) return left and right",
+          "description": "Python递归法（版本三）直接取该树的最小值"
+        },
+        {
+          "language": "python",
+          "code": "def isValidBST(self, root): stack = [] cur = root pre = None while cur is not None or len(stack) > 0: if cur is not None: stack.append(cur) cur = cur.left else: cur = stack.pop() if pre is not None and cur.val <= pre.val: return False pre = cur cur = cur.right return True",
+          "description": "Python迭代法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "//使用統一迭代法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<int> vec;\n    void traversal(TreeNode* root) {\n        if (root == NULL) return;\n        traversal(root->left);\n        vec.push_back(root->val); \n        traversal(root->right);\n    }\npublic:\n    bool isValidBST(TreeNode* root) {\n        vec.clear();\n        traversal(root);\n        for (int i = 1; i < vec.size(); i++) {\n            if (vec[i] <= vec[i - 1]) return false;\n        }\n        return true;\n    }\n};",
+          "description": "使用递归中序遍历将二叉搜索树转变成一个数组，然后判断这个数组是否是有序的。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    long long maxVal = LONG_MIN;\n    bool isValidBST(TreeNode* root) {\n        if (root == NULL) return true;\n\n        bool left = isValidBST(root->left);\n        if (maxVal < root->val) maxVal = root->val;\n        else return false;\n        bool right = isValidBST(root->right);\n\n        return left && right;\n    }\n};",
+          "description": "通过递归和一个全局变量来跟踪当前最大值，确保每个节点都大于其左子树中的所有节点。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* pre = NULL; \n    bool isValidBST(TreeNode* root) {\n        if (root == NULL) return true;\n        bool left = isValidBST(root->left);\n\n        if (pre != NULL && pre->val >= root->val) return false;\n        pre = root; \n\n        bool right = isValidBST(root->right);\n        return left && right;\n    }\n};",
+          "description": "通过递归和记录前一个访问的节点来验证当前节点是否大于前一个节点。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    bool isValidBST(TreeNode* root) {\n        stack<TreeNode*> st;\n        TreeNode* cur = root;\n        TreeNode* pre = NULL; \n        while (cur != NULL || !st.empty()) {\n            if (cur != NULL) {\n                st.push(cur);\n                cur = cur->left;                \n            } else {\n                cur = st.top();                 \n                st.pop();\n                if (pre != NULL && cur->val <= pre->val)\n                return false;\n                pre = cur; \n\n                cur = cur->right;               \n            }\n        }\n        return true;\n    }\n};",
+          "description": "使用迭代法模拟二叉树中序遍历，通过栈结构来实现。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean isValidBST(TreeNode root) {\n        Stack<TreeNode> stack = new Stack<>();\n        TreeNode pre = null;\n        if(root != null)\n            stack.add(root);        \n        while(!stack.isEmpty()){\n            TreeNode curr = stack.peek();\n            if(curr != null){\n                stack.pop();\n                if(curr.right != null)\n                    stack.add(curr.right);\n                stack.add(curr);\n                stack.add(null);\n                if(curr.left != null)\n                    stack.add(curr.left);\n            }else{\n                stack.pop();\n                TreeNode temp = stack.pop();\n                if(pre != null && pre.val >= temp.val)\n                    return false;\n                pre = temp;\n            }\n        }\n        return true;\n    }\n}",
+          "description": "Java版本的统一迭代法验证二叉搜索树。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    // 递归\n    TreeNode max;\n    public boolean isValidBST(TreeNode root) {\n        if (root == null) {\n            return true;\n        }\n        boolean left = isValidBST(root.left);\n        if (!left) {\n            return false;\n        }\n        if (max != null && root.val <= max.val) {\n            return false;\n        }\n        max = root;\n        boolean right = isValidBST(root.right);\n        return right;\n    }\n}",
+          "description": "Java版本的递归方法来验证二叉搜索树。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    // 迭代\n    public boolean isValidBST(TreeNode root) {\n        if (root == null) {\n            return true;\n        }\n        Stack<TreeNode> stack = new Stack<>();\n        TreeNode pre = null;\n        while (root != null || !stack.isEmpty()) {\n            while (root != null) {\n                stack.push(root);\n                root = root.left;\n            }\n            TreeNode pop = stack.pop();\n            if (pre != null && pop.val <= pre.val) {\n                return false;\n            }\n            pre = pop;\n            root = pop.right;\n        }\n        return true;\n    }\n}",
+          "description": "Java版本的迭代法来验证二叉搜索树。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.vec = []\n\n    def traversal(self, root):\n        if root is None:\n            return\n        self.traversal(root.left)\n        self.vec.append(root.val)  \n        self.traversal(root.right)\n\n    def isValidBST(self, root):\n        self.vec = []  \n        self.traversal(root)\n        for i in range(1, len(self.vec)):\n            if self.vec[i] <= self.vec[i - 1]:\n                return False\n        return True",
+          "description": "Python版本的递归法（版本一）利用中序递增性质，转换成数组。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.maxVal = float('-inf')  \n\n    def isValidBST(self, root):\n        if root is None:\n            return True\n\n        left = self.isValidBST(root.left)\n        if self.maxVal < root.val:\n            self.maxVal = root.val\n        else:\n            return False\n        right = self.isValidBST(root.right)\n\n        return left and right",
+          "description": "Python版本的递归法（版本二）设定极小值，进行比较。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.pre = None  \n\n    def isValidBST(self, root):\n        if root is None:\n            return True\n\n        left = self.isValidBST(root.left)\n\n        if self.pre is not None and self.pre.val >= root.val:\n            return False\n        self.pre = root  \n\n        right = self.isValidBST(root.right)\n        return left and right",
+          "description": "Python版本的递归法（版本三）直接取该树的最小值。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def isValidBST(self, root):\n        stack = []\n        cur = root\n        pre = None  \n        while cur is not None or len(stack) > 0:\n            if cur is not None:\n                stack.append(cur)\n                cur = cur.left  \n            else:\n                cur = stack.pop()  \n                if pre is not None and cur.val <= pre.val:\n                    return False\n                pre = cur  \n                cur = cur.right  \n        return True",
+          "description": "Python版本的迭代法。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "递归法（版本一）利用中序递增性质，转换成数组",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<int> vec;\n    void traversal(TreeNode* root) {\n        if (root == NULL) return;\n        traversal(root->left);\n        vec.push_back(root->val); // 将二叉搜索树转换为有序数组\n        traversal(root->right);\n    }\npublic:\n    bool isValidBST(TreeNode* root) {\n        vec.clear();\n        traversal(root);\n        for (int i = 1; i < vec.size(); i++) {\n            if (vec[i] <= vec[i - 1]) return false;\n        }\n        return true;\n    }\n};",
+          "description": "递归法将二叉树中序遍历转为数组，判断数组是否严格递增。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    long long maxVal = LONG_MIN;\n    bool isValidBST(TreeNode* root) {\n        if (root == NULL) return true;\n\n        bool left = isValidBST(root->left);\n        if (maxVal < root->val) maxVal = root->val;\n        else return false;\n        bool right = isValidBST(root->right);\n\n        return left && right;\n    }\n};",
+          "description": "使用一个全局变量记录前一个节点的值，直接在中序遍历时比较当前节点与前一节点的值。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* pre = NULL;\n    bool isValidBST(TreeNode* root) {\n        if (root == NULL) return true;\n        bool left = isValidBST(root->left);\n\n        if (pre != NULL && pre->val >= root->val) return false;\n        pre = root;\n\n        bool right = isValidBST(root->right);\n        return left && right;\n    }\n};",
+          "description": "通过记录前一个访问的节点来避免初始化最小值的问题，在中序遍历时比较当前节点与前一节点的值。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    bool isValidBST(TreeNode* root) {\n        stack<TreeNode*> st;\n        TreeNode* cur = root;\n        TreeNode* pre = NULL;\n        while (cur != NULL || !st.empty()) {\n            if (cur != NULL) {\n                st.push(cur);\n                cur = cur->left;\n            } else {\n                cur = st.top();\n                st.pop();\n                if (pre != NULL && cur->val <= pre->val)\n                    return false;\n                pre = cur;\n                cur = cur->right;\n            }\n        }\n        return true;\n    }\n};",
+          "description": "迭代法模拟二叉树中序遍历，同时检查节点值是否满足二叉搜索树的要求。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean isValidBST(TreeNode root) {\n        Stack<TreeNode> stack = new Stack<>();\n        TreeNode pre = null;\n        if(root != null)\n            stack.add(root);\n        while(!stack.isEmpty()){\n            TreeNode curr = stack.peek();\n            if(curr != null){\n                stack.pop();\n                if(curr.right != null)\n                    stack.add(curr.right);\n                stack.add(curr);\n                stack.add(null);\n                if(curr.left != null)\n                    stack.add(curr.left);\n            }else{\n                stack.pop();\n                TreeNode temp = stack.pop();\n                if(pre != null && pre.val >= temp.val)\n                    return false;\n                pre = temp;\n            }\n        }\n        return true;\n    }\n}",
+          "description": "Java实现的迭代法验证二叉搜索树。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.vec = []\n\n    def traversal(self, root):\n        if root is None:\n            return\n        self.traversal(root.left)\n        self.vec.append(root.val)\n        self.traversal(root.right)\n\n    def isValidBST(self, root):\n        self.vec = []\n        self.traversal(root)\n        for i in range(1, len(self.vec)):\n            if self.vec[i] <= self.vec[i - 1]:\n                return False\n        return True",
+          "description": "Python实现的递归法版本一，利用中序遍历性质将二叉树转换成数组进行判断。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.maxVal = float('-inf')\n\n    def isValidBST(self, root):\n        if root is None:\n            return True\n\n        left = self.isValidBST(root.left)\n        if self.maxVal < root.val:\n            self.maxVal = root.val\n        else:\n            return False\n        right = self.isValidBST(root.right)\n\n        return left and right",
+          "description": "Python实现的递归法版本二，设定极小值进行比较。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.pre = None\n\n    def isValidBST(self, root):\n        if root is None:\n            return True\n\n        left = self.isValidBST(root.left)\n\n        if self.pre is not None and self.pre.val >= root.val:\n            return False\n        self.pre = root\n\n        right = self.isValidBST(root.right)\n        return left and right",
+          "description": "Python实现的递归法版本三，直接取该树的最小值。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def isValidBST(self, root):\n        stack = []\n        cur = root\n        pre = None\n        while cur is not None or len(stack) > 0:\n            if cur is not None:\n                stack.append(cur)\n                cur = cur.left\n            else:\n                cur = stack.pop()\n                if pre is not None and cur.val <= pre.val:\n                    return False\n                pre = cur\n                cur = cur.right\n        return True",
+          "description": "Python实现的迭代法，采用栈结构进行中序遍历。"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "vector<int> vec; void traversal(TreeNode* root) { if (root == NULL) return; traversal(root->left); vec.push_back(root->val); traversal(root->right); } bool isValidBST(TreeNode* root) { vec.clear(); traversal(root); for (int i = 1; i < vec.size(); i++) { if (vec[i] <= vec[i - 1]) return false; } return true; }",
+      "description": "使用中序遍历将二叉搜索树转换为有序数组，然后判断该数组是否严格递增"
+    },
+    {
+      "language": "cpp",
+      "code": "long long maxVal = LONG_MIN; bool isValidBST(TreeNode* root) { if (root == NULL) return true; bool left = isValidBST(root->left); if (maxVal < root->val) maxVal = root->val; else return false; bool right = isValidBST(root->right); return left && right; }",
+      "description": "通过递归方式验证二叉树是否为有效的二叉搜索树，使用一个全局变量来记录最大值"
+    },
+    {
+      "language": "cpp",
+      "code": "TreeNode* pre = NULL; bool isValidBST(TreeNode* root) { if (root == NULL) return true; bool left = isValidBST(root->left); if (pre != NULL && pre->val >= root->val) return false; pre = root; bool right = isValidBST(root->right); return left && right; }",
+      "description": "递归实现，不依赖于初始化最小值，而是通过前一节点的值进行比较"
+    },
+    {
+      "language": "cpp",
+      "code": "bool isValidBST(TreeNode* root) { stack<TreeNode*> st; TreeNode* cur = root; TreeNode* pre = NULL; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->left; } else { cur = st.top(); st.pop(); if (pre != NULL && cur->val <= pre->val) return false; pre = cur; cur = cur->right; } } return true; }",
+      "description": "迭代法实现中序遍历以验证二叉搜索树的有效性"
+    },
+    {
+      "language": "java",
+      "code": "public boolean isValidBST(TreeNode root) { Stack<TreeNode> stack = new Stack<>(); TreeNode pre = null; if(root != null) stack.add(root); while(!stack.isEmpty()) { TreeNode curr = stack.peek(); if(curr != null) { stack.pop(); if(curr.right != null) stack.add(curr.right); stack.add(curr); stack.add(null); if(curr.left != null) stack.add(curr.left); } else { stack.pop(); TreeNode temp = stack.pop(); if(pre != null && pre.val >= temp.val) return false; pre = temp; } } return true; }",
+      "description": "Java实现统一迭代法来验证二叉搜索树"
+    },
+    {
+      "language": "java",
+      "code": "TreeNode max; public boolean isValidBST(TreeNode root) { if (root == null) { return true; } boolean left = isValidBST(root.left); if (!left) { return false; } if (max != null && root.val <= max.val) { return false; } max = root; boolean right = isValidBST(root.right); return right; }",
+      "description": "Java递归方法，通过设置一个全局变量来追踪当前子树的最大值"
+    },
+    {
+      "language": "java",
+      "code": "public boolean isValidBST(TreeNode root) { if (root == null) { return true; } Stack<TreeNode> stack = new Stack<>(); TreeNode pre = null; while (root != null || !stack.isEmpty()) { while (root != null) { stack.push(root); root = root.left; } TreeNode pop = stack.pop(); if (pre != null && pop.val <= pre.val) { return false; } pre = pop; root = pop.right; } return true; }",
+      "description": "Java迭代法实现，通过栈辅助完成中序遍历"
+    },
+    {
+      "language": "java",
+      "code": "public boolean isValidBST(TreeNode root) { return validBST(Long.MIN_VALUE, Long.MAX_VALUE, root); } boolean validBST(long lower, long upper, TreeNode root) { if (root == null) return true; if (root.val <= lower || root.val >= upper) return false; return validBST(lower, root.val, root.left) && validBST(root.val, upper, root.right); }",
+      "description": "简洁递归实现，通过设定上下界来判断二叉搜索树的有效性"
+    },
+    {
+      "language": "java",
+      "code": "private long prev = Long.MIN_VALUE; public boolean isValidBST(TreeNode root) { if (root == null) { return true; } if (!isValidBST(root.left)) { return false; } if (root.val <= prev) { return false; } prev = root.val; return isValidBST(root.right); }",
+      "description": "简洁递归实现，基于中序遍历的特性直接判断"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def __init__(self): self.vec = [] def traversal(self, root): if root is None: return self.traversal(root.left) self.vec.append(root.val) self.traversal(root.right) def isValidBST(self, root): self.vec = [] self.traversal(root) for i in range(1, len(self.vec)): if self.vec[i] <= self.vec[i - 1]: return False return True",
+      "description": "Python实现，利用中序遍历将二叉树转换成列表，并检查列表是否严格递增"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def __init__(self): self.maxVal = float('-inf') def isValidBST(self, root): if root is None: return True left = self.isValidBST(root.left) if self.maxVal < root.val: self.maxVal = root.val else: return False right = self.isValidBST(root.right) return left and right",
+      "description": "Python递归实现，通过维护一个最大值来判断二叉搜索树的有效性"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def __init__(self): self.pre = None def isValidBST(self, root): if root is None: return True left = self.isValidBST(root.left) if self.pre is not None and self.pre.val >= root.val: return False self.pre = root right = self.isValidBST(root.right) return left and right",
+      "description": "Python递归实现，直接取前一个节点的值进行比较"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def isValidBST(self, root): stack = [] cur = root pre = None while cur is not None or len(stack) > 0: if cur is not None: stack.append(cur) cur = cur.left else: cur = stack.pop() if pre is not None and cur.val <= pre.val: return False pre = cur cur = cur.right return True",
+      "description": "Python迭代法实现，通过栈辅助完成中序遍历"
+    }
+  ],
+  "common_mistakes": [
+    "仅比较左右子节点而不考虑整个子树。",
+    "初始化比较值时未考虑到极端情况下的整数边界问题。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230310000750.png",
+      "description": "该图片展示了判断二叉树是否为有效二叉搜索树的示例，涉及算法和数据结构中的二叉树性质验证。",
+      "context": "该图片展示了二叉搜索树的结构，帮助理解题目中关于验证二叉搜索树有效性的要求。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230310000824.png",
+      "description": "这是一棵二叉搜索树，节点值分别为10、5、15、6和20，其中节点10和6被红色边框突出显示。",
+      "context": "该图片展示了二叉搜索树的一个具体案例[10,5,15,null,null,6,20]，用于说明为何仅比较根节点与其直接子节点的值不足以验证整棵树是否满足二叉搜索树性质。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230310000750.png",
+      "description": "GIF展示了通过中序遍历二叉树，并将节点值依次添加到数组中的过程，以验证该树是否为有效的二叉搜索树。",
+      "context": "GIF动画展示了通过中序遍历二叉搜索树的过程，帮助理解如何验证其节点值是否形成递增序列。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230310000824.png",
+      "description": "GIF展示了二叉搜索树的遍历过程，特别强调了节点值之间的比较以验证树的有效性。",
+      "context": "GIF动画展示了二叉搜索树的一个具体例子，用以说明为何简单的节点值比较逻辑是不充分的。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\验证二叉搜索树.txt",
+  "extracted_at": "2025-07-20T10:38:02.071125",
+  "raw_content": "验证二叉搜索树\n力扣题目链接(https://leetcode.cn/problems/validate-binary-search-tree/)\n\n给定一个二叉树，判断其是否是一个有效的二叉搜索树。\n\n假设一个二叉搜索树具有如下特征：\n\n节点的左子树只包含小于当前节点的数。\n节点的右子树只包含大于当前节点的数。\n所有左子树和右子树自身必须也是二叉搜索树。\n\nhttps://file1.kamacoder.com/i/algo/20230310000750.png\n\n\n\n#思路\n要知道中序遍历下，输出的二叉搜索树节点的数值是有序序列。\n\n有了这个特性，验证二叉搜索树，就相当于变成了判断一个序列是不是递增的了。\n\n#递归法\n可以递归中序遍历将二叉搜索树转变成一个数组，代码如下：\n\nvector<int> vec;\nvoid traversal(TreeNode* root) {\n    if (root == NULL) return;\n    traversal(root->left);\n    vec.push_back(root->val); // 将二叉搜索树转换为有序数组\n    traversal(root->right);\n}\n然后只要比较一下，这个数组是否是有序的，注意二叉搜索树中不能有重复元素。\n\ntraversal(root);\nfor (int i = 1; i < vec.size(); i++) {\n    // 注意要小于等于，搜索树里不能有相同元素\n    if (vec[i] <= vec[i - 1]) return false;\n}\nreturn true;\n整体代码如下：\n\nclass Solution {\nprivate:\n    vector<int> vec;\n    void traversal(TreeNode* root) {\n        if (root == NULL) return;\n        traversal(root->left);\n        vec.push_back(root->val); // 将二叉搜索树转换为有序数组\n        traversal(root->right);\n    }\npublic:\n    bool isValidBST(TreeNode* root) {\n        vec.clear(); // 不加这句在leetcode上也可以过，但最好加上\n        traversal(root);\n        for (int i = 1; i < vec.size(); i++) {\n            // 注意要小于等于，搜索树里不能有相同元素\n            if (vec[i] <= vec[i - 1]) return false;\n        }\n        return true;\n    }\n};\n以上代码中，我们把二叉树转变为数组来判断，是最直观的，但其实不用转变成数组，可以在递归遍历的过程中直接判断是否有序。\n\n这道题目比较容易陷入两个陷阱：\n\n陷阱1\n不能单纯的比较左节点小于中间节点，右节点大于中间节点就完事了。\n\n写出了类似这样的代码：\n\nif (root->val > root->left->val && root->val < root->right->val) {\n    return true;\n} else {\n    return false;\n}\n我们要比较的是 左子树所有节点小于中间节点，右子树所有节点大于中间节点。所以以上代码的判断逻辑是错误的。\n\n例如： [10,5,15,null,null,6,20] 这个case：\n\nhttps://file1.kamacoder.com/i/algo/20230310000824.png\n\n节点10大于左节点5，小于右节点15，但右子树里出现了一个6 这就不符合了！\n\n陷阱2\n样例中最小节点 可能是int的最小值，如果这样使用最小的int来比较也是不行的。\n\n此时可以初始化比较元素为longlong的最小值。\n\n问题可以进一步演进：如果样例中根节点的val 可能是longlong的最小值 又要怎么办呢？文中会解答。\n\n了解这些陷阱之后我们来看一下代码应该怎么写：\n\n递归三部曲：\n\n确定递归函数，返回值以及参数\n要定义一个longlong的全局变量，用来比较遍历的节点是否有序，因为后台测试数据中有int最小值，所以定义为longlong的类型，初始化为longlong最小值。\n\n注意递归函数要有bool类型的返回值， 我们在二叉树：递归函数究竟什么时候需要返回值，什么时候不要返回值？ (https://programmercarl.com/0112.%E8%B7%AF%E5%BE%84%E6%80%BB%E5%92%8C.html)中讲了，只有寻找某一条边（或者一个节点）的时候，递归函数会有bool类型的返回值。\n\n其实本题是同样的道理，我们在寻找一个不符合条件的节点，如果没有找到这个节点就遍历了整个树，如果找到不符合的节点了，立刻返回。\n\n代码如下：\n\nlong long maxVal = LONG_MIN; // 因为后台测试数据中有int最小值\nbool isValidBST(TreeNode* root)\n确定终止条件\n如果是空节点 是不是二叉搜索树呢？\n\n是的，二叉搜索树也可以为空！\n\n代码如下：\n\nif (root == NULL) return true;\n确定单层递归的逻辑\n中序遍历，一直更新maxVal，一旦发现maxVal >= root->val，就返回false，注意元素相同时候也要返回false。\n\n代码如下：\n\nbool left = isValidBST(root->left);         // 左\n\n// 中序遍历，验证遍历的元素是不是从小到大\nif (maxVal < root->val) maxVal = root->val; // 中\nelse return false;\n\nbool right = isValidBST(root->right);       // 右\nreturn left && right;\n整体代码如下：\n\nclass Solution {\npublic:\n    long long maxVal = LONG_MIN; // 因为后台测试数据中有int最小值\n    bool isValidBST(TreeNode* root) {\n        if (root == NULL) return true;\n\n        bool left = isValidBST(root->left);\n        // 中序遍历，验证遍历的元素是不是从小到大\n        if (maxVal < root->val) maxVal = root->val;\n        else return false;\n        bool right = isValidBST(root->right);\n\n        return left && right;\n    }\n};\n以上代码是因为后台数据有int最小值测试用例，所以都把maxVal改成了longlong最小值。\n\n如果测试数据中有 longlong的最小值，怎么办？\n\n不可能在初始化一个更小的值了吧。 建议避免 初始化最小值，如下方法取到最左面节点的数值来比较。\n\n代码如下：\n\nclass Solution {\npublic:\n    TreeNode* pre = NULL; // 用来记录前一个节点\n    bool isValidBST(TreeNode* root) {\n        if (root == NULL) return true;\n        bool left = isValidBST(root->left);\n\n        if (pre != NULL && pre->val >= root->val) return false;\n        pre = root; // 记录前一个节点\n\n        bool right = isValidBST(root->right);\n        return left && right;\n    }\n};\n最后这份代码看上去整洁一些，思路也清晰。\n\n#迭代法\n可以用迭代法模拟二叉树中序遍历，对前中后序迭代法生疏的同学可以看这两篇二叉树：听说递归能做的，栈也能做！ (https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E8%BF%AD%E4%BB%A3%E9%81%8D%E5%8E%86.html)，二叉树：前中后序迭代方式统一写法(https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E7%BB%9F%E4%B8%80%E8%BF%AD%E4%BB%A3%E6%B3%95.html)\n\n迭代法中序遍历稍加改动就可以了，代码如下：\n\nclass Solution {\npublic:\n    bool isValidBST(TreeNode* root) {\n        stack<TreeNode*> st;\n        TreeNode* cur = root;\n        TreeNode* pre = NULL; // 记录前一个节点\n        while (cur != NULL || !st.empty()) {\n            if (cur != NULL) {\n                st.push(cur);\n                cur = cur->left;                // 左\n            } else {\n                cur = st.top();                 // 中\n                st.pop();\n                if (pre != NULL && cur->val <= pre->val)\n                return false;\n                pre = cur; //保存前一个访问的结点\n\n                cur = cur->right;               // 右\n            }\n        }\n        return true;\n    }\n};\n在二叉树：二叉搜索树登场！ (https://programmercarl.com/0700.%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E6%90%9C%E7%B4%A2.html)中我们分明写出了痛哭流涕的简洁迭代法，怎么在这里不行了呢，因为本题是要验证二叉搜索树啊。\n\n#总结\n这道题目是一个简单题，但对于没接触过的同学还是有难度的。\n\n所以初学者刚开始学习算法的时候，看到简单题目没有思路很正常，千万别怀疑自己智商，学习过程都是这样的，大家智商都差不多。\n\n只要把基本类型的题目都做过，总结过之后，思路自然就开阔了，加油💪\n\n#其他语言版本\n#Java\n//使用統一迭代法\nclass Solution {\n    public boolean isValidBST(TreeNode root) {\n        Stack<TreeNode> stack = new Stack<>();\n        TreeNode pre = null;\n        if(root != null)\n            stack.add(root);        \n        while(!stack.isEmpty()){\n            TreeNode curr = stack.peek();\n            if(curr != null){\n                stack.pop();\n                if(curr.right != null)\n                    stack.add(curr.right);\n                stack.add(curr);\n                stack.add(null);\n                if(curr.left != null)\n                    stack.add(curr.left);\n            }else{\n                stack.pop();\n                TreeNode temp = stack.pop();\n                if(pre != null && pre.val >= temp.val)\n                    return false;\n                pre = temp;\n            }\n        }\n        return true;\n    }\n}\nclass Solution {\n    // 递归\n    TreeNode max;\n    public boolean isValidBST(TreeNode root) {\n        if (root == null) {\n            return true;\n        }\n        // 左\n        boolean left = isValidBST(root.left);\n        if (!left) {\n            return false;\n        }\n        // 中\n        if (max != null && root.val <= max.val) {\n            return false;\n        }\n        max = root;\n        // 右\n        boolean right = isValidBST(root.right);\n        return right;\n    }\n}\n\nclass Solution {\n    // 迭代\n    public boolean isValidBST(TreeNode root) {\n        if (root == null) {\n            return true;\n        }\n        Stack<TreeNode> stack = new Stack<>();\n        TreeNode pre = null;\n        while (root != null || !stack.isEmpty()) {\n            while (root != null) {\n                stack.push(root);\n                root = root.left;// 左\n            }\n            // 中，处理\n            TreeNode pop = stack.pop();\n            if (pre != null && pop.val <= pre.val) {\n                return false;\n            }\n            pre = pop;\n\n            root = pop.right;// 右\n        }\n        return true;\n    }\n}\n\n// 简洁实现·递归解法\nclass Solution {\n    public boolean isValidBST(TreeNode root) {\n        return validBST(Long.MIN_VALUE, Long.MAX_VALUE, root);\n    }\n    boolean validBST(long lower, long upper, TreeNode root) {\n        if (root == null) return true;\n        if (root.val <= lower || root.val >= upper) return false;\n        return validBST(lower, root.val, root.left) && validBST(root.val, upper, root.right);\n    }\n}\n// 简洁实现·中序遍历\nclass Solution {\n    private long prev = Long.MIN_VALUE;\n    public boolean isValidBST(TreeNode root) {\n        if (root == null) {\n            return true;\n        }\n        if (!isValidBST(root.left)) {\n            return false;\n        }\n        if (root.val <= prev) { // 不满足二叉搜索树条件\n            return false;\n        }\n        prev = root.val;\n        return isValidBST(root.right);\n    }\n}\n#Python\n递归法（版本一）利用中序递增性质，转换成数组\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def __init__(self):\n        self.vec = []\n\n    def traversal(self, root):\n        if root is None:\n            return\n        self.traversal(root.left)\n        self.vec.append(root.val)  # 将二叉搜索树转换为有序数组\n        self.traversal(root.right)\n\n    def isValidBST(self, root):\n        self.vec = []  # 清空数组\n        self.traversal(root)\n        for i in range(1, len(self.vec)):\n            # 注意要小于等于，搜索树里不能有相同元素\n            if self.vec[i] <= self.vec[i - 1]:\n                return False\n        return True\n\n递归法（版本二）设定极小值，进行比较\n\nclass Solution:\n    def __init__(self):\n        self.maxVal = float('-inf')  # 因为后台测试数据中有int最小值\n\n    def isValidBST(self, root):\n        if root is None:\n            return True\n\n        left = self.isValidBST(root.left)\n        # 中序遍历，验证遍历的元素是不是从小到大\n        if self.maxVal < root.val:\n            self.maxVal = root.val\n        else:\n            return False\n        right = self.isValidBST(root.right)\n\n        return left and right\n\n递归法（版本三）直接取该树的最小值\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def __init__(self):\n        self.pre = None  # 用来记录前一个节点\n\n    def isValidBST(self, root):\n        if root is None:\n            return True\n\n        left = self.isValidBST(root.left)\n\n        if self.pre is not None and self.pre.val >= root.val:\n            return False\n        self.pre = root  # 记录前一个节点\n\n        right = self.isValidBST(root.right)\n        return left and right\n\n\n\n迭代法\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def isValidBST(self, root):\n        stack = []\n        cur = root\n        pre = None  # 记录前一个节点\n        while cur is not None or len(stack) > 0:\n            if cur is not None:\n                stack.append(cur)\n                cur = cur.left  # 左\n            else:\n                cur = stack.pop()  # 中\n                if pre is not None and cur.val <= pre.val:\n                    return False\n                pre = cur  # 保存前一个访问的结点\n                cur = cur.right  # 右\n        return True"
+}

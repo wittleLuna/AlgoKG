@@ -1,0 +1,323 @@
+四数之和
+力扣题目链接(https://leetcode.cn/problems/4sum/)
+
+题意：给定一个包含 n 个整数的数组 nums 和一个目标值 target，判断 nums 中是否存在四个元素 a，b，c 和 d ，使得 a + b + c + d 的值与 target 相等？找出所有满足条件且不重复的四元组。
+
+注意：
+
+答案中不可以包含重复的四元组。
+
+示例： 给定数组 nums = [1, 0, -1, 0, -2, 2]，和 target = 0。 满足要求的四元组集合为： [ [-1, 0, 0, 1], [-2, -1, 1, 2], [-2, 0, 0, 2] ]
+
+#算法公开课
+《代码随想录》算法视频公开课 (opens new window)：难在去重和剪枝！| LeetCode：18. 四数之和 (opens new window)，相信结合视频再看本篇题解，更有助于大家对本题的理解。
+
+#思路
+四数之和，和15.三数之和 (opens new window)是一个思路，都是使用双指针法, 基本解法就是在15.三数之和 (opens new window)的基础上再套一层for循环。
+
+但是有一些细节需要注意，例如： 不要判断nums[k] > target 就返回了，三数之和 可以通过 nums[i] > 0 就返回了，因为 0 已经是确定的数了，四数之和这道题目 target是任意值。比如：数组是[-4, -3, -2, -1]，target是-10，不能因为-4 > -10而跳过。但是我们依旧可以去做剪枝，逻辑变成nums[k] > target && (nums[k] >=0 || target >= 0)就可以了。
+
+15.三数之和 (opens new window)的双指针解法是一层for循环num[i]为确定值，然后循环内有left和right下标作为双指针，找到nums[i] + nums[left] + nums[right] == 0。
+
+四数之和的双指针解法是两层for循环nums[k] + nums[i]为确定值，依然是循环内有left和right下标作为双指针，找出nums[k] + nums[i] + nums[left] + nums[right] == target的情况，三数之和的时间复杂度是O(n^2)，四数之和的时间复杂度是O(n^3) 。
+
+那么一样的道理，五数之和、六数之和等等都采用这种解法。
+
+对于15.三数之和 (opens new window)双指针法就是将原本暴力O(n^3)的解法，降为O(n^2)的解法，四数之和的双指针解法就是将原本暴力O(n^4)的解法，降为O(n^3)的解法。
+
+之前我们讲过哈希表的经典题目：454.四数相加II (opens new window)，相对于本题简单很多，因为本题是要求在一个集合中找出四个数相加等于target，同时四元组不能重复。
+
+而454.四数相加II (opens new window)是四个独立的数组，只要找到A[i] + B[j] + C[k] + D[l] = 0就可以，不用考虑有重复的四个元素相加等于0的情况，所以相对于本题还是简单了不少！
+
+我们来回顾一下，几道题目使用了双指针法。
+
+双指针法将时间复杂度：O(n^2)的解法优化为 O(n)的解法。也就是降一个数量级，题目如下：
+
+27.移除元素(opens new window)
+15.三数之和(opens new window)
+18.四数之和(opens new window)
+链表相关双指针题目：
+
+206.反转链表(opens new window)
+19.删除链表的倒数第N个节点(opens new window)
+面试题 02.07. 链表相交(opens new window)
+142题.环形链表II(opens new window)
+双指针法在字符串题目中还有很多应用，后面还会介绍到。
+
+C++代码
+
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        vector<vector<int>> result;
+        sort(nums.begin(), nums.end());
+        for (int k = 0; k < nums.size(); k++) {
+            // 剪枝处理
+            if (nums[k] > target && nums[k] >= 0) {
+            	break; // 这里使用break，统一通过最后的return返回
+            }
+            // 对nums[k]去重
+            if (k > 0 && nums[k] == nums[k - 1]) {
+                continue;
+            }
+            for (int i = k + 1; i < nums.size(); i++) {
+                // 2级剪枝处理
+                if (nums[k] + nums[i] > target && nums[k] + nums[i] >= 0) {
+                    break;
+                }
+
+                // 对nums[i]去重
+                if (i > k + 1 && nums[i] == nums[i - 1]) {
+                    continue;
+                }
+                int left = i + 1;
+                int right = nums.size() - 1;
+                while (right > left) {
+                    // nums[k] + nums[i] + nums[left] + nums[right] > target 会溢出
+                    if ((long) nums[k] + nums[i] + nums[left] + nums[right] > target) {
+                        right--;
+                    // nums[k] + nums[i] + nums[left] + nums[right] < target 会溢出
+                    } else if ((long) nums[k] + nums[i] + nums[left] + nums[right]  < target) {
+                        left++;
+                    } else {
+                        result.push_back(vector<int>{nums[k], nums[i], nums[left], nums[right]});
+                        // 对nums[left]和nums[right]去重
+                        while (right > left && nums[right] == nums[right - 1]) right--;
+                        while (right > left && nums[left] == nums[left + 1]) left++;
+
+                        // 找到答案时，双指针同时收缩
+                        right--;
+                        left++;
+                    }
+                }
+
+            }
+        }
+        return result;
+    }
+};
+
+
+时间复杂度: O(n^3)
+空间复杂度: O(1)
+#补充
+二级剪枝的部分：
+
+if (nums[k] + nums[i] > target && nums[k] + nums[i] >= 0) {
+    break;
+}
+可以优化为：
+
+if (nums[k] + nums[i] > target && nums[i] >= 0) {
+    break;
+}
+因为只要 nums[k] + nums[i] > target，那么 nums[i] 后面的数都是正数的话，就一定 不符合条件了。
+
+不过这种剪枝 其实有点 小绕，大家能够理解 文章给的完整代码的剪枝 就够了。
+
+#其他语言版本
+#C:
+/* qsort */
+static int cmp(const void* arg1, const void* arg2) {
+    int a = *(int *)arg1;
+    int b = *(int *)arg2;
+    return (a > b);
+}
+
+int** fourSum(int* nums, int numsSize, int target, int* returnSize, int** returnColumnSizes) {
+
+    /* 对nums数组进行排序 */
+    qsort(nums, numsSize, sizeof(int), cmp);
+
+    int **res = (int **)malloc(sizeof(int *) * 40000);
+    int index = 0;
+
+    /* k */
+    for (int k = 0; k < numsSize - 3; k++) { /* 第一级 */
+
+        /* k剪枝 */
+        if ((nums[k] > target) && (nums[k] >= 0)) {
+            break;
+        }
+        /* k去重 */
+        if ((k > 0) && (nums[k] == nums[k - 1])) {
+            continue;
+        }
+
+        /* i */
+        for (int i = k + 1; i < numsSize - 2; i++) { /* 第二级 */
+
+            /* i剪枝 */
+            if ((nums[k] + nums[i] > target) && (nums[i] >= 0)) {
+                break;
+            }
+            /* i去重 */
+            if ((i > (k + 1)) && (nums[i] == nums[i - 1])) {
+                continue;
+            }
+
+            /* left and right */
+            int left = i + 1;
+            int right = numsSize - 1;
+
+            while (left < right) {
+
+                /* 防止大数溢出 */
+                long long val = (long long)nums[k] + nums[i] + nums[left] + nums[right];
+                if (val > target) {
+                    right--;
+                } else if (val < target) {
+                    left++;
+                } else {
+                    int *res_tmp = (int *)malloc(sizeof(int) * 4);
+                    res_tmp[0] = nums[k];
+                    res_tmp[1] = nums[i];
+                    res_tmp[2] = nums[left];
+                    res_tmp[3] = nums[right];
+                    res[index++] = res_tmp;
+                    
+                    /* right去重 */
+                    while ((right > left) && (nums[right] == nums[right - 1])) {
+                        right--;
+                    }
+                    /* left去重 */
+                    while ((left < right) && (nums[left] == nums[left + 1])) {
+                        left++;
+                    }
+
+                    /* 更新right与left */
+                    left++, right--;
+                }
+            }
+        }
+    }
+
+    /* 返回值处理 */
+    *returnSize = index;
+
+    int *column = (int *)malloc(sizeof(int) * index);
+    for (int i = 0; i < index; i++) {
+        column[i] = 4;
+    }
+    *returnColumnSizes = column;
+    return res;
+}
+#Java：
+import java.util.*;
+
+public class Solution {
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        Arrays.sort(nums);  // 排序数组
+        List<List<Integer>> result = new ArrayList<>();  // 结果集
+        for (int k = 0; k < nums.length; k++) {
+            // 剪枝处理
+            if (nums[k] > target && nums[k] >= 0) {
+                break;	// 此处的break可以等价于return result;
+            }
+            // 对nums[k]去重
+            if (k > 0 && nums[k] == nums[k - 1]) {
+                continue;
+            }
+            for (int i = k + 1; i < nums.length; i++) {
+                // 第二级剪枝
+                if (nums[k] + nums[i] > target && nums[k] + nums[i] >= 0) {
+                    break;	// 注意是break到上一级for循环，如果直接return result;会有遗漏
+                }
+                // 对nums[i]去重
+                if (i > k + 1 && nums[i] == nums[i - 1]) {
+                    continue;
+                }
+                int left = i + 1;
+                int right = nums.length - 1;
+                while (right > left) {
+                    long sum = (long) nums[k] + nums[i] + nums[left] + nums[right];
+                    if (sum > target) {
+                        right--;
+                    } else if (sum < target) {
+                        left++;
+                    } else {
+                        result.add(Arrays.asList(nums[k], nums[i], nums[left], nums[right]));
+                        // 对nums[left]和nums[right]去重
+                        while (right > left && nums[right] == nums[right - 1]) right--;
+                        while (right > left && nums[left] == nums[left + 1]) left++;
+                        right--;
+                        left++;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        int[] nums = {1, 0, -1, 0, -2, 2};
+        int target = 0;
+        List<List<Integer>> results = solution.fourSum(nums, target);
+        for (List<Integer> result : results) {
+            System.out.println(result);
+        }
+    }
+}
+#Python：
+(版本一) 双指针
+
+class Solution:
+    def fourSum(self, nums: List[int], target: int) -> List[List[int]]:
+        nums.sort()
+        n = len(nums)
+        result = []
+        for i in range(n):
+            if nums[i] > target and nums[i] > 0 and target > 0:# 剪枝（可省）
+                break
+            if i > 0 and nums[i] == nums[i-1]:# 去重
+                continue
+            for j in range(i+1, n):
+                if nums[i] + nums[j] > target and target > 0: #剪枝（可省）
+                    break
+                if j > i+1 and nums[j] == nums[j-1]: # 去重
+                    continue
+                left, right = j+1, n-1
+                while left < right:
+                    s = nums[i] + nums[j] + nums[left] + nums[right]
+                    if s == target:
+                        result.append([nums[i], nums[j], nums[left], nums[right]])
+                        while left < right and nums[left] == nums[left+1]:
+                            left += 1
+                        while left < right and nums[right] == nums[right-1]:
+                            right -= 1
+                        left += 1
+                        right -= 1
+                    elif s < target:
+                        left += 1
+                    else:
+                        right -= 1
+        return result
+
+(版本二) 使用字典
+
+class Solution(object):
+    def fourSum(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: List[List[int]]
+        """
+        # 创建一个字典来存储输入列表中每个数字的频率
+        freq = {}
+        for num in nums:
+            freq[num] = freq.get(num, 0) + 1
+        
+        # 创建一个集合来存储最终答案，并遍历4个数字的所有唯一组合
+        ans = set()
+        for i in range(len(nums)):
+            for j in range(i + 1, len(nums)):
+                for k in range(j + 1, len(nums)):
+                    val = target - (nums[i] + nums[j] + nums[k])
+                    if val in freq:
+                        # 确保没有重复
+                        count = (nums[i] == val) + (nums[j] == val) + (nums[k] == val)
+                        if freq[val] > count:
+                            ans.add(tuple(sorted([nums[i], nums[j], nums[k], val])))
+        
+        return [list(x) for x in ans]

@@ -1,0 +1,432 @@
+{
+  "id": "AP_c3033ec5",
+  "title": "每日温度",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/daily-temperatures/",
+  "description": "请根据每日 气温 列表，重新生成一个列表。对应位置的输出为：要想观测到更高的气温，至少需要等待的天数。如果气温在这之后都不会升高，请在该位置用 0 来代替。\n\n例如，给定一个列表 temperatures = [73, 74, 75, 71, 69, 72, 76, 73]，你的输出应该是 [1, 1, 4, 2, 1, 1, 0, 0]。\n\n提示：气温 列表长度的范围是 [1, 30000]。每个气温的值的均为华氏度，都是在 [30, 100] 范围内的整数。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "单调栈",
+    "线性扫描"
+  ],
+  "data_structure_tags": [
+    "栈"
+  ],
+  "technique_tags": [
+    "空间换时间"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用单调递增栈遍历每日气温列表，以找到每个温度右侧第一个比它更高的温度的位置。对于当前处理的元素，如果它小于或等于栈顶元素，则直接入栈；若大于栈顶元素，则弹出栈顶并计算等待天数直到栈为空或当前元素不大于新的栈顶元素为止。",
+  "key_insights": [
+    {
+      "content": "当需要在一维数组中寻找任一元素右边第一个比自己大或者小的元素位置时，可以考虑使用单调栈来优化时间复杂度至O(n)。"
+    },
+    {
+      "content": "针对本题寻找更高气温的需求，采用递增栈存储气温索引，从而能快速定位到右侧首个更高气温出现的位置。"
+    },
+    {
+      "content": "通过维护一个从栈顶到底部为递增顺序的栈，能够有效地追踪每个温度后面首次遇到更高温度所需等待的天数。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "首先想到的当然是暴力解法，两层for循环，把至少需要等待的天数就搜出来了。时间复杂度是O(n^2)",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> dailyTemperatures(vector<int>& T) {stack<int> st; vector<int> result(T.size(), 0); st.push(0); for (int i = 1; i < T.size(); i++) {if (T[i] < T[st.top()]) {st.push(i);} else if (T[i] == T[st.top()]) {st.push(i);} else {while (!st.empty() && T[i] > T[st.top()]) {result[st.top()] = i - st.top();st.pop();}st.push(i);}}}return result;}};",
+          "description": "C++版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> dailyTemperatures(vector<int>& T) {stack<int> st; vector<int> result(T.size(), 0); for (int i = 0; i < T.size(); i++) {while (!st.empty() && T[i] > T[st.top()]) {result[st.top()] = i - st.top();st.pop();}st.push(i);}return result;}};",
+          "description": "C++版本二"
+        },
+        {
+          "language": "c",
+          "code": "int* dailyTemperatures(int* temperatures, int temperaturesSize, int* returnSize) {int len = temperaturesSize; *returnSize = len;int *result = (int *)malloc(sizeof(int) * len);memset(result, 0x00, sizeof(int) * len);int stack[len];memset(stack, 0x00, sizeof(stack));int top = 0;for (int i = 1; i < len; i++) {if (temperatures[i] <= temperatures[stack[top]]) {stack[++top] = i;} else {while (top >= 0 && temperatures[i] > temperatures[stack[top]]) {result[stack[top]] = i - stack[top];top--;}stack[++top] = i;}}return result;}",
+          "description": "C语言版本"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] dailyTemperatures(int[] temperatures) {int lens=temperatures.length;int []res=new int[lens];Deque<Integer> stack=new LinkedList<>();stack.push(0);for(int i=1;i<lens;i++){if(temperatures[i]<=temperatures[stack.peek()]){stack.push(i);}else{while(!stack.isEmpty()&&temperatures[i]>temperatures[stack.peek()]){res[stack.peek()]=i-stack.peek();stack.pop();}stack.push(i);}}return res;}}",
+          "description": "Java版本一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] dailyTemperatures(int[] temperatures) {int lens=temperatures.length;int []res=new int[lens];Deque<Integer> stack=new LinkedList<>();for(int i=0;i<lens;i++){while(!stack.isEmpty()&&temperatures[i]>temperatures[stack.peek()]){res[stack.peek()]=i-stack.peek();stack.pop();}stack.push(i);}return res;}}",
+          "description": "Java版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def dailyTemperatures(self, temperatures: List[int]) -> List[int]: answer = [0]*len(temperatures) stack = [0] for i in range(1,len(temperatures)): if temperatures[i]<=temperatures[stack[-1]]: stack.append(i) else: while len(stack) != 0 and temperatures[i]>temperatures[stack[-1]]: answer[stack[-1]]=i-stack[-1] stack.pop() stack.append(i)return answer",
+          "description": "Python未精简版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def dailyTemperatures(self, temperatures: List[int]) -> List[int]: answer = [0]*len(temperatures) stack = [] for i in range(len(temperatures)): while len(stack)>0 and temperatures[i] > temperatures[stack[-1]]: answer[stack[-1]] = i - stack[-1] stack.pop() stack.append(i)return answer",
+          "description": "Python精简版本"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#C：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "class Solution {public: vector<int> dailyTemperatures(vector<int>& T) { stack<int> st; vector<int> result(T.size(), 0); st.push(0); for (int i = 1; i < T.size(); i++) { if (T[i] < T[st.top()]) { st.push(i); } else if (T[i] == T[st.top()]) { st.push(i); } else { while (!st.empty() && T[i] > T[st.top()]) { result[st.top()] = i - st.top(); st.pop(); } st.push(i); } } return result; }};",
+          "description": "使用单调栈解决每日温度问题的C++实现"
+        },
+        {
+          "language": "C++",
+          "code": "class Solution {public: vector<int> dailyTemperatures(vector<int>& T) { stack<int> st; vector<int> result(T.size(), 0); for (int i = 0; i < T.size(); i++) { while (!st.empty() && T[i] > T[st.top()]) { result[st.top()] = i - st.top(); st.pop(); } st.push(i); } return result; }};",
+          "description": "精简版本：使用单调栈解决每日温度问题的C++实现"
+        },
+        {
+          "language": "C",
+          "code": "int* dailyTemperatures(int* temperatures, int temperaturesSize, int* returnSize) { int len = temperaturesSize; *returnSize = len; int *result = (int *)malloc(sizeof(int) * len); memset(result, 0x00, sizeof(int) * len); int stack[len]; memset(stack, 0x00, sizeof(stack)); int top = 0; for (int i = 1; i < len; i++) { if (temperatures[i] <= temperatures[stack[top]]) { stack[++top] = i; } else { while (top >= 0 && temperatures[i] > temperatures[stack[top]]) { result[stack[top]] = i - stack[top]; top--; } stack[++top] = i; } } return result;}",
+          "description": "使用单调栈解决每日温度问题的C语言实现"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution { public int[] dailyTemperatures(int[] temperatures) { int lens=temperatures.length; int []res=new int[lens]; Deque<Integer> stack=new LinkedList<>(); stack.push(0); for(int i=1;i<lens;i++){ if(temperatures[i]<=temperatures[stack.peek()]){ stack.push(i); }else{ while(!stack.isEmpty()&&temperatures[i]>temperatures[stack.peek()]){ res[stack.peek()]=i-stack.peek(); stack.pop(); } stack.push(i); } } return res; }}",
+          "description": "版本1：使用单调栈解决每日温度问题的Java实现"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution { public int[] dailyTemperatures(int[] temperatures) { int lens=temperatures.length; int []res=new int[lens]; Deque<Integer> stack=new LinkedList<>(); for(int i=0;i<lens;i++){ while(!stack.isEmpty()&&temperatures[i]>temperatures[stack.peek()]){ res[stack.peek()]=i-stack.peek(); stack.pop(); } stack.push(i); } return res; }}",
+          "description": "版本2：使用单调栈解决每日温度问题的Java实现"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def dailyTemperatures(self, temperatures: List[int]) -> List[int]: answer = [0]*len(temperatures) stack = [0] for i in range(1,len(temperatures)): if temperatures[i]<=temperatures[stack[-1]]: stack.append(i) else: while len(stack) != 0 and temperatures[i]>temperatures[stack[-1]]: answer[stack[-1]]=i-stack[-1] stack.pop() stack.append(i) return answer",
+          "description": "未精简版本：使用单调栈解决每日温度问题的Python实现"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def dailyTemperatures(self, temperatures: List[int]) -> List[int]: answer = [0]*len(temperatures) stack = [] for i in range(len(temperatures)): while len(stack)>0 and temperatures[i] > temperatures[stack[-1]]: answer[stack[-1]] = i - stack[-1] stack.pop() stack.append(i) return answer",
+          "description": "精简版本：使用单调栈解决每日温度问题的Python实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "C：",
+      "text": "/**",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> dailyTemperatures(vector<int>& T) {stack<int> st; vector<int> result(T.size(), 0); for (int i = 0; i < T.size(); i++) {while (!st.empty() && T[i] > T[st.top()]) {result[st.top()] = i - st.top(); st.pop();} st.push(i);} return result;}};",
+          "description": "C++版本二"
+        },
+        {
+          "language": "c",
+          "code": "int* dailyTemperatures(int* temperatures, int temperaturesSize, int* returnSize) {int len = temperaturesSize; *returnSize = len; int *result = (int *)malloc(sizeof(int) * len); memset(result, 0x00, sizeof(int) * len); int stack[len]; memset(stack, 0x00, sizeof(stack)); int top = 0; for (int i = 1; i < len; i++) {if (temperatures[i] <= temperatures[stack[top]]) {stack[++top] = i;} else {while (top >= 0 && temperatures[i] > temperatures[stack[top]]) {result[stack[top]] = i - stack[top]; top--;} stack[++top] = i;}} return result;}",
+          "description": "C语言实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] dailyTemperatures(int[] temperatures) {int lens=temperatures.length; int []res=new int[lens]; Deque<Integer> stack=new LinkedList<>(); for(int i=0;i<lens;i++){while(!stack.isEmpty()&&temperatures[i]>temperatures[stack.peek()]){res[stack.peek()]=i-stack.peek(); stack.pop();} stack.push(i);} return res;}}",
+          "description": "Java版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def dailyTemperatures(self, temperatures: List[int]) -> List[int]: answer = [0]*len(temperatures) stack = [] for i in range(len(temperatures)): while len(stack)>0 and temperatures[i] > temperatures[stack[-1]]: answer[stack[-1]] = i - stack[-1] stack.pop() stack.append(i) return answer",
+          "description": "Python精简版本"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> dailyTemperatures(vector<int>& T) {stack<int> st; vector<int> result(T.size(), 0); st.push(0); for (int i = 1; i < T.size(); i++) {if (T[i] < T[st.top()]) {st.push(i);} else if (T[i] == T[st.top()]) {st.push(i);} else {while (!st.empty() && T[i] > T[st.top()]) {result[st.top()] = i - st.top(); st.pop();} st.push(i);}} return result;}};",
+          "description": "C++版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> dailyTemperatures(vector<int>& T) {stack<int> st; vector<int> result(T.size(), 0); for (int i = 0; i < T.size(); i++) {while (!st.empty() && T[i] > T[st.top()]) {result[st.top()] = i - st.top(); st.pop();} st.push(i);} return result;}};",
+          "description": "C++精简版"
+        },
+        {
+          "language": "c",
+          "code": "int* dailyTemperatures(int* temperatures, int temperaturesSize, int* returnSize) {int len = temperaturesSize; *returnSize = len;int *result = (int *)malloc(sizeof(int) * len);memset(result, 0x00, sizeof(int) * len);int stack[len];memset(stack, 0x00, sizeof(stack));int top = 0;for (int i = 1; i < len; i++) {if (temperatures[i] <= temperatures[stack[top]]) {stack[++top] = i;} else {while (top >= 0 && temperatures[i] > temperatures[stack[top]]) {result[stack[top]] = i - stack[top]; top--;}stack[++top] = i;}}return result;}",
+          "description": "C语言实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] dailyTemperatures(int[] temperatures) {int lens=temperatures.length;int []res=new int[lens];Deque<Integer> stack=new LinkedList<>();stack.push(0);for(int i=1;i<lens;i++){if(temperatures[i]<=temperatures[stack.peek()]){stack.push(i);}else{while(!stack.isEmpty()&&temperatures[i]>temperatures[stack.peek()]){res[stack.peek()]=i-stack.peek();stack.pop();}stack.push(i);}}return res;}}",
+          "description": "Java版本一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] dailyTemperatures(int[] temperatures) {int lens=temperatures.length;int []res=new int[lens];Deque<Integer> stack=new LinkedList<>();for(int i=0;i<lens;i++){while(!stack.isEmpty()&&temperatures[i]>temperatures[stack.peek()]){res[stack.peek()]=i-stack.peek();stack.pop();}stack.push(i);}return res;}}",
+          "description": "Java精简版"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def dailyTemperatures(self, temperatures: List[int]) -> List[int]: answer = [0]*len(temperatures) stack = [0] for i in range(1,len(temperatures)): if temperatures[i]<=temperatures[stack[-1]]: stack.append(i) else: while len(stack) != 0 and temperatures[i]>temperatures[stack[-1]]: answer[stack[-1]]=i-stack[-1] stack.pop() stack.append(i) return answer",
+          "description": "Python未精简版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def dailyTemperatures(self, temperatures: List[int]) -> List[int]: answer = [0]*len(temperatures) stack = [] for i in range(len(temperatures)): while len(stack)>0 and temperatures[i] > temperatures[stack[-1]]: answer[stack[-1]] = i - stack[-1] stack.pop() stack.append(i) return answer",
+          "description": "Python精简版"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "未精简版本",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> dailyTemperatures(vector<int>& T) { stack<int> st; vector<int> result(T.size(), 0); st.push(0); for (int i = 1; i < T.size(); i++) { if (T[i] < T[st.top()]) { st.push(i); } else if (T[i] == T[st.top()]) { st.push(i); } else { while (!st.empty() && T[i] > T[st.top()]) { result[st.top()] = i - st.top(); st.pop(); } st.push(i); } } return result; }};",
+          "description": "C++未精简版本"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> dailyTemperatures(vector<int>& T) { stack<int> st; vector<int> result(T.size(), 0); for (int i = 0; i < T.size(); i++) { while (!st.empty() && T[i] > T[st.top()]) { result[st.top()] = i - st.top(); st.pop(); } st.push(i); } return result; }};",
+          "description": "C++精简版本"
+        },
+        {
+          "language": "c",
+          "code": "int* dailyTemperatures(int* temperatures, int temperaturesSize, int* returnSize) { *returnSize = temperaturesSize; int *result = (int *)malloc(sizeof(int) * temperaturesSize); memset(result, 0x00, sizeof(int) * temperaturesSize); int stack[temperaturesSize]; memset(stack, 0x00, sizeof(stack)); int top = 0; for (int i = 1; i < temperaturesSize; i++) { if (temperatures[i] <= temperatures[stack[top]]) { stack[++top] = i; } else { while (top >= 0 && temperatures[i] > temperatures[stack[top]]) { result[stack[top]] = i - stack[top]; top--; } stack[++top] = i; } } return result;}",
+          "description": "C语言版本"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int[] dailyTemperatures(int[] temperatures) { int lens=temperatures.length; int []res=new int[lens]; Deque<Integer> stack=new LinkedList<>(); stack.push(0); for(int i=1;i<lens;i++){ if(temperatures[i]<=temperatures[stack.peek()]){ stack.push(i); }else{ while(!stack.isEmpty()&&temperatures[i]>temperatures[stack.peek()]){ res[stack.peek()]=i-stack.peek(); stack.pop(); } stack.push(i); } } return res; }}",
+          "description": "Java未精简版本"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int[] dailyTemperatures(int[] temperatures) { int lens=temperatures.length; int []res=new int[lens]; Deque<Integer> stack=new LinkedList<>(); for(int i=0;i<lens;i++){ while(!stack.isEmpty()&&temperatures[i]>temperatures[stack.peek()]){ res[stack.peek()]=i-stack.peek(); stack.pop(); } stack.push(i); } return res; }}",
+          "description": "Java精简版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def dailyTemperatures(self, temperatures: List[int]) -> List[int]: answer = [0]*len(temperatures) stack = [0] for i in range(1,len(temperatures)): if temperatures[i]<=temperatures[stack[-1]]: stack.append(i) else: while len(stack) != 0 and temperatures[i]>temperatures[stack[-1]]: answer[stack[-1]]=i-stack[-1] stack.pop() stack.append(i) return answer",
+          "description": "Python未精简版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def dailyTemperatures(self, temperatures: List[int]) -> List[int]: answer = [0]*len(temperatures) stack = [] for i in range(len(temperatures)): while len(stack)>0 and temperatures[i] > temperatures[stack[-1]]: answer[stack[-1]] = i - stack[-1] stack.pop() stack.append(i) return answer",
+          "description": "Python精简版本"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "explanation": "我怎么能想到用单调栈呢？ 什么时候用单调栈呢？"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: vector<int> dailyTemperatures(vector<int>& T) {stack<int> st; vector<int> result(T.size(), 0); st.push(0); for (int i = 1; i < T.size(); i++) { if (T[i] < T[st.top()]) { st.push(i);} else if (T[i] == T[st.top()]) { st.push(i);} else {while (!st.empty() && T[i] > T[st.top()]) { result[st.top()] = i - st.top(); st.pop();} st.push(i);}} return result;}};",
+      "description": "C++版本一实现"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: vector<int> dailyTemperatures(vector<int>& T) {stack<int> st; vector<int> result(T.size(), 0); for (int i = 0; i < T.size(); i++) { while (!st.empty() && T[i] > T[st.top()]) { result[st.top()] = i - st.top(); st.pop();} st.push(i);} return result;}};",
+      "description": "C++精简版实现"
+    },
+    {
+      "language": "c",
+      "code": "int* dailyTemperatures(int* temperatures, int temperaturesSize, int* returnSize) {int len = temperaturesSize; *returnSize = len; int *result = (int *)malloc(sizeof(int) * len); memset(result, 0x00, sizeof(int) * len); int stack[len]; memset(stack, 0x00, sizeof(stack)); int top = 0; for (int i = 1; i < len; i++) {if (temperatures[i] <= temperatures[stack[top]]) { stack[++top] = i;} else {while (top >= 0 && temperatures[i] > temperatures[stack[top]]) { result[stack[top]] = i - stack[top]; top--;} stack[++top] = i;}} return result;}",
+      "description": "C语言实现"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int[] dailyTemperatures(int[] temperatures) {int lens=temperatures.length; int []res=new int[lens]; Deque<Integer> stack=new LinkedList<>(); stack.push(0); for(int i=1;i<lens;i++){ if(temperatures[i]<=temperatures[stack.peek()]){ stack.push(i);}else{ while(!stack.isEmpty()&&temperatures[i]>temperatures[stack.peek()]){ res[stack.peek()]=i-stack.peek(); stack.pop();} stack.push(i);}} return res;}}",
+      "description": "Java版本一实现"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int[] dailyTemperatures(int[] temperatures) {int lens=temperatures.length; int []res=new int[lens]; Deque<Integer> stack=new LinkedList<>(); for(int i=0;i<lens;i++){ while(!stack.isEmpty()&&temperatures[i]>temperatures[stack.peek()]){ res[stack.peek()]=i-stack.peek(); stack.pop();} stack.push(i);} return res;}}",
+      "description": "Java精简版实现"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def dailyTemperatures(self, temperatures: List[int]) -> List[int]: answer = [0]*len(temperatures) stack = [0] for i in range(1,len(temperatures)): if temperatures[i]<=temperatures[stack[-1]]: stack.append(i) else: while len(stack) != 0 and temperatures[i]>temperatures[stack[-1]]: answer[stack[-1]]=i-stack[-1] stack.pop() stack.append(i) return answer",
+      "description": "Python未精简版本实现"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def dailyTemperatures(self, temperatures: List[int]) -> List[int]: answer = [0]*len(temperatures) stack = [] for i in range(len(temperatures)): while len(stack)>0 and temperatures[i] > temperatures[stack[-1]]: answer[stack[-1]] = i - stack[-1] stack.pop() stack.append(i) return answer",
+      "description": "Python精简版本实现"
+    }
+  ],
+  "common_mistakes": [
+    "初始化result数组时未设置为0，导致对于那些没有更高温度的日子处理不当。",
+    "忽视了当前元素与栈顶元素相等的情况，这可能导致结果不准确。实际上，当两者相等时也应当继续入栈，因为我们要找的是严格大于当前值的下一个温度。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124434172.jpg",
+      "description": "这张图片展示了栈数据结构的一个示例，其中栈内元素为元素下标（当前为0），栈头指向该元素，而下表为0的元素值为73。",
+      "context": "该图片展示了在处理温度列表时，当遍历到第二个元素74并将其与栈内首个元素73比较后，如何更新单调递增栈及结果数组的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124504299.jpg",
+      "description": "这张图片展示了使用栈数据结构解决“下一个更大元素”问题的过程，具体为当当前元素大于栈顶元素时，弹出栈顶元素并计算其结果。",
+      "context": "该图展示了在处理数组T时，当遇到T[2]且其大于栈顶元素T[1]的情况下，如何按照保持递增单调栈的原则更新栈和结果数组的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124527361.jpg",
+      "description": "这张图片展示了使用栈数据结构解决特定问题的过程，具体为在遍历数组时，根据条件（如74 < 75）弹出栈顶元素，并计算结果数组的值。",
+      "context": "展示了在保持递增单调栈的过程中，当遇到T[i]大于栈顶元素时（本例中T[2]>T[1]），将栈顶元素T[1]弹出，并更新result数组的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124610761.jpg",
+      "description": "这张图片展示了使用栈数据结构解决特定问题的过程，具体为计算每个元素到其右侧第一个更大元素的距离。",
+      "context": "展示了当遍历到T[4]时，由于T[4]等于栈顶元素T[3]，因此继续将T[4]加入单调栈中的情况。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124633444.jpg",
+      "description": "这张图片展示了使用栈数据结构解决特定问题的过程，具体涉及元素下标操作和结果计算。",
+      "context": "该图片展示了当遍历到的元素T[4]等于栈顶元素T[3]时，即使两者相等也继续将T[4]加入单调栈的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124700567.jpg",
+      "description": "这张图片展示了使用单调栈算法解决“下一个更大元素”问题的过程，具体表现为栈内元素的弹出和结果数组的计算。",
+      "context": "展示了当遍历到T[5]时，由于T[5]大于栈顶元素T[4]，因此将T[4]从栈中弹出，并计算距离以更新结果的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124726613.jpg",
+      "description": "这张图片展示了使用单调栈算法解决“下一个更大元素”问题的过程，具体表现为栈内元素的弹出和结果数组的计算。",
+      "context": "展示了在T[4]被弹出后，由于T[5]大于新的栈顶元素T[3]，继续执行弹出操作并更新结果的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124807715.jpg",
+      "description": "这张图片展示了使用栈数据结构来解决“下一个更大元素”问题的解题过程，具体通过计算栈内元素与当前元素的索引差来更新结果数组。",
+      "context": "展示了在T[5]被加入单调栈之前，T[5]与当前栈顶元素比较后导致T[3]被弹出，并准备继续处理直到T[5]小于新的栈顶元素的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/2021021912483374.jpg",
+      "description": "这张图片展示了使用单调栈算法解决“下一个更大元素”问题的过程，具体包括栈内元素的弹出操作和结果数组的计算方法。",
+      "context": "展示了在处理数组T时，当加入T[6]后，根据规则需要将栈内比T[6]大的元素T[5]和T[2]弹出的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/2021021912490098.jpg",
+      "description": "这张图片展示了使用栈数据结构解决“下一个更大元素”问题的解题过程，具体通过弹出栈内元素并计算结果数组的值来实现。",
+      "context": "展示在加入T[6]后，根据规则继续从栈中弹出元素直至满足条件的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124930156.jpg",
+      "description": "该图片展示了使用栈数据结构解决特定问题的过程，通过计算栈顶元素与当前索引的差值来更新结果数组。",
+      "context": "展示了栈内只剩T[6]元素的情况，准备迎接下一个元素T[7]的加入。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124957216.jpg",
+      "description": "这张图片展示了使用单调栈算法解决特定问题的过程，通过栈内元素的下标计算结果数组的值。",
+      "context": "该图片展示了在T[7]加入后，由于T[7]小于T[6]直接入栈的情况，同时表明result数组已完成更新。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124434172.jpg",
+      "description": "GIF展示了使用递增单调栈处理温度列表[73, 74, 75, 71, 71, 72, 76, 73]的过程，其中元素被依次加入栈中，并根据与栈顶元素的比较结果决定是否弹出栈顶元素。",
+      "context": "该GIF动画展示了在处理温度列表[73, 74, 75, 71, 71, 72, 76, 73]时，如何通过维护一个递增的单调栈来找到每个元素右侧第一个比它大的元素的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124504299.jpg",
+      "description": "该GIF展示了使用单调栈处理数组时，元素被依次比较并根据大小关系进出栈的过程。",
+      "context": "此GIF展示了在维持一个递增单调栈的过程中，当遇到新的元素大于栈顶元素时，如何更新栈内元素及结果数组的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124527361.jpg",
+      "description": "GIF展示了在维护一个递增单调栈的过程中，当遇到当前遍历的元素小于栈顶元素时，直接将该元素加入到栈中的操作。",
+      "context": "该GIF动画展示了在保持递增单调栈的过程中，当遇到新元素T[2]时，由于它大于当前栈顶元素T[1]，因此先将T[1]弹出栈后再将T[2]加入栈中的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124610761.jpg",
+      "description": "该GIF展示了在处理数组T时，维护一个递增单调栈的过程，特别地，当遇到当前元素小于或等于栈顶元素的情况时如何操作。",
+      "context": "该GIF展示了在遍历到T[4]时，由于T[4]等于栈顶元素T[3]，因此将T[4]加入单调栈的过程，强调了在寻找右侧第一个更大元素时遇到相等值的处理方式。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124633444.jpg",
+      "description": "GIF展示了在处理数组元素时，如何根据比较结果将元素压入或弹出单调栈的过程。",
+      "context": "该GIF展示了当遍历到的元素T[4]等于栈顶元素T[3]时，即使两者相等也要将T[4]加入单调栈中的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124700567.jpg",
+      "description": "GIF展示了在处理数组时，当遇到当前元素大于栈顶元素的情况，从单调栈中弹出相应元素并计算距离的过程。",
+      "context": "GIF展示了当遍历到T[5]时，因T[5]大于栈顶元素T[4]，故将T[4]从栈中弹出，并计算距离以更新结果的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124726613.jpg",
+      "description": "GIF展示了在处理数组时，当新加入的元素大于栈顶元素时，不断弹出栈顶并计算距离的过程。",
+      "context": "该GIF展示了当遍历到的元素T[5]大于栈顶元素T[3]时，将T[3]从单调栈中弹出，并计算距离以更新结果的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124807715.jpg",
+      "description": "GIF展示了在处理数组时，通过比较当前元素与单调栈顶元素的大小关系来决定是否弹出栈顶元素，并更新结果的过程。",
+      "context": "GIF展示了在处理T[5]时，当其小于栈顶元素之前，如何从单调栈中弹出元素并更新结果的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/2021021912483374.jpg",
+      "description": "该GIF展示了在处理数组时，通过单调栈技术移除并更新元素的过程。",
+      "context": "该GIF展示了在算法执行过程中，当新元素T[6]被加入时，由于其值大于栈顶元素，因此需要依次将栈内不符合条件的元素（这里是T[5]和T[2]）弹出的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/2021021912490098.jpg",
+      "description": "GIF展示了通过单调栈处理数组元素的过程，包括弹出比当前元素大的栈内元素、计算距离并更新结果数组。",
+      "context": "该GIF展示了在处理数组T时，当加入新元素T[6]后，如何依据其与栈顶元素的大小关系来决定是否从单调栈中弹出元素的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124930156.jpg",
+      "description": "GIF展示了在处理数组时，使用单调栈技术移除不符合条件的元素，并更新结果数组的过程。",
+      "context": "此GIF展示了在处理完一系列元素后，栈中仅保留了T[6]的状态，准备进行下一个元素T[7]的处理。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210219124957216.jpg",
+      "description": "GIF展示了使用单调栈算法处理数组时，元素入栈与出栈的过程以及结果数组的更新情况。",
+      "context": "该GIF展示了将T[7]加入栈后，因为T[7]小于T[6]而直接入栈的过程，同时指出result数组更新完毕的情况。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\单调栈\\每日温度.txt",
+  "extracted_at": "2025-07-21T01:26:23.351332",
+  "raw_content": "每日温度\n力扣题目链接(https://leetcode.cn/problems/daily-temperatures/)\n\n请根据每日 气温 列表，重新生成一个列表。对应位置的输出为：要想观测到更高的气温，至少需要等待的天数。如果气温在这之后都不会升高，请在该位置用 0 来代替。\n\n例如，给定一个列表 temperatures = [73, 74, 75, 71, 69, 72, 76, 73]，你的输出应该是 [1, 1, 4, 2, 1, 1, 0, 0]。\n\n提示：气温 列表长度的范围是 [1, 30000]。每个气温的值的均为华氏度，都是在 [30, 100] 范围内的整数。\n\n\n#思路\n首先想到的当然是暴力解法，两层for循环，把至少需要等待的天数就搜出来了。时间复杂度是O(n^2)\n\n那么接下来在来看看使用单调栈的解法。\n\n那有同学就问了，我怎么能想到用单调栈呢？ 什么时候用单调栈呢？\n\n通常是一维数组，要寻找任一个元素的右边或者左边第一个比自己大或者小的元素的位置，此时我们就要想到可以用单调栈了。时间复杂度为O(n)。\n\n例如本题其实就是找找到一个元素右边第一个比自己大的元素，此时就应该想到用单调栈了。\n\n那么单调栈的原理是什么呢？为什么时间复杂度是O(n)就可以找到每一个元素的右边第一个比它大的元素位置呢？\n\n单调栈的本质是空间换时间，因为在遍历的过程中需要用一个栈来记录右边第一个比当前元素高的元素，优点是整个数组只需要遍历一次。\n\n更直白来说，就是用一个栈来记录我们遍历过的元素，因为我们遍历数组的时候，我们不知道之前都遍历了哪些元素，以至于遍历一个元素找不到是不是之前遍历过一个更小的，所以我们需要用一个容器（这里用单调栈）来记录我们遍历过的元素。\n\n在使用单调栈的时候首先要明确如下几点：\n\n单调栈里存放的元素是什么？\n单调栈里只需要存放元素的下标i就可以了，如果需要使用对应的元素，直接T[i]就可以获取。\n\n单调栈里元素是递增呢？ 还是递减呢？\n注意以下讲解中，顺序的描述为 从栈头到栈底的顺序，因为单纯的说从左到右或者从前到后，不说栈头朝哪个方向的话，大家一定比较懵。\n\n这里我们要使用递增循序（再强调一下是指从栈头到栈底的顺序），因为只有递增的时候，栈里要加入一个元素i的时候，才知道栈顶元素在数组中右面第一个比栈顶元素大的元素是i。\n\n即：如果求一个元素右边第一个更大元素，单调栈就是递增的，如果求一个元素右边第一个更小元素，单调栈就是递减的。\n\n文字描述理解起来有点费劲，接下来我画了一系列的图，来讲解单调栈的工作过程，大家再去思考，本题为什么是递增栈。\n\n使用单调栈主要有三个判断条件。\n\n当前遍历的元素T[i]小于栈顶元素T[st.top()]的情况\n当前遍历的元素T[i]等于栈顶元素T[st.top()]的情况\n当前遍历的元素T[i]大于栈顶元素T[st.top()]的情况\n把这三种情况分析清楚了，也就理解透彻了。\n\n接下来我们用temperatures = [73, 74, 75, 71, 71, 72, 76, 73]为例来逐步分析，输出应该是 [1, 1, 4, 2, 1, 1, 0, 0]。\n\n首先先将第一个遍历元素加入单调栈\n\nhttps://file1.kamacoder.com/i/algo/20210219124434172.jpg\n\n加入T[1] = 74，因为T[1] > T[0]（当前遍历的元素T[i]大于栈顶元素T[st.top()]的情况）。\n\n我们要保持一个递增单调栈（从栈头到栈底），所以将T[0]弹出，T[1]加入，此时result数组可以记录了，result[0] = 1，即T[0]右面第一个比T[0]大的元素是T[1]。\nhttps://file1.kamacoder.com/i/algo/20210219124504299.jpg\n\n加入T[2]，同理，T[1]弹出\n\nhttps://file1.kamacoder.com/i/algo/20210219124527361.jpg\n\n加入T[3]，T[3] < T[2] （当前遍历的元素T[i]小于栈顶元素T[st.top()]的情况），加T[3]加入单调栈。\n\nhttps://file1.kamacoder.com/i/algo/20210219124610761.jpg\n\n加入T[4]，T[4] == T[3] （当前遍历的元素T[i]等于栈顶元素T[st.top()]的情况），此时依然要加入栈，不用计算距离，因为我们要求的是右面第一个大于本元素的位置，而不是大于等于！\n\nhttps://file1.kamacoder.com/i/algo/20210219124633444.jpg\n加入T[5]，T[5] > T[4] （当前遍历的元素T[i]大于栈顶元素T[st.top()]的情况），将T[4]弹出，同时计算距离，更新result \nhttps://file1.kamacoder.com/i/algo/20210219124700567.jpg\n\nT[4]弹出之后， T[5] > T[3] （当前遍历的元素T[i]大于栈顶元素T[st.top()]的情况），将T[3]继续弹出，同时计算距离，更新result \nhttps://file1.kamacoder.com/i/algo/20210219124726613.jpg\n直到发现T[5]小于T[st.top()]，终止弹出，将T[5]加入单调栈\n\nhttps://file1.kamacoder.com/i/algo/20210219124807715.jpg\n\n加入T[6]，同理，需要将栈里的T[5]，T[2]弹出\n\nhttps://file1.kamacoder.com/i/algo/2021021912483374.jpg\n\n同理，继续弹出\n\nhttps://file1.kamacoder.com/i/algo/2021021912490098.jpg\n\n此时栈里只剩下了T[6]\n\nhttps://file1.kamacoder.com/i/algo/20210219124930156.jpg\n\n加入T[7]， T[7] < T[6] 直接入栈，这就是最后的情况，result数组也更新完了。\n\nhttps://file1.kamacoder.com/i/algo/20210219124957216.jpg\n\n此时有同学可能就疑惑了，那result[6] , result[7]怎么没更新啊，元素也一直在栈里。\n\n其实定义result数组的时候，就应该直接初始化为0，如果result没有更新，说明这个元素右面没有更大的了，也就是为0。\n\n以上在图解的时候，已经把，这三种情况都做了详细的分析。\n\n情况一：当前遍历的元素T[i]小于栈顶元素T[st.top()]的情况\n情况二：当前遍历的元素T[i]等于栈顶元素T[st.top()]的情况\n情况三：当前遍历的元素T[i]大于栈顶元素T[st.top()]的情况\n通过以上过程，大家可以自己再模拟一遍，就会发现：只有单调栈递增（从栈口到栈底顺序），就是求右边第一个比自己大的，单调栈递减的话，就是求右边第一个比自己小的。\n\nC++代码如下：\n\n// 版本一\nclass Solution {\npublic:\n    vector<int> dailyTemperatures(vector<int>& T) {\n        // 递增栈\n        stack<int> st;\n        vector<int> result(T.size(), 0);\n        st.push(0);\n        for (int i = 1; i < T.size(); i++) {\n            if (T[i] < T[st.top()]) {                       // 情况一\n                st.push(i);\n            } else if (T[i] == T[st.top()]) {               // 情况二\n                st.push(i);\n            } else {\n                while (!st.empty() && T[i] > T[st.top()]) { // 情况三\n                    result[st.top()] = i - st.top();\n                    st.pop();\n                }\n                st.push(i);\n            }\n        }\n        return result;\n    }\n};\n建议一开始 都把每种情况分析好，不要上来看简短的代码，关键逻辑都被隐藏了。\n\n精简代码如下：\n\n// 版本二\nclass Solution {\npublic:\n    vector<int> dailyTemperatures(vector<int>& T) {\n        stack<int> st; // 递增栈\n        vector<int> result(T.size(), 0);\n        for (int i = 0; i < T.size(); i++) {\n            while (!st.empty() && T[i] > T[st.top()]) { // 注意栈不能为空\n                result[st.top()] = i - st.top();\n                st.pop();\n            }\n            st.push(i);\n\n        }\n        return result;\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(n)\n精简的代码是直接把情况一二三都合并到了一起，其实这种代码精简是精简，但思路不是很清晰。\n\n建议大家把情况一二三想清楚了，先写出版本一的代码，然后在其基础上在做精简！\n\n#其他语言版本\n#C：\n/**\n * Note: The returned array must be malloced, assume caller calls free().\n */\nint* dailyTemperatures(int* temperatures, int temperaturesSize, int* returnSize) {\n    int len = temperaturesSize;\n    *returnSize = len;\n\n    int *result = (int *)malloc(sizeof(int) * len);\n    memset(result, 0x00, sizeof(int) * len);\n\n    int stack[len];\n    memset(stack, 0x00, sizeof(stack));\n    int top = 0;\n\n    for (int i = 1; i < len; i++) {\n        if (temperatures[i] <= temperatures[stack[top]]) { /* push */\n            stack[++top] = i;\n        } else {\n            while (top >= 0 && temperatures[i] > temperatures[stack[top]]) { /* stack not empty */\n                result[stack[top]] = i - stack[top];\n                top--; /* pop */\n            }\n            stack[++top] = i; /* push */\n        }\n    }\n    return result;\n}\n#Java：\nclass Solution {\n  // 版本 1\n    public int[] dailyTemperatures(int[] temperatures) {\n\n        int lens=temperatures.length;\n        int []res=new int[lens];\n\n        /**\n        如果当前遍历的元素 大于栈顶元素，表示 栈顶元素的 右边的最大的元素就是 当前遍历的元素，\n        \t所以弹出 栈顶元素，并记录\n        \t如果栈不空的话，还要考虑新的栈顶与当前元素的大小关系\n        否则的话，可以直接入栈。\n        注意，单调栈里 加入的元素是 下标。\n        */\n        Deque<Integer> stack=new LinkedList<>();\n        stack.push(0);\n        for(int i=1;i<lens;i++){\n\n            if(temperatures[i]<=temperatures[stack.peek()]){\n                stack.push(i);\n            }else{\n                while(!stack.isEmpty()&&temperatures[i]>temperatures[stack.peek()]){\n                    res[stack.peek()]=i-stack.peek();\n                    stack.pop();\n                }\n                stack.push(i);\n            }\n        }\n\n        return  res;\n    }\n\n    //--------这 是一条分界线\n    // 版本 2\n    class Solution {\n    public int[] dailyTemperatures(int[] temperatures) {\n        int lens=temperatures.length;\n        int []res=new int[lens];\n        Deque<Integer> stack=new LinkedList<>();\n        for(int i=0;i<lens;i++){\n\n           while(!stack.isEmpty()&&temperatures[i]>temperatures[stack.peek()]){\n                    res[stack.peek()]=i-stack.peek();\n                    stack.pop();\n                }\n                stack.push(i);\n        }\n\n        return  res;\n    }\n}\n\n}\n#Python：\n未精简版本\n\nclass Solution:\n    def dailyTemperatures(self, temperatures: List[int]) -> List[int]:\n        answer = [0]*len(temperatures)\n        stack = [0]\n        for i in range(1,len(temperatures)):\n            # 情况一和情况二\n            if temperatures[i]<=temperatures[stack[-1]]:\n                stack.append(i)\n            # 情况三\n            else:\n                while len(stack) != 0 and temperatures[i]>temperatures[stack[-1]]:\n                    answer[stack[-1]]=i-stack[-1]\n                    stack.pop()\n                stack.append(i)\n\n        return answer\n精简版本\n\nclass Solution:\n    def dailyTemperatures(self, temperatures: List[int]) -> List[int]:\n        answer = [0]*len(temperatures)\n        stack = []\n        for i in range(len(temperatures)):\n            while len(stack)>0 and temperatures[i] > temperatures[stack[-1]]:\n                answer[stack[-1]] = i - stack[-1]\n                stack.pop()\n            stack.append(i)\n        return answer"
+}

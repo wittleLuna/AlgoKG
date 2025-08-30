@@ -1,0 +1,81 @@
+{
+    "math_symbols": {
+      "\\\\mathit\\{([^}]+)\\}": "\\1",
+      "\\\\mathrm\\{([^}]+)\\}": "\\1",
+      "\\\\mathbf\\{([^}]+)\\}": "\\1",
+      "\\\\text\\{([^}]+)\\}": "\\1"
+    },
+    "comparison_operators": {
+      "\\\\leq": "≤",
+      "\\\\geq": "≥",
+      "\\\\neq": "≠",
+      "\\\\lt": "<",
+      "\\\\gt": ">"
+    },
+    "arithmetic_operators": {
+      "\\\\cdot": "·",
+      "\\\\times": "×",
+      "\\\\div": "÷",
+      "\\\\pm": "±"
+    },
+    "fractions_and_powers": {
+      "\\\\frac\\{([^}]+)\\}\\{([^}]+)\\}": "(\\1)/(\\2)",
+      "\\^(\\{[^}]+\\}|\\w)": "^(\\1)",
+      "_(\\{[^}]+\\}|\\w)": "_(\\1)"
+    },
+    "brackets": {
+      "\\\\left\\(": "(",
+      "\\\\right\\)": ")",
+      "\\\\left\\[": "[",
+      "\\\\right\\]": "]"
+    },
+    "set_symbols": {
+      "\\\\in": "∈",
+      "\\\\subset": "⊂",
+      "\\\\cup": "∪",
+      "\\\\cap": "∩"
+    },
+    "greek_letters": {
+      "\\\\alpha": "α",
+      "\\\\beta": "β",
+      "\\\\gamma": "γ",
+      "\\\\delta": "δ",
+      "\\\\theta": "θ",
+      "\\\\lambda": "λ",
+      "\\\\mu": "μ",
+      "\\\\sigma": "σ",
+      "\\\\pi": "π"
+    },
+    "complexity_notation": {
+      "\\\\mathcal\\{O\\}": "O",
+      "\\\\Theta": "Θ",
+      "\\\\Omega": "Ω"
+    },
+    "logic_symbols": {
+      "\\\\land": "∧",
+      "\\\\lor": "∨",
+      "\\\\neg": "¬",
+      "\\\\Rightarrow": "⇒",
+      "\\\\Leftarrow": "⇐",
+      "\\\\Leftrightarrow": "⇔"
+    },
+    "summation_integration": {
+      "\\\\sum": "∑",
+      "\\\\prod": "∏",
+      "\\\\int": "∫"
+    },
+    "common_functions": {
+      "\\\\log": "log",
+      "\\\\ln": "ln",
+      "\\\\sin": "sin",
+      "\\\\cos": "cos",
+      "\\\\tan": "tan"
+    },
+    "special_symbols": {
+      "\\\\infty": "∞"
+    },
+    "cleanup_rules": {
+      "\\\\([a-zA-Z]+)": "\\1",
+      "\\{([^{}]*)\\}": "\\1"
+    }
+  }

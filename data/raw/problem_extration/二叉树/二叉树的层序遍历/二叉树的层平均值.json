@@ -1,0 +1,167 @@
+{
+  "id": "AP_bc9c4242",
+  "title": "二叉树的层平均值",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/average-of-levels-in-binary-tree/",
+  "description": "给定一个非空二叉树, 返回一个由每层节点平均值组成的数组。\n\nhttps://file1.kamacoder.com/i/algo/20210203151350500.png",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "Breadth-First Search",
+    "Level Order Traversal"
+  ],
+  "data_structure_tags": [
+    "Queue"
+  ],
+  "technique_tags": [
+    "Iterative Approach",
+    "Tree Traversal"
+  ],
+  "difficulty": null,
+  "solution_approach": "采用层序遍历（广度优先搜索）的方式遍历二叉树。在遍历每一层节点时计算该层所有节点值的总和，并除以该层数量得到平均值。将每层的平均值依次存入结果列表中。",
+  "key_insights": [
+    {
+      "content": "通过使用队列数据结构来辅助进行层次遍历，确保可以按层次访问每个节点，从而方便地对同一层的所有节点进行处理。"
+    },
+    {
+      "content": "每次循环迭代处理一层的所有节点，这使得我们可以容易地计算出当前层的节点数量及它们的总和，进而快速获得平均值。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "本题就是层序遍历的时候把一层求个总和再取一个均值。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<double> averageOfLevels(TreeNode* root) { queue<TreeNode*> que; if (root != NULL) que.push(root); vector<double> result; while (!que.empty()) { int size = que.size(); double sum = 0; for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); sum += node->val; if (node->left) que.push(node->left); if (node->right) que.push(node->right); } result.push_back(sum / size); } return result; }};",
+          "description": "C++版本的二叉树层平均值计算"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def averageOfLevels(self, root: TreeNode) -> List[float]: if not root: return [] queue = collections.deque([root]) averages = [] while queue: size = len(queue) level_sum = 0 for i in range(size): node = queue.popleft() level_sum += node.val if node.left: queue.append(node.left) if node.right: queue.append(node.right) averages.append(level_sum / size) return averages",
+          "description": "Python版本的二叉树层平均值计算"
+        },
+        {
+          "language": "java",
+          "code": "public class N0637 { public List<Double> averageOfLevels(TreeNode root) { List<Double> list = new ArrayList<>(); Deque<TreeNode> que = new LinkedList<>(); if (root == null) { return list; } que.offerLast(root); while (!que.isEmpty()) { int levelSize = que.size(); double levelSum = 0.0; for (int i = 0; i < levelSize; i++) { TreeNode poll = que.pollFirst(); levelSum += poll.val; if (poll.left != null) { que.addLast(poll.left); } if (poll.right != null) { que.addLast(poll.right); } } list.add(levelSum / levelSize); } return list; }}",
+          "description": "Java版本的二叉树层平均值计算"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Python：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<double> averageOfLevels(TreeNode* root) { queue<TreeNode*> que; if (root != NULL) que.push(root); vector<double> result; while (!que.empty()) { int size = que.size(); double sum = 0; for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); sum += node->val; if (node->left) que.push(node->left); if (node->right) que.push(node->right); } result.push_back(sum / size); } return result; }};",
+          "description": "C++版本的二叉树层平均值解决方案"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\nclass TreeNode:\n def __init__(self, val=0, left=None, right=None):\n self.val = val\n self.left = left\n self.right = right\nclass Solution:\n def averageOfLevels(self, root: TreeNode) -> List[float]:\n if not root:\n return []\n queue = deque([root])\n averages = []\n while queue:\n size = len(queue)\n level_sum = 0\n for i in range(size):\n node = queue.popleft()\n level_sum += node.val\n if node.left:\n queue.append(node.left)\n if node.right:\n queue.append(node.right)\n averages.append(level_sum / size)\n return averages",
+          "description": "Python版本的二叉树层平均值解决方案"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class N0637 {\n public List<Double> averageOfLevels(TreeNode root) {\n List<Double> list = new ArrayList<>();\n Deque<TreeNode> que = new LinkedList<>();\n if (root == null) {\n return list;\n }\n que.offerLast(root);\n while (!que.isEmpty()) {\n int levelSize = que.size();\n double levelSum = 0.0;\n for (int i = 0; i < levelSize; i++) {\n TreeNode poll = que.pollFirst();\n levelSum += poll.val;\n if (poll.left != null) {\n que.addLast(poll.left);\n }\n if (poll.right != null) {\n que.addLast(poll.right);\n }\n }\n list.add(levelSum / levelSize);\n }\n return list;\n }\n}",
+          "description": "Java版本的二叉树层平均值解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "class Solution:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<double> averageOfLevels(TreeNode* root) { queue<TreeNode*> que; if (root != NULL) que.push(root); vector<double> result; while (!que.empty()) { int size = que.size(); double sum = 0; for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); sum += node->val; if (node->left) que.push(node->left); if (node->right) que.push(node->right); } result.push_back(sum / size); } return result; }};",
+          "description": "C++实现的二叉树层平均值计算"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\nclass Solution:\n    def averageOfLevels(self, root: TreeNode) -> List[float]:\n        if not root:\n            return []\n\n        queue = deque([root])\n        averages = []\n\n        while queue:\n            size = len(queue)\n            level_sum = 0\n\n            for i in range(size):\n                node = queue.popleft()\n                level_sum += node.val\n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n\n            averages.append(level_sum / size)\n\n        return averages",
+          "description": "Python实现的二叉树层平均值计算"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class N0637 {\n    public List<Double> averageOfLevels(TreeNode root) {\n        List<Double> list = new ArrayList<>();\n        Deque<TreeNode> que = new LinkedList<>();\n        if (root == null) {\n            return list;\n        }\n        que.offerLast(root);\n        while (!que.isEmpty()) {\n            int levelSize = que.size();\n            double levelSum = 0.0;\n            for (int i = 0; i < levelSize; i++) {\n                TreeNode poll = que.pollFirst();\n                levelSum += poll.val;\n                if (poll.left != null) {\n                    que.addLast(poll.left);\n                }\n                if (poll.right != null) {\n                    que.addLast(poll.right);\n                }\n            }\n            list.add(levelSum / levelSize);\n        }\n        return list;\n    }\n}",
+          "description": "Java实现的二叉树层平均值计算"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java:",
+      "text": "// 637. 二叉树的层平均值",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<double> averageOfLevels(TreeNode* root) {queue<TreeNode*> que;if (root != NULL) que.push(root);vector<double> result;while (!que.empty()) {int size = que.size();double sum = 0;for (int i = 0; i < size; i++) {TreeNode* node = que.front();que.pop();sum += node->val;if (node->left) que.push(node->left);if (node->right) que.push(node->right);}result.push_back(sum / size);}return result;}};",
+          "description": "C++版本的二叉树层平均值算法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def averageOfLevels(self, root: TreeNode) -> List[float]: if not root: return [] queue = collections.deque([root]) averages = [] while queue: size = len(queue) level_sum = 0 for i in range(size): node = queue.popleft() level_sum += node.val if node.left: queue.append(node.left) if node.right: queue.append(node.right) averages.append(level_sum / size) return averages",
+          "description": "Python版本的二叉树层平均值算法"
+        },
+        {
+          "language": "java",
+          "code": "public class N0637 { public List<Double> averageOfLevels(TreeNode root) { List<Double> list = new ArrayList<>(); Deque<TreeNode> que = new LinkedList<>(); if (root == null) { return list; } que.offerLast(root); while (!que.isEmpty()) { int levelSize = que.size(); double levelSum = 0.0; for (int i = 0; i < levelSize; i++) { TreeNode poll = que.pollFirst(); levelSum += poll.val; if (poll.left != null) { que.addLast(poll.left); } if (poll.right != null) { que.addLast(poll.right); } } list.add(levelSum / levelSize); } return list; }}",
+          "description": "Java版本的二叉树层平均值算法"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: vector<double> averageOfLevels(TreeNode* root) { queue<TreeNode*> que; if (root != NULL) que.push(root); vector<double> result; while (!que.empty()) { int size = que.size(); double sum = 0; for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); sum += node->val; if (node->left) que.push(node->left); if (node->right) que.push(node->right); } result.push_back(sum / size); } return result; }};",
+      "description": "C++实现的二叉树层平均值计算"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def averageOfLevels(self, root: TreeNode) -> List[float]: if not root: return [] queue = collections.deque([root]) averages = [] while queue: size = len(queue) level_sum = 0 for i in range(size): node = queue.popleft() level_sum += node.val if node.left: queue.append(node.left) if node.right: queue.append(node.right) averages.append(level_sum / size) return averages",
+      "description": "Python实现的二叉树层平均值计算"
+    },
+    {
+      "language": "java",
+      "code": "public class N0637 { public List<Double> averageOfLevels(TreeNode root) { List<Double> list = new ArrayList<>(); Deque<TreeNode> que = new LinkedList<>(); if (root == null) { return list; } que.offerLast(root); while (!que.isEmpty()) { int levelSize = que.size(); double levelSum = 0.0; for (int i = 0; i < levelSize; i++) { TreeNode poll = que.pollFirst(); levelSum += poll.val; if (poll.left != null) { que.addLast(poll.left); } if (poll.right != null) { que.addLast(poll.right); } } list.add(levelSum / levelSize); } return list; }}",
+      "description": "Java实现的二叉树层平均值计算"
+    }
+  ],
+  "common_mistakes": [
+    "忘记初始化队列或未正确处理空树的情况。",
+    "没有正确更新队列中的元素，导致某些节点被遗漏或重复处理。",
+    "在计算平均值时可能发生的整数除法错误；确保使用浮点数运算以避免此类问题。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210203151350500.png",
+      "description": "该图片展示了一个二叉树的层次遍历问题，要求计算每层节点值的平均值并返回结果数组。",
+      "context": "该图片展示了二叉树结构，用于说明如何计算给定非空二叉树每一层节点的平均值问题。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210203151350500.png",
+      "description": "GIF展示了二叉树层序遍历过程中，每层节点被依次访问并计算平均值的过程。",
+      "context": "GIF动画展示了通过层序遍历二叉树来计算每层节点平均值的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\二叉树的层序遍历\\二叉树的层平均值.txt",
+  "extracted_at": "2025-07-20T11:02:21.323087",
+  "raw_content": "二叉树的层平均值\n力扣题目链接(https://leetcode.cn/problems/average-of-levels-in-binary-tree/)\n\n给定一个非空二叉树, 返回一个由每层节点平均值组成的数组。\n\nhttps://file1.kamacoder.com/i/algo/20210203151350500.png\n\n#思路\n本题就是层序遍历的时候把一层求个总和再取一个均值。\n\nC++代码:\n\nclass Solution {\npublic:\n    vector<double> averageOfLevels(TreeNode* root) {\n        queue<TreeNode*> que;\n        if (root != NULL) que.push(root);\n        vector<double> result;\n        while (!que.empty()) {\n            int size = que.size();\n            double sum = 0; // 统计每一层的和\n            for (int i = 0; i < size; i++) {\n                TreeNode* node = que.front();\n                que.pop();\n                sum += node->val;\n                if (node->left) que.push(node->left);\n                if (node->right) que.push(node->right);\n            }\n            result.push_back(sum / size); // 将每一层均值放进结果集\n        }\n        return result;\n    }\n};\n\n#其他语言版本\n#Python：\nclass Solution:\n    \"\"\"二叉树层平均值迭代解法\"\"\"\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def averageOfLevels(self, root: TreeNode) -> List[float]:\n        if not root:\n            return []\n\n        queue = collections.deque([root])\n        averages = []\n        \n        while queue:\n            size = len(queue)\n            level_sum = 0\n            \n            for i in range(size):\n                node = queue.popleft()\n                \n                \n                level_sum += node.val\n                    \n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n            \n            averages.append(level_sum / size)\n        \n        return averages\n#Java:\n// 637. 二叉树的层平均值\npublic class N0637 {\n\n    /**\n     * 解法：队列，迭代。\n     * 每次返回每层的最后一个字段即可。\n     */\n    public List<Double> averageOfLevels(TreeNode root) {\n        List<Double> list = new ArrayList<>();\n        Deque<TreeNode> que = new LinkedList<>();\n\n        if (root == null) {\n            return list;\n        }\n\n        que.offerLast(root);\n        while (!que.isEmpty()) {\n\n            int levelSize = que.size();\n            double levelSum = 0.0;\n            for (int i = 0; i < levelSize; i++) {\n                TreeNode poll = que.pollFirst();\n\n                levelSum += poll.val;\n\n                if (poll.left != null) {\n                    que.addLast(poll.left);\n                }\n                if (poll.right != null) {\n                    que.addLast(poll.right);\n                }\n            }\n            list.add(levelSum / levelSize);\n        }\n        return list;\n    }\n}"
+}

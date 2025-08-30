@@ -1,0 +1,355 @@
+{
+  "id": "AP_a161f385",
+  "title": "递增子序列",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/non-decreasing-subsequences/",
+  "description": "一个整型数组, 你的任务是找到所有该数组的递增子序列，递增子序列的长度至少是2。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "Backtracking",
+    "Subsequence"
+  ],
+  "data_structure_tags": [
+    "Array",
+    "Hash Table",
+    "Set"
+  ],
+  "technique_tags": [
+    "Backtracking with Pruning",
+    "Hashing for Deduplication"
+  ],
+  "difficulty": null,
+  "solution_approach": "采用回溯法来寻找所有递增子序列。通过维护一个路径path和结果集result，在遍历数组时构建递增子序列，并使用哈希表或数组对每一层的元素进行去重处理以避免重复计算。",
+  "key_insights": [
+    {
+      "content": "与90. 子集II不同，本题要求找到的是递增子序列，因此不能预先对输入数组进行排序，否则会破坏原有的序列关系。"
+    },
+    {
+      "content": "在单层搜索过程中，为了确保同一层中不会重复选择相同的数字，采用了哈希集合（unordered_set）或者固定大小的数组作为哈希表来追踪当前层已经访问过的元素。"
+    },
+    {
+      "content": "对于每个节点，如果当前元素小于路径中的最后一个元素，则跳过该元素继续下一个迭代，保证了递增性质。"
+    },
+    {
+      "content": "使用数组替代哈希集合可以提高效率，特别是在数值范围较小的情况下。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这个递增子序列比较像是取有序的子集。而且本题也要求不能有相同的递增子序列。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution { private: vector<vector<int>> result; vector<int> path; void backtracking(vector<int>& nums, int startIndex) { if (path.size() > 1) { result.push_back(path); } unordered_set<int> uset; for (int i = startIndex; i < nums.size(); i++) { if ((!path.empty() && nums[i] < path.back()) || uset.find(nums[i]) != uset.end()) { continue; } uset.insert(nums[i]); path.push_back(nums[i]); backtracking(nums, i + 1); path.pop_back(); } } public: vector<vector<int>> findSubsequences(vector<int>& nums) { result.clear(); path.clear(); backtracking(nums, 0); return result; } };",
+          "description": "C++版本的递增子序列求解，使用unordered_set来记录本层元素是否重复使用。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution { private: vector<vector<int>> result; vector<int> path; void backtracking(vector<int>& nums, int startIndex) { if (path.size() > 1) { result.push_back(path); } int used[201] = {0}; for (int i = startIndex; i < nums.size(); i++) { if ((!path.empty() && nums[i] < path.back()) || used[nums[i] + 100] == 1) { continue; } used[nums[i] + 100] = 1; path.push_back(nums[i]); backtracking(nums, i + 1); path.pop_back(); } } public: vector<vector<int>> findSubsequences(vector<int>& nums) { result.clear(); path.clear(); backtracking(nums, 0); return result; } };",
+          "description": "优化后的C++版本，改用数组作为哈希表来提高效率。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { List<List<Integer>> result = new ArrayList<>(); List<Integer> path = new ArrayList<>(); public List<List<Integer>> findSubsequences(int[] nums) { backTracking(nums, 0); return result; } private void backTracking(int[] nums, int startIndex){ if(path.size() >= 2) result.add(new ArrayList<>(path)); HashSet<Integer> hs = new HashSet<>(); for(int i = startIndex; i < nums.length; i++){ if(!path.isEmpty() && path.get(path.size() -1 ) > nums[i] || hs.contains(nums[i])) continue; hs.add(nums[i]); path.add(nums[i]); backTracking(nums, i + 1); path.remove(path.size() - 1); } } }",
+          "description": "Java版本的递增子序列求解，使用HashSet来去重。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { private List<Integer> path = new ArrayList<>(); private List<List<Integer>> res = new ArrayList<>(); public List<List<Integer>> findSubsequences(int[] nums) { backtracking(nums,0); return res; } private void backtracking (int[] nums, int start) { if (path.size() > 1) { res.add(new ArrayList<>(path)); } int[] used = new int[201]; for (int i = start; i < nums.length; i++) { if (!path.isEmpty() && nums[i] < path.get(path.size() - 1) || (used[nums[i] + 100] == 1)) continue; used[nums[i] + 100] = 1; path.add(nums[i]); backtracking(nums, i + 1); path.remove(path.size() - 1); } } }",
+          "description": "优化后的Java版本，采用数组实现更高效的去重机制。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { List<List<Integer>> res = new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); public List<List<Integer>> findSubsequences(int[] nums) { getSubsequences(nums,0); return res; } private void getSubsequences( int[] nums, int start ) { if(path.size()>1 ){ res.add( new ArrayList<>(path) ); } HashMap<Integer,Integer> map = new HashMap<>(); for(int i=start ;i < nums.length ;i++){ if(!path.isEmpty() && nums[i]< path.getLast()){ continue; } if ( map.getOrDefault( nums[i],0 ) >=1 ){ continue; } map.put(nums[i],map.getOrDefault( nums[i],0 )+1); path.add( nums[i] ); getSubsequences( nums,i+1 ); path.removeLast(); } } }",
+          "description": "Java版本，利用HashMap进行去重操作。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findSubsequences(self, nums): result = [] path = [] self.backtracking(nums, 0, path, result) return result def backtracking(self, nums, startIndex, path, result): if len(path) > 1: result.append(path[:]) uset = set() for i in range(startIndex, len(nums)): if (path and nums[i] < path[-1]) or nums[i] in uset: continue uset.add(nums[i]) path.append(nums[i]) self.backtracking(nums, i + 1, path, result) path.pop()",
+          "description": "Python版本，通过set对每个层次的元素进行去重处理。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findSubsequences(self, nums): result = [] path = [] self.backtracking(nums, 0, path, result) return result def backtracking(self, nums, startIndex, path, result): if len(path) > 1: result.append(path[:]) used = [0] * 201 for i in range(startIndex, len(nums)): if (path and nums[i] < path[-1]) or used[nums[i] + 100] == 1: continue used[nums[i] + 100] = 1 path.append(nums[i]) self.backtracking(nums, i + 1, path, result) path.pop()",
+          "description": "优化后的Python版本，使用列表代替set以提升性能。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "回溯三部曲",
+      "text": "递归函数参数",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(vector<int>& nums, int startIndex) {\n        if (path.size() > 1) {\n            result.push_back(path);\n        }\n        int used[201] = {0};\n        for (int i = startIndex; i < nums.size(); i++) {\n            if ((!path.empty() && nums[i] < path.back()) || used[nums[i] + 100] == 1) {\n                continue;\n            }\n            used[nums[i] + 100] = 1;\n            path.push_back(nums[i]);\n            backtracking(nums, i + 1);\n            path.pop_back();\n        }\n    }\npublic:\n    vector<vector<int>> findSubsequences(vector<int>& nums) {\n        result.clear();\n        path.clear();\n        backtracking(nums, 0);\n        return result;\n    }\n};",
+          "description": "C++实现，使用数组来记录本层元素是否重复使用。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    private List<Integer> path = new ArrayList<>();\n    private List<List<Integer>> res = new ArrayList<>();\n    public List<List<Integer>> findSubsequences(int[] nums) {\n        backtracking(nums,0);\n        return res;\n    }\n\n    private void backtracking (int[] nums, int start) {\n        if (path.size() > 1) {\n            res.add(new ArrayList<>(path));\n        }\n\n        int[] used = new int[201];\n        for (int i = start; i < nums.length; i++) {\n            if (!path.isEmpty() && nums[i] < path.get(path.size() - 1) || (used[nums[i] + 100] == 1)) continue;\n            used[nums[i] + 100] = 1;\n            path.add(nums[i]);\n            backtracking(nums, i + 1);\n            path.remove(path.size() - 1);\n        }\n    }\n}",
+          "description": "Java实现，同样采用数组进行去重操作。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def findSubsequences(self, nums):\n        result = []\n        path = []\n        self.backtracking(nums, 0, path, result)\n        return result\n\n    def backtracking(self, nums, startIndex, path, result):\n        if len(path) > 1:\n            result.append(path[:])\n\n        used = [0] * 201\n        for i in range(startIndex, len(nums)):\n            if (path and nums[i] < path[-1]) or used[nums[i] + 100] == 1:\n                continue\n\n            used[nums[i] + 100] = 1\n            path.append(nums[i])\n            self.backtracking(nums, i + 1, path, result)\n            path.pop()",
+          "description": "Python实现，使用列表作为哈希表来进行本层元素的去重。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "优化",
+      "text": "以上代码用我用了unordered_set<int>来记录本层元素是否重复使用。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(vector<int>& nums, int startIndex) {\n        if (path.size() > 1) {\n            result.push_back(path);\n        }\n        unordered_set<int> uset; // 使用set对本层元素进行去重\n        for (int i = startIndex; i < nums.size(); i++) {\n            if ((!path.empty() && nums[i] < path.back())\n                    || uset.find(nums[i]) != uset.end()) {\n                    continue;\n            }\n            uset.insert(nums[i]); // 记录这个元素在本层用过了，本层后面不能再用了\n            path.push_back(nums[i]);\n            backtracking(nums, i + 1);\n            path.pop_back();\n        }\n    }\npublic:\n    vector<vector<int>> findSubsequences(vector<int>& nums) {\n        result.clear();\n        path.clear();\n        backtracking(nums, 0);\n        return result;\n    }\n};",
+          "description": "C++版本，使用unordered_set记录每层递归中的已访问元素来避免重复"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(vector<int>& nums, int startIndex) {\n        if (path.size() > 1) {\n            result.push_back(path);\n        }\n        int used[201] = {0}; // 这里使用数组来进行去重操作，题目说数值范围[-100, 100]\n        for (int i = startIndex; i < nums.size(); i++) {\n            if ((!path.empty() && nums[i] < path.back())\n                    || used[nums[i] + 100] == 1) {\n                    continue;\n            }\n            used[nums[i] + 100] = 1; // 记录这个元素在本层用过了，本层后面不能再用了\n            path.push_back(nums[i]);\n            backtracking(nums, i + 1);\n            path.pop_back();\n        }\n    }\npublic:\n    vector<vector<int>> findSubsequences(vector<int>& nums) {\n        result.clear();\n        path.clear();\n        backtracking(nums, 0);\n        return result;\n    }\n};",
+          "description": "C++优化版本，使用数组代替unordered_set以提高效率"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<List<Integer>> result = new ArrayList<>();\n    List<Integer> path = new ArrayList<>();\n    public List<List<Integer>> findSubsequences(int[] nums) {\n        backTracking(nums, 0);\n        return result;\n    }\n    private void backTracking(int[] nums, int startIndex){\n        if(path.size() >= 2)\n                result.add(new ArrayList<>(path));\n        HashSet<Integer> hs = new HashSet<>();\n        for(int i = startIndex; i < nums.length; i++){\n            if(!path.isEmpty() && path.get(path.size() -1 ) > nums[i] || hs.contains(nums[i]))\n                continue;\n            hs.add(nums[i]);\n            path.add(nums[i]);\n            backTracking(nums, i + 1);\n            path.remove(path.size() - 1);\n        }\n    }\n}",
+          "description": "Java版本，使用HashSet记录每层递归中的已访问元素"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    private List<Integer> path = new ArrayList<>();\n    private List<List<Integer>> res = new ArrayList<>();\n    public List<List<Integer>> findSubsequences(int[] nums) {\n        backtracking(nums,0);\n        return res;\n    }\n    private void backtracking (int[] nums, int start) {\n        if (path.size() > 1) {\n            res.add(new ArrayList<>(path));\n        }\n        int[] used = new int[201];\n        for (int i = start; i < nums.length; i++) {\n            if (!path.isEmpty() && nums[i] < path.get(path.size() - 1) || (used[nums[i] + 100] == 1)) continue;\n            used[nums[i] + 100] = 1;\n            path.add(nums[i]);\n            backtracking(nums, i + 1);\n            path.remove(path.size() - 1);\n        }\n    }\n}",
+          "description": "Java优化版本，使用数组代替HashSet以提高效率"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def findSubsequences(self, nums):\n        result = []\n        path = []\n        self.backtracking(nums, 0, path, result)\n        return result\n    \n    def backtracking(self, nums, startIndex, path, result):\n        if len(path) > 1:\n            result.append(path[:])\n        uset = set()\n        for i in range(startIndex, len(nums)):\n            if (path and nums[i] < path[-1]) or nums[i] in uset:\n                continue\n            uset.add(nums[i])\n            path.append(nums[i])\n            self.backtracking(nums, i + 1, path, result)\n            path.pop()",
+          "description": "Python版本，使用集合记录每层递归中的已访问元素"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def findSubsequences(self, nums):\n        result = []\n        path = []\n        self.backtracking(nums, 0, path, result)\n        return result\n    \n    def backtracking(self, nums, startIndex, path, result):\n        if len(path) > 1:\n            result.append(path[:])\n        used = [0] * 201\n        for i in range(startIndex, len(nums)):\n            if (path and nums[i] < path[-1]) or used[nums[i] + 100] == 1:\n                continue\n            used[nums[i] + 100] = 1\n            path.append(nums[i])\n            self.backtracking(nums, i + 1, path, result)\n            path.pop()",
+          "description": "Python优化版本，使用数组代替集合以提高效率"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "本题题解清一色都说是深度优先搜索，但我更倾向于说它用回溯法，而且本题我也是完全使用回溯法的逻辑来分析的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(vector<int>& nums, int startIndex) {\n        if (path.size() > 1) {\n            result.push_back(path);\n        }\n        int used[201] = {0};\n        for (int i = startIndex; i < nums.size(); i++) {\n            if ((!path.empty() && nums[i] < path.back())\n                    || used[nums[i] + 100] == 1) {\n                    continue;\n            }\n            used[nums[i] + 100] = 1;\n            path.push_back(nums[i]);\n            backtracking(nums, i + 1);\n            path.pop_back();\n        }\n    }\npublic:\n    vector<vector<int>> findSubsequences(vector<int>& nums) {\n        result.clear();\n        path.clear();\n        backtracking(nums, 0);\n        return result;\n    }\n};",
+          "description": "C++实现的寻找递增子序列"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    private List<Integer> path = new ArrayList<>();\n    private List<List<Integer>> res = new ArrayList<>();\n    public List<List<Integer>> findSubsequences(int[] nums) {\n        backtracking(nums,0);\n        return res;\n    }\n\n    private void backtracking (int[] nums, int start) {\n        if (path.size() > 1) {\n            res.add(new ArrayList<>(path));\n        }\n\n        int[] used = new int[201];\n        for (int i = start; i < nums.length; i++) {\n            if (!path.isEmpty() && nums[i] < path.get(path.size() - 1) || (used[nums[i] + 100] == 1)) continue;\n            used[nums[i] + 100] = 1;\n            path.add(nums[i]);\n            backtracking(nums, i + 1);\n            path.remove(path.size() - 1);\n        }\n    }\n}",
+          "description": "Java实现的寻找递增子序列"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def findSubsequences(self, nums):\n        result = []\n        path = []\n        self.backtracking(nums, 0, path, result)\n        return result\n\n    def backtracking(self, nums, startIndex, path, result):\n        if len(path) > 1:\n            result.append(path[:])\n\n        used = [0] * 201\n        for i in range(startIndex, len(nums)):\n            if (path and nums[i] < path[-1]) or used[nums[i] + 100] == 1:\n                continue\n\n            used[nums[i] + 100] = 1\n            path.append(nums[i])\n            self.backtracking(nums, i + 1, path, result)\n            path.pop()",
+          "description": "Python实现的寻找递增子序列"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<int>> result; vector<int> path; void backtracking(vector<int>& nums, int startIndex) { if (path.size() > 1) { result.push_back(path); } unordered_set<int> uset; for (int i = startIndex; i < nums.size(); i++) { if ((!path.empty() && nums[i] < path.back()) || uset.find(nums[i]) != uset.end()) { continue; } uset.insert(nums[i]); path.push_back(nums[i]); backtracking(nums, i + 1); path.pop_back(); } } public: vector<vector<int>> findSubsequences(vector<int>& nums) { result.clear(); path.clear(); backtracking(nums, 0); return result; }};",
+          "description": "C++版本使用unordered_set去重"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<int>> result; vector<int> path; void backtracking(vector<int>& nums, int startIndex) { if (path.size() > 1) { result.push_back(path); } int used[201] = {0}; for (int i = startIndex; i < nums.size(); i++) { if ((!path.empty() && nums[i] < path.back()) || used[nums[i] + 100] == 1) { continue; } used[nums[i] + 100] = 1; path.push_back(nums[i]); backtracking(nums, i + 1); path.pop_back(); } } public: vector<vector<int>> findSubsequences(vector<int>& nums) { result.clear(); path.clear(); backtracking(nums, 0); return result; }};",
+          "description": "C++版本使用数组进行去重优化"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { List<List<Integer>> result = new ArrayList<>(); List<Integer> path = new ArrayList<>(); public List<List<Integer>> findSubsequences(int[] nums) { backTracking(nums, 0); return result; } private void backTracking(int[] nums, int startIndex){ if(path.size() >= 2) result.add(new ArrayList<>(path)); HashSet<Integer> hs = new HashSet<>(); for(int i = startIndex; i < nums.length; i++){ if(!path.isEmpty() && path.get(path.size() -1 ) > nums[i] || hs.contains(nums[i])) continue; hs.add(nums[i]); path.add(nums[i]); backTracking(nums, i + 1); path.remove(path.size() - 1); }}}",
+          "description": "Java版本使用HashSet去重"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { private List<Integer> path = new ArrayList<>(); private List<List<Integer>> res = new ArrayList<>(); public List<List<Integer>> findSubsequences(int[] nums) { backtracking(nums,0); return res; } private void backtracking (int[] nums, int start) { if (path.size() > 1) { res.add(new ArrayList<>(path)); } int[] used = new int[201]; for (int i = start; i < nums.length; i++) { if (!path.isEmpty() && nums[i] < path.get(path.size() - 1) || (used[nums[i] + 100] == 1)) continue; used[nums[i] + 100] = 1; path.add(nums[i]); backtracking(nums, i + 1); path.remove(path.size() - 1); }}",
+          "description": "Java版本使用数组进行去重优化"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { List<List<Integer>> res = new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); public List<List<Integer>> findSubsequences(int[] nums) { getSubsequences(nums,0); return res; } private void getSubsequences( int[] nums, int start ) { if(path.size()>1 ){ res.add( new ArrayList<>(path) ); } HashMap<Integer,Integer> map = new HashMap<>(); for(int i=start ;i < nums.length ;i++){ if(!path.isEmpty() && nums[i]< path.getLast()){ continue; } if ( map.getOrDefault( nums[i],0 ) >=1 ){ continue; } map.put(nums[i],map.getOrDefault( nums[i],0 )+1); path.add( nums[i] ); getSubsequences( nums,i+1 ); path.removeLast(); }}",
+          "description": "Java版本使用HashMap去重"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findSubsequences(self, nums): result = [] path = [] self.backtracking(nums, 0, path, result) return result def backtracking(self, nums, startIndex, path, result): if len(path) > 1: result.append(path[:]) uset = set() for i in range(startIndex, len(nums)): if (path and nums[i] < path[-1]) or nums[i] in uset: continue uset.add(nums[i]) path.append(nums[i]) self.backtracking(nums, i + 1, path, result) path.pop()",
+          "description": "Python版本使用set去重"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findSubsequences(self, nums): result = [] path = [] self.backtracking(nums, 0, path, result) return result def backtracking(self, nums, startIndex, path, result): if len(path) > 1: result.append(path[:]) used = [0] * 201 for i in range(startIndex, len(nums)): if (path and nums[i] < path[-1]) or used[nums[i] + 100] == 1: continue used[nums[i] + 100] = 1 path.append(nums[i]) self.backtracking(nums, i + 1, path, result) path.pop()",
+          "description": "Python版本使用数组进行去重优化"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(vector<int>& nums, int startIndex) {\n        if (path.size() > 1) {\n            result.push_back(path);\n        }\n        int used[201] = {0};\n        for (int i = startIndex; i < nums.size(); i++) {\n            if ((!path.empty() && nums[i] < path.back()) || used[nums[i] + 100] == 1) {\n                continue;\n            }\n            used[nums[i] + 100] = 1;\n            path.push_back(nums[i]);\n            backtracking(nums, i + 1);\n            path.pop_back();\n        }\n    }\npublic:\n    vector<vector<int>> findSubsequences(vector<int>& nums) {\n        result.clear();\n        path.clear();\n        backtracking(nums, 0);\n        return result;\n    }\n};",
+          "description": "C++实现，使用数组作为哈希表来去重"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    private List<Integer> path = new ArrayList<>();\n    private List<List<Integer>> res = new ArrayList<>();\n    public List<List<Integer>> findSubsequences(int[] nums) {\n        backtracking(nums,0);\n        return res;\n    }\n\n    private void backtracking (int[] nums, int start) {\n        if (path.size() > 1) {\n            res.add(new ArrayList<>(path));\n        }\n\n        int[] used = new int[201];\n        for (int i = start; i < nums.length; i++) {\n            if (!path.isEmpty() && nums[i] < path.get(path.size() - 1) || (used[nums[i] + 100] == 1)) continue;\n            used[nums[i] + 100] = 1;\n            path.add(nums[i]);\n            backtracking(nums, i + 1);\n            path.remove(path.size() - 1);\n        }\n    }\n}",
+          "description": "Java实现，同样采用数组作为哈希表进行去重操作"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def findSubsequences(self, nums):\n        result = []\n        path = []\n        self.backtracking(nums, 0, path, result)\n        return result\n\n    def backtracking(self, nums, startIndex, path, result):\n        if len(path) > 1:\n            result.append(path[:])\n        \n        used = [0] * 201\n        for i in range(startIndex, len(nums)):\n            if (path and nums[i] < path[-1]) or used[nums[i] + 100] == 1:\n                continue\n            \n            used[nums[i] + 100] = 1\n            path.append(nums[i])\n            self.backtracking(nums, i + 1, path, result)\n            path.pop()",
+          "description": "Python实现，利用数组（列表）作为哈希表对元素进行去重"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "回溯 利用set去重",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(vector<int>& nums, int startIndex) {\n        if (path.size() > 1) {\n            result.push_back(path);\n        }\n        unordered_set<int> uset; // 使用set对本层元素进行去重\n        for (int i = startIndex; i < nums.size(); i++) {\n            if ((!path.empty() && nums[i] < path.back())\n                    || uset.find(nums[i]) != uset.end()) {\n                    continue;\n            }\n            uset.insert(nums[i]); // 记录这个元素在本层用过了，本层后面不能再用了\n            path.push_back(nums[i]);\n            backtracking(nums, i + 1);\n            path.pop_back();\n        }\n    }\npublic:\n    vector<vector<int>> findSubsequences(vector<int>& nums) {\n        result.clear();\n        path.clear();\n        backtracking(nums, 0);\n        return result;\n    }\n};",
+          "description": "C++版使用unordered_set来记录本层元素是否重复使用。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(vector<int>& nums, int startIndex) {\n        if (path.size() > 1) {\n            result.push_back(path);\n        }\n        int used[201] = {0}; // 这里使用数组来进行去重操作，题目说数值范围[-100, 100]\n        for (int i = startIndex; i < nums.size(); i++) {\n            if ((!path.empty() && nums[i] < path.back())\n                    || used[nums[i] + 100] == 1) {\n                    continue;\n            }\n            used[nums[i] + 100] = 1; // 记录这个元素在本层用过了，本层后面不能再用了\n            path.push_back(nums[i]);\n            backtracking(nums, i + 1);\n            path.pop_back();\n        }\n    }\npublic:\n    vector<vector<int>> findSubsequences(vector<int>& nums) {\n        result.clear();\n        path.clear();\n        backtracking(nums, 0);\n        return result;\n    }\n};",
+          "description": "优化后的C++代码，使用数组作为哈希表来记录本层元素是否重复使用。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<List<Integer>> result = new ArrayList<>();\n    List<Integer> path = new ArrayList<>();\n    public List<List<Integer>> findSubsequences(int[] nums) {\n        backTracking(nums, 0);\n        return result;\n    }\n    private void backTracking(int[] nums, int startIndex){\n        if(path.size() >= 2)\n                result.add(new ArrayList<>(path));\n        HashSet<Integer> hs = new HashSet<>();\n        for(int i = startIndex; i < nums.length; i++){\n            if(!path.isEmpty() && path.get(path.size() -1 ) > nums[i] || hs.contains(nums[i]))\n                continue;\n            hs.add(nums[i]);\n            path.add(nums[i]);\n            backTracking(nums, i + 1);\n            path.remove(path.size() - 1);\n        }\n    }\n}",
+          "description": "Java版使用HashSet来记录本层元素是否重复使用。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    private List<Integer> path = new ArrayList<>();\n    private List<List<Integer>> res = new ArrayList<>();\n    public List<List<Integer>> findSubsequences(int[] nums) {\n        backtracking(nums,0);\n        return res;\n    }\n    private void backtracking (int[] nums, int start) {\n        if (path.size() > 1) {\n            res.add(new ArrayList<>(path));\n        }\n        int[] used = new int[201];\n        for (int i = start; i < nums.length; i++) {\n            if (!path.isEmpty() && nums[i] < path.get(path.size() - 1) ||\n                    (used[nums[i] + 100] == 1)) continue;\n            used[nums[i] + 100] = 1;\n            path.add(nums[i]);\n            backtracking(nums, i + 1);\n            path.remove(path.size() - 1);\n        }\n    }\n}",
+          "description": "优化后的Java代码，使用数组作为哈希表来记录本层元素是否重复使用。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    //结果集合\n    List<List<Integer>> res = new ArrayList<>();\n    //路径集合\n    LinkedList<Integer> path = new LinkedList<>();\n    public List<List<Integer>> findSubsequences(int[] nums) {\n        getSubsequences(nums,0);\n        return res;\n    }\n    private void getSubsequences( int[] nums, int start ) {\n        if(path.size()>1 ){\n            res.add( new ArrayList<>(path) );\n        }\n        HashMap<Integer,Integer> map = new HashMap<>();\n        for(int i=start ;i < nums.length ;i++){\n            if(!path.isEmpty() && nums[i]< path.getLast()){\n                continue;\n            }\n            if ( map.getOrDefault( nums[i],0 ) >=1 ){\n                continue;\n            }\n            map.put(nums[i],map.getOrDefault( nums[i],0 )+1);\n            path.add( nums[i] );\n            getSubsequences( nums,i+1 );\n            path.removeLast();\n        }\n    }\n}",
+          "description": "Java版本使用HashMap来记录本层元素是否重复使用。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def findSubsequences(self, nums):\n        result = []\n        path = []\n        self.backtracking(nums, 0, path, result)\n        return result\n\n    def backtracking(self, nums, startIndex, path, result):\n        if len(path) > 1:\n            result.append(path[:])\n        uset = set()\n        for i in range(startIndex, len(nums)):\n            if (path and nums[i] < path[-1]) or nums[i] in uset:\n                continue\n            uset.add(nums[i])\n            path.append(nums[i])\n            self.backtracking(nums, i + 1, path, result)\n            path.pop()",
+          "description": "Python版使用set来记录本层元素是否重复使用。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def findSubsequences(self, nums):\n        result = []\n        path = []\n        self.backtracking(nums, 0, path, result)\n        return result\n\n    def backtracking(self, nums, startIndex, path, result):\n        if len(path) > 1:\n            result.append(path[:])\n        used = [0] * 201\n        for i in range(startIndex, len(nums)):\n            if (path and nums[i] < path[-1]) or used[nums[i] + 100] == 1:\n                continue\n            used[nums[i] + 100] = 1\n            path.append(nums[i])\n            self.backtracking(nums, i + 1, path, result)\n            path.pop()",
+          "description": "优化后的Python代码，使用数组作为哈希表来记录本层元素是否重复使用。"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n * 2^n)",
+    "space_complexity": "O(n)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {private: vector<vector<int>> result; vector<int> path; void backtracking(vector<int>& nums, int startIndex) { if (path.size() > 1) { result.push_back(path); } unordered_set<int> uset; for (int i = startIndex; i < nums.size(); i++) { if ((!path.empty() && nums[i] < path.back()) || uset.find(nums[i]) != uset.end()) { continue; } uset.insert(nums[i]); path.push_back(nums[i]); backtracking(nums, i + 1); path.pop_back(); } } public: vector<vector<int>> findSubsequences(vector<int>& nums) { result.clear(); path.clear(); backtracking(nums, 0); return result; } };",
+      "description": "使用unordered_set去重的递增子序列查找算法"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {private: vector<vector<int>> result; vector<int> path; void backtracking(vector<int>& nums, int startIndex) { if (path.size() > 1) { result.push_back(path); } int used[201] = {0}; for (int i = startIndex; i < nums.size(); i++) { if ((!path.empty() && nums[i] < path.back()) || used[nums[i] + 100] == 1) { continue; } used[nums[i] + 100] = 1; path.push_back(nums[i]); backtracking(nums, i + 1); path.pop_back(); } } public: vector<vector<int>> findSubsequences(vector<int>& nums) { result.clear(); path.clear(); backtracking(nums, 0); return result; } };",
+      "description": "使用数组作为哈希表去重的递增子序列查找算法"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { List<List<Integer>> result = new ArrayList<>(); List<Integer> path = new ArrayList<>(); public List<List<Integer>> findSubsequences(int[] nums) { backTracking(nums, 0); return result; } private void backTracking(int[] nums, int startIndex){ if(path.size() >= 2) result.add(new ArrayList<>(path)); HashSet<Integer> hs = new HashSet<>(); for(int i = startIndex; i < nums.length; i++){ if(!path.isEmpty() && path.get(path.size() -1 ) > nums[i] || hs.contains(nums[i])) continue; hs.add(nums[i]); path.add(nums[i]); backTracking(nums, i + 1); path.remove(path.size() - 1); } } }",
+      "description": "Java实现，使用HashSet去重的递增子序列查找算法"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { private List<Integer> path = new ArrayList<>(); private List<List<Integer>> res = new ArrayList<>(); public List<List<Integer>> findSubsequences(int[] nums) { backtracking(nums,0); return res; } private void backtracking (int[] nums, int start) { if (path.size() > 1) { res.add(new ArrayList<>(path)); } int[] used = new int[201]; for (int i = start; i < nums.length; i++) { if (!path.isEmpty() && nums[i] < path.get(path.size() - 1) || (used[nums[i] + 100] == 1)) continue; used[nums[i] + 100] = 1; path.add(nums[i]); backtracking(nums, i + 1); path.remove(path.size() - 1); } } }",
+      "description": "Java实现，使用数组作为哈希表去重的递增子序列查找算法"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { List<List<Integer>> res = new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); public List<List<Integer>> findSubsequences(int[] nums) { getSubsequences(nums,0); return res; } private void getSubsequences( int[] nums, int start ) { if(path.size()>1 ) { res.add( new ArrayList<>(path) ); } HashMap<Integer,Integer> map = new HashMap<>(); for(int i=start ;i < nums.length ;i++){ if(!path.isEmpty() && nums[i]< path.getLast()){ continue; } if ( map.getOrDefault( nums[i],0 ) >=1 ){ continue; } map.put(nums[i],map.getOrDefault( nums[i],0 )+1); path.add( nums[i] ); getSubsequences( nums,i+1 ); path.removeLast(); } } }",
+      "description": "Java实现，使用HashMap去重的递增子序列查找算法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def findSubsequences(self, nums): result = [] path = [] self.backtracking(nums, 0, path, result) return result def backtracking(self, nums, startIndex, path, result): if len(path) > 1: result.append(path[:]) uset = set() for i in range(startIndex, len(nums)): if (path and nums[i] < path[-1]) or nums[i] in uset: continue uset.add(nums[i]) path.append(nums[i]) self.backtracking(nums, i + 1, path, result) path.pop()",
+      "description": "Python实现，使用set去重的递增子序列查找算法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def findSubsequences(self, nums): result = [] path = [] self.backtracking(nums, 0, path, result) return result def backtracking(self, nums, startIndex, path, result): if len(path) > 1: result.append(path[:]) used = [0] * 201 for i in range(startIndex, len(nums)): if (path and nums[i] < path[-1]) or used[nums[i] + 100] == 1: continue used[nums[i] + 100] = 1 path.append(nums[i]) self.backtracking(nums, i + 1, path, result) path.pop()",
+      "description": "Python实现，使用数组作为哈希表去重的递增子序列查找算法"
+    }
+  ],
+  "common_mistakes": [
+    "误认为可以通过先排序再求解的方式解决此问题。",
+    "忽视了需要在同一层内对相同元素进行去重处理的重要性。",
+    "在实现去重逻辑时未考虑到效率问题，如频繁地使用unordered_set可能导致性能下降。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201124200229824.png",
+      "description": "这张图片展示了使用回溯算法寻找整型数组中所有递增子序列的过程，通过树形结构表示每一步的选择和剪枝条件。",
+      "context": "该图片展示了使用数组[4, 7, 6, 7]作为例子时，寻找自增子序列问题的树形结构抽象表示，旨在与直接对数组排序的方法形成对比，强调了解决此问题时不能依赖排序手段的重要性。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201124200229824-20230310131640070.png",
+      "description": "这张图片展示了使用回溯算法寻找整型数组中所有递增子序列的过程，通过树状结构表示每一步的选择和剪枝条件。",
+      "context": "该图展示了在递增子序列生成过程中，同一父节点下的同层元素去重机制。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201124200229824.png",
+      "description": "GIF展示了通过回溯算法生成给定数组所有递增子序列的过程，以树形结构表示每一步的选择。",
+      "context": "GIF动画展示了如何通过树形结构表示寻找数组[4, 7, 6, 7]中自增子序列的过程，以此来区分于排序方法，并形象地解释了回溯算法的应用。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201124200229824-20230310131640070.png",
+      "description": "GIF展示了回溯算法寻找递增子序列的过程，通过树形结构遍历每个节点，并使用集合来避免同一层内重复元素的选取。",
+      "context": "该GIF动画展示了在寻找递增子序列的过程中，如何避免在同一层中重复选择相同的元素，并确保所选子序列满足题目要求。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\回溯算法\\递增子序列.txt",
+  "extracted_at": "2025-07-21T12:55:14.127345",
+  "raw_content": "递增子序列\n力扣题目链接(https://leetcode.cn/problems/non-decreasing-subsequences/)\n\n给定一个整型数组, 你的任务是找到所有该数组的递增子序列，递增子序列的长度至少是2。\n\n示例:\n\n输入: [4, 6, 7, 7]\n输出: [[4, 6], [4, 7], [4, 6, 7], [4, 6, 7, 7], [6, 7], [6, 7, 7], [7,7], [4,7,7]]\n说明:\n\n给定数组的长度不会超过15。\n数组中的整数范围是 [-100,100]。\n给定数组中可能包含重复数字，相等的数字应该被视为递增的一种情况。\n\n\n#思路\n这个递增子序列比较像是取有序的子集。而且本题也要求不能有相同的递增子序列。\n\n这又是子集，又是去重，是不是不由自主的想起了刚刚讲过的90.子集II (https://programmercarl.com/0090.%E5%AD%90%E9%9B%86II.html)。\n\n就是因为太像了，更要注意差别所在，要不就掉坑里了！\n\n在90.子集II (https://programmercarl.com/0090.%E5%AD%90%E9%9B%86II.html)中我们是通过排序，再加一个标记数组来达到去重的目的。\n\n而本题求自增子序列，是不能对原数组进行排序的，排完序的数组都是自增子序列了。\n\n所以不能使用之前的去重逻辑！\n\n本题给出的示例，还是一个有序数组 [4, 6, 7, 7]，这更容易误导大家按照排序的思路去做了。\n\n为了有鲜明的对比，我用[4, 7, 6, 7]这个数组来举例，抽象为树形结构如图：\n\nhttps://file1.kamacoder.com/i/algo/20201124200229824.png\n\n#回溯三部曲\n递归函数参数\n本题求子序列，很明显一个元素不能重复使用，所以需要startIndex，调整下一层递归的起始位置。\n\n代码如下：\n\nvector<vector<int>> result;\nvector<int> path;\nvoid backtracking(vector<int>& nums, int startIndex)\n终止条件\n本题其实类似求子集问题，也是要遍历树形结构找每一个节点，所以和回溯算法：求子集问题！ (opens new window)一样，可以不加终止条件，startIndex每次都会加1，并不会无限递归。\n\n但本题收集结果有所不同，题目要求递增子序列大小至少为2，所以代码如下：\n\nif (path.size() > 1) {\n    result.push_back(path);\n    // 注意这里不要加return，因为要取树上的所有节点\n}\n单层搜索逻辑\nhttps://file1.kamacoder.com/i/algo/20201124200229824-20230310131640070.png\n在图中可以看出，同一父节点下的同层上使用过的元素就不能再使用了\n\n那么单层搜索代码如下：\n\nunordered_set<int> uset; // 使用set来对本层元素进行去重\nfor (int i = startIndex; i < nums.size(); i++) {\n    if ((!path.empty() && nums[i] < path.back())\n            || uset.find(nums[i]) != uset.end()) {\n            continue;\n    }\n    uset.insert(nums[i]); // 记录这个元素在本层用过了，本层后面不能再用了\n    path.push_back(nums[i]);\n    backtracking(nums, i + 1);\n    path.pop_back();\n}\n对于已经习惯写回溯的同学，看到递归函数上面的uset.insert(nums[i]);，下面却没有对应的pop之类的操作，应该很不习惯吧\n\n这也是需要注意的点，unordered_set<int> uset; 是记录本层元素是否重复使用，新的一层uset都会重新定义（清空），所以要知道uset只负责本层！\n\n最后整体C++代码如下：\n\n// 版本一\nclass Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(vector<int>& nums, int startIndex) {\n        if (path.size() > 1) {\n            result.push_back(path);\n            // 注意这里不要加return，要取树上的节点\n        }\n        unordered_set<int> uset; // 使用set对本层元素进行去重\n        for (int i = startIndex; i < nums.size(); i++) {\n            if ((!path.empty() && nums[i] < path.back())\n                    || uset.find(nums[i]) != uset.end()) {\n                    continue;\n            }\n            uset.insert(nums[i]); // 记录这个元素在本层用过了，本层后面不能再用了\n            path.push_back(nums[i]);\n            backtracking(nums, i + 1);\n            path.pop_back();\n        }\n    }\npublic:\n    vector<vector<int>> findSubsequences(vector<int>& nums) {\n        result.clear();\n        path.clear();\n        backtracking(nums, 0);\n        return result;\n    }\n};\n时间复杂度: O(n * 2^n)\n空间复杂度: O(n)\n#优化\n以上代码用我用了unordered_set<int>来记录本层元素是否重复使用。\n\n其实用数组来做哈希，效率就高了很多。\n\n注意题目中说了，数值范围[-100,100]，所以完全可以用数组来做哈希。\n\n程序运行的时候对unordered_set 频繁的insert，unordered_set需要做哈希映射（也就是把key通过hash function映射为唯一的哈希值）相对费时间，而且每次重新定义set，insert的时候其底层的符号表也要做相应的扩充，也是费事的。\n\n那么优化后的代码如下：\n\n// 版本二\nclass Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(vector<int>& nums, int startIndex) {\n        if (path.size() > 1) {\n            result.push_back(path);\n        }\n        int used[201] = {0}; // 这里使用数组来进行去重操作，题目说数值范围[-100, 100]\n        for (int i = startIndex; i < nums.size(); i++) {\n            if ((!path.empty() && nums[i] < path.back())\n                    || used[nums[i] + 100] == 1) {\n                    continue;\n            }\n            used[nums[i] + 100] = 1; // 记录这个元素在本层用过了，本层后面不能再用了\n            path.push_back(nums[i]);\n            backtracking(nums, i + 1);\n            path.pop_back();\n        }\n    }\npublic:\n    vector<vector<int>> findSubsequences(vector<int>& nums) {\n        result.clear();\n        path.clear();\n        backtracking(nums, 0);\n        return result;\n    }\n};\n这份代码在leetcode上提交，要比版本一耗时要好的多。\n\n所以正如在哈希表：总结篇！（每逢总结必经典） (https://programmercarl.com/%E5%93%88%E5%B8%8C%E8%A1%A8%E6%80%BB%E7%BB%93.html)中说的那样，数组，set，map都可以做哈希表，而且数组干的活，map和set都能干，但如果数值范围小的话能用数组尽量用数组。\n\n#总结\n本题题解清一色都说是深度优先搜索，但我更倾向于说它用回溯法，而且本题我也是完全使用回溯法的逻辑来分析的。\n\n相信大家在本题中处处都能看到是回溯算法：求子集问题（二） (https://programmercarl.com/0090.%E5%AD%90%E9%9B%86II.html)的身影，但处处又都是陷阱。\n\n对于养成思维定式或者套模板套嗨了的同学，这道题起到了很好的警醒作用。更重要的是拓展了大家的思路！\n\n#其他语言版本\n#Java\nclass Solution {\n    List<List<Integer>> result = new ArrayList<>();\n    List<Integer> path = new ArrayList<>();\n    public List<List<Integer>> findSubsequences(int[] nums) {\n        backTracking(nums, 0);\n        return result;\n    }\n    private void backTracking(int[] nums, int startIndex){\n        if(path.size() >= 2)\n                result.add(new ArrayList<>(path));            \n        HashSet<Integer> hs = new HashSet<>();\n        for(int i = startIndex; i < nums.length; i++){\n            if(!path.isEmpty() && path.get(path.size() -1 ) > nums[i] || hs.contains(nums[i]))\n                continue;\n            hs.add(nums[i]);\n            path.add(nums[i]);\n            backTracking(nums, i + 1);\n            path.remove(path.size() - 1);\n        }\n    }\n}\nclass Solution {\n    private List<Integer> path = new ArrayList<>();\n    private List<List<Integer>> res = new ArrayList<>();\n    public List<List<Integer>> findSubsequences(int[] nums) {\n        backtracking(nums,0);\n        return res;\n    }\n\n    private void backtracking (int[] nums, int start) {\n        if (path.size() > 1) {\n            res.add(new ArrayList<>(path));\n        }\n\n        int[] used = new int[201];\n        for (int i = start; i < nums.length; i++) {\n            if (!path.isEmpty() && nums[i] < path.get(path.size() - 1) ||\n                    (used[nums[i] + 100] == 1)) continue;\n            used[nums[i] + 100] = 1;\n            path.add(nums[i]);\n            backtracking(nums, i + 1);\n            path.remove(path.size() - 1);\n        }\n    }\n}\n//法二：使用map\nclass Solution {\n    //结果集合\n    List<List<Integer>> res = new ArrayList<>();\n    //路径集合\n    LinkedList<Integer> path = new LinkedList<>();\n    public List<List<Integer>> findSubsequences(int[] nums) {\n        getSubsequences(nums,0);\n        return res;\n    }\n    private void getSubsequences( int[] nums, int start ) {\n        if(path.size()>1 ){\n            res.add( new ArrayList<>(path) );\n            // 注意这里不要加return，要取树上的节点\n        }\n        HashMap<Integer,Integer> map = new HashMap<>();\n        for(int i=start ;i < nums.length ;i++){\n            if(!path.isEmpty() && nums[i]< path.getLast()){\n                continue;\n            }\n            // 使用过了当前数字\n            if ( map.getOrDefault( nums[i],0 ) >=1 ){\n                continue;\n            }\n            map.put(nums[i],map.getOrDefault( nums[i],0 )+1);\n            path.add( nums[i] );\n            getSubsequences( nums,i+1 );\n            path.removeLast();\n        }\n    }\n}\n#Python\n回溯 利用set去重\n\nclass Solution:\n    def findSubsequences(self, nums):\n        result = []\n        path = []\n        self.backtracking(nums, 0, path, result)\n        return result\n    \n    def backtracking(self, nums, startIndex, path, result):\n        if len(path) > 1:\n            result.append(path[:])  # 注意要使用切片将当前路径的副本加入结果集\n            # 注意这里不要加return，要取树上的节点\n        \n        uset = set()  # 使用集合对本层元素进行去重\n        for i in range(startIndex, len(nums)):\n            if (path and nums[i] < path[-1]) or nums[i] in uset:\n                continue\n            \n            uset.add(nums[i])  # 记录这个元素在本层用过了，本层后面不能再用了\n            path.append(nums[i])\n            self.backtracking(nums, i + 1, path, result)\n            path.pop()\n\n回溯 利用哈希表去重\n\nclass Solution:\n    def findSubsequences(self, nums):\n        result = []\n        path = []\n        self.backtracking(nums, 0, path, result)\n        return result\n\n    def backtracking(self, nums, startIndex, path, result):\n        if len(path) > 1:\n            result.append(path[:])  # 注意要使用切片将当前路径的副本加入结果集\n        \n        used = [0] * 201  # 使用数组来进行去重操作，题目说数值范围[-100, 100]\n        for i in range(startIndex, len(nums)):\n            if (path and nums[i] < path[-1]) or used[nums[i] + 100] == 1:\n                continue  # 如果当前元素小于上一个元素，或者已经使用过当前元素，则跳过当前元素\n            \n            used[nums[i] + 100] = 1  # 标记当前元素已经使用过\n            path.append(nums[i])  # 将当前元素加入当前递增子序列\n            self.backtracking(nums, i + 1, path, result)\n            path.pop()"
+}

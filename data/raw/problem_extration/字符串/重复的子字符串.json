@@ -1,0 +1,824 @@
+{
+  "id": "AP_4605c26b",
+  "title": "重复的子字符串",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/repeated-substring-pattern/",
+  "description": "一个非空的字符串，判断它是否可以由它的一个子串重复多次构成。给定的字符串只含有小写英文字母，并且长度不超过10000。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "字符串处理",
+    "KMP"
+  ],
+  "data_structure_tags": [
+    "字符串"
+  ],
+  "technique_tags": [
+    "模式匹配",
+    "前缀表",
+    "字符串拼接"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过将给定字符串s与自身拼接并去除首尾字符，然后在新字符串中查找原字符串s是否出现来判断s是否由重复子串组成。该方法利用了重复子串特性的充分性和必要性证明。同时，使用KMP算法中的next数组来快速搜索字符串。",
+  "key_insights": [
+    {
+      "content": "如果一个字符串s可以由其一个子串多次重复构成，则在s+s的新字符串中去除首尾字符后仍能找到s。这是因为s内部有重复部分，使得在双倍长度的字符串里能够找到完整的s。"
+    },
+    {
+      "content": "KMP算法中的next数组用于快速地在字符串中搜索模式串。在此问题背景下，最长相等前后缀不包含的部分实际上就是最小重复单元，这为使用KMP提供了一个理论基础。"
+    },
+    {
+      "content": "当字符串s的长度可以被其最长相等前后缀不包含的子串的长度整除时，不包含的子串就是s的最小重复子串。"
+    },
+    {
+      "content": "通过构建KMP算法的前缀表，可以在O(n)时间复杂度内解决该问题。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "暴力的解法， 就是一个for循环获取 子串的终止位置， 然后判断子串是否能重复构成字符串，又嵌套一个for循环，所以是O(n^2)的时间复杂度。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    bool repeatedSubstringPattern(string s) {\n        string t = s + s;\n        t.erase(t.begin()); t.erase(t.end() - 1); // 掐头去尾\n        if (t.find(s) != std::string::npos) return true; // r\n        return false;\n    }\n};",
+          "description": "使用字符串拼接和查找来判断重复子串"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    void getNext (int* next, const string& s){\n        next[0] = -1;\n        int j = -1;\n        for(int i = 1;i < s.size(); i++){\n            while(j >= 0 && s[i] != s[j + 1]) {\n                j = next[j];\n            }\n            if(s[i] == s[j + 1]) {\n                j++;\n            }\n            next[i] = j;\n        }\n    }\n    bool repeatedSubstringPattern (string s) {\n        if (s.size() == 0) {\n            return false;\n        }\n        int next[s.size()];\n        getNext(next, s);\n        int len = s.size();\n        if (next[len - 1] != -1 && len % (len - (next[len - 1] + 1)) == 0) {\n            return true;\n        }\n        return false;\n    }\n};",
+          "description": "使用KMP算法的前缀表减一方式判断重复子串"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    void getNext (int* next, const string& s){\n        next[0] = 0;\n        int j = 0;\n        for(int i = 1;i < s.size(); i++){\n            while(j > 0 && s[i] != s[j]) {\n                j = next[j - 1];\n            }\n            if(s[i] == s[j]) {\n                j++;\n            }\n            next[i] = j;\n        }\n    }\n    bool repeatedSubstringPattern (string s) {\n        if (s.size() == 0) {\n            return false;\n        }\n        int next[s.size()];\n        getNext(next, s);\n        int len = s.size();\n        if (next[len - 1] != 0 && len % (len - (next[len - 1])) == 0) {\n            return true;\n        }\n        return false;\n    }\n};",
+          "description": "使用KMP算法的前缀表不减一方式判断重复子串"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean repeatedSubstringPattern(String s) {\n        if (s.equals(\"\") || s.length() <= 1) return false;\n        int len = s.length();\n        s = \" \" + s;\n        char[] chars = s.toCharArray();\n        int[] next = new int[len + 1];\n        for (int i = 2, j = 0; i <= len; i++) {\n            while (j > 0 && chars[i] != chars[j + 1]) j = next[j];\n            if (chars[i] == chars[j + 1]) j++;\n            next[i] = j;\n        }\n        if (next[len] > 0 && len % (len - next[len]) == 0) {\n            return true;\n        }\n        return false;\n    }\n}",
+          "description": "Java版本，使用前缀表减一的方式实现KMP算法判断重复子串"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean repeatedSubstringPattern(String s) {\n        int n = s.length();\n        int[] next = new int[n];\n        int j = 0;\n        next[0] = 0;\n        for (int i = 1; i < n; i++) {\n            while (j > 0 && s.charAt(i) != s.charAt(j)) j = next[j - 1];\n            if (s.charAt(i) == s.charAt(j)) j++;\n            next[i] = j;\n        }\n        if (next[n - 1] > 0 && n % (n - next[n - 1]) == 0) {\n            return true;\n        } else {\n            return false;\n        }\n    }\n}",
+          "description": "Java版本，使用前缀表不减一的方式实现KMP算法判断重复子串"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def repeatedSubstringPattern(self, s: str) -> bool:  \n        if len(s) == 0:\n            return False\n        nxt = [0] * len(s)\n        self.getNext(nxt, s)\n        if nxt[-1] != -1 and len(s) % (len(s) - (nxt[-1] + 1)) == 0:\n            return True\n        return False\n    \n    def getNext(self, nxt, s):\n        nxt[0] = -1\n        j = -1\n        for i in range(1, len(s)):\n            while j >= 0 and s[i] != s[j+1]:\n                j = nxt[j]\n            if s[i] == s[j+1]:\n                j += 1\n            nxt[i] = j\n        return nxt",
+          "description": "Python版本，使用前缀表减一的方式实现KMP算法判断重复子串"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def repeatedSubstringPattern(self, s: str) -> bool:  \n        if len(s) == 0:\n            return False\n        nxt = [0] * len(s)\n        self.getNext(nxt, s)\n        if nxt[-1] != 0 and len(s) % (len(s) - nxt[-1]) == 0:\n            return True\n        return False\n    \n    def getNext(self, nxt, s):\n        nxt[0] = 0\n        j = 0\n        for i in range(1, len(s)):\n            while j > 0 and s[i] != s[j]:\n                j = nxt[j - 1]\n            if s[i] == s[j]:\n                j += 1\n            nxt[i] = j\n        return nxt",
+          "description": "Python版本，使用前缀表不减一的方式实现KMP算法判断重复子串"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def repeatedSubstringPattern(self, s: str) -> bool:\n        n = len(s)\n        if n <= 1:\n            return False\n        ss = s[1:] + s[:-1] \n        return ss.find(s) != -1",
+          "description": "Python版本，使用find方法判断重复子串"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def repeatedSubstringPattern(self, s: str) -> bool:\n        n = len(s)\n        if n <= 1:\n            return False\n        substr = \"\"\n        for i in range(1, n//2 + 1):\n            if n % i == 0:\n                substr = s[:i]\n                if substr * (n//i) == s:\n                    return True\n        return False",
+          "description": "Python版本，暴力法判断重复子串"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "移动匹配",
+      "text": "当一个字符串s：abcabc，内部由重复的子串组成，那么这个字符串的结构一定是这样的：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool repeatedSubstringPattern(string s) { string t = s + s; t.erase(t.begin()); t.erase(t.end() - 1); if (t.find(s) != std::string::npos) return true; return false; }};",
+          "description": "C++实现，通过将字符串拼接后去除首尾字符来判断是否由重复子串组成"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void getNext (int* next, const string& s){ next[0] = -1; int j = -1; for(int i = 1;i < s.size(); i++){ while(j >= 0 && s[i] != s[j + 1]) { j = next[j]; } if(s[i] == s[j + 1]) { j++; } next[i] = j; }} bool repeatedSubstringPattern (string s) { if (s.size() == 0) { return false; } int next[s.size()]; getNext(next, s); int len = s.size(); if (next[len - 1] != -1 && len % (len - (next[len - 1] + 1)) == 0) { return true; } return false;}};",
+          "description": "使用KMP算法的C++实现，基于前缀表统一减一的方式"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void getNext (int* next, const string& s){ next[0] = 0; int j = 0; for(int i = 1;i < s.size(); i++){ while(j > 0 && s[i] != s[j]) { j = next[j - 1]; } if(s[i] == s[j]) { j++; } next[i] = j; }} bool repeatedSubstringPattern (string s) { if (s.size() == 0) { return false; } int next[s.size()]; getNext(next, s); int len = s.size(); if (next[len - 1] != 0 && len % (len - (next[len - 1] )) == 0) { return true; } return false;}};",
+          "description": "使用KMP算法的C++实现，基于前缀表不减一的方式"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean repeatedSubstringPattern(String s) { if (s.equals(\"\")) return false; int len = s.length(); s = \" \" + s; char[] chars = s.toCharArray(); int[] next = new int[len + 1]; for (int i = 2, j = 0; i <= len; i++) { while (j > 0 && chars[i] != chars[j + 1]) j = next[j]; if (chars[i] == chars[j + 1]) j++; next[i] = j; } if (next[len] > 0 && len % (len - next[len]) == 0) { return true; } return false;}}",
+          "description": "Java实现，利用KMP算法构建前缀表减一版本"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean repeatedSubstringPattern(String s) { int n = s.length(); int[] next = new int[n]; int j = 0; next[0] = 0; for (int i = 1; i < n; i++) { while (j > 0 && s.charAt(i) != s.charAt(j)) j = next[j - 1]; if (s.charAt(i) == s.charAt(j)) j++; next[i] = j; } if (next[n - 1] > 0 && n % (n - next[n - 1]) == 0) { return true; } else { return false; }}}",
+          "description": "Java实现，利用KMP算法构建前缀表不减一版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: if len(s) == 0: return False nxt = [0] * len(s) self.getNext(nxt, s) if nxt[-1] != -1 and len(s) % (len(s) - (nxt[-1] + 1)) == 0: return True return False def getNext(self, nxt, s): nxt[0] = -1 j = -1 for i in range(1, len(s)): while j >= 0 and s[i] != s[j+1]: j = nxt[j] if s[i] == s[j+1]: j += 1 nxt[i] = j return nxt",
+          "description": "Python实现，基于KMP算法和前缀表减一的方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: if len(s) == 0: return False nxt = [0] * len(s) self.getNext(nxt, s) if nxt[-1] != 0 and len(s) % (len(s) - nxt[-1]) == 0: return True return False def getNext(self, nxt, s): nxt[0] = 0 j = 0 for i in range(1, len(s)): while j > 0 and s[i] != s[j]: j = nxt[j - 1] if s[i] == s[j]: j += 1 nxt[i] = j return nxt",
+          "description": "Python实现，基于KMP算法和前缀表不减一的方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: n = len(s) if n <= 1: return False ss = s[1:] + s[:-1] return ss.find(s) != -1",
+          "description": "Python实现，使用find方法检查字符串是否由重复子串组成"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: n = len(s) if n <= 1: return False substr = \"\" for i in range(1, n//2 + 1): if n % i == 0: substr = s[:i] if substr * (n//i) == s: return True return False",
+          "description": "Python实现，暴力解法检查字符串是否由重复子串组成"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "KMP",
+      "text": "#为什么会使用KMP",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool repeatedSubstringPattern(string s) { string t = s + s; t.erase(t.begin()); t.erase(t.end() - 1); if (t.find(s) != std::string::npos) return true; return false; }};",
+          "description": "检查字符串是否可以由其子串重复多次构成，通过拼接字符串并去除首尾字符来实现。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void getNext (int* next, const string& s){ next[0] = -1; int j = -1; for(int i = 1;i < s.size(); i++){ while(j >= 0 && s[i] != s[j + 1]) { j = next[j]; } if(s[i] == s[j + 1]) { j++; } next[i] = j; }} bool repeatedSubstringPattern (string s) { if (s.size() == 0) { return false; } int next[s.size()]; getNext(next, s); int len = s.size(); if (next[len - 1] != -1 && len % (len - (next[len - 1] + 1)) == 0) { return true; } return false;}};",
+          "description": "使用KMP算法计算next数组，以判断字符串是否可由其子串重复组成。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void getNext (int* next, const string& s){ next[0] = 0; int j = 0; for(int i = 1;i < s.size(); i++){ while(j > 0 && s[i] != s[j]) { j = next[j - 1]; } if(s[i] == s[j]) { j++; } next[i] = j; }} bool repeatedSubstringPattern (string s) { if (s.size() == 0) { return false; } int next[s.size()]; getNext(next, s); int len = s.size(); if (next[len - 1] != 0 && len % (len - (next[len - 1] )) == 0) { return true; } return false;}};",
+          "description": "使用KMP算法但不减一的方式计算next数组，用于检测字符串是否由重复子串组成。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean repeatedSubstringPattern(String s) { if (s.equals(\"\")) return false; int len = s.length(); s = \" \" + s; char[] chars = s.toCharArray(); int[] next = new int[len + 1]; for (int i = 2, j = 0; i <= len; i++) { while (j > 0 && chars[i] != chars[j + 1]) j = next[j]; if (chars[i] == chars[j + 1]) j++; next[i] = j; } if (next[len] > 0 && len % (len - next[len]) == 0) { return true; } return false; }}",
+          "description": "Java版本的KMP算法实现，包括构建next数组和判断字符串是否由重复子串组成。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean repeatedSubstringPattern(String s) { int n = s.length(); int[] next = new int[n]; int j = 0; next[0] = 0; for (int i = 1; i < n; i++) { while (j > 0 && s.charAt(i) != s.charAt(j)) j = next[j - 1]; if (s.charAt(i) == s.charAt(j)) j++; next[i] = j; } if (next[n - 1] > 0 && n % (n - next[n - 1]) == 0) { return true; } else { return false; } }}",
+          "description": "另一个Java版本的KMP算法实现，用于判断字符串是否由重复子串组成。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: if len(s) == 0: return False nxt = [0] * len(s) self.getNext(nxt, s) if nxt[-1] != -1 and len(s) % (len(s) - (nxt[-1] + 1)) == 0: return True return False def getNext(self, nxt, s): nxt[0] = -1 j = -1 for i in range(1, len(s)): while j >= 0 and s[i] != s[j+1]: j = nxt[j] if s[i] == s[j+1]: j += 1 nxt[i] = j return nxt",
+          "description": "Python版本的KMP算法实现，利用next数组判断字符串是否由重复子串组成。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: if len(s) == 0: return False nxt = [0] * len(s) self.getNext(nxt, s) if nxt[-1] != 0 and len(s) % (len(s) - nxt[-1]) == 0: return True return False def getNext(self, nxt, s): nxt[0] = 0 j = 0 for i in range(1, len(s)): while j > 0 and s[i] != s[j]: j = nxt[j - 1] if s[i] == s[j]: j += 1 nxt[i] = j return nxt",
+          "description": "Python版本KMP算法不减一方式实现，用于判断字符串是否由重复子串组成。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: n = len(s) if n <= 1: return False ss = s[1:] + s[:-1] return ss.find(s) != -1",
+          "description": "通过字符串拼接与查找方法，快速判断字符串是否由重复子串组成。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: n = len(s) if n <= 1: return False substr = \"\" for i in range(1, n//2 + 1): if n % i == 0: substr = s[:i] if substr * (n//i) == s: return True return False",
+          "description": "暴力法实现，遍历可能的子串长度并检查该子串是否能重复构成原字符串。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "为什么会使用KMP",
+      "text": "以下使用KMP方式讲解，强烈建议大家先把以下两个视频看了，理解KMP算法，再来看下面讲解，否则会很懵。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void getNext (int* next, const string& s){next[0] = -1; int j = -1; for(int i = 1;i < s.size(); i++){while(j >= 0 && s[i] != s[j + 1]) {j = next[j];}if(s[i] == s[j + 1]) {j++;}next[i] = j;}} bool repeatedSubstringPattern (string s) {if (s.size() == 0) {return false;}int next[s.size()];getNext(next, s);int len = s.size();if (next[len - 1] != -1 && len % (len - (next[len - 1] + 1)) == 0) {return true;}return false;}};",
+          "description": "使用KMP算法判断字符串是否由重复子串组成（前缀表减一版本）"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void getNext (int* next, const string& s){next[0] = 0; int j = 0; for(int i = 1;i < s.size(); i++){while(j > 0 && s[i] != s[j]) {j = next[j - 1];}if(s[i] == s[j]) {j++;}next[i] = j;}} bool repeatedSubstringPattern (string s) {if (s.size() == 0) {return false;}int next[s.size()];getNext(next, s);int len = s.size();if (next[len - 1] != 0 && len % (len - (next[len - 1] )) == 0) {return true;}return false;}};",
+          "description": "使用KMP算法判断字符串是否由重复子串组成（前缀表不减一版本）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean repeatedSubstringPattern(String s) {if (s.equals(\"\")) return false;int len = s.length();s = \" \" + s;char[] chars = s.toCharArray();int[] next = new int[len + 1];for (int i = 2, j = 0; i <= len; i++) {while (j > 0 && chars[i] != chars[j + 1]) j = next[j];if (chars[i] == chars[j + 1]) j++;next[i] = j;}if (next[len] > 0 && len % (len - next[len]) == 0) {return true;}return false;}}",
+          "description": "Java实现，使用KMP算法判断字符串是否由重复子串组成（前缀表减一版本）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean repeatedSubstringPattern(String s) {int n = s.length();int[] next = new int[n];int j = 0;next[0] = 0;for (int i = 1; i < n; i++) {while (j > 0 && s.charAt(i) != s.charAt(j)) j = next[j - 1];if (s.charAt(i) == s.charAt(j)) j++;next[i] = j;}if (next[n - 1] > 0 && n % (n - next[n - 1]) == 0) {return true;} else {return false;}}}",
+          "description": "Java实现，使用KMP算法判断字符串是否由重复子串组成（前缀表不减一版本）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: if len(s) == 0: return False nxt = [0] * len(s) self.getNext(nxt, s) if nxt[-1] != -1 and len(s) % (len(s) - (nxt[-1] + 1)) == 0: return True return False def getNext(self, nxt, s): nxt[0] = -1 j = -1 for i in range(1, len(s)): while j >= 0 and s[i] != s[j+1]: j = nxt[j] if s[i] == s[j+1]: j += 1 nxt[i] = j return nxt",
+          "description": "Python实现，使用KMP算法判断字符串是否由重复子串组成（前缀表减一版本）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: if len(s) == 0: return False nxt = [0] * len(s) self.getNext(nxt, s) if nxt[-1] != 0 and len(s) % (len(s) - nxt[-1]) == 0: return True return False def getNext(self, nxt, s): nxt[0] = 0 j = 0 for i in range(1, len(s)): while j > 0 and s[i] != s[j]: j = nxt[j - 1] if s[i] == s[j]: j += 1 nxt[i] = j return nxt",
+          "description": "Python实现，使用KMP算法判断字符串是否由重复子串组成（前缀表不减一版本）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: n = len(s) if n <= 1: return False ss = s[1:] + s[:-1] return ss.find(s) != -1",
+          "description": "Python实现，通过拼接字符串并查找来判断是否由重复子串组成"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: n = len(s) if n <= 1: return False substr = \"\" for i in range(1, n//2 + 1): if n % i == 0: substr = s[:i] if substr * (n//i) == s: return True return False",
+          "description": "Python实现，暴力法判断字符串是否由重复子串组成"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "充分性证明",
+      "text": "如果一个字符串s是由重复子串组成，那么 最长相等前后缀不包含的子串一定是字符串s的最小重复子串。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool repeatedSubstringPattern(string s) {string t = s + s;t.erase(t.begin()); t.erase(t.end() - 1); if (t.find(s) != std::string::npos) return true; return false;}};",
+          "description": "通过拼接字符串并去除首尾字符来判断是否由重复子串组成"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void getNext (int* next, const string& s){next[0] = -1;int j = -1;for(int i = 1;i < s.size(); i++){while(j >= 0 && s[i] != s[j + 1]) {j = next[j];}if(s[i] == s[j + 1]) {j++;}next[i] = j;}}bool repeatedSubstringPattern (string s) {if (s.size() == 0) {return false;}int next[s.size()];getNext(next, s);int len = s.size();if (next[len - 1] != -1 && len % (len - (next[len - 1] + 1)) == 0) {return true;}return false;}};",
+          "description": "使用KMP算法的前缀表减一方式实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void getNext (int* next, const string& s){next[0] = 0;int j = 0;for(int i = 1;i < s.size(); i++){while(j > 0 && s[i] != s[j]) {j = next[j - 1];}if(s[i] == s[j]) {j++;}next[i] = j;}}bool repeatedSubstringPattern (string s) {if (s.size() == 0) {return false;}int next[s.size()];getNext(next, s);int len = s.size();if (next[len - 1] != 0 && len % (len - (next[len - 1] )) == 0) {return true;}return false;}};",
+          "description": "使用KMP算法的前缀表不减一方式实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean repeatedSubstringPattern(String s) {if (s.equals(\"\")) return false;int len = s.length();s = \" \" + s;char[] chars = s.toCharArray();int[] next = new int[len + 1];for (int i = 2, j = 0; i <= len; i++) {while (j > 0 && chars[i] != chars[j + 1]) j = next[j];if (chars[i] == chars[j + 1]) j++;next[i] = j;}if (next[len] > 0 && len % (len - next[len]) == 0) {return true;}return false;}}",
+          "description": "Java版本，使用前缀表减一的方式实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean repeatedSubstringPattern(String s) {int n = s.length();int[] next = new int[n];int j = 0;next[0] = 0;for (int i = 1; i < n; i++) {while (j > 0 && s.charAt(i) != s.charAt(j)) j = next[j - 1];if (s.charAt(i) == s.charAt(j)) j++;next[i] = j;}if (next[n - 1] > 0 && n % (n - next[n - 1]) == 0) {return true;} else {return false;}}}",
+          "description": "Java版本，使用前缀表不减一的方式实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool:  if len(s) == 0:    return False  nxt = [0] * len(s)  self.getNext(nxt, s)  if nxt[-1] != -1 and len(s) % (len(s) - (nxt[-1] + 1)) == 0:    return True  return False def getNext(self, nxt, s):  nxt[0] = -1  j = -1  for i in range(1, len(s)):    while j >= 0 and s[i] != s[j+1]:      j = nxt[j]    if s[i] == s[j+1]:      j += 1    nxt[i] = j  return nxt",
+          "description": "Python版本，使用前缀表减一的方式实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool:  if len(s) == 0:    return False  nxt = [0] * len(s)  self.getNext(nxt, s)  if nxt[-1] != 0 and len(s) % (len(s) - nxt[-1]) == 0:    return True  return False def getNext(self, nxt, s):  nxt[0] = 0  j = 0  for i in range(1, len(s)):    while j > 0 and s[i] != s[j]:      j = nxt[j - 1]    if s[i] == s[j]:      j += 1    nxt[i] = j  return nxt",
+          "description": "Python版本，使用前缀表不减一的方式实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool:  n = len(s)  if n <= 1:    return False  ss = s[1:] + s[:-1]  return ss.find(s) != -1",
+          "description": "Python版本，使用find方法判断是否存在重复子串"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool:  n = len(s)  if n <= 1:    return False  substr = \"\"  for i in range(1, n//2 + 1):    if n % i == 0:      substr = s[:i]      if substr * (n//i) == s:        return True  return False",
+          "description": "Python暴力法检查是否存在重复子串"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "必要性证明",
+      "text": "以上是充分性证明，以下是必要性证明：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool repeatedSubstringPattern(string s) { string t = s + s; t.erase(t.begin()); t.erase(t.end() - 1); if (t.find(s) != std::string::npos) return true; return false; }};",
+          "description": "使用字符串拼接的方法判断是否有重复子串"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void getNext (int* next, const string& s){ next[0] = -1; int j = -1; for(int i = 1;i < s.size(); i++){ while(j >= 0 && s[i] != s[j + 1]) { j = next[j]; } if(s[i] == s[j + 1]) { j++; } next[i] = j; }} bool repeatedSubstringPattern (string s) { if (s.size() == 0) { return false; } int next[s.size()]; getNext(next, s); int len = s.size(); if (next[len - 1] != -1 && len % (len - (next[len - 1] + 1)) == 0) { return true; } return false; }};",
+          "description": "KMP算法，前缀表统一减一实现方式"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void getNext (int* next, const string& s){ next[0] = 0; int j = 0; for(int i = 1;i < s.size(); i++){ while(j > 0 && s[i] != s[j]) { j = next[j - 1]; } if(s[i] == s[j]) { j++; } next[i] = j; }} bool repeatedSubstringPattern (string s) { if (s.size() == 0) { return false; } int next[s.size()]; getNext(next, s); int len = s.size(); if (next[len - 1] != 0 && len % (len - (next[len - 1])) == 0) { return true; } return false; }};",
+          "description": "KMP算法，前缀表不减一实现方式"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean repeatedSubstringPattern(String s) { if (s.equals(\"\")) return false; int len = s.length(); s = \" \" + s; char[] chars = s.toCharArray(); int[] next = new int[len + 1]; for (int i = 2, j = 0; i <= len; i++) { while (j > 0 && chars[i] != chars[j + 1]) j = next[j]; if (chars[i] == chars[j + 1]) j++; next[i] = j; } if (next[len] > 0 && len % (len - next[len]) == 0) { return true; } return false; }}",
+          "description": "Java版本，前缀表减一实现方式"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean repeatedSubstringPattern(String s) { int n = s.length(); int[] next = new int[n]; int j = 0; next[0] = 0; for (int i = 1; i < n; i++) { while (j > 0 && s.charAt(i) != s.charAt(j)) j = next[j - 1]; if (s.charAt(i) == s.charAt(j)) j++; next[i] = j; } if (next[n - 1] > 0 && n % (n - next[n - 1]) == 0) { return true; } else { return false; }}}",
+          "description": "Java版本，前缀表不减一实现方式"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: if len(s) == 0: return False nxt = [0] * len(s) self.getNext(nxt, s) if nxt[-1] != -1 and len(s) % (len(s) - (nxt[-1] + 1)) == 0: return True return False def getNext(self, nxt, s): nxt[0] = -1 j = -1 for i in range(1, len(s)): while j >= 0 and s[i] != s[j+1]: j = nxt[j] if s[i] == s[j+1]: j += 1 nxt[i] = j return nxt",
+          "description": "Python版本，前缀表减一实现方式"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: if len(s) == 0: return False nxt = [0] * len(s) self.getNext(nxt, s) if nxt[-1] != 0 and len(s) % (len(s) - nxt[-1]) == 0: return True return False def getNext(self, nxt, s): nxt[0] = 0 j = 0 for i in range(1, len(s)): while j > 0 and s[i] != s[j]: j = nxt[j - 1] if s[i] == s[j]: j += 1 nxt[i] = j return nxt",
+          "description": "Python版本，前缀表不减一实现方式"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: n = len(s) if n <= 1: return False ss = s[1:] + s[:-1] return ss.find(s) != -1",
+          "description": "Python版本，使用find方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: n = len(s) if n <= 1: return False substr = \"\" for i in range(1, n//2 + 1): if n % i == 0: substr = s[:i] if substr * (n//i) == s: return True return False",
+          "description": "Python版本，暴力法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "代码分析",
+      "text": "next 数组记录的就是最长相同前后缀（ 字符串：KMP算法精讲 (opens new window)）， 如果 next[len - 1] != -1，则说明字符串有最长相同的前后缀（就是字符串里的前缀子串和后缀子串相同的最长长度）。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void getNext (int* next, const string& s){next[0] = -1;int j = -1;for(int i = 1;i < s.size(); i++){while(j >= 0 && s[i] != s[j + 1]) {j = next[j];}if(s[i] == s[j + 1]) {j++;}next[i] = j;}}bool repeatedSubstringPattern (string s) {if (s.size() == 0) {return false;}int next[s.size()];getNext(next, s);int len = s.size();if (next[len - 1] != -1 && len % (len - (next[len - 1] + 1)) == 0) {return true;}return false;}};",
+          "description": "使用KMP算法判断字符串是否由重复子串组成(C++实现，前缀表减一)"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void getNext (int* next, const string& s){next[0] = 0;int j = 0;for(int i = 1;i < s.size(); i++){while(j > 0 && s[i] != s[j]) {j = next[j - 1];}if(s[i] == s[j]) {j++;}next[i] = j;}}bool repeatedSubstringPattern (string s) {if (s.size() == 0) {return false;}int next[s.size()];getNext(next, s);int len = s.size();if (next[len - 1] != 0 && len % (len - (next[len - 1] )) == 0) {return true;}return false;}};",
+          "description": "使用KMP算法判断字符串是否由重复子串组成(C++实现，前缀表不减一)"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean repeatedSubstringPattern(String s) {if (s.equals(\"\")) return false;int len = s.length();s = \" \" + s;char[] chars = s.toCharArray();int[] next = new int[len + 1];for (int i = 2, j = 0; i <= len; i++) {while (j > 0 && chars[i] != chars[j + 1]) j = next[j];if (chars[i] == chars[j + 1]) j++;next[i] = j;}if (next[len] > 0 && len % (len - next[len]) == 0) {return true;}return false;}}",
+          "description": "使用KMP算法判断字符串是否由重复子串组成(Java实现，前缀表减一)"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean repeatedSubstringPattern(String s) {int n = s.length();int[] next = new int[n];int j = 0;next[0] = 0;for (int i = 1; i < n; i++) {while (j > 0 && s.charAt(i) != s.charAt(j)) j = next[j - 1];if (s.charAt(i) == s.charAt(j)) j++;next[i] = j;}if (next[n - 1] > 0 && n % (n - next[n - 1]) == 0) {return true;} else {return false;}}}",
+          "description": "使用KMP算法判断字符串是否由重复子串组成(Java实现，前缀表不减一)"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: if len(s) == 0: return False nxt = [0] * len(s) self.getNext(nxt, s) if nxt[-1] != -1 and len(s) % (len(s) - (nxt[-1] + 1)) == 0: return True return False def getNext(self, nxt, s): nxt[0] = -1 j = -1 for i in range(1, len(s)): while j >= 0 and s[i] != s[j+1]: j = nxt[j] if s[i] == s[j+1]: j += 1 nxt[i] = j return nxt",
+          "description": "使用KMP算法判断字符串是否由重复子串组成(Python实现，前缀表减一)"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: if len(s) == 0: return False nxt = [0] * len(s) self.getNext(nxt, s) if nxt[-1] != 0 and len(s) % (len(s) - nxt[-1]) == 0: return True return False def getNext(self, nxt, s): nxt[0] = 0 j = 0 for i in range(1, len(s)): while j > 0 and s[i] != s[j]: j = nxt[j - 1] if s[i] == s[j]: j += 1 nxt[i] = j return nxt",
+          "description": "使用KMP算法判断字符串是否由重复子串组成(Python实现，前缀表不减一)"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: n = len(s) if n <= 1: return False ss = s[1:] + s[:-1] return ss.find(s) != -1",
+          "description": "通过拼接字符串并查找原字符串来判断是否存在重复子串(Python实现)"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: n = len(s) if n <= 1: return False substr = \"\" for i in range(1, n//2 + 1): if n % i == 0: substr = s[:i] if substr * (n//i) == s: return True return False",
+          "description": "暴力法检查所有可能的子串是否能构成原字符串(Python实现)"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "打印数组",
+      "text": "强烈建议大家把next数组打印出来，看看next数组里的规律，有助于理解KMP算法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    bool repeatedSubstringPattern(string s) {\n        string t = s + s;\n        t.erase(t.begin()); t.erase(t.end() - 1); // 掐头去尾\n        if (t.find(s) != std::string::npos) return true; // r\n        return false;\n    }\n};",
+          "description": "C++移动匹配解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    void getNext (int* next, const string& s){\n        next[0] = -1;\n        int j = -1;\n        for(int i = 1;i < s.size(); i++){\n            while(j >= 0 && s[i] != s[j + 1]) {\n                j = next[j];\n            }\n            if(s[i] == s[j + 1]) {\n                j++;\n            }\n            next[i] = j;\n        }\n    }\n    bool repeatedSubstringPattern (string s) {\n        if (s.size() == 0) {\n            return false;\n        }\n        int next[s.size()];\n        getNext(next, s);\n        int len = s.size();\n        if (next[len - 1] != -1 && len % (len - (next[len - 1] + 1)) == 0) {\n            return true;\n        }\n        return false;\n    }\n};",
+          "description": "C++ KMP算法（前缀表统一减一实现方式）"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    void getNext (int* next, const string& s){\n        next[0] = 0;\n        int j = 0;\n        for(int i = 1;i < s.size(); i++){\n            while(j > 0 && s[i] != s[j]) {\n                j = next[j - 1];\n            }\n            if(s[i] == s[j]) {\n                j++;\n            }\n            next[i] = j;\n        }\n    }\n    bool repeatedSubstringPattern (string s) {\n        if (s.size() == 0) {\n            return false;\n        }\n        int next[s.size()];\n        getNext(next, s);\n        int len = s.size();\n        if (next[len - 1] != 0 && len % (len - (next[len - 1])) == 0) {\n            return true;\n        }\n        return false;\n    }\n};",
+          "description": "C++ KMP算法（前缀表不减一实现方式）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean repeatedSubstringPattern(String s) {\n        if (s.equals(\"\")) return false;\n        int len = s.length();\n        s = \" \" + s;\n        char[] chars = s.toCharArray();\n        int[] next = new int[len + 1];\n        for (int i = 2, j = 0; i <= len; i++) {\n            while (j > 0 && chars[i] != chars[j + 1]) j = next[j];\n            if (chars[i] == chars[j + 1]) j++;\n            next[i] = j;\n        }\n        if (next[len] > 0 && len % (len - next[len]) == 0) {\n            return true;\n        }\n        return false;\n    }\n}",
+          "description": "Java KMP算法（前缀表减一实现方式）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean repeatedSubstringPattern(String s) {\n        int n = s.length();\n        int[] next = new int[n];\n        int j = 0;\n        next[0] = 0;\n        for (int i = 1; i < n; i++) {\n            while (j > 0 && s.charAt(i) != s.charAt(j)) j = next[j - 1];\n            if (s.charAt(i) == s.charAt(j)) j++;\n            next[i] = j;\n        }\n        if (next[n - 1] > 0 && n % (n - next[n - 1]) == 0) {\n            return true;\n        } else {\n            return false;\n        }\n    }\n}",
+          "description": "Java KMP算法（前缀表不减一实现方式）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def repeatedSubstringPattern(self, s: str) -> bool:  \n        if len(s) == 0:\n            return False\n        nxt = [0] * len(s)\n        self.getNext(nxt, s)\n        if nxt[-1] != -1 and len(s) % (len(s) - (nxt[-1] + 1)) == 0:\n            return True\n        return False\n    def getNext(self, nxt, s):\n        nxt[0] = -1\n        j = -1\n        for i in range(1, len(s)):\n            while j >= 0 and s[i] != s[j+1]:\n                j = nxt[j]\n            if s[i] == s[j+1]:\n                j += 1\n            nxt[i] = j\n        return nxt",
+          "description": "Python KMP算法（前缀表减一实现方式）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def repeatedSubstringPattern(self, s: str) -> bool:  \n        if len(s) == 0:\n            return False\n        nxt = [0] * len(s)\n        self.getNext(nxt, s)\n        if nxt[-1] != 0 and len(s) % (len(s) - nxt[-1]) == 0:\n            return True\n        return False\n    def getNext(self, nxt, s):\n        nxt[0] = 0\n        j = 0\n        for i in range(1, len(s)):\n            while j > 0 and s[i] != s[j]:\n                j = nxt[j - 1]\n            if s[i] == s[j]:\n                j += 1\n            nxt[i] = j\n        return nxt",
+          "description": "Python KMP算法（前缀表不减一实现方式）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def repeatedSubstringPattern(self, s: str) -> bool:\n        n = len(s)\n        if n <= 1:\n            return False\n        ss = s[1:] + s[:-1] \n        return ss.find(s) != -1",
+          "description": "Python使用find方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def repeatedSubstringPattern(self, s: str) -> bool:\n        n = len(s)\n        if n <= 1:\n            return False\n        substr = \"\"\n        for i in range(1, n//2 + 1):\n            if n % i == 0:\n                substr = s[:i]\n                if substr * (n//i) == s:\n                    return True\n        return False",
+          "description": "Python暴力法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "代码实现",
+      "text": "C++代码如下：（这里使用了前缀表统一减一的实现方式）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    void getNext (int* next, const string& s){\n        next[0] = -1;\n        int j = -1;\n        for(int i = 1;i < s.size(); i++){\n            while(j >= 0 && s[i] != s[j + 1]) {\n                j = next[j];\n            }\n            if(s[i] == s[j + 1]) {\n                j++;\n            }\n            next[i] = j;\n        }\n    }\n    bool repeatedSubstringPattern (string s) {\n        if (s.size() == 0) {\n            return false;\n        }\n        int next[s.size()];\n        getNext(next, s);\n        int len = s.size();\n        if (next[len - 1] != -1 && len % (len - (next[len - 1] + 1)) == 0) {\n            return true;\n        }\n        return false;\n    }\n};",
+          "description": "C++ KMP算法实现，使用前缀表统一减一的方式判断字符串是否由重复子串构成"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    void getNext (int* next, const string& s){\n        next[0] = 0;\n        int j = 0;\n        for(int i = 1;i < s.size(); i++){\n            while(j > 0 && s[i] != s[j]) {\n                j = next[j - 1];\n            }\n            if(s[i] == s[j]) {\n                j++;\n            }\n            next[i] = j;\n        }\n    }\n    bool repeatedSubstringPattern (string s) {\n        if (s.size() == 0) {\n            return false;\n        }\n        int next[s.size()];\n        getNext(next, s);\n        int len = s.size();\n        if (next[len - 1] != 0 && len % (len - (next[len - 1])) == 0) {\n            return true;\n        }\n        return false;\n    }\n};",
+          "description": "C++ KMP算法实现，使用不减一的前缀表方式判断字符串是否由重复子串构成"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean repeatedSubstringPattern(String s) {\n        if (s.equals(\"\") || s.length() == 0) return false;\n\n        int len = s.length();\n        s = \" \" + s;\n        char[] chars = s.toCharArray();\n        int[] next = new int[len + 1];\n\n        for (int i = 2, j = 0; i <= len; i++) {\n            while (j > 0 && chars[i] != chars[j + 1]) j = next[j];\n            if (chars[i] == chars[j + 1]) j++;\n            next[i] = j;\n        }\n\n        if (next[len] > 0 && len % (len - next[len]) == 0) {\n            return true;\n        }\n        return false;\n    }\n}",
+          "description": "Java KMP算法实现，前缀表减一版本用于判断字符串是否由重复子串构成"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean repeatedSubstringPattern(String s) {\n        if (s.equals(\"\") || s.length() == 0) return false;\n\n        int n = s.length();\n        int[] next = new int[n];\n        next[0] = 0;\n        int j = 0;\n        for (int i = 1; i < n; i++) {\n            while (j > 0 && s.charAt(i) != s.charAt(j)) j = next[j - 1];\n            if (s.charAt(i) == s.charAt(j)) j++;\n            next[i] = j;\n        }\n\n        if (next[n - 1] > 0 && n % (n - next[n - 1]) == 0) {\n            return true;\n        }\n        return false;\n    }\n}",
+          "description": "Java KMP算法实现，不减一的前缀表方式判断字符串是否由重复子串构成"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def repeatedSubstringPattern(self, s: str) -> bool:\n        if len(s) == 0:\n            return False\n        nxt = [0] * len(s)\n        self.getNext(nxt, s)\n        if nxt[-1] != -1 and len(s) % (len(s) - (nxt[-1] + 1)) == 0:\n            return True\n        return False\n\n    def getNext(self, nxt, s):\n        nxt[0] = -1\n        j = -1\n        for i in range(1, len(s)):\n            while j >= 0 and s[i] != s[j+1]:\n                j = nxt[j]\n            if s[i] == s[j+1]:\n                j += 1\n            nxt[i] = j\n        return nxt",
+          "description": "Python KMP算法实现，前缀表减一版本用于判断字符串是否由重复子串构成"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def repeatedSubstringPattern(self, s: str) -> bool:\n        if len(s) == 0:\n            return False\n        nxt = [0] * len(s)\n        self.getNext(nxt, s)\n        if nxt[-1] != 0 and len(s) % (len(s) - nxt[-1]) == 0:\n            return True\n        return False\n\n    def getNext(self, nxt, s):\n        nxt[0] = 0\n        j = 0\n        for i in range(1, len(s)):\n            while j > 0 and s[i] != s[j]:\n                j = nxt[j - 1]\n            if s[i] == s[j]:\n                j += 1\n            nxt[i] = j\n        return nxt",
+          "description": "Python KMP算法实现，不减一的前缀表方式判断字符串是否由重复子串构成"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def repeatedSubstringPattern(self, s: str) -> bool:\n        n = len(s)\n        if n <= 1:\n            return False\n        ss = s[1:] + s[:-1]\n        return ss.find(s) != -1",
+          "description": "Python 实现，通过移动匹配方法判断字符串是否由重复子串构成"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def repeatedSubstringPattern(self, s: str) -> bool:\n        n = len(s)\n        if n <= 1:\n            return False\n        \n        substr = \"\"\n        for i in range(1, n//2 + 1):\n            if n % i == 0:\n                substr = s[:i]\n                if substr * (n//i) == s:\n                    return True\n        \n        return False",
+          "description": "Python 暴力解法实现，直接遍历所有可能的子串组合来判断"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool repeatedSubstringPattern(string s) {string t = s + s; t.erase(t.begin()); t.erase(t.end() - 1); if (t.find(s) != std::string::npos) return true; return false;}};",
+          "description": "使用字符串拼接和查找方法判断重复子串"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void getNext (int* next, const string& s){next[0] = -1; int j = -1; for(int i = 1;i < s.size(); i++){while(j >= 0 && s[i] != s[j + 1]) {j = next[j];}if(s[i] == s[j + 1]) {j++;}next[i] = j;}}bool repeatedSubstringPattern (string s) {if (s.size() == 0) {return false;}int next[s.size()];getNext(next, s);int len = s.size();if (next[len - 1] != -1 && len % (len - (next[len - 1] + 1)) == 0) {return true;}return false;}};",
+          "description": "使用KMP算法及前缀表减一实现重复子串判断"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: void getNext (int* next, const string& s){next[0] = 0; int j = 0; for(int i = 1;i < s.size(); i++){while(j > 0 && s[i] != s[j]) {j = next[j - 1];}if(s[i] == s[j]) {j++;}next[i] = j;}}bool repeatedSubstringPattern (string s) {if (s.size() == 0) {return false;}int next[s.size()];getNext(next, s);int len = s.size();if (next[len - 1] != 0 && len % (len - (next[len - 1] )) == 0) {return true;}return false;}};",
+          "description": "使用KMP算法及前缀表不减一实现重复子串判断"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean repeatedSubstringPattern(String s) {if (s.equals(\"\")) return false;int len = s.length();s = \" \" + s;char[] chars = s.toCharArray();int[] next = new int[len + 1];for (int i = 2, j = 0; i <= len; i++) {while (j > 0 && chars[i] != chars[j + 1]) j = next[j];if (chars[i] == chars[j + 1]) j++;next[i] = j;}if (next[len] > 0 && len % (len - next[len]) == 0) {return true;}return false;}}",
+          "description": "Java版KMP算法，前缀表减一实现重复子串判断"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean repeatedSubstringPattern(String s) {int n = s.length();int[] next = new int[n];next[0] = 0;int j = 0;for (int i = 1; i < n; i++) {while (j > 0 && s.charAt(i) != s.charAt(j)) j = next[j - 1];if (s.charAt(i) == s.charAt(j)) j++;next[i] = j;}if (next[n - 1] > 0 && n % (n - next[n - 1]) == 0) {return true;}else {return false;}}}",
+          "description": "Java版KMP算法，前缀表不减一实现重复子串判断"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: if len(s) == 0: return False nxt = [0] * len(s) self.getNext(nxt, s) if nxt[-1] != -1 and len(s) % (len(s) - (nxt[-1] + 1)) == 0: return True return False def getNext(self, nxt, s): nxt[0] = -1 j = -1 for i in range(1, len(s)): while j >= 0 and s[i] != s[j+1]: j = nxt[j] if s[i] == s[j+1]: j += 1 nxt[i] = j return nxt",
+          "description": "Python版KMP算法，前缀表减一实现重复子串判断"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: if len(s) == 0: return False nxt = [0] * len(s) self.getNext(nxt, s) if nxt[-1] != 0 and len(s) % (len(s) - nxt[-1]) == 0: return True return False def getNext(self, nxt, s): nxt[0] = 0 j = 0 for i in range(1, len(s)): while j > 0 and s[i] != s[j]: j = nxt[j - 1] if s[i] == s[j]: j += 1 nxt[i] = j return nxt",
+          "description": "Python版KMP算法，前缀表不减一实现重复子串判断"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: n = len(s) if n <= 1: return False ss = s[1:] + s[:-1] return ss.find(s) != -1",
+          "description": "Python版通过字符串拼接与查找判断重复子串"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: n = len(s) if n <= 1: return False substr = \"\" for i in range(1, n//2 + 1): if n % i == 0: substr = s[:i] if substr * (n//i) == s: return True return False",
+          "description": "Python版暴力法判断重复子串"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "（版本一） 前缀表 减一",
+      "resources": [],
+      "code_snippets": [],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "（版本一） 前缀表 减一",
+      "resources": [],
+      "code_snippets": [],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "explanation": "怎么一个for循环就可以获取子串吗？ 至少得一个for获取子串起始位置，一个for获取子串结束位置吧。"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: bool repeatedSubstringPattern(string s) { string t = s + s; t.erase(t.begin()); t.erase(t.end() - 1); if (t.find(s) != std::string::npos) return true; return false; }};",
+      "description": "检查字符串是否由重复子串组成"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: void getNext (int* next, const string& s){ next[0] = -1; int j = -1; for(int i = 1;i < s.size(); i++){ while(j >= 0 && s[i] != s[j + 1]) { j = next[j]; } if(s[i] == s[j + 1]) { j++; } next[i] = j; }} bool repeatedSubstringPattern (string s) { if (s.size() == 0) { return false; } int next[s.size()]; getNext(next, s); int len = s.size(); if (next[len - 1] != -1 && len % (len - (next[len - 1] + 1)) == 0) { return true; } return false; }};",
+      "description": "使用KMP算法检查字符串是否由重复子串组成（前缀表减一）"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: void getNext (int* next, const string& s){ next[0] = 0; int j = 0; for(int i = 1;i < s.size(); i++){ while(j > 0 && s[i] != s[j]) { j = next[j - 1]; } if(s[i] == s[j]) { j++; } next[i] = j; }} bool repeatedSubstringPattern (string s) { if (s.size() == 0) { return false; } int next[s.size()]; getNext(next, s); int len = s.size(); if (next[len - 1] != 0 && len % (len - (next[len - 1] )) == 0) { return true; } return false; }};",
+      "description": "使用KMP算法检查字符串是否由重复子串组成（前缀表不减一）"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public boolean repeatedSubstringPattern(String s) { if (s.equals(\"\")) return false; int len = s.length(); s = \" \" + s; char[] chars = s.toCharArray(); int[] next = new int[len + 1]; for (int i = 2, j = 0; i <= len; i++) { while (j > 0 && chars[i] != chars[j + 1]) j = next[j]; if (chars[i] == chars[j + 1]) j++; next[i] = j; } if (next[len] > 0 && len % (len - next[len]) == 0) { return true; } return false; }}",
+      "description": "Java版本的KMP算法，检查字符串是否由重复子串组成（前缀表减一）"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public boolean repeatedSubstringPattern(String s) { int n = s.length(); int[] next = new int[n]; int j = 0; next[0] = 0; for (int i = 1; i < n; i++) { while (j > 0 && s.charAt(i) != s.charAt(j)) j = next[j - 1]; if (s.charAt(i) == s.charAt(j)) j++; next[i] = j; } if (next[n - 1] > 0 && n % (n - next[n - 1]) == 0) { return true; } else { return false; }}}",
+      "description": "Java版本的KMP算法，检查字符串是否由重复子串组成（前缀表不减一）"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: if len(s) == 0: return False nxt = [0] * len(s) self.getNext(nxt, s) if nxt[-1] != -1 and len(s) % (len(s) - (nxt[-1] + 1)) == 0: return True return False def getNext(self, nxt, s): nxt[0] = -1 j = -1 for i in range(1, len(s)): while j >= 0 and s[i] != s[j+1]: j = nxt[j] if s[i] == s[j+1]: j += 1 nxt[i] = j return nxt",
+      "description": "Python版本的KMP算法，检查字符串是否由重复子串组成（前缀表减一）"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: if len(s) == 0: return False nxt = [0] * len(s) self.getNext(nxt, s) if nxt[-1] != 0 and len(s) % (len(s) - nxt[-1]) == 0: return True return False def getNext(self, nxt, s): nxt[0] = 0 j = 0 for i in range(1, len(s)): while j > 0 and s[i] != s[j]: j = nxt[j - 1] if s[i] == s[j]: j += 1 nxt[i] = j return nxt",
+      "description": "Python版本的KMP算法，检查字符串是否由重复子串组成（前缀表不减一）"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: n = len(s) if n <= 1: return False ss = s[1:] + s[:-1] return ss.find(s) != -1",
+      "description": "Python版本的find方法实现，检查字符串是否由重复子串组成"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def repeatedSubstringPattern(self, s: str) -> bool: n = len(s) if n <= 1: return False substr = \"\" for i in range(1, n//2 + 1): if n % i == 0: substr = s[:i] if substr * (n//i) == s: return True return False",
+      "description": "Python版本的暴力法实现，检查字符串是否由重复子串组成"
+    }
+  ],
+  "common_mistakes": [
+    "忽略对s+s后的字符串进行首尾字符移除，直接查找可能导致错误的结果。",
+    "未理解KMP算法或其next数组的具体作用，导致难以应用到实际问题解决中。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20220728104518.png",
+      "description": "这张图片展示了两个数组（或字符串）\"abc\"的并排比较，可能用于算法中的字符串匹配或数组操作分析。",
+      "context": "该图片展示了由重复子串组成的字符串结构，帮助理解如何通过s+s的方式检查原字符串s是否可以由其子串重复构成。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20220728104931.png",
+      "description": "这张图片展示了字符串模式匹配的示例，红色框标出了重复出现的子串“abc”，体现了字符串搜索算法中的模式识别过程。",
+      "context": "该图片展示了通过将字符串s与其自身相连接（形成s+s）并忽略首尾字符后，如何能够找到原字符串s作为一个重复模式出现的情形，以此来证明如果s由重复子串构成，则在s+s中去除首位字符后的部分仍能找到完整的s。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240910115555.png",
+      "description": "这张图片展示了数组的拼接操作，通过将一个数组多次重复拼接来形成一个新的数组结构。",
+      "context": "该图展示了字符串s在进行s+s拼接后（忽略首尾字符），如何通过中间部分重新构成s的过程，以及通过红色框标注了其中字符相等关系的示例。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240910115819.png",
+      "description": "这张图片展示了两个数组的拼接过程，红色框标出了拼接后的数组前缀部分，涉及数组操作和索引映射的算法概念。",
+      "context": "这张图片展示了通过特定字符重复组成的字符串s中各位置字符之间的相等关系，用以说明s[4],s[5] = s[0],s[1] = s[2],s[3]的逻辑。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240910120751.png",
+      "description": "这张图片展示了数组的索引映射过程，通过箭头指示将一个较大数组的特定部分映射到另一个较小数组中，体现了数据结构中的索引和映射概念。",
+      "context": "该图片展示了另一种字符串组成方式，其中s[3] = s[0]，s[4] = s[1]，s[5] = s[2]，以此来说明字符串可以由s[0]、s[1]、s[2]重复构成。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240910121236.png",
+      "description": "这张图片展示了数组的索引映射过程，通过箭头指示原数组（含重复元素）到新数组（去重后）的索引对应关系。",
+      "context": "该图示例了一个字符串中所有字符相等的情况，用于说明当字符串由单一字符重复组成时的特性。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240913110257.png",
+      "description": "该图片展示了字符串 \"pppp\" 的最长相等前缀和后缀分析，这是KMP算法中模式匹配的关键步骤。",
+      "context": "展示了由最小重复子串组成的字符串s中，相同前后缀的一种可能形态。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240913110316.png",
+      "description": "该图片展示了字符串 \"pppp\" 的最长相等前缀和后缀，分别标识为 \"pp\"，这是KMP算法中构建部分匹配表（next数组）的关键步骤。",
+      "context": "这张图片展示了由最小重复子串组成的字符串中，相等前后缀的一种可能形式。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240913110841.png",
+      "description": "该图展示了字符串 \"pppp\" 的最长相等前缀和后缀，用于解释KMP算法中部分匹配表的构建过程。",
+      "context": "此图展示了当字符串s由最小重复子串p组成时，s中可能存在的最长相等前后缀的情况。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240913114348.png",
+      "description": "这张图片展示了KMP算法中模式串的前缀和后缀匹配过程，用于构建部分匹配表（next数组）。",
+      "context": "这张图片展示了当字符串s由重复子串p组成时，假设存在更长的相等前后缀情况下的一种情景。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240913114818.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20240913114818.png",
+      "context": "该图展示了当p2等于p1且p3等于p2时的情况，即p1=p2=p3，用以说明在这样的情况下，p实际上是由p1重复三次组成的，从而证明了p不是字符串s的最小重复子串。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240911110236.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20240911110236.png",
+      "context": "该图展示了当最长相等前后缀不包含的子串长度大于字符串s长度的一半时的情况，说明了这种情况下该子串不能作为字符串s的重复子串。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240910174249.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20240910174249.png",
+      "context": "该图展示了当最长相等前后缀不包含的子串长度可以被原字符串长度整除时的情况，通过具体示例说明了如何识别字符串中的重复模式。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240910175053.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20240910175053.png",
+      "context": "该图片展示了由单一字符重复构成的字符串的最长相等前后缀的情况，用以解释当字符串s中所有字符都相同时，其最长相同前后缀的具体形态。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240913115854.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20240913115854.png",
+      "context": "该图示例说明了当最长相等前后缀不包含的子串长度不能被原字符串长度整除时的情况。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/459.重复的子字符串_1.png",
+      "description": "该图片展示了字符串 \"asdfasdfasdf\" 的 KMP 算法中 next 数组的构建结果，体现了模式匹配算法中的前缀和后缀分析。",
+      "context": "图片相关说明"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20220728104518.png",
+      "description": "GIF展示了字符串s通过自身拼接形成的新字符串中，如何识别出重复子串的过程。",
+      "context": "该GIF动画展示了当字符串s由重复子串组成时，其结构特征以及如何通过s+s拼接来直观地理解这一特性。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20220728104931.png",
+      "description": "GIF展示了通过将字符串s与其自身拼接，并去除首尾字符后，如何从中找到原字符串s的过程，证明了该字符串由重复子串组成。",
+      "context": "该GIF动画展示了如何通过将字符串s与其自身拼接（刨除首尾字符后），来验证其是否由重复子串构成的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240910115555.png",
+      "description": "GIF展示了通过将字符串s与自身拼接并去除首尾字符后，如何从中找到重复子串的过程。",
+      "context": "GIF动画展示了在字符串s+s（去除首尾字符后）中如何通过中间部分重新构成原始字符串s，从而证明了s由重复子串组成。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240910115819.png",
+      "description": "GIF展示了通过拼接字符串s+s（去除首尾）后如何确定原字符串s由重复子串构成的过程。",
+      "context": "该GIF动画展示了通过数组下标间的相等关系，如何推导出字符串是由两个特定字符重复组成的逻辑过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240910120751.png",
+      "description": "GIF展示了字符串中字符位置的相等关系变换过程，表明字符串由特定模式重复组成。",
+      "context": "GIF动画展示了通过另一种字符重复模式构建字符串s的过程，以验证是否存在多种方式满足给定的相等关系。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240910121236.png",
+      "description": "GIF展示了字符串中字符依次相等的推导过程，表明整个字符串是由单一字符重复组成。",
+      "context": "该GIF动画展示了通过字符相等关系推导出字符串由重复子串组成的可视化过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240913110257.png",
+      "description": "GIF展示了字符串中由重复子串组成的模式，通过指针移动过程来直观地表示最长相等前后缀如何帮助识别这些重复结构。",
+      "context": "该GIF展示了当一个字符串由重复子串组成时，如何识别出其中一个可能的相等前后缀形式。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240913110316.png",
+      "description": "GIF展示了字符串中形成相同前后缀的过程，用以说明最长相同前后缀与最小重复子串之间的关系。",
+      "context": "该GIF展示了当字符串s由最小重复子串p组成时，相等前后缀的一种可能形态。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240913110841.png",
+      "description": "GIF展示了字符串中寻找最长相等前后缀的过程，以证明最小重复子串的存在。",
+      "context": "该GIF展示了字符串s由其最小重复子串p构成时，最长相等前后缀的样子。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240913114348.png",
+      "description": "GIF展示了尝试将字符串s视为由更长的相等前后缀组成的例子，来探讨最小重复子串的概念。",
+      "context": "GIF动画展示了当假设字符串s由最小重复子串p组成时，尝试延长最长相等前后缀导致p不再是真正意义上的最小重复子串的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240913114818.png",
+      "description": "GIF展示了字符串中由相同子串组成的部分如何导致最长相等前后缀的变化，强调了最小重复子串的概念。",
+      "context": "该GIF展示了当字符串由重复子串组成时，如何通过最长相等前后缀的关系推导出最小重复子串的结构。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240911110236.png",
+      "description": "GIF展示了当最长相等前后缀不包含的子串长度超过原字符串一半时的情况，说明这种情况下该子串不能作为原字符串的重复单元。",
+      "context": "该GIF动画展示了当最长相等前后缀不包含的子串长度超过原字符串长度一半时的情况，说明了此时该子串不能作为原字符串s的重复单元。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240910174249.png",
+      "description": "GIF展示了通过相等的前缀和后缀逐步揭示字符串s中重复模式的过程。",
+      "context": "该GIF动画展示了如何通过分析字符串的最长相等前后缀来确定其是否可以被划分为更小的重复单元，特别是当不包含在最长相等前后缀中的子串长度能够被原字符串长度整除时的情况。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240910175053.png",
+      "description": "GIF展示了字符串中寻找最长相等前后缀的过程，以及如何通过排除这些前后缀来确定最小重复子串。",
+      "context": "该GIF动画展示了当字符串由单一字符重复构成时，其最长相等前后缀的实际位置，帮助理解在特定情况下如何确定字符串的最长相同前后缀。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240913115854.png",
+      "description": "GIF展示了字符串中相等前后缀的比较过程，通过字符匹配来说明最长相等前后缀的计算方法。",
+      "context": "该GIF动画展示了当最长相等前后缀不包含的子串长度不能被原字符串长度整除时，如何通过比较前缀和后缀来识别重复模式的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/459.%E9%87%8D%E5%A4%8D%E7%9A%84%E5%AD%90%E5%AD%97%E7%AC%A6%E4%B8%B2_1.png",
+      "description": "GIF展示了KMP算法中next数组的构建过程及如何利用它来识别字符串中的重复子串。",
+      "context": "该GIF动画展示了如何通过next数组识别字符串中的重复子串，特别地，它演示了计算最长相等前后缀不包含的子串长度，并验证字符串是否由重复子串组成的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\字符串\\重复的子字符串.txt",
+  "extracted_at": "2025-07-21T20:35:06.667194",
+  "raw_content": "重复的子字符串\n力扣题目链接(https://leetcode.cn/problems/repeated-substring-pattern/)\n\n给定一个非空的字符串，判断它是否可以由它的一个子串重复多次构成。给定的字符串只含有小写英文字母，并且长度不超过10000。\n\n示例 1:\n\n输入: \"abab\"\n输出: True\n解释: 可由子字符串 \"ab\" 重复两次构成。\n示例 2:\n\n输入: \"aba\"\n输出: False\n示例 3:\n\n输入: \"abcabcabcabc\"\n输出: True\n解释: 可由子字符串 \"abc\" 重复四次构成。 (或者子字符串 \"abcabc\" 重复两次构成。)\n\n\n#思路\n暴力的解法， 就是一个for循环获取 子串的终止位置， 然后判断子串是否能重复构成字符串，又嵌套一个for循环，所以是O(n^2)的时间复杂度。\n\n有的同学可以想，怎么一个for循环就可以获取子串吗？ 至少得一个for获取子串起始位置，一个for获取子串结束位置吧。\n\n其实我们只需要判断，以第一个字母为开始的子串就可以，所以一个for循环获取子串的终止位置就行了。 而且遍历的时候 都不用遍历结束，只需要遍历到中间位置，因为子串结束位置大于中间位置的话，一定不能重复组成字符串。\n\n暴力的解法，这里就不详细讲解了。\n\n主要讲一讲移动匹配 和 KMP两种方法。\n\n#移动匹配\n当一个字符串s：abcabc，内部由重复的子串组成，那么这个字符串的结构一定是这样的：\n\nhttps://file1.kamacoder.com/i/algo/20220728104518.png\n\n也就是由前后相同的子串组成。\n\n那么既然前面有相同的子串，后面有相同的子串，用 s + s，这样组成的字符串中，后面的子串做前串，前面的子串做后串，就一定还能组成一个s，如图：\n\nhttps://file1.kamacoder.com/i/algo/20220728104931.png\n\n当然，我们在判断 s + s 拼接的字符串里是否出现一个s的的时候，要刨除 s + s 的首字符和尾字符，这样避免在s+s中搜索出原来的s，我们要搜索的是中间拼接出来的s。\n\n以上证明的充分性，接下来证明必要性：\n\n如果有一个字符串s，在 s + s 拼接后， 不算首尾字符，如果能凑成s字符串，说明s 一定是重复子串组成。\n\n如图，字符串s，图中数字为数组下标，在 s + s 拼接后， 不算首尾字符，中间凑成s字符串。 （图中数字为数组下标）\n\nhttps://file1.kamacoder.com/i/algo/20240910115555.png\n\n图中，因为中间拼接成了s，根据红色框 可以知道 s[4] = s[0]， s[5] = s[1]， s[0] = s[2], s[1] = s[3] s[2] = s[4] ,s[3] = s[5]\n\nhttps://file1.kamacoder.com/i/algo/20240910115819.png\n\n以上相等关系我们串联一下：\n\ns[4] = s[0] = s[2]\n\ns[5] = s[1] = s[3]\n\n即：s[4],s[5] = s[0],s[1] = s[2],s[3]\n\n说明这个字符串，是由 两个字符 s[0] 和 s[1] 重复组成的！\n\n这里可以有录友想，凭什么就是这样组成的s呢，我换一个方式组成s 行不行，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240910120751.png\n\ns[3] = s[0]，s[4] = s[1] ，s[5] = s[2]，s[0] = s[3]，s[1] = s[4]，s[2] = s[5]\n\n以上相等关系串联：\n\ns[3] = s[0]\n\ns[1] = s[4]\n\ns[2] = s[5]\n\ns[0] s[1] s[2] = s[3] s[4] s[5]\n\n和以上推导过程一样，最后可以推导出，这个字符串是由 s[0] ，s[1] ，s[2] 重复组成。\n\n如果是这样的呢，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240910121236.png\n\ns[1] = s[0]，s[2] = s[1] ，s[3] = s[2]，s[4] = s[3]，s[5] = s[4]，s[0] = s[5]\n\n以上相等关系串联\n\ns[0] = s[1] = s[2] = s[3] = s[4] = s[5]\n\n最后可以推导出，这个字符串是由 s[0] 重复组成。\n\n以上 充分和必要性都证明了，所以判断字符串s是否由重复子串组成，只要两个s拼接在一起，里面还出现一个s的话，就说明是由重复子串组成。\n\n代码如下：\n\nclass Solution {\npublic:\n    bool repeatedSubstringPattern(string s) {\n        string t = s + s;\n        t.erase(t.begin()); t.erase(t.end() - 1); // 掐头去尾\n        if (t.find(s) != std::string::npos) return true; // r\n        return false;\n    }\n};\n时间复杂度: O(n)\n空间复杂度: O(1)\n不过这种解法还有一个问题，就是 我们最终还是要判断 一个字符串（s + s）是否出现过 s 的过程，大家可能直接用contains，find 之类的库函数， 却忽略了实现这些函数的时间复杂度（暴力解法是m * n，一般库函数实现为 O(m + n)）。\n\n如果我们做过 28.实现strStr (opens new window)题目的话，其实就知道，实现一个 高效的算法来判断 一个字符串中是否出现另一个字符串是很复杂的，这里就涉及到了KMP算法。\n\n#KMP\n#为什么会使用KMP\n以下使用KMP方式讲解，强烈建议大家先把以下两个视频看了，理解KMP算法，再来看下面讲解，否则会很懵。\n\n视频讲解版：帮你把KMP算法学个通透！（理论篇）(opens new window)\n视频讲解版：帮你把KMP算法学个通透！（求next数组代码篇）(opens new window)\n文字讲解版：KMP算法(opens new window)\n在一个串中查找是否出现过另一个串，这是KMP的看家本领。那么寻找重复子串怎么也涉及到KMP算法了呢？\n\nKMP算法中next数组为什么遇到字符不匹配的时候可以找到上一个匹配过的位置继续匹配，靠的是有计算好的前缀表。\n\n前缀表里，统计了各个位置为终点字符串的最长相同前后缀的长度。\n\n那么 最长相同前后缀和重复子串的关系又有什么关系呢。\n\n可能很多录友又忘了 前缀和后缀的定义，再回顾一下：\n\n前缀是指不包含最后一个字符的所有以第一个字符开头的连续子串；\n后缀是指不包含第一个字符的所有以最后一个字符结尾的连续子串\n#充分性证明\n如果一个字符串s是由重复子串组成，那么 最长相等前后缀不包含的子串一定是字符串s的最小重复子串。\n\n如果s 是由最小重复子串p组成，即 s = n * p\n\n那么相同前后缀可以是这样：\n\nhttps://file1.kamacoder.com/i/algo/20240913110257.png\n\n也可以是这样：\n\nhttps://file1.kamacoder.com/i/algo/20240913110316.png\n\n最长的相等前后缀，也就是这样：\n\nhttps://file1.kamacoder.com/i/algo/20240913110841.png\n\n这里有录友就想：如果字符串s 是由最小重复子串p组成，最长相等前后缀就不能更长一些？ 例如这样：\n\nhttps://file1.kamacoder.com/i/algo/20240913114348.png\n\n如果这样的话，因为前后缀要相同，所以 p2 = p1，p3 = p2，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240913114818.png\n\np2 = p1，p3 = p2 即： p1 = p2 = p3\n\n说明 p = p1 * 3。\n\n这样p 就不是最小重复子串了，不符合我们定义的条件。\n\n所以，如果这个字符串s是由重复子串组成，那么最长相等前后缀不包含的子串是字符串s的最小重复子串。\n\n#必要性证明\n以上是充分性证明，以下是必要性证明：\n\n如果 最长相等前后缀不包含的子串是字符串s的最小重复子串， 那么字符串s一定由重复子串组成吗？\n\n最长相等前后缀不包含的子串已经是字符串s的最小重复子串，那么字符串s一定由重复子串组成，这个不需要证明了。\n\n关键是要证明：最长相等前后缀不包含的子串什么时候才是字符串s的最小重复子串呢。\n\n情况一， 最长相等前后缀不包含的子串的长度 比 字符串s的一半的长度还大，那一定不是字符串s的重复子串，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240911110236.png\n\n图中：前后缀不包含的子串的长度 大于 字符串s的长度的 二分之一\n\n情况二，最长相等前后缀不包含的子串的长度 可以被 字符串s的长度整除，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240910174249.png\n\n步骤一：因为 这是相等的前缀和后缀，t[0] 与 k[0]相同， t[1] 与 k[1]相同，所以 s[0] 一定和 s[2]相同，s[1] 一定和 s[3]相同，即：，s[0]s[1]与s[2]s[3]相同 。\n\n步骤二： 因为在同一个字符串位置，所以 t[2] 与 k[0]相同，t[3] 与 k[1]相同。\n\n步骤三： 因为 这是相等的前缀和后缀，t[2] 与 k[2]相同 ，t[3]与k[3] 相同，所以，s[2]一定和s[4]相同，s[3]一定和s[5]相同，即：s[2]s[3] 与 s[4]s[5]相同。\n\n步骤四：循环往复。\n\n所以字符串s，s[0]s[1]与s[2]s[3]相同， s[2]s[3] 与 s[4]s[5]相同，s[4]s[5] 与 s[6]s[7] 相同。\n\n可以推出，在由重复子串组成的字符串中，最长相等前后缀不包含的子串就是最小重复子串。\n\n即 s[0]s[1] 是最小重复子串\n\n以上推导中，录友可能想，你怎么知道 s[0] 和 s[1] 就不相同呢？ s[0] 为什么就不能是最小重复子串。\n\n如果 s[0] 和 s[1] 也相同，同时 s[0]s[1]与s[2]s[3]相同，s[2]s[3] 与 s[4]s[5]相同，s[4]s[5] 与 s[6]s[7] 相同，那么这个字符串就是有一个字符构成的字符串。\n\n那么它的最长相同前后缀，就不是上图中的前后缀，而是这样的的前后缀：\n\nhttps://file1.kamacoder.com/i/algo/20240910175053.png\n\n录友可能再问，由一个字符组成的字符串，最长相等前后缀凭什么就是这样的。\n\n有这种疑惑的录友，就是还不知道 最长相等前后缀 是怎么算的。\n\n可以看这里：KMP讲解 (opens new window)，再去回顾一下。\n\n或者说，自己举个例子，aaaaaa，这个字符串，他的最长相等前后缀是什么？\n\n同上以上推导，最长相等前后缀不包含的子串的长度只要被 字符串s的长度整除，最长相等前后缀不包含的子串一定是最小重复子串。\n\n情况三，最长相等前后缀不包含的子串的长度 不被 字符串s的长度整除得情况，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240913115854.png\n\n步骤一：因为 这是相等的前缀和后缀，t[0] 与 k[0]相同， t[1] 与 k[1]相同，t[2] 与 k[2]相同。\n\n所以 s[0] 与 s[3]相同，s[1] 与 s[4]相同，s[2] 与s[5]，即：，s[0]s[1]与s[2]s[3]相同 。\n\n步骤二： 因为在同一个字符串位置，所以 t[3] 与 k[0]相同，t[4] 与 k[1]相同。\n\n步骤三： 因为 这是相等的前缀和后缀，t[3] 与 k[3]相同 ，t[4]与k[5] 相同，所以，s[3]一定和s[6]相同，s[4]一定和s[7]相同，即：s[3]s[4] 与 s[6]s[7]相同。\n\n以上推导，可以得出 s[0],s[1],s[2] 与 s[3],s[4],s[5] 相同，s[3]s[4] 与 s[6]s[7]相同。\n\n那么 最长相等前后缀不包含的子串的长度 不被 字符串s的长度整除 ，最长相等前后缀不包含的子串就不是s的重复子串\n\n充分条件：如果字符串s是由重复子串组成，那么 最长相等前后缀不包含的子串 一定是 s的最小重复子串。\n\n必要条件：如果字符串s的最长相等前后缀不包含的子串 是 s最小重复子串，那么 s是由重复子串组成。\n\n在必要条件，这个是 显而易见的，都已经假设 最长相等前后缀不包含的子串 是 s的最小重复子串了，那s必然是重复子串。\n\n关键是需要证明， 字符串s的最长相等前后缀不包含的子串 什么时候才是 s最小重复子串。\n\n同上我们证明了，当 最长相等前后缀不包含的子串的长度 可以被 字符串s的长度整除，那么不包含的子串 就是s的最小重复子串。\n\n#代码分析\nnext 数组记录的就是最长相同前后缀（ 字符串：KMP算法精讲 (opens new window)）， 如果 next[len - 1] != -1，则说明字符串有最长相同的前后缀（就是字符串里的前缀子串和后缀子串相同的最长长度）。\n\n最长相等前后缀的长度为：next[len - 1] + 1。(这里的next数组是以统一减一的方式计算的，因此需要+1，两种计算next数组的具体区别看这里：字符串：KMP算法精讲 (opens new window))\n\n数组长度为：len。\n\nlen - (next[len - 1] + 1) 是最长相等前后缀不包含的子串的长度。\n\n如果len % (len - (next[len - 1] + 1)) == 0 ，则说明数组的长度正好可以被 最长相等前后缀不包含的子串的长度 整除 ，说明该字符串有重复的子字符串。\n\n#打印数组\n强烈建议大家把next数组打印出来，看看next数组里的规律，有助于理解KMP算法\n\n如图：\n\nhttps://file1.kamacoder.com/i/algo/459.%E9%87%8D%E5%A4%8D%E7%9A%84%E5%AD%90%E5%AD%97%E7%AC%A6%E4%B8%B2_1.png\n\nnext[len - 1] = 7，next[len - 1] + 1 = 8，8就是此时字符串asdfasdfasdf的最长相同前后缀的长度。\n\n(len - (next[len - 1] + 1)) 也就是： 12(字符串的长度) - 8(最长公共前后缀的长度) = 4， 为最长相同前后缀不包含的子串长度\n\n4可以被 12(字符串的长度) 整除，所以说明有重复的子字符串（asdf）。\n\n#代码实现\nC++代码如下：（这里使用了前缀表统一减一的实现方式）\n\nclass Solution {\npublic:\n    void getNext (int* next, const string& s){\n        next[0] = -1;\n        int j = -1;\n        for(int i = 1;i < s.size(); i++){\n            while(j >= 0 && s[i] != s[j + 1]) {\n                j = next[j];\n            }\n            if(s[i] == s[j + 1]) {\n                j++;\n            }\n            next[i] = j;\n        }\n    }\n    bool repeatedSubstringPattern (string s) {\n        if (s.size() == 0) {\n            return false;\n        }\n        int next[s.size()];\n        getNext(next, s);\n        int len = s.size();\n        if (next[len - 1] != -1 && len % (len - (next[len - 1] + 1)) == 0) {\n            return true;\n        }\n        return false;\n    }\n};\n时间复杂度: O(n)\n空间复杂度: O(n)\n前缀表（不减一）的C++代码实现：\n\nclass Solution {\npublic:\n    void getNext (int* next, const string& s){\n        next[0] = 0;\n        int j = 0;\n        for(int i = 1;i < s.size(); i++){\n            while(j > 0 && s[i] != s[j]) {\n                j = next[j - 1];\n            }\n            if(s[i] == s[j]) {\n                j++;\n            }\n            next[i] = j;\n        }\n    }\n    bool repeatedSubstringPattern (string s) {\n        if (s.size() == 0) {\n            return false;\n        }\n        int next[s.size()];\n        getNext(next, s);\n        int len = s.size();\n        if (next[len - 1] != 0 && len % (len - (next[len - 1] )) == 0) {\n            return true;\n        }\n        return false;\n    }\n};\n时间复杂度: O(n)\n空间复杂度: O(n)\n#其他语言版本\n#Java：\n（版本一） 前缀表 减一\n\nclass Solution {\n    public boolean repeatedSubstringPattern(String s) {\n        if (s.equals(\"\")) return false;\n\n        int len = s.length();\n        // 原串加个空格(哨兵)，使下标从1开始，这样j从0开始，也不用初始化了\n        s = \" \" + s;\n        char[] chars = s.toCharArray();\n        int[] next = new int[len + 1];\n\n        // 构造 next 数组过程，j从0开始(空格)，i从2开始\n        for (int i = 2, j = 0; i <= len; i++) {\n            // 匹配不成功，j回到前一位置 next 数组所对应的值\n            while (j > 0 && chars[i] != chars[j + 1]) j = next[j];\n            // 匹配成功，j往后移\n            if (chars[i] == chars[j + 1]) j++;\n            // 更新 next 数组的值\n            next[i] = j;\n        }\n\n        // 最后判断是否是重复的子字符串，这里 next[len] 即代表next数组末尾的值\n        if (next[len] > 0 && len % (len - next[len]) == 0) {\n            return true;\n        }\n        return false;\n    }\n}\n（版本二） 前缀表 不减一\n\n/*\n * 充分条件：如果字符串s是由重复子串组成的，那么它的最长相等前后缀不包含的子串一定是s的最小重复子串。\n * 必要条件：如果字符串s的最长相等前后缀不包含的子串是s的最小重复子串，那么s必然是由重复子串组成的。\n * 推得：当字符串s的长度可以被其最长相等前后缀不包含的子串的长度整除时，不包含的子串就是s的最小重复子串。\n *\n * 时间复杂度：O(n)\n * 空间复杂度：O(n)\n */\nclass Solution {\n    public boolean repeatedSubstringPattern(String s) {\n        // if (s.equals(\"\")) return false; \n        // 边界判断（可以去掉，因为题目给定范围是1 <= s.length <= 10^4）\n        int n = s.length();\n\n        // Step 1.构建KMP算法的前缀表\n        int[] next = new int[n]; // 前缀表的值表示 以该位置结尾的字符串的最长相等前后缀的长度\n        int j = 0;\n        next[0] = 0;\n        for (int i = 1; i < n; i++) {\n            while (j > 0 && s.charAt(i) != s.charAt(j)) // 只要前缀后缀还不一致，就根据前缀表回退j直到起点为止\n                j = next[j - 1];\n            if (s.charAt(i) == s.charAt(j))\n                j++;\n            next[i] = j;\n        }\n\n        // Step 2.判断重复子字符串\n        if (next[n - 1] > 0 && n % (n - next[n - 1]) == 0) { // 当字符串s的长度可以被其最长相等前后缀不包含的子串的长度整除时\n            return true; // 不包含的子串就是s的最小重复子串\n        } else {\n            return false;\n        }\n    }\n}\n#Python：\n（版本一） 前缀表 减一\n\nclass Solution:\n    def repeatedSubstringPattern(self, s: str) -> bool:  \n        if len(s) == 0:\n            return False\n        nxt = [0] * len(s)\n        self.getNext(nxt, s)\n        if nxt[-1] != -1 and len(s) % (len(s) - (nxt[-1] + 1)) == 0:\n            return True\n        return False\n    \n    def getNext(self, nxt, s):\n        nxt[0] = -1\n        j = -1\n        for i in range(1, len(s)):\n            while j >= 0 and s[i] != s[j+1]:\n                j = nxt[j]\n            if s[i] == s[j+1]:\n                j += 1\n            nxt[i] = j\n        return nxt\n（版本二） 前缀表 不减一\n\nclass Solution:\n    def repeatedSubstringPattern(self, s: str) -> bool:  \n        if len(s) == 0:\n            return False\n        nxt = [0] * len(s)\n        self.getNext(nxt, s)\n        if nxt[-1] != 0 and len(s) % (len(s) - nxt[-1]) == 0:\n            return True\n        return False\n    \n    def getNext(self, nxt, s):\n        nxt[0] = 0\n        j = 0\n        for i in range(1, len(s)):\n            while j > 0 and s[i] != s[j]:\n                j = nxt[j - 1]\n            if s[i] == s[j]:\n                j += 1\n            nxt[i] = j\n        return nxt\n（版本三） 使用 find\n\nclass Solution:\n    def repeatedSubstringPattern(self, s: str) -> bool:\n        n = len(s)\n        if n <= 1:\n            return False\n        ss = s[1:] + s[:-1] \n        print(ss.find(s))              \n        return ss.find(s) != -1\n（版本四） 暴力法\n\nclass Solution:\n    def repeatedSubstringPattern(self, s: str) -> bool:\n        n = len(s)\n        if n <= 1:\n            return False\n        \n        substr = \"\"\n        for i in range(1, n//2 + 1):\n            if n % i == 0:\n                substr = s[:i]\n                if substr * (n//i) == s:\n                    return True\n                \n        return False"
+}

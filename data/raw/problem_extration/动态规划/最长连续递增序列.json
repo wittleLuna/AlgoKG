@@ -1,0 +1,432 @@
+{
+  "id": "AP_eb6c95f5",
+  "title": "最长连续递增序列",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/longest-continuous-increasing-subsequence/",
+  "description": "一个未经排序的整数数组，找到最长且 连续递增的子序列，并返回该序列的长度。\n\n连续递增的子序列 可以由两个下标 l 和 r（l < r）确定，如果对于每个 l <= i < r，都有 nums[i] < nums[i + 1] ，那么子序列 [nums[l], nums[l + 1], ..., nums[r - 1], nums[r]] 就是连续递增子序列。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "Dynamic Programming",
+    "Greedy"
+  ],
+  "data_structure_tags": [
+    "Array"
+  ],
+  "technique_tags": [
+    "Sliding Window",
+    "State Compression"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过动态规划或贪心算法来解决最长连续递增子序列问题。在动态规划方法中，定义dp[i]为以i位置结尾的最长连续递增子序列长度，并基于前一状态更新当前状态；而在贪心算法中，则是在遍历数组时直接计算并更新当前最长连续递增子序列长度。",
+  "key_insights": [
+    {
+      "content": "本题与寻找非连续最长递增子序列的主要区别在于其要求元素间必须是连续的。因此，在确定递推关系时仅需比较相邻两个数即可。"
+    },
+    {
+      "content": "由于只需要考虑相邻元素间的大小关系，故不需要双层循环去尝试所有可能的起始点和终点组合。"
+    },
+    {
+      "content": "使用贪心算法可以简化问题，同时减少空间复杂度至O(1)。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "本题相对于昨天的动态规划：300.最长递增子序列 (https://programmercarl.com/0300.%E6%9C%80%E9%95%BF%E4%B8%8A%E5%8D%87%E5%AD%90%E5%BA%8F%E5%88%97.html)最大的区别在于“连续”。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int findLengthOfLCIS(vector<int>& nums) {\n        if (nums.size() == 0) return 0;\n        int result = 1;\n        vector<int> dp(nums.size(), 1);\n        for (int i = 1; i < nums.size(); i++) {\n            if (nums[i] > nums[i - 1]) { // 连续记录\n                dp[i] = dp[i - 1] + 1;\n            }\n            if (dp[i] > result) result = dp[i];\n        }\n        return result;\n    }\n};",
+          "description": "动态规划"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int findLengthOfLCIS(vector<int>& nums) {\n        if (nums.size() == 0) return 0;\n        int result = 1; // 连续子序列最少也是1\n        int count = 1;\n        for (int i = 1; i < nums.size(); i++) {\n            if (nums[i] > nums[i - 1]) { // 连续记录\n                count++;\n            } else { // 不连续，count从头开始\n                count = 1;\n            }\n            if (count > result) result = count;\n        }\n        return result;\n    }\n};",
+          "description": "贪心算法"
+        },
+        {
+          "language": "java",
+          "code": "public static int findLengthOfLCIS(int[] nums) {\n    int[] dp = new int[nums.length];\n    for (int i = 0; i < dp.length; i++) {\n        dp[i] = 1;\n    }\n    int res = 1;\n    for (int i = 0; i < nums.length - 1; i++) {\n        if (nums[i + 1] > nums[i]) {\n            dp[i + 1] = dp[i] + 1;\n        }\n        res = res > dp[i + 1] ? res : dp[i + 1];\n    }\n    return res;\n}",
+          "description": "动态规划"
+        },
+        {
+          "language": "java",
+          "code": "public int findLengthOfLCIS(int[] nums) {\n    int beforeOneMaxLen = 1, currentMaxLen = 0;\n    int res = 1;\n    for (int i = 1; i < nums.length; i++) {\n        currentMaxLen = nums[i] > nums[i - 1] ? beforeOneMaxLen + 1 : 1;\n        beforeOneMaxLen = currentMaxLen;\n        res = Math.max(res, currentMaxLen);\n    }\n    return res;\n}",
+          "description": "动态规划状态压缩"
+        },
+        {
+          "language": "java",
+          "code": "public static int findLengthOfLCIS(int[] nums) {\n    if (nums.length == 0) return 0;\n    int res = 1; // 连续子序列最少也是1\n    int count = 1;\n    for (int i = 0; i < nums.length - 1; i++) {\n        if (nums[i + 1] > nums[i]) { // 连续记录\n            count++;\n        } else { // 不连续，count从头开始\n            count = 1;\n        }\n        if (count > res) res = count;\n    }\n    return res;\n}",
+          "description": "贪心法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def findLengthOfLCIS(self, nums: List[int]) -> int:\n        if len(nums) == 0:\n            return 0\n        result = 1\n        dp = [1] * len(nums)\n        for i in range(len(nums)-1):\n            if nums[i+1] > nums[i]: #连续记录\n                dp[i+1] = dp[i] + 1\n            result = max(result, dp[i+1])\n        return result",
+          "description": "动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def findLengthOfLCIS(self, nums: List[int]) -> int:\n        if not nums:\n            return 0\n\n        max_length = 1\n        current_length = 1\n\n        for i in range(1, len(nums)):\n            if nums[i] > nums[i - 1]:\n                current_length += 1\n                max_length = max(max_length, current_length)\n            else:\n                current_length = 1\n\n        return max_length",
+          "description": "动态规划优化版"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def findLengthOfLCIS(self, nums: List[int]) -> int:\n        if len(nums) == 0:\n            return 0\n        result = 1 #连续子序列最少也是1\n        count = 1\n        for i in range(len(nums)-1):\n            if nums[i+1] > nums[i]: #连续记录\n                count += 1\n            else: #不连续，count从头开始\n                count = 1\n            result = max(result, count)\n        return result",
+          "description": "贪心算法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "动态规划",
+      "text": "动规五部曲分析如下：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLengthOfLCIS(vector<int>& nums) {if (nums.size() == 0) return 0;int result = 1;vector<int> dp(nums.size() ,1);for (int i = 1; i < nums.size(); i++) {if (nums[i] > nums[i - 1]) {dp[i] = dp[i - 1] + 1;}if (dp[i] > result) result = dp[i];}return result;}};",
+          "description": "C++动态规划解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLengthOfLCIS(vector<int>& nums) {if (nums.size() == 0) return 0;int result = 1;int count = 1;for (int i = 1; i < nums.size(); i++) {if (nums[i] > nums[i - 1]) {count++;} else {count = 1;}if (count > result) result = count;}return result;}};",
+          "description": "C++贪心解法"
+        },
+        {
+          "language": "java",
+          "code": "public static int findLengthOfLCIS(int[] nums) {int[] dp = new int[nums.length];for (int i = 0; i < dp.length; i++) {dp[i] = 1;}int res = 1;for (int i = 0; i < nums.length - 1; i++) {if (nums[i + 1] > nums[i]) {dp[i + 1] = dp[i] + 1;}res = res > dp[i + 1] ? res : dp[i + 1];}return res;}",
+          "description": "Java动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int findLengthOfLCIS(int[] nums) {int beforeOneMaxLen = 1, currentMaxLen = 0;int res = 1;for (int i = 1; i < nums.length; i ++) {currentMaxLen = nums[i] > nums[i - 1] ? beforeOneMaxLen + 1 : 1;beforeOneMaxLen = currentMaxLen;res = Math.max(res, currentMaxLen);}return res;}}",
+          "description": "Java动态规划状态压缩解法"
+        },
+        {
+          "language": "java",
+          "code": "public static int findLengthOfLCIS(int[] nums) {if (nums.length == 0) return 0;int res = 1;int count = 1;for (int i = 0; i < nums.length - 1; i++) {if (nums[i + 1] > nums[i]) {count++;} else {count = 1;}if (count > res) res = count;}return res;}",
+          "description": "Java贪心解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLengthOfLCIS(self, nums: List[int]) -> int: if len(nums) == 0: return 0 result = 1 dp = [1] * len(nums) for i in range(len(nums)-1): if nums[i+1] > nums[i]: dp[i+1] = dp[i] + 1 result = max(result, dp[i+1]) return result",
+          "description": "Python动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLengthOfLCIS(self, nums: List[int]) -> int: if not nums: return 0 max_length = 1 current_length = 1 for i in range(1, len(nums)): if nums[i] > nums[i - 1]: current_length += 1 max_length = max(max_length, current_length) else: current_length = 1 return max_length",
+          "description": "Python动态规划优化版解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLengthOfLCIS(self, nums: List[int]) -> int: if len(nums) == 0: return 0 result = 1 count = 1 for i in range(len(nums)-1): if nums[i+1] > nums[i]: count += 1 else: count = 1 result = max(result, count) return result",
+          "description": "Python贪心解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "贪心",
+      "text": "这道题目也可以用贪心来做，也就是遇到nums[i] > nums[i - 1]的情况，count就++，否则count为1，记录count的最大值就可以了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLengthOfLCIS(vector<int>& nums) {if (nums.size() == 0) return 0;int result = 1;vector<int> dp(nums.size() ,1);for (int i = 1; i < nums.size(); i++) {if (nums[i] > nums[i - 1]) {dp[i] = dp[i - 1] + 1;}if (dp[i] > result) result = dp[i];}return result;}};",
+          "description": "C++动态规划解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLengthOfLCIS(vector<int>& nums) {if (nums.size() == 0) return 0;int result = 1;int count = 1;for (int i = 1; i < nums.size(); i++) {if (nums[i] > nums[i - 1]) {count++;} else {count = 1;}if (count > result) result = count;}return result;}};",
+          "description": "C++贪心算法解法"
+        },
+        {
+          "language": "java",
+          "code": "public static int findLengthOfLCIS(int[] nums) {int[] dp = new int[nums.length];for (int i = 0; i < dp.length; i++) {dp[i] = 1;}int res = 1;for (int i = 0; i < nums.length - 1; i++) {if (nums[i + 1] > nums[i]) {dp[i + 1] = dp[i] + 1;}res = res > dp[i + 1] ? res : dp[i + 1];}return res;}",
+          "description": "Java动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int findLengthOfLCIS(int[] nums) {int beforeOneMaxLen = 1, currentMaxLen = 0;int res = 1;for (int i = 1; i < nums.length; i ++) {currentMaxLen = nums[i] > nums[i - 1] ? beforeOneMaxLen + 1 : 1;beforeOneMaxLen = currentMaxLen;res = Math.max(res, currentMaxLen);}return res;}}",
+          "description": "Java动态规划状态压缩解法"
+        },
+        {
+          "language": "java",
+          "code": "public static int findLengthOfLCIS(int[] nums) {if (nums.length == 0) return 0;int res = 1;int count = 1;for (int i = 0; i < nums.length - 1; i++) {if (nums[i + 1] > nums[i]) {count++;} else {count = 1;}if (count > res) res = count;}return res;}",
+          "description": "Java贪心算法解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLengthOfLCIS(self, nums: List[int]) -> int: if len(nums) == 0: return 0 result = 1 dp = [1] * len(nums) for i in range(len(nums)-1): if nums[i+1] > nums[i]: dp[i+1] = dp[i] + 1 result = max(result, dp[i+1]) return result",
+          "description": "Python动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLengthOfLCIS(self, nums: List[int]) -> int: if not nums: return 0 max_length = 1 current_length = 1 for i in range(1, len(nums)): if nums[i] > nums[i - 1]: current_length += 1 max_length = max(max_length, current_length) else: current_length = 1 return max_length",
+          "description": "Python优化版动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLengthOfLCIS(self, nums: List[int]) -> int: if len(nums) == 0: return 0 result = 1 count = 1 for i in range(len(nums)-1): if nums[i+1] > nums[i]: count += 1 else: count = 1 result = max(result, count) return result",
+          "description": "Python贪心算法解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "本题也是动规里子序列问题的经典题目，但也可以用贪心来做，大家也会发现贪心好像更简单一点，而且空间复杂度仅是O(1)。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLengthOfLCIS(vector<int>& nums) {if (nums.size() == 0) return 0;int result = 1;vector<int> dp(nums.size() ,1);for (int i = 1; i < nums.size(); i++) {if (nums[i] > nums[i - 1]) {dp[i] = dp[i - 1] + 1;}if (dp[i] > result) result = dp[i];}return result;}};",
+          "description": "C++ 动态规划解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLengthOfLCIS(vector<int>& nums) {if (nums.size() == 0) return 0;int result = 1; // 连续子序列最少也是1int count = 1;for (int i = 1; i < nums.size(); i++) {if (nums[i] > nums[i - 1]) {count++;} else {count = 1;}if (count > result) result = count;}return result;}};",
+          "description": "C++ 贪心解法"
+        },
+        {
+          "language": "java",
+          "code": "public static int findLengthOfLCIS(int[] nums) {int[] dp = new int[nums.length];for (int i = 0; i < dp.length; i++) {dp[i] = 1;}int res = 1;for (int i = 0; i < nums.length - 1; i++) {if (nums[i + 1] > nums[i]) {dp[i + 1] = dp[i] + 1;}res = res > dp[i + 1] ? res : dp[i + 1];}return res;}",
+          "description": "Java 动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "public int findLengthOfLCIS(int[] nums) {int beforeOneMaxLen = 1, currentMaxLen = 0;int res = 1;for (int i = 1; i < nums.length; i ++) {currentMaxLen = nums[i] > nums[i - 1] ? beforeOneMaxLen + 1 : 1;beforeOneMaxLen = currentMaxLen;res = Math.max(res, currentMaxLen);}return res;}",
+          "description": "Java 动态规划状态压缩解法"
+        },
+        {
+          "language": "java",
+          "code": "public static int findLengthOfLCIS(int[] nums) {if (nums.length == 0) return 0;int res = 1; // 连续子序列最少也是1int count = 1;for (int i = 0; i < nums.length - 1; i++) {if (nums[i + 1] > nums[i]) {count++;} else {count = 1;}if (count > res) res = count;}return res;}",
+          "description": "Java 贪心解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLengthOfLCIS(self, nums: List[int]) -> int: if len(nums) == 0: return 0 result = 1 dp = [1] * len(nums) for i in range(len(nums)-1): if nums[i+1] > nums[i]: dp[i+1] = dp[i] + 1 result = max(result, dp[i+1]) return result",
+          "description": "Python 动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLengthOfLCIS(self, nums: List[int]) -> int: if not nums: return 0 max_length = 1 current_length = 1 for i in range(1, len(nums)): if nums[i] > nums[i - 1]: current_length += 1 max_length = max(max_length, current_length) else: current_length = 1 return max_length",
+          "description": "Python 动态规划优化版解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLengthOfLCIS(self, nums: List[int]) -> int: if len(nums) == 0: return 0 result = 1 count = 1 for i in range(len(nums)-1): if nums[i+1] > nums[i]: count += 1 else: count = 1 result = max(result, count) return result",
+          "description": "Python 贪心解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "public static int findLengthOfLCIS(int[] nums) {\n    int[] dp = new int[nums.length];\n    for (int i = 0; i < dp.length; i++) {\n        dp[i] = 1;\n    }\n    int res = 1;\n    for (int i = 0; i < nums.length - 1; i++) {\n        if (nums[i + 1] > nums[i]) {\n            dp[i + 1] = dp[i] + 1;\n        }\n        res = Math.max(res, dp[i + 1]);\n    }\n    return res;\n}",
+          "description": "动态规划"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int findLengthOfLCIS(int[] nums) {\n        int beforeOneMaxLen = 1, currentMaxLen = 0;\n        int res = 1;\n        for (int i = 1; i < nums.length; i ++) {\n            currentMaxLen = nums[i] > nums[i - 1] ? beforeOneMaxLen + 1 : 1;\n            beforeOneMaxLen = currentMaxLen;\n            res = Math.max(res, currentMaxLen);\n        }\n        return res;\n    }\n}",
+          "description": "动态规划状态压缩"
+        },
+        {
+          "language": "java",
+          "code": "public static int findLengthOfLCIS(int[] nums) {\n    if (nums.length == 0) return 0;\n    int res = 1;\n    int count = 1;\n    for (int i = 0; i < nums.length - 1; i++) {\n        if (nums[i + 1] > nums[i]) {\n            count++;\n        } else {\n            count = 1;\n        }\n        if (count > res) res = count;\n    }\n    return res;\n}",
+          "description": "贪心法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def findLengthOfLCIS(self, nums: List[int]) -> int:\n        if len(nums) == 0:\n            return 0\n        result = 1\n        dp = [1] * len(nums)\n        for i in range(len(nums)-1):\n            if nums[i+1] > nums[i]:\n                dp[i+1] = dp[i] + 1\n            result = max(result, dp[i+1])\n        return result",
+          "description": "DP"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def findLengthOfLCIS(self, nums: List[int]) -> int:\n        if not nums:\n            return 0\n        max_length = 1\n        current_length = 1\n        for i in range(1, len(nums)):\n            if nums[i] > nums[i - 1]:\n                current_length += 1\n                max_length = max(max_length, current_length)\n            else:\n                current_length = 1\n        return max_length",
+          "description": "DP(优化版)"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def findLengthOfLCIS(self, nums: List[int]) -> int:\n        if len(nums) == 0:\n            return 0\n        result = 1\n        count = 1\n        for i in range(len(nums)-1):\n            if nums[i+1] > nums[i]:\n                count += 1\n            else:\n                count = 1\n            result = max(result, count)\n        return result",
+          "description": "贪心"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "动态规划：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLengthOfLCIS(vector<int>& nums) {if (nums.size() == 0) return 0;int result = 1;vector<int> dp(nums.size() ,1);for (int i = 1; i < nums.size(); i++) {if (nums[i] > nums[i - 1]) {dp[i] = dp[i - 1] + 1;}if (dp[i] > result) result = dp[i];}return result;}};",
+          "description": "C++ 动态规划实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLengthOfLCIS(vector<int>& nums) {if (nums.size() == 0) return 0;int result = 1;int count = 1;for (int i = 1; i < nums.size(); i++) {if (nums[i] > nums[i - 1]) {count++;} else {count = 1;}if (count > result) result = count;}return result;}};",
+          "description": "C++ 贪心算法实现"
+        },
+        {
+          "language": "java",
+          "code": "public static int findLengthOfLCIS(int[] nums) {int[] dp = new int[nums.length];for (int i = 0; i < dp.length; i++) {dp[i] = 1;}int res = 1;for (int i = 0; i < nums.length - 1; i++) {if (nums[i + 1] > nums[i]) {dp[i + 1] = dp[i] + 1;}res = res > dp[i + 1] ? res : dp[i + 1];}return res;}",
+          "description": "Java 动态规划实现"
+        },
+        {
+          "language": "java",
+          "code": "public int findLengthOfLCIS(int[] nums) {int beforeOneMaxLen = 1, currentMaxLen = 0;int res = 1;for (int i = 1; i < nums.length; i ++) {currentMaxLen = nums[i] > nums[i - 1] ? beforeOneMaxLen + 1 : 1;beforeOneMaxLen = currentMaxLen;res = Math.max(res, currentMaxLen);}return res;}",
+          "description": "Java 动态规划状态压缩实现"
+        },
+        {
+          "language": "java",
+          "code": "public static int findLengthOfLCIS(int[] nums) {if (nums.length == 0) return 0;int res = 1;int count = 1;for (int i = 0; i < nums.length - 1; i++) {if (nums[i + 1] > nums[i]) {count++;} else {count = 1;}if (count > res) res = count;}return res;}",
+          "description": "Java 贪心法实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLengthOfLCIS(self, nums: List[int]) -> int: if len(nums) == 0: return 0 result = 1 dp = [1] * len(nums) for i in range(len(nums)-1): if nums[i+1] > nums[i]: dp[i+1] = dp[i] + 1 result = max(result, dp[i+1]) return result",
+          "description": "Python 动态规划实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLengthOfLCIS(self, nums: List[int]) -> int: if not nums: return 0 max_length = 1 current_length = 1 for i in range(1, len(nums)): if nums[i] > nums[i - 1]: current_length += 1 max_length = max(max_length, current_length) else: current_length = 1 return max_length",
+          "description": "Python 动态规划优化版实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLengthOfLCIS(self, nums: List[int]) -> int: if len(nums) == 0: return 0 result = 1 count = 1 for i in range(len(nums)-1): if nums[i+1] > nums[i]: count += 1 else: count = 1 result = max(result, count) return result",
+          "description": "Python 贪心实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "DP",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLengthOfLCIS(vector<int>& nums) {if (nums.size() == 0) return 0;int result = 1;vector<int> dp(nums.size() ,1);for (int i = 1; i < nums.size(); i++) {if (nums[i] > nums[i - 1]) {dp[i] = dp[i - 1] + 1;}if (dp[i] > result) result = dp[i];}return result;}};",
+          "description": "C++ 动态规划实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLengthOfLCIS(vector<int>& nums) {if (nums.size() == 0) return 0;int result = 1;int count = 1;for (int i = 1; i < nums.size(); i++) {if (nums[i] > nums[i - 1]) {count++;} else {count = 1;}if (count > result) result = count;}return result;}};",
+          "description": "C++ 贪心算法实现"
+        },
+        {
+          "language": "java",
+          "code": "public static int findLengthOfLCIS(int[] nums) {int[] dp = new int[nums.length];for (int i = 0; i < dp.length; i++) {dp[i] = 1;}int res = 1;for (int i = 0; i < nums.length - 1; i++) {if (nums[i + 1] > nums[i]) {dp[i + 1] = dp[i] + 1;}res = res > dp[i + 1] ? res : dp[i + 1];}return res;}",
+          "description": "Java 动态规划实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int findLengthOfLCIS(int[] nums) {int beforeOneMaxLen = 1, currentMaxLen = 0;int res = 1;for (int i = 1; i < nums.length; i ++) {currentMaxLen = nums[i] > nums[i - 1] ? beforeOneMaxLen + 1 : 1;beforeOneMaxLen = currentMaxLen;res = Math.max(res, currentMaxLen);}return res;}}",
+          "description": "Java 动态规划状态压缩实现"
+        },
+        {
+          "language": "java",
+          "code": "public static int findLengthOfLCIS(int[] nums) {if (nums.length == 0) return 0;int res = 1;int count = 1;for (int i = 0; i < nums.length - 1; i++) {if (nums[i + 1] > nums[i]) {count++;} else {count = 1;}if (count > res) res = count;}return res;}",
+          "description": "Java 贪心法实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLengthOfLCIS(self, nums: List[int]) -> int: if len(nums) == 0: return 0 result = 1 dp = [1] * len(nums) for i in range(len(nums)-1): if nums[i+1] > nums[i]: dp[i+1] = dp[i] + 1 result = max(result, dp[i+1]) return result",
+          "description": "Python 动态规划实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLengthOfLCIS(self, nums: List[int]) -> int: if not nums: return 0 max_length = 1 current_length = 1 for i in range(1, len(nums)): if nums[i] > nums[i - 1]: current_length += 1 max_length = max(max_length, current_length) else: current_length = 1 return max_length",
+          "description": "Python 动态规划优化版实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLengthOfLCIS(self, nums: List[int]) -> int: if len(nums) == 0: return 0 result = 1 count = 1 for i in range(len(nums)-1): if nums[i+1] > nums[i]: count += 1 else: count = 1 result = max(result, count) return result",
+          "description": "Python 贪心算法实现"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int findLengthOfLCIS(vector<int>& nums) {if (nums.size() == 0) return 0;int result = 1;vector<int> dp(nums.size() ,1);for (int i = 1; i < nums.size(); i++) {if (nums[i] > nums[i - 1]) {dp[i] = dp[i - 1] + 1;}if (dp[i] > result) result = dp[i];}return result;}};",
+      "description": "C++动态规划实现"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int findLengthOfLCIS(vector<int>& nums) {if (nums.size() == 0) return 0;int result = 1;int count = 1;for (int i = 1; i < nums.size(); i++) {if (nums[i] > nums[i - 1]) {count++;} else {count = 1;}if (count > result) result = count;}return result;}};",
+      "description": "C++贪心算法实现"
+    },
+    {
+      "language": "java",
+      "code": "public static int findLengthOfLCIS(int[] nums) {int[] dp = new int[nums.length];for (int i = 0; i < dp.length; i++) {dp[i] = 1;}int res = 1;for (int i = 0; i < nums.length - 1; i++) {if (nums[i + 1] > nums[i]) {dp[i + 1] = dp[i] + 1;}res = res > dp[i + 1] ? res : dp[i + 1];}return res;}",
+      "description": "Java动态规划实现"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int findLengthOfLCIS(int[] nums) {int beforeOneMaxLen = 1, currentMaxLen = 0;int res = 1;for (int i = 1; i < nums.length; i ++) {currentMaxLen = nums[i] > nums[i - 1] ? beforeOneMaxLen + 1 : 1;beforeOneMaxLen = currentMaxLen;res = Math.max(res, currentMaxLen);}return res;}}",
+      "description": "Java动态规划状态压缩实现"
+    },
+    {
+      "language": "java",
+      "code": "public static int findLengthOfLCIS(int[] nums) {if (nums.length == 0) return 0;int res = 1;int count = 1;for (int i = 0; i < nums.length - 1; i++) {if (nums[i + 1] > nums[i]) {count++;} else {count = 1;}if (count > res) res = count;}return res;}",
+      "description": "Java贪心法实现"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def findLengthOfLCIS(self, nums: List[int]) -> int: if len(nums) == 0: return 0 result = 1 dp = [1] * len(nums) for i in range(len(nums)-1): if nums[i+1] > nums[i]: dp[i+1] = dp[i] + 1 result = max(result, dp[i+1]) return result",
+      "description": "Python动态规划实现"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def findLengthOfLCIS(self, nums: List[int]) -> int: if not nums: return 0 max_length = 1 current_length = 1 for i in range(1, len(nums)): if nums[i] > nums[i - 1]: current_length += 1 max_length = max(max_length, current_length) else: current_length = 1 return max_length",
+      "description": "Python优化版动态规划实现"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def findLengthOfLCIS(self, nums: List[int]) -> int: if len(nums) == 0: return 0 result = 1 count = 1 for i in range(len(nums)-1): if nums[i+1] > nums[i]: count += 1 else: count = 1 result = max(result, count) return result",
+      "description": "Python贪心算法实现"
+    }
+  ],
+  "common_mistakes": [
+    "忽视了题目要求的是连续递增子序列而非任意递增子序列。",
+    "错误地使用了两层循环实现动态规划，导致时间复杂度增加。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210204103529742.jpg",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20210204103529742.jpg",
+      "context": "该图片展示了给定数组nums=[1,3,5,4,7]时，dp数组的状态变化过程，帮助理解如何通过一次for循环计算最长连续递增子序列的长度。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210204103529742.jpg",
+      "description": "GIF展示了通过动态规划方法计算数组[1,3,5,4,7]中最长连续递增子序列长度的过程。",
+      "context": "GIF动画展示了给定数组[1,3,5,4,7]时，动态规划数组dp的状态变化过程，帮助理解如何通过一次遍历来计算最长连续递增子序列的长度。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\动态规划\\最长连续递增序列.txt",
+  "extracted_at": "2025-07-20T21:24:17.694862",
+  "raw_content": "最长连续递增序列\n力扣题目链接(https://leetcode.cn/problems/longest-continuous-increasing-subsequence/)\n\n给定一个未经排序的整数数组，找到最长且 连续递增的子序列，并返回该序列的长度。\n\n连续递增的子序列 可以由两个下标 l 和 r（l < r）确定，如果对于每个 l <= i < r，都有 nums[i] < nums[i + 1] ，那么子序列 [nums[l], nums[l + 1], ..., nums[r - 1], nums[r]] 就是连续递增子序列。\n\n示例 1：\n\n输入：nums = [1,3,5,4,7]\n输出：3\n解释：最长连续递增序列是 [1,3,5], 长度为3。尽管 [1,3,5,7] 也是升序的子序列, 但它不是连续的，因为 5 和 7 在原数组里被 4 隔开。\n示例 2：\n\n输入：nums = [2,2,2,2,2]\n输出：1\n解释：最长连续递增序列是 [2], 长度为1。\n提示：\n\n0 <= nums.length <= 10^4\n-10^9 <= nums[i] <= 10^9\n\n\n#思路\n本题相对于昨天的动态规划：300.最长递增子序列 (https://programmercarl.com/0300.%E6%9C%80%E9%95%BF%E4%B8%8A%E5%8D%87%E5%AD%90%E5%BA%8F%E5%88%97.html)最大的区别在于“连续”。\n\n本题要求的是最长连续递增序列\n\n#动态规划\n动规五部曲分析如下：\n\n确定dp数组（dp table）以及下标的含义\ndp[i]：以下标i为结尾的连续递增的子序列长度为dp[i]。\n\n注意这里的定义，一定是以下标i为结尾，并不是说一定以下标0为起始位置。\n\n确定递推公式\n如果 nums[i] > nums[i - 1]，那么以 i 为结尾的连续递增的子序列长度 一定等于 以i - 1为结尾的连续递增的子序列长度 + 1 。\n\n即：dp[i] = dp[i - 1] + 1;\n\n注意这里就体现出和动态规划：300.最长递增子序列 (https://programmercarl.com/0300.%E6%9C%80%E9%95%BF%E4%B8%8A%E5%8D%87%E5%AD%90%E5%BA%8F%E5%88%97.html)的区别！\n\n因为本题要求连续递增子序列，所以就只要比较nums[i]与nums[i - 1]，而不用去比较nums[j]与nums[i] （j是在0到i之间遍历）。\n\n既然不用j了，那么也不用两层for循环，本题一层for循环就行，比较nums[i] 和 nums[i - 1]。\n\n这里大家要好好体会一下！\n\ndp数组如何初始化\n以下标i为结尾的连续递增的子序列长度最少也应该是1，即就是nums[i]这一个元素。\n\n所以dp[i]应该初始1;\n\n确定遍历顺序\n从递推公式上可以看出， dp[i + 1]依赖dp[i]，所以一定是从前向后遍历。\n\n本文在确定递推公式的时候也说明了为什么本题只需要一层for循环，代码如下：\n\nfor (int i = 1; i < nums.size(); i++) {\n    if (nums[i] > nums[i - 1]) { // 连续记录\n        dp[i] = dp[i - 1] + 1;\n    }\n}\n举例推导dp数组\n已输入nums = [1,3,5,4,7]为例，dp数组状态如下：\n\nhttps://file1.kamacoder.com/i/algo/20210204103529742.jpg\n\n注意这里要取dp[i]里的最大值，所以dp[2]才是结果！\n\n以上分析完毕，C++代码如下：\n\nclass Solution {\npublic:\n    int findLengthOfLCIS(vector<int>& nums) {\n        if (nums.size() == 0) return 0;\n        int result = 1;\n        vector<int> dp(nums.size() ,1);\n        for (int i = 1; i < nums.size(); i++) {\n            if (nums[i] > nums[i - 1]) { // 连续记录\n                dp[i] = dp[i - 1] + 1;\n            }\n            if (dp[i] > result) result = dp[i];\n        }\n        return result;\n    }\n};\n\n时间复杂度：O(n)\n空间复杂度：O(n)\n#贪心\n这道题目也可以用贪心来做，也就是遇到nums[i] > nums[i - 1]的情况，count就++，否则count为1，记录count的最大值就可以了。\n\n代码如下：\n\nclass Solution {\npublic:\n    int findLengthOfLCIS(vector<int>& nums) {\n        if (nums.size() == 0) return 0;\n        int result = 1; // 连续子序列最少也是1\n        int count = 1;\n        for (int i = 1; i < nums.size(); i++) {\n            if (nums[i] > nums[i - 1]) { // 连续记录\n                count++;\n            } else { // 不连续，count从头开始\n                count = 1;\n            }\n            if (count > result) result = count;\n        }\n        return result;\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(1)\n#总结\n本题也是动规里子序列问题的经典题目，但也可以用贪心来做，大家也会发现贪心好像更简单一点，而且空间复杂度仅是O(1)。\n\n在动规分析中，关键是要理解和动态规划：300.最长递增子序列 (https://programmercarl.com/0300.%E6%9C%80%E9%95%BF%E4%B8%8A%E5%8D%87%E5%AD%90%E5%BA%8F%E5%88%97.html)的区别。\n\n要联动起来，才能理解递增子序列怎么求，递增连续子序列又要怎么求。\n\n概括来说：不连续递增子序列的跟前0-i 个状态有关，连续递增的子序列只跟前一个状态有关\n\n本篇我也把区别所在之处重点介绍了，关键在递推公式和遍历方法上，大家可以仔细体会一波！\n\n#其他语言版本\n#Java：\n动态规划：\n\n /**\n     * 1.dp[i] 代表当前下标最大连续值\n     * 2.递推公式 if（nums[i+1]>nums[i]） dp[i+1] = dp[i]+1\n     * 3.初始化 都为1\n     * 4.遍历方向，从其那往后\n     * 5.结果推导 。。。。\n     * @param nums\n     * @return\n     */\n    public static int findLengthOfLCIS(int[] nums) {\n        int[] dp = new int[nums.length];\n        for (int i = 0; i < dp.length; i++) {\n            dp[i] = 1;\n        }\n        int res = 1;\n\t//可以注意到，這邊的 i 是從 0 開始，所以會出現和卡哥的C++ code有差異的地方，在一些地方會看到有 i + 1 的偏移。\n        for (int i = 0; i < nums.length - 1; i++) {\n            if (nums[i + 1] > nums[i]) {\n                dp[i + 1] = dp[i] + 1;\n            }\n            res = res > dp[i + 1] ? res : dp[i + 1];\n        }\n        return res;\n    }\n动态规划状态压缩\n\nclass Solution {\n    public int findLengthOfLCIS(int[] nums) {\n        // 记录以 前一个元素结尾的最长连续递增序列的长度 和 以当前 结尾的......\n        int beforeOneMaxLen = 1, currentMaxLen = 0;\n        // res 赋最小值返回的最小值1\n        int res = 1;\n        for (int i = 1; i < nums.length; i ++) {\n            currentMaxLen = nums[i] > nums[i - 1] ? beforeOneMaxLen + 1 : 1;\n            beforeOneMaxLen = currentMaxLen;\n            res = Math.max(res, currentMaxLen);\n        }\n        return res;\n    }\n}\n贪心法：\n\npublic static int findLengthOfLCIS(int[] nums) {\n    if (nums.length == 0) return 0;\n    int res = 1; // 连续子序列最少也是1\n    int count = 1;\n    for (int i = 0; i < nums.length - 1; i++) {\n        if (nums[i + 1] > nums[i]) { // 连续记录\n            count++;\n        } else { // 不连续，count从头开始\n            count = 1;\n        }\n        if (count > res) res = count;\n    }\n    return res;\n}\n#Python：\nDP\n\nclass Solution:\n    def findLengthOfLCIS(self, nums: List[int]) -> int:\n        if len(nums) == 0:\n            return 0\n        result = 1\n        dp = [1] * len(nums)\n        for i in range(len(nums)-1):\n            if nums[i+1] > nums[i]: #连续记录\n                dp[i+1] = dp[i] + 1\n            result = max(result, dp[i+1])\n        return result\nDP(优化版)\n\nclass Solution:\n    def findLengthOfLCIS(self, nums: List[int]) -> int:\n        if not nums:\n            return 0\n\n        max_length = 1\n        current_length = 1\n\n        for i in range(1, len(nums)):\n            if nums[i] > nums[i - 1]:\n                current_length += 1\n                max_length = max(max_length, current_length)\n            else:\n                current_length = 1\n\n        return max_length\n\n贪心\n\nclass Solution:\n    def findLengthOfLCIS(self, nums: List[int]) -> int:\n        if len(nums) == 0:\n            return 0\n        result = 1 #连续子序列最少也是1\n        count = 1\n        for i in range(len(nums)-1):\n            if nums[i+1] > nums[i]: #连续记录\n                count += 1\n            else: #不连续，count从头开始\n                count = 1\n            result = max(result, count)\n        return result"
+}

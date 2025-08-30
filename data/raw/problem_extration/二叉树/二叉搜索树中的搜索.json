@@ -1,0 +1,479 @@
+{
+  "id": "AP_62a1b6c6",
+  "title": "二叉搜索树中的搜索",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/search-in-a-binary-search-tree/",
+  "description": "二叉搜索树（BST）的根节点和一个值。 你需要在BST中找到节点值等于给定值的节点。 返回以该节点为根的子树。 如果节点不存在，则返回 NULL。\n\n例如，\n\nhttps://file1.kamacoder.com/i/algo/20210204155522476.png\n\n在上述",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "二分查找",
+    "深度优先搜索"
+  ],
+  "data_structure_tags": [
+    "树",
+    "二叉搜索树"
+  ],
+  "technique_tags": [
+    "递归",
+    "迭代"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过递归或迭代方法在二叉搜索树中查找特定值。利用二叉搜索树左子树小于根节点、右子树大于根节点的特点来优化搜索过程。",
+  "key_insights": [
+    {
+      "content": "二叉搜索树具有左子树所有节点值小于根节点值，右子树所有节点值大于根节点值的特点，这使得我们可以直接决定向哪个方向进行搜索，从而提高了效率。"
+    },
+    {
+      "content": "对于本问题，既可以通过递归也可以通过迭代解决。递归易于理解但可能消耗更多栈空间；而迭代虽然代码简洁性稍差，但在处理大规模数据时更高效。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "之前我们讲的都是普通二叉树，那么接下来看看二叉搜索树。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* searchBST(TreeNode* root, int val) { if (root == NULL || root->val == val) return root; TreeNode* result = NULL; if (root->val > val) result = searchBST(root->left, val); if (root->val < val) result = searchBST(root->right, val); return result; }};",
+          "description": "C++实现的递归法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* searchBST(TreeNode* root, int val) { if (root == NULL || root->val == val) return root; if (root->val > val) return searchBST(root->left, val); if (root->val < val) return searchBST(root->right, val); return NULL; }};",
+          "description": "另一种C++实现的递归法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* searchBST(TreeNode* root, int val) { while (root != NULL) { if (root->val > val) root = root->left; else if (root->val < val) root = root->right; else return root; } return NULL; }};",
+          "description": "C++实现的迭代法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode searchBST(TreeNode root, int val) { if (root == null || root.val == val) { return root; } TreeNode left = searchBST(root.left, val); if (left != null) { return left; } return searchBST(root.right, val); }};",
+          "description": "Java实现的递归法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode searchBST(TreeNode root, int val) { if (root == null || root.val == val) { return root; } if (val < root.val) { return searchBST(root.left, val); } else { return searchBST(root.right, val); } }};",
+          "description": "利用二叉搜索树特点优化的Java递归法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode searchBST(TreeNode root, int val) { if (root == null || root.val == val) { return root; } Stack<TreeNode> stack = new Stack<>(); stack.push(root); while (!stack.isEmpty()) { TreeNode pop = stack.pop(); if (pop.val == val) { return pop; } if (pop.right != null) { stack.push(pop.right); } if (pop.left != null) { stack.push(pop.left); } } return null; }};",
+          "description": "Java实现的迭代法，使用栈"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode searchBST(TreeNode root, int val) { while (root != null) if (val < root.val) root = root.left; else if (val > root.val) root = root.right; else return root; return null; }};",
+          "description": "利用二叉搜索树特点优化的Java迭代法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def searchBST(self, root: TreeNode, val: int) -> TreeNode: if not root or root.val == val: return root if root.val > val: return self.searchBST(root.left, val) if root.val < val: return self.searchBST(root.right, val)",
+          "description": "Python实现的递归法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def searchBST(self, root: TreeNode, val: int) -> TreeNode: while root: if val < root.val: root = root.left elif val > root.val: root = root.right else: return root return None",
+          "description": "Python实现的迭代法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def searchBST(self, root: TreeNode, val: int) -> TreeNode: stack = [root] while stack: node = stack.pop() if node.val == val: return node if node.right: stack.append(node.right) if node.left: stack.append(node.left) return None",
+          "description": "Python实现的栈遍历方法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "递归法",
+      "text": "确定递归函数的参数和返回值",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* searchBST(TreeNode* root, int val) {\n        if (root == NULL || root->val == val) return root;\n        TreeNode* result = NULL;\n        if (root->val > val) result = searchBST(root->left, val);\n        if (root->val < val) result = searchBST(root->right, val);\n        return result;\n    }\n};",
+          "description": "使用递归方法在二叉搜索树中查找指定值的节点。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* searchBST(TreeNode* root, int val) {\n        if (root == NULL || root->val == val) return root;\n        if (root->val > val) return searchBST(root->left, val);\n        if (root->val < val) return searchBST(root->right, val);\n        return NULL;\n    }\n};",
+          "description": "简化版递归方式在二叉搜索树中查找指定值的节点。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* searchBST(TreeNode* root, int val) {\n        while (root != NULL) {\n            if (root->val > val) root = root->left;\n            else if (root->val < val) root = root->right;\n            else return root;\n        }\n        return NULL;\n    }\n};",
+          "description": "迭代法在二叉搜索树中查找指定值的节点，利用二叉搜索树的有序性。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode searchBST(TreeNode root, int val) {\n        if (root == null || root.val == val) {\n            return root;\n        }\n        TreeNode left = searchBST(root.left, val);\n        if (left != null) {\n            return left;\n        }\n        return searchBST(root.right, val);\n    }\n}",
+          "description": "Java版本的递归方法用于在二叉搜索树中找到指定值的节点。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode searchBST(TreeNode root, int val) {\n        if (root == null || root.val == val) {\n            return root;\n        }\n        if (val < root.val) {\n            return searchBST(root.left, val);\n        } else {\n            return searchBST(root.right, val);\n        }\n    }\n}",
+          "description": "优化后的Java递归实现，在二叉搜索树中查找给定值的节点。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode searchBST(TreeNode root, int val) {\n        while (root != null)\n            if (val < root.val) root = root.left;\n            else if (val > root.val) root = root.right;\n            else return root;\n        return null;\n    }\n}",
+          "description": "Java迭代实现，在二叉搜索树中查找指定值的节点，无须使用栈或队列。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def searchBST(self, root: TreeNode, val: int) -> TreeNode:\n        if not root or root.val == val: \n            return root\n\n        if root.val > val: \n            return self.searchBST(root.left, val)\n\n        if root.val < val: \n            return self.searchBST(root.right, val)",
+          "description": "Python中的递归解法，用于在二叉搜索树中寻找特定值对应的节点。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def searchBST(self, root: TreeNode, val: int) -> TreeNode:\n        while root:\n            if val < root.val: root = root.left\n            elif val > root.val: root = root.right\n            else: return root\n        return None",
+          "description": "Python迭代方法实现在二叉搜索树中查找目标值所在的节点。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "迭代法",
+      "text": "一提到二叉树遍历的迭代法，可能立刻想起使用栈来模拟深度遍历，使用队列来模拟广度遍历。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* searchBST(TreeNode* root, int val) {if (root == NULL || root->val == val) return root; TreeNode* result = NULL;if (root->val > val) result = searchBST(root->left, val);if (root->val < val) result = searchBST(root->right, val);return result;}};",
+          "description": "C++实现的递归方法来搜索二叉搜索树中的指定值"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* searchBST(TreeNode* root, int val) {while (root != NULL) {if (root->val > val) root = root->left;else if (root->val < val) root = root->right;else return root;}return NULL;}};",
+          "description": "C++实现的迭代方法来搜索二叉搜索树中的指定值，利用了二叉搜索树的特性"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode searchBST(TreeNode root, int val) {if (root == null || root.val == val) {return root;}TreeNode left = searchBST(root.left, val);if (left != null) {return left;}return searchBST(root.right, val);}}",
+          "description": "Java实现的递归方法来搜索二叉搜索树中的指定值"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode searchBST(TreeNode root, int val) {while (root != null)if (val < root.val) root = root.left;else if (val > root.val) root = root.right;else return root;return null;}}",
+          "description": "Java实现的迭代方法来搜索二叉搜索树中的指定值，无需使用额外数据结构"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def searchBST(self, root: TreeNode, val: int) -> TreeNode:if not root or root.val == val:return rootif root.val > val:return self.searchBST(root.left, val)if root.val < val:return self.searchBST(root.right, val)",
+          "description": "Python实现的递归方法来搜索二叉搜索树中的指定值"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def searchBST(self, root: TreeNode, val: int) -> TreeNode:while root:if val < root.val: root = root.leftelif val > root.val: root = root.rightelse: return rootreturn None",
+          "description": "Python实现的迭代方法来搜索二叉搜索树中的指定值，直接利用二叉搜索树属性"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "本篇我们介绍了二叉搜索树的遍历方式，因为二叉搜索树的有序性，遍历的时候要比普通二叉树简单很多。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* searchBST(TreeNode* root, int val) {\n        if (root == NULL || root->val == val) return root;\n        TreeNode* result = NULL;\n        if (root->val > val) result = searchBST(root->left, val);\n        if (root->val < val) result = searchBST(root->right, val);\n        return result;\n    }\n};",
+          "description": "递归法实现二叉搜索树的搜索"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* searchBST(TreeNode* root, int val) {\n        while (root != NULL) {\n            if (root->val > val) root = root->left;\n            else if (root->val < val) root = root->right;\n            else return root;\n        }\n        return NULL;\n    }\n};",
+          "description": "迭代法实现二叉搜索树的搜索"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode searchBST(TreeNode root, int val) {\n        if (root == null || root.val == val) {\n            return root;\n        }\n        if (val < root.val) {\n            return searchBST(root.left, val);\n        } else {\n            return searchBST(root.right, val);\n        }\n    }\n}",
+          "description": "利用二叉搜索树特点优化的递归搜索"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode searchBST(TreeNode root, int val) {\n        while (root != null)\n            if (val < root.val) root = root.left;\n            else if (val > root.val) root = root.right;\n            else return root;\n        return null;\n    }\n}",
+          "description": "利用二叉搜索树特点优化的迭代搜索"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def searchBST(self, root: TreeNode, val: int) -> TreeNode:\n        if not root or root.val == val: \n            return root\n\n        if root.val > val: \n            return self.searchBST(root.left, val)\n\n        if root.val < val: \n            return self.searchBST(root.right, val)",
+          "description": "递归方式搜索二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def searchBST(self, root: TreeNode, val: int) -> TreeNode:\n        while root:\n            if val < root.val: root = root.left\n            elif val > root.val: root = root.right\n            else: return root\n        return None",
+          "description": "迭代方式搜索二叉搜索树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* searchBST(TreeNode* root, int val) { if (root == NULL || root->val == val) return root; TreeNode* result = NULL; if (root->val > val) result = searchBST(root->left, val); if (root->val < val) result = searchBST(root->right, val); return result; }};",
+          "description": "C++递归实现二叉搜索树中查找特定值的节点"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* searchBST(TreeNode* root, int val) { if (root == NULL || root->val == val) return root; if (root->val > val) return searchBST(root->left, val); if (root->val < val) return searchBST(root->right, val); return NULL; }};",
+          "description": "C++简化递归实现二叉搜索树中查找特定值的节点"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* searchBST(TreeNode* root, int val) { while (root != NULL) { if (root->val > val) root = root->left; else if (root->val < val) root = root->right; else return root; } return NULL; }};",
+          "description": "C++迭代实现二叉搜索树中查找特定值的节点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode searchBST(TreeNode root, int val) { if (root == null || root.val == val) { return root; } TreeNode left = searchBST(root.left, val); if (left != null) { return left; } return searchBST(root.right, val); }};",
+          "description": "Java递归实现二叉搜索树中查找特定值的节点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode searchBST(TreeNode root, int val) { if (root == null || root.val == val) { return root; } if (val < root.val) { return searchBST(root.left, val); } else { return searchBST(root.right, val); } }};",
+          "description": "Java优化递归实现二叉搜索树中查找特定值的节点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode searchBST(TreeNode root, int val) { if (root == null || root.val == val) { return root; } Stack<TreeNode> stack = new Stack<>(); stack.push(root); while (!stack.isEmpty()) { TreeNode pop = stack.pop(); if (pop.val == val) { return pop; } if (pop.right != null) { stack.push(pop.right); } if (pop.left != null) { stack.push(pop.left); } } return null; }};",
+          "description": "Java使用栈的迭代实现二叉搜索树中查找特定值的节点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode searchBST(TreeNode root, int val) { while (root != null) if (val < root.val) root = root.left; else if (val > root.val) root = root.right; else return root; return null; }};",
+          "description": "Java不使用栈的迭代实现二叉搜索树中查找特定值的节点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def searchBST(self, root: TreeNode, val: int) -> TreeNode: if not root or root.val == val: return root if root.val > val: return self.searchBST(root.left, val) if root.val < val: return self.searchBST(root.right, val)",
+          "description": "Python递归实现二叉搜索树中查找特定值的节点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def searchBST(self, root: TreeNode, val: int) -> TreeNode: while root: if val < root.val: root = root.left elif val > root.val: root = root.right else: return root return None",
+          "description": "Python迭代实现二叉搜索树中查找特定值的节点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def searchBST(self, root: TreeNode, val: int) -> TreeNode: stack = [root] while stack: node = stack.pop() if node.val == val: return node if node.right: stack.append(node.right) if node.left: stack.append(node.left) return None",
+          "description": "Python使用栈的迭代实现二叉搜索树中查找特定值的节点"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* searchBST(TreeNode* root, int val) {if (root == NULL || root->val == val) return root; TreeNode* result = NULL;if (root->val > val) result = searchBST(root->left, val);if (root->val < val) result = searchBST(root->right, val);return result;}};",
+          "description": "C++递归实现二叉搜索树中的搜索"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* searchBST(TreeNode* root, int val) {if (root == NULL || root->val == val) return root;if (root->val > val) return searchBST(root->left, val);if (root->val < val) return searchBST(root->right, val);return NULL;}};",
+          "description": "C++简化版递归实现二叉搜索树中的搜索"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* searchBST(TreeNode* root, int val) {while (root != NULL) {if (root->val > val) root = root->left;else if (root->val < val) root = root->right;else return root;}return NULL;}};",
+          "description": "C++迭代实现二叉搜索树中的搜索"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode searchBST(TreeNode root, int val) {if (root == null || root.val == val) {return root;}TreeNode left = searchBST(root.left, val);if (left != null) {return left;}return searchBST(root.right, val);}}",
+          "description": "Java递归实现二叉搜索树中的搜索（普通二叉树方法）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode searchBST(TreeNode root, int val) {if (root == null || root.val == val) {return root;}if (val < root.val) {return searchBST(root.left, val);} else {return searchBST(root.right, val);}}}",
+          "description": "Java递归实现二叉搜索树中的搜索（利用二叉搜索树特性优化）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode searchBST(TreeNode root, int val) {if (root == null || root.val == val) {return root;}Stack<TreeNode> stack = new Stack<>();stack.push(root);while (!stack.isEmpty()) {TreeNode pop = stack.pop();if (pop.val == val) {return pop;}if (pop.right != null) {stack.push(pop.right);}if (pop.left != null) {stack.push(pop.left);}}return null;}}",
+          "description": "Java迭代实现二叉搜索树中的搜索（使用栈模拟普通二叉树遍历）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode searchBST(TreeNode root, int val) {while (root != null)if (val < root.val) root = root.left;else if (val > root.val) root = root.right;else return root;return null;}}",
+          "description": "Java迭代实现二叉搜索树中的搜索（利用二叉搜索树特性优化，不使用栈）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def searchBST(self, root: TreeNode, val: int) -> TreeNode: if not root or root.val == val: return root if root.val > val: return self.searchBST(root.left, val) if root.val < val: return self.searchBST(root.right, val)",
+          "description": "Python递归实现二叉搜索树中的搜索"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def searchBST(self, root: TreeNode, val: int) -> TreeNode: while root: if val < root.val: root = root.left elif val > root.val: root = root.right else: return root return None",
+          "description": "Python迭代实现二叉搜索树中的搜索"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def searchBST(self, root: TreeNode, val: int) -> TreeNode: stack = [root] while stack: node = stack.pop() if node.val == val: return node if node.right: stack.append(node.right) if node.left: stack.append(node.left) return None",
+          "description": "Python使用栈实现二叉搜索树中的搜索"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "（方法一） 递归",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* searchBST(TreeNode* root, int val) { if (root == NULL || root->val == val) return root; TreeNode* result = NULL; if (root->val > val) result = searchBST(root->left, val); if (root->val < val) result = searchBST(root->right, val); return result; }};",
+          "description": "使用递归方法在二叉搜索树中查找指定值的节点"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* searchBST(TreeNode* root, int val) { if (root == NULL || root->val == val) return root; if (root->val > val) return searchBST(root->left, val); if (root->val < val) return searchBST(root->right, val); return NULL; }};",
+          "description": "简化版的递归方法，用于在二叉搜索树中查找指定值的节点"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* searchBST(TreeNode* root, int val) { while (root != NULL) { if (root->val > val) root = root->left; else if (root->val < val) root = root->right; else return root; } return NULL; }};",
+          "description": "迭代法实现，在二叉搜索树中查找指定值的节点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode searchBST(TreeNode root, int val) { if (root == null || root.val == val) { return root; } TreeNode left = searchBST(root.left, val); if (left != null) { return left; } return searchBST(root.right, val); }}",
+          "description": "Java版本的递归方法，用于在二叉搜索树中查找指定值的节点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode searchBST(TreeNode root, int val) { if (root == null || root.val == val) { return root; } if (val < root.val) { return searchBST(root.left, val); } else { return searchBST(root.right, val); } }}",
+          "description": "优化后的Java版本递归方法，利用二叉搜索树特性加快查找速度"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode searchBST(TreeNode root, int val) { if (root == null || root.val == val) { return root; } Stack<TreeNode> stack = new Stack<>(); stack.push(root); while (!stack.isEmpty()) { TreeNode pop = stack.pop(); if (pop.val == val) { return pop; } if (pop.right != null) { stack.push(pop.right); } if (pop.left != null) { stack.push(pop.left); } } return null; }}",
+          "description": "Java版本使用栈进行迭代搜索的方法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode searchBST(TreeNode root, int val) { while (root != null) if (val < root.val) root = root.left; else if (val > root.val) root = root.right; else return root; return null; }}",
+          "description": "优化后的Java版本迭代方法，利用二叉搜索树特性加快查找速度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def searchBST(self, root: TreeNode, val: int) -> TreeNode: if not root or root.val == val: return root if root.val > val: return self.searchBST(root.left, val) if root.val < val: return self.searchBST(root.right, val)",
+          "description": "Python版本的递归方法，用于在二叉搜索树中查找指定值的节点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def searchBST(self, root: TreeNode, val: int) -> TreeNode: while root: if val < root.val: root = root.left elif val > root.val: root = root.right else: return root return None",
+          "description": "Python版本的迭代方法，用于在二叉搜索树中查找指定值的节点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def searchBST(self, root: TreeNode, val: int) -> TreeNode: stack = [root] while stack: node = stack.pop() if node.val == val: return node if node.right: stack.append(node.right) if node.left: stack.append(node.left) return None",
+          "description": "Python版本使用栈进行迭代搜索的方法"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public:    TreeNode* searchBST(TreeNode* root, int val) {        if (root == NULL || root->val == val) return root;        TreeNode* result = NULL;        if (root->val > val) result = searchBST(root->left, val);        if (root->val < val) result = searchBST(root->right, val);        return result;    }};",
+      "description": "使用递归法在二叉搜索树中查找指定值的节点"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public:    TreeNode* searchBST(TreeNode* root, int val) {        if (root == NULL || root->val == val) return root;        if (root->val > val) return searchBST(root->left, val);        if (root->val < val) return searchBST(root->right, val);        return NULL;    }};",
+      "description": "简化版本的递归法，直接返回结果"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public:    TreeNode* searchBST(TreeNode* root, int val) {        while (root != NULL) {            if (root->val > val) root = root->left;            else if (root->val < val) root = root->right;            else return root;        }        return NULL;    }};",
+      "description": "迭代法实现，在二叉搜索树中查找指定值的节点"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {    public TreeNode searchBST(TreeNode root, int val) {        if (root == null || root.val == val) {            return root;        }        TreeNode left = searchBST(root.left, val);        if (left != null) {            return left;        }        return searchBST(root.right, val);    }}",
+      "description": "Java实现的递归方法，用于在二叉搜索树中查找指定值的节点"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {    public TreeNode searchBST(TreeNode root, int val) {        if (root == null || root.val == val) {            return root;        }        if (val < root.val) {            return searchBST(root.left, val);        } else {            return searchBST(root.right, val);        }    }}",
+      "description": "优化后的Java递归方法，利用了二叉搜索树的特点"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {    public TreeNode searchBST(TreeNode root, int val) {        if (root == null || root.val == val) {            return root;        }        Stack<TreeNode> stack = new Stack<>();        stack.push(root);        while (!stack.isEmpty()) {            TreeNode pop = stack.pop();            if (pop.val == val) {                return pop;            }            if (pop.right != null) {                stack.push(pop.right);            }            if (pop.left != null) {                stack.push(pop.left);            }        }        return null;    }}",
+      "description": "Java实现的迭代方法，使用栈来辅助遍历"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {    public TreeNode searchBST(TreeNode root, int val) {        while (root != null)            if (val < root.val) root = root.left;            else if (val > root.val) root = root.right;            else return root;        return null;    }}",
+      "description": "Java实现的迭代方法，不需要使用栈，直接遍历"
+    },
+    {
+      "language": "python",
+      "code": "class Solution:    def searchBST(self, root: TreeNode, val: int) -> TreeNode:        if not root or root.val == val:            return root        if root.val > val:            return self.searchBST(root.left, val)        if root.val < val:            return self.searchBST(root.right, val)",
+      "description": "Python实现的递归方法，用于在二叉搜索树中查找指定值的节点"
+    },
+    {
+      "language": "python",
+      "code": "class Solution:    def searchBST(self, root: TreeNode, val: int) -> TreeNode:        while root:            if val < root.val: root = root.left            elif val > root.val: root = root.right            else: return root        return None",
+      "description": "Python实现的迭代方法，直接遍历查找"
+    },
+    {
+      "language": "python",
+      "code": "class Solution:    def searchBST(self, root: TreeNode, val: int) -> TreeNode:        stack = [root]        while stack:            node = stack.pop()            if node.val == val:                return node            if node.right:                stack.append(node.right)            if node.left:                stack.append(node.left)        return None",
+      "description": "Python实现的迭代方法，使用栈来辅助遍历"
+    }
+  ],
+  "common_mistakes": [
+    "忘记考虑二叉搜索树的有序性，导致不必要的遍历。",
+    "忽略递归函数返回值的重要性，可能导致逻辑错误。",
+    "在迭代版本中过度使用额外的数据结构如栈，未充分利用BST特性简化算法。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210204155522476.png",
+      "description": "给定一个二叉搜索树和值2，通过减去该值后返回新的子树结构。",
+      "context": "该图片展示了二叉搜索树的一个例子，用于说明如何在给定的BST中查找特定值的节点。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20200812190213280.png",
+      "description": "这是一棵二叉树，节点值分别为1、2、3、4和7，红色箭头指示了特定的遍历路径。",
+      "context": "此图展示了在二叉搜索树中查找特定值（例如3）时，如何依据节点的数值大小决定搜索方向的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210204155522476.png",
+      "description": "GIF展示了在二叉搜索树中查找特定值的过程，包括了从根节点开始比较并沿着左或右子树向下搜索直到找到目标值或确定不存在该值为止。",
+      "context": "GIF动画展示了在二叉搜索树中查找特定值的过程，帮助理解当目标值不存在时如何遍历树并最终返回NULL。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20200812190213280.png",
+      "description": "GIF展示了在二叉搜索树中查找特定值节点的过程，指针根据比较结果向左或向右移动直到找到目标。",
+      "context": "该GIF动画展示了在二叉搜索树中查找特定值（例如3）的过程，通过比较节点值来决定是向左子树还是向右子树继续搜索，直至找到目标或搜索完毕。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\二叉搜索树中的搜索.txt",
+  "extracted_at": "2025-07-19T16:08:31.548863",
+  "raw_content": "二叉搜索树中的搜索\n力扣题目地址(https://leetcode.cn/problems/search-in-a-binary-search-tree/)\n\n给定二叉搜索树（BST）的根节点和一个值。 你需要在BST中找到节点值等于给定值的节点。 返回以该节点为根的子树。 如果节点不存在，则返回 NULL。\n\n例如，\n\nhttps://file1.kamacoder.com/i/algo/20210204155522476.png\n\n在上述示例中，如果要找的值是 5，但因为没有节点值为 5，我们应该返回 NULL。\n\n\n\n#思路\n之前我们讲的都是普通二叉树，那么接下来看看二叉搜索树。\n\n在关于二叉树，你该了解这些！ (https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html)中，我们已经讲过了二叉搜索树。\n\n二叉搜索树是一个有序树：\n\n若它的左子树不空，则左子树上所有结点的值均小于它的根结点的值；\n若它的右子树不空，则右子树上所有结点的值均大于它的根结点的值；\n它的左、右子树也分别为二叉搜索树\n这就决定了，二叉搜索树，递归遍历和迭代遍历和普通二叉树都不一样。\n\n本题，其实就是在二叉搜索树中搜索一个节点。那么我们来看看应该如何遍历。\n\n#递归法\n确定递归函数的参数和返回值\n递归函数的参数传入的就是根节点和要搜索的数值，返回的就是以这个搜索数值所在的节点。\n\n代码如下：\n\nTreeNode* searchBST(TreeNode* root, int val)\n确定终止条件\n如果root为空，或者找到这个数值了，就返回root节点。\n\nif (root == NULL || root->val == val) return root;\n确定单层递归的逻辑\n看看二叉搜索树的单层递归逻辑有何不同。\n\n因为二叉搜索树的节点是有序的，所以可以有方向的去搜索。\n\n如果root->val > val，搜索左子树，如果root->val < val，就搜索右子树，最后如果都没有搜索到，就返回NULL。\n\n代码如下：\n\nTreeNode* result = NULL;\nif (root->val > val) result = searchBST(root->left, val);\nif (root->val < val) result = searchBST(root->right, val);\nreturn result;\n很多录友写递归函数的时候 习惯直接写 searchBST(root->left, val)，却忘了 递归函数还有返回值。\n\n递归函数的返回值是什么? 是 左子树如果搜索到了val，要将该节点返回。 如果不用一个变量将其接住，那么返回值不就没了。\n\n所以要 result = searchBST(root->left, val)。\n\n整体代码如下：\n\nclass Solution {\npublic:\n    TreeNode* searchBST(TreeNode* root, int val) {\n        if (root == NULL || root->val == val) return root;\n        TreeNode* result = NULL;\n        if (root->val > val) result = searchBST(root->left, val);\n        if (root->val < val) result = searchBST(root->right, val);\n        return result;\n    }\n};\n或者我们也可以这么写\n\nclass Solution {\npublic:\n    TreeNode* searchBST(TreeNode* root, int val) {\n        if (root == NULL || root->val == val) return root;\n        if (root->val > val) return searchBST(root->left, val);\n        if (root->val < val) return searchBST(root->right, val);\n        return NULL;\n    }\n};\n#迭代法\n一提到二叉树遍历的迭代法，可能立刻想起使用栈来模拟深度遍历，使用队列来模拟广度遍历。\n\n对于二叉搜索树可就不一样了，因为二叉搜索树的特殊性，也就是节点的有序性，可以不使用辅助栈或者队列就可以写出迭代法。\n\n对于一般二叉树，递归过程中还有回溯的过程，例如走一个左方向的分支走到头了，那么要调头，在走右分支。\n\n而对于二叉搜索树，不需要回溯的过程，因为节点的有序性就帮我们确定了搜索的方向。\n\n例如要搜索元素为3的节点，我们不需要搜索其他节点，也不需要做回溯，查找的路径已经规划好了。\n\n中间节点如果大于3就向左走，如果小于3就向右走，如图：\n\n二叉搜索树 https://file1.kamacoder.com/i/algo/20200812190213280.png\n\n所以迭代法代码如下：\n\nclass Solution {\npublic:\n    TreeNode* searchBST(TreeNode* root, int val) {\n        while (root != NULL) {\n            if (root->val > val) root = root->left;\n            else if (root->val < val) root = root->right;\n            else return root;\n        }\n        return NULL;\n    }\n};\n第一次看到了如此简单的迭代法，是不是感动的痛哭流涕，哭一会~\n\n#总结\n本篇我们介绍了二叉搜索树的遍历方式，因为二叉搜索树的有序性，遍历的时候要比普通二叉树简单很多。\n\n但是一些同学很容易忽略二叉搜索树的特性，所以写出遍历的代码就未必真的简单了。\n\n所以针对二叉搜索树的题目，一样要利用其特性。\n\n文中我依然给出递归和迭代两种方式，可以看出写法都非常简单，就是利用了二叉搜索树有序的特点。\n\n#其他语言版本\n#Java\nclass Solution {\n    // 递归，普通二叉树\n    public TreeNode searchBST(TreeNode root, int val) {\n        if (root == null || root.val == val) {\n            return root;\n        }\n        TreeNode left = searchBST(root.left, val);\n        if (left != null) {\n            return left;\n        }\n        return searchBST(root.right, val);\n    }\n}\n\nclass Solution {\n    // 递归，利用二叉搜索树特点，优化\n    public TreeNode searchBST(TreeNode root, int val) {\n        if (root == null || root.val == val) {\n            return root;\n        }\n        if (val < root.val) {\n            return searchBST(root.left, val);\n        } else {\n            return searchBST(root.right, val);\n        }\n    }\n}\n\nclass Solution {\n    // 迭代，普通二叉树\n    public TreeNode searchBST(TreeNode root, int val) {\n        if (root == null || root.val == val) {\n            return root;\n        }\n        Stack<TreeNode> stack = new Stack<>();\n        stack.push(root);\n        while (!stack.isEmpty()) {\n            TreeNode pop = stack.pop();\n            if (pop.val == val) {\n                return pop;\n            }\n            if (pop.right != null) {\n                stack.push(pop.right);\n            }\n            if (pop.left != null) {\n                stack.push(pop.left);\n            }\n        }\n        return null;\n    }\n}\n\nclass Solution {\n    // 迭代，利用二叉搜索树特点，优化，可以不需要栈\n    public TreeNode searchBST(TreeNode root, int val) {\n        while (root != null)\n            if (val < root.val) root = root.left;\n            else if (val > root.val) root = root.right;\n            else return root;\n        return null;\n    }\n}\n#Python\n（方法一） 递归\n\nclass Solution:\n    def searchBST(self, root: TreeNode, val: int) -> TreeNode:\n        # 为什么要有返回值: \n        #   因为搜索到目标节点就要立即return，\n        #   这样才是找到节点就返回（搜索某一条边），如果不加return，就是遍历整棵树了。\n\n        if not root or root.val == val: \n            return root\n\n        if root.val > val: \n            return self.searchBST(root.left, val)\n\n        if root.val < val: \n            return self.searchBST(root.right, val)\n\n（方法二）迭代\n\nclass Solution:\n    def searchBST(self, root: TreeNode, val: int) -> TreeNode:\n        while root:\n            if val < root.val: root = root.left\n            elif val > root.val: root = root.right\n            else: return root\n        return None\n(方法三) 栈-遍历\n\nclass Solution:\n    def searchBST(self, root: TreeNode, val: int) -> TreeNode:\n        stack = [root]\n        while stack:\n            node = stack.pop()\n            # 根据TreeNode的定义\n            # node携带有三类信息 node.left/node.right/node.val\n            # 找到val直接返回node 即是找到了该节点为根的子树\n            # 此处node.left/node.right/val的前后顺序可打乱\n            if node.val == val: \n                return node\n            if node.right:\n                stack.append(node.right)\n            if node.left:\n                stack.append(node.left)\n        return None"
+}

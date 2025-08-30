@@ -1,0 +1,265 @@
+{
+  "id": "AP_e4518bfe",
+  "title": "N皇后",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/n-queens/",
+  "description": "一个整数 n ，返回所有不同的 n 皇后问题 的解决方案。\n\n每一种解法包含一个不同的 n 皇后问题 的棋子放置方案，该方案中 'Q' 和 '.' 分别代表了皇后和空位。",
+  "examples": [
+    {
+      "input": "见图",
+      "output": "见图",
+      "explanation": null,
+      "image": "https://file1.kamacoder.com/i/algo/20211020232201.png"
+    }
+  ],
+  "constraints": [],
+  "algorithm_tags": [
+    "Backtracking",
+    "Recursion"
+  ],
+  "data_structure_tags": [
+    "Array",
+    "2D Array"
+  ],
+  "technique_tags": [
+    "Pruning",
+    "Tree Traversal"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用回溯算法解决N皇后问题。通过构建一个树形结构来表示棋盘上每个可能放置皇后的位置，并在每一层递归中选择一个位置尝试放置皇后，同时确保不违反任何约束条件（不同行、不同列、不同对角线）。当达到棋盘最后一行时，如果满足所有条件，则记录当前棋盘状态为一种解法。",
+  "key_insights": [
+    {
+      "content": "将二维矩阵中的皇后放置问题抽象为一棵树，其中树的高度对应棋盘高度，宽度对应每行可选位置数。"
+    },
+    {
+      "content": "利用递归搜索所有可能的解，并通过回溯撤销之前的选择以探索其他可能路径。"
+    },
+    {
+      "content": "每次放置皇后前，检查当前位置是否与已放置的皇后冲突，包括同行、同列及对角线。"
+    },
+    {
+      "content": "通过剪枝技术减少不必要的搜索，例如在检查列和对角线时只考虑当前行之前的行。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "都知道n皇后问题是回溯算法解决的经典问题，但是用回溯解决多了组合、切割、子集、排列问题之后，遇到这种二维矩阵还会有点不知所措。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private:vector<vector<string>> result;void backtracking(int n, int row, vector<string>& chessboard) {if (row == n) {result.push_back(chessboard);return;}for (int col = 0; col < n; col++) {if (isValid(row, col, chessboard, n)) {chessboard[row][col] = 'Q';backtracking(n, row + 1, chessboard);chessboard[row][col] = '.';}}}bool isValid(int row, int col, vector<string>& chessboard, int n) {for (int i = 0; i < row; i++) {if (chessboard[i][col] == 'Q') {return false;}}for (int i = row - 1, j = col - 1; i >=0 && j >= 0; i--, j--) {if (chessboard[i][j] == 'Q') {return false;}}for(int i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++) {if (chessboard[i][j] == 'Q') {return false;}}return true;}public:vector<vector<string>> solveNQueens(int n) {result.clear();std::vector<std::string> chessboard(n, std::string(n, '.'));backtracking(n, 0, chessboard);return result;};}",
+          "description": "C++实现N皇后问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {List<List<String>> res = new ArrayList<>();public List<List<String>> solveNQueens(int n) {char[][] chessboard = new char[n][n];for (char[] c : chessboard) {Arrays.fill(c, '.');}backTrack(n, 0, chessboard);return res;}public void backTrack(int n, int row, char[][] chessboard) {if (row == n) {res.add(Array2List(chessboard));return;}for (int col = 0;col < n; ++col) {if (isValid (row, col, n, chessboard)) {chessboard[row][col] = 'Q';backTrack(n, row+1, chessboard);chessboard[row][col] = '.';}}}public List Array2List(char[][] chessboard) {List<String> list = new ArrayList<>();for (char[] c : chessboard) {list.add(String.copyValueOf(c));}return list;}public boolean isValid(int row, int col, int n, char[][] chessboard) {for (int i=0; i<row; ++i) {if (chessboard[i][col] == 'Q') {return false;}}for (int i=row-1, j=col-1; i>=0 && j>=0; i--, j--) {if (chessboard[i][j] == 'Q') {return false;}}for (int i=row-1, j=col+1; i>=0 && j<=n-1; i--, j++) {if (chessboard[i][j] == 'Q') {return false;}}return true;}}",
+          "description": "Java实现N皇后问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def solveNQueens(self, n: int) -> List[List[str]]: result = [] chessboard = ['.' * n for _ in range(n)] self.backtracking(n, 0, chessboard, result) return [[''.join(row) for row in solution] for solution in result] def backtracking(self, n: int, row: int, chessboard: List[str], result: List[List[str]]) -> None: if row == n: result.append(chessboard[:]) return for col in range(n): if self.isValid(row, col, chessboard): chessboard[row] = chessboard[row][:col] + 'Q' + chessboard[row][col+1:] self.backtracking(n, row + 1, chessboard, result) chessboard[row] = chessboard[row][:col] + '.' + chessboard[row][col+1:] def isValid(self, row: int, col: int, chessboard: List[str]) -> bool: for i in range(row): if chessboard[i][col] == 'Q': return False i, j = row - 1, col - 1 while i >= 0 and j >= 0: if chessboard[i][j] == 'Q': return False i -= 1 j -= 1 i, j = row - 1, col + 1 while i >= 0 and j < len(chessboard): if chessboard[i][j] == 'Q': return False i -= 1 j += 1 return True",
+          "description": "Python实现N皇后问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "回溯三部曲",
+      "text": "按照我总结的如下回溯模板，我们来依次分析：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private:vector<vector<string>> result;void backtracking(int n, int row, vector<string>& chessboard) {if (row == n) {result.push_back(chessboard);return;}for (int col = 0; col < n; col++) {if (isValid(row, col, chessboard, n)) {chessboard[row][col] = 'Q';backtracking(n, row + 1, chessboard);chessboard[row][col] = '.';}}}bool isValid(int row, int col, vector<string>& chessboard, int n) {for (int i = 0; i < row; i++) {if (chessboard[i][col] == 'Q') {return false;}}for (int i = row - 1, j = col - 1; i >=0 && j >= 0; i--, j--) {if (chessboard[i][j] == 'Q') {return false;}}for(int i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++) {if (chessboard[i][j] == 'Q') {return false;}}return true;}public:vector<vector<string>> solveNQueens(int n) {result.clear();std::vector<std::string> chessboard(n, std::string(n, '.'));backtracking(n, 0, chessboard);return result;};};",
+          "description": "C++实现的N皇后问题解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {List<List<String>> res = new ArrayList<>();public List<List<String>> solveNQueens(int n) {char[][] chessboard = new char[n][n];for (char[] c : chessboard) {Arrays.fill(c, '.');}backTrack(n, 0, chessboard);return res;}public void backTrack(int n, int row, char[][] chessboard) {if (row == n) {res.add(Array2List(chessboard));return;}for (int col = 0;col < n; ++col) {if (isValid (row, col, n, chessboard)) {chessboard[row][col] = 'Q';backTrack(n, row+1, chessboard);chessboard[row][col] = '.';}}}public List Array2List(char[][] chessboard) {List<String> list = new ArrayList<>();for (char[] c : chessboard) {list.add(String.copyValueOf(c));}return list;}public boolean isValid(int row, int col, int n, char[][] chessboard) {for (int i=0; i<row; ++i) {if (chessboard[i][col] == 'Q') {return false;}}for (int i=row-1, j=col-1; i>=0 && j>=0; i--, j--) {if (chessboard[i][j] == 'Q') {return false;}}for (int i=row-1, j=col+1; i>=0 && j<=n-1; i--, j++) {if (chessboard[i][j] == 'Q') {return false;}}return true;}}",
+          "description": "Java实现的N皇后问题解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {List<List<String>> res = new ArrayList<>();boolean[] usedCol, usedDiag45, usedDiag135;public List<List<String>> solveNQueens(int n) {usedCol = new boolean[n];usedDiag45 = new boolean[2 * n - 1];usedDiag135 = new boolean[2 * n - 1];int[] board = new int[n];backTracking(board, n, 0);return res;}private void backTracking(int[] board, int n, int row) {if (row == n) {List<String> temp = new ArrayList<>();for (int i : board) {char[] str = new char[n];Arrays.fill(str, '.');str[i] = 'Q';temp.add(new String(str));}res.add(temp);return;}for (int col = 0; col < n; col++) {if (usedCol[col] | usedDiag45[row + col] | usedDiag135[row - col + n - 1]) {continue;}board[row] = col;usedCol[col] = true;usedDiag45[row + col] = true;usedDiag135[row - col + n - 1] = true;backTracking(board, n, row + 1);usedCol[col] = false;usedDiag45[row + col] = false;usedDiag135[row - col + n - 1] = false;}}}",
+          "description": "Java使用布尔数组优化的N皇后问题解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def solveNQueens(self, n: int) -> List[List[str]]:        result = []  # 存储最终结果的二维字符串数组        chessboard = ['.' * n for _ in range(n)]  # 初始化棋盘        self.backtracking(n, 0, chessboard, result)  # 回溯求解        return [[''.join(row) for row in solution] for solution in result]  # 返回结果集    def backtracking(self, n: int, row: int, chessboard: List[str], result: List[List[str]]) -> None:        if row == n:            result.append(chessboard[:])  # 棋盘填满，将当前解加入结果集            return        for col in range(n):            if self.isValid(row, col, chessboard):                chessboard[row] = chessboard[row][:col] + 'Q' + chessboard[row][col+1:]  # 放置皇后                self.backtracking(n, row + 1, chessboard, result)  # 递归到下一行                chessboard[row] = chessboard[row][:col] + '.' + chessboard[row][col+1:]  # 回溯，撤销当前位置的皇后    def isValid(self, row: int, col: int, chessboard: List[str]) -> bool:        # 检查列        for i in range(row):            if chessboard[i][col] == 'Q':                return False  # 当前列已经存在皇后，不合法        # 检查 45 度角是否有皇后        i, j = row - 1, col - 1        while i >= 0 and j >= 0:            if chessboard[i][j] == 'Q':                return False  # 左上方向已经存在皇后，不合法            i -= 1            j -= 1        # 检查 135 度角是否有皇后        i, j = row - 1, col + 1        while i >= 0 and j < len(chessboard):            if chessboard[i][j] == 'Q':                return False  # 右上方向已经存在皇后，不合法            i -= 1            j += 1        return True  # 当前位置合法",
+          "description": "Python实现的N皇后问题解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "本题是我们解决棋盘问题的第一道题目。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private:vector<vector<string>> result;void backtracking(int n, int row, vector<string>& chessboard) {if (row == n) {result.push_back(chessboard);return;}for (int col = 0; col < n; col++) {if (isValid(row, col, chessboard, n)) {chessboard[row][col] = 'Q';backtracking(n, row + 1, chessboard);chessboard[row][col] = '.';}}}bool isValid(int row, int col, vector<string>& chessboard, int n) {for (int i = 0; i < row; i++) {if (chessboard[i][col] == 'Q') {return false;}}for (int i = row - 1, j = col - 1; i >=0 && j >= 0; i--, j--) {if (chessboard[i][j] == 'Q') {return false;}}for(int i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++) {if (chessboard[i][j] == 'Q') {return false;}}return true;}public:vector<vector<string>> solveNQueens(int n) {result.clear();std::vector<std::string> chessboard(n, std::string(n, '.'));backtracking(n, 0, chessboard);return result;};}",
+          "description": "C++版本的N皇后问题解决代码"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {List<List<String>> res = new ArrayList<>();public List<List<String>> solveNQueens(int n) {char[][] chessboard = new char[n][n];for (char[] c : chessboard) {Arrays.fill(c, '.');}backTrack(n, 0, chessboard);return res;}public void backTrack(int n, int row, char[][] chessboard) {if (row == n) {res.add(Array2List(chessboard));return;}for (int col = 0;col < n; ++col) {if (isValid (row, col, n, chessboard)) {chessboard[row][col] = 'Q';backTrack(n, row+1, chessboard);chessboard[row][col] = '.';}}}public List Array2List(char[][] chessboard) {List<String> list = new ArrayList<>();for (char[] c : chessboard) {list.add(String.copyValueOf(c));}return list;}public boolean isValid(int row, int col, int n, char[][] chessboard) {for (int i=0; i<row; ++i) {if (chessboard[i][col] == 'Q') {return false;}}for (int i=row-1, j=col-1; i>=0 && j>=0; i--, j--) {if (chessboard[i][j] == 'Q') {return false;}}for (int i=row-1, j=col+1; i>=0 && j<=n-1; i--, j++) {if (chessboard[i][j] == 'Q') {return false;}}return true;}}",
+          "description": "Java版本的N皇后问题解决代码"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def solveNQueens(self, n: int) -> List[List[str]]:result = []chessboard = ['.' * n for _ in range(n)]self.backtracking(n, 0, chessboard, result)return [[''.join(row) for row in solution] for solution in result]def backtracking(self, n: int, row: int, chessboard: List[str], result: List[List[str]]) -> None:if row == n:result.append(chessboard[:])returnfor col in range(n):if self.isValid(row, col, chessboard):chessboard[row] = chessboard[row][:col] + 'Q' + chessboard[row][col+1:]self.backtracking(n, row + 1, chessboard, result)chessboard[row] = chessboard[row][:col] + '.' + chessboard[row][col+1:]def isValid(self, row: int, col: int, chessboard: List[str]) -> bool:for i in range(row):if chessboard[i][col] == 'Q':return Falsei, j = row - 1, col - 1while i >= 0 and j >= 0:if chessboard[i][j] == 'Q':return Falsei -= 1j -= 1i, j = row - 1, col + 1while i >= 0 and j < len(chessboard):if chessboard[i][j] == 'Q':return Falsei -= 1j += 1return True",
+          "description": "Python版本的N皇后问题解决代码"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言补充",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution { List<List<String>> res = new ArrayList<>(); public List<List<String>> solveNQueens(int n) { char[][] chessboard = new char[n][n]; for (char[] c : chessboard) { Arrays.fill(c, '.'); } backTrack(n, 0, chessboard); return res; } public void backTrack(int n, int row, char[][] chessboard) { if (row == n) { res.add(Array2List(chessboard)); return; } for (int col = 0;col < n; ++col) { if (isValid (row, col, n, chessboard)) { chessboard[row][col] = 'Q'; backTrack(n, row+1, chessboard); chessboard[row][col] = '.'; } } } public List Array2List(char[][] chessboard) { List<String> list = new ArrayList<>(); for (char[] c : chessboard) { list.add(String.copyValueOf(c)); } return list; } public boolean isValid(int row, int col, int n, char[][] chessboard) { for (int i=0; i<row; ++i) { if (chessboard[i][col] == 'Q') { return false; } } for (int i=row-1, j=col-1; i>=0 && j>=0; i--, j--) { if (chessboard[i][j] == 'Q') { return false; } } for (int i=row-1, j=col+1; i>=0 && j<=n-1; i--, j++) { if (chessboard[i][j] == 'Q') { return false; } } return true; } }",
+          "description": "Java实现N皇后问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { List<List<String>> res = new ArrayList<>(); boolean[] usedCol, usedDiag45, usedDiag135; public List<List<String>> solveNQueens(int n) { usedCol = new boolean[n]; usedDiag45 = new boolean[2 * n - 1]; usedDiag135 = new boolean[2 * n - 1]; int[] board = new int[n]; backTracking(board, n, 0); return res; } private void backTracking(int[] board, int n, int row) { if (row == n) { List<String> temp = new ArrayList<>(); for (int i : board) { char[] str = new char[n]; Arrays.fill(str, '.'); str[i] = 'Q'; temp.add(new String(str)); } res.add(temp); return; } for (int col = 0; col < n; col++) { if (usedCol[col] | usedDiag45[row + col] | usedDiag135[row - col + n - 1]) { continue; } board[row] = col; usedCol[col] = true; usedDiag45[row + col] = true; usedDiag135[row - col + n - 1] = true; backTracking(board, n, row + 1); usedCol[col] = false; usedDiag45[row + col] = false; usedDiag135[row - col + n - 1] = false; } } }",
+          "description": "Java使用布尔数组优化的N皇后问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def solveNQueens(self, n: int) -> List[List[str]]: result = [] chessboard = ['.' * n for _ in range(n)] self.backtracking(n, 0, chessboard, result) return [[''.join(row) for row in solution] for solution in result] def backtracking(self, n: int, row: int, chessboard: List[str], result: List[List[str]]) -> None: if row == n: result.append(chessboard[:]) return for col in range(n): if self.isValid(row, col, chessboard): chessboard[row] = chessboard[row][:col] + 'Q' + chessboard[row][col+1:] self.backtracking(n, row + 1, chessboard, result) chessboard[row] = chessboard[row][:col] + '.' + chessboard[row][col+1:] def isValid(self, row: int, col: int, chessboard: List[str]) -> bool: for i in range(row): if chessboard[i][col] == 'Q': return False i, j = row - 1, col - 1 while i >= 0 and j >= 0: if chessboard[i][j] == 'Q': return False i -= 1 j -= 1 i, j = row - 1, col + 1 while i >= 0 and j < len(chessboard): if chessboard[i][j] == 'Q': return False i -= 1 j += 1 return True",
+          "description": "Python实现N皇后问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private:vector<vector<string>> result;void backtracking(int n, int row, vector<string>& chessboard) {if (row == n) {result.push_back(chessboard);return;}for (int col = 0; col < n; col++) {if (isValid(row, col, chessboard, n)) {chessboard[row][col] = 'Q';backtracking(n, row + 1, chessboard);chessboard[row][col] = '.';}}}bool isValid(int row, int col, vector<string>& chessboard, int n) {for (int i = 0; i < row; i++) {if (chessboard[i][col] == 'Q') {return false;}}for (int i = row - 1, j = col - 1; i >=0 && j >= 0; i--, j--) {if (chessboard[i][j] == 'Q') {return false;}}for(int i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++) {if (chessboard[i][j] == 'Q') {return false;}}return true;}public:vector<vector<string>> solveNQueens(int n) {result.clear();std::vector<std::string> chessboard(n, std::string(n, '.'));backtracking(n, 0, chessboard);return result;};}",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "class Solution {List<List<String>> res = new ArrayList<>();public List<List<String>> solveNQueens(int n) {char[][] chessboard = new char[n][n];for (char[] c : chessboard) {Arrays.fill(c, '.');}backTrack(n, 0, chessboard);return res;}public void backTrack(int n, int row, char[][] chessboard) {if (row == n) {res.add(Array2List(chessboard));return;}for (int col = 0;col < n; ++col) {if (isValid (row, col, n, chessboard)) {chessboard[row][col] = 'Q';backTrack(n, row+1, chessboard);chessboard[row][col] = '.';}}}public List Array2List(char[][] chessboard) {List<String> list = new ArrayList<>();for (char[] c : chessboard) {list.add(String.copyValueOf(c));}return list;}public boolean isValid(int row, int col, int n, char[][] chessboard) {for (int i=0; i<row; ++i) {if (chessboard[i][col] == 'Q') {return false;}}for (int i=row-1, j=col-1; i>=0 && j>=0; i--, j--) {if (chessboard[i][j] == 'Q') {return false;}}for (int i=row-1, j=col+1; i>=0 && j<=n-1; i--, j++) {if (chessboard[i][j] == 'Q') {return false;}}return true;}}",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def solveNQueens(self, n: int) -> List[List[str]]:result = []chessboard = ['.' * n for _ in range(n)]self.backtracking(n, 0, chessboard, result)return [[''.join(row) for row in solution] for solution in result]def backtracking(self, n: int, row: int, chessboard: List[str], result: List[List[str]]) -> None:if row == n:result.append(chessboard[:])returnfor col in range(n):if self.isValid(row, col, chessboard):chessboard[row] = chessboard[row][:col] + 'Q' + chessboard[row][col+1:]self.backtracking(n, row + 1, chessboard, result)chessboard[row] = chessboard[row][:col] + '.' + chessboard[row][col+1:]def isValid(self, row: int, col: int, chessboard: List[str]) -> bool:for i in range(row):if chessboard[i][col] == 'Q':return Falsei, j = row - 1, col - 1while i >= 0 and j >= 0:if chessboard[i][j] == 'Q':return Falsei -= 1j -= 1i, j = row - 1, col + 1while i >= 0 and j < len(chessboard):if chessboard[i][j] == 'Q':return Falsei -= 1j += 1return True",
+          "description": null
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "class Solution:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private:vector<vector<string>> result;void backtracking(int n, int row, vector<string>& chessboard) {if (row == n) {result.push_back(chessboard);return;}for (int col = 0; col < n; col++) {if (isValid(row, col, chessboard, n)) {chessboard[row][col] = 'Q';backtracking(n, row + 1, chessboard);chessboard[row][col] = '.';}}}bool isValid(int row, int col, vector<string>& chessboard, int n) {for (int i = 0; i < row; i++) {if (chessboard[i][col] == 'Q') {return false;}}for (int i = row - 1, j = col - 1; i >=0 && j >= 0; i--, j--) {if (chessboard[i][j] == 'Q') {return false;}}for(int i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++) {if (chessboard[i][j] == 'Q') {return false;}}return true;}public:vector<vector<string>> solveNQueens(int n) {result.clear();std::vector<std::string> chessboard(n, std::string(n, '.'));backtracking(n, 0, chessboard);return result;};};",
+          "description": "C++实现的N皇后问题解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {List<List<String>> res = new ArrayList<>();public List<List<String>> solveNQueens(int n) {char[][] chessboard = new char[n][n];for (char[] c : chessboard) {Arrays.fill(c, '.');}backTrack(n, 0, chessboard);return res;}public void backTrack(int n, int row, char[][] chessboard) {if (row == n) {res.add(Array2List(chessboard));return;}for (int col = 0;col < n; ++col) {if (isValid (row, col, n, chessboard)) {chessboard[row][col] = 'Q';backTrack(n, row+1, chessboard);chessboard[row][col] = '.';}}}public List Array2List(char[][] chessboard) {List<String> list = new ArrayList<>();for (char[] c : chessboard) {list.add(String.copyValueOf(c));}return list;}public boolean isValid(int row, int col, int n, char[][] chessboard) {for (int i=0; i<row; ++i) {if (chessboard[i][col] == 'Q') {return false;}}for (int i=row-1, j=col-1; i>=0 && j>=0; i--, j--) {if (chessboard[i][j] == 'Q') {return false;}}for (int i=row-1, j=col+1; i>=0 && j<=n-1; i--, j++) {if (chessboard[i][j] == 'Q') {return false;}}return true;}}",
+          "description": "Java实现的N皇后问题解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def solveNQueens(self, n: int) -> List[List[str]]:        result = []        chessboard = ['.' * n for _ in range(n)]        self.backtracking(n, 0, chessboard, result)        return [[''.join(row) for row in solution] for solution in result]    def backtracking(self, n: int, row: int, chessboard: List[str], result: List[List[str]]) -> None:        if row == n:            result.append(chessboard[:])            return        for col in range(n):            if self.isValid(row, col, chessboard):                chessboard[row] = chessboard[row][:col] + 'Q' + chessboard[row][col+1:]                self.backtracking(n, row + 1, chessboard, result)                chessboard[row] = chessboard[row][:col] + '.' + chessboard[row][col+1:]    def isValid(self, row: int, col: int, chessboard: List[str]) -> bool:        for i in range(row):            if chessboard[i][col] == 'Q':                return False        i, j = row - 1, col - 1        while i >= 0 and j >= 0:            if chessboard[i][j] == 'Q':                return False            i -= 1            j -= 1        i, j = row - 1, col + 1        while i >= 0 and j < len(chessboard):            if chessboard[i][j] == 'Q':                return False            i -= 1            j += 1        return True",
+          "description": "Python实现的N皇后问题解决方案"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n!)",
+    "space_complexity": "O(n)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {private:vector<vector<string>> result;void backtracking(int n, int row, vector<string>& chessboard) {if (row == n) {result.push_back(chessboard);return;}for (int col = 0; col < n; col++) {if (isValid(row, col, chessboard, n)) {chessboard[row][col] = 'Q';backtracking(n, row + 1, chessboard);chessboard[row][col] = '.';}}bool isValid(int row, int col, vector<string>& chessboard, int n) {for (int i = 0; i < row; i++) {if (chessboard[i][col] == 'Q') {return false;}}for (int i = row - 1, j = col - 1; i >=0 && j >= 0; i--, j--) {if (chessboard[i][j] == 'Q') {return false;}}for(int i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++) {if (chessboard[i][j] == 'Q') {return false;}}return true;}public:vector<vector<string>> solveNQueens(int n) {result.clear();std::vector<std::string> chessboard(n, std::string(n, '.'));backtracking(n, 0, chessboard);return result;};}",
+      "description": null
+    },
+    {
+      "language": "java",
+      "code": "class Solution {List<List<String>> res = new ArrayList<>();public List<List<String>> solveNQueens(int n) {char[][] chessboard = new char[n][n];for (char[] c : chessboard) {Arrays.fill(c, '.');}backTrack(n, 0, chessboard);return res;}public void backTrack(int n, int row, char[][] chessboard) {if (row == n) {res.add(Array2List(chessboard));return;}for (int col = 0;col < n; ++col) {if (isValid (row, col, n, chessboard)) {chessboard[row][col] = 'Q';backTrack(n, row+1, chessboard);chessboard[row][col] = '.';}}}public List Array2List(char[][] chessboard) {List<String> list = new ArrayList<>();for (char[] c : chessboard) {list.add(String.copyValueOf(c));}return list;}public boolean isValid(int row, int col, int n, char[][] chessboard) {for (int i=0; i<row; ++i) {if (chessboard[i][col] == 'Q') {return false;}}for (int i=row-1, j=col-1; i>=0 && j>=0; i--, j--) {if (chessboard[i][j] == 'Q') {return false;}}for (int i=row-1, j=col+1; i>=0 && j<=n-1; i--, j++) {if (chessboard[i][j] == 'Q') {return false;}}return true;}}",
+      "description": null
+    },
+    {
+      "language": "java",
+      "code": "class Solution {List<List<String>> res = new ArrayList<>();boolean[] usedCol, usedDiag45, usedDiag135;public List<List<String>> solveNQueens(int n) {usedCol = new boolean[n];usedDiag45 = new boolean[2 * n - 1];usedDiag135 = new boolean[2 * n - 1];int[] board = new int[n];backTracking(board, n, 0);return res;}private void backTracking(int[] board, int n, int row) {if (row == n) {List<String> temp = new ArrayList<>();for (int i : board) {char[] str = new char[n];Arrays.fill(str, '.');str[i] = 'Q';temp.add(new String(str));}res.add(temp);return;}for (int col = 0; col < n; col++) {if (usedCol[col] | usedDiag45[row + col] | usedDiag135[row - col + n - 1]) {continue;}board[row] = col;usedCol[col] = true;usedDiag45[row + col] = true;usedDiag135[row - col + n - 1] = true;backTracking(board, n, row + 1);usedCol[col] = false;usedDiag45[row + col] = false;usedDiag135[row - col + n - 1] = false;}}}",
+      "description": null
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def solveNQueens(self, n: int) -> List[List[str]]: result = [] chessboard = ['.' * n for _ in range(n)] self.backtracking(n, 0, chessboard, result) return [[''.join(row) for row in solution] for solution in result] def backtracking(self, n: int, row: int, chessboard: List[str], result: List[List[str]]) -> None: if row == n: result.append(chessboard[:]) return for col in range(n): if self.isValid(row, col, chessboard): chessboard[row] = chessboard[row][:col] + 'Q' + chessboard[row][col+1:] self.backtracking(n, row + 1, chessboard, result) chessboard[row] = chessboard[row][:col] + '.' + chessboard[row][col+1:] def isValid(self, row: int, col: int, chessboard: List[str]) -> bool: for i in range(row): if chessboard[i][col] == 'Q': return False i, j = row - 1, col - 1 while i >= 0 and j >= 0: if chessboard[i][j] == 'Q': return False i -= 1 j -= 1 i, j = row - 1, col + 1 while i >= 0 and j < len(chessboard): if chessboard[i][j] == 'Q': return False i -= 1 j += 1 return True",
+      "description": null
+    }
+  ],
+  "common_mistakes": [
+    "忘记初始化或重置全局变量导致结果错误。",
+    "在合法性检查中未考虑所有方向的冲突情况。",
+    "未能正确处理边界条件导致数组越界。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20211020232201.png",
+      "description": "这张图片展示了两个4x4的棋盘，每个棋盘上放置了四个皇后，体现了八皇后问题的一种简化版本，旨在寻找不互相攻击的皇后排列方案。",
+      "context": "该图片展示了当n=4时，N皇后问题的两个不同的解决方案布局。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210130182532303.jpg",
+      "description": "这张图片展示了使用回溯算法解决N皇后问题（此处为3皇后问题）的决策树过程，通过逐行放置皇后并检查冲突来寻找解。",
+      "context": "该图片展示了如何将3*3棋盘上搜索皇后位置的过程抽象成一棵树的结构，帮助理解n皇后问题中的回溯搜索方法。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210130182532303-20230310122134167.jpg",
+      "description": "这张图片展示了使用回溯算法解决N皇后问题（此处为3皇后问题）的决策树过程，通过逐行放置皇后并检查冲突来寻找解。",
+      "context": "该图片展示了一个树形结构，用于说明当递归到达棋盘的最底层时（即叶子节点），可以收集八皇后问题的一种解法并返回的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20211020232201.png",
+      "description": "GIF展示了在3×3棋盘上使用回溯算法寻找N皇后问题解的过程。",
+      "context": "GIF动画展示了n皇后问题的一种解决方案，通过可视化的方式帮助理解如何在棋盘上放置皇后以满足题目要求。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210130182532303.jpg",
+      "description": "GIF展示了通过回溯算法搜索3皇后问题所有解决方案的过程，将二维矩阵的搜索过程抽象成树形结构进行可视化。",
+      "context": "该GIF动画展示了如何将3*3棋盘上搜索皇后位置的过程抽象成一棵树的结构，帮助理解回溯算法在解决n皇后问题时的工作方式。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210130182532303-20230310122134167.jpg",
+      "description": "GIF展示了N皇后问题中递归回溯算法的执行过程，通过在棋盘上逐行放置皇后并验证位置合法性来寻找所有可能的解决方案。",
+      "context": "GIF动画展示了在解决N皇后问题时，使用回溯算法遍历棋盘、放置皇后并探索所有可能解的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\回溯算法\\N皇后.txt",
+  "extracted_at": "2025-07-21T04:01:32.852236",
+  "raw_content": "N皇后\n力扣题目链接(https://leetcode.cn/problems/n-queens/)\n\nn 皇后问题 研究的是如何将 n 个皇后放置在 n×n 的棋盘上，并且使皇后彼此之间不能相互攻击。\n\n给你一个整数 n ，返回所有不同的 n 皇后问题 的解决方案。\n\n每一种解法包含一个不同的 n 皇后问题 的棋子放置方案，该方案中 'Q' 和 '.' 分别代表了皇后和空位。\n\n示例 1：\n\nhttps://file1.kamacoder.com/i/algo/20211020232201.png\n\n输入：n = 4\n输出：[[\".Q..\",\"...Q\",\"Q...\",\"..Q.\"],[\"..Q.\",\"Q...\",\"...Q\",\".Q..\"]]\n解释：如上图所示，4 皇后问题存在两个不同的解法。\n示例 2：\n\n输入：n = 1\n输出：[[\"Q\"]]\n\n#思路\n都知道n皇后问题是回溯算法解决的经典问题，但是用回溯解决多了组合、切割、子集、排列问题之后，遇到这种二维矩阵还会有点不知所措。\n\n首先来看一下皇后们的约束条件：\n\n不能同行\n不能同列\n不能同斜线\n确定完约束条件，来看看究竟要怎么去搜索皇后们的位置，其实搜索皇后的位置，可以抽象为一棵树。\n\n下面我用一个 3 * 3 的棋盘，将搜索过程抽象为一棵树，如图：\n\nhttps://file1.kamacoder.com/i/algo/20210130182532303.jpg\n\n从图中，可以看出，二维矩阵中矩阵的高就是这棵树的高度，矩阵的宽就是树形结构中每一个节点的宽度。\n\n那么我们用皇后们的约束条件，来回溯搜索这棵树，只要搜索到了树的叶子节点，说明就找到了皇后们的合理位置了。\n\n#回溯三部曲\n按照我总结的如下回溯模板，我们来依次分析：\n\nvoid backtracking(参数) {\n    if (终止条件) {\n        存放结果;\n        return;\n    }\n    for (选择：本层集合中元素（树中节点孩子的数量就是集合的大小）) {\n        处理节点;\n        backtracking(路径，选择列表); // 递归\n        回溯，撤销处理结果\n    }\n}\n递归函数参数\n我依然是定义全局变量二维数组result来记录最终结果。\n\n参数n是棋盘的大小，然后用row来记录当前遍历到棋盘的第几层了。\n\n代码如下：\n\nvector<vector<string>> result;\nvoid backtracking(int n, int row, vector<string>& chessboard) {\n递归终止条件\n在如下树形结构中： https://file1.kamacoder.com/i/algo/20210130182532303-20230310122134167.jpg\n\n可以看出，当递归到棋盘最底层（也就是叶子节点）的时候，就可以收集结果并返回了。\n\n代码如下：\n\nif (row == n) {\n    result.push_back(chessboard);\n    return;\n}\n单层搜索的逻辑\n递归深度就是row控制棋盘的行，每一层里for循环的col控制棋盘的列，一行一列，确定了放置皇后的位置。\n\n每次都是要从新的一行的起始位置开始搜，所以都是从0开始。\n\n代码如下：\n\nfor (int col = 0; col < n; col++) {\n    if (isValid(row, col, chessboard, n)) { // 验证合法就可以放\n        chessboard[row][col] = 'Q'; // 放置皇后\n        backtracking(n, row + 1, chessboard);\n        chessboard[row][col] = '.'; // 回溯，撤销皇后\n    }\n}\n验证棋盘是否合法\n按照如下标准去重：\n\n不能同行\n不能同列\n不能同斜线 （45度和135度角）\n代码如下：\n\nbool isValid(int row, int col, vector<string>& chessboard, int n) {\n    // 检查列\n    for (int i = 0; i < row; i++) { // 这是一个剪枝\n        if (chessboard[i][col] == 'Q') {\n            return false;\n        }\n    }\n    // 检查 45度角是否有皇后\n    for (int i = row - 1, j = col - 1; i >=0 && j >= 0; i--, j--) {\n        if (chessboard[i][j] == 'Q') {\n            return false;\n        }\n    }\n    // 检查 135度角是否有皇后\n    for(int i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++) {\n        if (chessboard[i][j] == 'Q') {\n            return false;\n        }\n    }\n    return true;\n}\n在这份代码中，细心的同学可以发现为什么没有在同行进行检查呢？\n\n因为在单层搜索的过程中，每一层递归，只会选for循环（也就是同一行）里的一个元素，所以不用去重了。\n\n那么按照这个模板不难写出如下C++代码：\n\nclass Solution {\nprivate:\nvector<vector<string>> result;\n// n 为输入的棋盘大小\n// row 是当前递归到棋盘的第几行了\nvoid backtracking(int n, int row, vector<string>& chessboard) {\n    if (row == n) {\n        result.push_back(chessboard);\n        return;\n    }\n    for (int col = 0; col < n; col++) {\n        if (isValid(row, col, chessboard, n)) { // 验证合法就可以放\n            chessboard[row][col] = 'Q'; // 放置皇后\n            backtracking(n, row + 1, chessboard);\n            chessboard[row][col] = '.'; // 回溯，撤销皇后\n        }\n    }\n}\nbool isValid(int row, int col, vector<string>& chessboard, int n) {\n    // 检查列\n    for (int i = 0; i < row; i++) { // 这是一个剪枝\n        if (chessboard[i][col] == 'Q') {\n            return false;\n        }\n    }\n    // 检查 45度角是否有皇后\n    for (int i = row - 1, j = col - 1; i >=0 && j >= 0; i--, j--) {\n        if (chessboard[i][j] == 'Q') {\n            return false;\n        }\n    }\n    // 检查 135度角是否有皇后\n    for(int i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++) {\n        if (chessboard[i][j] == 'Q') {\n            return false;\n        }\n    }\n    return true;\n}\npublic:\n    vector<vector<string>> solveNQueens(int n) {\n        result.clear();\n        std::vector<std::string> chessboard(n, std::string(n, '.'));\n        backtracking(n, 0, chessboard);\n        return result;\n    }\n};\n时间复杂度: O(n!)\n空间复杂度: O(n)\n可以看出，除了验证棋盘合法性的代码，省下来部分就是按照回溯法模板来的。\n\n#总结\n本题是我们解决棋盘问题的第一道题目。\n\n如果从来没有接触过N皇后问题的同学看着这样的题会感觉无从下手，可能知道要用回溯法，但也不知道该怎么去搜。\n\n这里我明确给出了棋盘的宽度就是for循环的长度，递归的深度就是棋盘的高度，这样就可以套进回溯法的模板里了。\n\n大家可以在仔细体会体会！\n\n#其他语言补充\n#Java\nclass Solution {\n    List<List<String>> res = new ArrayList<>();\n\n    public List<List<String>> solveNQueens(int n) {\n        char[][] chessboard = new char[n][n];\n        for (char[] c : chessboard) {\n            Arrays.fill(c, '.');\n        }\n        backTrack(n, 0, chessboard);\n        return res;\n    }\n\n\n    public void backTrack(int n, int row, char[][] chessboard) {\n        if (row == n) {\n            res.add(Array2List(chessboard));\n            return;\n        }\n\n        for (int col = 0;col < n; ++col) {\n            if (isValid (row, col, n, chessboard)) {\n                chessboard[row][col] = 'Q';\n                backTrack(n, row+1, chessboard);\n                chessboard[row][col] = '.';\n            }\n        }\n\n    }\n\n\n    public List Array2List(char[][] chessboard) {\n        List<String> list = new ArrayList<>();\n\n        for (char[] c : chessboard) {\n            list.add(String.copyValueOf(c));\n        }\n        return list;\n    }\n\n\n    public boolean isValid(int row, int col, int n, char[][] chessboard) {\n        // 检查列\n        for (int i=0; i<row; ++i) { // 相当于剪枝\n            if (chessboard[i][col] == 'Q') {\n                return false;\n            }\n        }\n\n        // 检查45度对角线\n        for (int i=row-1, j=col-1; i>=0 && j>=0; i--, j--) {\n            if (chessboard[i][j] == 'Q') {\n                return false;\n            }\n        }\n\n        // 检查135度对角线\n        for (int i=row-1, j=col+1; i>=0 && j<=n-1; i--, j++) {\n            if (chessboard[i][j] == 'Q') {\n                return false;\n            }\n        }\n        return true;\n    }\n}\n// 方法2：使用boolean数组表示已经占用的直(斜)线\nclass Solution {\n    List<List<String>> res = new ArrayList<>();\n    boolean[] usedCol, usedDiag45, usedDiag135;    // boolean数组中的每个元素代表一条直(斜)线\n    public List<List<String>> solveNQueens(int n) {\n        usedCol = new boolean[n];                  // 列方向的直线条数为 n\n        usedDiag45 = new boolean[2 * n - 1];       // 45°方向的斜线条数为 2 * n - 1\n        usedDiag135 = new boolean[2 * n - 1];      // 135°方向的斜线条数为 2 * n - 1\n\t\t//用于收集结果, 元素的index表示棋盘的row，元素的value代表棋盘的column\n        int[] board = new int[n];\n        backTracking(board, n, 0);\n        return res;\n    }\n    private void backTracking(int[] board, int n, int row) {\n        if (row == n) {\n            //收集结果\n            List<String> temp = new ArrayList<>();\n            for (int i : board) {\n                char[] str = new char[n];\n                Arrays.fill(str, '.');\n                str[i] = 'Q';\n                temp.add(new String(str));\n            }\n            res.add(temp);\n            return;\n        }\n\n        for (int col = 0; col < n; col++) {\n            if (usedCol[col] | usedDiag45[row + col] | usedDiag135[row - col + n - 1]) {\n                continue;\n            }\n            board[row] = col;\n\t\t\t// 标记该列出现过\n            usedCol[col] = true;\n\t\t\t// 同一45°斜线上元素的row + col为定值, 且各不相同\n            usedDiag45[row + col] = true;\n\t\t\t// 同一135°斜线上元素row - col为定值, 且各不相同\n\t\t\t// row - col 值有正有负, 加 n - 1 是为了对齐零点\n            usedDiag135[row - col + n - 1] = true;\n            // 递归\n            backTracking(board, n, row + 1);\n            usedCol[col] = false;\n            usedDiag45[row + col] = false;\n            usedDiag135[row - col + n - 1] = false;\n        }\n    }\n}\n#Python\nclass Solution:\n    def solveNQueens(self, n: int) -> List[List[str]]:\n        result = []  # 存储最终结果的二维字符串数组\n\n        chessboard = ['.' * n for _ in range(n)]  # 初始化棋盘\n        self.backtracking(n, 0, chessboard, result)  # 回溯求解\n        return [[''.join(row) for row in solution] for solution in result]  # 返回结果集\n\n    def backtracking(self, n: int, row: int, chessboard: List[str], result: List[List[str]]) -> None:\n        if row == n:\n            result.append(chessboard[:])  # 棋盘填满，将当前解加入结果集\n            return\n\n        for col in range(n):\n            if self.isValid(row, col, chessboard):\n                chessboard[row] = chessboard[row][:col] + 'Q' + chessboard[row][col+1:]  # 放置皇后\n                self.backtracking(n, row + 1, chessboard, result)  # 递归到下一行\n                chessboard[row] = chessboard[row][:col] + '.' + chessboard[row][col+1:]  # 回溯，撤销当前位置的皇后\n\n    def isValid(self, row: int, col: int, chessboard: List[str]) -> bool:\n        # 检查列\n        for i in range(row):\n            if chessboard[i][col] == 'Q':\n                return False  # 当前列已经存在皇后，不合法\n\n        # 检查 45 度角是否有皇后\n        i, j = row - 1, col - 1\n        while i >= 0 and j >= 0:\n            if chessboard[i][j] == 'Q':\n                return False  # 左上方向已经存在皇后，不合法\n            i -= 1\n            j -= 1\n\n        # 检查 135 度角是否有皇后\n        i, j = row - 1, col + 1\n        while i >= 0 and j < len(chessboard):\n            if chessboard[i][j] == 'Q':\n                return False  # 右上方向已经存在皇后，不合法\n            i -= 1\n            j += 1\n\n        return True  # 当前位置合法"
+}

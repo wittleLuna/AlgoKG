@@ -1,0 +1,274 @@
+{
+  "id": "AP_ab079f01",
+  "title": "滑动窗口最大值",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/sliding-window-maximum/",
+  "description": "一个数组 nums，有一个大小为 k 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k 个数字。滑动窗口每次只向右移动一位。\n\n返回滑动窗口中的最大值。\n\n进阶：\n\n你能在线性时间复杂度内解决此题吗？\n\nhttps://file1.kamacoder.com/i/algo/239.%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%9C%80%E5%A4%A7%E5%80%BC.png\n\n提示：\n\n1 <= nums.length <= 10^5\n-10^4 <= nums[i] <= 10^4\n1 <= k <= nums.length\n\n\n思路\n这是使用单调队列的经典题目。\n\n难点是如何求一个区间里的最大值呢？ （这好像是废话），暴力一下不就得了。\n\n暴力方法，遍历一遍的过程中每次从窗口中再找到最大的数值，这样很明显是O(n × k)的算法。\n\n有的同学可能会想用一个大顶堆（优先级队列）来存放这个窗口里的k个数字，这样就可以知道最大的最大值是多少了， 但是问题是这个窗口是移动的，而大顶堆每次只能弹出最大值，我们无法移除其他数值，这样就造成大顶堆维护的不是滑动窗口里面的数值了。所以不能用大顶堆。\n\n此时我们需要一个队列，这个队列呢，放进去窗口里的元素，然后随着窗口的移动，队列也一进一出，每次移动之后，队列告诉我们里面的最大值是什么。\n\n这个队列应该长这个样子：\n\nclass MyQueue {\npublic:\n    void pop(int value) {\n    }\n    void push(int value) {\n    }\n    int front() {\n        return que.front();\n    }\n};\n每次窗口移动的时候，调用que.pop(滑动窗口中移除元素的数值)，que.push(滑动窗口添加元素的数值)，然后que.front()就返回我们要的最大值。\n\n这么个队列香不香，要是有现成的这种数据结构是不是更香了！\n\n其实在C++中，可以使用 multiset 来模拟这个过程，文末提供这个解法仅针对C++，以下讲解我们还是靠自己来实现这个单调队列。\n\n然后再分析一下，队列里的元素一定是要排序的，而且要最大值放在出队口，要不然怎么知道最大值呢。\n\n但如果把窗口里的元素都放进队列里，窗口移动的时候，队列需要弹出元素。\n\n那么问题来了，已经排序之后的队列 怎么能把窗口要移除的元素（这个元素可不一定是最大值）弹出呢。\n\n大家此时应该陷入深思.....\n\n其实队列没有必要维护窗口里的所有元素，只需要维护有可能成为窗口里最大值的元素就可以了，同时保证队列里的元素数值是由大到小的。\n\n那么这个维护元素单调递减的队列就叫做单调队列，即单调递减或单调递增的队列。C++中没有直接支持单调队列，需要我们自己来实现一个单调队列\n\n不要以为实现的单调队列就是 对窗口里面的数进行排序，如果排序的话，那和优先级队列又有什么区别了呢。\n\n来看一下单调队列如何维护队列里的元素。\n\n动画如下：\n\nhttps://file1.kamacoder.com/i/algo/239.%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%9C%80%E5%A4%A7%E5%80%BC.gif\n\n对于窗口里的元素{2, 3, 5, 1 ,4}，单调队列里只维护{5, 4} 就够了，保持单调队列里单调递减，此时队列出口元素就是窗口里最大元素。\n\n此时大家应该怀疑单调队列里维护着{5, 4} 怎么配合窗口进行滑动呢？\n\n设计单调队列的时候，pop，和push操作要保持如下规则：\n\npop(value)：如果窗口移除的元素value等于单调队列的出口元素，那么队列弹出元素，否则不用任何操作\npush(value)：如果push的元素value大于入口元素的数值，那么就将队列入口的元素弹出，直到push元素的数值小于等于队列入口元素的数值为止\n保持如上规则，每次窗口移动的时候，只要问que.front()就可以返回当前窗口的最大值。\n\n为了更直观的感受到单调队列的工作过程，以题目",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "滑动窗口",
+    "单调队列"
+  ],
+  "data_structure_tags": [
+    "双端队列(deque)"
+  ],
+  "technique_tags": [
+    "贪心算法",
+    "数据流处理",
+    "双指针"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过设计一个单调递减的双端队列来追踪滑动窗口中的最大值。这个队列维持了从大到小的顺序，确保每次查询时，队列头部总是当前窗口的最大值。随着窗口的移动，适当更新队列以反映新加入和移出窗口的元素。",
+  "key_insights": [
+    {
+      "content": "维护一个单调递减的队列可以保证在O(1)时间内获取当前窗口内的最大值。"
+    },
+    {
+      "content": "队列不需要保存所有窗口内的元素，只需保存那些可能成为最大值的元素，从而减少了空间复杂度。"
+    },
+    {
+      "content": "每个元素最多被push_back和pop_back各一次，因此整体时间复杂度为O(n)。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "扩展",
+      "text": "大家貌似对单调队列 都有一些疑惑，首先要明确的是，题解中单调队列里的pop和push接口，仅适用于本题哈。单调队列不是一成不变的，而是不同场景不同写法，总之要保证队列里单调递减或递增的原则，所以叫做单调队列。 不要以为本题中的单调队列实现就是固定的写法哈。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class MyQueue { //单调队列（从大到小） public: deque<int> que; // 使用deque来实现单调队列 void pop(int value) { if (!que.empty() && value == que.front()) { que.pop_front(); } } void push(int value) { while (!que.empty() && value > que.back()) { que.pop_back(); } que.push_back(value); } int front() { return que.front(); } }; class Solution { private: class MyQueue { //单调队列（从大到小） public: deque<int> que; // 使用deque来实现单调队列 void pop(int value) { if (!que.empty() && value == que.front()) { que.pop_front(); } } void push(int value) { while (!que.empty() && value > que.back()) { que.pop_back(); } que.push_back(value); } int front() { return que.front(); } }; public: vector<int> maxSlidingWindow(vector<int>& nums, int k) { MyQueue que; vector<int> result; for (int i = 0; i < k; i++) { // 先将前k的元素放进队列 que.push(nums[i]); } result.push_back(que.front()); // result 记录前k的元素的最大值 for (int i = k; i < nums.size(); i++) { que.pop(nums[i - k]); // 滑动窗口移除最前面元素 que.push(nums[i]); // 滑动窗口前加入最后面的元素 result.push_back(que.front()); // 记录对应的最大值 } return result; } };",
+          "description": "C++版本的滑动窗口最大值问题解决方案，使用自定义的单调队列类。"
+        },
+        {
+          "language": "java",
+          "code": "class MyQueue { Deque<Integer> deque = new LinkedList<>(); void poll(int val) { if (!deque.isEmpty() && val == deque.peek()) { deque.poll(); } } void add(int val) { while (!deque.isEmpty() && val > deque.getLast()) { deque.removeLast(); } deque.add(val); } int peek() { return deque.peek(); } } class Solution { public int[] maxSlidingWindow(int[] nums, int k) { if (nums.length == 1) { return nums; } int len = nums.length - k + 1; int[] res = new int[len]; int num = 0; MyQueue myQueue = new MyQueue(); for (int i = 0; i < k; i++) { myQueue.add(nums[i]); } res[num++] = myQueue.peek(); for (int i = k; i < nums.length; i++) { myQueue.poll(nums[i - k]); myQueue.add(nums[i]); res[num++] = myQueue.peek(); } return res; } }",
+          "description": "Java版本的滑动窗口最大值问题解决方案，使用自定义的单调队列类。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int[] maxSlidingWindow(int[] nums, int k) { ArrayDeque<Integer> deque = new ArrayDeque<>(); int n = nums.length; int[] res = new int[n - k + 1]; int idx = 0; for(int i = 0; i < n; i++) { while(!deque.isEmpty() && deque.peek() < i - k + 1){ deque.poll(); } while(!deque.isEmpty() && nums[deque.peekLast()] < nums[i]) { deque.pollLast(); } deque.offer(i); if(i >= k - 1){ res[idx++] = nums[deque.peek()]; } } return res; } }",
+          "description": "Java版本的另一种滑动窗口最大值问题解决方案，直接利用双端队列手动实现单调队列。"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque class MyQueue: def __init__(self): self.queue = deque() def pop(self, value): if self.queue and value == self.queue[0]: self.queue.popleft() def push(self, value): while self.queue and value > self.queue[-1]: self.queue.pop() self.queue.append(value) def front(self): return self.queue[0] class Solution: def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]: que = MyQueue() result = [] for i in range(k): que.push(nums[i]) result.append(que.front()) for i in range(k, len(nums)): que.pop(nums[i - k]) que.push(nums[i]) result.append(que.front()) return result",
+          "description": "Python版本的滑动窗口最大值问题解决方案，使用自定义的单调队列类。"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque class Solution: def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]: max_list = [] kept_nums = deque() for i in range(len(nums)): update_kept_nums(kept_nums, nums[i]) if i >= k and nums[i - k] == kept_nums[0]: kept_nums.popleft() if i >= k - 1: max_list.append(kept_nums[0]) return max_list def update_kept_nums(kept_nums, num): while kept_nums and num > kept_nums[-1]: kept_nums.pop() kept_nums.append(num)",
+          "description": "Python版本的另一种滑动窗口最大值问题解决方案，直接用单调队列。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class MyQueue { Deque<Integer> deque = new LinkedList<>(); void poll(int val) { if (!deque.isEmpty() && val == deque.peek()) { deque.poll(); } } void add(int val) { while (!deque.isEmpty() && val > deque.getLast()) { deque.removeLast(); } deque.add(val); } int peek() { return deque.peek(); } } class Solution { public int[] maxSlidingWindow(int[] nums, int k) { if (nums.length == 1) { return nums; } int len = nums.length - k + 1; int[] res = new int[len]; int num = 0; MyQueue myQueue = new MyQueue(); for (int i = 0; i < k; i++) { myQueue.add(nums[i]); } res[num++] = myQueue.peek(); for (int i = k; i < nums.length; i++) { myQueue.poll(nums[i - k]); myQueue.add(nums[i]); res[num++] = myQueue.peek(); } return res; } }",
+          "description": "Java实现滑动窗口最大值问题，使用自定义单调队列类。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int[] maxSlidingWindow(int[] nums, int k) { ArrayDeque<Integer> deque = new ArrayDeque<>(); int n = nums.length; int[] res = new int[n - k + 1]; int idx = 0; for(int i = 0; i < n; i++) { while(!deque.isEmpty() && deque.peek() < i - k + 1){ deque.poll(); } while(!deque.isEmpty() && nums[deque.peekLast()] < nums[i]) { deque.pollLast(); } deque.offer(i); if(i >= k - 1){ res[idx++] = nums[deque.peek()]; } } return res; } }",
+          "description": "Java实现滑动窗口最大值问题，直接利用双端队列手动实现单调队列。"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque class MyQueue: def __init__(self): self.queue = deque() def pop(self, value): if self.queue and value == self.queue[0]: self.queue.popleft() def push(self, value): while self.queue and value > self.queue[-1]: self.queue.pop() self.queue.append(value) def front(self): return self.queue[0] class Solution: def maxSlidingWindow(self, nums, k): que = MyQueue() result = [] for i in range(k): que.push(nums[i]) result.append(que.front()) for i in range(k, len(nums)): que.pop(nums[i - k]) que.push(nums[i]) result.append(que.front()) return result",
+          "description": "Python实现滑动窗口最大值问题，使用自定义单调队列类。"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque class Solution: def maxSlidingWindow(self, nums, k): max_list = [] kept_nums = deque() for i in range(len(nums)): update_kept_nums(kept_nums, nums[i]) if i >= k and nums[i - k] == kept_nums[0]: kept_nums.popleft() if i >= k - 1: max_list.append(kept_nums[0]) return max_list def update_kept_nums(kept_nums, num): while kept_nums and num > kept_nums[-1]: kept_nums.pop() kept_nums.append(num)",
+          "description": "Python实现滑动窗口最大值问题，直接用单调队列。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "//解法一",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class MyQueue { //单调队列（从大到小）\npublic:\n    deque<int> que; // 使用deque来实现单调队列\n    void pop(int value) {\n        if (!que.empty() && value == que.front()) {\n            que.pop_front();\n        }\n    }\n    void push(int value) {\n        while (!que.empty() && value > que.back()) {\n            que.pop_back();\n        }\n        que.push_back(value);\n    }\n    int front() {\n        return que.front();\n    }\n};\nclass Solution {\nprivate:\n    class MyQueue { //单调队列（从大到小）\n    public:\n        deque<int> que; // 使用deque来实现单调队列\n        void pop(int value) {\n            if (!que.empty() && value == que.front()) {\n                que.pop_front();\n            }\n        }\n        void push(int value) {\n            while (!que.empty() && value > que.back()) {\n                que.pop_back();\n            }\n            que.push_back(value);\n        }\n        int front() {\n            return que.front();\n        }\n    };\npublic:\n    vector<int> maxSlidingWindow(vector<int>& nums, int k) {\n        MyQueue que;\n        vector<int> result;\n        for (int i = 0; i < k; i++) { // 先将前k的元素放进队列\n            que.push(nums[i]);\n        }\n        result.push_back(que.front()); // result 记录前k的元素的最大值\n        for (int i = k; i < nums.size(); i++) {\n            que.pop(nums[i - k]); // 滑动窗口移除最前面元素\n            que.push(nums[i]); // 滑动窗口前加入最后面的元素\n            result.push_back(que.front()); // 记录对应的最大值\n        }\n        return result;\n    }\n};",
+          "description": "使用C++实现滑动窗口最大值问题，通过自定义单调队列类MyQueue来追踪当前窗口内的最大值。"
+        },
+        {
+          "language": "java",
+          "code": "class MyQueue {\n    Deque<Integer> deque = new LinkedList<>();\n    void poll(int val) {\n        if (!deque.isEmpty() && val == deque.peek()) {\n            deque.poll();\n        }\n    }\n    void add(int val) {\n        while (!deque.isEmpty() && val > deque.getLast()) {\n            deque.removeLast();\n        }\n        deque.add(val);\n    }\n    int peek() {\n        return deque.peek();\n    }\n}\nclass Solution {\n    public int[] maxSlidingWindow(int[] nums, int k) {\n        if (nums.length == 1) {\n            return nums;\n        }\n        int len = nums.length - k + 1;\n        int[] res = new int[len];\n        int num = 0;\n        MyQueue myQueue = new MyQueue();\n        for (int i = 0; i < k; i++) {\n            myQueue.add(nums[i]);\n        }\n        res[num++] = myQueue.peek();\n        for (int i = k; i < nums.length; i++) {\n            myQueue.poll(nums[i - k]);\n            myQueue.add(nums[i]);\n            res[num++] = myQueue.peek();\n        }\n        return res;\n    }\n}",
+          "description": "Java版本的解决方案，同样采用自定义的单调队列类MyQueue来处理滑动窗口最大值问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\nclass Solution {\n    public int[] maxSlidingWindow(int[] nums, int k) {\n        ArrayDeque<Integer> deque = new ArrayDeque<>();\n        int n = nums.length;\n        int[] res = new int[n - k + 1];\n        int idx = 0;\n        for(int i = 0; i < n; i++) {\n            while(!deque.isEmpty() && deque.peek() < i - k + 1){\n                deque.poll();\n            }\n            while(!deque.isEmpty() && nums[deque.peekLast()] < nums[i]) {\n                deque.pollLast();\n            }\n            deque.offer(i);\n            if(i >= k - 1){\n                res[idx++] = nums[deque.peek()];\n            }\n        }\n        return res;\n    }\n}",
+          "description": "另一种Java实现方式，直接利用ArrayDeque作为单调队列，简化了代码结构。"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\nclass MyQueue: #单调队列（从大到小）\n    def __init__(self):\n        self.queue = deque()\n    def pop(self, value):\n        if self.queue and value == self.queue[0]:\n            self.queue.popleft()\n    def push(self, value):\n        while self.queue and value > self.queue[-1]:\n            self.queue.pop()\n        self.queue.append(value)\n    def front(self):\n        return self.queue[0]\nclass Solution:\n    def maxSlidingWindow(self, nums, k):\n        que = MyQueue()\n        result = []\n        for i in range(k):\n            que.push(nums[i])\n        result.append(que.front())\n        for i in range(k, len(nums)):\n            que.pop(nums[i - k])\n            que.push(nums[i])\n            result.append(que.front())\n        return result",
+          "description": "Python版本的解法一，基于collections.deque实现了单调队列类MyQueue，用于解决滑动窗口最大值问题。"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\nclass Solution:\n    def maxSlidingWindow(self, nums, k):\n        max_list = []\n        kept_nums = deque()\n        def update_kept_nums(kept_nums, num):\n            while kept_nums and num > kept_nums[-1]:\n                kept_nums.pop()\n            kept_nums.append(num)\n        for i in range(len(nums)):\n            update_kept_nums(kept_nums, nums[i])\n            if i >= k and nums[i - k] == kept_nums[0]:\n                kept_nums.popleft()\n            if i >= k - 1:\n                max_list.append(kept_nums[0])\n        return max_list",
+          "description": "Python版本的解法二，直接使用单调队列，并通过update_kept_nums函数保持队列的单调性。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "#解法一：使用自定义的单调队列类",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "class MyQueue {public: deque<int> que; void pop(int value) { if (!que.empty() && value == que.front()) { que.pop_front(); } } void push(int value) { while (!que.empty() && value > que.back()) { que.pop_back(); } que.push_back(value); } int front() { return que.front(); } }; class Solution {private: class MyQueue {public: deque<int> que; void pop(int value) { if (!que.empty() && value == que.front()) { que.pop_front(); } } void push(int value) { while (!que.empty() && value > que.back()) { que.pop_back(); } que.push_back(value); } int front() { return que.front(); } };public: vector<int> maxSlidingWindow(vector<int>& nums, int k) { MyQueue que; vector<int> result; for (int i = 0; i < k; i++) { que.push(nums[i]); } result.push_back(que.front()); for (int i = k; i < nums.size(); i++) { que.pop(nums[i - k]); que.push(nums[i]); result.push_back(que.front()); } return result; } };",
+          "description": "C++实现单调队列求滑动窗口最大值"
+        },
+        {
+          "language": "Java",
+          "code": "class MyQueue { Deque<Integer> deque = new LinkedList<>(); void poll(int val) { if (!deque.isEmpty() && val == deque.peek()) { deque.poll(); } } void add(int val) { while (!deque.isEmpty() && val > deque.getLast()) { deque.removeLast(); } deque.add(val); } int peek() { return deque.peek(); } } class Solution { public int[] maxSlidingWindow(int[] nums, int k) { if (nums.length == 1) { return nums; } int len = nums.length - k + 1; int[] res = new int[len]; int num = 0; MyQueue myQueue = new MyQueue(); for (int i = 0; i < k; i++) { myQueue.add(nums[i]); } res[num++] = myQueue.peek(); for (int i = k; i < nums.length; i++) { myQueue.poll(nums[i - k]); myQueue.add(nums[i]); res[num++] = myQueue.peek(); } return res; } }",
+          "description": "Java实现单调队列求滑动窗口最大值"
+        },
+        {
+          "language": "Python",
+          "code": "from collections import deque class MyQueue: def __init__(self): self.queue = deque() def pop(self, value): if self.queue and value == self.queue[0]: self.queue.popleft() def push(self, value): while self.queue and value > self.queue[-1]: self.queue.pop() self.queue.append(value) def front(self): return self.queue[0] class Solution: def maxSlidingWindow(self, nums, k): que = MyQueue() result = [] for i in range(k): que.push(nums[i]) result.append(que.front()) for i in range(k, len(nums)): que.pop(nums[i - k]) que.push(nums[i]) result.append(que.front()) return result",
+          "description": "Python实现单调队列求滑动窗口最大值"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "解法一：使用自定义的单调队列类",
+      "text": "from collections import deque",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class MyQueue { public: deque<int> que; void pop(int value) { if (!que.empty() && value == que.front()) { que.pop_front(); } } void push(int value) { while (!que.empty() && value > que.back()) { que.pop_back(); } que.push_back(value); } int front() { return que.front(); } }; class Solution { private: MyQueue que; public: vector<int> maxSlidingWindow(vector<int>& nums, int k) { for (int i = 0; i < k; i++) { que.push(nums[i]); } vector<int> result; result.push_back(que.front()); for (int i = k; i < nums.size(); i++) { que.pop(nums[i - k]); que.push(nums[i]); result.push_back(que.front()); } return result; } };",
+          "description": "使用C++实现的单调队列解决滑动窗口最大值问题"
+        },
+        {
+          "language": "java",
+          "code": "class MyQueue { Deque<Integer> deque = new LinkedList<>(); void poll(int val) { if (!deque.isEmpty() && val == deque.peek()) { deque.poll(); } } void add(int val) { while (!deque.isEmpty() && val > deque.getLast()) { deque.removeLast(); } deque.add(val); } int peek() { return deque.peek(); } } class Solution { public int[] maxSlidingWindow(int[] nums, int k) { int len = nums.length - k + 1; int[] res = new int[len]; int num = 0; MyQueue myQueue = new MyQueue(); for (int i = 0; i < k; i++) { myQueue.add(nums[i]); } res[num++] = myQueue.peek(); for (int i = k; i < nums.length; i++) { myQueue.poll(nums[i - k]); myQueue.add(nums[i]); res[num++] = myQueue.peek(); } return res; } }",
+          "description": "使用Java实现的单调队列解决滑动窗口最大值问题"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque class MyQueue: def __init__(self): self.queue = deque() def pop(self, value): if self.queue and value == self.queue[0]: self.queue.popleft() def push(self, value): while self.queue and value > self.queue[-1]: self.queue.pop() self.queue.append(value) def front(self): return self.queue[0] class Solution: def maxSlidingWindow(self, nums, k): que = MyQueue() result = [] for i in range(k): que.push(nums[i]) result.append(que.front()) for i in range(k, len(nums)): que.pop(nums[i - k]) que.push(nums[i]) result.append(que.front()) return result",
+          "description": "使用Python实现的单调队列解决滑动窗口最大值问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "解法二：直接用单调队列",
+      "text": "from collections import deque",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class MyQueue { //单调队列（从大到小） public: deque<int> que; // 使用deque来实现单调队列 void pop(int value) { if (!que.empty() && value == que.front()) { que.pop_front(); } } void push(int value) { while (!que.empty() && value > que.back()) { que.pop_back(); } que.push_back(value); } int front() { return que.front(); } }; class Solution { private: class MyQueue { //单调队列（从大到小） public: deque<int> que; // 使用deque来实现单调队列 void pop(int value) { if (!que.empty() && value == que.front()) { que.pop_front(); } } void push(int value) { while (!que.empty() && value > que.back()) { que.pop_back(); } que.push_back(value); } int front() { return que.front(); } }; public: vector<int> maxSlidingWindow(vector<int>& nums, int k) { MyQueue que; vector<int> result; for (int i = 0; i < k; i++) { // 先将前k的元素放进队列 que.push(nums[i]); } result.push_back(que.front()); // result 记录前k的元素的最大值 for (int i = k; i < nums.size(); i++) { que.pop(nums[i - k]); // 滑动窗口移除最前面元素 que.push(nums[i]); // 滑动窗口前加入最后面的元素 result.push_back(que.front()); // 记录对应的最大值 } return result; } };",
+          "description": "C++中使用deque实现单调队列解决滑动窗口最大值问题。"
+        },
+        {
+          "language": "java",
+          "code": "class MyQueue { Deque<Integer> deque = new LinkedList<>(); void poll(int val) { if (!deque.isEmpty() && val == deque.peek()) { deque.poll(); } } void add(int val) { while (!deque.isEmpty() && val > deque.getLast()) { deque.removeLast(); } deque.add(val); } int peek() { return deque.peek(); } } class Solution { public int[] maxSlidingWindow(int[] nums, int k) { if (nums.length == 1) { return nums; } int len = nums.length - k + 1; int[] res = new int[len]; int num = 0; MyQueue myQueue = new MyQueue(); for (int i = 0; i < k; i++) { myQueue.add(nums[i]); } res[num++] = myQueue.peek(); for (int i = k; i < nums.length; i++) { myQueue.poll(nums[i - k]); myQueue.add(nums[i]); res[num++] = myQueue.peek(); } return res; } }",
+          "description": "Java版本，使用自定义数组实现单调队列解决滑动窗口最大值问题。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int[] maxSlidingWindow(int[] nums, int k) { ArrayDeque<Integer> deque = new ArrayDeque<>(); int n = nums.length; int[] res = new int[n - k + 1]; int idx = 0; for(int i = 0; i < n; i++) { while(!deque.isEmpty() && deque.peek() < i - k + 1){ deque.poll(); } while(!deque.isEmpty() && nums[deque.peekLast()] < nums[i]) { deque.pollLast(); } deque.offer(i); if(i >= k - 1){ res[idx++] = nums[deque.peek()]; } } return res; } }",
+          "description": "Java版本，利用双端队列手动实现单调队列解决滑动窗口最大值问题。"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque class MyQueue: def __init__(self): self.queue = deque() def pop(self, value): if self.queue and value == self.queue[0]: self.queue.popleft() def push(self, value): while self.queue and value > self.queue[-1]: self.queue.pop() self.queue.append(value) def front(self): return self.queue[0] class Solution: def maxSlidingWindow(self, nums, k): que = MyQueue() result = [] for i in range(k): que.push(nums[i]) result.append(que.front()) for i in range(k, len(nums)): que.pop(nums[i - k]) que.push(nums[i]) result.append(que.front()) return result",
+          "description": "Python版本，使用自定义的单调队列类解决滑动窗口最大值问题。"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque class Solution: def maxSlidingWindow(self, nums, k): max_list = [] kept_nums = deque() for i in range(len(nums)): update_kept_nums(kept_nums, nums[i]) if i >= k and nums[i - k] == kept_nums[0]: kept_nums.popleft() if i >= k - 1: max_list.append(kept_nums[0]) return max_list def update_kept_nums(kept_nums, num): while kept_nums and num > kept_nums[-1]: kept_nums.pop() kept_nums.append(num)",
+          "description": "Python版本，直接用单调队列解决滑动窗口最大值问题。"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(k)",
+    "explanation": "暴力一下不就得了。"
+  },
+  "code_solutions": [
+    {
+      "language": "C++",
+      "code": "class MyQueue { public: deque<int> que; void pop(int value) { if (!que.empty() && value == que.front()) { que.pop_front(); } } void push(int value) { while (!que.empty() && value > que.back()) { que.pop_back(); } que.push_back(value); } int front() { return que.front(); } }; class Solution { private: class MyQueue { public: deque<int> que; void pop(int value) { if (!que.empty() && value == que.front()) { que.pop_front(); } } void push(int value) { while (!que.empty() && value > que.back()) { que.pop_back(); } que.push_back(value); } int front() { return que.front(); } }; public: vector<int> maxSlidingWindow(vector<int>& nums, int k) { MyQueue que; vector<int> result; for (int i = 0; i < k; i++) { que.push(nums[i]); } result.push_back(que.front()); for (int i = k; i < nums.size(); i++) { que.pop(nums[i - k]); que.push(nums[i]); result.push_back(que.front()); } return result; } };",
+      "description": "使用单调队列解决滑动窗口最大值问题"
+    },
+    {
+      "language": "Java",
+      "code": "class MyQueue { Deque<Integer> deque = new LinkedList<>(); void poll(int val) { if (!deque.isEmpty() && val == deque.peek()) { deque.poll(); } } void add(int val) { while (!deque.isEmpty() && val > deque.getLast()) { deque.removeLast(); } deque.add(val); } int peek() { return deque.peek(); } } class Solution { public int[] maxSlidingWindow(int[] nums, int k) { if (nums.length == 1) { return nums; } int len = nums.length - k + 1; int[] res = new int[len]; int num = 0; MyQueue myQueue = new MyQueue(); for (int i = 0; i < k; i++) { myQueue.add(nums[i]); } res[num++] = myQueue.peek(); for (int i = k; i < nums.length; i++) { myQueue.poll(nums[i - k]); myQueue.add(nums[i]); res[num++] = myQueue.peek(); } return res; } }",
+      "description": "利用自定义队列实现的Java版本解决滑动窗口最大值问题"
+    },
+    {
+      "language": "Python",
+      "code": "from collections import deque class MyQueue: def __init__(self): self.queue = deque() def pop(self, value): if self.queue and value == self.queue[0]: self.queue.popleft() def push(self, value): while self.queue and value > self.queue[-1]: self.queue.pop() self.queue.append(value) def front(self): return self.queue[0] class Solution: def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]: que = MyQueue() result = [] for i in range(k): que.push(nums[i]) result.append(que.front()) for i in range(k, len(nums)): que.pop(nums[i - k]) que.push(nums[i]) result.append(que.front()) return result",
+      "description": "基于Python的单调队列解法处理滑动窗口最大值问题"
+    }
+  ],
+  "common_mistakes": [
+    "尝试使用优先级队列（堆）来直接解决问题，但忽略了无法有效删除非最值元素的问题。",
+    "未正确理解单调队列的工作原理，导致在实现pop和push方法时出现错误。",
+    "忽视了边界条件，如空数组或k为0等特殊情况下的处理。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/239.%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%9C%80%E5%A4%A7%E5%80%BC.png",
+      "description": "该图片展示了使用滑动窗口算法在数组中找到每个长度为 k 的子数组的最大值的过程。",
+      "context": "该图片展示了滑动窗口在数组上移动的过程，以及如何确定每个窗口内的最大值，帮助理解题目要求和解题思路。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/239.%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%9C%80%E5%A4%A7%E5%80%BC.gif",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/239.%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%9C%80%E5%A4%A7%E5%80%BC.gif",
+      "context": "动画展示了如何通过维护一个单调递减队列来跟踪滑动窗口中的最大值。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/239.%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%9C%80%E5%A4%A7%E5%80%BC-2.gif",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/239.%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%9C%80%E5%A4%A7%E5%80%BC-2.gif",
+      "context": "该动图展示了在给定数组和窗口大小的情况下，单调队列如何通过一系列的入队和出队操作来维持窗口内的最大值。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/239.%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%9C%80%E5%A4%A7%E5%80%BC.gif",
+      "description": "GIF展示了滑动窗口最大值问题中，随着窗口在数组上滑动，单调队列如何通过特定规则维护潜在的最大值元素的过程。",
+      "context": "该GIF动画展示了如何通过维护一个单调递减队列来追踪滑动窗口中的最大值，当窗口滑动时，队列相应地调整以保持其性质。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/239.%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%9C%80%E5%A4%A7%E5%80%BC-2.gif",
+      "description": "GIF展示了通过滑动窗口和单调队列寻找数组中每个大小为k的连续子数组最大值的过程。",
+      "context": "该GIF动画展示了在给定数组和窗口大小条件下，单调队列如何维护并找出滑动窗口内的最大值的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\栈与队列\\滑动窗口最大值.txt",
+  "extracted_at": "2025-07-22T13:51:31.060250",
+  "raw_content": "滑动窗口最大值\n力扣题目链接(https://leetcode.cn/problems/sliding-window-maximum/)\n\n给定一个数组 nums，有一个大小为 k 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k 个数字。滑动窗口每次只向右移动一位。\n\n返回滑动窗口中的最大值。\n\n进阶：\n\n你能在线性时间复杂度内解决此题吗？\n\nhttps://file1.kamacoder.com/i/algo/239.%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%9C%80%E5%A4%A7%E5%80%BC.png\n\n提示：\n\n1 <= nums.length <= 10^5\n-10^4 <= nums[i] <= 10^4\n1 <= k <= nums.length\n\n\n思路\n这是使用单调队列的经典题目。\n\n难点是如何求一个区间里的最大值呢？ （这好像是废话），暴力一下不就得了。\n\n暴力方法，遍历一遍的过程中每次从窗口中再找到最大的数值，这样很明显是O(n × k)的算法。\n\n有的同学可能会想用一个大顶堆（优先级队列）来存放这个窗口里的k个数字，这样就可以知道最大的最大值是多少了， 但是问题是这个窗口是移动的，而大顶堆每次只能弹出最大值，我们无法移除其他数值，这样就造成大顶堆维护的不是滑动窗口里面的数值了。所以不能用大顶堆。\n\n此时我们需要一个队列，这个队列呢，放进去窗口里的元素，然后随着窗口的移动，队列也一进一出，每次移动之后，队列告诉我们里面的最大值是什么。\n\n这个队列应该长这个样子：\n\nclass MyQueue {\npublic:\n    void pop(int value) {\n    }\n    void push(int value) {\n    }\n    int front() {\n        return que.front();\n    }\n};\n每次窗口移动的时候，调用que.pop(滑动窗口中移除元素的数值)，que.push(滑动窗口添加元素的数值)，然后que.front()就返回我们要的最大值。\n\n这么个队列香不香，要是有现成的这种数据结构是不是更香了！\n\n其实在C++中，可以使用 multiset 来模拟这个过程，文末提供这个解法仅针对C++，以下讲解我们还是靠自己来实现这个单调队列。\n\n然后再分析一下，队列里的元素一定是要排序的，而且要最大值放在出队口，要不然怎么知道最大值呢。\n\n但如果把窗口里的元素都放进队列里，窗口移动的时候，队列需要弹出元素。\n\n那么问题来了，已经排序之后的队列 怎么能把窗口要移除的元素（这个元素可不一定是最大值）弹出呢。\n\n大家此时应该陷入深思.....\n\n其实队列没有必要维护窗口里的所有元素，只需要维护有可能成为窗口里最大值的元素就可以了，同时保证队列里的元素数值是由大到小的。\n\n那么这个维护元素单调递减的队列就叫做单调队列，即单调递减或单调递增的队列。C++中没有直接支持单调队列，需要我们自己来实现一个单调队列\n\n不要以为实现的单调队列就是 对窗口里面的数进行排序，如果排序的话，那和优先级队列又有什么区别了呢。\n\n来看一下单调队列如何维护队列里的元素。\n\n动画如下：\n\nhttps://file1.kamacoder.com/i/algo/239.%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%9C%80%E5%A4%A7%E5%80%BC.gif\n\n对于窗口里的元素{2, 3, 5, 1 ,4}，单调队列里只维护{5, 4} 就够了，保持单调队列里单调递减，此时队列出口元素就是窗口里最大元素。\n\n此时大家应该怀疑单调队列里维护着{5, 4} 怎么配合窗口进行滑动呢？\n\n设计单调队列的时候，pop，和push操作要保持如下规则：\n\npop(value)：如果窗口移除的元素value等于单调队列的出口元素，那么队列弹出元素，否则不用任何操作\npush(value)：如果push的元素value大于入口元素的数值，那么就将队列入口的元素弹出，直到push元素的数值小于等于队列入口元素的数值为止\n保持如上规则，每次窗口移动的时候，只要问que.front()就可以返回当前窗口的最大值。\n\n为了更直观的感受到单调队列的工作过程，以题目示例为例，输入: nums = [1,3,-1,-3,5,3,6,7], 和 k = 3，动画如下：\n\nhttps://file1.kamacoder.com/i/algo/239.%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%9C%80%E5%A4%A7%E5%80%BC-2.gif\n\n那么我们用什么数据结构来实现这个单调队列呢？\n\n使用deque最为合适，在文章栈与队列：来看看栈和队列不为人知的一面 (opens new window)中，我们就提到了常用的queue在没有指定容器的情况下，deque就是默认底层容器。\n\n基于刚刚说过的单调队列pop和push的规则，代码不难实现，如下：\n\nclass MyQueue { //单调队列（从大到小）\npublic:\n    deque<int> que; // 使用deque来实现单调队列\n    // 每次弹出的时候，比较当前要弹出的数值是否等于队列出口元素的数值，如果相等则弹出。\n    // 同时pop之前判断队列当前是否为空。\n    void pop(int value) {\n        if (!que.empty() && value == que.front()) {\n            que.pop_front();\n        }\n    }\n    // 如果push的数值大于入口元素的数值，那么就将队列后端的数值弹出，直到push的数值小于等于队列入口元素的数值为止。\n    // 这样就保持了队列里的数值是单调从大到小的了。\n    void push(int value) {\n        while (!que.empty() && value > que.back()) {\n            que.pop_back();\n        }\n        que.push_back(value);\n\n    }\n    // 查询当前队列里的最大值 直接返回队列前端也就是front就可以了。\n    int front() {\n        return que.front();\n    }\n};\n这样我们就用deque实现了一个单调队列，接下来解决滑动窗口最大值的问题就很简单了，直接看代码吧。\n\nC++代码如下：\n\nclass Solution {\nprivate:\n    class MyQueue { //单调队列（从大到小）\n    public:\n        deque<int> que; // 使用deque来实现单调队列\n        // 每次弹出的时候，比较当前要弹出的数值是否等于队列出口元素的数值，如果相等则弹出。\n        // 同时pop之前判断队列当前是否为空。\n        void pop(int value) {\n            if (!que.empty() && value == que.front()) {\n                que.pop_front();\n            }\n        }\n        // 如果push的数值大于入口元素的数值，那么就将队列后端的数值弹出，直到push的数值小于等于队列入口元素的数值为止。\n        // 这样就保持了队列里的数值是单调从大到小的了。\n        void push(int value) {\n            while (!que.empty() && value > que.back()) {\n                que.pop_back();\n            }\n            que.push_back(value);\n\n        }\n        // 查询当前队列里的最大值 直接返回队列前端也就是front就可以了。\n        int front() {\n            return que.front();\n        }\n    };\npublic:\n    vector<int> maxSlidingWindow(vector<int>& nums, int k) {\n        MyQueue que;\n        vector<int> result;\n        for (int i = 0; i < k; i++) { // 先将前k的元素放进队列\n            que.push(nums[i]);\n        }\n        result.push_back(que.front()); // result 记录前k的元素的最大值\n        for (int i = k; i < nums.size(); i++) {\n            que.pop(nums[i - k]); // 滑动窗口移除最前面元素\n            que.push(nums[i]); // 滑动窗口前加入最后面的元素\n            result.push_back(que.front()); // 记录对应的最大值\n        }\n        return result;\n    }\n};\n时间复杂度: O(n)\n空间复杂度: O(k)\n再来看一下时间复杂度，使用单调队列的时间复杂度是 O(n)。\n\n有的同学可能想了，在队列中 push元素的过程中，还有pop操作呢，感觉不是纯粹的O(n)。\n\n其实，大家可以自己观察一下单调队列的实现，nums 中的每个元素最多也就被 push_back 和 pop_back 各一次，没有任何多余操作，所以整体的复杂度还是 O(n)。\n\n空间复杂度因为我们定义一个辅助队列，所以是O(k)。\n\n#扩展\n大家貌似对单调队列 都有一些疑惑，首先要明确的是，题解中单调队列里的pop和push接口，仅适用于本题哈。单调队列不是一成不变的，而是不同场景不同写法，总之要保证队列里单调递减或递增的原则，所以叫做单调队列。 不要以为本题中的单调队列实现就是固定的写法哈。\n\n大家貌似对deque也有一些疑惑，C++中deque是stack和queue默认的底层实现容器（这个我们之前已经讲过啦），deque是可以两边扩展的，而且deque里元素并不是严格的连续分布的。\n\n#其他语言版本\n#Java：\n//解法一\n//自定义数组\nclass MyQueue {\n    Deque<Integer> deque = new LinkedList<>();\n    //弹出元素时，比较当前要弹出的数值是否等于队列出口的数值，如果相等则弹出\n    //同时判断队列当前是否为空\n    void poll(int val) {\n        if (!deque.isEmpty() && val == deque.peek()) {\n            deque.poll();\n        }\n    }\n    //添加元素时，如果要添加的元素大于入口处的元素，就将入口元素弹出\n    //保证队列元素单调递减\n    //比如此时队列元素3,1，2将要入队，比1大，所以1弹出，此时队列：3,2\n    void add(int val) {\n        while (!deque.isEmpty() && val > deque.getLast()) {\n            deque.removeLast();\n        }\n        deque.add(val);\n    }\n    //队列队顶元素始终为最大值\n    int peek() {\n        return deque.peek();\n    }\n}\n\nclass Solution {\n    public int[] maxSlidingWindow(int[] nums, int k) {\n        if (nums.length == 1) {\n            return nums;\n        }\n        int len = nums.length - k + 1;\n        //存放结果元素的数组\n        int[] res = new int[len];\n        int num = 0;\n        //自定义队列\n        MyQueue myQueue = new MyQueue();\n        //先将前k的元素放入队列\n        for (int i = 0; i < k; i++) {\n            myQueue.add(nums[i]);\n        }\n        res[num++] = myQueue.peek();\n        for (int i = k; i < nums.length; i++) {\n            //滑动窗口移除最前面的元素，移除是判断该元素是否放入队列\n            myQueue.poll(nums[i - k]);\n            //滑动窗口加入最后面的元素\n            myQueue.add(nums[i]);\n            //记录对应的最大值\n            res[num++] = myQueue.peek();\n        }\n        return res;\n    }\n}\n\n//解法二\n//利用双端队列手动实现单调队列\n/**\n * 用一个单调队列来存储对应的下标，每当窗口滑动的时候，直接取队列的头部指针对应的值放入结果集即可\n * 单调递减队列类似 （head -->） 3 --> 2 --> 1 --> 0 (--> tail) (左边为头结点，元素存的是下标)\n */\nclass Solution {\n    public int[] maxSlidingWindow(int[] nums, int k) {\n        ArrayDeque<Integer> deque = new ArrayDeque<>();\n        int n = nums.length;\n        int[] res = new int[n - k + 1];\n        int idx = 0;\n        for(int i = 0; i < n; i++) {\n            // 根据题意，i为nums下标，是要在[i - k + 1, i] 中选到最大值，只需要保证两点\n            // 1.队列头结点需要在[i - k + 1, i]范围内，不符合则要弹出\n            while(!deque.isEmpty() && deque.peek() < i - k + 1){\n                deque.poll();\n            }\n            // 2.维护单调递减队列：新元素若大于队尾元素，则弹出队尾元素，直到满足单调性\n            while(!deque.isEmpty() && nums[deque.peekLast()] < nums[i]) {\n                deque.pollLast();\n            }\n\n            deque.offer(i);\n\n            // 因为单调，当i增长到符合第一个k范围的时候，每滑动一步都将队列头节点放入结果就行了\n            if(i >= k - 1){\n                res[idx++] = nums[deque.peek()];\n            }\n        }\n        return res;\n    }\n}\n#Python：\n#解法一：使用自定义的单调队列类\nfrom collections import deque\n\n\nclass MyQueue: #单调队列（从大到小\n    def __init__(self):\n        self.queue = deque() #这里需要使用deque实现单调队列，直接使用list会超时\n    \n    #每次弹出的时候，比较当前要弹出的数值是否等于队列出口元素的数值，如果相等则弹出。\n    #同时pop之前判断队列当前是否为空。\n    def pop(self, value):\n        if self.queue and value == self.queue[0]:\n            self.queue.popleft()#list.pop()时间复杂度为O(n),这里需要使用collections.deque()\n            \n    #如果push的数值大于入口元素的数值，那么就将队列后端的数值弹出，直到push的数值小于等于队列入口元素的数值为止。\n    #这样就保持了队列里的数值是单调从大到小的了。\n    def push(self, value):\n        while self.queue and value > self.queue[-1]:\n            self.queue.pop()\n        self.queue.append(value)\n        \n    #查询当前队列里的最大值 直接返回队列前端也就是front就可以了。\n    def front(self):\n        return self.queue[0]\n    \nclass Solution:\n    def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:\n        que = MyQueue()\n        result = []\n        for i in range(k): #先将前k的元素放进队列\n            que.push(nums[i])\n        result.append(que.front()) #result 记录前k的元素的最大值\n        for i in range(k, len(nums)):\n            que.pop(nums[i - k]) #滑动窗口移除最前面元素\n            que.push(nums[i]) #滑动窗口前加入最后面的元素\n            result.append(que.front()) #记录对应的最大值\n        return result\n#解法二：直接用单调队列\nfrom collections import deque\nclass Solution:\n    def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:\n        max_list = [] # 结果集合\n        kept_nums = deque() # 单调队列\n\n        for i in range(len(nums)):\n            update_kept_nums(kept_nums, nums[i]) # 右侧新元素加入\n\n            if i >= k and nums[i - k] == kept_nums[0]: # 左侧旧元素如果等于单调队列头元素，需要移除头元素\n                kept_nums.popleft()\n\n            if i >= k - 1:\n                max_list.append(kept_nums[0])\n\n        return max_list\n\ndef update_kept_nums(kept_nums, num): # num 是新加入的元素\n    # 所有小于新元素的队列尾部元素，在新元素出现后，都是没有价值的，都需要被移除\n    while kept_nums and num > kept_nums[-1]:\n        kept_nums.pop()\n\n    kept_nums.append(num)"
+}

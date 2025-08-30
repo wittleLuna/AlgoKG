@@ -1,0 +1,179 @@
+{
+  "id": "AP_1c7cf586",
+  "title": "柠檬水找零",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/lemonade-change/",
+  "description": "在柠檬水摊上，每一杯柠檬水的售价为 5 美元。\n\n顾客排队购买你的产品，（按账单 bills 支付的顺序）一次购买一杯。\n\n每位顾客只买一杯柠檬水，然后向你付 5 美元、10 美元或 20 美元。你必须给每个顾客正确找零，也就是说净交易是每位顾客向你支付 5 美元。\n\n注意，一开始你手头没有任何零钱。\n\n如果你能给每位顾客正确找零，返回 true ，否则返回 false 。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "贪心"
+  ],
+  "data_structure_tags": [
+    "数组",
+    "计数器"
+  ],
+  "technique_tags": [
+    "模拟"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过维护不同面额钞票的数量（5美元、10美元和20美元），对每个账单进行处理。根据收到的不同面额的钞票，采取相应的策略来确保能够正确找零。",
+  "key_insights": [
+    {
+      "content": "当收到20美元时，优先尝试使用一张10美元加上一张5美元来找零，这样可以保留更多的5美元钞票用于后续更灵活地找零。这是因为5美元比10美元更通用，既可以用来找给10美元也可以找给20美元。"
+    },
+    {
+      "content": "在每次交易中做出当前最优的选择（如尽可能多地保留5美元钞票）可以保证整体上能够满足所有顾客的找零需求。这种策略体现了贪心算法的思想。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这是前几天的leetcode每日一题，感觉不错，给大家讲一下。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool lemonadeChange(vector<int>& bills) { int five = 0, ten = 0, twenty = 0; for (int bill : bills) { if (bill == 5) five++; if (bill == 10) { if (five <= 0) return false; ten++; five--; } if (bill == 20) { if (five > 0 && ten > 0) { five--; ten--; twenty++; } else if (five >= 3) { five -= 3; twenty++; } else return false; }} return true;}};",
+          "description": ""
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean lemonadeChange(int[] bills) { int five = 0; int ten = 0; for (int i = 0; i < bills.length; i++) { if (bills[i] == 5) { five++; } else if (bills[i] == 10) { five--; ten++; } else if (bills[i] == 20) { if (ten > 0) { ten--; five--; } else { five -= 3; } } if (five < 0 || ten < 0) return false; } return true;}}",
+          "description": ""
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def lemonadeChange(self, bills: List[int]) -> bool: five = 0 ten = 0 twenty = 0 for bill in bills: if bill == 5: five += 1 if bill == 10: if five <= 0: return False ten += 1 five -= 1 if bill == 20: if five > 0 and ten > 0: five -= 1 ten -= 1 elif five >= 3: five -= 3 else: return False return True",
+          "description": ""
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "咋眼一看好像很复杂，分析清楚之后，会发现逻辑其实非常固定。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool lemonadeChange(vector<int>& bills) {int five = 0, ten = 0, twenty = 0;for (int bill : bills) {if (bill == 5) five++;if (bill == 10) {if (five <= 0) return false;ten++;five--;}if (bill == 20) {if (five > 0 && ten > 0) {five--;ten--;twenty++;} else if (five >= 3) {five -= 3;twenty++;} else return false;}}return true;}};",
+          "description": "C++版本的柠檬水找零问题解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean lemonadeChange(int[] bills) {int five = 0;int ten = 0;for (int i = 0; i < bills.length; i++) {if (bills[i] == 5) {five++;} else if (bills[i] == 10) {five--;ten++;} else if (bills[i] == 20) {if (ten > 0) {ten--;five--;} else {five -= 3;}}if (five < 0 || ten < 0) return false;}return true;}}",
+          "description": "Java版本的柠檬水找零问题解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def lemonadeChange(self, bills: List[int]) -> bool: five = 0 ten = 0 twenty = 0 for bill in bills: if bill == 5: five += 1 if bill == 10: if five <= 0: return False ten += 1 five -= 1 if bill == 20: if five > 0 and ten > 0: five -= 1 ten -= 1 elif five >= 3: five -= 3 else: return False return True",
+          "description": "Python版本的柠檬水找零问题解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool lemonadeChange(vector<int>& bills) {int five = 0, ten = 0, twenty = 0;for (int bill : bills) {if (bill == 5) five++;if (bill == 10) {if (five <= 0) return false;ten++;five--;}if (bill == 20) {if (five > 0 && ten > 0) {five--;ten--;twenty++;} else if (five >= 3) {five -= 3;twenty++;} else return false;}}return true;}};",
+          "description": "C++实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean lemonadeChange(int[] bills) {int five = 0;int ten = 0;for (int i = 0; i < bills.length; i++) {if (bills[i] == 5) {five++;} else if (bills[i] == 10) {five--;ten++;} else if (bills[i] == 20) {if (ten > 0) {ten--;five--;} else {five -= 3;}}if (five < 0 || ten < 0) return false;}return true;}}",
+          "description": "Java实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def lemonadeChange(self, bills: List[int]) -> bool: five = 0 ten = 0 twenty = 0 for bill in bills: if bill == 5: five += 1 if bill == 10: if five <= 0: return False ten += 1 five -= 1 if bill == 20: if five > 0 and ten > 0: five -= 1 ten -= 1 elif five >= 3: five -= 3 else: return False return True",
+          "description": "Python实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool lemonadeChange(vector<int>& bills) {int five = 0, ten = 0, twenty = 0; for (int bill : bills) {if (bill == 5) five++; if (bill == 10) {if (five <= 0) return false; ten++; five--;} if (bill == 20) {if (five > 0 && ten > 0) {five--; ten--; twenty++;} else if (five >= 3) {five -= 3; twenty++;} else return false;}} return true;}};",
+          "description": "C++版本的柠檬水找零问题解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean lemonadeChange(int[] bills) {int five = 0; int ten = 0; for (int i = 0; i < bills.length; i++) {if (bills[i] == 5) {five++;} else if (bills[i] == 10) {five--; ten++;} else if (bills[i] == 20) {if (ten > 0) {ten--; five--;} else {five -= 3;}} if (five < 0 || ten < 0) return false;} return true;}}",
+          "description": "Java版本的柠檬水找零问题解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def lemonadeChange(self, bills: List[int]) -> bool: five = 0 ten = 0 twenty = 0 for bill in bills: if bill == 5: five += 1 if bill == 10: if five <= 0: return False ten += 1 five -= 1 if bill == 20: if five > 0 and ten > 0: five -= 1 ten -= 1 elif five >= 3: five -= 3 else: return False return True",
+          "description": "Python版本的柠檬水找零问题解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "class Solution:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool lemonadeChange(vector<int>& bills) { int five = 0, ten = 0, twenty = 0; for (int bill : bills) { if (bill == 5) five++; if (bill == 10) { if (five <= 0) return false; ten++; five--; } if (bill == 20) { if (five > 0 && ten > 0) { five--; ten--; twenty++; } else if (five >= 3) { five -= 3; twenty++; } else return false; }} return true;}};",
+          "description": "C++版本的解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean lemonadeChange(int[] bills) { int five = 0; int ten = 0; for (int i = 0; i < bills.length; i++) { if (bills[i] == 5) { five++; } else if (bills[i] == 10) { five--; ten++; } else if (bills[i] == 20) { if (ten > 0) { ten--; five--; } else { five -= 3; } } if (five < 0 || ten < 0) return false; } return true; }}",
+          "description": "Java版本的解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def lemonadeChange(self, bills: List[int]) -> bool: five = 0 ten = 0 twenty = 0 for bill in bills: if bill == 5: five += 1 if bill == 10: if five <= 0: return False ten += 1 five -= 1 if bill == 20: if five > 0 and ten > 0: five -= 1 ten -= 1 elif five >= 3: five -= 3 else: return False return True",
+          "description": "Python版本的解决方案"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: bool lemonadeChange(vector<int>& bills) { int five = 0, ten = 0, twenty = 0; for (int bill : bills) { if (bill == 5) five++; if (bill == 10) { if (five <= 0) return false; ten++; five--; } if (bill == 20) { if (five > 0 && ten > 0) { five--; ten--; twenty++; } else if (five >= 3) { five -= 3; twenty++; } else return false; }} return true;}};",
+      "description": ""
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public boolean lemonadeChange(int[] bills) { int five = 0; int ten = 0; for (int i = 0; i < bills.length; i++) { if (bills[i] == 5) { five++; } else if (bills[i] == 10) { five--; ten++; } else if (bills[i] == 20) { if (ten > 0) { ten--; five--; } else { five -= 3; } } if (five < 0 || ten < 0) return false; } return true; }}",
+      "description": ""
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def lemonadeChange(self, bills: List[int]) -> bool: five = 0 ten = 0 twenty = 0 for bill in bills: if bill == 5: five += 1 if bill == 10: if five <= 0: return False ten += 1 five -= 1 if bill == 20: if five > 0 and ten > 0: five -= 1 ten -= 1 elif five >= 3: five -= 3 else: return False return True",
+      "description": ""
+    }
+  ],
+  "common_mistakes": [
+    "未考虑先消耗10美元再消耗5美元的顺序，导致无法最大化利用手中的钞票。",
+    "忽略了一开始没有零钱的情况，可能会直接返回错误的结果而不是等待首次出现大额账单时才判断失败。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\贪心算法\\柠檬水找零.txt",
+  "extracted_at": "2025-07-22T16:39:27.072157",
+  "raw_content": "柠檬水找零\n力扣题目链接(https://leetcode.cn/problems/lemonade-change/)\n\n在柠檬水摊上，每一杯柠檬水的售价为 5 美元。\n\n顾客排队购买你的产品，（按账单 bills 支付的顺序）一次购买一杯。\n\n每位顾客只买一杯柠檬水，然后向你付 5 美元、10 美元或 20 美元。你必须给每个顾客正确找零，也就是说净交易是每位顾客向你支付 5 美元。\n\n注意，一开始你手头没有任何零钱。\n\n如果你能给每位顾客正确找零，返回 true ，否则返回 false 。\n\n示例 1：\n\n输入：[5,5,5,10,20]\n输出：true\n解释：\n前 3 位顾客那里，我们按顺序收取 3 张 5 美元的钞票。\n第 4 位顾客那里，我们收取一张 10 美元的钞票，并返还 5 美元。\n第 5 位顾客那里，我们找还一张 10 美元的钞票和一张 5 美元的钞票。\n由于所有客户都得到了正确的找零，所以我们输出 true。\n示例 2：\n\n输入：[5,5,10]\n输出：true\n示例 3：\n\n输入：[10,10]\n输出：false\n示例 4：\n\n输入：[5,5,10,10,20]\n输出：false\n解释：\n前 2 位顾客那里，我们按顺序收取 2 张 5 美元的钞票。\n对于接下来的 2 位顾客，我们收取一张 10 美元的钞票，然后返还 5 美元。\n对于最后一位顾客，我们无法退回 15 美元，因为我们现在只有两张 10 美元的钞票。\n由于不是每位顾客都得到了正确的找零，所以答案是 false。\n提示：\n\n0 <= bills.length <= 10000\nbills[i] 不是 5 就是 10 或是 20\n\n\n#思路\n这是前几天的leetcode每日一题，感觉不错，给大家讲一下。\n\n这道题目刚一看，可能会有点懵，这要怎么找零才能保证完成全部账单的找零呢？\n\n但仔细一琢磨就会发现，可供我们做判断的空间非常少！\n\n只需要维护三种金额的数量，5，10和20。\n\n有如下三种情况：\n\n情况一：账单是5，直接收下。\n情况二：账单是10，消耗一个5，增加一个10\n情况三：账单是20，优先消耗一个10和一个5，如果不够，再消耗三个5\n此时大家就发现 情况一，情况二，都是固定策略，都不用我们来做分析了，而唯一不确定的其实在情况三。\n\n而情况三逻辑也不复杂甚至感觉纯模拟就可以了，其实情况三这里是有贪心的。\n\n账单是20的情况，为什么要优先消耗一个10和一个5呢？\n\n因为美元10只能给账单20找零，而美元5可以给账单10和账单20找零，美元5更万能！\n\n所以局部最优：遇到账单20，优先消耗美元10，完成本次找零。全局最优：完成全部账单的找零。\n\n局部最优可以推出全局最优，并找不出反例，那么就试试贪心算法！\n\nC++代码如下：\n\nclass Solution {\npublic:\n    bool lemonadeChange(vector<int>& bills) {\n        int five = 0, ten = 0, twenty = 0;\n        for (int bill : bills) {\n            // 情况一\n            if (bill == 5) five++;\n            // 情况二\n            if (bill == 10) {\n                if (five <= 0) return false;\n                ten++;\n                five--;\n            }\n            // 情况三\n            if (bill == 20) {\n                // 优先消耗10美元，因为5美元的找零用处更大，能多留着就多留着\n                if (five > 0 && ten > 0) {\n                    five--;\n                    ten--;\n                    twenty++; // 其实这行代码可以删了，因为记录20已经没有意义了，不会用20来找零\n                } else if (five >= 3) {\n                    five -= 3;\n                    twenty++; // 同理，这行代码也可以删了\n                } else return false;\n            }\n        }\n        return true;\n    }\n};\n时间复杂度: O(n)\n空间复杂度: O(1)\n#总结\n咋眼一看好像很复杂，分析清楚之后，会发现逻辑其实非常固定。\n\n这道题目可以告诉大家，遇到感觉没有思路的题目，可以静下心来把能遇到的情况分析一下，只要分析到具体情况了，一下子就豁然开朗了。\n\n如果一直陷入想从整体上寻找找零方案，就会把自己陷进去，各种情况一交叉，只会越想越复杂了。\n\n#其他语言版本\n#Java\nclass Solution {\n    public boolean lemonadeChange(int[] bills) {\n        int five = 0;\n        int ten = 0;\n\n        for (int i = 0; i < bills.length; i++) {\n            if (bills[i] == 5) {\n                five++;\n            } else if (bills[i] == 10) {\n                five--;\n                ten++;\n            } else if (bills[i] == 20) {\n                if (ten > 0) {\n                    ten--;\n                    five--;\n                } else {\n                    five -= 3;\n                }\n            }\n            if (five < 0 || ten < 0) return false;\n        }\n        \n        return true;\n    }\n}\n#Python\nclass Solution:\n    def lemonadeChange(self, bills: List[int]) -> bool:\n        five = 0\n        ten = 0\n        twenty = 0\n        \n        for bill in bills:\n            # 情况一：收到5美元\n            if bill == 5:\n                five += 1\n            \n            # 情况二：收到10美元\n            if bill == 10:\n                if five <= 0:\n                    return False\n                ten += 1\n                five -= 1\n            \n            # 情况三：收到20美元\n            if bill == 20:\n                # 先尝试使用10美元和5美元找零\n                if five > 0 and ten > 0:\n                    five -= 1\n                    ten -= 1\n                    #twenty += 1\n                # 如果无法使用10美元找零，则尝试使用三张5美元找零\n                elif five >= 3:\n                    five -= 3\n                    #twenty += 1\n                else:\n                    return False\n        \n        return True"
+}

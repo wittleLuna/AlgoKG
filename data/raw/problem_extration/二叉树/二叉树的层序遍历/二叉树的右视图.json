@@ -1,0 +1,167 @@
+{
+  "id": "AP_48841cf3",
+  "title": "二叉树的右视图",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/binary-tree-right-side-view/",
+  "description": "给定一棵二叉树，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。\n\nhttps://file1.kamacoder.com/i/algo/20210203151307377.png",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "BFS",
+    "层序遍历"
+  ],
+  "data_structure_tags": [
+    "Queue",
+    "Tree"
+  ],
+  "technique_tags": [
+    "迭代",
+    "使用队列存储节点"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过层序遍历（广度优先搜索）的方法来获取二叉树每一层最右侧节点的值。在遍历过程中，当访问到每一层最后一个节点时，将其值添加到结果列表中。",
+  "key_insights": [
+    {
+      "content": "利用队列实现对二叉树逐层遍历，确保可以按层次顺序处理每个节点。"
+    },
+    {
+      "content": "仅记录每层最后一个被访问的节点值，因为从右侧面看只能看到这些节点。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "层序遍历的时候，判断是否遍历到单层的最后面的元素，如果是，就放进result数组中，随后返回result就可以了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> rightSideView(TreeNode* root) { queue<TreeNode*> que; if (root != NULL) que.push(root); vector<int> result; while (!que.empty()) { int size = que.size(); for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); if (i == (size - 1)) result.push_back(node->val); if (node->left) que.push(node->left); if (node->right) que.push(node->right); } } return result; }};",
+          "description": "C++实现二叉树右视图"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rightSideView(self, root: TreeNode) -> List[int]: if not root: return [] queue = collections.deque([root]) right_view = [] while queue: level_size = len(queue) for i in range(level_size): node = queue.popleft() if i == level_size - 1: right_view.append(node.val) if node.left: queue.append(node.left) if node.right: queue.append(node.right) return right_view",
+          "description": "Python实现二叉树右视图"
+        },
+        {
+          "language": "java",
+          "code": "public class N0199 { public List<Integer> rightSideView(TreeNode root) { List<Integer> list = new ArrayList<>(); Deque<TreeNode> que = new LinkedList<>(); if (root == null) { return list; } que.offerLast(root); while (!que.isEmpty()) { int levelSize = que.size(); for (int i = 0; i < levelSize; i++) { TreeNode poll = que.pollFirst(); if (poll.left != null) { que.addLast(poll.left); } if (poll.right != null) { que.addLast(poll.right); } if (i == levelSize - 1) { list.add(poll.val); } } } return list; }}",
+          "description": "Java实现二叉树右视图"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Python：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> rightSideView(TreeNode* root) { queue<TreeNode*> que; if (root != NULL) que.push(root); vector<int> result; while (!que.empty()) { int size = que.size(); for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); if (i == (size - 1)) result.push_back(node->val); if (node->left) que.push(node->left); if (node->right) que.push(node->right); } } return result; }};",
+          "description": "C++实现二叉树的右视图"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rightSideView(self, root: TreeNode) -> List[int]: if not root: return [] queue = collections.deque([root]) right_view = [] while queue: level_size = len(queue) for i in range(level_size): node = queue.popleft() if i == level_size - 1: right_view.append(node.val) if node.left: queue.append(node.left) if node.right: queue.append(node.right) return right_view",
+          "description": "Python实现二叉树的右视图"
+        },
+        {
+          "language": "java",
+          "code": "public class N0199 { public List<Integer> rightSideView(TreeNode root) { List<Integer> list = new ArrayList<>(); Deque<TreeNode> que = new LinkedList<>(); if (root == null) { return list; } que.offerLast(root); while (!que.isEmpty()) { int levelSize = que.size(); for (int i = 0; i < levelSize; i++) { TreeNode poll = que.pollFirst(); if (poll.left != null) { que.addLast(poll.left); } if (poll.right != null) { que.addLast(poll.right); } if (i == levelSize - 1) { list.add(poll.val); } } } return list; }}",
+          "description": "Java实现二叉树的右视图"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "# Definition for a binary tree node.",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> rightSideView(TreeNode* root) { queue<TreeNode*> que; if (root != NULL) que.push(root); vector<int> result; while (!que.empty()) { int size = que.size(); for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); if (i == (size - 1)) result.push_back(node->val); // 将每一层的最后元素放入result数组中 if (node->left) que.push(node->left); if (node->right) que.push(node->right); } } return result; }};",
+          "description": "C++版本实现二叉树右视图"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rightSideView(self, root: TreeNode) -> List[int]: if not root: return [] queue = collections.deque([root]) right_view = [] while queue: level_size = len(queue) for i in range(level_size): node = queue.popleft() if i == level_size - 1: right_view.append(node.val) if node.left: queue.append(node.left) if node.right: queue.append(node.right) return right_view",
+          "description": "Python版本实现二叉树右视图"
+        },
+        {
+          "language": "java",
+          "code": "public class N0199 { public List<Integer> rightSideView(TreeNode root) { List<Integer> list = new ArrayList<>(); Deque<TreeNode> que = new LinkedList<>(); if (root == null) { return list; } que.offerLast(root); while (!que.isEmpty()) { int levelSize = que.size(); for (int i = 0; i < levelSize; i++) { TreeNode poll = que.pollFirst(); if (poll.left != null) { que.addLast(poll.left); } if (poll.right != null) { que.addLast(poll.right); } if (i == levelSize - 1) { list.add(poll.val); } } } return list; }}",
+          "description": "Java版本实现二叉树右视图"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java:",
+      "text": "// 199.二叉树的右视图",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> rightSideView(TreeNode* root) { queue<TreeNode*> que; if (root != NULL) que.push(root); vector<int> result; while (!que.empty()) { int size = que.size(); for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); if (i == (size - 1)) result.push_back(node->val); if (node->left) que.push(node->left); if (node->right) que.push(node->right); } } return result; }};",
+          "description": "C++版本的二叉树右视图实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rightSideView(self, root: TreeNode) -> List[int]: if not root: return [] queue = collections.deque([root]) right_view = [] while queue: level_size = len(queue) for i in range(level_size): node = queue.popleft() if i == level_size - 1: right_view.append(node.val) if node.left: queue.append(node.left) if node.right: queue.append(node.right) return right_view",
+          "description": "Python版本的二叉树右视图实现"
+        },
+        {
+          "language": "java",
+          "code": "public class N0199 { public List<Integer> rightSideView(TreeNode root) { List<Integer> list = new ArrayList<>(); Deque<TreeNode> que = new LinkedList<>(); if (root == null) { return list; } que.offerLast(root); while (!que.isEmpty()) { int levelSize = que.size(); for (int i = 0; i < levelSize; i++) { TreeNode poll = que.pollFirst(); if (poll.left != null) { que.addLast(poll.left); } if (poll.right != null) { que.addLast(poll.right); } if (i == levelSize - 1) { list.add(poll.val); } } } return list; }}",
+          "description": "Java版本的二叉树右视图实现"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: vector<int> rightSideView(TreeNode* root) { queue<TreeNode*> que; if (root != NULL) que.push(root); vector<int> result; while (!que.empty()) { int size = que.size(); for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); if (i == (size - 1)) result.push_back(node->val); if (node->left) que.push(node->left); if (node->right) que.push(node->right); } } return result; }};",
+      "description": ""
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def rightSideView(self, root: TreeNode) -> List[int]: if not root: return [] queue = collections.deque([root]) right_view = [] while queue: level_size = len(queue) for i in range(level_size): node = queue.popleft() if i == level_size - 1: right_view.append(node.val) if node.left: queue.append(node.left) if node.right: queue.append(node.right) return right_view",
+      "description": ""
+    },
+    {
+      "language": "java",
+      "code": "public class N0199 { public List<Integer> rightSideView(TreeNode root) { List<Integer> list = new ArrayList<>(); Deque<TreeNode> que = new LinkedList<>(); if (root == null) { return list; } que.offerLast(root); while (!que.isEmpty()) { int levelSize = que.size(); for (int i = 0; i < levelSize; i++) { TreeNode poll = que.pollFirst(); if (poll.left != null) { que.addLast(poll.left); } if (poll.right != null) { que.addLast(poll.right); } if (i == levelSize - 1) { list.add(poll.val); } } } return list; }}",
+      "description": ""
+    }
+  ],
+  "common_mistakes": [
+    "忘记检查根节点是否为空，导致程序异常。",
+    "在遍历时没有正确区分每层的节点，可能导致错误地将非最后一层节点加入结果集中。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210203151307377.png",
+      "description": "该图片描述了一个二叉树的右视图问题，输入为二叉树的层次遍历序列，输出为其右视图节点值列表。",
+      "context": "该图片展示了二叉树的结构，帮助理解从右侧视角观察时能看到哪些节点值。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210203151307377.png",
+      "description": "GIF展示了二叉树层序遍历过程中，从右侧视角可见节点的选取过程。",
+      "context": "该GIF动画展示了二叉树的结构以及从右侧视角观察时能看到的节点值，帮助理解题目要求和解题思路。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\二叉树的层序遍历\\二叉树的右视图.txt",
+  "extracted_at": "2025-07-20T10:57:09.089737",
+  "raw_content": "二叉树的右视图\n力扣题目链接(https://leetcode.cn/problems/binary-tree-right-side-view/)\n\n给定一棵二叉树，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。\n\nhttps://file1.kamacoder.com/i/algo/20210203151307377.png\n\n#思路\n层序遍历的时候，判断是否遍历到单层的最后面的元素，如果是，就放进result数组中，随后返回result就可以了。\n\nC++代码：\n\nclass Solution {\npublic:\n    vector<int> rightSideView(TreeNode* root) {\n        queue<TreeNode*> que;\n        if (root != NULL) que.push(root);\n        vector<int> result;\n        while (!que.empty()) {\n            int size = que.size();\n            for (int i = 0; i < size; i++) {\n                TreeNode* node = que.front();\n                que.pop();\n                if (i == (size - 1)) result.push_back(node->val); // 将每一层的最后元素放入result数组中\n                if (node->left) que.push(node->left);\n                if (node->right) que.push(node->right);\n            }\n        }\n        return result;\n    }\n};\n#其他语言版本\n#Python：\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def rightSideView(self, root: TreeNode) -> List[int]:\n        if not root:\n            return []\n        \n        queue = collections.deque([root])\n        right_view = []\n        \n        while queue:\n            level_size = len(queue)\n            \n            for i in range(level_size):\n                node = queue.popleft()\n                \n                if i == level_size - 1:\n                    right_view.append(node.val)\n                \n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n        \n        return right_view\n#Java:\n// 199.二叉树的右视图\npublic class N0199 {\n    /**\n     * 解法：队列，迭代。\n     * 每次返回每层的最后一个字段即可。\n     *\n     * 小优化：每层右孩子先入队。代码略。\n     */\n    public List<Integer> rightSideView(TreeNode root) {\n        List<Integer> list = new ArrayList<>();\n        Deque<TreeNode> que = new LinkedList<>();\n\n        if (root == null) {\n            return list;\n        }\n\n        que.offerLast(root);\n        while (!que.isEmpty()) {\n            int levelSize = que.size();\n\n            for (int i = 0; i < levelSize; i++) {\n                TreeNode poll = que.pollFirst();\n\n                if (poll.left != null) {\n                    que.addLast(poll.left);\n                }\n                if (poll.right != null) {\n                    que.addLast(poll.right);\n                }\n\n                if (i == levelSize - 1) {\n                    list.add(poll.val);\n                }\n            }\n        }\n\n        return list;\n    }\n}"
+}

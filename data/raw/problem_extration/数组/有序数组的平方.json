@@ -1,0 +1,412 @@
+{
+  "id": "AP_812a48a1",
+  "title": "有序数组的平方",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/squares-of-a-sorted-array/",
+  "description": "一个按 非递减顺序 排序的整数数组 nums，返回 每个数字的平方 组成的新数组，要求也按 非递减顺序 排序。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "双指针",
+    "排序"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "原地操作",
+    "反向填充"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过双指针法利用输入数组的有序性，从两端向中间遍历，每次选择较大的平方值放置于结果数组的末尾以构建新的非递减数组。另一种方法是暴力排序，即先对每个元素进行平方再对整个数组排序。",
+  "key_insights": [
+    {
+      "content": "由于输入数组是非递减排列的，其中包含可能的负数值，这些负数值在平方之后可能会变得比正数值还要大，因此需要一种有效的方法来处理这种情况。"
+    },
+    {
+      "content": "基于数组中最小值可能是最左边或最右边的特性，可以使用双指针从两边向中间遍历，每次选择较大的平方值放置于结果数组的末尾。"
+    },
+    {
+      "content": "对于完全由非负数或非正数组成的情况，可以直接平方后返回结果或者反转后再平方返回，以优化算法效率。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "#暴力排序",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> sortedSquares(vector<int>& A) {for (int i = 0; i < A.size(); i++) {A[i] *= A[i];}sort(A.begin(), A.end());return A;}};",
+          "description": "C++暴力排序实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> sortedSquares(vector<int>& A) {int k = A.size() - 1;vector<int> result(A.size(), 0);for (int i = 0, j = A.size() - 1; i <= j;) {if (A[i] * A[i] < A[j] * A[j])  {result[k--] = A[j] * A[j];j--;}else {result[k--] = A[i] * A[i];i++;}}return result;}};",
+          "description": "C++双指针法实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] sortedSquares(int[] nums) {for (int i = 0; i < nums.length; i++) {nums[i] = nums[i] * nums[i];}Arrays.sort(nums);return nums;}}",
+          "description": "Java排序法实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] sortedSquares(int[] nums) {int right = nums.length - 1;int left = 0;int[] result = new int[nums.length];int index = result.length - 1;while (left <= right) {if (nums[left] * nums[left] > nums[right] * nums[right]) {result[index--] = nums[left] * nums[left];++left;} else {result[index--] = nums[right] * nums[right];--right;}}return result;}}",
+          "description": "Java双指针法实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] sortedSquares(int[] nums) {int l = 0;int r = nums.length - 1;int[] res = new int[nums.length];int j = nums.length - 1;while(l <= r){if(nums[l] * nums[l] > nums[r] * nums[r]){res[j--] = nums[l] * nums[l++];}else{res[j--] = nums[r] * nums[r--];}}return res;}}",
+          "description": "Java双指针简化版"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: l, r, i = 0, len(nums)-1, len(nums)-1 res = [float('inf')] * len(nums) while l <= r: if nums[l] ** 2 < nums[r] ** 2: res[i] = nums[r] ** 2 r -= 1 else: res[i] = nums[l] ** 2 l += 1 i -= 1 return res",
+          "description": "Python双指针法实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: for i in range(len(nums)): nums[i] *= nums[i] nums.sort() return nums",
+          "description": "Python暴力排序法实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: return sorted(x*x for x in nums)",
+          "description": "Python列表推导与排序结合"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: new_list = [] left, right = 0 , len(nums) -1 while left <= right: if abs(nums[left]) <= abs(nums[right]): new_list.append(nums[right] ** 2) right -= 1 else: new_list.append(nums[left] ** 2) left += 1 return new_list[::-1]",
+          "description": "Python双指针加反转列表"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: if nums[0] >= 0: return [num ** 2 for num in nums] if nums[-1] <= 0: return [x ** 2 for x in nums[::-1]] i = 0 j = len(nums) - 1 new_nums = [0] * len(nums) for end_index in range(len(nums)-1, -1, -1): if nums[i] + nums[j] <= 0: new_nums[end_index] = nums[i] ** 2 i += 1 else: new_nums[end_index] = nums[j] ** 2 j -= 1 return new_nums",
+          "description": "Python优化后的双指针法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "暴力排序",
+      "text": "最直观的想法，莫过于：每个数平方之后，排个序，代码如下：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> sortedSquares(vector<int>& A) {for (int i = 0; i < A.size(); i++) {A[i] *= A[i];}sort(A.begin(), A.end());return A;}};",
+          "description": "暴力排序法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> sortedSquares(vector<int>& A) {int k = A.size() - 1;vector<int> result(A.size(), 0);for (int i = 0, j = A.size() - 1; i <= j;) {if (A[i] * A[i] < A[j] * A[j])  {result[k--] = A[j] * A[j];j--;}else {result[k--] = A[i] * A[i];i++;}}return result;}};",
+          "description": "双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] sortedSquares(int[] nums) {for (int i = 0; i < nums.length; i++) {nums[i] = nums[i] * nums[i];}Arrays.sort(nums);return nums;}}",
+          "description": "排序法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] sortedSquares(int[] nums) {int right = nums.length - 1;int left = 0;int[] result = new int[nums.length];int index = result.length - 1;while (left <= right) {if (nums[left] * nums[left] > nums[right] * nums[right]) {result[index--] = nums[left] * nums[left];++left;} else {result[index--] = nums[right] * nums[right];--right;}}return result;}}",
+          "description": "双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] sortedSquares(int[] nums) {int l = 0;int r = nums.length - 1;int[] res = new int[nums.length];int j = nums.length - 1;while(l <= r){if(nums[l] * nums[l] > nums[r] * nums[r]){res[j--] = nums[l] * nums[l++];}else{res[j--] = nums[r] * nums[r--];}}return res;}}",
+          "description": "双指针法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: l, r, i = 0, len(nums)-1, len(nums)-1 res = [float('inf')] * len(nums) while l <= r: if nums[l] ** 2 < nums[r] ** 2: res[i] = nums[r] ** 2 r -= 1 else: res[i] = nums[l] ** 2 l += 1 i -= 1 return res",
+          "description": "双指针法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: for i in range(len(nums)): nums[i] *= nums[i] nums.sort() return nums",
+          "description": "暴力排序法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: return sorted(x*x for x in nums)",
+          "description": "列表推导+排序"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: new_list = [] left, right = 0 , len(nums) -1 while left <= right: if abs(nums[left]) <= abs(nums[right]): new_list.append(nums[right] ** 2) right -= 1 else: new_list.append(nums[left] ** 2) left += 1 return new_list[::-1]",
+          "description": "双指针+反转列表"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: if nums[0] >= 0: return [num ** 2 for num in nums] if nums[-1] <= 0: return [x ** 2 for x in nums[::-1]] i = 0 j = len(nums) - 1 new_nums = [0] * len(nums) for end_index in range(len(nums)-1, -1, -1): if nums[i] + nums[j] <= 0: new_nums[end_index] = nums[i] ** 2 i += 1 else: new_nums[end_index] = nums[j] ** 2 j -= 1 return new_nums",
+          "description": "优化的双指针法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "双指针法",
+      "text": "数组其实是有序的， 只不过负数平方之后可能成为最大数了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> sortedSquares(vector<int>& A) {for (int i = 0; i < A.size(); i++) {A[i] *= A[i];}sort(A.begin(), A.end());return A;}};",
+          "description": "暴力排序"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> sortedSquares(vector<int>& A) {int k = A.size() - 1;vector<int> result(A.size(), 0);for (int i = 0, j = A.size() - 1; i <= j;) {if (A[i] * A[i] < A[j] * A[j])  {result[k--] = A[j] * A[j];j--;}else {result[k--] = A[i] * A[i];i++;}}return result;}};",
+          "description": "双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] sortedSquares(int[] nums) {for (int i = 0; i < nums.length; i++) {nums[i] = nums[i] * nums[i];}Arrays.sort(nums);return nums;}}",
+          "description": "排序法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] sortedSquares(int[] nums) {int right = nums.length - 1;int left = 0;int[] result = new int[nums.length];int index = result.length - 1;while (left <= right) {if (nums[left] * nums[left] > nums[right] * nums[right]) {result[index--] = nums[left] * nums[left];++left;} else {result[index--] = nums[right] * nums[right];--right;}}return result;}}",
+          "description": "双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] sortedSquares(int[] nums) {int l = 0;int r = nums.length - 1;int[] res = new int[nums.length];int j = nums.length - 1;while(l <= r){if(nums[l] * nums[l] > nums[r] * nums[r]){res[j--] = nums[l] * nums[l++];}else{res[j--] = nums[r] * nums[r--];}}return res;}}",
+          "description": "双指针法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: l, r, i = 0, len(nums)-1, len(nums)-1 res = [float('inf')] * len(nums) while l <= r: if nums[l] ** 2 < nums[r] ** 2: res[i] = nums[r] ** 2 r -= 1 else: res[i] = nums[l] ** 2 l += 1 i -= 1 return res",
+          "description": "双指针法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: for i in range(len(nums)): nums[i] *= nums[i] nums.sort() return nums",
+          "description": "暴力排序法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: return sorted(x*x for x in nums)",
+          "description": "暴力排序+列表推导法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: new_list = [] left, right = 0 , len(nums) -1 while left <= right: if abs(nums[left]) <= abs(nums[right]): new_list.append(nums[right] ** 2) right -= 1 else: new_list.append(nums[left] ** 2) left += 1 return new_list[::-1]",
+          "description": "双指针+反转列表"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: if nums[0] >= 0: return [num ** 2 for num in nums] if nums[-1] <= 0: return [x ** 2 for x in nums[::-1]] i = 0 j = len(nums) - 1 new_nums = [0] * len(nums) for end_index in range(len(nums)-1, -1, -1): if nums[i] + nums[j] <= 0: new_nums[end_index] = nums[i] ** 2 i += 1 else: new_nums[end_index] = nums[j] ** 2 j -= 1 return new_nums",
+          "description": "双指针优化版本"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    vector<int> sortedSquares(vector<int>& A) {\n        for (int i = 0; i < A.size(); i++) {\n            A[i] *= A[i];\n        }\n        sort(A.begin(), A.end()); \n        return A;\n    }\n};",
+          "description": "使用快速排序对平方后的数组进行排序"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    vector<int> sortedSquares(vector<int>& A) {\n        int k = A.size() - 1;\n        vector<int> result(A.size(), 0);\n        for (int i = 0, j = A.size() - 1; i <= j;) {\n            if (A[i] * A[i] < A[j] * A[j])  {\n                result[k--] = A[j] * A[j];\n                j--;\n            }\n            else {\n                result[k--] = A[i] * A[i];\n                i++;\n            }\n        }\n        return result;\n    }\n};",
+          "description": "采用双指针法，从两端向中间遍历，将较大的平方数放入结果数组的末尾"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int[] sortedSquares(int[] nums) {\n        for (int i = 0; i < nums.length; i++) {\n            nums[i] = nums[i] * nums[i];\n        }\n        Arrays.sort(nums);\n        return nums;\n    }\n}",
+          "description": "Java版本：先计算每个元素的平方，然后对数组进行排序"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int[] sortedSquares(int[] nums) {\n        int right = nums.length - 1;\n        int left = 0;\n        int[] result = new int[nums.length];\n        int index = result.length - 1;\n        while (left <= right) {\n            if (nums[left] * nums[left] > nums[right] * nums[right]) {\n                result[index--] = nums[left] * nums[left];\n                ++left;\n            } else {\n                result[index--] = nums[right] * nums[right];\n                --right;\n            }\n        }\n        return result;\n    }\n}",
+          "description": "Java版本：利用双指针从数组两头比较大小，将较大的平方值放到新数组的末端"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int[] sortedSquares(int[] nums) {\n        int l = 0;\n        int r = nums.length - 1;\n        int[] res = new int[nums.length];\n        int j = nums.length - 1;\n        while(l <= r){\n            if(nums[l] * nums[l] > nums[r] * nums[r]){\n                res[j--] = nums[l] * nums[l++];\n            }else{\n                res[j--] = nums[r] * nums[r--];\n            }\n        }\n        return res;\n    }\n}",
+          "description": "Java版本：通过双指针方法填充结果数组"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def sortedSquares(self, nums: List[int]) -> List[int]:\n        l, r, i = 0, len(nums)-1, len(nums)-1\n        res = [float('inf')] * len(nums)\n        while l <= r:\n            if nums[l] ** 2 < nums[r] ** 2:\n                res[i] = nums[r] ** 2\n                r -= 1\n            else:\n                res[i] = nums[l] ** 2\n                l += 1\n            i -= 1\n        return res",
+          "description": "Python版本：使用双指针法，根据条件更新结果列表"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def sortedSquares(self, nums: List[int]) -> List[int]:\n        for i in range(len(nums)):\n            nums[i] *= nums[i]\n        nums.sort()\n        return nums",
+          "description": "Python版本：直接对原数组进行平方操作后排序"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def sortedSquares(self, nums: List[int]) -> List[int]:\n        return sorted(x*x for x in nums)",
+          "description": "Python版本：使用列表推导式生成平方后的数组，并利用sorted函数进行排序"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def sortedSquares(self, nums: List[int]) -> List[int]:\n        new_list = []\n        left, right = 0 , len(nums) -1\n        while left <= right:\n            if abs(nums[left]) <= abs(nums[right]):\n                new_list.append(nums[right] ** 2)\n                right -= 1\n            else:\n                new_list.append(nums[left] ** 2)\n                left += 1\n        return new_list[::-1]",
+          "description": "Python版本：双指针法构建逆序列表，最后反转得到正确顺序的结果"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def sortedSquares(self, nums: List[int]) -> List[int]:\n        if nums[0] >= 0:\n            return [num ** 2 for num in nums]\n        if nums[-1] <= 0:\n            return [x ** 2 for x in nums[::-1]]\n        i = 0\n        j = len(nums) - 1\n        new_nums = [0] * len(nums)\n        for end_index in range(len(nums)-1, -1, -1):\n            if nums[i] + nums[j] <= 0:\n                new_nums[end_index] = nums[i] ** 2\n                i += 1\n            else:\n                new_nums[end_index] = nums[j] ** 2\n                j -= 1\n        return new_nums",
+          "description": "优化版Python代码：处理特殊情况并应用双指针策略"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "排序法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> sortedSquares(vector<int>& A) {for (int i = 0; i < A.size(); i++) {A[i] *= A[i];}sort(A.begin(), A.end());return A;}};",
+          "description": "暴力排序法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> sortedSquares(vector<int>& A) {int k = A.size() - 1;vector<int> result(A.size(), 0);for (int i = 0, j = A.size() - 1; i <= j;) {if (A[i] * A[i] < A[j] * A[j])  {result[k--] = A[j] * A[j];j--;}else {result[k--] = A[i] * A[i];i++;}}return result;}};",
+          "description": "双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] sortedSquares(int[] nums) {for (int i = 0; i < nums.length; i++) {nums[i] = nums[i] * nums[i];}Arrays.sort(nums);return nums;}}",
+          "description": "暴力排序法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] sortedSquares(int[] nums) {int right = nums.length - 1;int left = 0;int[] result = new int[nums.length];int index = result.length - 1;while (left <= right) {if (nums[left] * nums[left] > nums[right] * nums[right]) {result[index--] = nums[left] * nums[left];++left;} else {result[index--] = nums[right] * nums[right];--right;}}return result;}}",
+          "description": "双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] sortedSquares(int[] nums) {int l = 0;int r = nums.length - 1;int[] res = new int[nums.length];int j = nums.length - 1;while(l <= r){if(nums[l] * nums[l] > nums[r] * nums[r]){res[j--] = nums[l] * nums[l++];}else{res[j--] = nums[r] * nums[r--];}}return res;}}",
+          "description": "双指针法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: l, r, i = 0, len(nums)-1, len(nums)-1 res = [float('inf')] * len(nums) while l <= r: if nums[l] ** 2 < nums[r] ** 2: res[i] = nums[r] ** 2 r -= 1 else: res[i] = nums[l] ** 2 l += 1 i -= 1 return res",
+          "description": "双指针法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: for i in range(len(nums)): nums[i] *= nums[i] nums.sort() return nums",
+          "description": "暴力排序法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: return sorted(x*x for x in nums)",
+          "description": "暴力排序+列表推导法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: new_list = [] left, right = 0 , len(nums) -1 while left <= right: if abs(nums[left]) <= abs(nums[right]): new_list.append(nums[right] ** 2) right -= 1 else: new_list.append(nums[left] ** 2) left += 1 return new_list[::-1]",
+          "description": "双指针+反转列表"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: if nums[0] >= 0: return [num ** 2 for num in nums] if nums[-1] <= 0: return [x ** 2 for x in nums[::-1]] i = 0 j = len(nums) - 1 new_nums = [0] * len(nums) for end_index in range(len(nums)-1, -1, -1): if nums[i] + nums[j] <= 0: new_nums[end_index] = nums[i] ** 2 i += 1 else: new_nums[end_index] = nums[j] ** 2 j -= 1 return new_nums",
+          "description": "双指针优化版本"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "（版本一）双指针法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> sortedSquares(vector<int>& A) { int k = A.size() - 1; vector<int> result(A.size(), 0); for (int i = 0, j = A.size() - 1; i <= j;) { if (A[i] * A[i] < A[j] * A[j])  { result[k--] = A[j] * A[j]; j--; } else { result[k--] = A[i] * A[i]; i++; } } return result; }};",
+          "description": "双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] sortedSquares(int[] nums) { int right = nums.length - 1; int left = 0; int[] result = new int[nums.length]; int index = result.length - 1; while (left <= right) { if (nums[left] * nums[left] > nums[right] * nums[right]) { result[index--] = nums[left] * nums[left]; ++left; } else { result[index--] = nums[right] * nums[right]; --right; } } return result;}}",
+          "description": "双指针法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: l, r, i = 0, len(nums)-1, len(nums)-1 res = [float('inf')] * len(nums) while l <= r: if nums[l] ** 2 < nums[r] ** 2: res[i] = nums[r] ** 2 r -= 1 else: res[i] = nums[l] ** 2 l += 1 i -= 1 return res",
+          "description": "双指针法"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: vector<int> sortedSquares(vector<int>& A) {for (int i = 0; i < A.size(); i++) {A[i] *= A[i];}sort(A.begin(), A.end()); // 快速排序return A;}};",
+      "description": "暴力排序"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: vector<int> sortedSquares(vector<int>& A) {int k = A.size() - 1;vector<int> result(A.size(), 0);for (int i = 0, j = A.size() - 1; i <= j;) {if (A[i] * A[i] < A[j] * A[j])  {result[k--] = A[j] * A[j];j--;}else {result[k--] = A[i] * A[i];i++;}}return result;}};",
+      "description": "双指针法"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int[] sortedSquares(int[] nums) {for (int i = 0; i < nums.length; i++) {nums[i] = nums[i] * nums[i];}Arrays.sort(nums);return nums;}}",
+      "description": "排序法"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int[] sortedSquares(int[] nums) {int right = nums.length - 1;int left = 0;int[] result = new int[nums.length];int index = result.length - 1;while (left <= right) {if (nums[left] * nums[left] > nums[right] * nums[right]) {result[index--] = nums[left] * nums[left];++left;} else {result[index--] = nums[right] * nums[right];--right;}}return result;}}",
+      "description": "双指针法"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int[] sortedSquares(int[] nums) {int l = 0;int r = nums.length - 1;int[] res = new int[nums.length];int j = nums.length - 1;while(l <= r){if(nums[l] * nums[l] > nums[r] * nums[r]){res[j--] = nums[l] * nums[l++];}else{res[j--] = nums[r] * nums[r--];}}return res;}}",
+      "description": "双指针法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: l, r, i = 0, len(nums)-1, len(nums)-1 res = [float('inf')] * len(nums) while l <= r: if nums[l] ** 2 < nums[r] ** 2: res[i] = nums[r] ** 2 r -= 1 else: res[i] = nums[l] ** 2 l += 1 i -= 1 return res",
+      "description": "双指针法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: for i in range(len(nums)): nums[i] *= nums[i] nums.sort() return nums",
+      "description": "暴力排序法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: return sorted(x*x for x in nums)",
+      "description": "暴力排序法+列表推导法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: new_list = [] left, right = 0 , len(nums) -1 while left <= right: if abs(nums[left]) <= abs(nums[right]): new_list.append(nums[right] ** 2) right -= 1 else: new_list.append(nums[left] ** 2) left += 1 return new_list[::-1]",
+      "description": "双指针+ 反转列表"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def sortedSquares(self, nums: List[int]) -> List[int]: if nums[0] >= 0: return [num ** 2 for num in nums] if nums[-1] <= 0: return [x ** 2 for x in nums[::-1]] i = 0 j = len(nums) - 1 new_nums = [0] * len(nums) for end_index in range(len(nums)-1, -1, -1): if nums[i] + nums[j] <= 0: new_nums[end_index] = nums[i] ** 2 i += 1 else: new_nums[end_index] = nums[j] ** 2 j -= 1 return new_nums",
+      "description": "双指针优化版本"
+    }
+  ],
+  "common_mistakes": [
+    "忽略数组中可能存在负数的情况，导致直接应用简单的排序算法无法得到正确答案。",
+    "在实现双指针方案时未考虑边界条件，如i <= j而非i < j，可能导致少处理最后两个元素之一。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\数组\\有序数组的平方.txt",
+  "extracted_at": "2025-07-21T22:43:53.354872",
+  "raw_content": "有序数组的平方\n力扣题目链接(https://leetcode.cn/problems/squares-of-a-sorted-array/)\n\n给你一个按 非递减顺序 排序的整数数组 nums，返回 每个数字的平方 组成的新数组，要求也按 非递减顺序 排序。\n\n示例 1：\n\n输入：nums = [-4,-1,0,3,10]\n输出：[0,1,9,16,100]\n解释：平方后，数组变为 [16,1,0,9,100]，排序后，数组变为 [0,1,9,16,100]\n示例 2：\n\n输入：nums = [-7,-3,2,3,11]\n输出：[4,9,9,49,121]\n\n#思路\n#暴力排序\n最直观的想法，莫过于：每个数平方之后，排个序，代码如下：\n\nclass Solution {\npublic:\n    vector<int> sortedSquares(vector<int>& A) {\n        for (int i = 0; i < A.size(); i++) {\n            A[i] *= A[i];\n        }\n        sort(A.begin(), A.end()); // 快速排序\n        return A;\n    }\n};\n这个时间复杂度是 O(n + nlogn)， 可以说是O(nlogn)的时间复杂度，但为了和下面双指针法算法时间复杂度有鲜明对比，我记为 O(n + nlog n)。\n\n#双指针法\n数组其实是有序的， 只不过负数平方之后可能成为最大数了。\n\n那么数组平方的最大值就在数组的两端，不是最左边就是最右边，不可能是中间。\n\n此时可以考虑双指针法了，i指向起始位置，j指向终止位置。\n\n定义一个新数组result，和A数组一样的大小，让k指向result数组终止位置。\n\n如果A[i] * A[i] < A[j] * A[j] 那么result[k--] = A[j] * A[j]; 。\n\n如果A[i] * A[i] >= A[j] * A[j] 那么result[k--] = A[i] * A[i]; 。\n\n如动画所示：\n\n\n\n不难写出如下代码：\n\nclass Solution {\npublic:\n    vector<int> sortedSquares(vector<int>& A) {\n        int k = A.size() - 1;\n        vector<int> result(A.size(), 0);\n        for (int i = 0, j = A.size() - 1; i <= j;) { // 注意这里要i <= j，因为最后要处理两个元素\n            if (A[i] * A[i] < A[j] * A[j])  {\n                result[k--] = A[j] * A[j];\n                j--;\n            }\n            else {\n                result[k--] = A[i] * A[i];\n                i++;\n            }\n        }\n        return result;\n    }\n};\n此时的时间复杂度为O(n)，相对于暴力排序的解法O(n + nlog n)还是提升不少的。\n\n这里还是说一下，大家不必太在意leetcode上执行用时，打败多少多少用户，这个就是一个玩具，非常不准确。\n\n做题的时候自己能分析出来时间复杂度就可以了，至于leetcode上执行用时，大概看一下就行，只要达到最优的时间复杂度就可以了，\n\n一样的代码多提交几次可能就击败百分之百了.....\n\n#其他语言版本\n#Java：\n排序法\n\nclass Solution {\n    public int[] sortedSquares(int[] nums) {\n        for (int i = 0; i < nums.length; i++) {\n            nums[i] = nums[i] * nums[i];\n        }\n        Arrays.sort(nums);\n        return nums;\n    }\n}\nclass Solution {\n    public int[] sortedSquares(int[] nums) {\n        int right = nums.length - 1;\n        int left = 0;\n        int[] result = new int[nums.length];\n        int index = result.length - 1;\n        while (left <= right) {\n            if (nums[left] * nums[left] > nums[right] * nums[right]) {\n                // 正数的相对位置是不变的， 需要调整的是负数平方后的相对位置\n                result[index--] = nums[left] * nums[left];\n                ++left;\n            } else {\n                result[index--] = nums[right] * nums[right];\n                --right;\n            }\n        }\n        return result;\n    }\n}\nclass Solution {\n    public int[] sortedSquares(int[] nums) {\n        int l = 0;\n        int r = nums.length - 1;\n        int[] res = new int[nums.length];\n        int j = nums.length - 1;\n        while(l <= r){\n            if(nums[l] * nums[l] > nums[r] * nums[r]){\n                res[j--] = nums[l] * nums[l++];\n            }else{\n                res[j--] = nums[r] * nums[r--];\n            }\n        }\n        return res;\n    }\n}\n#Python：\n（版本一）双指针法\nclass Solution:\n    def sortedSquares(self, nums: List[int]) -> List[int]:\n        l, r, i = 0, len(nums)-1, len(nums)-1\n        res = [float('inf')] * len(nums) # 需要提前定义列表，存放结果\n        while l <= r:\n            if nums[l] ** 2 < nums[r] ** 2: # 左右边界进行对比，找出最大值\n                res[i] = nums[r] ** 2\n                r -= 1 # 右指针往左移动\n            else:\n                res[i] = nums[l] ** 2\n                l += 1 # 左指针往右移动\n            i -= 1 # 存放结果的指针需要往前平移一位\n        return res\n（版本二）暴力排序法\nclass Solution:\n    def sortedSquares(self, nums: List[int]) -> List[int]:\n        for i in range(len(nums)):\n            nums[i] *= nums[i]\n        nums.sort()\n        return nums\n（版本三）暴力排序法+列表推导法\nclass Solution:\n    def sortedSquares(self, nums: List[int]) -> List[int]:\n        return sorted(x*x for x in nums)\n(版本四) 双指针+ 反转列表\nclass Solution:\n    def sortedSquares(self, nums: List[int]) -> List[int]:\n        #根据list的先进排序在先原则\n        #将nums的平方按从大到小的顺序添加进新的list\n        #最后反转list\n        new_list = []\n        left, right = 0 , len(nums) -1\n        while left <= right:\n            if abs(nums[left]) <= abs(nums[right]):\n                new_list.append(nums[right] ** 2)\n                right -= 1\n            else:\n                new_list.append(nums[left] ** 2)\n                left += 1\n        return new_list[::-1]\n(双指针优化版本） 三步优化\n class Solution:\n    def sortedSquares(self, nums: List[int]) -> List[int]:\n        \"\"\"\n        整体思想：有序数组的绝对值最大值永远在两头，比较两头，平方大的插到新数组的最后\n        优   化：1. 优化所有元素为非正或非负的情况\n                2. 头尾平方的大小比较直接将头尾相加与0进行比较即可\n                3. 新的平方排序数组的插入索引可以用倒序插入实现（针对for循环，while循环不适用）\n        \"\"\"\n \n        # 特殊情况, 元素都非负（优化1）\n        if nums[0] >= 0:\n            return [num ** 2 for num in nums]  # 按顺序平方即可\n        # 最后一个非正，全负有序的\n        if nums[-1] <= 0:\n            return [x ** 2 for x in nums[::-1]]  # 倒序平方后的数组\n        \n        # 一般情况, 有正有负\n        i = 0  # 原数组头索引\n        j = len(nums) - 1  # 原数组尾部索引\n        new_nums = [0] * len(nums)  # 新建一个等长数组用于保存排序后的结果\n        # end_index = len(nums) - 1  # 新的排序数组(是新数组)尾插索引, 每次需要减一（优化3优化了）\n\n        for end_index in range(len(nums)-1, -1, -1): # (优化3，倒序，不用单独创建变量)\n            # if nums[i] ** 2 >= nums[j] ** 2:\n            if nums[i] + nums[j] <= 0:  # (优化2)\n                new_nums[end_index] = nums[i] ** 2\n                i += 1\n                # end_index -= 1  (优化3)\n            else:\n                new_nums[end_index] = nums[j] ** 2\n                j -= 1\n                # end_index -= 1  (优化3)\n        return new_nums"
+}

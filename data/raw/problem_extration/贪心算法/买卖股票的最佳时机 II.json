@@ -1,0 +1,362 @@
+{
+  "id": "AP_58cafcef",
+  "title": "买卖股票的最佳时机 II",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/",
+  "description": "一个数组，它的第  i 个元素是一支给定股票第 i 天的价格。\n\n设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。\n\n注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "贪心算法",
+    "动态规划"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "状态转移",
+    "单次遍历"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过将整体利润分解为每天的利润变化，使用贪心算法或动态规划求解。贪心策略下，仅收集所有正向的日收益；而在动态规划中，则维护持有与不持有股票两种状态下最大收益。",
+  "key_insights": [
+    {
+      "content": "将整体交易利润视为连续几天的小额交易利润之和，这使得我们能够灵活地选择买卖时机。"
+    },
+    {
+      "content": "贪心算法的关键在于每一步都尽可能获取当前最大的局部利益（即只考虑正利润），最终累积成全局最优解。"
+    },
+    {
+      "content": "动态规划方法通过定义状态并利用状态转移方程来跟踪每一天结束时的最大可能收益，分为持有股票和未持有股票两种情形。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "本题首先要清楚两点：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int result = 0;for (int i = 1; i < prices.size(); i++) {result += max(prices[i] - prices[i - 1], 0);}return result;}};",
+          "description": "C++贪心算法实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int n = prices.size();vector<vector<int>> dp(n, vector<int>(2, 0));dp[0][0] -= prices[0]; for (int i = 1; i < n; i++) {dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]);}return max(dp[n - 1][0], dp[n - 1][1]);}};",
+          "description": "C++动态规划实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int result = 0;for (int i = 1; i < prices.length; i++) {result += Math.max(prices[i] - prices[i - 1], 0);}return result;}}",
+          "description": "Java贪心算法实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int[][] dp = new int[prices.length][2];dp[0][0] = 0;dp[0][1] = -prices[0];for (int i = 1; i < prices.length; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] - prices[i]);}return dp[prices.length - 1][0];}}",
+          "description": "Java动态规划实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: result = 0 for i in range(1, len(prices)): result += max(prices[i] - prices[i - 1], 0) return result",
+          "description": "Python贪心算法实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: length = len(prices) dp = [[0] * 2 for _ in range(length)] dp[0][0] = -prices[0] dp[0][1] = 0 for i in range(1, length): dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i]) return dp[-1][1]",
+          "description": "Python动态规划实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "贪心算法",
+      "text": "这道题目可能我们只会想，选一个低的买入，再选个高的卖，再选一个低的买入.....循环反复。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int result = 0;for (int i = 1; i < prices.size(); i++) {result += max(prices[i] - prices[i - 1], 0);}return result;}};",
+          "description": "C++贪心算法实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int n = prices.size();vector<vector<int>> dp(n, vector<int>(2, 0));dp[0][0] -= prices[0]; for (int i = 1; i < n; i++) {dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]);}return max(dp[n - 1][0], dp[n - 1][1]);}};",
+          "description": "C++动态规划实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int result = 0;for (int i = 1; i < prices.length; i++) {result += Math.max(prices[i] - prices[i - 1], 0);}return result;}}",
+          "description": "Java贪心算法实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int[][] dp = new int[prices.length][2];dp[0][0] = 0;dp[0][1] = -prices[0];for (int i = 1; i < prices.length; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] - prices[i]);}return dp[prices.length - 1][0];}}",
+          "description": "Java动态规划实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: result = 0 for i in range(1, len(prices)): result += max(prices[i] - prices[i - 1], 0) return result",
+          "description": "Python贪心算法实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: length = len(prices) dp = [[0] * 2 for _ in range(length)] dp[0][0] = -prices[0] dp[0][1] = 0 for i in range(1, length): dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i]) return dp[-1][1]",
+          "description": "Python动态规划实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "动态规划",
+      "text": "动态规划将在下一个系列详细讲解，本题解先给出我的 C++代码（带详细注释），想先学习的话，可以看本篇：122.买卖股票的最佳时机II（动态规划）(https://programmercarl.com/0122.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BAII%EF%BC%88%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%89.html#%E6%80%9D%E8%B7%AF)",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int result = 0;for (int i = 1; i < prices.size(); i++) {result += max(prices[i] - prices[i - 1], 0);}return result;}};",
+          "description": "C++贪心算法求解买卖股票的最佳时机II"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int n = prices.size();vector<vector<int>> dp(n, vector<int>(2, 0));dp[0][0] -= prices[0]; for (int i = 1; i < n; i++) {dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]);}return max(dp[n - 1][0], dp[n - 1][1]);}};",
+          "description": "C++动态规划求解买卖股票的最佳时机II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int result = 0;for (int i = 1; i < prices.length; i++) {result += Math.max(prices[i] - prices[i - 1], 0);}return result;}}",
+          "description": "Java贪心算法求解买卖股票的最佳时机II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int[][] dp = new int[prices.length][2];dp[0][0] = 0;dp[0][1] = -prices[0];for (int i = 1; i < prices.length; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] - prices[i]);}return dp[prices.length - 1][0];}}",
+          "description": "Java动态规划求解买卖股票的最佳时机II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def maxProfit(self, prices: List[int]) -> int:result = 0for i in range(1, len(prices)):result += max(prices[i] - prices[i - 1], 0)return result",
+          "description": "Python贪心算法求解买卖股票的最佳时机II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def maxProfit(self, prices: List[int]) -> int:length = len(prices)dp = [[0] * 2 for _ in range(length)]dp[0][0] = -prices[0]dp[0][1] = 0for i in range(1, length):dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i])dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i])return dp[-1][1]",
+          "description": "Python动态规划求解买卖股票的最佳时机II"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "股票问题其实是一个系列的，属于动态规划的范畴，因为目前在讲解贪心系列，所以股票问题会在之后的动态规划系列中详细讲解。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int result = 0;for (int i = 1; i < prices.size(); i++) {result += max(prices[i] - prices[i - 1], 0);}return result;}};",
+          "description": "C++贪心算法实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int n = prices.size();vector<vector<int>> dp(n, vector<int>(2, 0));dp[0][0] -= prices[0]; for (int i = 1; i < n; i++) {dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]);}return max(dp[n - 1][0], dp[n - 1][1]);}};",
+          "description": "C++动态规划实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int result = 0;for (int i = 1; i < prices.length; i++) {result += Math.max(prices[i] - prices[i - 1], 0);}return result;}}",
+          "description": "Java贪心算法实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int[][] dp = new int[prices.length][2];dp[0][0] = 0;dp[0][1] = -prices[0];for (int i = 1; i < prices.length; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] - prices[i]);}return dp[prices.length - 1][0];}}",
+          "description": "Java动态规划实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: result = 0 for i in range(1, len(prices)): result += max(prices[i] - prices[i - 1], 0) return result",
+          "description": "Python贪心算法实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: length = len(prices) dp = [[0] * 2 for _ in range(length)] dp[0][0] = -prices[0] dp[0][1] = 0 for i in range(1, length): dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i]) return dp[-1][1]",
+          "description": "Python动态规划实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int result = 0;for (int i = 1; i < prices.size(); i++) {result += max(prices[i] - prices[i - 1], 0);}return result;}};",
+          "description": "使用贪心算法计算最大利润"
+        },
+        {
+          "language": "C++",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int n = prices.size();vector<vector<int>> dp(n, vector<int>(2, 0));dp[0][0] -= prices[0]; for (int i = 1; i < n; i++) {dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]);}return max(dp[n - 1][0], dp[n - 1][1]);}};",
+          "description": "使用动态规划计算最大利润"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int result = 0;for (int i = 1; i < prices.length; i++) {result += Math.max(prices[i] - prices[i - 1], 0);}return result;}}",
+          "description": "使用贪心算法计算最大利润"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int[][] dp = new int[prices.length][2];dp[0][0] = 0;dp[0][1] = -prices[0];for (int i = 1; i < prices.length; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] - prices[i]);}return dp[prices.length - 1][0];}}",
+          "description": "使用动态规划计算最大利润"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: result = 0 for i in range(1, len(prices)): result += max(prices[i] - prices[i - 1], 0) return result",
+          "description": "使用贪心算法计算最大利润"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: length = len(prices) dp = [[0] * 2 for _ in range(length)] dp[0][0] = -prices[0] dp[0][1] = 0 for i in range(1, length): dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i]) return dp[-1][1]",
+          "description": "使用动态规划计算最大利润"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java:",
+      "text": "贪心:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int result = 0;for (int i = 1; i < prices.size(); i++) {result += max(prices[i] - prices[i - 1], 0);}return result;}};",
+          "description": "C++贪心算法实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int n = prices.size();vector<vector<int>> dp(n, vector<int>(2, 0));dp[0][0] -= prices[0]; for (int i = 1; i < n; i++) {dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]);}return max(dp[n - 1][0], dp[n - 1][1]);}};",
+          "description": "C++动态规划实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int result = 0;for (int i = 1; i < prices.length; i++) {result += Math.max(prices[i] - prices[i - 1], 0);}return result;}}",
+          "description": "Java贪心算法实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int[][] dp = new int[prices.length][2];dp[0][0] = 0;dp[0][1] = -prices[0];for (int i = 1; i < prices.length; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] - prices[i]);}return dp[prices.length - 1][0];}}",
+          "description": "Java动态规划实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: result = 0 for i in range(1, len(prices)): result += max(prices[i] - prices[i - 1], 0) return result",
+          "description": "Python贪心算法实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: length = len(prices) dp = [[0] * 2 for _ in range(length)] dp[0][0] = -prices[0] dp[0][1] = 0 for i in range(1, length): dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i]) return dp[-1][1]",
+          "description": "Python动态规划实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python:",
+      "text": "贪心:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int result = 0;for (int i = 1; i < prices.size(); i++) {result += max(prices[i] - prices[i - 1], 0);}return result;}};",
+          "description": "C++贪心算法实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int n = prices.size();vector<vector<int>> dp(n, vector<int>(2, 0));dp[0][0] -= prices[0];for (int i = 1; i < n; i++) {dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]);}return max(dp[n - 1][0], dp[n - 1][1]);}};",
+          "description": "C++动态规划实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int result = 0;for (int i = 1; i < prices.length; i++) {result += Math.max(prices[i] - prices[i - 1], 0);}return result;}}",
+          "description": "Java贪心算法实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int[][] dp = new int[prices.length][2];dp[0][0] = 0;dp[0][1] = -prices[0];for (int i = 1; i < prices.length; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] - prices[i]);}return dp[prices.length - 1][0];}}",
+          "description": "Java动态规划实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: result = 0 for i in range(1, len(prices)): result += max(prices[i] - prices[i - 1], 0) return result",
+          "description": "Python贪心算法实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: length = len(prices) dp = [[0] * 2 for _ in range(length)] dp[0][0] = -prices[0] dp[0][1] = 0 for i in range(1, length): dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i]) return dp[-1][1]",
+          "description": "Python动态规划实现"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int maxProfit(vector<int>& prices) { int result = 0; for (int i = 1; i < prices.size(); i++) { result += max(prices[i] - prices[i - 1], 0); } return result; }};",
+      "description": "C++贪心算法实现"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int maxProfit(vector<int>& prices) { int n = prices.size(); vector<vector<int>> dp(n, vector<int>(2, 0)); dp[0][0] -= prices[0]; for (int i = 1; i < n; i++) { dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]); dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]); } return max(dp[n - 1][0], dp[n - 1][1]); }};",
+      "description": "C++动态规划实现"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public int maxProfit(int[] prices) { int result = 0; for (int i = 1; i < prices.length; i++) { result += Math.max(prices[i] - prices[i - 1], 0); } return result; }}",
+      "description": "Java贪心算法实现"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public int maxProfit(int[] prices) { int[][] dp = new int[prices.length][2]; dp[0][0] = 0; dp[0][1] = -prices[0]; for (int i = 1; i < prices.length; i++) { dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]); dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] - prices[i]); } return dp[prices.length - 1][0]; }}",
+      "description": "Java动态规划实现"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: result = 0 for i in range(1, len(prices)): result += max(prices[i] - prices[i - 1], 0) return result",
+      "description": "Python贪心算法实现"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: length = len(prices) dp = [[0] * 2 for _ in range(length)] dp[0][0] = -prices[0] dp[0][1] = 0 for i in range(1, length): dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i]) return dp[-1][1]",
+      "description": "Python动态规划实现"
+    }
+  ],
+  "common_mistakes": [
+    "误解了题目的要求，尝试同时参与多笔交易。",
+    "未能理解如何将总利润拆解为每日利润的变化，导致算法复杂度过高。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/2020112917480858-20230310134659477.png",
+      "description": "该图片展示了通过贪心算法计算股票交易最大利润的过程，即只收集每天的正利润（4 + 5 + 3 = 12）。",
+      "context": "该图展示了如何将股票买卖问题转化为每天利润的累加过程，强调了从第二天开始计算每天利润的重要性以及只收集正利润来实现最大总利润的策略。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/2020112917480858-20230310134659477.png",
+      "description": "GIF展示了根据每日股价变化计算并累积正利润的过程，形象地表达了通过收集每天的正差价来获取最大总利润的方法。",
+      "context": "GIF动画展示了如何将整体利润分解为每天的利润变化，并强调了只收集正利润来实现最大收益的方法。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\贪心算法\\买卖股票的最佳时机 II.txt",
+  "extracted_at": "2025-07-22T14:40:01.033851",
+  "raw_content": "买卖股票的最佳时机 II\n力扣题目链接(https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/)\n\n给定一个数组，它的第  i 个元素是一支给定股票第 i 天的价格。\n\n设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。\n\n注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。\n\n示例 1:\n\n输入: [7,1,5,3,6,4]\n输出: 7\n解释: 在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4。随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6-3 = 3 。\n示例 2:\n\n输入: [1,2,3,4,5]\n输出: 4\n解释: 在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。注意你不能在第 1 天和第 2 天接连购买股票，之后再将它们卖出。因为这样属于同时参与了多笔交易，你必须在再次购买前出售掉之前的股票。\n示例  3:\n\n输入: [7,6,4,3,1]\n输出: 0\n解释: 在这种情况下, 没有交易完成, 所以最大利润为 0。\n提示：\n\n1 <= prices.length <= 3 * 10 ^ 4\n0 <= prices[i] <= 10 ^ 4\n\n\n#思路\n本题首先要清楚两点：\n\n只有一只股票！\n当前只有买股票或者卖股票的操作\n想获得利润至少要两天为一个交易单元。\n\n#贪心算法\n这道题目可能我们只会想，选一个低的买入，再选个高的卖，再选一个低的买入.....循环反复。\n\n如果想到其实最终利润是可以分解的，那么本题就很容易了！\n\n如何分解呢？\n\n假如第 0 天买入，第 3 天卖出，那么利润为：prices[3] - prices[0]。\n\n相当于(prices[3] - prices[2]) + (prices[2] - prices[1]) + (prices[1] - prices[0])。\n\n此时就是把利润分解为每天为单位的维度，而不是从 0 天到第 3 天整体去考虑！\n\n那么根据 prices 可以得到每天的利润序列：(prices[i] - prices[i - 1]).....(prices[1] - prices[0])。\n\n如图：\n\nhttps://file1.kamacoder.com/i/algo/2020112917480858-20230310134659477.png\n\n一些同学陷入：第一天怎么就没有利润呢，第一天到底算不算的困惑中。\n\n第一天当然没有利润，至少要第二天才会有利润，所以利润的序列比股票序列少一天！\n\n从图中可以发现，其实我们需要收集每天的正利润就可以，收集正利润的区间，就是股票买卖的区间，而我们只需要关注最终利润，不需要记录区间。\n\n那么只收集正利润就是贪心所贪的地方！\n\n局部最优：收集每天的正利润，全局最优：求得最大利润。\n\n局部最优可以推出全局最优，找不出反例，试一试贪心！\n\n对应 C++代码如下：\n\nclass Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        int result = 0;\n        for (int i = 1; i < prices.size(); i++) {\n            result += max(prices[i] - prices[i - 1], 0);\n        }\n        return result;\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(1)\n#动态规划\n动态规划将在下一个系列详细讲解，本题解先给出我的 C++代码（带详细注释），想先学习的话，可以看本篇：122.买卖股票的最佳时机II（动态规划）(https://programmercarl.com/0122.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BAII%EF%BC%88%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%89.html#%E6%80%9D%E8%B7%AF)\n\nclass Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        // dp[i][1]第i天持有的最多现金\n        // dp[i][0]第i天持有股票后的最多现金\n        int n = prices.size();\n        vector<vector<int>> dp(n, vector<int>(2, 0));\n        dp[0][0] -= prices[0]; // 持股票\n        for (int i = 1; i < n; i++) {\n            // 第i天持股票所剩最多现金 = max(第i-1天持股票所剩现金, 第i-1天持现金-买第i天的股票)\n            dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);\n            // 第i天持有最多现金 = max(第i-1天持有的最多现金，第i-1天持有股票的最多现金+第i天卖出股票)\n            dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]);\n        }\n        return max(dp[n - 1][0], dp[n - 1][1]);\n    }\n};\n时间复杂度：$O(n)$\n空间复杂度：$O(n)$\n#总结\n股票问题其实是一个系列的，属于动态规划的范畴，因为目前在讲解贪心系列，所以股票问题会在之后的动态规划系列中详细讲解。\n\n可以看出有时候，贪心往往比动态规划更巧妙，更好用，所以别小看了贪心算法。\n\n本题中理解利润拆分是关键点！ 不要整块的去看，而是把整体利润拆为每天的利润。\n\n一旦想到这里了，很自然就会想到贪心了，即：只收集每天的正利润，最后稳稳的就是最大利润了。\n\n#其他语言版本\n#Java:\n贪心:\n\n// 贪心思路\nclass Solution {\n    public int maxProfit(int[] prices) {\n        int result = 0;\n        for (int i = 1; i < prices.length; i++) {\n            result += Math.max(prices[i] - prices[i - 1], 0);\n        }\n        return result;\n    }\n}\n动态规划:\n\nclass Solution { // 动态规划\n    public int maxProfit(int[] prices) {\n        // [天数][是否持有股票]\n        int[][] dp = new int[prices.length][2];\n\n        // base case\n        dp[0][0] = 0;\n        dp[0][1] = -prices[0];\n\n        for (int i = 1; i < prices.length; i++) {\n            // dp公式\n            dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);\n            dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] - prices[i]);\n        }\n\n        return dp[prices.length - 1][0];\n    }\n}\n#Python:\n贪心:\n\nclass Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        result = 0\n        for i in range(1, len(prices)):\n            result += max(prices[i] - prices[i - 1], 0)\n        return result\n动态规划:\n\nclass Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        length = len(prices)\n        dp = [[0] * 2 for _ in range(length)]\n        dp[0][0] = -prices[0]\n        dp[0][1] = 0\n        for i in range(1, length):\n            dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) #注意这里是和121. 买卖股票的最佳时机唯一不同的地方\n            dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i])\n        return dp[-1][1]"
+}

@@ -1,0 +1,337 @@
+{
+  "id": "AP_3fecf1a1",
+  "title": "两个字符串的删除操作",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/delete-operation-for-two-strings/",
+  "description": "两个单词 word1 和 word2，找到使得 word1 和 word2 相同所需的最小步数，每步可以删除任意一个字符串中的一个字符。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "动态规划"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "双层循环",
+    "状态转移"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用动态规划来解决两个字符串的删除操作问题。通过定义一个二维dp数组，其中dp[i][j]表示以i-1为结尾的word1和以j-1为结尾的word2达到相等所需要的最少删除次数。初始化边界条件后，依据字符是否相等决定递推公式，并按从上到下、从左到右的顺序遍历填充dp数组。",
+  "key_insights": [
+    {
+      "content": "本题适合用动态规划方法求解，因为问题可以通过分解成更小的子问题来解决，且这些子问题之间存在重叠。"
+    },
+    {
+      "content": "该问题与寻找两个字符串的最长公共子序列密切相关，后者是动态规划的经典应用之一。一旦找到最长公共子序列，剩余需要被删除的字符数即为总长度减去两倍的LCS长度。"
+    },
+    {
+      "content": "当字符相同时，不需要额外的操作；当字符不同时，考虑三种可能的操作（删除word1中的字符、删除word2中的字符或同时删除两者），取最小值作为当前状态的最优解。"
+    },
+    {
+      "content": "dp数组的初始化基于空字符串的情况，即要使一个非空字符串变为空所需的删除次数等于其长度。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "#动态规划一",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minDistance(string word1, string word2) {vector<vector<int>> dp(word1.size() + 1, vector<int>(word2.size() + 1)); for (int i = 0; i <= word1.size(); i++) dp[i][0] = i; for (int j = 0; j <= word2.size(); j++) dp[0][j] = j; for (int i = 1; i <= word1.size(); i++) {for (int j = 1; j <= word2.size(); j++) {if (word1[i - 1] == word2[j - 1]) {dp[i][j] = dp[i - 1][j - 1];} else {dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1);}}} return dp[word1.size()][word2.size()];}};",
+          "description": "使用动态规划找到两个字符串相等所需最小删除操作数。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minDistance(string word1, string word2) {vector<vector<int>> dp(word1.size()+1, vector<int>(word2.size()+1, 0)); for (int i=1; i<=word1.size(); i++){for (int j=1; j<=word2.size(); j++){if (word1[i-1] == word2[j-1]) dp[i][j] = dp[i-1][j-1] + 1;else dp[i][j] = max(dp[i-1][j], dp[i][j-1]);}}return word1.size()+word2.size()-dp[word1.size()][word2.size()]*2;}};",
+          "description": "通过计算最长公共子序列长度，反推出使两字符串相等所需的最少删除操作数。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int minDistance(String word1, String word2) {int len1 = word1.length();int len2 = word2.length();int[][] dp = new int[len1 + 1][len2 + 1];for (int i = 1; i <= len1; i++) {for (int j = 1; j <= len2; j++) {if (word1.charAt(i - 1) == word2.charAt(j - 1)) {dp[i][j] = dp[i - 1][j - 1] + 1;} else {dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);}}}return len1 + len2 - dp[len1][len2] * 2;}}",
+          "description": "Java实现，基于最长公共子序列的长度来计算最少删除操作数。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int minDistance(String word1, String word2) {int[][] dp = new int[word1.length() + 1][word2.length() + 1];for (int i = 0; i < word1.length() + 1; i++) dp[i][0] = i;for (int j = 0; j < word2.length() + 1; j++) dp[0][j] = j;for (int i = 1; i < word1.length() + 1; i++) {for (int j = 1; j < word2.length() + 1; j++) {if (word1.charAt(i - 1) == word2.charAt(j - 1)) {dp[i][j] = dp[i - 1][j - 1];}else{dp[i][j] = Math.min(dp[i - 1][j - 1] + 2,Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1));}}}return dp[word1.length()][word2.length()];}}",
+          "description": "直接计算需要删除多少个字符才能使两个字符串相等。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int minDistance(String word1, String word2) {char[] char1 = word1.toCharArray();char[] char2 = word2.toCharArray();int len1 = char1.length;int len2 = char2.length;int dp[][] = new int [len1 + 1][len2 + 1];for(int i = 1; i <= len1; i++){for(int j = 1; j <= len2; j++){if(char1[i - 1] == char2[j - 1])dp[i][j] = dp[i - 1][j - 1] + 1;elsedp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);}}return len1 + len2 - (2 * dp[len1][len2]);}}",
+          "description": "利用最长公共子序列的方法来解决最小删除操作问题。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def minDistance(self, word1: str, word2: str) -> int: dp = [[0] * (len(word2)+1) for _ in range(len(word1)+1)] for i in range(len(word1)+1): dp[i][0] = i for j in range(len(word2)+1): dp[0][j] = j for i in range(1, len(word1)+1): for j in range(1, len(word2)+1): if word1[i-1] == word2[j-1]: dp[i][j] = dp[i-1][j-1] else: dp[i][j] = min(dp[i-1][j-1] + 2, dp[i-1][j] + 1, dp[i][j-1] + 1) return dp[-1][-1]",
+          "description": "Python版本的动态规划解法，寻找将两字符串变为相同所需的最少删除次数。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def minDistance(self, word1, word2): m, n = len(word1), len(word2) dp = [[0] * (n+1) for _ in range(m+1)] for i in range(1, m+1): for j in range(1, n+1): if word1[i-1] == word2[j-1]: dp[i][j] = dp[i-1][j-1] + 1 else: dp[i][j] = max(dp[i-1][j], dp[i][j-1]) return m + n - 2 * dp[-1][-1]",
+          "description": "另一个Python实现，采用最长公共子序列方法求解删除操作数。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "动态规划一",
+      "text": "本题和动态规划：115.不同的子序列 (https://programmercarl.com/0115.%E4%B8%8D%E5%90%8C%E7%9A%84%E5%AD%90%E5%BA%8F%E5%88%97.html)相比，其实就是两个字符串都可以删除了，情况虽说复杂一些，但整体思路是不变的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minDistance(string word1, string word2) {vector<vector<int>> dp(word1.size() + 1, vector<int>(word2.size() + 1)); for (int i = 0; i <= word1.size(); i++) dp[i][0] = i; for (int j = 0; j <= word2.size(); j++) dp[0][j] = j; for (int i = 1; i <= word1.size(); i++) {for (int j = 1; j <= word2.size(); j++) {if (word1[i - 1] == word2[j - 1]) {dp[i][j] = dp[i - 1][j - 1];} else {dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1);}}} return dp[word1.size()][word2.size()];}};",
+          "description": "使用动态规划计算两个字符串达到相等所需的最小删除次数"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minDistance(string word1, string word2) {vector<vector<int>> dp(word1.size()+1, vector<int>(word2.size()+1, 0)); for (int i=1; i<=word1.size(); i++){for (int j=1; j<=word2.size(); j++){if (word1[i-1] == word2[j-1]) dp[i][j] = dp[i-1][j-1] + 1;else dp[i][j] = max(dp[i-1][j], dp[i][j-1]);}}return word1.size()+word2.size()-dp[word1.size()][word2.size()]*2;}};",
+          "description": "通过最长公共子序列长度计算最小删除次数"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int minDistance(String word1, String word2) {int len1 = word1.length(); int len2 = word2.length(); int[][] dp = new int[len1 + 1][len2 + 1]; for (int i = 1; i <= len1; i++) {for (int j = 1; j <= len2; j++) {if (word1.charAt(i - 1) == word2.charAt(j - 1)) {dp[i][j] = dp[i - 1][j - 1] + 1;} else {dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);}}}return len1 + len2 - dp[len1][len2] * 2;}}",
+          "description": "Java实现，基于最长公共子序列求解"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int minDistance(String word1, String word2) {int[][] dp = new int[word1.length() + 1][word2.length() + 1]; for (int i = 0; i < word1.length() + 1; i++) dp[i][0] = i; for (int j = 0; j < word2.length() + 1; j++) dp[0][j] = j; for (int i = 1; i < word1.length() + 1; i++) {for (int j = 1; j < word2.length() + 1; j++) {if (word1.charAt(i - 1) == word2.charAt(j - 1)) {dp[i][j] = dp[i - 1][j - 1];}else{dp[i][j] = Math.min(dp[i - 1][j - 1] + 2,Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1));}}}return dp[word1.length()][word2.length()];}}",
+          "description": "Java版本，直接计算最小删除操作数"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int minDistance(String word1, String word2) {char[] char1 = word1.toCharArray(); char[] char2 = word2.toCharArray(); int len1 = char1.length; int len2 = char2.length; int dp[][] = new int [len1 + 1][len2 + 1]; for(int i = 1; i <= len1; i++){for(int j = 1; j <= len2; j++){if(char1[i - 1] == char2[j - 1]) dp[i][j] = dp[i - 1][j - 1] + 1;else dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);}}return len1 + len2 - (2 * dp[len1][len2]);}}",
+          "description": "基于最长公共子序列的Java解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def minDistance(self, word1: str, word2: str) -> int: dp = [[0] * (len(word2)+1) for _ in range(len(word1)+1)] for i in range(len(word1)+1): dp[i][0] = i for j in range(len(word2)+1): dp[0][j] = j for i in range(1, len(word1)+1): for j in range(1, len(word2)+1): if word1[i-1] == word2[j-1]: dp[i][j] = dp[i-1][j-1] else: dp[i][j] = min(dp[i-1][j-1] + 2, dp[i-1][j] + 1, dp[i][j-1] + 1) return dp[-1][-1]",
+          "description": "Python实现，直接计算两字符串达到相等的最小删除次数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def minDistance(self, word1, word2): m, n = len(word1), len(word2) dp = [[0] * (n+1) for _ in range(m+1)] for i in range(1, m+1): for j in range(1, n+1): if word1[i-1] == word2[j-1]: dp[i][j] = dp[i-1][j-1] + 1 else: dp[i][j] = max(dp[i-1][j], dp[i][j-1]) return m + n - 2 * dp[-1][-1]",
+          "description": "Python版本，通过最长公共子序列间接求解"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "动态规划二",
+      "text": "本题和动态规划：1143.最长公共子序列 (https://programmercarl.com/1143.%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97.html)基本相同，只要求出两个字符串的最长公共子序列长度即可，那么除了最长公共子序列之外的字符都是必须删除的，最后用两个字符串的总长度减去两个最长公共子序列的长度就是删除的最少步数。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minDistance(string word1, string word2) {vector<vector<int>> dp(word1.size() + 1, vector<int>(word2.size() + 1)); for (int i = 0; i <= word1.size(); i++) dp[i][0] = i; for (int j = 0; j <= word2.size(); j++) dp[0][j] = j; for (int i = 1; i <= word1.size(); i++) {for (int j = 1; j <= word2.size(); j++) {if (word1[i - 1] == word2[j - 1]) {dp[i][j] = dp[i - 1][j - 1];} else {dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1);}}} return dp[word1.size()][word2.size()];}};",
+          "description": "动态规划实现，存储需要删除的字符个数"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minDistance(string word1, string word2) {vector<vector<int>> dp(word1.size()+1, vector<int>(word2.size()+1, 0)); for (int i=1; i<=word1.size(); i++){for (int j=1; j<=word2.size(); j++){if (word1[i-1] == word2[j-1]) dp[i][j] = dp[i-1][j-1] + 1; else dp[i][j] = max(dp[i-1][j], dp[i][j-1]);}} return word1.size()+word2.size()-dp[word1.size()][word2.size()]*2;}};",
+          "description": "使用最长公共子序列长度来计算最少删除步数"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int minDistance(String word1, String word2) {int len1 = word1.length(); int len2 = word2.length(); int[][] dp = new int[len1 + 1][len2 + 1]; for (int i = 1; i <= len1; i++) {for (int j = 1; j <= len2; j++) {if (word1.charAt(i - 1) == word2.charAt(j - 1)) {dp[i][j] = dp[i - 1][j - 1] + 1;} else {dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);}}} return len1 + len2 - dp[len1][len2] * 2;}}",
+          "description": "Java版，利用最长公共子序列反推最少删除步数"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int minDistance(String word1, String word2) {int[][] dp = new int[word1.length() + 1][word2.length() + 1]; for (int i = 0; i < word1.length() + 1; i++) dp[i][0] = i; for (int j = 0; j < word2.length() + 1; j++) dp[0][j] = j; for (int i = 1; i < word1.length() + 1; i++) {for (int j = 1; j < word2.length() + 1; j++) {if (word1.charAt(i - 1) == word2.charAt(j - 1)) {dp[i][j] = dp[i - 1][j - 1];}else{dp[i][j] = Math.min(dp[i - 1][j - 1] + 2, Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1));}}} return dp[word1.length()][word2.length()];}}",
+          "description": "Java版，直接计算最少删除步数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def minDistance(self, word1: str, word2: str) -> int: dp = [[0] * (len(word2)+1) for _ in range(len(word1)+1)] for i in range(len(word1)+1): dp[i][0] = i for j in range(len(word2)+1): dp[0][j] = j for i in range(1, len(word1)+1): for j in range(1, len(word2)+1): if word1[i-1] == word2[j-1]: dp[i][j] = dp[i-1][j-1] else: dp[i][j] = min(dp[i-1][j-1] + 2, dp[i-1][j] + 1, dp[i][j-1] + 1) return dp[-1][-1]",
+          "description": "Python版，直接计算最少删除步数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def minDistance(self, word1, word2): m, n = len(word1), len(word2) dp = [[0] * (n+1) for _ in range(m+1)] for i in range(1, m+1): for j in range(1, n+1): if word1[i-1] == word2[j-1]: dp[i][j] = dp[i-1][j-1] + 1 else: dp[i][j] = max(dp[i-1][j], dp[i][j-1]) return m + n - 2 * dp[-1][-1]",
+          "description": "Python版，利用最长公共子序列长度来计算最少删除步数"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int minDistance(String word1, String word2) {\n        int len1 = word1.length();\n        int len2 = word2.length();\n        int[][] dp = new int[len1 + 1][len2 + 1];\n\n        for (int i = 1; i <= len1; i++) {\n            for (int j = 1; j <= len2; j++) {\n                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                } else {\n                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);\n                }\n            }\n        }\n\n        return len1 + len2 - dp[len1][len2] * 2;\n    }\n}",
+          "description": "使用最长公共子序列的方法来解决两个字符串的删除操作问题。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int minDistance(String word1, String word2) {\n        int[][] dp = new int[word1.length() + 1][word2.length() + 1];\n        for (int i = 0; i < word1.length() + 1; i++) dp[i][0] = i;\n        for (int j = 0; j < word2.length() + 1; j++) dp[0][j] = j;\n        \n        for (int i = 1; i < word1.length() + 1; i++) {\n            for (int j = 1; j < word2.length() + 1; j++) {\n                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {\n                    dp[i][j] = dp[i - 1][j - 1];\n                }else{\n                    dp[i][j] = Math.min(dp[i - 1][j - 1] + 2,\n                                        Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1));\n                }\n            }\n        }\n        \n        return dp[word1.length()][word2.length()];\n    }\n}",
+          "description": "直接计算需要删除的字符个数来使两个字符串相等。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int minDistance(String word1, String word2) {\n        char[] char1 = word1.toCharArray();\n        char[] char2 = word2.toCharArray();\n\n        int len1 = char1.length;\n        int len2 = char2.length;\n\n        int dp[][] = new int [len1 + 1][len2 + 1];\n\n        for(int i = 1; i <= len1; i++){\n            for(int j = 1; j <= len2; j++){\n                if(char1[i - 1] == char2[j - 1])\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                else\n                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);\n            }\n        }\n\n        return len1 + len2 - (2 * dp[len1][len2]);\n    }\n}",
+          "description": "利用最长公共子序列方法反推最小删除次数。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def minDistance(self, word1: str, word2: str) -> int:\n        dp = [[0] * (len(word2)+1) for _ in range(len(word1)+1)]\n        for i in range(len(word1)+1):\n            dp[i][0] = i\n        for j in range(len(word2)+1):\n            dp[0][j] = j\n        for i in range(1, len(word1)+1):\n            for j in range(1, len(word2)+1):\n                if word1[i-1] == word2[j-1]:\n                    dp[i][j] = dp[i-1][j-1]\n                else:\n                    dp[i][j] = min(dp[i-1][j-1] + 2, dp[i-1][j] + 1, dp[i][j-1] + 1)\n        return dp[-1][-1]",
+          "description": "Python实现的动态规划方法，计算两个字符串达到相等所需的最少删除操作次数。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object):\n    def minDistance(self, word1, word2):\n        m, n = len(word1), len(word2)\n        dp = [[0] * (n+1) for _ in range(m+1)]\n        for i in range(1, m+1):\n            for j in range(1, n+1):\n                if word1[i-1] == word2[j-1]:\n                    dp[i][j] = dp[i-1][j-1] + 1\n                else:\n                    dp[i][j] = max(dp[i-1][j], dp[i][j-1])\n        return m + n - 2 * dp[-1][-1]",
+          "description": "通过寻找最长公共子序列并基于此计算出删除操作次数。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "// dp数组中存储word1和word2最长相同子序列的长度",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int minDistance(string word1, string word2) {\n        vector<vector<int>> dp(word1.size() + 1, vector<int>(word2.size() + 1));\n        for (int i = 0; i <= word1.size(); i++) dp[i][0] = i;\n        for (int j = 0; j <= word2.size(); j++) dp[0][j] = j;\n        for (int i = 1; i <= word1.size(); i++) {\n            for (int j = 1; j <= word2.size(); j++) {\n                if (word1[i - 1] == word2[j - 1]) {\n                    dp[i][j] = dp[i - 1][j - 1];\n                } else {\n                    dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1);\n                }\n            }\n        }\n        return dp[word1.size()][word2.size()];\n    }\n};",
+          "description": "C++动态规划求解两个字符串的删除操作，以达到相同所需的最小步数。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int minDistance(string word1, string word2) {\n        vector<vector<int>> dp(word1.size()+1, vector<int>(word2.size()+1, 0));\n        for (int i=1; i<=word1.size(); i++){\n            for (int j=1; j<=word2.size(); j++){\n                if (word1[i-1] == word2[j-1]) dp[i][j] = dp[i-1][j-1] + 1;\n                else dp[i][j] = max(dp[i-1][j], dp[i][j-1]);\n            }\n        }\n        return word1.size()+word2.size()-dp[word1.size()][word2.size()]*2;\n    }\n};",
+          "description": "C++通过寻找最长公共子序列来计算两个字符串达到相同所需的最少删除次数。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int minDistance(String word1, String word2) {\n        int len1 = word1.length();\n        int len2 = word2.length();\n        int[][] dp = new int[len1 + 1][len2 + 1];\n\n        for (int i = 1; i <= len1; i++) {\n            for (int j = 1; j <= len2; j++) {\n                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                } else {\n                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);\n                }\n            }\n        }\n\n        return len1 + len2 - dp[len1][len2] * 2;\n    }\n}",
+          "description": "Java版本利用最长公共子序列长度来确定将两个字符串变得相同的最小删除操作数。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int minDistance(String word1, String word2) {\n        int[][] dp = new int[word1.length() + 1][word2.length() + 1];\n        for (int i = 0; i < word1.length() + 1; i++) dp[i][0] = i;\n        for (int j = 0; j < word2.length() + 1; j++) dp[0][j] = j;\n\n        for (int i = 1; i < word1.length() + 1; i++) {\n            for (int j = 1; j < word2.length() + 1; j++) {\n                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {\n                    dp[i][j] = dp[i - 1][j - 1];\n                }else{\n                    dp[i][j] = Math.min(dp[i - 1][j - 1] + 2,\n                                        Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1));\n                }\n            }\n        }\n\n        return dp[word1.length()][word2.length()];\n    }\n}",
+          "description": "Java实现动态规划直接计算使两字符串相等所需的最小删除次数。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int minDistance(String word1, String word2) {\n        char[] char1 = word1.toCharArray();\n        char[] char2 = word2.toCharArray();\n\n        int len1 = char1.length;\n        int len2 = char2.length;\n\n        int dp[][] = new int [len1 + 1][len2 + 1];\n\n        for(int i = 1; i <= len1; i++){\n            for(int j = 1; j <= len2; j++){\n                if(char1[i - 1] == char2[j - 1])\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                else\n                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);\n            }\n        }\n\n        return len1 + len2 - (2 * dp[len1][len2]);\n    }\n}",
+          "description": "Java版基于最长公共子序列反推出删除操作数。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def minDistance(self, word1: str, word2: str) -> int:\n        dp = [[0] * (len(word2)+1) for _ in range(len(word1)+1)]\n        for i in range(len(word1)+1):\n            dp[i][0] = i\n        for j in range(len(word2)+1):\n            dp[0][j] = j\n        for i in range(1, len(word1)+1):\n            for j in range(1, len(word2)+1):\n                if word1[i-1] == word2[j-1]:\n                    dp[i][j] = dp[i-1][j-1]\n                else:\n                    dp[i][j] = min(dp[i-1][j-1] + 2, dp[i-1][j] + 1, dp[i][j-1] + 1)\n        return dp[-1][-1]",
+          "description": "Python使用动态规划解决两个字符串成为相同所需的最少删除步骤。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object):\n    def minDistance(self, word1, word2):\n        m, n = len(word1), len(word2)\n\n        # dp 求解两字符串最长公共子序列\n        dp = [[0] * (n+1) for _ in range(m+1)]\n        for i in range(1, m+1):\n            for j in range(1, n+1):\n                if word1[i-1] == word2[j-1]:\n                    dp[i][j] = dp[i-1][j-1] + 1\n                else:\n                    dp[i][j] = max(dp[i-1][j], dp[i][j-1])\n\n        # 删去最长公共子序列以外元素\n        return m + n - 2 * dp[-1][-1]",
+          "description": "Python中通过查找最长公共子序列的方法来计算两字符串达到一致所需的最小删除次数。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "class Solution:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minDistance(string word1, string word2) {vector<vector<int>> dp(word1.size() + 1, vector<int>(word2.size() + 1)); for (int i = 0; i <= word1.size(); i++) dp[i][0] = i; for (int j = 0; j <= word2.size(); j++) dp[0][j] = j; for (int i = 1; i <= word1.size(); i++) {for (int j = 1; j <= word2.size(); j++) {if (word1[i - 1] == word2[j - 1]) {dp[i][j] = dp[i - 1][j - 1];} else {dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1);}}} return dp[word1.size()][word2.size()];}};",
+          "description": "C++实现的解决方案，使用动态规划求解两个字符串达到相同所需的最小删除次数。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minDistance(string word1, string word2) {vector<vector<int>> dp(word1.size()+1, vector<int>(word2.size()+1, 0)); for (int i=1; i<=word1.size(); i++){for (int j=1; j<=word2.size(); j++){if (word1[i-1] == word2[j-1]) dp[i][j] = dp[i-1][j-1] + 1;else dp[i][j] = max(dp[i-1][j], dp[i][j-1]);}} return word1.size()+word2.size()-dp[word1.size()][word2.size()]*2;}};",
+          "description": "C++实现的另一个解决方案，通过寻找最长公共子序列来计算最少删除次数。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int minDistance(String word1, String word2) {int len1 = word1.length();int len2 = word2.length();int[][] dp = new int[len1 + 1][len2 + 1];for (int i = 1; i <= len1; i++) {for (int j = 1; j <= len2; j++) {if (word1.charAt(i - 1) == word2.charAt(j - 1)) {dp[i][j] = dp[i - 1][j - 1] + 1;} else {dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);}}}return len1 + len2 - dp[len1][len2] * 2;}}",
+          "description": "Java实现的解决方案，基于最长公共子序列长度计算最少删除次数。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int minDistance(String word1, String word2) {int[][] dp = new int[word1.length() + 1][word2.length() + 1];for (int i = 0; i < word1.length() + 1; i++) dp[i][0] = i;for (int j = 0; j < word2.length() + 1; j++) dp[0][j] = j;for (int i = 1; i < word1.length() + 1; i++) {for (int j = 1; j < word2.length() + 1; j++) {if (word1.charAt(i - 1) == word2.charAt(j - 1)) {dp[i][j] = dp[i - 1][j - 1];}else{dp[i][j] = Math.min(dp[i - 1][j - 1] + 2,Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1));}}}return dp[word1.length()][word2.length()];}}",
+          "description": "另一种Java实现，直接计算需要删除的字符个数以使两字符串相同。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def minDistance(self, word1: str, word2: str) -> int: dp = [[0] * (len(word2)+1) for _ in range(len(word1)+1)] for i in range(len(word1)+1): dp[i][0] = i for j in range(len(word2)+1): dp[0][j] = j for i in range(1, len(word1)+1): for j in range(1, len(word2)+1): if word1[i-1] == word2[j-1]: dp[i][j] = dp[i-1][j-1] else: dp[i][j] = min(dp[i-1][j-1] + 2, dp[i-1][j] + 1, dp[i][j-1] + 1) return dp[-1][-1]",
+          "description": "Python版本的解决方案，采用动态规划方法计算最小删除操作数。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def minDistance(self, word1, word2): m, n = len(word1), len(word2) dp = [[0] * (n+1) for _ in range(m+1)] for i in range(1, m+1): for j in range(1, n+1): if word1[i-1] == word2[j-1]: dp[i][j] = dp[i-1][j-1] + 1 else: dp[i][j] = max(dp[i-1][j], dp[i][j-1]) return m + n - 2 * dp[-1][-1]",
+          "description": "另一种Python实现，通过找到最长公共子序列长度来确定最少删除次数。"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n * m)",
+    "space_complexity": "O(n * m)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int minDistance(string word1, string word2) {vector<vector<int>> dp(word1.size() + 1, vector<int>(word2.size() + 1)); for (int i = 0; i <= word1.size(); i++) dp[i][0] = i; for (int j = 0; j <= word2.size(); j++) dp[0][j] = j; for (int i = 1; i <= word1.size(); i++) {for (int j = 1; j <= word2.size(); j++) {if (word1[i - 1] == word2[j - 1]) {dp[i][j] = dp[i - 1][j - 1];} else {dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1);}}}} return dp[word1.size()][word2.size()];}};",
+      "description": "使用动态规划方法计算两个字符串达到相等所需的最小删除次数。"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int minDistance(string word1, string word2) {vector<vector<int>> dp(word1.size()+1, vector<int>(word2.size()+1, 0)); for (int i=1; i<=word1.size(); i++){for (int j=1; j<=word2.size(); j++){if (word1[i-1] == word2[j-1]) dp[i][j] = dp[i-1][j-1] + 1;else dp[i][j] = max(dp[i-1][j], dp[i][j-1]);}}return word1.size()+word2.size()-dp[word1.size()][word2.size()]*2;}};",
+      "description": "通过计算最长公共子序列的长度来间接求解两个字符串达到相等所需的最小删除次数。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int minDistance(String word1, String word2) {int len1 = word1.length();int len2 = word2.length();int[][] dp = new int[len1 + 1][len2 + 1];for (int i = 1; i <= len1; i++) {for (int j = 1; j <= len2; j++) {if (word1.charAt(i - 1) == word2.charAt(j - 1)) {dp[i][j] = dp[i - 1][j - 1] + 1;} else {dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);}}}return len1 + len2 - dp[len1][len2] * 2;}}",
+      "description": "Java实现，通过找到最长公共子序列并据此计算最少删除操作数。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int minDistance(String word1, String word2) {int[][] dp = new int[word1.length() + 1][word2.length() + 1];for (int i = 0; i < word1.length() + 1; i++) dp[i][0] = i;for (int j = 0; j < word2.length() + 1; j++) dp[0][j] = j;for (int i = 1; i < word1.length() + 1; i++) {for (int j = 1; j < word2.length() + 1; j++) {if (word1.charAt(i - 1) == word2.charAt(j - 1)) {dp[i][j] = dp[i - 1][j - 1];}else{dp[i][j] = Math.min(dp[i - 1][j - 1] + 2,Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1));}}}}return dp[word1.length()][word2.length()];}}",
+      "description": "直接在Java中使用动态规划计算使两个字符串相等所需删除的最少字符数。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def minDistance(self, word1: str, word2: str) -> int: dp = [[0] * (len(word2)+1) for _ in range(len(word1)+1)] for i in range(len(word1)+1): dp[i][0] = i for j in range(len(word2)+1): dp[0][j] = j for i in range(1, len(word1)+1): for j in range(1, len(word2)+1): if word1[i-1] == word2[j-1]: dp[i][j] = dp[i-1][j-1] else: dp[i][j] = min(dp[i-1][j-1] + 2, dp[i-1][j] + 1, dp[i][j-1] + 1) return dp[-1][-1]",
+      "description": "Python版本的动态规划解决方案，用于找出将两个字符串变为相同的最小删除步数。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution(object): def minDistance(self, word1, word2): m, n = len(word1), len(word2) dp = [[0] * (n+1) for _ in range(m+1)] for i in range(1, m+1): for j in range(1, n+1): if word1[i-1] == word2[j-1]: dp[i][j] = dp[i-1][j-1] + 1 else: dp[i][j] = max(dp[i-1][j], dp[i][j-1]) return m + n - 2 * dp[-1][-1]",
+      "description": "另一个Python版本，利用最长公共子序列的方法来确定最小删除次数。"
+    }
+  ],
+  "common_mistakes": [
+    "忽略对dp数组边界情况的初始化。",
+    "未能正确理解当word1[i - 1]与word2[j - 1]不同时递推公式的含义，特别是为何不需要考虑同时删除两个不同字符的情况。",
+    "混淆了dp[i][0]和dp[0][j]的意义，导致初始化错误。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210714101750205.png",
+      "description": "这张图片展示了使用动态规划算法解决两个字符串（\"sea\" 和 \"eat\"）的编辑距离问题的过程。",
+      "context": "该图片展示了以\"sea\"和\"eat\"为例推导出的dp数组状态图，帮助理解动态规划过程中每个元素是如何根据其左上方、正上方及正左方元素计算得出的。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210714101750205.png",
+      "description": "GIF展示了通过动态规划方法计算两个字符串之间最小编辑距离的过程。",
+      "context": "GIF动画展示了以\"sea\"和\"eat\"为例，动态规划数组dp的填充过程，帮助理解如何根据左上方、正上方、正左方的值来推导出当前格子的值。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\动态规划\\两个字符串的删除操作.txt",
+  "extracted_at": "2025-07-20T15:15:39.094773",
+  "raw_content": "两个字符串的删除操作\n力扣题目链接(https://leetcode.cn/problems/delete-operation-for-two-strings/)\n\n给定两个单词 word1 和 word2，找到使得 word1 和 word2 相同所需的最小步数，每步可以删除任意一个字符串中的一个字符。\n\n示例：\n\n输入: \"sea\", \"eat\"\n输出: 2\n解释: 第一步将\"sea\"变为\"ea\"，第二步将\"eat\"变为\"ea\"\n\n\n#思路\n#动态规划一\n本题和动态规划：115.不同的子序列 (https://programmercarl.com/0115.%E4%B8%8D%E5%90%8C%E7%9A%84%E5%AD%90%E5%BA%8F%E5%88%97.html)相比，其实就是两个字符串都可以删除了，情况虽说复杂一些，但整体思路是不变的。\n\n这次是两个字符串可以相互删了，这种题目也知道用动态规划的思路来解，动规五部曲，分析如下：\n\n确定dp数组（dp table）以及下标的含义\ndp[i][j]：以i-1为结尾的字符串word1，和以j-1位结尾的字符串word2，想要达到相等，所需要删除元素的最少次数。\n\n这里dp数组的定义有点点绕，大家要理清思路。\n\n确定递推公式\n当word1[i - 1] 与 word2[j - 1]相同的时候\n当word1[i - 1] 与 word2[j - 1]不相同的时候\n当word1[i - 1] 与 word2[j - 1]相同的时候，dp[i][j] = dp[i - 1][j - 1];\n\n当word1[i - 1] 与 word2[j - 1]不相同的时候，有三种情况：\n\n情况一：删word1[i - 1]，最少操作次数为dp[i - 1][j] + 1\n\n情况二：删word2[j - 1]，最少操作次数为dp[i][j - 1] + 1\n\n情况三：同时删word1[i - 1]和word2[j - 1]，操作的最少次数为dp[i - 1][j - 1] + 2\n\n那最后当然是取最小值，所以当word1[i - 1] 与 word2[j - 1]不相同的时候，递推公式：dp[i][j] = min({dp[i - 1][j - 1] + 2, dp[i - 1][j] + 1, dp[i][j - 1] + 1});\n\n因为 dp[i][j - 1] + 1 = dp[i - 1][j - 1] + 2，所以递推公式可简化为：dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1);\n\n这里可能不少录友有点迷糊，从字面上理解 就是 当 同时删word1[i - 1]和word2[j - 1]，dp[i][j-1] 本来就不考虑 word2[j - 1]了，那么我在删 word1[i - 1]，是不是就达到两个元素都删除的效果，即 dp[i][j-1] + 1。\n\ndp数组如何初始化\n从递推公式中，可以看出来，dp[i][0] 和 dp[0][j]是一定要初始化的。\n\ndp[i][0]：word2为空字符串，以i-1为结尾的字符串word1要删除多少个元素，才能和word2相同呢，很明显dp[i][0] = i。\n\ndp[0][j]的话同理，所以代码如下：\n\nvector<vector<int>> dp(word1.size() + 1, vector<int>(word2.size() + 1));\nfor (int i = 0; i <= word1.size(); i++) dp[i][0] = i;\nfor (int j = 0; j <= word2.size(); j++) dp[0][j] = j;\n确定遍历顺序\n从递推公式 dp[i][j] = min(dp[i - 1][j - 1] + 2, min(dp[i - 1][j], dp[i][j - 1]) + 1); 和dp[i][j] = dp[i - 1][j - 1]可以看出dp[i][j]都是根据左上方、正上方、正左方推出来的。\n\n所以遍历的时候一定是从上到下，从左到右，这样保证dp[i][j]可以根据之前计算出来的数值进行计算。\n\n举例推导dp数组\n以word1:\"sea\"，word2:\"eat\"为例，推导dp数组状态图如下：\n\nhttps://file1.kamacoder.com/i/algo/20210714101750205.png\n\n以上分析完毕，代码如下：\n\nclass Solution {\npublic:\n    int minDistance(string word1, string word2) {\n        vector<vector<int>> dp(word1.size() + 1, vector<int>(word2.size() + 1));\n        for (int i = 0; i <= word1.size(); i++) dp[i][0] = i;\n        for (int j = 0; j <= word2.size(); j++) dp[0][j] = j;\n        for (int i = 1; i <= word1.size(); i++) {\n            for (int j = 1; j <= word2.size(); j++) {\n                if (word1[i - 1] == word2[j - 1]) {\n                    dp[i][j] = dp[i - 1][j - 1];\n                } else {\n                    dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1);\n                }\n            }\n        }\n        return dp[word1.size()][word2.size()];\n    }\n};\n\n时间复杂度: O(n * m)\n空间复杂度: O(n * m)\n#动态规划二\n本题和动态规划：1143.最长公共子序列 (https://programmercarl.com/1143.%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97.html)基本相同，只要求出两个字符串的最长公共子序列长度即可，那么除了最长公共子序列之外的字符都是必须删除的，最后用两个字符串的总长度减去两个最长公共子序列的长度就是删除的最少步数。\n\n代码如下：\n\nclass Solution {\npublic:\n    int minDistance(string word1, string word2) {\n        vector<vector<int>> dp(word1.size()+1, vector<int>(word2.size()+1, 0));\n        for (int i=1; i<=word1.size(); i++){\n            for (int j=1; j<=word2.size(); j++){\n                if (word1[i-1] == word2[j-1]) dp[i][j] = dp[i-1][j-1] + 1;\n                else dp[i][j] = max(dp[i-1][j], dp[i][j-1]);\n            }\n        }\n        return word1.size()+word2.size()-dp[word1.size()][word2.size()]*2;\n    }\n};\n\n时间复杂度: O(n * m)\n空间复杂度: O(n * m)\n#其他语言版本\n#Java：\n// dp数组中存储word1和word2最长相同子序列的长度\nclass Solution {\n    public int minDistance(String word1, String word2) {\n        int len1 = word1.length();\n        int len2 = word2.length();\n        int[][] dp = new int[len1 + 1][len2 + 1];\n\n        for (int i = 1; i <= len1; i++) {\n            for (int j = 1; j <= len2; j++) {\n                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                } else {\n                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);\n                }\n            }\n        }\n\n        return len1 + len2 - dp[len1][len2] * 2;\n    }\n}\n\n// dp数组中存储需要删除的字符个数\nclass Solution {\n    public int minDistance(String word1, String word2) {\n        int[][] dp = new int[word1.length() + 1][word2.length() + 1];\n        for (int i = 0; i < word1.length() + 1; i++) dp[i][0] = i;\n        for (int j = 0; j < word2.length() + 1; j++) dp[0][j] = j;\n        \n        for (int i = 1; i < word1.length() + 1; i++) {\n            for (int j = 1; j < word2.length() + 1; j++) {\n                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {\n                    dp[i][j] = dp[i - 1][j - 1];\n                }else{\n                    dp[i][j] = Math.min(dp[i - 1][j - 1] + 2,\n                                        Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1));\n                }\n            }\n        }\n        \n        return dp[word1.length()][word2.length()];\n    }\n}\n//DP - longest common subsequence (用最長公共子序列反推)\nclass Solution {\n    public int minDistance(String word1, String word2) {\n        char[] char1 = word1.toCharArray();\n        char[] char2 = word2.toCharArray();\n\n        int len1 = char1.length;\n        int len2 = char2.length;\n\n        int dp[][] = new int [len1 + 1][len2 + 1];\n\n        for(int i = 1; i <= len1; i++){\n            for(int j = 1; j <= len2; j++){\n                if(char1[i - 1] == char2[j - 1])\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                else\n                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);\n            }\n        }\n\n        return len1 + len2 - (2 * dp[len1][len2]);//和leetcode 1143只差在這一行。\n    }\n}\n#Python：\nclass Solution:\n    def minDistance(self, word1: str, word2: str) -> int:\n        dp = [[0] * (len(word2)+1) for _ in range(len(word1)+1)]\n        for i in range(len(word1)+1):\n            dp[i][0] = i\n        for j in range(len(word2)+1):\n            dp[0][j] = j\n        for i in range(1, len(word1)+1):\n            for j in range(1, len(word2)+1):\n                if word1[i-1] == word2[j-1]:\n                    dp[i][j] = dp[i-1][j-1]\n                else:\n                    dp[i][j] = min(dp[i-1][j-1] + 2, dp[i-1][j] + 1, dp[i][j-1] + 1)\n        return dp[-1][-1]\n版本 2\n\nclass Solution(object):\n    def minDistance(self, word1, word2):\n        m, n = len(word1), len(word2)\n        \n        # dp 求解两字符串最长公共子序列\n        dp = [[0] * (n+1) for _ in range(m+1)]\n        for i in range(1, m+1):\n            for j in range(1, n+1):\n                if word1[i-1] == word2[j-1]:\n                    dp[i][j] = dp[i-1][j-1] + 1\n                else:\n                    dp[i][j] = max(dp[i-1][j], dp[i][j-1])\n                    \n        # 删去最长公共子序列以外元素\n        return m + n - 2 * dp[-1][-1]"
+}

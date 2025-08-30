@@ -1,0 +1,1 @@
+{"ast":null,"code":"import count from \"../count.js\";\nimport deviation from \"../deviation.js\";\nexport default function thresholdScott(values, min, max) {\n  const c = count(values),\n    d = deviation(values);\n  return c && d ? Math.ceil((max - min) * Math.cbrt(c) / (3.49 * d)) : 1;\n}","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}

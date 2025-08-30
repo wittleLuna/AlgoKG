@@ -1,0 +1,401 @@
+{
+  "id": "AP_c0b145c2",
+  "title": "修剪二叉搜索树",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/trim-a-binary-search-tree/",
+  "description": "一个二叉搜索树，同时给定最小边界L 和最大边界 R。通过修剪二叉搜索树，使得所有节点的值在[L, R]中 (R>=L) 。你可能需要改变树的根节点，所以结果应当返回修剪好的二叉搜索树的新的根节点。\n\nhttps://file1.kamacoder.com/i/algo/20201014173115788.png\n\nhttps://file1.kamacoder.com/i/algo/20201014173219142.png\n\n\n#思路\n相信看到这道题目大家都感觉是一道简单题（事实上leetcode上也标明是简单）。\n\n但还真的不简单！\n\n#递归法\n直接想法就是：递归处理，然后遇到 root->val < low || root->val > high 的时候直接return NULL，一波修改，赶紧利落。\n\n不难写出如下代码：\n\nclass Solution {\npublic:\n    TreeNode* trimBST(TreeNode* root, int low, int high) {\n        if (root == nullptr || root->val < low || root->val > high) return nullptr;\n        root->left = trimBST(root->left, low, high);\n        root->right = trimBST(root->right, low, high);\n        return root;\n    }\n};\n然而[1, 3]区间在二叉搜索树的中可不是单纯的节点3和左孩子节点0就决定的，还要考虑节点0的右子树。\n\n我们再重新关注一下第二个",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "递归",
+    "迭代"
+  ],
+  "data_structure_tags": [
+    "二叉搜索树"
+  ],
+  "technique_tags": [
+    "分治法",
+    "二叉树遍历"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过递归或迭代方式修剪二叉搜索树，确保所有节点值位于给定区间[L, R]内。对于不在区间的节点，利用其子树中符合条件的部分替换之。",
+  "key_insights": [
+    {
+      "content": "当遇到根节点值小于L时，只需关注右子树；大于R时，则转向左子树。这样做可以有效跳过不需要的分支，简化问题处理流程。"
+    },
+    {
+      "content": "基于二叉搜索树的有序性（左小右大），可以直接决定遍历方向和剪枝操作，无需额外比较。"
+    },
+    {
+      "content": "在修剪过程中，需要特别注意如何处理那些自身不符合条件但其子树中有符合条件部分的节点，以正确地调整树结构。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "相信看到这道题目大家都感觉是一道简单题（事实上leetcode上也标明是简单）。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* trimBST(TreeNode* root, int low, int high) { if (root == nullptr ) return nullptr; if (root->val < low) return trimBST(root->right, low, high); if (root->val > high) return trimBST(root->left, low, high); root->left = trimBST(root->left, low, high); root->right = trimBST(root->right, low, high); return root; }};",
+          "description": "C++语言实现的递归法修剪二叉搜索树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* trimBST(TreeNode* root, int L, int R) { if (!root) return nullptr; while (root != nullptr && (root->val < L || root->val > R)) { if (root->val < L) root = root->right; else root = root->left; } TreeNode *cur = root; while (cur != nullptr) { while (cur->left && cur->left->val < L) { cur->left = cur->left->right; } cur = cur->left; } cur = root; while (cur != nullptr) { while (cur->right && cur->right->val > R) { cur->right = cur->right->left; } cur = cur->right; } return root;}};",
+          "description": "C++语言实现的迭代法修剪二叉搜索树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode trimBST(TreeNode root, int low, int high) { if (root == null) { return null; } if (root.val < low) { return trimBST(root.right, low, high); } if (root.val > high) { return trimBST(root.left, low, high); } // root在[low,high]范围内 root.left = trimBST(root.left, low, high); root.right = trimBST(root.right, low, high); return root; }}",
+          "description": "Java语言实现的递归法修剪二叉搜索树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { //iteration public TreeNode trimBST(TreeNode root, int low, int high) { if(root == null) return null; while(root != null && (root.val < low || root.val > high)){ if(root.val < low) root = root.right; else root = root.left; } TreeNode curr = root; //deal with root's left sub-tree, and deal with the value smaller than low. while(curr != null){ while(curr.left != null && curr.left.val < low){ curr.left = curr.left.right; } curr = curr.left; } //go back to root; curr = root; //deal with root's righg sub-tree, and deal with the value bigger than high. while(curr != null){ while(curr.right != null && curr.right.val > high){ curr.right = curr.right.left; } curr = curr.right; } return root; }}",
+          "description": "Java语言实现的迭代法修剪二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def trimBST(self, root: TreeNode, low: int, high: int) -> TreeNode: if root is None: return None if root.val < low: # 寻找符合区间 [low, high] 的节点 return self.trimBST(root.right, low, high) if root.val > high: # 寻找符合区间 [low, high] 的节点 return self.trimBST(root.left, low, high) root.left = self.trimBST(root.left, low, high)  # root.left 接入符合条件的左孩子 root.right = self.trimBST(root.right, low, high)  # root.right 接入符合条件的右孩子 return root",
+          "description": "Python语言实现的递归法修剪二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def trimBST(self, root: TreeNode, L: int, R: int) -> TreeNode: if not root: return None # 处理头结点，让root移动到[L, R] 范围内，注意是左闭右闭 while root and (root.val < L or root.val > R): if root.val < L: root = root.right  # 小于L往右走 else: root = root.left  # 大于R往左走 cur = root # 此时root已经在[L, R] 范围内，处理左孩子元素小于L的情况 while cur: while cur.left and cur.left.val < L: cur.left = cur.left.right cur = cur.left cur = root # 此时root已经在[L, R] 范围内，处理右孩子大于R的情况 while cur: while cur.right and cur.right.val > R: cur.right = cur.right.left cur = cur.right return root",
+          "description": "Python语言实现的迭代法修剪二叉搜索树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "递归法",
+      "text": "直接想法就是：递归处理，然后遇到 root->val < low || root->val > high 的时候直接return NULL，一波修改，赶紧利落。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* trimBST(TreeNode* root, int low, int high) {if (root == nullptr ) return nullptr;if (root->val < low) return trimBST(root->right, low, high);if (root->val > high) return trimBST(root->left, low, high);root->left = trimBST(root->left, low, high);root->right = trimBST(root->right, low, high);return root;}};",
+          "description": ""
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* trimBST(TreeNode* root, int L, int R) {if (!root) return nullptr;while (root != nullptr && (root->val < L || root->val > R)) {if (root->val < L) root = root->right; else root = root->left;}TreeNode *cur = root;while (cur != nullptr) {while (cur->left && cur->left->val < L) {cur->left = cur->left->right;}cur = cur->left;}cur = root;while (cur != nullptr) {while (cur->right && cur->right->val > R) {cur->right = cur->right->left;}cur = cur->right;}return root;}};",
+          "description": ""
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode trimBST(TreeNode root, int low, int high) {if (root == null) {return null;}if (root.val < low) {return trimBST(root.right, low, high);}if (root.val > high) {return trimBST(root.left, low, high);}root.left = trimBST(root.left, low, high);root.right = trimBST(root.right, low, high);return root;}}",
+          "description": ""
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode trimBST(TreeNode root, int low, int high) {if(root == null)return null;while(root != null && (root.val < low || root.val > high)){if(root.val < low)root = root.right;else root = root.left;}TreeNode curr = root;while(curr != null){while(curr.left != null && curr.left.val < low){curr.left = curr.left.right;}curr = curr.left;}curr = root;while(curr != null){while(curr.right != null && curr.right.val > high){curr.right = curr.right.left;}curr = curr.right;}return root;}}",
+          "description": ""
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def trimBST(self, root: TreeNode, low: int, high: int) -> TreeNode: if root is None: return None if root.val < low: return self.trimBST(root.right, low, high) if root.val > high: return self.trimBST(root.left, low, high) root.left = self.trimBST(root.left, low, high) root.right = self.trimBST(root.right, low, high) return root",
+          "description": ""
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def trimBST(self, root: TreeNode, L: int, R: int) -> TreeNode: if not root: return None while root and (root.val < L or root.val > R): if root.val < L: root = root.right else: root = root.left cur = root while cur: while cur.left and cur.left.val < L: cur.left = cur.left.right cur = cur.left cur = root while cur: while cur.right and cur.right.val > R: cur.right = cur.right.left cur = cur.right return root",
+          "description": ""
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "迭代法",
+      "text": "因为二叉搜索树的有序性，不需要使用栈模拟递归的过程。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* trimBST(TreeNode* root, int low, int high) { if (root == nullptr ) return nullptr; if (root->val < low) return trimBST(root->right, low, high); if (root->val > high) return trimBST(root->left, low, high); root->left = trimBST(root->left, low, high); root->right = trimBST(root->right, low, high); return root; }};",
+          "description": "递归法修剪二叉搜索树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* trimBST(TreeNode* root, int L, int R) { if (!root) return nullptr; while (root != nullptr && (root->val < L || root->val > R)) { if (root->val < L) root = root->right; else root = root->left; } TreeNode *cur = root; while (cur != nullptr) { while (cur->left && cur->left->val < L) { cur->left = cur->left->right; } cur = cur->left; } cur = root; while (cur != nullptr) { while (cur->right && cur->right->val > R) { cur->right = cur->right->left; } cur = cur->right; } return root; }};",
+          "description": "迭代法修剪二叉搜索树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode trimBST(TreeNode root, int low, int high) { if (root == null) { return null; } if (root.val < low) { return trimBST(root.right, low, high); } if (root.val > high) { return trimBST(root.left, low, high); } root.left = trimBST(root.left, low, high); root.right = trimBST(root.right, low, high); return root; }}",
+          "description": "Java版本的递归法修剪二叉搜索树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode trimBST(TreeNode root, int low, int high) { if(root == null) return null; while(root != null && (root.val < low || root.val > high)){ if(root.val < low) root = root.right; else root = root.left; } TreeNode curr = root; while(curr != null){ while(curr.left != null && curr.left.val < low){ curr.left = curr.left.right; } curr = curr.left; } curr = root; while(curr != null){ while(curr.right != null && curr.right.val > high){ curr.right = curr.right.left; } curr = curr.right; } return root; }}",
+          "description": "Java版本的迭代法修剪二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def trimBST(self, root: TreeNode, low: int, high: int) -> TreeNode: if root is None: return None if root.val < low: return self.trimBST(root.right, low, high) if root.val > high: return self.trimBST(root.left, low, high) root.left = self.trimBST(root.left, low, high) root.right = self.trimBST(root.right, low, high) return root",
+          "description": "Python版本的递归法修剪二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def trimBST(self, root: TreeNode, L: int, R: int) -> TreeNode: if not root: return None while root and (root.val < L or root.val > R): if root.val < L: root = root.right else: root = root.left cur = root while cur: while cur.left and cur.left.val < L: cur.left = cur.left.right cur = cur.left cur = root while cur: while cur.right and cur.right.val > R: cur.right = cur.right.left cur = cur.right return root",
+          "description": "Python版本的迭代法修剪二叉搜索树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "修剪二叉搜索树其实并不难，但在递归法中大家可看出我费了很大的功夫来讲解如何删除节点的，这个思路其实是比较绕的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* trimBST(TreeNode* root, int low, int high) {\n        if (root == nullptr) return nullptr;\n        if (root->val < low) return trimBST(root->right, low, high);\n        if (root->val > high) return trimBST(root->left, low, high);\n        root->left = trimBST(root->left, low, high);\n        root->right = trimBST(root->right, low, high);\n        return root;\n    }\n};",
+          "description": "使用递归法修剪二叉搜索树，确保所有节点的值在指定范围内。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* trimBST(TreeNode* root, int L, int R) {\n        if (!root) return nullptr;\n\n        while (root != nullptr && (root->val < L || root->val > R)) {\n            if (root->val < L) root = root->right; \n            else root = root->left; \n        }\n        TreeNode *cur = root;\n        while (cur != nullptr) {\n            while (cur->left && cur->left->val < L) {\n                cur->left = cur->left->right;\n            }\n            cur = cur->left;\n        }\n        cur = root;\n        while (cur != nullptr) {\n            while (cur->right && cur->right->val > R) {\n                cur->right = cur->right->left;\n            }\n            cur = cur->right;\n        }\n        return root;\n    }\n};",
+          "description": "使用迭代法修剪二叉搜索树，确保所有节点的值在指定范围内。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode trimBST(TreeNode root, int low, int high) {\n        if (root == null) {\n            return null;\n        }\n        if (root.val < low) {\n            return trimBST(root.right, low, high);\n        }\n        if (root.val > high) {\n            return trimBST(root.left, low, high);\n        }\n        root.left = trimBST(root.left, low, high);\n        root.right = trimBST(root.right, low, high);\n        return root;\n    }\n}",
+          "description": "Java实现的递归方法来修剪二叉搜索树。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode trimBST(TreeNode root, int low, int high) {\n        if(root == null)\n            return null;\n        while(root != null && (root.val < low || root.val > high)){\n            if(root.val < low)\n                root = root.right;\n            else\n                root = root.left;\n        }\n\n        TreeNode curr = root;\n        while(curr != null){\n            while(curr.left != null && curr.left.val < low){\n                curr.left = curr.left.right;\n            }\n            curr = curr.left;\n        }\n        curr = root;\n        while(curr != null){\n            while(curr.right != null && curr.right.val > high){\n                curr.right = curr.right.left;\n            }\n            curr = curr.right;\n        }\n        return root;\n    }\n}",
+          "description": "Java实现的迭代方法来修剪二叉搜索树。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def trimBST(self, root: TreeNode, low: int, high: int) -> TreeNode:\n        if root is None:\n            return None\n        if root.val < low:\n            return self.trimBST(root.right, low, high)\n        if root.val > high:\n            return self.trimBST(root.left, low, high)\n        root.left = self.trimBST(root.left, low, high)\n        root.right = self.trimBST(root.right, low, high)\n        return root",
+          "description": "Python实现的递归方法来修剪二叉搜索树。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def trimBST(self, root: TreeNode, L: int, R: int) -> TreeNode:\n        if not root:\n            return None\n        while root and (root.val < L or root.val > R):\n            if root.val < L:\n                root = root.right\n            else:\n                root = root.left\n        cur = root\n        while cur:\n            while cur.left and cur.left.val < L:\n                cur.left = cur.left.right\n            cur = cur.left\n        cur = root\n        while cur:\n            while cur.right and cur.right.val > R:\n                cur.right = cur.right.left\n            cur = cur.right\n        return root",
+          "description": "Python实现的迭代方法来修剪二叉搜索树。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* trimBST(TreeNode* root, int low, int high) {if (root == nullptr) return nullptr;if (root->val < low) return trimBST(root->right, low, high);if (root->val > high) return trimBST(root->left, low, high);root->left = trimBST(root->left, low, high);root->right = trimBST(root->right, low, high);return root;}};",
+          "description": ""
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode trimBST(TreeNode root, int low, int high) { if (root == null) { return null; } if (root.val < low) { return trimBST(root.right, low, high); } if (root.val > high) { return trimBST(root.left, low, high); } // root在[low,high]范围内 root.left = trimBST(root.left, low, high); root.right = trimBST(root.right, low, high); return root; }}",
+          "description": ""
+        },
+        {
+          "language": "java",
+          "code": "class Solution { //iteration public TreeNode trimBST(TreeNode root, int low, int high) { if(root == null) return null; while(root != null && (root.val < low || root.val > high)){ if(root.val < low) root = root.right; else root = root.left; } TreeNode curr = root; //deal with root's left sub-tree, and deal with the value smaller than low. while(curr != null){ while(curr.left != null && curr.left.val < low){ curr.left = curr.left.right; } curr = curr.left; } //go back to root; curr = root; //deal with root's righg sub-tree, and deal with the value bigger than high. while(curr != null){ while(curr.right != null && curr.right.val > high){ curr.right = curr.right.left; } curr = curr.right; } return root; }}",
+          "description": ""
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def trimBST(self, root: TreeNode, low: int, high: int) -> TreeNode: if root is None: return None if root.val < low: # 寻找符合区间 [low, high] 的节点 return self.trimBST(root.right, low, high) if root.val > high: # 寻找符合区间 [low, high] 的节点 return self.trimBST(root.left, low, high) root.left = self.trimBST(root.left, low, high)  # root.left 接入符合条件的左孩子 root.right = self.trimBST(root.right, low, high)  # root.right 接入符合条件的右孩子 return root",
+          "description": ""
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def trimBST(self, root: TreeNode, L: int, R: int) -> TreeNode: if not root: return None # 处理头结点，让root移动到[L, R] 范围内，注意是左闭右闭 while root and (root.val < L or root.val > R): if root.val < L: root = root.right  # 小于L往右走 else: root = root.left  # 大于R往左走 cur = root # 此时root已经在[L, R] 范围内，处理左孩子元素小于L的情况 while cur: while cur.left and cur.left.val < L: cur.left = cur.left.right cur = cur.left cur = root # 此时root已经在[L, R] 范围内，处理右孩子大于R的情况 while cur: while cur.right and cur.right.val > R: cur.right = cur.right.left cur = cur.right return root",
+          "description": ""
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "递归",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* trimBST(TreeNode* root, int low, int high) {\n        if (root == nullptr) return nullptr;\n        if (root->val < low) return trimBST(root->right, low, high);\n        if (root->val > high) return trimBST(root->left, low, high);\n        root->left = trimBST(root->left, low, high);\n        root->right = trimBST(root->right, low, high);\n        return root;\n    }\n};",
+          "description": "修剪二叉搜索树的递归解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* trimBST(TreeNode* root, int L, int R) {\n        if (!root) return nullptr;\n\n        while (root != nullptr && (root->val < L || root->val > R)) {\n            if (root->val < L) root = root->right;\n            else root = root->left;\n        }\n        TreeNode *cur = root;\n        while (cur != nullptr) {\n            while (cur->left && cur->left->val < L) {\n                cur->left = cur->left->right;\n            }\n            cur = cur->left;\n        }\n        cur = root;\n        while (cur != nullptr) {\n            while (cur->right && cur->right->val > R) {\n                cur->right = cur->right->left;\n            }\n            cur = cur->right;\n        }\n        return root;\n    }\n};",
+          "description": "修剪二叉搜索树的迭代解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode trimBST(TreeNode root, int low, int high) {\n        if (root == null) {\n            return null;\n        }\n        if (root.val < low) {\n            return trimBST(root.right, low, high);\n        }\n        if (root.val > high) {\n            return trimBST(root.left, low, high);\n        }\n        root.left = trimBST(root.left, low, high);\n        root.right = trimBST(root.right, low, high);\n        return root;\n    }\n}",
+          "description": "Java版修剪二叉搜索树的递归解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode trimBST(TreeNode root, int low, int high) {\n        if(root == null)\n            return null;\n        while(root != null && (root.val < low || root.val > high)){\n            if(root.val < low)\n                root = root.right;\n            else\n                root = root.left;\n        }\n\n        TreeNode curr = root;\n\n        while(curr != null){\n            while(curr.left != null && curr.left.val < low){\n                curr.left = curr.left.right;\n            }\n            curr = curr.left;\n        }\n        curr = root;\n\n        while(curr != null){\n            while(curr.right != null && curr.right.val > high){\n                curr.right = curr.right.left;\n            }\n            curr = curr.right;\n        }\n        return root;\n    }\n}",
+          "description": "Java版修剪二叉搜索树的迭代解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def trimBST(self, root: TreeNode, low: int, high: int) -> TreeNode:\n        if root is None:\n            return None\n        if root.val < low:\n            return self.trimBST(root.right, low, high)\n        if root.val > high:\n            return self.trimBST(root.left, low, high)\n        root.left = self.trimBST(root.left, low, high)\n        root.right = self.trimBST(root.right, low, high)\n        return root",
+          "description": "Python版修剪二叉搜索树的递归解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def trimBST(self, root: TreeNode, L: int, R: int) -> TreeNode:\n        if not root:\n            return None\n        while root and (root.val < L or root.val > R):\n            if root.val < L:\n                root = root.right\n            else:\n                root = root.left\n        cur = root\n        while cur:\n            while cur.left and cur.left.val < L:\n                cur.left = cur.left.right\n            cur = cur.left\n        cur = root\n        while cur:\n            while cur.right and cur.right.val > R:\n                cur.right = cur.right.left\n            cur = cur.right\n        return root",
+          "description": "Python版修剪二叉搜索树的迭代解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "递归法（版本一）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* trimBST(TreeNode* root, int low, int high) {\n        if (root == nullptr) return nullptr;\n        if (root->val < low) return trimBST(root->right, low, high);\n        if (root->val > high) return trimBST(root->left, low, high);\n        root->left = trimBST(root->left, low, high);\n        root->right = trimBST(root->right, low, high);\n        return root;\n    }\n};",
+          "description": "递归法修剪二叉搜索树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* trimBST(TreeNode* root, int L, int R) {\n        if (!root) return nullptr;\n\n        while (root != nullptr && (root->val < L || root->val > R)) {\n            if (root->val < L) root = root->right;\n            else root = root->left;\n        }\n        TreeNode *cur = root;\n        while (cur != nullptr) {\n            while (cur->left && cur->left->val < L) {\n                cur->left = cur->left->right;\n            }\n            cur = cur->left;\n        }\n        cur = root;\n\n        while (cur != nullptr) {\n            while (cur->right && cur->right->val > R) {\n                cur->right = cur->right->left;\n            }\n            cur = cur->right;\n        }\n        return root;\n    }\n};",
+          "description": "迭代法修剪二叉搜索树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode trimBST(TreeNode root, int low, int high) {\n        if (root == null) {\n            return null;\n        }\n        if (root.val < low) {\n            return trimBST(root.right, low, high);\n        }\n        if (root.val > high) {\n            return trimBST(root.left, low, high);\n        }\n        root.left = trimBST(root.left, low, high);\n        root.right = trimBST(root.right, low, high);\n        return root;\n    }\n}",
+          "description": "Java递归法修剪二叉搜索树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode trimBST(TreeNode root, int low, int high) {\n        if(root == null)\n            return null;\n        while(root != null && (root.val < low || root.val > high)){\n            if(root.val < low)\n                root = root.right;\n            else\n                root = root.left;\n        }\n\n        TreeNode curr = root;\n\n        while(curr != null){\n            while(curr.left != null && curr.left.val < low){\n                curr.left = curr.left.right;\n            }\n            curr = curr.left;\n        }\n        curr = root;\n\n        while(curr != null){\n            while(curr.right != null && curr.right.val > high){\n                curr.right = curr.right.left;\n            }\n            curr = curr.right;\n        }\n        return root;\n    }\n}",
+          "description": "Java迭代法修剪二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def trimBST(self, root: TreeNode, low: int, high: int) -> TreeNode:\n        if root is None:\n            return None\n        if root.val < low:\n            return self.trimBST(root.right, low, high)\n        if root.val > high:\n            return self.trimBST(root.left, low, high)\n        root.left = self.trimBST(root.left, low, high)\n        root.right = self.trimBST(root.right, low, high)\n        return root",
+          "description": "Python递归法修剪二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def trimBST(self, root: TreeNode, L: int, R: int) -> TreeNode:\n        if not root:\n            return None\n\n        while root and (root.val < L or root.val > R):\n            if root.val < L:\n                root = root.right\n            else:\n                root = root.left\n\n        cur = root\n\n        while cur:\n            while cur.left and cur.left.val < L:\n                cur.left = cur.left.right\n            cur = cur.left\n\n        cur = root\n\n        while cur:\n            while cur.right and cur.right.val > R:\n                cur.right = cur.right.left\n            cur = cur.right\n\n        return root",
+          "description": "Python迭代法修剪二叉搜索树"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: TreeNode* trimBST(TreeNode* root, int low, int high) {if (root == nullptr ) return nullptr;if (root->val < low) return trimBST(root->right, low, high);if (root->val > high) return trimBST(root->left, low, high);root->left = trimBST(root->left, low, high);root->right = trimBST(root->right, low, high);return root;}};",
+      "description": "使用递归法修剪二叉搜索树，使得所有节点的值在[low, high]中。"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: TreeNode* trimBST(TreeNode* root, int L, int R) {if (!root) return nullptr;while (root != nullptr && (root->val < L || root->val > R)) {if (root->val < L) root = root->right; else root = root->left;} TreeNode *cur = root;while (cur != nullptr) {while (cur->left && cur->left->val < L) {cur->left = cur->left->right;}cur = cur->left;}cur = root;while (cur != nullptr) {while (cur->right && cur->right->val > R) {cur->right = cur->right->left;}cur = cur->right;}return root;}};",
+      "description": "使用迭代法修剪二叉搜索树，使得所有节点的值在[L, R]中。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public TreeNode trimBST(TreeNode root, int low, int high) {if (root == null) {return null;}if (root.val < low) {return trimBST(root.right, low, high);}if (root.val > high) {return trimBST(root.left, low, high);}root.left = trimBST(root.left, low, high);root.right = trimBST(root.right, low, high);return root;}}",
+      "description": "Java实现的递归方法来修剪二叉搜索树。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public TreeNode trimBST(TreeNode root, int low, int high) {if(root == null) return null;while(root != null && (root.val < low || root.val > high)){if(root.val < low) root = root.right;else root = root.left;}TreeNode curr = root;while(curr != null){while(curr.left != null && curr.left.val < low){curr.left = curr.left.right;}curr = curr.left;}curr = root;while(curr != null){while(curr.right != null && curr.right.val > high){curr.right = curr.right.left;}curr = curr.right;}return root;}}",
+      "description": "Java实现的迭代方法来修剪二叉搜索树。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def trimBST(self, root: TreeNode, low: int, high: int) -> TreeNode: if root is None: return None if root.val < low: return self.trimBST(root.right, low, high) if root.val > high: return self.trimBST(root.left, low, high) root.left = self.trimBST(root.left, low, high) root.right = self.trimBST(root.right, low, high) return root",
+      "description": "Python实现的递归方法来修剪二叉搜索树。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def trimBST(self, root: TreeNode, L: int, R: int) -> TreeNode: if not root: return None while root and (root.val < L or root.val > R): if root.val < L: root = root.right else: root = root.left cur = root while cur: while cur.left and cur.left.val < L: cur.left = cur.left.right cur = cur.left cur = root while cur: while cur.right and cur.right.val > R: cur.right = cur.right.left cur = cur.right return root",
+      "description": "Python实现的迭代方法来修剪二叉搜索树。"
+    }
+  ],
+  "common_mistakes": [
+    "错误地假设仅需简单地删除不满足条件的节点，而忽略了可能需要调整子树结构以保持二叉搜索树属性。",
+    "在实现过程中未充分考虑边界情况，如树为空或根节点即为要修剪的对象等。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201014173115788.png",
+      "description": "该图片展示了一个二叉树修剪算法的示例，输入为一个根节点值为1的二叉树和修剪范围[L=1, R=2]，输出为修剪后的二叉树。",
+      "context": "该图片展示了修剪前的二叉搜索树结构，帮助理解需要被处理的数据样本。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201014173219142.png",
+      "description": "该图片展示了一个二叉树修剪算法的示例，输入为一个特定范围内的二叉树，输出为修剪后的二叉树结构。",
+      "context": "该图片展示了修剪后的二叉搜索树，其所有节点值均位于给定的最小边界L和最大边界R之间。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210204155302751.png",
+      "description": "这张图片展示了二叉搜索树的修剪过程，将节点值不在[1, 3]区间内的节点移除，得到修剪后的树结构。",
+      "context": "这张图片展示了在处理二叉搜索树时遇到的一个具体示例，其中节点0不符合给定的[1, 3]区间要求，用于说明直接应用提供的代码片段无法正确解决问题的情况。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210204155327203.png",
+      "description": "这张图片展示了在二叉树数据结构中删除节点0的过程，通过调整节点连接来维护树的结构。",
+      "context": "这张图片展示了通过将节点0的右孩子（节点2）直接赋给节点3的左孩子，从而移除不符合区间要求的节点0后重构的二叉树结构。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210204155327203-20230310120126738.png",
+      "description": "这张图片展示了在二叉树数据结构中删除节点0的过程，通过调整节点连接来维护树的结构。",
+      "context": "该图片展示了二叉树的具体结构，帮助理解代码是如何通过递归方式修剪不在指定值范围内的节点。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201014173115788.png",
+      "description": "GIF展示了修剪二叉搜索树的过程，通过递归方法移除不在给定范围内的节点。",
+      "context": "GIF动画展示了通过递归方法修剪二叉搜索树，使其所有节点的值位于给定范围内的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201014173219142.png",
+      "description": "GIF展示了修剪二叉搜索树的过程，将不在给定范围内的节点移除。",
+      "context": "GIF动画展示了通过递归方法修剪二叉搜索树的过程，使得所有节点的值位于给定的最小边界L和最大边界R之间。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210204155302751.png",
+      "description": "GIF展示了如何在二叉搜索树中移除不符合指定区间[1, 3]的节点，并调整其子树以保持二叉搜索树性质的过程。",
+      "context": "该GIF动画展示了在给定区间[1, 3]内，如何通过移除不符合条件的节点0，并将其右子树（节点2）连接到节点3的左侧来调整二叉搜索树的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210204155327203.png",
+      "description": "GIF展示了通过调整二叉搜索树节点连接关系来修剪不符合区间要求的节点的过程。",
+      "context": "该GIF动画展示了如何通过直接调整节点连接来简化二叉树的重构过程，具体操作为将不符合区间要求的节点0从树中移除，并将其右子节点2作为节点3的新左子节点。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210204155327203-20230310120126738.png",
+      "description": "GIF展示了修剪二叉搜索树的过程，通过递归移除不在指定值范围内的节点，并调整其子树连接以保持树结构。",
+      "context": "该GIF动画展示了如何通过递归调用`trimBST`函数来修剪二叉搜索树中值不在指定范围内的节点，特别是演示了当根节点的值小于设定的下限时，如何将右子树中的合适节点返回并替换当前根节点的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\修剪二叉搜索树.txt",
+  "extracted_at": "2025-07-19T19:56:41.130456",
+  "raw_content": "修剪二叉搜索树\n力扣题目链接(https://leetcode.cn/problems/trim-a-binary-search-tree/)\n\n给定一个二叉搜索树，同时给定最小边界L 和最大边界 R。通过修剪二叉搜索树，使得所有节点的值在[L, R]中 (R>=L) 。你可能需要改变树的根节点，所以结果应当返回修剪好的二叉搜索树的新的根节点。\n\nhttps://file1.kamacoder.com/i/algo/20201014173115788.png\n\nhttps://file1.kamacoder.com/i/algo/20201014173219142.png\n\n\n#思路\n相信看到这道题目大家都感觉是一道简单题（事实上leetcode上也标明是简单）。\n\n但还真的不简单！\n\n#递归法\n直接想法就是：递归处理，然后遇到 root->val < low || root->val > high 的时候直接return NULL，一波修改，赶紧利落。\n\n不难写出如下代码：\n\nclass Solution {\npublic:\n    TreeNode* trimBST(TreeNode* root, int low, int high) {\n        if (root == nullptr || root->val < low || root->val > high) return nullptr;\n        root->left = trimBST(root->left, low, high);\n        root->right = trimBST(root->right, low, high);\n        return root;\n    }\n};\n然而[1, 3]区间在二叉搜索树的中可不是单纯的节点3和左孩子节点0就决定的，还要考虑节点0的右子树。\n\n我们再重新关注一下第二个示例，如图：\n\nhttps://file1.kamacoder.com/i/algo/20210204155302751.png\n\n所以以上的代码是不可行的！\n\n从图中可以看出需要重构二叉树，想想是不是本题就有点复杂了。\n\n其实不用重构那么复杂。\n\n在上图中我们发现节点0并不符合区间要求，那么将节点0的右孩子 节点2 直接赋给 节点3的左孩子就可以了（就是把节点0从二叉树中移除），如图：\n\nhttps://file1.kamacoder.com/i/algo/20210204155327203.png\n\n理解了最关键部分了我们再递归三部曲：\n\n确定递归函数的参数以及返回值\n这里我们为什么需要返回值呢？\n\n因为是要遍历整棵树，做修改，其实不需要返回值也可以，我们也可以完成修剪（其实就是从二叉树中移除节点）的操作。\n\n但是有返回值，更方便，可以通过递归函数的返回值来移除节点。\n\n这样的做法在二叉树：搜索树中的插入操作 (https://programmercarl.com/0701.%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E6%8F%92%E5%85%A5%E6%93%8D%E4%BD%9C.html)和二叉树：搜索树中的删除操作 (https://programmercarl.com/0450.%E5%88%A0%E9%99%A4%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B9.html)中大家已经了解过了。\n\n代码如下：\n\nTreeNode* trimBST(TreeNode* root, int low, int high)\n确定终止条件\n修剪的操作并不是在终止条件上进行的，所以就是遇到空节点返回就可以了。\n\nif (root == nullptr ) return nullptr;\n确定单层递归的逻辑\n如果root（当前节点）的元素小于low的数值，那么应该递归右子树，并返回右子树符合条件的头结点。\n\n代码如下：\n\nif (root->val < low) {\n    TreeNode* right = trimBST(root->right, low, high); // 寻找符合区间[low, high]的节点\n    return right;\n}\n如果root(当前节点)的元素大于high的，那么应该递归左子树，并返回左子树符合条件的头结点。\n\n代码如下：\n\nif (root->val > high) {\n    TreeNode* left = trimBST(root->left, low, high); // 寻找符合区间[low, high]的节点\n    return left;\n}\n接下来要将下一层处理完左子树的结果赋给root->left，处理完右子树的结果赋给root->right。\n\n最后返回root节点，代码如下：\n\nroot->left = trimBST(root->left, low, high); // root->left接入符合条件的左孩子\nroot->right = trimBST(root->right, low, high); // root->right接入符合条件的右孩子\nreturn root;\n此时大家是不是还没发现这多余的节点究竟是如何从二叉树中移除的呢？\n\n在回顾一下上面的代码，针对下图中二叉树的情况：\n\nhttps://file1.kamacoder.com/i/algo/20210204155327203-20230310120126738.png\n\n如下代码相当于把节点0的右孩子（节点2）返回给上一层，\n\nif (root->val < low) {\n    TreeNode* right = trimBST(root->right, low, high); // 寻找符合区间[low, high]的节点\n    return right;\n}\n然后如下代码相当于用节点3的左孩子 把下一层返回的 节点0的右孩子（节点2） 接住。\n\nroot->left = trimBST(root->left, low, high);\n此时节点3的左孩子就变成了节点2，将节点0从二叉树中移除了。\n\n最后整体代码如下：\n\nclass Solution {\npublic:\n    TreeNode* trimBST(TreeNode* root, int low, int high) {\n        if (root == nullptr ) return nullptr;\n        if (root->val < low) {\n            TreeNode* right = trimBST(root->right, low, high); // 寻找符合区间[low, high]的节点\n            return right;\n        }\n        if (root->val > high) {\n            TreeNode* left = trimBST(root->left, low, high); // 寻找符合区间[low, high]的节点\n            return left;\n        }\n        root->left = trimBST(root->left, low, high); // root->left接入符合条件的左孩子\n        root->right = trimBST(root->right, low, high); // root->right接入符合条件的右孩子\n        return root;\n    }\n};\n精简之后代码如下：\n\nclass Solution {\npublic:\n    TreeNode* trimBST(TreeNode* root, int low, int high) {\n        if (root == nullptr) return nullptr;\n        if (root->val < low) return trimBST(root->right, low, high);\n        if (root->val > high) return trimBST(root->left, low, high);\n        root->left = trimBST(root->left, low, high);\n        root->right = trimBST(root->right, low, high);\n        return root;\n    }\n};\n只看代码，其实不太好理解节点是如何移除的，这一块大家可以自己再模拟模拟！\n\n#迭代法\n因为二叉搜索树的有序性，不需要使用栈模拟递归的过程。\n\n在剪枝的时候，可以分为三步：\n\n将root移动到[L, R] 范围内，注意是左闭右闭区间\n剪枝左子树\n剪枝右子树\n代码如下：\n\nclass Solution {\npublic:\n    TreeNode* trimBST(TreeNode* root, int L, int R) {\n        if (!root) return nullptr;\n\n        // 处理头结点，让root移动到[L, R] 范围内，注意是左闭右闭\n        while (root != nullptr && (root->val < L || root->val > R)) {\n            if (root->val < L) root = root->right; // 小于L往右走\n            else root = root->left; // 大于R往左走\n        }\n        TreeNode *cur = root;\n        // 此时root已经在[L, R] 范围内，处理左孩子元素小于L的情况\n        while (cur != nullptr) {\n            while (cur->left && cur->left->val < L) {\n                cur->left = cur->left->right;\n            }\n            cur = cur->left;\n        }\n        cur = root;\n\n        // 此时root已经在[L, R] 范围内，处理右孩子大于R的情况\n        while (cur != nullptr) {\n            while (cur->right && cur->right->val > R) {\n                cur->right = cur->right->left;\n            }\n            cur = cur->right;\n        }\n        return root;\n    }\n};\n#总结\n修剪二叉搜索树其实并不难，但在递归法中大家可看出我费了很大的功夫来讲解如何删除节点的，这个思路其实是比较绕的。\n\n最终的代码倒是很简洁。\n\n如果不对递归有深刻的理解，这道题目还是有难度的！\n\n本题我依然给出递归法和迭代法，初学者掌握递归就可以了，如果想进一步学习，就把迭代法也写一写。\n\n#其他语言版本\n#Java\n递归\n\nclass Solution {\n    public TreeNode trimBST(TreeNode root, int low, int high) {\n        if (root == null) {\n            return null;\n        }\n        if (root.val < low) {\n            return trimBST(root.right, low, high);\n        }\n        if (root.val > high) {\n            return trimBST(root.left, low, high);\n        }\n        // root在[low,high]范围内\n        root.left = trimBST(root.left, low, high);\n        root.right = trimBST(root.right, low, high);\n        return root;\n    }\n}\n\n迭代\n\nclass Solution {\n    //iteration\n    public TreeNode trimBST(TreeNode root, int low, int high) {\n        if(root == null)\n            return null;\n        while(root != null && (root.val < low || root.val > high)){\n            if(root.val < low)\n                root = root.right;\n            else\n                root = root.left;\n        }\n\n        TreeNode curr = root;\n        \n        //deal with root's left sub-tree, and deal with the value smaller than low.\n        while(curr != null){\n            while(curr.left != null && curr.left.val < low){\n                curr.left = curr.left.right;\n            }\n            curr = curr.left;\n        }\n        //go back to root;\n        curr = root;\n\n        //deal with root's righg sub-tree, and deal with the value bigger than high.\n        while(curr != null){\n            while(curr.right != null && curr.right.val > high){\n                curr.right = curr.right.left;\n            }\n            curr = curr.right;\n        }\n        return root;\n    }\n}\n\n#Python\n递归法（版本一）\n\nclass Solution:\n    def trimBST(self, root: TreeNode, low: int, high: int) -> TreeNode:\n        if root is None:\n            return None\n        if root.val < low:\n            # 寻找符合区间 [low, high] 的节点\n            return self.trimBST(root.right, low, high)\n        if root.val > high:\n            # 寻找符合区间 [low, high] 的节点\n            return self.trimBST(root.left, low, high)\n        root.left = self.trimBST(root.left, low, high)  # root.left 接入符合条件的左孩子\n        root.right = self.trimBST(root.right, low, high)  # root.right 接入符合条件的右孩子\n        return root\n\n迭代法\n\nclass Solution:\n    def trimBST(self, root: TreeNode, L: int, R: int) -> TreeNode:\n        if not root:\n            return None\n        \n        # 处理头结点，让root移动到[L, R] 范围内，注意是左闭右闭\n        while root and (root.val < L or root.val > R):\n            if root.val < L:\n                root = root.right  # 小于L往右走\n            else:\n                root = root.left  # 大于R往左走\n        \n        cur = root\n        \n        # 此时root已经在[L, R] 范围内，处理左孩子元素小于L的情况\n        while cur:\n            while cur.left and cur.left.val < L:\n                cur.left = cur.left.right\n            cur = cur.left\n        \n        cur = root\n        \n        # 此时root已经在[L, R] 范围内，处理右孩子大于R的情况\n        while cur:\n            while cur.right and cur.right.val > R:\n                cur.right = cur.right.left\n            cur = cur.right\n        \n        return root"
+}

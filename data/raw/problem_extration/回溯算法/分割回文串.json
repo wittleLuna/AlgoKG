@@ -1,0 +1,509 @@
+{
+  "id": "AP_87265050",
+  "title": "分割回文串",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/palindrome-partitioning/",
+  "description": "一个字符串 s，将 s 分割成一些子串，使每个子串都是回文串。\n\n返回 s 所有可能的分割方案。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "回溯",
+    "深度优先搜索"
+  ],
+  "data_structure_tags": [
+    "数组",
+    "字符串"
+  ],
+  "technique_tags": [
+    "递归",
+    "双指针",
+    "动态规划"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过回溯算法来解决字符串的所有可能分割方案问题，其中每段子串都必须是回文串。利用递归实现纵向遍历所有可能的分割点，使用for循环尝试从当前起始位置到字符串末尾的所有切割方式。每次成功切割出一个回文子串后，递归调用自身处理剩余部分，直到整个字符串被完全分割。为了提高效率，可以预先使用动态规划计算所有子串是否为回文，从而避免重复计算。",
+  "key_insights": [
+    {
+      "content": "将字符串切割问题类比为组合问题，通过递归来实现纵向遍历不同的切割路径，而for循环则用于横向探索当前层的不同切割可能性。"
+    },
+    {
+      "content": "只有当切割得到的子串是回文时，才将其加入当前路径中继续递归搜索。这确保了最终结果集中的每个分割方案都是有效的。"
+    },
+    {
+      "content": "通过动态规划预处理所有子串的回文状态，能够显著减少在回溯过程中判断回文的时间消耗，提升整体性能。"
+    },
+    {
+      "content": "切割过的位置不能重复切割，因此递归函数需要传入下一个起始位置作为参数，保证不重复访问同一位置。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "本题这涉及到两个关键问题：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<string>> result;\n    vector<string> path; // 放已经回文的子串\n    void backtracking (const string& s, int startIndex) {\n        if (startIndex >= s.size()) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i < s.size(); i++) {\n            if (isPalindrome(s, startIndex, i)) {   // 是回文子串\n                string str = s.substr(startIndex, i - startIndex + 1);\n                path.push_back(str);\n            } else {                                // 不是回文，跳过\n                continue;\n            }\n            backtracking(s, i + 1); \n            path.pop_back();\n        }\n    }\n    bool isPalindrome(const string& s, int start, int end) {\n        for (int i = start, j = end; i < j; i++, j--) {\n            if (s[i] != s[j]) {\n                return false;\n            }\n        }\n        return true;\n    }\npublic:\n    vector<vector<string>> partition(string s) {\n        result.clear();\n        path.clear();\n        backtracking(s, 0);\n        return result;\n    }\n};",
+          "description": "C++版本的分割回文串解决方案"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<string>> result;\n    vector<string> path; // 放已经回文的子串\n    vector<vector<bool>> isPalindrome; // 放事先计算好的是否回文子串的结果\n    void backtracking (const string& s, int startIndex) {\n        if (startIndex >= s.size()) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i < s.size(); i++) {\n            if (isPalindrome[startIndex][i]) {   // 是回文子串\n                string str = s.substr(startIndex, i - startIndex + 1);\n                path.push_back(str);\n            } else {                                // 不是回文，跳过\n                continue;\n            }\n            backtracking(s, i + 1); \n            path.pop_back();\n        }\n    }\n    void computePalindrome(const string& s) {\n        isPalindrome.resize(s.size(), vector<bool>(s.size(), false));\n        for (int i = s.size() - 1; i >= 0; i--) { \n            for (int j = i; j < s.size(); j++) {\n                if (j == i) {isPalindrome[i][j] = true;}\n                else if (j - i == 1) {isPalindrome[i][j] = (s[i] == s[j]);}\n                else {isPalindrome[i][j] = (s[i] == s[j] && isPalindrome[i+1][j-1]);}\n            }\n        }\n    }\npublic:\n    vector<vector<string>> partition(string s) {\n        result.clear();\n        path.clear();\n        computePalindrome(s);\n        backtracking(s, 0);\n        return result;\n    }\n};",
+          "description": "C++优化版的分割回文串解决方案，使用动态规划预处理回文判断"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<List<String>> res = new ArrayList<>();\n    List<String> cur = new ArrayList<>();\n    public List<List<String>> partition(String s) {\n        backtracking(s, 0, new StringBuilder());\n        return res;\n    }\n    private void backtracking(String s, int start, StringBuilder sb){\n        if (start == s.length()){\n            res.add(new ArrayList<>(cur));\n            return;\n        }\n        for (int i = start; i < s.length(); i++){\n            sb.append(s.charAt(i));\n            if (check(sb)){\n                cur.add(sb.toString());\n                backtracking(s, i + 1, new StringBuilder());\n                cur.remove(cur.size() -1 );\n            }\n        }\n    }\n    private boolean check(StringBuilder sb){\n        for (int i = 0; i < sb.length()/ 2; i++){\n            if (sb.charAt(i) != sb.charAt(sb.length() - 1 - i)){return false;}\n        }\n        return true;\n    }\n}",
+          "description": "Java版本的分割回文串解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<List<String>> result;\n    LinkedList<String> path;\n    boolean[][] dp;\n    public List<List<String>> partition(String s) {\n        result = new ArrayList<>();\n        char[] str = s.toCharArray();\n        path = new LinkedList<>();\n        dp = new boolean[str.length + 1][str.length + 1];\n        isPalindrome(str);\n        backtracking(s, 0);\n        return result;\n    }\n    public void backtracking(String str, int startIndex) {\n        if (startIndex >= str.length()) {\n            result.add(new ArrayList<>(path));\n        } else {\n            for (int i = startIndex; i < str.length(); ++i) {\n                if (dp[startIndex][i]) {\n                    path.addLast(str.substring(startIndex, i + 1));\n                    backtracking(str, i + 1);\n                    path.pollLast();\n                }\n            }\n        }\n    }\n    public void isPalindrome(char[] str) {\n        for (int i = 0; i <= str.length; ++i) {\n            dp[i][i] = true;\n        }\n        for (int i = 1; i < str.length; ++i) {\n            for (int j = i; j >= 0; --j) {\n                if (str[j] == str[i]) {\n                    if (i - j <= 1) {\n                        dp[j][i] = true;\n                    } else if (dp[j + 1][i - 1]) {\n                        dp[j][i] = true;\n                    }\n                }\n            }\n        }\n    }\n}",
+          "description": "Java优化版的分割回文串解决方案，使用动态规划预处理回文判断"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def partition(self, s: str) -> List[List[str]]:\n        result = []\n        self.backtracking(s, 0, [], result)\n        return result\n    def backtracking(self, s, start_index, path, result ):\n        if start_index == len(s):\n            result.append(path[:])\n            return\n        for i in range(start_index, len(s)):\n            if self.is_palindrome(s, start_index, i):\n                path.append(s[start_index:i+1])\n                self.backtracking(s, i+1, path, result)\n                path.pop()\n    def is_palindrome(self, s: str, start: int, end: int) -> bool:\n        i, j = start, end\n        while i < j:\n            if s[i] != s[j]:\n                return False\n            i += 1\n            j -= 1\n        return True",
+          "description": "Python版本的分割回文串解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def partition(self, s: str) -> List[List[str]]:\n        result = []\n        isPalindrome = [[False] * len(s) for _ in range(len(s))]\n        self.computePalindrome(s, isPalindrome)\n        self.backtracking(s, 0, [], result, isPalindrome)\n        return result\n    def backtracking(self, s, startIndex, path, result, isPalindrome):\n        if startIndex >= len(s):\n            result.append(path[:])\n            return\n        for i in range(startIndex, len(s)):\n            if isPalindrome[startIndex][i]:\n                substring = s[startIndex:i + 1]\n                path.append(substring)\n                self.backtracking(s, i + 1, path, result, isPalindrome)\n                path.pop()\n    def computePalindrome(self, s, isPalindrome):\n        for i in range(len(s) - 1, -1, -1):\n            for j in range(i, len(s)):\n                if j == i:\n                    isPalindrome[i][j] = True\n                elif j - i == 1:\n                    isPalindrome[i][j] = (s[i] == s[j])\n                else:\n                    isPalindrome[i][j] = (s[i] == s[j] and isPalindrome[i+1][j-1])",
+          "description": "Python优化版的分割回文串解决方案，使用动态规划预处理回文判断"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def partition(self, s: str) -> List[List[str]]:\n        result = []\n        self.partition_helper(s, 0, [], result)\n        return result\n    def partition_helper(self, s, start_index, path, result):\n        if start_index == len(s):\n            result.append(path[:])\n            return\n        for i in range(start_index + 1, len(s) + 1):\n            sub = s[start_index:i]\n            if self.isPalindrome(sub):\n                path.append(sub)\n                self.partition_helper(s, i, path, result)\n                path.pop()\n    def isPalindrome(self, s):\n        return all(s[i] == s[len(s) - 1 - i] for i in range(len(s) // 2))",
+          "description": "Python版本的分割回文串解决方案，使用all函数判断回文"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "回溯三部曲",
+      "text": "递归函数参数",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<string>> result; vector<string> path; void backtracking (const string& s, int startIndex) { if (startIndex >= s.size()) { result.push_back(path); return; } for (int i = startIndex; i < s.size(); i++) { if (isPalindrome(s, startIndex, i)) { string str = s.substr(startIndex, i - startIndex + 1); path.push_back(str); } else { continue; } backtracking(s, i + 1); path.pop_back(); } } bool isPalindrome(const string& s, int start, int end) { for (int i = start, j = end; i < j; i++, j--) { if (s[i] != s[j]) { return false; } } return true; } public: vector<vector<string>> partition(string s) { result.clear(); path.clear(); backtracking(s, 0); return result; } };",
+          "description": "使用回溯算法解决字符串分割问题，寻找所有可能的回文子串组合。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<string>> result; vector<string> path; vector<vector<bool>> isPalindrome; void backtracking (const string& s, int startIndex) { if (startIndex >= s.size()) { result.push_back(path); return; } for (int i = startIndex; i < s.size(); i++) { if (isPalindrome[startIndex][i]) { string str = s.substr(startIndex, i - startIndex + 1); path.push_back(str); } else { continue; } backtracking(s, i + 1); path.pop_back(); } } void computePalindrome(const string& s) { isPalindrome.resize(s.size(), vector<bool>(s.size(), false)); for (int i = s.size() - 1; i >= 0; i--) { for (int j = i; j < s.size(); j++) { if (j == i) {isPalindrome[i][j] = true;} else if (j - i == 1) {isPalindrome[i][j] = (s[i] == s[j]);} else {isPalindrome[i][j] = (s[i] == s[j] && isPalindrome[i+1][j-1]);} } } } public: vector<vector<string>> partition(string s) { result.clear(); path.clear(); computePalindrome(s); backtracking(s, 0); return result; } };",
+          "description": "优化版本，预先计算每个子串是否为回文，以提高搜索效率。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { List<List<String>> res = new ArrayList<>(); List<String> cur = new ArrayList<>(); public List<List<String>> partition(String s) { backtracking(s, 0, new StringBuilder()); return res; } private void backtracking(String s, int start, StringBuilder sb){ if (start == s.length()){ res.add(new ArrayList<>(cur)); return; } for (int i = start; i < s.length(); i++){ sb.append(s.charAt(i)); if (check(sb)){ cur.add(sb.toString()); backtracking(s, i + 1, new StringBuilder()); cur.remove(cur.size() -1 ); } } } private boolean check(StringBuilder sb){ for (int i = 0; i < sb.length()/ 2; i++){ if (sb.charAt(i) != sb.charAt(sb.length() - 1 - i)){return false;} } return true; } }",
+          "description": "Java实现，通过递归和StringBuilder来检查回文并构建结果。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { List<List<String>> result; LinkedList<String> path; boolean[][] dp; public List<List<String>> partition(String s) { result = new ArrayList<>(); char[] str = s.toCharArray(); path = new LinkedList<>(); dp = new boolean[str.length + 1][str.length + 1]; isPalindrome(str); backtracking(s, 0); return result; } public void backtracking(String str, int startIndex) { if (startIndex >= str.length()) { result.add(new ArrayList<>(path)); } else { for (int i = startIndex; i < str.length(); ++i) { if (dp[startIndex][i]) { path.addLast(str.substring(startIndex, i + 1)); backtracking(str, i + 1); path.pollLast(); } else { continue; } } } } public void isPalindrome(char[] str) { for (int i = 0; i <= str.length; ++i) { dp[i][i] = true; } for (int i = 1; i < str.length; ++i) { for (int j = i; j >= 0; --j) { if (str[j] == str[i]) { if (i - j <= 1) { dp[j][i] = true; } else if (dp[j + 1][i - 1]) { dp[j][i] = true; } } } } } }",
+          "description": "Java版，结合动态规划预处理回文判断加速搜索过程。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] self.backtracking(s, 0, [], result) return result def backtracking(self, s, start_index, path, result): if start_index == len(s): result.append(path[:]) return for i in range(start_index, len(s)): if self.is_palindrome(s, start_index, i): path.append(s[start_index:i+1]) self.backtracking(s, i+1, path, result) path.pop() def is_palindrome(self, s: str, start: int, end: int) -> bool: i = start j = end while i < j: if s[i] != s[j]: return False i += 1 j -= 1 return True",
+          "description": "Python基本版，利用递归和双指针方法检测回文。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] isPalindrome = [[False] * len(s) for _ in range(len(s))] self.computePalindrome(s, isPalindrome) self.backtracking(s, 0, [], result, isPalindrome) return result def backtracking(self, s, startIndex, path, result, isPalindrome): if startIndex >= len(s): result.append(path[:]) return for i in range(startIndex, len(s)): if isPalindrome[startIndex][i]: substring = s[startIndex:i + 1] path.append(substring) self.backtracking(s, i + 1, path, result, isPalindrome) path.pop() def computePalindrome(self, s, isPalindrome): for i in range(len(s) - 1, -1, -1): for j in range(i, len(s)): if j == i: isPalindrome[i][j] = True elif j - i == 1: isPalindrome[i][j] = (s[i] == s[j]) else: isPalindrome[i][j] = (s[i] == s[j] and isPalindrome[i+1][j-1])",
+          "description": "Python高效版，提前计算所有子串是否为回文以减少重复计算。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] self.partition_helper(s, 0, [], result) return result def partition_helper(self, s, start_index, path, result): if start_index == len(s): result.append(path[:]) return for i in range(start_index + 1, len(s) + 1): sub = s[start_index:i] if self.isPalindrome(sub): path.append(sub) self.partition_helper(s, i, path, result) path.pop() def isPalindrome(self, s): return all(s[i] == s[len(s) - 1 - i] for i in range(len(s) // 2))",
+          "description": "Python使用all函数简化回文检查逻辑。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "判断回文子串",
+      "text": "最后我们看一下回文子串要如何判断了，判断一个字符串是否是回文。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<string>> result; vector<string> path; void backtracking (const string& s, int startIndex) { if (startIndex >= s.size()) { result.push_back(path); return; } for (int i = startIndex; i < s.size(); i++) { if (isPalindrome(s, startIndex, i)) { string str = s.substr(startIndex, i - startIndex + 1); path.push_back(str); } else { continue; } backtracking(s, i + 1); path.pop_back(); } } bool isPalindrome(const string& s, int start, int end) { for (int i = start, j = end; i < j; i++, j--) { if (s[i] != s[j]) { return false; } } return true; } public: vector<vector<string>> partition(string s) { result.clear(); path.clear(); backtracking(s, 0); return result; }};",
+          "description": "C++实现的分割回文串问题解决方案"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<string>> result; vector<string> path; vector<vector<bool>> isPalindrome; void backtracking (const string& s, int startIndex) { if (startIndex >= s.size()) { result.push_back(path); return; } for (int i = startIndex; i < s.size(); i++) { if (isPalindrome[startIndex][i]) { string str = s.substr(startIndex, i - startIndex + 1); path.push_back(str); } else { continue; } backtracking(s, i + 1); path.pop_back(); } } void computePalindrome(const string& s) { isPalindrome.resize(s.size(), vector<bool>(s.size(), false)); for (int i = s.size() - 1; i >= 0; i--) { for (int j = i; j < s.size(); j++) { if (j == i) {isPalindrome[i][j] = true;} else if (j - i == 1) {isPalindrome[i][j] = (s[i] == s[j]);} else {isPalindrome[i][j] = (s[i] == s[j] && isPalindrome[i+1][j-1]);} } } } public: vector<vector<string>> partition(string s) { result.clear(); path.clear(); computePalindrome(s); backtracking(s, 0); return result; }};",
+          "description": "使用动态规划优化判断回文子串的C++解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { List<List<String>> res = new ArrayList<>(); List<String> cur = new ArrayList<>(); public List<List<String>> partition(String s) { backtracking(s, 0, new StringBuilder()); return res; } private void backtracking(String s, int start, StringBuilder sb){ if (start == s.length()){ res.add(new ArrayList<>(cur)); return; } for (int i = start; i < s.length(); i++){ sb.append(s.charAt(i)); if (check(sb)){ cur.add(sb.toString()); backtracking(s, i + 1, new StringBuilder()); cur.remove(cur.size() -1 ); } } } private boolean check(StringBuilder sb){ for (int i = 0; i < sb.length()/ 2; i++){ if (sb.charAt(i) != sb.charAt(sb.length() - 1 - i)){return false;} } return true; }}",
+          "description": "Java实现的分割回文串问题解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { List<List<String>> result; LinkedList<String> path; boolean[][] dp; public List<List<String>> partition(String s) { result = new ArrayList<>(); char[] str = s.toCharArray(); path = new LinkedList<>(); dp = new boolean[str.length + 1][str.length + 1]; isPalindrome(str); backtracking(s, 0); return result; } public void backtracking(String str, int startIndex) { if (startIndex >= str.length()) { result.add(new ArrayList<>(path)); } else { for (int i = startIndex; i < str.length(); ++i) { if (dp[startIndex][i]) { path.addLast(str.substring(startIndex, i + 1)); backtracking(str, i + 1); path.pollLast(); } else { continue; } } } } public void isPalindrome(char[] str) { for (int i = 0; i <= str.length; ++i) { dp[i][i] = true; } for (int i = 1; i < str.length; ++i) { for (int j = i; j >= 0; --j) { if (str[j] == str[i]) { if (i - j <= 1) { dp[j][i] = true; } else if (dp[j + 1][i - 1]) { dp[j][i] = true; } } } } }}",
+          "description": "Java实现，结合了动态规划来优化回文串判断的分割回文串问题解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] self.backtracking(s, 0, [], result) return result def backtracking(self, s, start_index, path, result ): if start_index == len(s): result.append(path[:]) return for i in range(start_index, len(s)): if self.is_palindrome(s, start_index, i): path.append(s[start_index:i+1]) self.backtracking(s, i+1, path, result) path.pop() def is_palindrome(self, s: str, start: int, end: int) -> bool: i = start j = end while i < j: if s[i] != s[j]: return False i += 1 j -= 1 return True",
+          "description": "Python实现的分割回文串问题的基础版解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] self.backtracking(s, 0, [], result) return result def backtracking(self, s, start_index, path, result ): if start_index == len(s): result.append(path[:]) return for i in range(start_index, len(s)): if s[start_index: i + 1] == s[start_index: i + 1][::-1]: path.append(s[start_index:i+1]) self.backtracking(s, i+1, path, result) path.pop()",
+          "description": "Python实现的分割回文串问题的优化版解决方案，通过字符串反转来简化回文判断"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] isPalindrome = [[False] * len(s) for _ in range(len(s))] self.computePalindrome(s, isPalindrome) self.backtracking(s, 0, [], result, isPalindrome) return result def backtracking(self, s, startIndex, path, result, isPalindrome): if startIndex >= len(s): result.append(path[:]) return for i in range(startIndex, len(s)): if isPalindrome[startIndex][i]: substring = s[startIndex:i + 1] path.append(substring) self.backtracking(s, i + 1, path, result, isPalindrome) path.pop() def computePalindrome(self, s, isPalindrome): for i in range(len(s) - 1, -1, -1): for j in range(i, len(s)): if j == i: isPalindrome[i][j] = True elif j - i == 1: isPalindrome[i][j] = (s[i] == s[j]) else: isPalindrome[i][j] = (s[i] == s[j] and isPalindrome[i+1][j-1])",
+          "description": "Python实现的分割回文串问题的高效版解决方案，利用动态规划预计算所有子串是否为回文"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] self.partition_helper(s, 0, [], result) return result def partition_helper(self, s, start_index, path, result): if start_index == len(s): result.append(path[:]) return for i in range(start_index + 1, len(s) + 1): sub = s[start_index:i] if self.isPalindrome(sub): path.append(sub) self.partition_helper(s, i, path, result) path.pop() def isPalindrome(self, s): return all(s[i] == s[len(s) - 1 - i] for i in range(len(s) // 2))",
+          "description": "Python实现的分割回文串问题的解决方案，使用all函数简化回文判断"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "优化",
+      "text": "上面的代码还存在一定的优化空间, 在于如何更高效的计算一个子字符串是否是回文字串。上述代码isPalindrome函数运用双指针的方法来判定对于一个字符串s, 给定起始下标和终止下标, 截取出的子字符串是否是回文字串。但是其中有一定的重复计算存在:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "bool isPalindrome(const string& s, int start, int end) { for (int i = start, j = end; i < j; i++, j--) { if (s[i] != s[j]) { return false; } } return true; }",
+          "description": "使用双指针法判断给定字符串是否为回文串"
+        },
+        {
+          "language": "cpp",
+          "code": "void backtracking (const string& s, int startIndex) { if (startIndex >= s.size()) { result.push_back(path); return; } for (int i = startIndex; i < s.size(); i++) { if (isPalindrome(s, startIndex, i)) { string str = s.substr(startIndex, i - startIndex + 1); path.push_back(str); backtracking(s, i + 1); path.pop_back(); } } }",
+          "description": "通过回溯算法探索所有可能的分割方案，其中每个子串都是回文串"
+        },
+        {
+          "language": "cpp",
+          "code": "void computePalindrome(const string& s) { isPalindrome.resize(s.size(), vector<bool>(s.size(), false)); for (int i = s.size() - 1; i >= 0; i--) { for (int j = i; j < s.size(); j++) { if (j == i) {isPalindrome[i][j] = true;} else if (j - i == 1) {isPalindrome[i][j] = (s[i] == s[j]);} else {isPalindrome[i][j] = (s[i] == s[j] && isPalindrome[i+1][j-1]);} } } }",
+          "description": "动态规划方法预计算字符串s中任意子串是否为回文串"
+        },
+        {
+          "language": "java",
+          "code": "private boolean check(StringBuilder sb){ for (int i = 0; i < sb.length()/ 2; i++){ if (sb.charAt(i) != sb.charAt(sb.length() - 1 - i)){return false;} } return true; }",
+          "description": "Java版本的检查字符串是否为回文的方法"
+        },
+        {
+          "language": "java",
+          "code": "public void isPalindrome(char[] str) { for (int i = 0; i <= str.length; ++i) { dp[i][i] = true; } for (int i = 1; i < str.length; ++i) { for (int j = i; j >= 0; --j) { if (str[j] == str[i]) { if (i - j <= 1) { dp[j][i] = true; } else if (dp[j + 1][i - 1]) { dp[j][i] = true; } } } } }",
+          "description": "Java版本利用动态规划预处理字符串中哪些子串是回文串"
+        },
+        {
+          "language": "python",
+          "code": "def is_palindrome(self, s: str, start: int, end: int) -> bool: i: int = start j: int = end while i < j: if s[i] != s[j]: return False i += 1 j -= 1 return True",
+          "description": "Python版本的双指针检测回文串方法"
+        },
+        {
+          "language": "python",
+          "code": "def computePalindrome(self, s, isPalindrome): for i in range(len(s) - 1, -1, -1): for j in range(i, len(s)): if j == i: isPalindrome[i][j] = True elif j - i == 1: isPalindrome[i][j] = (s[i] == s[j]) else: isPalindrome[i][j] = (s[i] == s[j] and isPalindrome[i+1][j-1])",
+          "description": "Python版本的动态规划预处理回文子串"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "这道题目在leetcode上是中等，但可以说是hard的题目了，但是代码其实就是按照模板的样子来的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<string>> result;\n    vector<string> path; // 放已经回文的子串\n    void backtracking (const string& s, int startIndex) {\n        if (startIndex >= s.size()) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i < s.size(); i++) {\n            if (isPalindrome(s, startIndex, i)) {   // 是回文子串\n                string str = s.substr(startIndex, i - startIndex + 1);\n                path.push_back(str);\n            } else {                                // 不是回文，跳过\n                continue;\n            }\n            backtracking(s, i + 1); \n            path.pop_back(); \n        }\n    }\n    bool isPalindrome(const string& s, int start, int end) {\n        for (int i = start, j = end; i < j; i++, j--) {\n            if (s[i] != s[j]) {\n                return false;\n            }\n        }\n        return true;\n    }\npublic:\n    vector<vector<string>> partition(string s) {\n        result.clear();\n        path.clear();\n        backtracking(s, 0);\n        return result;\n    }\n};",
+          "description": "使用回溯法解决分割回文串问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<string>> result;\n    vector<string> path; // 放已经回文的子串\n    vector<vector<bool>> isPalindrome; // 放事先计算好的是否回文子串的结果\n    void backtracking (const string& s, int startIndex) {\n        if (startIndex >= s.size()) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i < s.size(); i++) {\n            if (isPalindrome[startIndex][i]) {   // 是回文子串\n                string str = s.substr(startIndex, i - startIndex + 1);\n                path.push_back(str);\n            } else {                                // 不是回文，跳过\n                continue;\n            }\n            backtracking(s, i + 1); \n            path.pop_back(); \n        }\n    }\n    void computePalindrome(const string& s) {\n        isPalindrome.resize(s.size(), vector<bool>(s.size(), false));\n        for (int i = s.size() - 1; i >= 0; i--) { \n            for (int j = i; j < s.size(); j++) {\n                if (j == i) {isPalindrome[i][j] = true;}\n                else if (j - i == 1) {isPalindrome[i][j] = (s[i] == s[j]);}\n                else {isPalindrome[i][j] = (s[i] == s[j] && isPalindrome[i+1][j-1]);}\n            }\n        }\n    }\npublic:\n    vector<vector<string>> partition(string s) {\n        result.clear();\n        path.clear();\n        computePalindrome(s);\n        backtracking(s, 0);\n        return result;\n    }\n};",
+          "description": "使用回溯法结合动态规划优化判断回文串以解决分割回文串问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<List<String>> res = new ArrayList<>();\n    List<String> cur = new ArrayList<>();\n    public List<List<String>> partition(String s) {\n        backtracking(s, 0, new StringBuilder());\n        return res;\n    }\n    private void backtracking(String s, int start, StringBuilder sb){\n        if (start == s.length()){\n            res.add(new ArrayList<>(cur));\n            return;\n        }\n        for (int i = start; i < s.length(); i++){\n            sb.append(s.charAt(i));\n            if (check(sb)){\n                cur.add(sb.toString());\n                backtracking(s, i + 1, new StringBuilder());\n                cur.remove(cur.size() -1 );\n            }\n        }\n    }\n    private boolean check(StringBuilder sb){\n        for (int i = 0; i < sb.length()/ 2; i++){\n            if (sb.charAt(i) != sb.charAt(sb.length() - 1 - i)){return false;}\n        }\n        return true;\n    }\n}",
+          "description": "Java版本使用回溯法解决分割回文串问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<List<String>> result;\n    LinkedList<String> path;\n    boolean[][] dp;\n    public List<List<String>> partition(String s) {\n        result = new ArrayList<>();\n        char[] str = s.toCharArray();\n        path = new LinkedList<>();\n        dp = new boolean[str.length + 1][str.length + 1];\n        isPalindrome(str);\n        backtracking(s, 0);\n        return result;\n    }\n    public void backtracking(String str, int startIndex) {\n        if (startIndex >= str.length()) {\n            result.add(new ArrayList<>(path));\n        } else {\n            for (int i = startIndex; i < str.length(); ++i) {\n                if (dp[startIndex][i]) {\n                    path.addLast(str.substring(startIndex, i + 1));\n                    backtracking(str, i + 1);\n                    path.pollLast();\n                }\n            }\n        }\n    }\n    public void isPalindrome(char[] str) {\n        for (int i = 0; i <= str.length; ++i) {\n            dp[i][i] = true;\n        }\n        for (int i = 1; i < str.length; ++i) {\n            for (int j = i; j >= 0; --j) {\n                if (str[j] == str[i]) {\n                    if (i - j <= 1) {\n                        dp[j][i] = true;\n                    } else if (dp[j + 1][i - 1]) {\n                        dp[j][i] = true;\n                    }\n                }\n            }\n        }\n    }\n}",
+          "description": "Java版本使用回溯法结合动态规划优化判断回文串以解决分割回文串问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def partition(self, s: str) -> List[List[str]]:\n        result = []\n        self.backtracking(s, 0, [], result)\n        return result\n    def backtracking(self, s, start_index, path, result ):\n        if start_index == len(s):\n            result.append(path[:])\n            return\n        for i in range(start_index, len(s)):\n            if self.is_palindrome(s, start_index, i):\n                path.append(s[start_index:i+1])\n                self.backtracking(s, i+1, path, result)\n                path.pop()\n    def is_palindrome(self, s: str, start: int, end: int) -> bool:\n        i, j = start, end\n        while i < j:\n            if s[i] != s[j]:\n                return False\n            i += 1\n            j -= 1\n        return True",
+          "description": "Python版本使用回溯法解决分割回文串问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def partition(self, s: str) -> List[List[str]]:\n        result = []\n        isPalindrome = [[False] * len(s) for _ in range(len(s))]\n        self.computePalindrome(s, isPalindrome)\n        self.backtracking(s, 0, [], result, isPalindrome)\n        return result\n    def backtracking(self, s, startIndex, path, result, isPalindrome):\n        if startIndex >= len(s):\n            result.append(path[:])\n            return\n        for i in range(startIndex, len(s)):\n            if isPalindrome[startIndex][i]:\n                substring = s[startIndex:i + 1]\n                path.append(substring)\n                self.backtracking(s, i + 1, path, result, isPalindrome)\n                path.pop()\n    def computePalindrome(self, s, isPalindrome):\n        for i in range(len(s) - 1, -1, -1):\n            for j in range(i, len(s)):\n                if j == i:\n                    isPalindrome[i][j] = True\n                elif j - i == 1:\n                    isPalindrome[i][j] = (s[i] == s[j])\n                else:\n                    isPalindrome[i][j] = (s[i] == s[j] and isPalindrome[i+1][j-1])",
+          "description": "Python版本使用回溯法结合动态规划优化判断回文串以解决分割回文串问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def partition(self, s: str) -> List[List[str]]:\n        result = []\n        self.partition_helper(s, 0, [], result)\n        return result\n    def partition_helper(self, s, start_index, path, result):\n        if start_index == len(s):\n            result.append(path[:])\n            return\n        for i in range(start_index + 1, len(s) + 1):\n            sub = s[start_index:i]\n            if self.isPalindrome(sub):\n                path.append(sub)\n                self.partition_helper(s, i, path, result)\n                path.pop()\n    def isPalindrome(self, s):\n        return all(s[i] == s[len(s) - 1 - i] for i in range(len(s) // 2))",
+          "description": "Python版本使用all函数来判断回文并解决分割回文串问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<string>> result; vector<string> path; void backtracking (const string& s, int startIndex) { if (startIndex >= s.size()) { result.push_back(path); return; } for (int i = startIndex; i < s.size(); i++) { if (isPalindrome(s, startIndex, i)) { string str = s.substr(startIndex, i - startIndex + 1); path.push_back(str); } else { continue; } backtracking(s, i + 1); path.pop_back(); } } bool isPalindrome(const string& s, int start, int end) { for (int i = start, j = end; i < j; i++, j--) { if (s[i] != s[j]) { return false; } } return true; } public: vector<vector<string>> partition(string s) { result.clear(); path.clear(); backtracking(s, 0); return result; }};",
+          "description": "C++基础版本"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<string>> result; vector<string> path; vector<vector<bool>> isPalindrome; void backtracking (const string& s, int startIndex) { if (startIndex >= s.size()) { result.push_back(path); return; } for (int i = startIndex; i < s.size(); i++) { if (isPalindrome[startIndex][i]) { string str = s.substr(startIndex, i - startIndex + 1); path.push_back(str); } else { continue; } backtracking(s, i + 1); path.pop_back(); } } void computePalindrome(const string& s) { isPalindrome.resize(s.size(), vector<bool>(s.size(), false)); for (int i = s.size() - 1; i >= 0; i--) { for (int j = i; j < s.size(); j++) { if (j == i) {isPalindrome[i][j] = true;} else if (j - i == 1) {isPalindrome[i][j] = (s[i] == s[j]);} else {isPalindrome[i][j] = (s[i] == s[j] && isPalindrome[i+1][j-1]);} } } } public: vector<vector<string>> partition(string s) { result.clear(); path.clear(); computePalindrome(s); backtracking(s, 0); return result; }};",
+          "description": "C++优化版，使用动态规划预计算回文子串"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {List<List<String>> res = new ArrayList<>(); List<String> cur = new ArrayList<>(); public List<List<String>> partition(String s) { backtracking(s, 0, new StringBuilder()); return res; } private void backtracking(String s, int start, StringBuilder sb){ if (start == s.length()){ res.add(new ArrayList<>(cur)); return; } for (int i = start; i < s.length(); i++){ sb.append(s.charAt(i)); if (check(sb)){ cur.add(sb.toString()); backtracking(s, i + 1, new StringBuilder()); cur.remove(cur.size() -1 ); } } } private boolean check(StringBuilder sb){ for (int i = 0; i < sb.length()/ 2; i++){ if (sb.charAt(i) != sb.charAt(sb.length() - 1 - i)){return false;} } return true; }}",
+          "description": "Java基础版本"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {List<List<String>> result; LinkedList<String> path; boolean[][] dp; public List<List<String>> partition(String s) { result = new ArrayList<>(); char[] str = s.toCharArray(); path = new LinkedList<>(); dp = new boolean[str.length + 1][str.length + 1]; isPalindrome(str); backtracking(s, 0); return result; } public void backtracking(String str, int startIndex) { if (startIndex >= str.length()) { result.add(new ArrayList<>(path)); } else { for (int i = startIndex; i < str.length(); ++i) { if (dp[startIndex][i]) { path.addLast(str.substring(startIndex, i + 1)); backtracking(str, i + 1); path.pollLast(); } else { continue; } } } } public void isPalindrome(char[] str) { for (int i = 0; i <= str.length; ++i) { dp[i][i] = true; } for (int i = 1; i < str.length; ++i) { for (int j = i; j >= 0; --j) { if (str[j] == str[i]) { if (i - j <= 1) { dp[j][i] = true; } else if (dp[j + 1][i - 1]) { dp[j][i] = true; } } } } }}",
+          "description": "Java优化版，使用动态规划预计算回文子串"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] self.backtracking(s, 0, [], result) return result def backtracking(self, s, start_index, path, result): if start_index == len(s): result.append(path[:]) return for i in range(start_index, len(s)): if self.is_palindrome(s, start_index, i): path.append(s[start_index:i+1]) self.backtracking(s, i+1, path, result) path.pop() def is_palindrome(self, s: str, start: int, end: int) -> bool: i = start j = end while i < j: if s[i] != s[j]: return False i += 1 j -= 1 return True",
+          "description": "Python基础版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] isPalindrome = [[False] * len(s) for _ in range(len(s))] self.computePalindrome(s, isPalindrome) self.backtracking(s, 0, [], result, isPalindrome) return result def backtracking(self, s, startIndex, path, result, isPalindrome): if startIndex >= len(s): result.append(path[:]) return for i in range(startIndex, len(s)): if isPalindrome[startIndex][i]: substring = s[startIndex:i + 1] path.append(substring) self.backtracking(s, i + 1, path, result, isPalindrome) path.pop() def computePalindrome(self, s, isPalindrome): for i in range(len(s) - 1, -1, -1): for j in range(i, len(s)): if j == i: isPalindrome[i][j] = True elif j - i == 1: isPalindrome[i][j] = (s[i] == s[j]) else: isPalindrome[i][j] = (s[i] == s[j] and isPalindrome[i+1][j-1])",
+          "description": "Python优化版，使用动态规划预计算回文子串"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] self.partition_helper(s, 0, [], result) return result def partition_helper(self, s, start_index, path, result): if start_index == len(s): result.append(path[:]) return for i in range(start_index + 1, len(s) + 1): sub = s[start_index:i] if self.isPalindrome(sub): path.append(sub) self.partition_helper(s, i, path, result) path.pop() def isPalindrome(self, s): return all(s[i] == s[len(s) - 1 - i] for i in range(len(s) // 2))",
+          "description": "Python使用all函数判断回文子串"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<string>> result; vector<string> path; void backtracking (const string& s, int startIndex) { if (startIndex >= s.size()) { result.push_back(path); return; } for (int i = startIndex; i < s.size(); i++) { if (isPalindrome(s, startIndex, i)) { string str = s.substr(startIndex, i - startIndex + 1); path.push_back(str); } else { continue; } backtracking(s, i + 1); path.pop_back(); } } bool isPalindrome(const string& s, int start, int end) { for (int i = start, j = end; i < j; i++, j--) { if (s[i] != s[j]) { return false; } } return true; } public: vector<vector<string>> partition(string s) { result.clear(); path.clear(); backtracking(s, 0); return result; } };",
+          "description": "C++实现的分割回文串解决方案"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<string>> result; vector<string> path; vector<vector<bool>> isPalindrome; void backtracking (const string& s, int startIndex) { if (startIndex >= s.size()) { result.push_back(path); return; } for (int i = startIndex; i < s.size(); i++) { if (isPalindrome[startIndex][i]) { string str = s.substr(startIndex, i - startIndex + 1); path.push_back(str); } else { continue; } backtracking(s, i + 1); path.pop_back(); } } void computePalindrome(const string& s) { isPalindrome.resize(s.size(), vector<bool>(s.size(), false)); for (int i = s.size() - 1; i >= 0; i--) { for (int j = i; j < s.size(); j++) { if (j == i) {isPalindrome[i][j] = true;} else if (j - i == 1) {isPalindrome[i][j] = (s[i] == s[j]);} else {isPalindrome[i][j] = (s[i] == s[j] && isPalindrome[i+1][j-1]);} } } } public: vector<vector<string>> partition(string s) { result.clear(); path.clear(); computePalindrome(s); backtracking(s, 0); return result; } };",
+          "description": "使用动态规划优化判断回文子串的C++解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {List<List<String>> res = new ArrayList<>(); List<String> cur = new ArrayList<>(); public List<List<String>> partition(String s) { backtracking(s, 0, new StringBuilder()); return res; } private void backtracking(String s, int start, StringBuilder sb){ if (start == s.length()){ res.add(new ArrayList<>(cur)); return; } for (int i = start; i < s.length(); i++){ sb.append(s.charAt(i)); if (check(sb)){ cur.add(sb.toString()); backtracking(s, i + 1, new StringBuilder()); cur.remove(cur.size() -1 ); } } } private boolean check(StringBuilder sb){ for (int i = 0; i < sb.length()/ 2; i++){ if (sb.charAt(i) != sb.charAt(sb.length() - 1 - i)){return false;} } return true; } }",
+          "description": "Java实现的基本版分割回文串解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {List<List<String>> result; LinkedList<String> path; boolean[][] dp; public List<List<String>> partition(String s) { result = new ArrayList<>(); char[] str = s.toCharArray(); path = new LinkedList<>(); dp = new boolean[str.length + 1][str.length + 1]; isPalindrome(str); backtracking(s, 0); return result; } public void backtracking(String str, int startIndex) { if (startIndex >= str.length()) { result.add(new ArrayList<>(path)); } else { for (int i = startIndex; i < str.length(); ++i) { if (dp[startIndex][i]) { path.addLast(str.substring(startIndex, i + 1)); backtracking(str, i + 1); path.pollLast(); } else { continue; } } } } public void isPalindrome(char[] str) { for (int i = 0; i <= str.length; ++i) { dp[i][i] = true; } for (int i = 1; i < str.length; ++i) { for (int j = i; j >= 0; --j) { if (str[j] == str[i]) { if (i - j <= 1) { dp[j][i] = true; } else if (dp[j + 1][i - 1]) { dp[j][i] = true; } } } } } }",
+          "description": "Java实现并使用动态规划优化判断回文子串的解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] self.backtracking(s, 0, [], result) return result def backtracking(self, s, start_index, path, result ): if start_index == len(s): result.append(path[:]) return for i in range(start_index, len(s)): if self.is_palindrome(s, start_index, i): path.append(s[start_index:i+1]) self.backtracking(s, i+1, path, result) path.pop() def is_palindrome(self, s: str, start: int, end: int) -> bool: i = start j = end while i < j: if s[i] != s[j]: return False i += 1 j -= 1 return True",
+          "description": "Python实现的基本版分割回文串解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] isPalindrome = [[False] * len(s) for _ in range(len(s))] self.computePalindrome(s, isPalindrome) self.backtracking(s, 0, [], result, isPalindrome) return result def backtracking(self, s, startIndex, path, result, isPalindrome): if startIndex >= len(s): result.append(path[:]) return for i in range(startIndex, len(s)): if isPalindrome[startIndex][i]: substring = s[startIndex:i + 1] path.append(substring) self.backtracking(s, i + 1, path, result, isPalindrome) path.pop() def computePalindrome(self, s, isPalindrome): for i in range(len(s) - 1, -1, -1): for j in range(i, len(s)): if j == i: isPalindrome[i][j] = True elif j - i == 1: isPalindrome[i][j] = (s[i] == s[j]) else: isPalindrome[i][j] = (s[i] == s[j] and isPalindrome[i+1][j-1])",
+          "description": "使用动态规划优化判断回文子串的Python解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] self.partition_helper(s, 0, [], result) return result def partition_helper(self, s, start_index, path, result): if start_index == len(s): result.append(path[:]) return for i in range(start_index + 1, len(s) + 1): sub = s[start_index:i] if self.isPalindrome(sub): path.append(sub) self.partition_helper(s, i, path, result) path.pop() def isPalindrome(self, s): return all(s[i] == s[len(s) - 1 - i] for i in range(len(s) // 2))",
+          "description": "使用all函数判断回文子串的Python解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<string>> result; vector<string> path; // 放已经回文的子串 void backtracking (const string& s, int startIndex) { if (startIndex >= s.size()) { result.push_back(path); return; } for (int i = startIndex; i < s.size(); i++) { if (isPalindrome(s, startIndex, i)) { string str = s.substr(startIndex, i - startIndex + 1); path.push_back(str); } else { continue; } backtracking(s, i + 1); path.pop_back(); } } bool isPalindrome(const string& s, int start, int end) { for (int i = start, j = end; i < j; i++, j--) { if (s[i] != s[j]) { return false; } } return true; } public: vector<vector<string>> partition(string s) { result.clear(); path.clear(); backtracking(s, 0); return result; }};",
+          "description": "C++实现分割回文串问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { List<List<String>> res = new ArrayList<>(); List<String> cur = new ArrayList<>(); public List<List<String>> partition(String s) { backtracking(s, 0, new StringBuilder()); return res; } private void backtracking(String s, int start, StringBuilder sb){ if (start == s.length()){ res.add(new ArrayList<>(cur)); return; } for (int i = start; i < s.length(); i++){ sb.append(s.charAt(i)); if (check(sb)){ cur.add(sb.toString()); backtracking(s, i + 1, new StringBuilder()); cur.remove(cur.size() -1 ); } } } private boolean check(StringBuilder sb){ for (int i = 0; i < sb.length()/ 2; i++){ if (sb.charAt(i) != sb.charAt(sb.length() - 1 - i)){return false;} } return true; }}",
+          "description": "Java实现分割回文串问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { List<List<String>> result; LinkedList<String> path; boolean[][] dp; public List<List<String>> partition(String s) { result = new ArrayList<>(); char[] str = s.toCharArray(); path = new LinkedList<>(); dp = new boolean[str.length + 1][str.length + 1]; isPalindrome(str); backtracking(s, 0); return result; } public void backtracking(String str, int startIndex) { if (startIndex >= str.length()) { result.add(new ArrayList<>(path)); } else { for (int i = startIndex; i < str.length(); ++i) { if (dp[startIndex][i]) { path.addLast(str.substring(startIndex, i + 1)); backtracking(str, i + 1); path.pollLast(); } else { continue; } } } } public void isPalindrome(char[] str) { for (int i = 0; i <= str.length; ++i) { dp[i][i] = true; } for (int i = 1; i < str.length; ++i) { for (int j = i; j >= 0; --j) { if (str[j] == str[i]) { if (i - j <= 1) { dp[j][i] = true; } else if (dp[j + 1][i - 1]) { dp[j][i] = true; } } } } }}",
+          "description": "Java实现，使用动态规划优化回文串判断"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] self.backtracking(s, 0, [], result) return result def backtracking(self, s, start_index, path, result ): if start_index == len(s): result.append(path[:]) return for i in range(start_index, len(s)): if self.is_palindrome(s, start_index, i): path.append(s[start_index:i+1]) self.backtracking(s, i+1, path, result) path.pop() def is_palindrome(self, s: str, start: int, end: int) -> bool: i: int = start j: int = end while i < j: if s[i] != s[j]: return False i += 1 j -= 1 return True",
+          "description": "Python基本版实现分割回文串问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] self.backtracking(s, 0, [], result) return result def backtracking(self, s, start_index, path, result ): if start_index == len(s): result.append(path[:]) return for i in range(start_index, len(s)): if s[start_index: i + 1] == s[start_index: i + 1][::-1]: path.append(s[start_index:i+1]) self.backtracking(s, i+1, path, result) path.pop()",
+          "description": "Python实现，通过字符串反转来简化回文判断"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] isPalindrome = [[False] * len(s) for _ in range(len(s))] self.computePalindrome(s, isPalindrome) self.backtracking(s, 0, [], result, isPalindrome) return result def backtracking(self, s, startIndex, path, result, isPalindrome): if startIndex >= len(s): result.append(path[:]) return for i in range(startIndex, len(s)): if isPalindrome[startIndex][i]: substring = s[startIndex:i + 1] path.append(substring) self.backtracking(s, i + 1, path, result, isPalindrome) path.pop() def computePalindrome(self, s, isPalindrome): for i in range(len(s) - 1, -1, -1): for j in range(i, len(s)): if j == i: isPalindrome[i][j] = True elif j - i == 1: isPalindrome[i][j] = (s[i] == s[j]) else: isPalindrome[i][j] = (s[i] == s[j] and isPalindrome[i+1][j-1])",
+          "description": "Python实现，利用动态规划预处理回文判断"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] self.partition_helper(s, 0, [], result) return result def partition_helper(self, s, start_index, path, result): if start_index == len(s): result.append(path[:]) return for i in range(start_index + 1, len(s) + 1): sub = s[start_index:i] if self.isPalindrome(sub): path.append(sub) self.partition_helper(s, i, path, result) path.pop() def isPalindrome(self, s): return all(s[i] == s[len(s) - 1 - i] for i in range(len(s) // 2))",
+          "description": "Python实现，使用all函数简化回文判断"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "回溯 基本版",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<string>> result; vector<string> path; void backtracking (const string& s, int startIndex) { if (startIndex >= s.size()) { result.push_back(path); return; } for (int i = startIndex; i < s.size(); i++) { if (isPalindrome(s, startIndex, i)) { string str = s.substr(startIndex, i - startIndex + 1); path.push_back(str); } else { continue; } backtracking(s, i + 1); path.pop_back(); } } bool isPalindrome(const string& s, int start, int end) { for (int i = start, j = end; i < j; i++, j--) { if (s[i] != s[j]) { return false; } } return true; } public: vector<vector<string>> partition(string s) { result.clear(); path.clear(); backtracking(s, 0); return result; }};",
+          "description": "C++实现的回溯算法，用于解决字符串分割成回文串的问题。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<string>> result; vector<string> path; vector<vector<bool>> isPalindrome; void backtracking (const string& s, int startIndex) { if (startIndex >= s.size()) { result.push_back(path); return; } for (int i = startIndex; i < s.size(); i++) { if (isPalindrome[startIndex][i]) { string str = s.substr(startIndex, i - startIndex + 1); path.push_back(str); } else { continue; } backtracking(s, i + 1); path.pop_back(); } } void computePalindrome(const string& s) { isPalindrome.resize(s.size(), vector<bool>(s.size(), false)); for (int i = s.size() - 1; i >= 0; i--) { for (int j = i; j < s.size(); j++) { if (j == i) {isPalindrome[i][j] = true;} else if (j - i == 1) {isPalindrome[i][j] = (s[i] == s[j]);} else {isPalindrome[i][j] = (s[i] == s[j] && isPalindrome[i+1][j-1]);} } } } public: vector<vector<string>> partition(string s) { result.clear(); path.clear(); computePalindrome(s); backtracking(s, 0); return result; }};",
+          "description": "优化版C++代码，使用动态规划预计算所有子串是否为回文，提高效率。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { List<List<String>> res = new ArrayList<>(); List<String> cur = new ArrayList<>(); public List<List<String>> partition(String s) { backtracking(s, 0, new StringBuilder()); return res; } private void backtracking(String s, int start, StringBuilder sb){ if (start == s.length()){ res.add(new ArrayList<>(cur)); return; } for (int i = start; i < s.length(); i++){ sb.append(s.charAt(i)); if (check(sb)){ cur.add(sb.toString()); backtracking(s, i + 1, new StringBuilder()); cur.remove(cur.size() -1 ); } } } private boolean check(StringBuilder sb){ for (int i = 0; i < sb.length()/ 2; i++){ if (sb.charAt(i) != sb.charAt(sb.length() - 1 - i)){return false;} } return true; }}",
+          "description": "Java版本的基础回溯法实现，通过StringBuilder来检查当前子串是否为回文。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { List<List<String>> result; LinkedList<String> path; boolean[][] dp; public List<List<String>> partition(String s) { result = new ArrayList<>(); char[] str = s.toCharArray(); path = new LinkedList<>(); dp = new boolean[str.length + 1][str.length + 1]; isPalindrome(str); backtracking(s, 0); return result; } public void backtracking(String str, int startIndex) { if (startIndex >= str.length()) { result.add(new ArrayList<>(path)); } else { for (int i = startIndex; i < str.length(); ++i) { if (dp[startIndex][i]) { path.addLast(str.substring(startIndex, i + 1)); backtracking(str, i + 1); path.pollLast(); } else { continue; } } } } public void isPalindrome(char[] str) { for (int i = 0; i <= str.length; ++i) { dp[i][i] = true; } for (int i = 1; i < str.length; ++i) { for (int j = i; j >= 0; --j) { if (str[j] == str[i]) { if (i - j <= 1) { dp[j][i] = true; } else if (dp[j + 1][i - 1]) { dp[j][i] = true; } } } } }}",
+          "description": "Java实现的优化版回溯加动态规划，提前计算所有可能的回文子串以减少重复计算。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] self.backtracking(s, 0, [], result) return result def backtracking(self, s, start_index, path, result): if start_index == len(s): result.append(path[:]) return for i in range(start_index, len(s)): if self.is_palindrome(s, start_index, i): path.append(s[start_index:i+1]) self.backtracking(s, i+1, path, result) path.pop() def is_palindrome(self, s: str, start: int, end: int) -> bool: i, j = start, end while i < j: if s[i] != s[j]: return False i += 1 j -= 1 return True",
+          "description": "Python基础版回溯算法，用于生成给定字符串的所有回文分割方式。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] isPalindrome = [[False] * len(s) for _ in range(len(s))] self.computePalindrome(s, isPalindrome) self.backtracking(s, 0, [], result, isPalindrome) return result def backtracking(self, s, startIndex, path, result, isPalindrome): if startIndex >= len(s): result.append(path[:]) return for i in range(startIndex, len(s)): if isPalindrome[startIndex][i]: substring = s[startIndex:i + 1] path.append(substring) self.backtracking(s, i + 1, path, result, isPalindrome) path.pop() def computePalindrome(self, s, isPalindrome): for i in range(len(s) - 1, -1, -1): for j in range(i, len(s)): if j == i: isPalindrome[i][j] = True elif j - i == 1: isPalindrome[i][j] = (s[i] == s[j]) else: isPalindrome[i][j] = (s[i] == s[j] and isPalindrome[i+1][j-1])",
+          "description": "Python版本的优化回溯算法，利用动态规划预先计算出所有子串是否为回文。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def partition(self, s: str) -> List[List[str]]: result = [] self.partition_helper(s, 0, [], result) return result def partition_helper(self, s, start_index, path, result): if start_index == len(s): result.append(path[:]) return for i in range(start_index + 1, len(s) + 1): sub = s[start_index:i] if self.isPalindrome(sub): path.append(sub) self.partition_helper(s, i, path, result) path.pop() def isPalindrome(self, s): return all(s[i] == s[len(s) - 1 - i] for i in range(len(s) // 2))",
+          "description": "Python版本的回溯算法，使用all函数简化了判断回文的过程。"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n * 2^n)",
+    "space_complexity": "O(n^2)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "bool isPalindrome(const string& s, int start, int end) {\n    for (int i = start, j = end; i < j; i++, j--) {\n        if (s[i] != s[j]) {\n            return false;\n        }\n    }\n    return true;\n}",
+      "description": "判断给定字符串是否为回文串"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {\nprivate:\n    vector<vector<string>> result;\n    vector<string> path; // 放已经回文的子串\n    void backtracking (const string& s, int startIndex) {\n        if (startIndex >= s.size()) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i < s.size(); i++) {\n            if (isPalindrome(s, startIndex, i)) {   // 是回文子串\n                string str = s.substr(startIndex, i - startIndex + 1);\n                path.push_back(str);\n            } else {                                // 不是回文，跳过\n                continue;\n            }\n            backtracking(s, i + 1); // 寻找i+1为起始位置的子串\n            path.pop_back(); // 回溯过程，弹出本次已经添加的子串\n        }\n    }\npublic:\n    vector<vector<string>> partition(string s) {\n        result.clear();\n        path.clear();\n        backtracking(s, 0);\n        return result;\n    }\n};",
+      "description": "使用回溯法解决分割回文串问题"
+    },
+    {
+      "language": "cpp",
+      "code": "void computePalindrome(const string& s) {\n    isPalindrome.resize(s.size(), vector<bool>(s.size(), false));\n    for (int i = s.size() - 1; i >= 0; i--) {\n        for (int j = i; j < s.size(); j++) {\n            if (j == i) {isPalindrome[i][j] = true;}\n            else if (j - i == 1) {isPalindrome[i][j] = (s[i] == s[j]);}\n            else {isPalindrome[i][j] = (s[i] == s[j] && isPalindrome[i+1][j-1]);}\n        }\n    }\n}",
+      "description": "动态规划预处理所有子串是否为回文串"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {\n    List<List<String>> res = new ArrayList<>();\n    List<String> cur = new ArrayList<>();\n    public List<List<String>> partition(String s) {\n        backtracking(s, 0, new StringBuilder());\n        return res;\n    }\n    private void backtracking(String s, int start, StringBuilder sb){\n        if (start == s.length()){\n            res.add(new ArrayList<>(cur));\n            return;\n        }\n        for (int i = start; i < s.length(); i++){\n            sb.append(s.charAt(i));\n            if (check(sb)){\n                cur.add(sb.toString());\n                backtracking(s, i + 1, new StringBuilder());\n                cur.remove(cur.size() - 1);\n            }\n        }\n    }\n    private boolean check(StringBuilder sb){\n        for (int i = 0; i < sb.length()/ 2; i++){\n            if (sb.charAt(i) != sb.charAt(sb.length() - 1 - i)){return false;}\n        }\n        return true;\n    }\n}",
+      "description": "Java实现回溯法解决分割回文串问题"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {\n    List<List<String>> result;\n    LinkedList<String> path;\n    boolean[][] dp;\n    public List<List<String>> partition(String s) {\n        result = new ArrayList<>();\n        char[] str = s.toCharArray();\n        path = new LinkedList<>();\n        dp = new boolean[str.length + 1][str.length + 1];\n        isPalindrome(str);\n        backtracking(s, 0);\n        return result;\n    }\n    public void backtracking(String str, int startIndex) {\n        if (startIndex >= str.length()) {\n            result.add(new ArrayList<>(path));\n        } else {\n            for (int i = startIndex; i < str.length(); ++i) {\n                if (dp[startIndex][i]) {\n                    path.addLast(str.substring(startIndex, i + 1));\n                    backtracking(str, i + 1);\n                    path.pollLast();\n                }\n            }\n        }\n    }\n    public void isPalindrome(char[] str) {\n        for (int i = 0; i <= str.length; ++i) {\n            dp[i][i] = true;\n        }\n        for (int i = 1; i < str.length; ++i) {\n            for (int j = i; j >= 0; --j) {\n                if (str[j] == str[i]) {\n                    if (i - j <= 1) {\n                        dp[j][i] = true;\n                    } else if (dp[j + 1][i - 1]) {\n                        dp[j][i] = true;\n                    }\n                }\n            }\n        }\n    }\n}",
+      "description": "Java实现回溯加动态规划优化回文串判断"
+    },
+    {
+      "language": "python",
+      "code": "def is_palindrome(self, s: str, start: int, end: int) -> bool:\n    i: int = start\n    j: int = end\n    while i < j:\n        if s[i] != s[j]:\n            return False\n        i += 1\n        j -= 1\n    return True",
+      "description": "Python实现判断给定字符串是否为回文串"
+    },
+    {
+      "language": "python",
+      "code": "class Solution:\n    def partition(self, s: str) -> List[List[str]]:\n        result = []\n        self.backtracking(s, 0, [], result)\n        return result\n    def backtracking(self, s, start_index, path, result ):\n        if start_index == len(s):\n            result.append(path[:])\n            return\n        for i in range(start_index, len(s)):\n            if self.is_palindrome(s, start_index, i):\n                path.append(s[start_index:i+1])\n                self.backtracking(s, i+1, path, result)\n                path.pop()",
+      "description": "Python实现基本版回溯法解决分割回文串问题"
+    },
+    {
+      "language": "python",
+      "code": "class Solution:\n    def partition(self, s: str) -> List[List[str]]:\n        result = []\n        isPalindrome = [[False] * len(s) for _ in range(len(s))]\n        self.computePalindrome(s, isPalindrome)\n        self.backtracking(s, 0, [], result, isPalindrome)\n        return result\n    def backtracking(self, s, startIndex, path, result, isPalindrome):\n        if startIndex >= len(s):\n            result.append(path[:])\n            return\n        for i in range(startIndex, len(s)):\n            if isPalindrome[startIndex][i]:\n                substring = s[startIndex:i + 1]\n                path.append(substring)\n                self.backtracking(s, i + 1, path, result, isPalindrome)\n                path.pop()\n    def computePalindrome(self, s, isPalindrome):\n        for i in range(len(s) - 1, -1, -1):\n            for j in range(i, len(s)):\n                if j == i:\n                    isPalindrome[i][j] = True\n                elif j - i == 1:\n                    isPalindrome[i][j] = (s[i] == s[j])\n                else:\n                    isPalindrome[i][j] = (s[i] == s[j] and isPalindrome[i+1][j-1])",
+      "description": "Python实现高效判断回文子串的回溯算法"
+    }
+  ],
+  "common_mistakes": [
+    "忘记在回溯过程中移除最后添加的元素，导致结果集中包含了无效的分割方案。",
+    "未正确更新startIndex值传递给下一层递归，可能导致重复计算或遗漏某些情况。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/131.%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.jpg",
+      "description": "这张图片展示了使用递归和回溯算法对字符串进行分割的过程，特别关注于判断子串是否为回文。",
+      "context": "该图片展示了如何将字符串切割问题抽象为一棵树形结构，用以解释切割与组合问题之间的相似性及回溯算法的应用。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/131.%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.jpg",
+      "description": "这张图片展示了使用回溯算法进行字符串分割的过程，通过横向遍历和纵向递归的方式寻找所有可能的回文子串组合。",
+      "context": "该图展示了如何将字符串切割问题抽象为树形结构，用以说明切割过程与组合问题的相似性以及回溯搜索的应用。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/131.%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.jpg",
+      "description": "GIF展示了通过回溯算法递归切割字符串以寻找所有可能的回文子串的过程。",
+      "context": "此GIF动画展示了如何通过树形结构来理解字符串切割问题，以及回溯算法是如何工作的。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\回溯算法\\分割回文串.txt",
+  "extracted_at": "2025-07-21T04:22:20.244378",
+  "raw_content": "分割回文串\n力扣题目链接(https://leetcode.cn/problems/palindrome-partitioning/)\n\n给定一个字符串 s，将 s 分割成一些子串，使每个子串都是回文串。\n\n返回 s 所有可能的分割方案。\n\n示例: 输入: \"aab\" 输出: [ [\"aa\",\"b\"], [\"a\",\"a\",\"b\"] ]\n\n\n#思路\n本题这涉及到两个关键问题：\n\n切割问题，有不同的切割方式\n判断回文\n相信这里不同的切割方式可以搞懵很多同学了。\n\n这种题目，想用for循环暴力解法，可能都不那么容易写出来，所以要换一种暴力的方式，就是回溯。\n\n一些同学可能想不清楚 回溯究竟是如何切割字符串呢？\n\n我们来分析一下切割，其实切割问题类似组合问题。\n\n例如对于字符串abcdef：\n\n组合问题：选取一个a之后，在bcdef中再去选取第二个，选取b之后在cdef中再选取第三个.....。\n切割问题：切割一个a之后，在bcdef中再去切割第二段，切割b之后在cdef中再切割第三段.....。\n感受出来了不？\n\n所以切割问题，也可以抽象为一棵树形结构，如图：\n\nhttps://file1.kamacoder.com/i/algo/131.%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.jpg\n\n递归用来纵向遍历，for循环用来横向遍历，切割线（就是图中的红线）切割到字符串的结尾位置，说明找到了一个切割方法。\n\n此时可以发现，切割问题的回溯搜索的过程和组合问题的回溯搜索的过程是差不多的。\n\n#回溯三部曲\n递归函数参数\n全局变量数组path存放切割后回文的子串，二维数组result存放结果集。 （这两个参数可以放到函数参数里）\n\n本题递归函数参数还需要startIndex，因为切割过的地方，不能重复切割，和组合问题也是保持一致的。\n\n在回溯算法：求组合总和（二） (opens new window)中我们深入探讨了组合问题什么时候需要startIndex，什么时候不需要startIndex。\n\n代码如下：\n\nvector<vector<string>> result;\nvector<string> path; // 放已经回文的子串\nvoid backtracking (const string& s, int startIndex) {\n递归函数终止条件\nhttps://file1.kamacoder.com/i/algo/131.%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.jpg\n\n从树形结构的图中可以看出：切割线切到了字符串最后面，说明找到了一种切割方法，此时就是本层递归的终止条件。\n\n那么在代码里什么是切割线呢？\n\n在处理组合问题的时候，递归参数需要传入startIndex，表示下一轮递归遍历的起始位置，这个startIndex就是切割线。\n\n所以终止条件代码如下：\n\nvoid backtracking (const string& s, int startIndex) {\n    // 如果起始位置已经大于s的大小，说明已经找到了一组分割方案了\n    if (startIndex >= s.size()) {\n        result.push_back(path);\n        return;\n    }\n}\n单层搜索的逻辑\n来看看在递归循环中如何截取子串呢？\n\n在for (int i = startIndex; i < s.size(); i++)循环中，我们 定义了起始位置startIndex，那么 [startIndex, i] 就是要截取的子串。\n\n首先判断这个子串是不是回文，如果是回文，就加入在vector<string> path中，path用来记录切割过的回文子串。\n\n代码如下：\n\nfor (int i = startIndex; i < s.size(); i++) {\n    if (isPalindrome(s, startIndex, i)) { // 是回文子串\n        // 获取[startIndex,i]在s中的子串\n        string str = s.substr(startIndex, i - startIndex + 1);\n        path.push_back(str);\n    } else {                // 如果不是则直接跳过\n        continue;\n    }\n    backtracking(s, i + 1); // 寻找i+1为起始位置的子串\n    path.pop_back();        // 回溯过程，弹出本次已经添加的子串\n}\n注意切割过的位置，不能重复切割，所以，backtracking(s, i + 1); 传入下一层的起始位置为i + 1。\n\n#判断回文子串\n最后我们看一下回文子串要如何判断了，判断一个字符串是否是回文。\n\n可以使用双指针法，一个指针从前向后，一个指针从后向前，如果前后指针所指向的元素是相等的，就是回文字符串了。\n\n那么判断回文的C++代码如下：\n\n bool isPalindrome(const string& s, int start, int end) {\n     for (int i = start, j = end; i < j; i++, j--) {\n         if (s[i] != s[j]) {\n             return false;\n         }\n     }\n     return true;\n }\n如果大家对双指针法有生疏了，传送门：双指针法：总结篇！(https://programmercarl.com/%E5%8F%8C%E6%8C%87%E9%92%88%E6%80%BB%E7%BB%93.html)\n\n此时关键代码已经讲解完毕，整体代码如下（详细注释了）\n\n根据回溯算法模板：\n\nvoid backtracking(参数) {\n    if (终止条件) {\n        存放结果;\n        return;\n    }\n\n    for (选择：本层集合中元素（树中节点孩子的数量就是集合的大小）) {\n        处理节点;\n        backtracking(路径，选择列表); // 递归\n        回溯，撤销处理结果\n    }\n}\n\n不难写出如下代码：\n\nclass Solution {\nprivate:\n    vector<vector<string>> result;\n    vector<string> path; // 放已经回文的子串\n    void backtracking (const string& s, int startIndex) {\n        // 如果起始位置已经大于s的大小，说明已经找到了一组分割方案了\n        if (startIndex >= s.size()) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i < s.size(); i++) {\n            if (isPalindrome(s, startIndex, i)) {   // 是回文子串\n                // 获取[startIndex,i]在s中的子串\n                string str = s.substr(startIndex, i - startIndex + 1);\n                path.push_back(str);\n            } else {                                // 不是回文，跳过\n                continue;\n            }\n            backtracking(s, i + 1); // 寻找i+1为起始位置的子串\n            path.pop_back(); // 回溯过程，弹出本次已经添加的子串\n        }\n    }\n    bool isPalindrome(const string& s, int start, int end) {\n        for (int i = start, j = end; i < j; i++, j--) {\n            if (s[i] != s[j]) {\n                return false;\n            }\n        }\n        return true;\n    }\npublic:\n    vector<vector<string>> partition(string s) {\n        result.clear();\n        path.clear();\n        backtracking(s, 0);\n        return result;\n    }\n};\n时间复杂度: O(n * 2^n)\n空间复杂度: O(n^2)\n#优化\n上面的代码还存在一定的优化空间, 在于如何更高效的计算一个子字符串是否是回文字串。上述代码isPalindrome函数运用双指针的方法来判定对于一个字符串s, 给定起始下标和终止下标, 截取出的子字符串是否是回文字串。但是其中有一定的重复计算存在:\n\n例如给定字符串\"abcde\", 在已知\"bcd\"不是回文字串时, 不再需要去双指针操作\"abcde\"而可以直接判定它一定不是回文字串。\n\n具体来说, 给定一个字符串s, 长度为n, 它成为回文字串的充分必要条件是s[0] == s[n-1]且s[1:n-1]是回文字串。\n\n大家如果熟悉动态规划这种算法的话, 我们可以高效地事先一次性计算出, 针对一个字符串s, 它的任何子串是否是回文字串, 然后在我们的回溯函数中直接查询即可, 省去了双指针移动判定这一步骤.\n\n具体参考代码如下:\n\nclass Solution {\nprivate:\n    vector<vector<string>> result;\n    vector<string> path; // 放已经回文的子串\n    vector<vector<bool>> isPalindrome; // 放事先计算好的是否回文子串的结果\n    void backtracking (const string& s, int startIndex) {\n        // 如果起始位置已经大于s的大小，说明已经找到了一组分割方案了\n        if (startIndex >= s.size()) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i < s.size(); i++) {\n            if (isPalindrome[startIndex][i]) {   // 是回文子串\n                // 获取[startIndex,i]在s中的子串\n                string str = s.substr(startIndex, i - startIndex + 1);\n                path.push_back(str);\n            } else {                                // 不是回文，跳过\n                continue;\n            }\n            backtracking(s, i + 1); // 寻找i+1为起始位置的子串\n            path.pop_back(); // 回溯过程，弹出本次已经添加的子串\n        }\n    }\n    void computePalindrome(const string& s) {\n        // isPalindrome[i][j] 代表 s[i:j](双边包括)是否是回文字串 \n        isPalindrome.resize(s.size(), vector<bool>(s.size(), false)); // 根据字符串s, 刷新布尔矩阵的大小\n        for (int i = s.size() - 1; i >= 0; i--) { \n            // 需要倒序计算, 保证在i行时, i+1行已经计算好了\n            for (int j = i; j < s.size(); j++) {\n                if (j == i) {isPalindrome[i][j] = true;}\n                else if (j - i == 1) {isPalindrome[i][j] = (s[i] == s[j]);}\n                else {isPalindrome[i][j] = (s[i] == s[j] && isPalindrome[i+1][j-1]);}\n            }\n        }\n    }\npublic:\n    vector<vector<string>> partition(string s) {\n        result.clear();\n        path.clear();\n        computePalindrome(s);\n        backtracking(s, 0);\n        return result;\n    }\n};\n\n#总结\n这道题目在leetcode上是中等，但可以说是hard的题目了，但是代码其实就是按照模板的样子来的。\n\n那么难究竟难在什么地方呢？\n\n我列出如下几个难点：\n\n切割问题可以抽象为组合问题\n如何模拟那些切割线\n切割问题中递归如何终止\n在递归循环中如何截取子串\n如何判断回文\n我们平时在做难题的时候，总结出来难究竟难在哪里也是一种需要锻炼的能力。\n\n一些同学可能遇到题目比较难，但是不知道题目难在哪里，反正就是很难。其实这样还是思维不够清晰，这种总结的能力需要多接触多锻炼。\n\n本题我相信很多同学主要卡在了第一个难点上：就是不知道如何切割，甚至知道要用回溯法，也不知道如何用。也就是没有体会到按照求组合问题的套路就可以解决切割。\n\n如果意识到这一点，算是重大突破了。接下来就可以对着模板照葫芦画瓢。\n\n但接下来如何模拟切割线，如何终止，如何截取子串，其实都不好想，最后判断回文算是最简单的了。\n\n关于模拟切割线，其实就是index是上一层已经确定了的分割线，i是这一层试图寻找的新分割线\n\n除了这些难点，本题还有细节，例如：切割过的地方不能重复切割所以递归函数需要传入i + 1。\n\n所以本题应该是一道hard题目了。\n\n可能刷过这道题目的录友都没感受到自己原来克服了这么多难点，就把这道题目AC了，这应该叫做无招胜有招，人码合一。\n\n#其他语言版本\n#Java\nclass Solution {\n    //保持前几题一贯的格式， initialization\n    List<List<String>> res = new ArrayList<>();\n    List<String> cur = new ArrayList<>();\n    public List<List<String>> partition(String s) {\n        backtracking(s, 0, new StringBuilder());\n        return res;\n    }\n    private void backtracking(String s, int start, StringBuilder sb){\n        //因为是起始位置一个一个加的，所以结束时start一定等于s.length,因为进入backtracking时一定末尾也是回文，所以cur是满足条件的\n        if (start == s.length()){\n            //注意创建一个新的copy\n            res.add(new ArrayList<>(cur));\n            return;\n        }\n        //像前两题一样从前往后搜索，如果发现回文，进入backtracking,起始位置后移一位，循环结束照例移除cur的末位\n        for (int i = start; i < s.length(); i++){\n            sb.append(s.charAt(i));\n            if (check(sb)){\n                cur.add(sb.toString());\n                backtracking(s, i + 1, new StringBuilder());\n                cur.remove(cur.size() -1 );\n            }\n        }\n    }\n\n    //helper method, 检查是否是回文\n    private boolean check(StringBuilder sb){\n        for (int i = 0; i < sb.length()/ 2; i++){\n            if (sb.charAt(i) != sb.charAt(sb.length() - 1 - i)){return false;}\n        }\n        return true;\n    }\n}\n#Java\n回溯+动态规划优化回文串判断\n\nclass Solution {\n    List<List<String>> result;\n    LinkedList<String> path;\n    boolean[][] dp;\n\n    public List<List<String>> partition(String s) {\n        result = new ArrayList<>();\n        char[] str = s.toCharArray();\n        path = new LinkedList<>();\n        dp = new boolean[str.length + 1][str.length + 1];\n        isPalindrome(str);\n        backtracking(s, 0);\n        return result;\n    }\n\n    public void backtracking(String str, int startIndex) {\n        if (startIndex >= str.length()) {\n            //如果起始位置大于s的大小，说明找到了一组分割方案\n            result.add(new ArrayList<>(path));\n        } else {\n            for (int i = startIndex; i < str.length(); ++i) {\n                if (dp[startIndex][i]) {\n                    //是回文子串，进入下一步递归\n                    //先将当前子串保存入path\n                    path.addLast(str.substring(startIndex, i + 1));\n                    //起始位置后移，保证不重复\n                    backtracking(str, i + 1);\n                    path.pollLast();\n                } else {\n                    //不是回文子串，跳过\n                    continue;\n                }\n            }\n        }\n    }\n\n    //通过动态规划判断是否是回文串,参考动态规划篇 52 回文子串\n    public void isPalindrome(char[] str) {\n        for (int i = 0; i <= str.length; ++i) {\n            dp[i][i] = true;\n        }\n        for (int i = 1; i < str.length; ++i) {\n            for (int j = i; j >= 0; --j) {\n                if (str[j] == str[i]) {\n                    if (i - j <= 1) {\n                        dp[j][i] = true;\n                    } else if (dp[j + 1][i - 1]) {\n                        dp[j][i] = true;\n                    }\n                }\n            }\n        }\n    }\n}\n#Python\n回溯 基本版\n\nclass Solution:\n\n    def partition(self, s: str) -> List[List[str]]:\n        '''\n        递归用于纵向遍历\n        for循环用于横向遍历\n        当切割线迭代至字符串末尾，说明找到一种方法\n        类似组合问题，为了不重复切割同一位置，需要start_index来做标记下一轮递归的起始位置(切割线)\n        '''\n        result = []\n        self.backtracking(s, 0, [], result)\n        return result\n\n    def backtracking(self, s, start_index, path, result ):\n        # Base Case\n        if start_index == len(s):\n            result.append(path[:])\n            return\n        \n        # 单层递归逻辑\n        for i in range(start_index, len(s)):\n            # 此次比其他组合题目多了一步判断：\n            # 判断被截取的这一段子串([start_index, i])是否为回文串\n            if self.is_palindrome(s, start_index, i):\n                path.append(s[start_index:i+1])\n                self.backtracking(s, i+1, path, result)   # 递归纵向遍历：从下一处进行切割，判断其余是否仍为回文串\n                path.pop()             # 回溯\n\n\n    def is_palindrome(self, s: str, start: int, end: int) -> bool:\n        i: int = start        \n        j: int = end\n        while i < j:\n            if s[i] != s[j]:\n                return False\n            i += 1\n            j -= 1\n        return True \n回溯+优化判定回文函数\n\nclass Solution:\n\n    def partition(self, s: str) -> List[List[str]]:\n        result = []\n        self.backtracking(s, 0, [], result)\n        return result\n\n    def backtracking(self, s, start_index, path, result ):\n        # Base Case\n        if start_index == len(s):\n            result.append(path[:])\n            return\n        \n        # 单层递归逻辑\n        for i in range(start_index, len(s)):\n            # 若反序和正序相同，意味着这是回文串\n            if s[start_index: i + 1] == s[start_index: i + 1][::-1]:\n                path.append(s[start_index:i+1])\n                self.backtracking(s, i+1, path, result)   # 递归纵向遍历：从下一处进行切割，判断其余是否仍为回文串\n                path.pop()             # 回溯\n  \n回溯+高效判断回文子串\n\nclass Solution:\n    def partition(self, s: str) -> List[List[str]]:\n        result = []\n        isPalindrome = [[False] * len(s) for _ in range(len(s))]  # 初始化isPalindrome矩阵\n        self.computePalindrome(s, isPalindrome)\n        self.backtracking(s, 0, [], result, isPalindrome)\n        return result\n\n    def backtracking(self, s, startIndex, path, result, isPalindrome):\n        if startIndex >= len(s):\n            result.append(path[:])\n            return\n\n        for i in range(startIndex, len(s)):\n            if isPalindrome[startIndex][i]:   # 是回文子串\n                substring = s[startIndex:i + 1]\n                path.append(substring)\n                self.backtracking(s, i + 1, path, result, isPalindrome)  # 寻找i+1为起始位置的子串\n                path.pop()           # 回溯过程，弹出本次已经添加的子串\n\n    def computePalindrome(self, s, isPalindrome):\n        for i in range(len(s) - 1, -1, -1):  # 需要倒序计算，保证在i行时，i+1行已经计算好了\n            for j in range(i, len(s)):\n                if j == i:\n                    isPalindrome[i][j] = True\n                elif j - i == 1:\n                    isPalindrome[i][j] = (s[i] == s[j])\n                else:\n                    isPalindrome[i][j] = (s[i] == s[j] and isPalindrome[i+1][j-1])\n回溯+使用all函数判断回文子串\n\nclass Solution:\n    def partition(self, s: str) -> List[List[str]]:\n        result = []\n        self.partition_helper(s, 0, [], result)\n        return result\n\n    def partition_helper(self, s, start_index, path, result):\n        if start_index == len(s):\n            result.append(path[:])\n            return\n\n        for i in range(start_index + 1, len(s) + 1):\n            sub = s[start_index:i]\n            if self.isPalindrome(sub):\n                path.append(sub)\n                self.partition_helper(s, i, path, result)\n                path.pop()\n\n    def isPalindrome(self, s):\n        return all(s[i] == s[len(s) - 1 - i] for i in range(len(s) // 2))"
+}

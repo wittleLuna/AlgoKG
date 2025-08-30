@@ -1,0 +1,374 @@
+{
+  "id": "AP_60d0e042",
+  "title": "用队列实现栈",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/implement-stack-using-queues/",
+  "description": "使用队列实现栈的下列操作：\n\npush(x) -- 元素 x 入栈\npop() -- 移除栈顶元素\ntop() -- 获取栈顶元素\nempty() -- 返回栈是否为空\n注意:\n\n你只能使用队列的基本操作-- 也就是 push to back, peek/pop from front, size, 和 is empty 这些操作是合法的。\n你所使用的语言也许不支持队列。 你可以使用 list 或者 deque（双端队列）来模拟一个队列 , 只要是标准的队列操作即可。\n你可以假设所有操作都是有效的（例如, 对一个空的栈不会调用 pop 或者 top 操作）。",
+  "examples": [],
+  "constraints": [
+    "你只能使用队列的基本操作-- 也就是 push to back, peek/pop from front, size, 和 is empty 这些操作是合法的。"
+  ],
+  "algorithm_tags": [
+    "Queue Implementation",
+    "Stack Simulation"
+  ],
+  "data_structure_tags": [
+    "Queue",
+    "Stack"
+  ],
+  "technique_tags": [
+    "Data Structure Manipulation",
+    "Element Reordering"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过使用一个或两个队列来模拟栈的行为。主要思想是当需要执行pop()或top()操作时，将队列中除了最后一个元素外的所有元素移动到另一个队列（如果使用双队列方法）或者重新推入当前队列尾部（单队列优化版），从而使得最后一个元素位于队列的前端，方便弹出或访问。",
+  "key_insights": [
+    {
+      "content": "通过调整队列中的元素位置，可以实现先进后出的特性，以此来模拟栈的功能。"
+    },
+    {
+      "content": "虽然可以使用两个队列来更直观地管理数据流动，但实际只需要一个队列即可完成所有操作，这减少了额外的空间开销。"
+    },
+    {
+      "content": "在单队列优化版本中，每次push操作之后，都会将新元素之前的所有元素重新排到队尾，这样保证了队首总是最新的元素。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "（这里要强调是单向队列）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class MyStack {\npublic:\n    queue<int> que1;\n    queue<int> que2; // 辅助队列，用来备份\n    /** Initialize your data structure here. */\n    MyStack() {}\n    /** Push element x onto stack. */\n    void push(int x) { que1.push(x); }\n    /** Removes the element on top of the stack and returns that element. */\n    int pop() {\n        int size = que1.size();\n        size--;\n        while (size--) { que2.push(que1.front()); que1.pop(); }\n        int result = que1.front();\n        que1.pop();\n        que1 = que2;\n        while (!que2.empty()) { que2.pop(); }\n        return result;\n    }\n    /** Get the top element. Can not use back() direactly. */\n    int top(){\n        int size = que1.size();\n        size--;\n        while (size--){\n            que2.push(que1.front());\n            que1.pop();\n        }\n        int result = que1.front();\n        que2.push(que1.front());\n        que1.pop();\n        que1 = que2;\n        while (!que2.empty()){ que2.pop(); }\n        return result;\n    }\n    /** Returns whether the stack is empty. */\n    bool empty() { return que1.empty(); }\n};",
+          "description": "使用两个队列实现栈的功能"
+        },
+        {
+          "language": "cpp",
+          "code": "class MyStack {\npublic:\n    queue<int> que;\n    MyStack() {}\n    void push(int x) { que.push(x); }\n    int pop() {\n        int size = que.size();\n        size--;\n        while (size--) { que.push(que.front()); que.pop(); }\n        int result = que.front();\n        que.pop();\n        return result;\n    }\n    int top(){\n        int size = que.size();\n        size--;\n        while (size--){\n            que.push(que.front());\n            que.pop();\n        }\n        int result = que.front();\n        que.push(que.front());\n        que.pop();\n        return result;\n    }\n    bool empty() { return que.empty(); }\n};",
+          "description": "使用一个队列优化实现栈的功能"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*; class MyStack { Queue<Integer> queue1; Queue<Integer> queue2; public MyStack() { queue1 = new LinkedList<>(); queue2 = new LinkedList<>(); } public void push(int x) { queue2.offer(x); while (!queue1.isEmpty()) { queue2.offer(queue1.poll()); } Queue<Integer> queueTemp; queueTemp = queue1; queue1 = queue2; queue2 = queueTemp; } public int pop() { return queue1.poll(); } public int top() { return queue1.peek(); } public boolean empty() { return queue1.isEmpty(); }}",
+          "description": "Java版本，使用两个Queue实现栈功能"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*; class MyStack { Queue<Integer> q1 = new ArrayDeque<>(); Queue<Integer> q2 = new ArrayDeque<>(); public MyStack() {} public void push(int x) { while (q1.size() > 0) { q2.add(q1.poll()); } q1.add(x); while (q2.size() > 0) { q1.add(q2.poll()); } } public int pop() { return q1.poll(); } public int top() { return q1.peek(); } public boolean empty() { return q1.isEmpty(); }}",
+          "description": "Java版本，另一种方式使用两个Queue实现栈功能"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*; class MyStack { Deque<Integer> que1; Deque<Integer> que2; public MyStack() { que1 = new ArrayDeque<>(); que2 = new ArrayDeque<>(); } public void push(int x) { que1.addLast(x); } public int pop() { int size = que1.size(); size--; while (size-- > 0) { que2.addLast(que1.peekFirst()); que1.pollFirst(); } int res = que1.pollFirst(); que1 = que2; que2 = new ArrayDeque<>(); return res; } public int top() { return que1.peekLast(); } public boolean empty() { return que1.isEmpty(); }}",
+          "description": "Java版本，使用两个Deque实现栈功能"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*; class MyStack { Deque<Integer> que1; public MyStack() { que1 = new ArrayDeque<>(); } public void push(int x) { que1.addLast(x); } public int pop() { int size = que1.size(); size--; while (size-- > 0) { que1.addLast(que1.peekFirst()); que1.pollFirst(); } int res = que1.pollFirst(); return res; } public int top() { return que1.peekLast(); } public boolean empty() { return que1.isEmpty(); }}",
+          "description": "Java版本，使用一个Deque优化实现栈功能"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*; class MyStack { Queue<Integer> queue; public MyStack() { queue = new LinkedList<>(); } public void push(int x) { queue.offer(x); int size = queue.size(); while (size-- > 1) queue.offer(queue.poll()); } public int pop() { return queue.poll(); } public int top() { return queue.peek(); } public boolean empty() { return queue.isEmpty(); }}",
+          "description": "Java版本，使用一个Queue优化实现栈功能"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*; class MyStack { Queue<Integer> queue; public MyStack() { queue = new LinkedList<>(); } public void push(int x) { queue.add(x); } public int pop() { rePosition(); return queue.poll(); } public int top() { rePosition(); int result = queue.poll(); queue.add(result); return result; } public boolean empty() { return queue.isEmpty(); } public void rePosition(){ int size = queue.size(); size--; while(size-->0) queue.add(queue.poll()); }}",
+          "description": "Java版本，使用一个Queue和辅助函数rePosition实现栈功能"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque; class MyStack: def __init__(self): self.queue_in = deque(); self.queue_out = deque(); def push(self, x: int) -> None: self.queue_in.append(x); def pop(self) -> int: if self.empty(): return None; for i in range(len(self.queue_in) - 1): self.queue_out.append(self.queue_in.popleft()); self.queue_in, self.queue_out = self.queue_out, self.queue_in; return self.queue_out.popleft(); def top(self) -> int: if self.empty(): return None; for i in range(len(self.queue_in) - 1): self.queue_out.append(self.queue_in.popleft()); self.queue_in, self.queue_out = self.queue_out, self.queue_in; temp = self.queue_out.popleft(); self.queue_in.append(temp); return temp; def empty(self) -> bool: return len(self.queue_in) == 0;",
+          "description": "Python版本，使用两个deque实现栈功能"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque; class MyStack: def __init__(self): self.que = deque(); def push(self, x: int) -> None: self.que.append(x); def pop(self) -> int: if self.empty(): return None; for i in range(len(self.que)-1): self.que.append(self.que.popleft()); return self.que.popleft(); def top(self) -> int: if self.empty(): return None; for i in range(len(self.que)-1): self.que.append(self.que.popleft()); temp = self.que.popleft(); self.que.append(temp); return temp; def empty(self) -> bool: return not self.que;",
+          "description": "Python版本，使用一个deque优化实现栈功能"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "优化",
+      "text": "其实这道题目就是用一个队列就够了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class MyStack {\npublic:\n    queue<int> que1;\n    queue<int> que2; // 辅助队列，用来备份\n\n    /** Initialize your data structure here. */\n    MyStack() {}\n\n    /** Push element x onto stack. */\n    void push(int x) {\n        que1.push(x);\n    }\n\n    /** Removes the element on top of the stack and returns that element. */\n    int pop() {\n        int size = que1.size();\n        size--;\n        while (size--) { \n            que2.push(que1.front());\n            que1.pop();\n        }\n\n        int result = que1.front();\n        que1.pop();\n        que1 = que2;            \n        while (!que2.empty()) {\n            que2.pop();\n        }\n        return result;\n    }\n\n    /** Get the top element.\n     ** Can not use back() direactly.\n     */\n    int top(){\n        int size = que1.size();\n        size--;\n        while (size--){\n            que2.push(que1.front());\n            que1.pop();\n        }\n\n        int result = que1.front();\n        que2.push(que1.front());   \n        que1.pop();\n\n        que1 = que2; \n        while (!que2.empty()){\n            que2.pop();\n        }\n        return result;\n    }\n\n    /** Returns whether the stack is empty. */\n    bool empty() {\n        return que1.empty();\n    }\n};",
+          "description": "使用两个队列实现栈的功能"
+        },
+        {
+          "language": "cpp",
+          "code": "class MyStack {\npublic:\n    queue<int> que;\n\n    MyStack() {}\n\n    void push(int x) {\n        que.push(x);\n    }\n\n    int pop() {\n        int size = que.size();\n        size--;\n        while (size--) { \n            que.push(que.front());\n            que.pop();\n        }\n        int result = que.front(); \n        que.pop();\n        return result;\n    }\n\n    int top(){\n        int size = que.size();\n        size--;\n        while (size--){\n            que.push(que.front());\n            que.pop();\n        }\n        int result = que.front(); \n        que.push(que.front());\n        que.pop();\n        return result;\n    }\n\n    bool empty() {\n        return que.empty();\n    }\n};",
+          "description": "使用一个队列实现栈的功能"
+        },
+        {
+          "language": "java",
+          "code": "class MyStack {\n    Queue<Integer> queue1; \n    Queue<Integer> queue2; \n\n    public MyStack() {\n        queue1 = new LinkedList<>();\n        queue2 = new LinkedList<>();\n    }\n\n    public void push(int x) {\n        queue2.offer(x);\n        while (!queue1.isEmpty()){\n            queue2.offer(queue1.poll());\n        }\n        Queue<Integer> queueTemp;\n        queueTemp = queue1;\n        queue1 = queue2;\n        queue2 = queueTemp; \n    }\n\n    public int pop() {\n        return queue1.poll(); \n    }\n\n    public int top() {\n        return queue1.peek();\n    }\n\n    public boolean empty() {\n        return queue1.isEmpty();\n    }\n}",
+          "description": "Java中使用两个Queue实现栈"
+        },
+        {
+          "language": "java",
+          "code": "class MyStack {\n    Queue<Integer> q1 = new ArrayDeque<>();\n    Queue<Integer> q2 = new ArrayDeque<>();\n\n    public MyStack() {}\n\n    public void push(int x) {\n        while (q1.size() > 0) {\n            q2.add(q1.poll());\n        }\n        q1.add(x);\n        while (q2.size() > 0) {\n            q1.add(q2.poll());\n        }\n    }\n\n    public int pop() {\n        return q1.poll();\n    }\n\n    public int top() {\n        return q1.peek();\n    }\n\n    public boolean empty() {\n        return q1.isEmpty();\n    }\n}",
+          "description": "Java中另一种使用两个Queue实现栈的方法"
+        },
+        {
+          "language": "java",
+          "code": "class MyStack {\n    Deque<Integer> que1; \n    Deque<Integer> que2; \n\n    public MyStack() {\n        que1 = new ArrayDeque<>();\n        que2 = new ArrayDeque<>();\n    }\n\n    public void push(int x) {\n        que1.addLast(x);\n    }\n\n    public int pop() {\n        int size = que1.size();\n        size--;\n        while (size-- > 0) {\n            que2.addLast(que1.peekFirst());\n            que1.pollFirst();\n        }\n\n        int res = que1.pollFirst();\n        que1 = que2;\n        que2 = new ArrayDeque<>();\n        return res;\n    }\n\n    public int top() {\n        return que1.peekLast();\n    }\n\n    public boolean empty() {\n        return que1.isEmpty();\n    }\n}",
+          "description": "Java中使用两个Deque实现栈"
+        },
+        {
+          "language": "java",
+          "code": "class MyStack {\n    Deque<Integer> que1;\n\n    public MyStack() {\n        que1 = new ArrayDeque<>();\n    }\n\n    public void push(int x) {\n        que1.addLast(x);\n    }\n\n    public int pop() {\n        int size = que1.size();\n        size--;\n        while (size-- > 0) {\n            que1.addLast(que1.peekFirst());\n            que1.pollFirst();\n        }\n\n        int res = que1.pollFirst();\n        return res;\n    }\n\n    public int top() {\n        return que1.peekLast();\n    }\n\n    public boolean empty() {\n        return que1.isEmpty();\n    }\n}",
+          "description": "Java中使用一个Deque优化实现栈"
+        },
+        {
+          "language": "java",
+          "code": "class MyStack {\n    Queue<Integer> queue;\n\n    public MyStack() {\n        queue = new LinkedList<>();\n    }\n\n    public void push(int x) {\n        queue.offer(x);\n        int size = queue.size();\n        while (size-- > 1)\n            queue.offer(queue.poll());\n    }\n\n    public int pop() {\n        return queue.poll();\n    }\n\n    public int top() {\n        return queue.peek();\n    }\n\n    public boolean empty() {\n        return queue.isEmpty();\n    }\n}",
+          "description": "Java中使用一个Queue优化实现栈"
+        },
+        {
+          "language": "java",
+          "code": "class MyStack {\n    Queue<Integer> queue;\n\n    public MyStack() {\n        queue = new LinkedList<>();\n    }\n\n    public void push(int x) {\n        queue.add(x);\n    }\n\n    public int pop() {\n        rePosition();\n        return queue.poll();\n    }\n\n    public int top() {\n        rePosition();\n        int result = queue.poll();\n        queue.add(result);\n        return result;\n    }\n\n    public boolean empty() {\n        return queue.isEmpty();\n    }\n\n    public void rePosition(){\n        int size = queue.size();\n        size--;\n        while(size-->0)\n            queue.add(queue.poll());\n    }\n}",
+          "description": "Java中使用一个Queue并采用特定逻辑实现栈"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\n\nclass MyStack:\n\n    def __init__(self):\n        self.queue_in = deque()\n        self.queue_out = deque()\n\n    def push(self, x: int) -> None:\n        self.queue_in.append(x)\n\n    def pop(self) -> int:\n        if self.empty():\n            return None\n\n        for i in range(len(self.queue_in) - 1):\n            self.queue_out.append(self.queue_in.popleft())\n\n        self.queue_in, self.queue_out = self.queue_out, self.queue_in\n        return self.queue_out.popleft()\n\n    def top(self) -> int:\n        if self.empty():\n            return None\n\n        for i in range(len(self.queue_in) - 1):\n            self.queue_out.append(self.queue_in.popleft())\n\n        self.queue_in, self.queue_out = self.queue_out, self.queue_in\n        temp = self.queue_out.popleft()\n        self.queue_in.append(temp)\n        return temp\n\n    def empty(self) -> bool:\n        return len(self.queue_in) == 0",
+          "description": "Python中使用两个deque实现栈"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\n\nclass MyStack:\n\n    def __init__(self):\n        self.que = deque()\n\n    def push(self, x: int) -> None:\n        self.que.append(x)\n\n    def pop(self) -> int:\n        if self.empty():\n            return None\n        for i in range(len(self.que)-1):\n            self.que.append(self.que.popleft())\n        return self.que.popleft()\n\n    def top(self) -> int:\n        if self.empty():\n            return None\n        for i in range(len(self.que)-1):\n            self.que.append(self.que.popleft())\n        temp = self.que.popleft()\n        self.que.append(temp)\n        return temp\n\n    def empty(self) -> bool:\n        return not self.que",
+          "description": "Python中使用一个deque优化实现栈"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class MyStack { Queue<Integer> queue1; Queue<Integer> queue2; public MyStack() { queue1 = new LinkedList<>(); queue2 = new LinkedList<>(); } public void push(int x) { queue2.offer(x); while (!queue1.isEmpty()){ queue2.offer(queue1.poll()); } Queue<Integer> queueTemp; queueTemp = queue1; queue1 = queue2; queue2 = queueTemp; } public int pop() { return queue1.poll(); } public int top() { return queue1.peek(); } public boolean empty() { return queue1.isEmpty(); } }",
+          "description": "使用两个Queue实现栈"
+        },
+        {
+          "language": "java",
+          "code": "class MyStack { Queue<Integer> q1 = new ArrayDeque<>(); Queue<Integer> q2 = new ArrayDeque<>(); public MyStack() {} public void push(int x) { while (q1.size() > 0) { q2.add(q1.poll()); } q1.add(x); while (q2.size() > 0) { q1.add(q2.poll()); } } public int pop() { return q1.poll(); } public int top() { return q1.peek(); } public boolean empty() { return q1.isEmpty(); } }",
+          "description": "使用两个Queue实现栈的另一种方法"
+        },
+        {
+          "language": "java",
+          "code": "class MyStack { Deque<Integer> que1; Deque<Integer> que2; public MyStack() { que1 = new ArrayDeque<>(); que2 = new ArrayDeque<>(); } public void push(int x) { que1.addLast(x); } public int pop() { int size = que1.size(); size--; while (size-- > 0) { que2.addLast(que1.peekFirst()); que1.pollFirst(); } int res = que1.pollFirst(); que1 = que2; que2 = new ArrayDeque<>(); return res; } public int top() { return que1.peekLast(); } public boolean empty() { return que1.isEmpty(); } }",
+          "description": "使用两个Deque实现栈"
+        },
+        {
+          "language": "java",
+          "code": "class MyStack { Deque<Integer> que1; public MyStack() { que1 = new ArrayDeque<>(); } public void push(int x) { que1.addLast(x); } public int pop() { int size = que1.size(); size--; while (size-- > 0) { que1.addLast(que1.peekFirst()); que1.pollFirst(); } int res = que1.pollFirst(); return res; } public int top() { return que1.peekLast(); } public boolean empty() { return que1.isEmpty(); } }",
+          "description": "使用一个Deque实现栈"
+        },
+        {
+          "language": "java",
+          "code": "class MyStack { Queue<Integer> queue; public MyStack() { queue = new LinkedList<>(); } public void push(int x) { queue.offer(x); int size = queue.size(); while (size-- > 1) queue.offer(queue.poll()); } public int pop() { return queue.poll(); } public int top() { return queue.peek(); } public boolean empty() { return queue.isEmpty(); } }",
+          "description": "使用一个Queue实现栈"
+        },
+        {
+          "language": "java",
+          "code": "class MyStack { Queue<Integer> queue; public MyStack() { queue = new LinkedList<>(); } public void push(int x) { queue.add(x); } public int pop() { rePosition(); return queue.poll(); } public int top() { rePosition(); int result = queue.poll(); queue.add(result); return result; } public boolean empty() { return queue.isEmpty(); } public void rePosition(){ int size = queue.size(); size--; while(size-->0) queue.add(queue.poll()); } }",
+          "description": "使用一个Queue实现栈，但用卡哥的逻辑"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque class MyStack: def __init__(self): self.queue_in = deque() self.queue_out = deque() def push(self, x: int) -> None: self.queue_in.append(x) def pop(self) -> int: if self.empty(): return None for i in range(len(self.queue_in) - 1): self.queue_out.append(self.queue_in.popleft()) self.queue_in, self.queue_out = self.queue_out, self.queue_in return self.queue_out.popleft() def top(self) -> int: if self.empty(): return None for i in range(len(self.queue_in) - 1): self.queue_out.append(self.queue_in.popleft()) self.queue_in, self.queue_out = self.queue_out, self.queue_in temp = self.queue_out.popleft() self.queue_in.append(temp) return temp def empty(self) -> bool: return len(self.queue_in) == 0",
+          "description": "使用两个deque实现栈"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque class MyStack: def __init__(self): self.que = deque() def push(self, x: int) -> None: self.que.append(x) def pop(self) -> int: if self.empty(): return None for i in range(len(self.que)-1): self.que.append(self.que.popleft()) return self.que.popleft() def top(self) -> int: if self.empty(): return None for i in range(len(self.que)-1): self.que.append(self.que.popleft()) temp = self.que.popleft() self.que.append(temp) return temp def empty(self) -> bool: return not self.que",
+          "description": "使用一个deque实现栈"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "使用两个 Queue 实现方法1",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class MyStack { public: queue<int> que1; queue<int> que2; // 辅助队列，用来备份 /** Initialize your data structure here. */ MyStack() {} /** Push element x onto stack. */ void push(int x) { que1.push(x); } /** Removes the element on top of the stack and returns that element. */ int pop() { int size = que1.size(); size--; while (size--) { // 将que1 导入que2，但要留下最后一个元素 que2.push(que1.front()); que1.pop(); } int result = que1.front(); // 留下的最后一个元素就是要返回的值 que1.pop(); que1 = que2; // 再将que2赋值给que1 while (!que2.empty()) { // 清空que2 que2.pop(); } return result; } /** Get the top element. ** Can not use back() direactly. */ int top(){ int size = que1.size(); size--; while (size--){ // 将que1 导入que2，但要留下最后一个元素 que2.push(que1.front()); que1.pop(); } int result = que1.front(); // 留下的最后一个元素就是要回返的值 que2.push(que1.front()); // 获取值后将最后一个元素也加入que2中，保持原本的结构不变 que1.pop(); que1 = que2; // 再将que2赋值给que1 while (!que2.empty()){ // 清空que2 que2.pop(); } return result; } /** Returns whether the stack is empty. */ bool empty() { return que1.empty(); } };",
+          "description": "C++实现使用两个队列模拟栈"
+        },
+        {
+          "language": "java",
+          "code": "class MyStack { Queue<Integer> queue1; // 和栈中保持一样元素的队列 Queue<Integer> queue2; // 辅助队列 /** Initialize your data structure here. */ public MyStack() { queue1 = new LinkedList<>(); queue2 = new LinkedList<>(); } /** Push element x onto stack. */ public void push(int x) { queue2.offer(x); // 先放在辅助队列中 while (!queue1.isEmpty()){ queue2.offer(queue1.poll()); } Queue<Integer> queueTemp; queueTemp = queue1; queue1 = queue2; queue2 = queueTemp; // 最后交换queue1和queue2，将元素都放到queue1中 } /** Removes the element on top of the stack and returns that element. */ public int pop() { return queue1.poll(); // 因为queue1中的元素和栈中的保持一致，所以这个和下面两个的操作只看queue1即可 } /** Get the top element. */ public int top() { return queue1.peek(); } /** Returns whether the stack is empty. */ public boolean empty() { return queue1.isEmpty(); } }",
+          "description": "Java实现使用两个队列模拟栈方法1"
+        },
+        {
+          "language": "java",
+          "code": "class MyStack { //q1作为主要的队列，其元素排列顺序和出栈顺序相同 Queue<Integer> q1 = new ArrayDeque<>(); //q2仅作为临时放置 Queue<Integer> q2 = new ArrayDeque<>(); public MyStack() {} //在加入元素时先将q1中的元素依次出栈压入q2，然后将新加入的元素压入q1，再将q2中的元素依次出栈压入q1 public void push(int x) { while (q1.size() > 0) { q2.add(q1.poll()); } q1.add(x); while (q2.size() > 0) { q1.add(q2.poll()); } } public int pop() { return q1.poll(); } public int top() { return q1.peek(); } public boolean empty() { return q1.isEmpty(); } }",
+          "description": "Java实现使用两个队列模拟栈方法2"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque class MyStack: def __init__(self): self.queue_in = deque() self.queue_out = deque() def push(self, x: int) -> None: self.queue_in.append(x) def pop(self) -> int: if self.empty(): return None for i in range(len(self.queue_in) - 1): self.queue_out.append(self.queue_in.popleft()) self.queue_in, self.queue_out = self.queue_out, self.queue_in return self.queue_out.popleft() def top(self) -> int: if self.empty(): return None for i in range(len(self.queue_in) - 1): self.queue_out.append(self.queue_in.popleft()) self.queue_in, self.queue_out = self.queue_out, self.queue_in temp = self.queue_out.popleft() self.queue_in.append(temp) return temp def empty(self) -> bool: return len(self.queue_in) == 0",
+          "description": "Python实现使用两个deque模拟栈"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque class MyStack: def __init__(self): self.que = deque() def push(self, x: int) -> None: self.que.append(x) def pop(self) -> int: if self.empty(): return None for i in range(len(self.que)-1): self.que.append(self.que.popleft()) return self.que.popleft() def top(self) -> int: if self.empty(): return None for i in range(len(self.que)-1): self.que.append(self.que.popleft()) temp = self.que.popleft() self.que.append(temp) return temp def empty(self) -> bool: return not self.que",
+          "description": "Python优化实现使用一个deque模拟栈"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "from collections import deque",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class MyStack {\npublic:\n    queue<int> que1;\n    queue<int> que2; // 辅助队列，用来备份\n\n    /** Initialize your data structure here. */\n    MyStack() {}\n\n    /** Push element x onto stack. */\n    void push(int x) {\n        que1.push(x);\n    }\n\n    /** Removes the element on top of the stack and returns that element. */\n    int pop() {\n        int size = que1.size();\n        size--;\n        while (size--) { // 将que1 导入que2，但要留下最后一个元素\n            que2.push(que1.front());\n            que1.pop();\n        }\n\n        int result = que1.front(); // 留下的最后一个元素就是要返回的值\n        que1.pop();\n        que1 = que2;            // 再将que2赋值给que1\n        while (!que2.empty()) { // 清空que2\n            que2.pop();\n        }\n        return result;\n    }\n\n    /** Get the top element.\n     ** Can not use back() direactly.\n     */\n    int top(){\n        int size = que1.size();\n        size--;\n        while (size--){\n            // 将que1 导入que2，但要留下最后一个元素\n            que2.push(que1.front());\n            que1.pop();\n        }\n\n        int result = que1.front(); // 留下的最后一个元素就是要回返的值\n        que2.push(que1.front());   // 获取值后将最后一个元素也加入que2中，保持原本的结构不变\n        que1.pop();\n\n        que1 = que2; // 再将que2赋值给que1\n        while (!que2.empty()){\n            // 清空que2\n            que2.pop();\n        }\n        return result;\n    }\n\n    /** Returns whether the stack is empty. */\n    bool empty() {\n        return que1.empty();\n    }\n};",
+          "description": "C++版本使用两个队列实现栈"
+        },
+        {
+          "language": "cpp",
+          "code": "class MyStack {\npublic:\n    queue<int> que;\n\n    MyStack() {}\n\n    void push(int x) {\n        que.push(x);\n    }\n\n    int pop() {\n        int size = que.size();\n        size--;\n        while (size--) { // 将队列头部的元素（除了最后一个元素外） 重新添加到队列尾部\n            que.push(que.front());\n            que.pop();\n        }\n        int result = que.front(); // 此时弹出的元素顺序就是栈的顺序了\n        que.pop();\n        return result;\n    }\n\n    int top(){\n        int size = que.size();\n        size--;\n        while (size--){\n            // 将队列头部的元素（除了最后一个元素外） 重新添加到队列尾部\n            que.push(que.front());\n            que.pop();\n        }\n        int result = que.front(); // 此时获得的元素就是栈顶的元素了\n        que.push(que.front());    // 将获取完的元素也重新添加到队列尾部，保证数据结构没有变化\n        que.pop();\n        return result;\n    }\n\n    bool empty() {\n        return que.empty();\n    }\n};",
+          "description": "C++版本优化，使用一个队列实现栈"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.LinkedList;\nimport java.util.Queue;\nclass MyStack {\n    Queue<Integer> queue1; // 和栈中保持一样元素的队列\n    Queue<Integer> queue2; // 辅助队列\n\n    /** Initialize your data structure here. */\n    public MyStack() {\n        queue1 = new LinkedList<>();\n        queue2 = new LinkedList<>();\n    }\n\n    /** Push element x onto stack. */\n    public void push(int x) {\n        queue2.offer(x); // 先放在辅助队列中\n        while (!queue1.isEmpty()){\n            queue2.offer(queue1.poll());\n        }\n        Queue<Integer> queueTemp;\n        queueTemp = queue1;\n        queue1 = queue2;\n        queue2 = queueTemp; // 最后交换queue1和queue2，将元素都放到queue1中\n    }\n\n    /** Removes the element on top of the stack and returns that element. */\n    public int pop() {\n        return queue1.poll(); // 因为queue1中的元素和栈中的保持一致，所以这个和下面两个的操作只看queue1即可\n    }\n\n    /** Get the top element. */\n    public int top() {\n        return queue1.peek();\n    }\n\n    /** Returns whether the stack is empty. */\n    public boolean empty() {\n        return queue1.isEmpty();\n    }\n}",
+          "description": "Java版本使用两个队列实现方法1"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayDeque;\nimport java.util.Queue;\nclass MyStack {\n    Queue<Integer> q1 = new ArrayDeque<>();\n    Queue<Integer> q2 = new ArrayDeque<>();\n\n    public MyStack() {}\n\n    public void push(int x) {\n        while (q1.size() > 0) {\n            q2.add(q1.poll());\n        }\n        q1.add(x);\n        while (q2.size() > 0) {\n            q1.add(q2.poll());\n        }\n    }\n\n    public int pop() {\n        return q1.poll();\n    }\n\n    public int top() {\n        return q1.peek();\n    }\n\n    public boolean empty() {\n        return q1.isEmpty();\n    }\n}",
+          "description": "Java版本使用两个队列实现方法2"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayDeque;\nimport java.util.Deque;\nclass MyStack {\n    Deque<Integer> que1; // 和栈中保持一样元素的队列\n    Deque<Integer> que2; // 辅助队列\n\n    public MyStack() {\n        que1 = new ArrayDeque<>();\n        que2 = new ArrayDeque<>();\n    }\n\n    public void push(int x) {\n        que1.addLast(x);\n    }\n\n    public int pop() {\n        int size = que1.size();\n        size--;\n        while (size-- > 0) {\n            que2.addLast(que1.peekFirst());\n            que1.pollFirst();\n        }\n\n        int res = que1.pollFirst();\n        que1 = que2;\n        que2 = new ArrayDeque<>();\n        return res;\n    }\n\n    public int top() {\n        return que1.peekLast();\n    }\n\n    public boolean empty() {\n        return que1.isEmpty();\n    }\n}",
+          "description": "Java版本使用两个Deque实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayDeque;\nimport java.util.Deque;\nclass MyStack {\n    Deque<Integer> que1;\n\n    public MyStack() {\n        que1 = new ArrayDeque<>();\n    }\n\n    public void push(int x) {\n        que1.addLast(x);\n    }\n\n    public int pop() {\n        int size = que1.size();\n        size--;\n        while (size-- > 0) {\n            que1.addLast(que1.peekFirst());\n            que1.pollFirst();\n        }\n\n        int res = que1.pollFirst();\n        return res;\n    }\n\n    public int top() {\n        return que1.peekLast();\n    }\n\n    public boolean empty() {\n        return que1.isEmpty();\n    }\n}",
+          "description": "Java版本优化，使用一个Deque实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.LinkedList;\nimport java.util.Queue;\nclass MyStack {\n    Queue<Integer> queue;\n\n    public MyStack() {\n        queue = new LinkedList<>();\n    }\n\n    public void push(int x) {\n        queue.offer(x);\n        int size = queue.size();\n        while (size-- > 1)\n            queue.offer(queue.poll());\n    }\n\n    public int pop() {\n        return queue.poll();\n    }\n\n    public int top() {\n        return queue.peek();\n    }\n\n    public boolean empty() {\n        return queue.isEmpty();\n    }\n}",
+          "description": "Java版本优化，使用一个Queue实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.LinkedList;\nimport java.util.Queue;\nclass MyStack {\n    Queue<Integer> queue;\n\n    public MyStack() {\n        queue = new LinkedList<>();\n    }\n\n    public void push(int x) {\n        queue.add(x);\n    }\n\n    public int pop() {\n        rePosition();\n        return queue.poll();\n    }\n\n    public int top() {\n        rePosition();\n        int result = queue.poll();\n        queue.add(result);\n        return result;\n    }\n\n    public boolean empty() {\n        return queue.isEmpty();\n    }\n\n    public void rePosition(){\n        int size = queue.size();\n        size--;\n        while(size-->0)\n            queue.add(queue.poll());\n    }\n}",
+          "description": "Java版本优化，使用一个Queue实现，但用卡哥的逻辑实现"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\nclass MyStack:\n    def __init__(self):\n        self.queue_in = deque()\n        self.queue_out = deque()\n\n    def push(self, x: int) -> None:\n        self.queue_in.append(x)\n\n    def pop(self) -> int:\n        if self.empty():\n            return None\n\n        for i in range(len(self.queue_in) - 1):\n            self.queue_out.append(self.queue_in.popleft())\n\n        self.queue_in, self.queue_out = self.queue_out, self.queue_in\n        return self.queue_out.popleft()\n\n    def top(self) -> int:\n        if self.empty():\n            return None\n\n        for i in range(len(self.queue_in) - 1):\n            self.queue_out.append(self.queue_in.popleft())\n\n        self.queue_in, self.queue_out = self.queue_out, self.queue_in\n        temp = self.queue_out.popleft()\n        self.queue_in.append(temp)\n        return temp\n\n    def empty(self) -> bool:\n        return len(self.queue_in) == 0",
+          "description": "Python版本使用两个deque实现栈"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\nclass MyStack:\n    def __init__(self):\n        self.que = deque()\n\n    def push(self, x: int) -> None:\n        self.que.append(x)\n\n    def pop(self) -> int:\n        if self.empty():\n            return None\n        for i in range(len(self.que)-1):\n            self.que.append(self.que.popleft())\n        return self.que.popleft()\n\n    def top(self) -> int:\n        if self.empty():\n            return None\n        for i in range(len(self.que)-1):\n            self.que.append(self.que.popleft())\n        temp = self.que.popleft()\n        self.que.append(temp)\n        return temp\n\n    def empty(self) -> bool:\n        return not self.que",
+          "description": "Python版本优化，使用一个deque实现栈"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": null,
+    "space_complexity": "O(n)",
+    "explanation": "top为O(n)，其他为O(1)"
+  },
+  "code_solutions": [
+    {
+      "language": "C++",
+      "code": "class MyStack {public: queue<int> que1; queue<int> que2; // 辅助队列，用来备份 MyStack() {} void push(int x) { que1.push(x); } int pop() { int size = que1.size(); size--; while (size--) { que2.push(que1.front()); que1.pop(); } int result = que1.front(); que1.pop(); que1 = que2; while (!que2.empty()) { que2.pop(); } return result; } int top(){ int size = que1.size(); size--; while (size--){ que2.push(que1.front()); que1.pop(); } int result = que1.front(); que2.push(que1.front()); que1.pop(); que1 = que2; while (!que2.empty()){ que2.pop(); } return result; } bool empty() { return que1.empty(); }};",
+      "description": "使用两个队列实现栈的功能"
+    },
+    {
+      "language": "C++",
+      "code": "class MyStack {public: queue<int> que; MyStack() {} void push(int x) { que.push(x); } int pop() { int size = que.size(); size--; while (size--) { que.push(que.front()); que.pop(); } int result = que.front(); que.pop(); return result; } int top(){ int size = que.size(); size--; while (size--){ que.push(que.front()); que.pop(); } int result = que.front(); que.push(que.front()); que.pop(); return result; } bool empty() { return que.empty(); }};",
+      "description": "使用一个队列实现栈的功能"
+    },
+    {
+      "language": "Java",
+      "code": "class MyStack {Queue<Integer> queue1; Queue<Integer> queue2; public MyStack() { queue1 = new LinkedList<>(); queue2 = new LinkedList<>(); } public void push(int x) { queue2.offer(x); while (!queue1.isEmpty()){ queue2.offer(queue1.poll()); } Queue<Integer> queueTemp; queueTemp = queue1; queue1 = queue2; queue2 = queueTemp; } public int pop() { return queue1.poll(); } public int top() { return queue1.peek(); } public boolean empty() { return queue1.isEmpty(); }};",
+      "description": "使用两个队列实现栈的方法1"
+    },
+    {
+      "language": "Java",
+      "code": "class MyStack {Queue<Integer> q1 = new ArrayDeque<>(); Queue<Integer> q2 = new ArrayDeque<>(); public MyStack() {} public void push(int x) { while (q1.size() > 0) { q2.add(q1.poll()); } q1.add(x); while (q2.size() > 0) { q1.add(q2.poll()); } } public int pop() { return q1.poll(); } public int top() { return q1.peek(); } public boolean empty() { return q1.isEmpty(); }};",
+      "description": "使用两个队列实现栈的方法2"
+    },
+    {
+      "language": "Java",
+      "code": "class MyStack {Deque<Integer> que1; Deque<Integer> que2; public MyStack() { que1 = new ArrayDeque<>(); que2 = new ArrayDeque<>(); } public void push(int x) { que1.addLast(x); } public int pop() { int size = que1.size(); size--; while (size-- > 0) { que2.addLast(que1.peekFirst()); que1.pollFirst(); } int res = que1.pollFirst(); que1 = que2; que2 = new ArrayDeque<>(); return res; } public int top() { return que1.peekLast(); } public boolean empty() { return que1.isEmpty(); }};",
+      "description": "使用两个Deque实现栈"
+    },
+    {
+      "language": "Java",
+      "code": "class MyStack {Deque<Integer> que1; public MyStack() { que1 = new ArrayDeque<>(); } public void push(int x) { que1.addLast(x); } public int pop() { int size = que1.size(); size--; while (size-- > 0) { que1.addLast(que1.peekFirst()); que1.pollFirst(); } int res = que1.pollFirst(); return res; } public int top() { return que1.peekLast(); } public boolean empty() { return que1.isEmpty(); }};",
+      "description": "使用一个Deque实现栈"
+    },
+    {
+      "language": "Java",
+      "code": "class MyStack {Queue<Integer> queue; public MyStack() { queue = new LinkedList<>(); } public void push(int x) { queue.offer(x); int size = queue.size(); while (size-- > 1) queue.offer(queue.poll()); } public int pop() { return queue.poll(); } public int top() { return queue.peek(); } public boolean empty() { return queue.isEmpty(); }};",
+      "description": "使用一个Queue实现栈"
+    },
+    {
+      "language": "Java",
+      "code": "class MyStack {Queue<Integer> queue; public MyStack() { queue = new LinkedList<>(); } public void push(int x) { queue.add(x); } public int pop() { rePosition(); return queue.poll(); } public int top() { rePosition(); int result = queue.poll(); queue.add(result); return result; } public boolean empty() { return queue.isEmpty(); } public void rePosition(){ int size = queue.size(); size--; while(size-->0) queue.add(queue.poll()); }};",
+      "description": "使用一个Queue实现栈，但用卡哥的逻辑实现"
+    },
+    {
+      "language": "Python",
+      "code": "from collections import deque class MyStack: def __init__(self): self.queue_in = deque() self.queue_out = deque() def push(self, x: int) -> None: self.queue_in.append(x) def pop(self) -> int: if self.empty(): return None for i in range(len(self.queue_in) - 1): self.queue_out.append(self.queue_in.popleft()) self.queue_in, self.queue_out = self.queue_out, self.queue_in return self.queue_out.popleft() def top(self) -> int: if self.empty(): return None for i in range(len(self.queue_in) - 1): self.queue_out.append(self.queue_in.popleft()) self.queue_in, self.queue_out = self.queue_out, self.queue_in temp = self.queue_out.popleft() self.queue_in.append(temp) return temp def empty(self) -> bool: return len(self.queue_in) == 0",
+      "description": "使用两个deque实现栈"
+    },
+    {
+      "language": "Python",
+      "code": "from collections import deque class MyStack: def __init__(self): self.que = deque() def push(self, x: int) -> None: self.que.append(x) def pop(self) -> int: if self.empty(): return None for i in range(len(self.que)-1): self.que.append(self.que.popleft()) return self.que.popleft() def top(self) -> int: if self.empty(): return None for i in range(len(self.que)-1): self.que.append(self.que.popleft()) temp = self.que.popleft() self.que.append(temp) return temp def empty(self) -> bool: return not self.que",
+      "description": "使用一个deque实现栈"
+    }
+  ],
+  "common_mistakes": [
+    "直接尝试使用队列的标准操作来实现栈的操作而未考虑如何调整元素顺序以符合栈的LIFO特性。",
+    "在使用双队列方法时错误处理了队列间的元素转移逻辑，导致无法正确模拟栈行为。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/225.%E7%94%A8%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0%E6%A0%88.gif",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/225.%E7%94%A8%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0%E6%A0%88.gif",
+      "context": "该动图展示了如何使用队列来实现栈的基本操作，如入栈、出栈等过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/225.%E7%94%A8%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0%E6%A0%88.gif",
+      "description": "GIF展示了如何通过两个队列实现栈的操作，包括元素的入栈、出栈及备份过程。",
+      "context": "该GIF动画展示了如何使用两个队列来模拟栈的操作过程，包括元素的入栈、出栈以及检查栈是否为空。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\栈与队列\\用队列实现栈.txt",
+  "extracted_at": "2025-07-22T14:14:19.590572",
+  "raw_content": "用队列实现栈\n力扣题目链接(https://leetcode.cn/problems/implement-stack-using-queues/)\n\n使用队列实现栈的下列操作：\n\npush(x) -- 元素 x 入栈\npop() -- 移除栈顶元素\ntop() -- 获取栈顶元素\nempty() -- 返回栈是否为空\n注意:\n\n你只能使用队列的基本操作-- 也就是 push to back, peek/pop from front, size, 和 is empty 这些操作是合法的。\n你所使用的语言也许不支持队列。 你可以使用 list 或者 deque（双端队列）来模拟一个队列 , 只要是标准的队列操作即可。\n你可以假设所有操作都是有效的（例如, 对一个空的栈不会调用 pop 或者 top 操作）。\n\n\n#思路\n（这里要强调是单向队列）\n\n有的同学可能疑惑这种题目有什么实际工程意义，其实很多算法题目主要是对知识点的考察和教学意义远大于其工程实践的意义，所以面试题也是这样！\n\n刚刚做过栈与队列：我用栈来实现队列怎么样？ (https://programmercarl.com/0232.%E7%94%A8%E6%A0%88%E5%AE%9E%E7%8E%B0%E9%98%9F%E5%88%97.html)的同学可能依然想着用一个输入队列，一个输出队列，就可以模拟栈的功能，仔细想一下还真不行！\n\n队列模拟栈，其实一个队列就够了，那么我们先说一说两个队列来实现栈的思路。\n\n队列是先进先出的规则，把一个队列中的数据导入另一个队列中，数据的顺序并没有变，并没有变成先进后出的顺序。\n\n所以用栈实现队列， 和用队列实现栈的思路还是不一样的，这取决于这两个数据结构的性质。\n\n但是依然还是要用两个队列来模拟栈，只不过没有输入和输出的关系，而是另一个队列完全用来备份的！\n\n如下面动画所示，用两个队列que1和que2实现队列的功能，que2其实完全就是一个备份的作用，把que1最后面的元素以外的元素都备份到que2，然后弹出最后面的元素，再把其他元素从que2导回que1。\n\n模拟的队列执行语句如下：\n\nqueue.push(1);        \nqueue.push(2);        \nqueue.pop();   // 注意弹出的操作       \nqueue.push(3);        \nqueue.push(4);       \nqueue.pop();  // 注意弹出的操作    \nqueue.pop();    \nqueue.pop();    \nqueue.empty();    \n\nhttps://file1.kamacoder.com/i/algo/225.%E7%94%A8%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0%E6%A0%88.gif\n\n详细如代码注释所示：\n\nclass MyStack {\npublic:\n    queue<int> que1;\n    queue<int> que2; // 辅助队列，用来备份\n\n    /** Initialize your data structure here. */\n    MyStack() {\n\n    }\n\n    /** Push element x onto stack. */\n    void push(int x) {\n        que1.push(x);\n    }\n\n    /** Removes the element on top of the stack and returns that element. */\n    int pop() {\n        int size = que1.size();\n        size--;\n        while (size--) { // 将que1 导入que2，但要留下最后一个元素\n            que2.push(que1.front());\n            que1.pop();\n        }\n\n        int result = que1.front(); // 留下的最后一个元素就是要返回的值\n        que1.pop();\n        que1 = que2;            // 再将que2赋值给que1\n        while (!que2.empty()) { // 清空que2\n            que2.pop();\n        }\n        return result;\n    }\n\n    /** Get the top element.\n     ** Can not use back() direactly.\n     */\n    int top(){\n        int size = que1.size();\n        size--;\n        while (size--){\n            // 将que1 导入que2，但要留下最后一个元素\n            que2.push(que1.front());\n            que1.pop();\n        }\n\n        int result = que1.front(); // 留下的最后一个元素就是要回返的值\n        que2.push(que1.front());   // 获取值后将最后一个元素也加入que2中，保持原本的结构不变\n        que1.pop();\n\n        que1 = que2; // 再将que2赋值给que1\n        while (!que2.empty()){\n            // 清空que2\n            que2.pop();\n        }\n        return result;\n    }\n\n    /** Returns whether the stack is empty. */\n    bool empty() {\n        return que1.empty();\n    }\n};\n时间复杂度: pop为O(n)，top为O(n)，其他为O(1)\n空间复杂度: O(n)\n#优化\n其实这道题目就是用一个队列就够了。\n\n一个队列在模拟栈弹出元素的时候只要将队列头部的元素（除了最后一个元素外） 重新添加到队列尾部，此时再去弹出元素就是栈的顺序了。\n\nC++优化代码\n\nclass MyStack {\npublic:\n    queue<int> que;\n\n    MyStack() {\n\n    }\n\n    void push(int x) {\n        que.push(x);\n    }\n\n    int pop() {\n        int size = que.size();\n        size--;\n        while (size--) { // 将队列头部的元素（除了最后一个元素外） 重新添加到队列尾部\n            que.push(que.front());\n            que.pop();\n        }\n        int result = que.front(); // 此时弹出的元素顺序就是栈的顺序了\n        que.pop();\n        return result;\n    }\n\n    int top(){\n        int size = que.size();\n        size--;\n        while (size--){\n            // 将队列头部的元素（除了最后一个元素外） 重新添加到队列尾部\n            que.push(que.front());\n            que.pop();\n        }\n        int result = que.front(); // 此时获得的元素就是栈顶的元素了\n        que.push(que.front());    // 将获取完的元素也重新添加到队列尾部，保证数据结构没有变化\n        que.pop();\n        return result;\n    }\n\n    bool empty() {\n        return que.empty();\n    }\n};\n时间复杂度: pop为O(n)，top为O(n)，其他为O(1)\n空间复杂度: O(n)\n#其他语言版本\n#Java：\n使用两个 Queue 实现方法1\n\nclass MyStack {\n\n    Queue<Integer> queue1; // 和栈中保持一样元素的队列\n    Queue<Integer> queue2; // 辅助队列\n\n    /** Initialize your data structure here. */\n    public MyStack() {\n        queue1 = new LinkedList<>();\n        queue2 = new LinkedList<>();\n    }\n    \n    /** Push element x onto stack. */\n    public void push(int x) {\n        queue2.offer(x); // 先放在辅助队列中\n        while (!queue1.isEmpty()){\n            queue2.offer(queue1.poll());\n        }\n        Queue<Integer> queueTemp;\n        queueTemp = queue1;\n        queue1 = queue2;\n        queue2 = queueTemp; // 最后交换queue1和queue2，将元素都放到queue1中\n    }\n    \n    /** Removes the element on top of the stack and returns that element. */\n    public int pop() {\n        return queue1.poll(); // 因为queue1中的元素和栈中的保持一致，所以这个和下面两个的操作只看queue1即可\n    }\n    \n    /** Get the top element. */\n    public int top() {\n        return queue1.peek();\n    }\n    \n    /** Returns whether the stack is empty. */\n    public boolean empty() {\n        return queue1.isEmpty();\n    }\n}\n\n使用两个 Queue 实现方法2\n\nclass MyStack {\n    //q1作为主要的队列，其元素排列顺序和出栈顺序相同\n    Queue<Integer> q1 = new ArrayDeque<>();\n    //q2仅作为临时放置\n    Queue<Integer> q2 = new ArrayDeque<>();\n\n    public MyStack() {\n\n    }\n    //在加入元素时先将q1中的元素依次出栈压入q2，然后将新加入的元素压入q1，再将q2中的元素依次出栈压入q1\n    public void push(int x) {\n        while (q1.size() > 0) {\n            q2.add(q1.poll());\n        }\n        q1.add(x);\n        while (q2.size() > 0) {\n            q1.add(q2.poll());\n        }\n    }\n\n    public int pop() {\n        return q1.poll();\n    }\n\n    public int top() {\n        return q1.peek();\n    }\n\n    public boolean empty() {\n        return q1.isEmpty();\n    }\n}\n使用两个 Deque 实现\n\nclass MyStack {\n    // Deque 接口继承了 Queue 接口\n    // 所以 Queue 中的 add、poll、peek等效于 Deque 中的 addLast、pollFirst、peekFirst\n    Deque<Integer> que1; // 和栈中保持一样元素的队列\n    Deque<Integer> que2; // 辅助队列\n    /** Initialize your data structure here. */\n    public MyStack() {\n        que1 = new ArrayDeque<>();\n        que2 = new ArrayDeque<>();\n    }\n    \n    /** Push element x onto stack. */\n    public void push(int x) {\n        que1.addLast(x);\n    }\n    \n    /** Removes the element on top of the stack and returns that element. */\n    public int pop() {\n        int size = que1.size();\n        size--;\n        // 将 que1 导入 que2 ，但留下最后一个值\n        while (size-- > 0) {\n            que2.addLast(que1.peekFirst());\n            que1.pollFirst();\n        }\n\n        int res = que1.pollFirst();\n        // 将 que2 对象的引用赋给了 que1 ，此时 que1，que2 指向同一个队列\n        que1 = que2;\n        // 如果直接操作 que2，que1 也会受到影响，所以为 que2 分配一个新的空间\n        que2 = new ArrayDeque<>();\n        return res;\n    }\n    \n    /** Get the top element. */\n    public int top() {\n        return que1.peekLast();\n    }\n    \n    /** Returns whether the stack is empty. */\n    public boolean empty() {\n        return que1.isEmpty();\n    }\n}\n优化，使用一个 Deque 实现\n\nclass MyStack {\n    // Deque 接口继承了 Queue 接口\n    // 所以 Queue 中的 add、poll、peek等效于 Deque 中的 addLast、pollFirst、peekFirst\n    Deque<Integer> que1;\n    /** Initialize your data structure here. */\n    public MyStack() {\n        que1 = new ArrayDeque<>();\n    }\n    \n    /** Push element x onto stack. */\n    public void push(int x) {\n        que1.addLast(x);\n    }\n    \n    /** Removes the element on top of the stack and returns that element. */\n    public int pop() {\n        int size = que1.size();\n        size--;\n        // 将 que1 导入 que2 ，但留下最后一个值\n        while (size-- > 0) {\n            que1.addLast(que1.peekFirst());\n            que1.pollFirst();\n        }\n\n        int res = que1.pollFirst();\n        return res;\n    }\n    \n    /** Get the top element. */\n    public int top() {\n        return que1.peekLast();\n    }\n    \n    /** Returns whether the stack is empty. */\n    public boolean empty() {\n        return que1.isEmpty();\n    }\n}\n优化，使用一个 Queue 实现\n\nclass MyStack {\n\n    Queue<Integer> queue;\n\n    public MyStack() {\n        queue = new LinkedList<>();\n    }\n\n    //每 offer 一个数（A）进来，都重新排列，把这个数（A）放到队列的队首\n    public void push(int x) {\n        queue.offer(x);\n        int size = queue.size();\n        //移动除了 A 的其它数\n        while (size-- > 1)\n            queue.offer(queue.poll());\n    }\n\n    public int pop() {\n        return queue.poll();\n    }\n\n    public int top() {\n        return queue.peek();\n    }\n\n    public boolean empty() {\n        return queue.isEmpty();\n    }\n}\n\n优化，使用一个 Queue 实现，但用卡哥的逻辑实现\n\nclass MyStack {\n    Queue<Integer> queue;\n    \n    public MyStack() {\n        queue = new LinkedList<>();\n    }\n    \n    public void push(int x) {\n        queue.add(x);\n    }\n    \n    public int pop() {\n        rePosition();\n        return queue.poll();\n    }\n    \n    public int top() {\n        rePosition();\n        int result = queue.poll();\n        queue.add(result);\n        return result;\n    }\n    \n    public boolean empty() {\n        return queue.isEmpty();\n    }\n\n    public void rePosition(){\n        int size = queue.size();\n        size--;\n        while(size-->0)\n            queue.add(queue.poll());\n    }\n}\n#Python：\nfrom collections import deque\n\nclass MyStack:\n\n    def __init__(self):\n        \"\"\"\n        Python普通的Queue或SimpleQueue没有类似于peek的功能\n        也无法用索引访问，在实现top的时候较为困难。\n\n        用list可以，但是在使用pop(0)的时候时间复杂度为O(n)\n        因此这里使用双向队列，我们保证只执行popleft()和append()，因为deque可以用索引访问，可以实现和peek相似的功能\n\n        in - 存所有数据\n        out - 仅在pop的时候会用到\n        \"\"\"\n        self.queue_in = deque()\n        self.queue_out = deque()\n\n    def push(self, x: int) -> None:\n        \"\"\"\n        直接append即可\n        \"\"\"\n        self.queue_in.append(x)\n\n\n    def pop(self) -> int:\n        \"\"\"\n        1. 首先确认不空\n        2. 因为队列的特殊性，FIFO，所以我们只有在pop()的时候才会使用queue_out\n        3. 先把queue_in中的所有元素（除了最后一个），依次出列放进queue_out\n        4. 交换in和out，此时out里只有一个元素\n        5. 把out中的pop出来，即是原队列的最后一个\n        \n        tip：这不能像栈实现队列一样，因为另一个queue也是FIFO，如果执行pop()它不能像\n        stack一样从另一个pop()，所以干脆in只用来存数据，pop()的时候两个进行交换\n        \"\"\"\n        if self.empty():\n            return None\n\n        for i in range(len(self.queue_in) - 1):\n            self.queue_out.append(self.queue_in.popleft())\n        \n        self.queue_in, self.queue_out = self.queue_out, self.queue_in    # 交换in和out，这也是为啥in只用来存\n        return self.queue_out.popleft()\n\n    def top(self) -> int:\n        \"\"\"\n        写法一：\n        1. 首先确认不空\n        2. 我们仅有in会存放数据，所以返回第一个即可（这里实际上用到了栈）\n        写法二：\n        1. 首先确认不空\n        2. 因为队列的特殊性，FIFO，所以我们只有在pop()的时候才会使用queue_out\n        3. 先把queue_in中的所有元素（除了最后一个），依次出列放进queue_out\n        4. 交换in和out，此时out里只有一个元素\n        5. 把out中的pop出来，即是原队列的最后一个，并使用temp变量暂存\n        6. 把temp追加到queue_in的末尾\n        \"\"\"\n        # 写法一：\n        # if self.empty():\n        #     return None\n        \n        # return self.queue_in[-1]    # 这里实际上用到了栈，因为直接获取了queue_in的末尾元素\n\n        # 写法二：\n        if self.empty():\n            return None\n\n        for i in range(len(self.queue_in) - 1):\n            self.queue_out.append(self.queue_in.popleft())\n        \n        self.queue_in, self.queue_out = self.queue_out, self.queue_in \n        temp = self.queue_out.popleft()   \n        self.queue_in.append(temp)\n        return temp\n\n\n    def empty(self) -> bool:\n        \"\"\"\n        因为只有in存了数据，只要判断in是不是有数即可\n        \"\"\"\n        return len(self.queue_in) == 0\n\n优化，使用一个队列实现\n\nclass MyStack:\n\n    def __init__(self):\n        self.que = deque()\n\n    def push(self, x: int) -> None:\n        self.que.append(x)\n\n    def pop(self) -> int:\n        if self.empty():\n            return None\n        for i in range(len(self.que)-1):\n            self.que.append(self.que.popleft())\n        return self.que.popleft()\n\n    def top(self) -> int:\n        # 写法一：\n        # if self.empty():\n        #     return None\n        # return self.que[-1]\n\n        # 写法二：\n        if self.empty():\n            return None\n        for i in range(len(self.que)-1):\n            self.que.append(self.que.popleft())\n        temp = self.que.popleft()\n        self.que.append(temp)\n        return temp\n\n    def empty(self) -> bool:\n        return not self.que"
+}

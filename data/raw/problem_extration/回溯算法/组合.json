@@ -1,0 +1,413 @@
+{
+  "id": "AP_65670d83",
+  "title": "组合",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/combinations/",
+  "description": "两个整数 n 和 k，返回 1 ... n 中所有可能的 k 个数的组合。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "回溯算法",
+    "递归"
+  ],
+  "data_structure_tags": [
+    "数组",
+    "向量"
+  ],
+  "technique_tags": [
+    "剪枝",
+    "树形结构"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用回溯法解决组合问题。通过递归模拟多层for循环的效果，每次递归调用中嵌套一个for循环来遍历集合中的元素，并且随着递归深度增加，选择的范围逐渐缩小。",
+  "key_insights": [
+    {
+      "content": "利用递归函数代替了难以实现的多层for循环，使得即使k很大时也能方便地生成所有可能的组合。"
+    },
+    {
+      "content": "将组合生成过程抽象成一棵树，其中每个节点代表一种选择状态，从根到叶子的一条路径表示一组组合。这种视角有助于理解如何遍历所有的可能性。"
+    },
+    {
+      "content": "通过引入startIndex参数记录当前递归层级应开始搜索的位置，避免重复选取已经处理过的元素，从而提高效率。"
+    },
+    {
+      "content": "剪枝优化减少了不必要的搜索，通过计算剩余所需元素数量与当前可选元素范围的关系，提前终止一些无效的递归分支。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "本题是回溯法的经典题目。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<int>> result; vector<int> path; void backtracking(int n, int k, int startIndex) { if (path.size() == k) { result.push_back(path); return; } for (int i = startIndex; i <= n - (k - path.size()) + 1; i++) { path.push_back(i); backtracking(n, k, i + 1); path.pop_back(); } } public: vector<vector<int>> combine(int n, int k) { backtracking(n, k, 1); return result; }};",
+          "description": "C++实现的剪枝优化后的组合问题解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {List<List<Integer>> result = new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); public List<List<Integer>> combine(int n, int k) { combineHelper(n, k, 1); return result; } private void combineHelper(int n, int k, int startIndex){ if (path.size() == k){ result.add(new ArrayList<>(path)); return; } for (int i = startIndex; i <= n - (k - path.size()) + 1; i++){ path.add(i); combineHelper(n, k, i + 1); path.removeLast(); } }}",
+          "description": "Java实现的剪枝优化后的组合问题解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def combine(self, n: int, k: int) -> List[List[int]]: result = [] self.backtracking(n, k, 1, [], result) return result def backtracking(self, n, k, startIndex, path, result): if len(path) == k: result.append(path[:]) return for i in range(startIndex, n - (k - len(path)) + 2): path.append(i) self.backtracking(n, k, i + 1, path, result) path.pop()",
+          "description": "Python实现的剪枝优化后的组合问题解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "回溯法三部曲",
+      "text": "递归函数的返回值以及参数",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result; // 存放符合条件结果的集合\n    vector<int> path; // 用来存放符合条件结果\n    void backtracking(int n, int k, int startIndex) {\n        if (path.size() == k) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i <= n; i++) {\n            path.push_back(i); // 处理节点\n            backtracking(n, k, i + 1); // 递归\n            path.pop_back(); // 回溯，撤销处理的节点\n        }\n    }\npublic:\n    vector<vector<int>> combine(int n, int k) {\n        result.clear(); // 可以不写\n        path.clear();   // 可以不写\n        backtracking(n, k, 1);\n        return result;\n    }\n};",
+          "description": "C++实现组合问题未剪枝版本"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(int n, int k, int startIndex) {\n        if (path.size() == k) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i <= n - (k - path.size()) + 1; i++) { // 优化的地方\n            path.push_back(i); // 处理节点\n            backtracking(n, k, i + 1);\n            path.pop_back(); // 回溯，撤销处理的节点\n        }\n    }\npublic:\n    vector<vector<int>> combine(int n, int k) {\n        backtracking(n, k, 1);\n        return result;\n    }\n};",
+          "description": "C++实现组合问题剪枝优化版本"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<List<Integer>> result= new ArrayList<>();\n    LinkedList<Integer> path = new LinkedList<>();\n    public List<List<Integer>> combine(int n, int k) {\n        backtracking(n,k,1);\n        return result;\n    }\n    public void backtracking(int n,int k,int startIndex){\n        if (path.size() == k){\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i =startIndex;i<=n;i++){\n            path.add(i);\n            backtracking(n,k,i+1);\n            path.removeLast();\n        }\n    }\n}",
+          "description": "Java实现组合问题未剪枝版本"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<List<Integer>> result = new ArrayList<>();\n    LinkedList<Integer> path = new LinkedList<>();\n    public List<List<Integer>> combine(int n, int k) {\n        combineHelper(n, k, 1);\n        return result;\n    }\n    private void combineHelper(int n, int k, int startIndex){\n        if (path.size() == k){\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = startIndex; i <= n - (k - path.size()) + 1; i++){\n            path.add(i);\n            combineHelper(n, k, i + 1);\n            path.removeLast();\n        }\n    }\n}",
+          "description": "Java实现组合问题剪枝优化版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def combine(self, n: int, k: int) -> List[List[int]]:\n        result = []  # 存放结果集\n        self.backtracking(n, k, 1, [], result)\n        return result\n    def backtracking(self, n, k, startIndex, path, result):\n        if len(path) == k:\n            result.append(path[:])\n            return\n        for i in range(startIndex, n + 1):  # 需要优化的地方\n            path.append(i)  # 处理节点\n            self.backtracking(n, k, i + 1, path, result)\n            path.pop()  # 回溯，撤销处理的节点",
+          "description": "Python实现组合问题未剪枝版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def combine(self, n: int, k: int) -> List[List[int]]:\n        result = []  # 存放结果集\n        self.backtracking(n, k, 1, [], result)\n        return result\n    def backtracking(self, n, k, startIndex, path, result):\n        if len(path) == k:\n            result.append(path[:])\n            return\n        for i in range(startIndex, n - (k - len(path)) + 2):  # 优化的地方\n            path.append(i)  # 处理节点\n            self.backtracking(n, k, i + 1, path, result)\n            path.pop()  # 回溯，撤销处理的节点",
+          "description": "Python实现组合问题剪枝优化版本"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "组合问题是回溯法解决的经典问题，我们开始的时候给大家列举一个很形象的例子，就是n为100，k为50的话，直接想法就需要50层for循环。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "int n = 4; for (int i = 1; i <= n; i++) { for (int j = i + 1; j <= n; j++) { cout << i << \" \" << j << endl; }}",
+          "description": "C++代码示例，使用两层for循环打印组合"
+        },
+        {
+          "language": "cpp",
+          "code": "int n = 100; for (int i = 1; i <= n; i++) { for (int j = i + 1; j <= n; j++) { for (int u = j + 1; u <= n; u++) { cout << i << \" \" << j << \" \" << u << endl; }}}",
+          "description": "C++代码示例，使用三层for循环打印组合"
+        },
+        {
+          "language": "cpp",
+          "code": "vector<vector<int>> result; vector<int> path; void backtracking(int n, int k, int startIndex) {}",
+          "description": "C++定义回溯函数的参数和全局变量"
+        },
+        {
+          "language": "cpp",
+          "code": "if (path.size() == k) { result.push_back(path); return; }",
+          "description": "C++终止条件代码段"
+        },
+        {
+          "language": "cpp",
+          "code": "for (int i = startIndex; i <= n; i++) { path.push_back(i); backtracking(n, k, i + 1); path.pop_back(); }",
+          "description": "C++单层搜索过程代码段"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<int>> result; vector<int> path; void backtracking(int n, int k, int startIndex) { if (path.size() == k) { result.push_back(path); return; } for (int i = startIndex; i <= n - (k - path.size()) + 1; i++) { path.push_back(i); backtracking(n, k, i + 1); path.pop_back(); }} public: vector<vector<int>> combine(int n, int k) { backtracking(n, k, 1); return result; }};",
+          "description": "剪枝优化后的C++完整代码"
+        },
+        {
+          "language": "java",
+          "code": "List<List<Integer>> result= new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); public List<List<Integer>> combine(int n, int k) { backtracking(n,k,1); return result; } public void backtracking(int n,int k,int startIndex){ if (path.size() == k){ result.add(new ArrayList<>(path)); return; } for (int i =startIndex;i<=n;i++){ path.add(i); backtracking(n,k,i+1); path.removeLast(); }}",
+          "description": "Java未剪枝优化版本"
+        },
+        {
+          "language": "java",
+          "code": "List<List<Integer>> result = new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); public List<List<Integer>> combine(int n, int k) { combineHelper(n, k, 1); return result; } private void combineHelper(int n, int k, int startIndex){ if (path.size() == k){ result.add(new ArrayList<>(path)); return; } for (int i = startIndex; i <= n - (k - path.size()) + 1; i++){ path.add(i); combineHelper(n, k, i + 1); path.removeLast(); }}",
+          "description": "Java剪枝优化版本"
+        },
+        {
+          "language": "python",
+          "code": "def combine(self, n: int, k: int) -> List[List[int]]: result = [] self.backtracking(n, k, 1, [], result) return result def backtracking(self, n, k, startIndex, path, result): if len(path) == k: result.append(path[:]) return for i in range(startIndex, n + 1): path.append(i) self.backtracking(n, k, i + 1, path, result) path.pop()",
+          "description": "Python未剪枝优化版本"
+        },
+        {
+          "language": "python",
+          "code": "def combine(self, n: int, k: int) -> List[List[int]]: result = [] self.backtracking(n, k, 1, [], result) return result def backtracking(self, n, k, startIndex, path, result): if len(path) == k: result.append(path[:]) return for i in range(startIndex, n - (k - len(path)) + 2): path.append(i) self.backtracking(n, k, i + 1, path, result) path.pop()",
+          "description": "Python剪枝优化版本"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "剪枝优化",
+      "text": "我们说过，回溯法虽然是暴力搜索，但也有时候可以有点剪枝优化一下的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result; // 存放符合条件结果的集合\n    vector<int> path; // 用来存放符合条件结果\n    void backtracking(int n, int k, int startIndex) {\n        if (path.size() == k) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i <= n - (k - path.size()) + 1; i++) { // 优化的地方\n            path.push_back(i); // 处理节点\n            backtracking(n, k, i + 1);\n            path.pop_back(); // 回溯，撤销处理的节点\n        }\n    }\npublic:\n\n    vector<vector<int>> combine(int n, int k) {\n        backtracking(n, k, 1);\n        return result;\n    }\n};",
+          "description": "C++版本剪枝优化后的组合问题解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<List<Integer>> result = new ArrayList<>();\n    LinkedList<Integer> path = new LinkedList<>();\n    public List<List<Integer>> combine(int n, int k) {\n        combineHelper(n, k, 1);\n        return result;\n    }\n    private void combineHelper(int n, int k, int startIndex){\n        if (path.size() == k){\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = startIndex; i <= n - (k - path.size()) + 1; i++){\n            path.add(i);\n            combineHelper(n, k, i + 1);\n            path.removeLast();\n        }\n    }\n}",
+          "description": "Java版本剪枝优化后的组合问题解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def combine(self, n: int, k: int) -> List[List[int]]:\n        result = []  # 存放结果集\n        self.backtracking(n, k, 1, [], result)\n        return result\n    def backtracking(self, n, k, startIndex, path, result):\n        if len(path) == k:\n            result.append(path[:])\n            return\n        for i in range(startIndex, n - (k - len(path)) + 2):  # 优化的地方\n            path.append(i)  # 处理节点\n            self.backtracking(n, k, i + 1, path, result)\n            path.pop()  # 回溯，撤销处理的节点",
+          "description": "Python版本剪枝优化后的组合问题解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "剪枝总结",
+      "text": "本篇我们准对求组合问题的回溯法代码做了剪枝优化，这个优化如果不画图的话，其实不好理解，也不好讲清楚。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<int>> result; vector<int> path; void backtracking(int n, int k, int startIndex) { if (path.size() == k) { result.push_back(path); return; } for (int i = startIndex; i <= n - (k - path.size()) + 1; i++) { path.push_back(i); backtracking(n, k, i + 1); path.pop_back(); } } public: vector<vector<int>> combine(int n, int k) { backtracking(n, k, 1); return result; }};",
+          "description": "C++版本剪枝优化后的组合问题解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {List<List<Integer>> result = new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); public List<List<Integer>> combine(int n, int k) { combineHelper(n, k, 1); return result; } private void combineHelper(int n, int k, int startIndex){ if (path.size() == k){ result.add(new ArrayList<>(path)); return; } for (int i = startIndex; i <= n - (k - path.size()) + 1; i++){ path.add(i); combineHelper(n, k, i + 1); path.removeLast(); }}}",
+          "description": "Java版本剪枝优化后的组合问题解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def combine(self, n: int, k: int) -> List[List[int]]: result = [] self.backtracking(n, k, 1, [], result) return result def backtracking(self, n, k, startIndex, path, result): if len(path) == k: result.append(path[:]) return for i in range(startIndex, n - (k - len(path)) + 2): path.append(i) self.backtracking(n, k, i + 1, path, result) path.pop()",
+          "description": "Python版本剪枝优化后的组合问题解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<List<Integer>> result= new ArrayList<>();\n    LinkedList<Integer> path = new LinkedList<>();\n    public List<List<Integer>> combine(int n, int k) {\n        backtracking(n,k,1);\n        return result;\n    }\n\n    public void backtracking(int n,int k,int startIndex){\n        if (path.size() == k){\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i =startIndex;i<=n;i++){\n            path.add(i);\n            backtracking(n,k,i+1);\n            path.removeLast();\n        }\n    }\n}",
+          "description": "Java未剪枝优化版本"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<List<Integer>> result = new ArrayList<>();\n    LinkedList<Integer> path = new LinkedList<>();\n    public List<List<Integer>> combine(int n, int k) {\n        combineHelper(n, k, 1);\n        return result;\n    }\n\n    private void combineHelper(int n, int k, int startIndex){\n        if (path.size() == k){\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = startIndex; i <= n - (k - path.size()) + 1; i++){\n            path.add(i);\n            combineHelper(n, k, i + 1);\n            path.removeLast();\n        }\n    }\n}",
+          "description": "Java剪枝优化版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def combine(self, n: int, k: int) -> List[List[int]]:\n        result = []  # 存放结果集\n        self.backtracking(n, k, 1, [], result)\n        return result\n    def backtracking(self, n, k, startIndex, path, result):\n        if len(path) == k:\n            result.append(path[:])\n            return\n        for i in range(startIndex, n + 1):  # 需要优化的地方\n            path.append(i)  # 处理节点\n            self.backtracking(n, k, i + 1, path, result)\n            path.pop()  # 回溯，撤销处理的节点",
+          "description": "Python未剪枝优化版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def combine(self, n: int, k: int) -> List[List[int]]:\n        result = []  # 存放结果集\n        self.backtracking(n, k, 1, [], result)\n        return result\n    def backtracking(self, n, k, startIndex, path, result):\n        if len(path) == k:\n            result.append(path[:])\n            return\n        for i in range(startIndex, n - (k - len(path)) + 2):  # 优化的地方\n            path.append(i)  # 处理节点\n            self.backtracking(n, k, i + 1, path, result)\n            path.pop()  # 回溯，撤销处理的节点",
+          "description": "Python剪枝优化版本"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "未剪枝优化",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<int>> result; vector<int> path; void backtracking(int n, int k, int startIndex) { if (path.size() == k) { result.push_back(path); return; } for (int i = startIndex; i <= n; i++) { path.push_back(i); backtracking(n, k, i + 1); path.pop_back(); } } public: vector<vector<int>> combine(int n, int k) { result.clear(); path.clear(); backtracking(n, k, 1); return result; }};",
+          "description": "C++实现的组合问题，未剪枝优化"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<int>> result; vector<int> path; void backtracking(int n, int k, int startIndex) { if (path.size() == k) { result.push_back(path); return; } for (int i = startIndex; i <= n - (k - path.size()) + 1; i++) { path.push_back(i); backtracking(n, k, i + 1); path.pop_back(); } } public: vector<vector<int>> combine(int n, int k) { backtracking(n, k, 1); return result; }};",
+          "description": "C++实现的组合问题，剪枝优化"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {List<List<Integer>> result= new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); public List<List<Integer>> combine(int n, int k) { backtracking(n,k,1); return result; } public void backtracking(int n,int k,int startIndex){ if (path.size() == k){ result.add(new ArrayList<>(path)); return; } for (int i =startIndex;i<=n;i++){ path.add(i); backtracking(n,k,i+1); path.removeLast(); } }}",
+          "description": "Java实现的组合问题，未剪枝优化"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {List<List<Integer>> result = new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); public List<List<Integer>> combine(int n, int k) { combineHelper(n, k, 1); return result; } private void combineHelper(int n, int k, int startIndex){ if (path.size() == k){ result.add(new ArrayList<>(path)); return; } for (int i = startIndex; i <= n - (k - path.size()) + 1; i++){ path.add(i); combineHelper(n, k, i + 1); path.removeLast(); } }}",
+          "description": "Java实现的组合问题，剪枝优化"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def combine(self, n: int, k: int) -> List[List[int]]: result = [] self.backtracking(n, k, 1, [], result) return result def backtracking(self, n, k, startIndex, path, result): if len(path) == k: result.append(path[:]) return for i in range(startIndex, n + 1): path.append(i) self.backtracking(n, k, i + 1, path, result) path.pop()",
+          "description": "Python实现的组合问题，未剪枝优化"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def combine(self, n: int, k: int) -> List[List[int]]: result = [] self.backtracking(n, k, 1, [], result) return result def backtracking(self, n, k, startIndex, path, result): if len(path) == k: result.append(path[:]) return for i in range(startIndex, n - (k - len(path)) + 2): path.append(i) self.backtracking(n, k, i + 1, path, result) path.pop()",
+          "description": "Python实现的组合问题，剪枝优化"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "未剪枝优化",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result; // 存放符合条件结果的集合\n    vector<int> path; // 用来存放符合条件结果\n    void backtracking(int n, int k, int startIndex) {\n        if (path.size() == k) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i <= n; i++) {\n            path.push_back(i); // 处理节点\n            backtracking(n, k, i + 1); // 递归\n            path.pop_back(); // 回溯，撤销处理的节点\n        }\n    }\npublic:\n    vector<vector<int>> combine(int n, int k) {\n        result.clear(); // 可以不写\n        path.clear();   // 可以不写\n        backtracking(n, k, 1);\n        return result;\n    }\n};",
+          "description": "C++实现未剪枝优化的组合问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<List<Integer>> result= new ArrayList<>();\n    LinkedList<Integer> path = new LinkedList<>();\n    public List<List<Integer>> combine(int n, int k) {\n        backtracking(n,k,1);\n        return result;\n    }\n    public void backtracking(int n,int k,int startIndex){\n        if (path.size() == k){\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i =startIndex;i<=n;i++){\n            path.add(i);\n            backtracking(n,k,i+1);\n            path.removeLast();\n        }\n    }\n}",
+          "description": "Java实现未剪枝优化的组合问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def combine(self, n: int, k: int) -> List[List[int]]:\n        result = []  # 存放结果集\n        self.backtracking(n, k, 1, [], result)\n        return result\n    def backtracking(self, n, k, startIndex, path, result):\n        if len(path) == k:\n            result.append(path[:])\n            return\n        for i in range(startIndex, n + 1):  # 需要优化的地方\n            path.append(i)  # 处理节点\n            self.backtracking(n, k, i + 1, path, result)\n            path.pop()  # 回溯，撤销处理的节点",
+          "description": "Python实现未剪枝优化的组合问题"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n * 2^n)",
+    "space_complexity": "O(n)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "int n = 4; for (int i = 1; i <= n; i++) { for (int j = i + 1; j <= n; j++) { cout << i << \" \" << j << endl; } }",
+      "description": null
+    },
+    {
+      "language": "cpp",
+      "code": "int n = 100; for (int i = 1; i <= n; i++) { for (int j = i + 1; j <= n; j++) { for (int u = j + 1; u <= n; n++) { cout << i << \" \" << j << \" \" << u << endl; } } }",
+      "description": null
+    },
+    {
+      "language": "cpp",
+      "code": "vector<vector<int>> result; vector<int> path; void backtracking(int n, int k, int startIndex) { if (path.size() == k) { result.push_back(path); return; } for (int i = startIndex; i <= n; i++) { path.push_back(i); backtracking(n, k, i + 1); path.pop_back(); } } public: vector<vector<int>> combine(int n, int k) { result.clear(); path.clear(); backtracking(n, k, 1); return result; }",
+      "description": null
+    },
+    {
+      "language": "cpp",
+      "code": "for (int i = startIndex; i <= n - (k - path.size()) + 1; i++) { path.push_back(i); backtracking(n, k, i + 1); path.pop_back(); }",
+      "description": null
+    },
+    {
+      "language": "java",
+      "code": "List<List<Integer>> result= new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); public List<List<Integer>> combine(int n, int k) { backtracking(n,k,1); return result; } public void backtracking(int n,int k,int startIndex){ if (path.size() == k){ result.add(new ArrayList<>(path)); return; } for (int i =startIndex;i<=n;i++){ path.add(i); backtracking(n,k,i+1); path.removeLast(); } }",
+      "description": null
+    },
+    {
+      "language": "java",
+      "code": "List<List<Integer>> result = new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); public List<List<Integer>> combine(int n, int k) { combineHelper(n, k, 1); return result; } private void combineHelper(int n, int k, int startIndex){ if (path.size() == k){ result.add(new ArrayList<>(path)); return; } for (int i = startIndex; i <= n - (k - path.size()) + 1; i++){ path.add(i); combineHelper(n, k, i + 1); path.removeLast(); } }",
+      "description": null
+    },
+    {
+      "language": "python",
+      "code": "def combine(self, n: int, k: int) -> List[List[int]]: result = [] self.backtracking(n, k, 1, [], result) return result def backtracking(self, n, k, startIndex, path, result): if len(path) == k: result.append(path[:]) return for i in range(startIndex, n + 1): path.append(i) self.backtracking(n, k, i + 1, path, result) path.pop()",
+      "description": null
+    },
+    {
+      "language": "python",
+      "code": "def combine(self, n: int, k: int) -> List[List[int]]: result = [] self.backtracking(n, k, 1, [], result) return result def backtracking(self, n, k, startIndex, path, result): if len(path) == k: result.append(path[:]) return for i in range(startIndex, n - (k - len(path)) + 2): path.append(i) self.backtracking(n, k, i + 1, path, result) path.pop()",
+      "description": null
+    }
+  ],
+  "common_mistakes": [
+    "未正确设置递归终止条件，导致无限递归或遗漏部分解。",
+    "忽略了对已选元素进行标记，可能会产生重复组合。",
+    "没有充分考虑递归过程中对于全局变量的操作，可能导致结果不准确。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201123195223940.png",
+      "description": "这张图片展示了从1到4中选取两个数的所有组合过程，采用递归树结构来表示每一步的选择和结果集合，体现了组合算法的解题思路。",
+      "context": "该图片展示了一个将组合问题抽象成的树形结构，帮助理解回溯算法中如何通过逐步选择元素来构建解空间。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201123195328976.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20201123195328976.png",
+      "context": "该图片通过红线标示了在集合[1,2,3,4]中选取数字1后，下一层递归将从[2,3,4]开始选取的过程，直观地解释了startIndex参数的作用。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201123195407907.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20201123195407907.png",
+      "context": "该图片展示了在回溯算法中，当path数组的大小达到k时，即找到了一个符合条件的组合，此时用result保存path内容的过程，红色部分特别标注了这一时刻。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201123195242899.png",
+      "description": "这张图片展示了使用回溯算法在集合 {1, 2, 3, 4} 中选择两个数的所有组合过程，通过递归（纵向遍历）和 for 循环（横向遍历）来生成结果集合。",
+      "context": "该图片展示了回溯法搜索过程中的树型结构遍历方式，其中for循环用于横向遍历，而递归则实现纵向深入。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210130194335207-20230310134409532.png",
+      "description": "这张图片展示了使用回溯算法在集合 {1, 2, 3, 4} 中选择 k=4 个元素的过程，通过树状结构和剪枝策略来高效找到唯一解 [1, 2, 3, 4]。",
+      "context": "图示解释了在给定n和k的情况下，如何通过剪枝优化每一层for循环的遍历范围，避免无效遍历。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201123195223940.png",
+      "description": "GIF展示了通过回溯法构建N叉树来解决组合问题的过程，随着递归深度增加，逐步从集合中选取元素形成不同的组合。",
+      "context": "GIF动画展示了如何通过树形结构来理解回溯算法解决组合问题的过程，其中每次选择一个元素后，可选范围逐渐减少。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201123195328976.png",
+      "description": "GIF展示了从集合[1,2,3,4]中选取元素构成组合的过程，通过递归调用逐步构建路径直至找到所有大小为k的组合。",
+      "context": "GIF动画展示了在递归过程中，随着每一步选取不同数字后，如何通过调整startIndex来更新剩余可选数字集合的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201123195407907.png",
+      "description": "GIF展示了回溯算法在寻找大小为k的组合时，通过递归调用构建决策树并收集满足条件路径的过程。",
+      "context": "该GIF动画展示了在回溯算法中，当path数组大小达到k时，即找到一个满足条件的组合，此时将该组合添加至结果集并结束当前路径搜索的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201123195242899.png",
+      "description": "GIF展示了使用回溯法解决组合问题时，通过递归进行树形结构遍历的过程。",
+      "context": "GIF动画展示了回溯法如何通过树型结构的遍历过程，利用for循环进行横向探索及递归实现纵向深入，来完成组合问题的求解。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210130194335207-20230310134409532.png",
+      "description": "GIF展示了回溯算法通过剪枝优化搜索过程，减少了无效遍历的情况。",
+      "context": "GIF动画展示了在给定n和k值的情况下，如何通过剪枝优化回溯算法中的遍历范围，去除无效的搜索路径。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\回溯算法\\组合.txt",
+  "extracted_at": "2025-07-21T11:44:04.690826",
+  "raw_content": "组合\n力扣题目链接(https://leetcode.cn/problems/combinations/)\n\n给定两个整数 n 和 k，返回 1 ... n 中所有可能的 k 个数的组合。\n\n示例: 输入: n = 4, k = 2 输出: [ [2,4], [3,4], [2,3], [1,2], [1,3], [1,4], ]\n\n\n#思路\n本题是回溯法的经典题目。\n\n直接的解法当然是使用for循环，例如示例中k为2，很容易想到 用两个for循环，这样就可以输出 和示例中一样的结果。\n\n代码如下：\n\nint n = 4;\nfor (int i = 1; i <= n; i++) {\n    for (int j = i + 1; j <= n; j++) {\n        cout << i << \" \" << j << endl;\n    }\n}\n输入：n = 100, k = 3 那么就三层for循环，代码如下：\n\nint n = 100;\nfor (int i = 1; i <= n; i++) {\n    for (int j = i + 1; j <= n; j++) {\n        for (int u = j + 1; u <= n; n++) {\n            cout << i << \" \" << j << \" \" << u << endl;\n        }\n    }\n}\n如果n为100，k为50呢，那就50层for循环，是不是开始窒息。\n\n此时就会发现虽然想暴力搜索，但是用for循环嵌套连暴力都写不出来！\n\n咋整？\n\n回溯搜索法来了，虽然回溯法也是暴力，但至少能写出来，不像for循环嵌套k层让人绝望。\n\n那么回溯法怎么暴力搜呢？\n\n上面我们说了要解决 n为100，k为50的情况，暴力写法需要嵌套50层for循环，那么回溯法就用递归来解决嵌套层数的问题。\n\n递归来做层叠嵌套（可以理解是开k层for循环），每一次的递归中嵌套一个for循环，那么递归就可以用于解决多层嵌套循环的问题了。\n\n此时递归的层数大家应该知道了，例如：n为100，k为50的情况下，就是递归50层。\n\n一些同学本来对递归就懵，回溯法中递归还要嵌套for循环，可能就直接晕倒了！\n\n如果脑洞模拟回溯搜索的过程，绝对可以让人窒息，所以需要抽象图形结构来进一步理解。\n\n我们在关于回溯算法，你该了解这些！ (https://programmercarl.com/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html)中说到回溯法解决的问题都可以抽象为树形结构（N叉树），用树形结构来理解回溯就容易多了。\n\n那么我把组合问题抽象为如下树形结构：\n\nhttps://file1.kamacoder.com/i/algo/20201123195223940.png\n\n可以看出这棵树，一开始集合是 1，2，3，4， 从左向右取数，取过的数，不再重复取。\n\n第一次取1，集合变为2，3，4 ，因为k为2，我们只需要再取一个数就可以了，分别取2，3，4，得到集合[1,2] [1,3] [1,4]，以此类推。\n\n每次从集合中选取元素，可选择的范围随着选择的进行而收缩，调整可选择的范围。\n\n图中可以发现n相当于树的宽度，k相当于树的深度。\n\n那么如何在这个树上遍历，然后收集到我们要的结果集呢？\n\n图中每次搜索到了叶子节点，我们就找到了一个结果。\n\n相当于只需要把达到叶子节点的结果收集起来，就可以求得 n个数中k个数的组合集合。\n\n在关于回溯算法，你该了解这些！ (https://programmercarl.com/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html)中我们提到了回溯法三部曲，那么我们按照回溯法三部曲开始正式讲解代码了。\n\n#回溯法三部曲\n递归函数的返回值以及参数\n在这里要定义两个全局变量，一个用来存放符合条件单一结果，一个用来存放符合条件结果的集合。\n\n代码如下：\n\nvector<vector<int>> result; // 存放符合条件结果的集合\nvector<int> path; // 用来存放符合条件结果\n其实不定义这两个全局变量也是可以的，把这两个变量放进递归函数的参数里，但函数里参数太多影响可读性，所以我定义全局变量了。\n\n函数里一定有两个参数，既然是集合n里面取k个数，那么n和k是两个int型的参数。\n\n然后还需要一个参数，为int型变量startIndex，这个参数用来记录本层递归的中，集合从哪里开始遍历（集合就是[1,...,n] ）。\n\n为什么要有这个startIndex呢？\n\n\n从下图中红线部分可以看出，在集合[1,2,3,4]取1之后，下一层递归，就要在[2,3,4]中取数了，那么下一层递归如何知道从[2,3,4]中取数呢，靠的就是startIndex。\nhttps://file1.kamacoder.com/i/algo/20201123195328976.png\n\n\n所以需要startIndex来记录下一层递归，搜索的起始位置。\n\n那么整体代码如下：\n\nvector<vector<int>> result; // 存放符合条件结果的集合\nvector<int> path; // 用来存放符合条件单一结果\nvoid backtracking(int n, int k, int startIndex)\n回溯函数终止条件\n什么时候到达所谓的叶子节点了呢？\n\npath这个数组的大小如果达到k，说明我们找到了一个子集大小为k的组合了，在图中path存的就是根节点到叶子节点的路径。\n\n如图红色部分：\n\nhttps://file1.kamacoder.com/i/algo/20201123195407907.png\n\n此时用result二维数组，把path保存起来，并终止本层递归。\n\n所以终止条件代码如下：\n\nif (path.size() == k) {\n    result.push_back(path);\n    return;\n}\n单层搜索的过程\n回溯法的搜索过程就是一个树型结构的遍历过程，在如下图中，可以看出for循环用来横向遍历，递归的过程是纵向遍历。\n\nhttps://file1.kamacoder.com/i/algo/20201123195242899.png\n如此我们才遍历完图中的这棵树。\n\nfor循环每次从startIndex开始遍历，然后用path保存取到的节点i。\n\n代码如下：\n\nfor (int i = startIndex; i <= n; i++) { // 控制树的横向遍历\n    path.push_back(i); // 处理节点\n    backtracking(n, k, i + 1); // 递归：控制树的纵向遍历，注意下一层搜索要从i+1开始\n    path.pop_back(); // 回溯，撤销处理的节点\n}\n可以看出backtracking（递归函数）通过不断调用自己一直往深处遍历，总会遇到叶子节点，遇到了叶子节点就要返回。\n\nbacktracking的下面部分就是回溯的操作了，撤销本次处理的结果。\n\n关键地方都讲完了，组合问题C++完整代码如下：\n\nclass Solution {\nprivate:\n    vector<vector<int>> result; // 存放符合条件结果的集合\n    vector<int> path; // 用来存放符合条件结果\n    void backtracking(int n, int k, int startIndex) {\n        if (path.size() == k) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i <= n; i++) {\n            path.push_back(i); // 处理节点\n            backtracking(n, k, i + 1); // 递归\n            path.pop_back(); // 回溯，撤销处理的节点\n        }\n    }\npublic:\n    vector<vector<int>> combine(int n, int k) {\n        result.clear(); // 可以不写\n        path.clear();   // 可以不写\n        backtracking(n, k, 1);\n        return result;\n    }\n};\n时间复杂度: O(n * 2^n)\n空间复杂度: O(n)\n还记得我们在关于回溯算法，你该了解这些！ (https://programmercarl.com/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html)中给出的回溯法模板么？\n\n如下：\n\nvoid backtracking(参数) {\n    if (终止条件) {\n        存放结果;\n        return;\n    }\n\n    for (选择：本层集合中元素（树中节点孩子的数量就是集合的大小）) {\n        处理节点;\n        backtracking(路径，选择列表); // 递归\n        回溯，撤销处理结果\n    }\n}\n对比一下本题的代码，是不是发现有点像！ 所以有了这个模板，就有解题的大体方向，不至于毫无头绪。\n\n#总结\n组合问题是回溯法解决的经典问题，我们开始的时候给大家列举一个很形象的例子，就是n为100，k为50的话，直接想法就需要50层for循环。\n\n从而引出了回溯法就是解决这种k层for循环嵌套的问题。\n\n然后进一步把回溯法的搜索过程抽象为树形结构，可以直观的看出搜索的过程。\n\n接着用回溯法三部曲，逐步分析了函数参数、终止条件和单层搜索的过程。\n\n#剪枝优化\n我们说过，回溯法虽然是暴力搜索，但也有时候可以有点剪枝优化一下的。\n\n在遍历的过程中有如下代码：\n\nfor (int i = startIndex; i <= n; i++) {\n    path.push_back(i);\n    backtracking(n, k, i + 1);\n    path.pop_back();\n}\n这个遍历的范围是可以剪枝优化的，怎么优化呢？\n\n来举一个例子，n = 4，k = 4的话，那么第一层for循环的时候，从元素2开始的遍历都没有意义了。 在第二层for循环，从元素3开始的遍历都没有意义了。\n\n这么说有点抽象，如图所示：\n\nhttps://file1.kamacoder.com/i/algo/20210130194335207-20230310134409532.png\n\n图中每一个节点（图中为矩形），就代表本层的一个for循环，那么每一层的for循环从第二个数开始遍历的话，都没有意义，都是无效遍历。\n\n所以，可以剪枝的地方就在递归中每一层的for循环所选择的起始位置。\n\n如果for循环选择的起始位置之后的元素个数 已经不足 我们需要的元素个数了，那么就没有必要搜索了。\n\n注意代码中i，就是for循环里选择的起始位置。\n\nfor (int i = startIndex; i <= n; i++) {\n接下来看一下优化过程如下：\n\n已经选择的元素个数：path.size();\n\n还需要的元素个数为: k - path.size();\n\n在集合n中至多要从该起始位置 : n - (k - path.size()) + 1，开始遍历\n\n为什么有个+1呢，因为包括起始位置，我们要是一个左闭的集合。\n\n举个例子，n = 4，k = 3， 目前已经选取的元素为0（path.size为0），n - (k - 0) + 1 即 4 - ( 3 - 0) + 1 = 2。\n\n从2开始搜索都是合理的，可以是组合[2, 3, 4]。\n\n这里大家想不懂的话，建议也举一个例子，就知道是不是要+1了。\n\n所以优化之后的for循环是：\n\nfor (int i = startIndex; i <= n - (k - path.size()) + 1; i++) // i为本次搜索的起始位置\n优化后整体代码如下：\n\nclass Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(int n, int k, int startIndex) {\n        if (path.size() == k) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i <= n - (k - path.size()) + 1; i++) { // 优化的地方\n            path.push_back(i); // 处理节点\n            backtracking(n, k, i + 1);\n            path.pop_back(); // 回溯，撤销处理的节点\n        }\n    }\npublic:\n\n    vector<vector<int>> combine(int n, int k) {\n        backtracking(n, k, 1);\n        return result;\n    }\n};\n#剪枝总结\n本篇我们准对求组合问题的回溯法代码做了剪枝优化，这个优化如果不画图的话，其实不好理解，也不好讲清楚。\n\n所以我依然是把整个回溯过程抽象为一棵树形结构，然后可以直观的看出，剪枝究竟是剪的哪里。\n\n#其他语言版本\n#Java：\n未剪枝优化\n\nclass Solution {\n    List<List<Integer>> result= new ArrayList<>();\n    LinkedList<Integer> path = new LinkedList<>();\n    public List<List<Integer>> combine(int n, int k) {\n        backtracking(n,k,1);\n        return result;\n    }\n\n    public void backtracking(int n,int k,int startIndex){\n        if (path.size() == k){\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i =startIndex;i<=n;i++){\n            path.add(i);\n            backtracking(n,k,i+1);\n            path.removeLast();\n        }\n    }\n}\n剪枝优化：\n\nclass Solution {\n    List<List<Integer>> result = new ArrayList<>();\n    LinkedList<Integer> path = new LinkedList<>();\n    public List<List<Integer>> combine(int n, int k) {\n        combineHelper(n, k, 1);\n        return result;\n    }\n\n    /**\n     * 每次从集合中选取元素，可选择的范围随着选择的进行而收缩，调整可选择的范围，就是要靠startIndex\n     * @param startIndex 用来记录本层递归的中，集合从哪里开始遍历（集合就是[1,...,n] ）。\n     */\n    private void combineHelper(int n, int k, int startIndex){\n        //终止条件\n        if (path.size() == k){\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = startIndex; i <= n - (k - path.size()) + 1; i++){\n            path.add(i);\n            combineHelper(n, k, i + 1);\n            path.removeLast();\n        }\n    }\n}\n#Python\n未剪枝优化\n\nclass Solution:\n    def combine(self, n: int, k: int) -> List[List[int]]:\n        result = []  # 存放结果集\n        self.backtracking(n, k, 1, [], result)\n        return result\n    def backtracking(self, n, k, startIndex, path, result):\n        if len(path) == k:\n            result.append(path[:])\n            return\n        for i in range(startIndex, n + 1):  # 需要优化的地方\n            path.append(i)  # 处理节点\n            self.backtracking(n, k, i + 1, path, result)\n            path.pop()  # 回溯，撤销处理的节点\n\n剪枝优化：\n\nclass Solution:\n    def combine(self, n: int, k: int) -> List[List[int]]:\n        result = []  # 存放结果集\n        self.backtracking(n, k, 1, [], result)\n        return result\n    def backtracking(self, n, k, startIndex, path, result):\n        if len(path) == k:\n            result.append(path[:])\n            return\n        for i in range(startIndex, n - (k - len(path)) + 2):  # 优化的地方\n            path.append(i)  # 处理节点\n            self.backtracking(n, k, i + 1, path, result)\n            path.pop()  # 回溯，撤销处理的节点"
+}

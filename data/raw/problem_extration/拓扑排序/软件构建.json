@@ -1,0 +1,452 @@
+{
+  "id": "AP_5330e2c0",
+  "title": "软件构建",
+  "alternative_titles": [],
+  "platform": "kamacoder",
+  "url": "https://kamacoder.com/problempage.php?pid=1191",
+  "description": "编写一个算法，用于确定文件处理的顺序。\n\n输入描述：\n\n第一行输入两个正整数 N, M。表示 N 个文件之间拥有 M 条依赖关系。\n\n后续 M 行，每行两个正整数 S 和 T，表示 T 文件依赖于 S 文件。\n\n输出描述：\n\n输出共一行，如果能处理成功，则输出文件顺序，用空格隔开。\n\n如果不能成功处理（相互依赖），则输出 -1。\n\n输入",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "拓扑排序",
+    "广度优先搜索"
+  ],
+  "data_structure_tags": [
+    "队列",
+    "哈希表",
+    "向量"
+  ],
+  "technique_tags": [
+    "图论",
+    "边权计算"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用拓扑排序解决文件依赖问题。首先统计每个节点（文件）的入度以及构建依赖关系图，然后通过广度优先搜索(BFS)来找到所有入度为0的节点并将它们依次加入结果集中，同时更新相关联节点的入度。如果最后结果集中的元素个数等于总节点数，则说明没有环存在；否则存在环。",
+  "key_insights": [
+    {
+      "content": "只有当一个节点的入度为0时，它才可能是一个独立的起始点或已经处理完了所有前置依赖的节点，因此可以优先处理这些节点。"
+    },
+    {
+      "content": "每当从图中移除一个节点后，需要更新与之相连的所有节点的入度。这样可以确保随着过程推进，新的无依赖节点不断被发现并处理。"
+    },
+    {
+      "content": "如果最终得到的结果集中包含的节点数目小于总节点数，则表明原图中存在至少一个环，使得部分节点无法被正确排序。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "拓扑排序的背景",
+      "text": "本题是拓扑排序的经典题目。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <unordered_map>\nusing namespace std;\nint main() {\n    int m, n, s, t;\n    cin >> n >> m;\n    vector<int> inDegree(n, 0); // 记录每个文件的入度\n\n    unordered_map<int, vector<int>> umap;// 记录文件依赖关系\n    vector<int> result; // 记录结果\n\n    while (m--) {\n        // s->t，先有s才能有t\n        cin >> s >> t;\n        inDegree[t]++; // t的入度加一\n        umap[s].push_back(t); // 记录s指向哪些文件\n    }\n    queue<int> que;\n    for (int i = 0; i < n; i++) {\n        // 入度为0的文件，可以作为开头，先加入队列\n        if (inDegree[i] == 0) que.push(i);\n        //cout << inDegree[i] << endl;\n    }\n    // int count = 0;\n    while (que.size()) {\n        int  cur = que.front(); // 当前选中的文件\n        que.pop();\n        //count++;\n        result.push_back(cur);\n        vector<int> files = umap[cur]; //获取该文件指向的文件\n        if (files.size()) { // cur有后续文件\n            for (int i = 0; i < files.size(); i++) {\n                inDegree[files[i]] --; // cur的指向的文件入度-1\n                if(inDegree[files[i]] == 0) que.push(files[i]);\n            }\n        }\n    }\n    if (result.size() == n) {\n        for (int i = 0; i < n - 1; i++) cout << result[i] << \" \";\n        cout << result[n - 1];\n    } else cout << -1 << endl;\n}",
+          "description": "C++版本的拓扑排序算法实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n\n        List<List<Integer>> umap = new ArrayList<>(); // 记录文件依赖关系\n        int[] inDegree = new int[n]; // 记录每个文件的入度\n\n        for (int i = 0; i < n; i++)\n            umap.add(new ArrayList<>());\n\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            umap.get(s).add(t); // 记录s指向哪些文件\n            inDegree[t]++; // t的入度加一\n        }\n\n        Queue<Integer> queue = new LinkedList<>();\n        for (int i = 0; i < n; i++) {\n            if (inDegree[i] == 0) {\n                // 入度为0的文件，可以作为开头，先加入队列\n                queue.add(i);\n            }\n        }\n\n        List<Integer> result = new ArrayList<>();\n\n        // 拓扑排序\n        while (!queue.isEmpty()) {\n            int cur = queue.poll(); // 当前选中的文件\n            result.add(cur);\n            for (int file : umap.get(cur)) {\n                inDegree[file]--; // cur的指向的文件入度-1\n                if (inDegree[file] == 0) {\n                    queue.add(file);\n                }\n            }\n        }\n\n        if (result.size() == n) {\n            for (int i = 0; i < result.size(); i++) {\n                System.out.print(result.get(i));\n                if (i < result.size() - 1) {\n                    System.out.print(\" \");\n                }\n            }\n        } else {\n            System.out.println(-1);\n        }\n    }\n}",
+          "description": "Java版本的拓扑排序算法实现"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque, defaultdict\ndef topological_sort(n, edges):\n    inDegree = [0] * n # inDegree 记录每个文件的入度\n    umap = defaultdict(list) # 记录文件依赖关系\n\n    # 构建图和入度表\n    for s, t in edges:\n        inDegree[t] += 1\n        umap[s].append(t)\n\n    # 初始化队列，加入所有入度为0的节点\n    queue = deque([i for i in range(n) if inDegree[i] == 0])\n    result = []\n\n    while queue:\n        cur = queue.popleft()  # 当前选中的文件\n        result.append(cur)\n        for file in umap[cur]:  # 获取该文件指向的文件\n            inDegree[file] -= 1  # cur的指向的文件入度-1\n            if inDegree[file] == 0:\n                queue.append(file)\n\n    if len(result) == n:\n        print(\" \".join(map(str, result)))\n    else:\n        print(-1)\n\nif __name__ == \"__main__\":\n    n, m = map(int, input().split())\n    edges = [tuple(map(int, input().split())) for _ in range(m)]\n    topological_sort(n, edges)",
+          "description": "Python版本的拓扑排序算法实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "拓扑排序的思路",
+      "text": "拓扑排序指的是一种 解决问题的大体思路， 而具体算法，可能是广搜也可能是深搜。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <unordered_map>\nusing namespace std;\nint main() {\n    int m, n, s, t;\n    cin >> n >> m;\n    vector<int> inDegree(n, 0); // 记录每个文件的入度\n\n    unordered_map<int, vector<int>> umap;// 记录文件依赖关系\n    vector<int> result; // 记录结果\n\n    while (m--) {\n        // s->t，先有s才能有t\n        cin >> s >> t;\n        inDegree[t]++; // t的入度加一\n        umap[s].push_back(t); // 记录s指向哪些文件\n    }\n    queue<int> que;\n    for (int i = 0; i < n; i++) {\n        // 入度为0的文件，可以作为开头，先加入队列\n        if (inDegree[i] == 0) que.push(i);\n        //cout << inDegree[i] << endl;\n    }\n    // int count = 0;\n    while (que.size()) {\n        int  cur = que.front(); // 当前选中的文件\n        que.pop();\n        //count++;\n        result.push_back(cur);\n        vector<int> files = umap[cur]; //获取该文件指向的文件\n        if (files.size()) { // cur有后续文件\n            for (int i = 0; i < files.size(); i++) {\n                inDegree[files[i]] --; // cur的指向的文件入度-1\n                if(inDegree[files[i]] == 0) que.push(files[i]);\n            }\n        }\n    }\n    if (result.size() == n) {\n        for (int i = 0; i < n - 1; i++) cout << result[i] << \" \";\n        cout << result[n - 1];\n    } else cout << -1 << endl;\n}",
+          "description": "C++实现拓扑排序"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n\n        List<List<Integer>> umap = new ArrayList<>(); // 记录文件依赖关系\n        int[] inDegree = new int[n]; // 记录每个文件的入度\n\n        for (int i = 0; i < n; i++)\n            umap.add(new ArrayList<>());\n\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            umap.get(s).add(t); // 记录s指向哪些文件\n            inDegree[t]++; // t的入度加一\n        }\n\n        Queue<Integer> queue = new LinkedList<>();\n        for (int i = 0; i < n; i++) {\n            if (inDegree[i] == 0) {\n                // 入度为0的文件，可以作为开头，先加入队列\n                queue.add(i);\n            }\n        }\n\n        List<Integer> result = new ArrayList<>();\n\n        // 拓扑排序\n        while (!queue.isEmpty()) {\n            int cur = queue.poll(); // 当前选中的文件\n            result.add(cur);\n            for (int file : umap.get(cur)) {\n                inDegree[file]--; // cur的指向的文件入度-1\n                if (inDegree[file] == 0) {\n                    queue.add(file);\n                }\n            }\n        }\n\n        if (result.size() == n) {\n            for (int i = 0; i < result.size(); i++) {\n                System.out.print(result.get(i));\n                if (i < result.size() - 1) {\n                    System.out.print(\" \");\n                }\n            }\n        } else {\n            System.out.println(-1);\n        }\n    }\n}",
+          "description": "Java实现拓扑排序"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque, defaultdict\ndef topological_sort(n, edges):\n    inDegree = [0] * n # inDegree 记录每个文件的入度\n    umap = defaultdict(list) # 记录文件依赖关系\n\n    # 构建图和入度表\n    for s, t in edges:\n        inDegree[t] += 1\n        umap[s].append(t)\n\n    # 初始化队列，加入所有入度为0的节点\n    queue = deque([i for i in range(n) if inDegree[i] == 0])\n    result = []\n\n    while queue:\n        cur = queue.popleft()  # 当前选中的文件\n        result.append(cur)\n        for file in umap[cur]:  # 获取该文件指向的文件\n            inDegree[file] -= 1  # cur的指向的文件入度-1\n            if inDegree[file] == 0:\n                queue.append(file)\n\n    if len(result) == n:\n        print(\" \".join(map(str, result)))\n    else:\n        print(-1)\n\nif __name__ == \"__main__\":\n    n, m = map(int, input().split())\n    edges = [tuple(map(int, input().split())) for _ in range(m)]\n    topological_sort(n, edges)",
+          "description": "Python实现拓扑排序"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "模拟过程",
+      "text": "用本题的示例来模拟这一过程：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <unordered_map>\nusing namespace std;\nint main() {\n    int m, n, s, t;\n    cin >> n >> m;\n    vector<int> inDegree(n, 0); // 记录每个文件的入度\n\n    unordered_map<int, vector<int>> umap;// 记录文件依赖关系\n    vector<int> result; // 记录结果\n\n    while (m--) {\n        // s->t，先有s才能有t\n        cin >> s >> t;\n        inDegree[t]++; // t的入度加一\n        umap[s].push_back(t); // 记录s指向哪些文件\n    }\n    queue<int> que;\n    for (int i = 0; i < n; i++) {\n        // 入度为0的文件，可以作为开头，先加入队列\n        if (inDegree[i] == 0) que.push(i);\n        //cout << inDegree[i] << endl;\n    }\n    // int count = 0;\n    while (que.size()) {\n        int  cur = que.front(); // 当前选中的文件\n        que.pop();\n        //count++;\n        result.push_back(cur);\n        vector<int> files = umap[cur]; //获取该文件指向的文件\n        if (files.size()) { // cur有后续文件\n            for (int i = 0; i < files.size(); i++) {\n                inDegree[files[i]] --; // cur的指向的文件入度-1\n                if(inDegree[files[i]] == 0) que.push(files[i]);\n            }\n        }\n    }\n    if (result.size() == n) {\n        for (int i = 0; i < n - 1; i++) cout << result[i] << \" \";\n        cout << result[n - 1];\n    } else cout << -1 << endl;\n}",
+          "description": "C++实现拓扑排序"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n\n        List<List<Integer>> umap = new ArrayList<>(); // 记录文件依赖关系\n        int[] inDegree = new int[n]; // 记录每个文件的入度\n\n        for (int i = 0; i < n; i++)\n            umap.add(new ArrayList<>());\n\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            umap.get(s).add(t); // 记录s指向哪些文件\n            inDegree[t]++; // t的入度加一\n        }\n\n        Queue<Integer> queue = new LinkedList<>();\n        for (int i = 0; i < n; i++) {\n            if (inDegree[i] == 0) {\n                // 入度为0的文件，可以作为开头，先加入队列\n                queue.add(i);\n            }\n        }\n\n        List<Integer> result = new ArrayList<>();\n\n        // 拓扑排序\n        while (!queue.isEmpty()) {\n            int cur = queue.poll(); // 当前选中的文件\n            result.add(cur);\n            for (int file : umap.get(cur)) {\n                inDegree[file]--; // cur的指向的文件入度-1\n                if (inDegree[file] == 0) {\n                    queue.add(file);\n                }\n            }\n        }\n\n        if (result.size() == n) {\n            for (int i = 0; i < result.size(); i++) {\n                System.out.print(result.get(i));\n                if (i < result.size() - 1) {\n                    System.out.print(\" \");\n                }\n            }\n        } else {\n            System.out.println(-1);\n        }\n    }\n}",
+          "description": "Java实现拓扑排序"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque, defaultdict\ndef topological_sort(n, edges):\n    inDegree = [0] * n # inDegree 记录每个文件的入度\n    umap = defaultdict(list) # 记录文件依赖关系\n\n    # 构建图和入度表\n    for s, t in edges:\n        inDegree[t] += 1\n        umap[s].append(t)\n\n    # 初始化队列，加入所有入度为0的节点\n    queue = deque([i for i in range(n) if inDegree[i] == 0])\n    result = []\n\n    while queue:\n        cur = queue.popleft()  # 当前选中的文件\n        result.append(cur)\n        for file in umap[cur]:  # 获取该文件指向的文件\n            inDegree[file] -= 1  # cur的指向的文件入度-1\n            if inDegree[file] == 0:\n                queue.append(file)\n\n    if len(result) == n:\n        print(\" \".join(map(str, result)))\n    else:\n        print(-1)\n\nif __name__ == \"__main__\":\n    n, m = map(int, input().split())\n    edges = [tuple(map(int, input().split())) for _ in range(m)]\n    topological_sort(n, edges)",
+          "description": "Python实现拓扑排序"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "判断有环",
+      "text": "如果有 有向环怎么办呢？例如这个图：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <unordered_map>\nusing namespace std;\nint main() {\n    int m, n, s, t;\n    cin >> n >> m;\n    vector<int> inDegree(n, 0); // 记录每个文件的入度\n\n    unordered_map<int, vector<int>> umap;// 记录文件依赖关系\n    vector<int> result; // 记录结果\n\n    while (m--) {\n        // s->t，先有s才能有t\n        cin >> s >> t;\n        inDegree[t]++; // t的入度加一\n        umap[s].push_back(t); // 记录s指向哪些文件\n    }\n    queue<int> que;\n    for (int i = 0; i < n; i++) {\n        // 入度为0的文件，可以作为开头，先加入队列\n        if (inDegree[i] == 0) que.push(i);\n        //cout << inDegree[i] << endl;\n    }\n    // int count = 0;\n    while (que.size()) {\n        int  cur = que.front(); // 当前选中的文件\n        que.pop();\n        //count++;\n        result.push_back(cur);\n        vector<int> files = umap[cur]; //获取该文件指向的文件\n        if (files.size()) { // cur有后续文件\n            for (int i = 0; i < files.size(); i++) {\n                inDegree[files[i]] --; // cur的指向的文件入度-1\n                if(inDegree[files[i]] == 0) que.push(files[i]);\n            }\n        }\n    }\n    if (result.size() == n) {\n        for (int i = 0; i < n - 1; i++) cout << result[i] << \" \";\n        cout << result[n - 1];\n    } else cout << -1 << endl;\n}\n",
+          "description": "C++实现拓扑排序"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n\n        List<List<Integer>> umap = new ArrayList<>(); // 记录文件依赖关系\n        int[] inDegree = new int[n]; // 记录每个文件的入度\n\n        for (int i = 0; i < n; i++)\n            umap.add(new ArrayList<>());\n\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            umap.get(s).add(t); // 记录s指向哪些文件\n            inDegree[t]++; // t的入度加一\n        }\n\n        Queue<Integer> queue = new LinkedList<>();\n        for (int i = 0; i < n; i++) {\n            if (inDegree[i] == 0) {\n                // 入度为0的文件，可以作为开头，先加入队列\n                queue.add(i);\n            }\n        }\n\n        List<Integer> result = new ArrayList<>();\n\n        // 拓扑排序\n        while (!queue.isEmpty()) {\n            int cur = queue.poll(); // 当前选中的文件\n            result.add(cur);\n            for (int file : umap.get(cur)) {\n                inDegree[file]--; // cur的指向的文件入度-1\n                if (inDegree[file] == 0) {\n                    queue.add(file);\n                }\n            }\n        }\n\n        if (result.size() == n) {\n            for (int i = 0; i < result.size(); i++) {\n                System.out.print(result.get(i));\n                if (i < result.size() - 1) {\n                    System.out.print(\" \");\n                }\n            }\n        } else {\n            System.out.println(-1);\n        }\n    }\n}\n",
+          "description": "Java实现拓扑排序"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque, defaultdict\ndef topological_sort(n, edges):\n    inDegree = [0] * n # inDegree 记录每个文件的入度\n    umap = defaultdict(list) # 记录文件依赖关系\n\n    # 构建图和入度表\n    for s, t in edges:\n        inDegree[t] += 1\n        umap[s].append(t)\n\n    # 初始化队列，加入所有入度为0的节点\n    queue = deque([i for i in range(n) if inDegree[i] == 0])\n    result = []\n\n    while queue:\n        cur = queue.popleft()  # 当前选中的文件\n        result.append(cur)\n        for file in umap[cur]:  # 获取该文件指向的文件\n            inDegree[file] -= 1  # cur的指向的文件入度-1\n            if inDegree[file] == 0:\n                queue.append(file)\n\n    if len(result) == n:\n        print(\" \".join(map(str, result)))\n    else:\n        print(-1)\n\nif __name__ == \"__main__\":\n    n, m = map(int, input().split())\n    edges = [tuple(map(int, input().split())) for _ in range(m)]\n    topological_sort(n, edges)\n",
+          "description": "Python实现拓扑排序"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "写代码",
+      "text": "理解思想后，确实不难，但代码写起来也不容易。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <unordered_map>\nusing namespace std;\nint main() {\n    int m, n, s, t;\n    cin >> n >> m;\n    vector<int> inDegree(n, 0); // 记录每个文件的入度\n\n    unordered_map<int, vector<int>> umap;// 记录文件依赖关系\n    vector<int> result; // 记录结果\n\n    while (m--) {\n        // s->t，先有s才能有t\n        cin >> s >> t;\n        inDegree[t]++; // t的入度加一\n        umap[s].push_back(t); // 记录s指向哪些文件\n    }\n    queue<int> que;\n    for (int i = 0; i < n; i++) {\n        // 入度为0的文件，可以作为开头，先加入队列\n        if (inDegree[i] == 0) que.push(i);\n        //cout << inDegree[i] << endl;\n    }\n    // int count = 0;\n    while (que.size()) {\n        int  cur = que.front(); // 当前选中的文件\n        que.pop();\n        //count++;\n        result.push_back(cur);\n        vector<int> files = umap[cur]; //获取该文件指向的文件\n        if (files.size()) { // cur有后续文件\n            for (int i = 0; i < files.size(); i++) {\n                inDegree[files[i]] --; // cur的指向的文件入度-1\n                if(inDegree[files[i]] == 0) que.push(files[i]);\n            }\n        }\n    }\n    if (result.size() == n) {\n        for (int i = 0; i < n - 1; i++) cout << result[i] << \" \";\n        cout << result[n - 1];\n    } else cout << -1 << endl;\n}",
+          "description": "使用C++实现拓扑排序算法来解决软件构建问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n\n        List<List<Integer>> umap = new ArrayList<>(); // 记录文件依赖关系\n        int[] inDegree = new int[n]; // 记录每个文件的入度\n\n        for (int i = 0; i < n; i++)\n            umap.add(new ArrayList<>());\n\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            umap.get(s).add(t); // 记录s指向哪些文件\n            inDegree[t]++; // t的入度加一\n        }\n\n        Queue<Integer> queue = new LinkedList<>();\n        for (int i = 0; i < n; i++) {\n            if (inDegree[i] == 0) {\n                // 入度为0的文件，可以作为开头，先加入队列\n                queue.add(i);\n            }\n        }\n\n        List<Integer> result = new ArrayList<>();\n\n        // 拓扑排序\n        while (!queue.isEmpty()) {\n            int cur = queue.poll(); // 当前选中的文件\n            result.add(cur);\n            for (int file : umap.get(cur)) {\n                inDegree[file]--; // cur的指向的文件入度-1\n                if (inDegree[file] == 0) {\n                    queue.add(file);\n                }\n            }\n        }\n\n        if (result.size() == n) {\n            for (int i = 0; i < result.size(); i++) {\n                System.out.print(result.get(i));\n                if (i < result.size() - 1) {\n                    System.out.print(\" \");\n                }\n            }\n        } else {\n            System.out.println(-1);\n        }\n    }\n}",
+          "description": "使用Java实现拓扑排序算法来解决软件构建问题。"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque, defaultdict\ndef topological_sort(n, edges):\n    inDegree = [0] * n # inDegree 记录每个文件的入度\n    umap = defaultdict(list) # 记录文件依赖关系\n\n    # 构建图和入度表\n    for s, t in edges:\n        inDegree[t] += 1\n        umap[s].append(t)\n\n    # 初始化队列，加入所有入度为0的节点\n    queue = deque([i for i in range(n) if inDegree[i] == 0])\n    result = []\n\n    while queue:\n        cur = queue.popleft()  # 当前选中的文件\n        result.append(cur)\n        for file in umap[cur]:  # 获取该文件指向的文件\n            inDegree[file] -= 1  # cur的指向的文件入度-1\n            if inDegree[file] == 0:\n                queue.append(file)\n\n    if len(result) == n:\n        print(\" \".join(map(str, result)))\n    else:\n        print(-1)\n\nif __name__ == \"__main__\":\n    n, m = map(int, input().split())\n    edges = [tuple(map(int, input().split())) for _ in range(m)]\n    topological_sort(n, edges)",
+          "description": "使用Python实现拓扑排序算法来解决软件构建问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <unordered_map>\nusing namespace std;\nint main() {\n    int m, n, s, t;\n    cin >> n >> m;\n    vector<int> inDegree(n, 0); // 记录每个文件的入度\n\n    unordered_map<int, vector<int>> umap;// 记录文件依赖关系\n    vector<int> result; // 记录结果\n\n    while (m--) {\n        // s->t，先有s才能有t\n        cin >> s >> t;\n        inDegree[t]++; // t的入度加一\n        umap[s].push_back(t); // 记录s指向哪些文件\n    }\n    queue<int> que;\n    for (int i = 0; i < n; i++) {\n        // 入度为0的文件，可以作为开头，先加入队列\n        if (inDegree[i] == 0) que.push(i);\n        //cout << inDegree[i] << endl;\n    }\n    // int count = 0;\n    while (que.size()) {\n        int  cur = que.front(); // 当前选中的文件\n        que.pop();\n        //count++;\n        result.push_back(cur);\n        vector<int> files = umap[cur]; //获取该文件指向的文件\n        if (files.size()) { // cur有后续文件\n            for (int i = 0; i < files.size(); i++) {\n                inDegree[files[i]] --; // cur的指向的文件入度-1\n                if(inDegree[files[i]] == 0) que.push(files[i]);\n            }\n        }\n    }\n    if (result.size() == n) {\n        for (int i = 0; i < n - 1; i++) cout << result[i] << \" \";\n        cout << result[n - 1];\n    } else cout << -1 << endl;\n}",
+          "description": "C++版本的拓扑排序算法实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n\n        List<List<Integer>> umap = new ArrayList<>(); // 记录文件依赖关系\n        int[] inDegree = new int[n]; // 记录每个文件的入度\n\n        for (int i = 0; i < n; i++)\n            umap.add(new ArrayList<>());\n\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            umap.get(s).add(t); // 记录s指向哪些文件\n            inDegree[t]++; // t的入度加一\n        }\n\n        Queue<Integer> queue = new LinkedList<>();\n        for (int i = 0; i < n; i++) {\n            if (inDegree[i] == 0) {\n                // 入度为0的文件，可以作为开头，先加入队列\n                queue.add(i);\n            }\n        }\n\n        List<Integer> result = new ArrayList<>();\n\n        // 拓扑排序\n        while (!queue.isEmpty()) {\n            int cur = queue.poll(); // 当前选中的文件\n            result.add(cur);\n            for (int file : umap.get(cur)) {\n                inDegree[file]--; // cur的指向的文件入度-1\n                if (inDegree[file] == 0) {\n                    queue.add(file);\n                }\n            }\n        }\n\n        if (result.size() == n) {\n            for (int i = 0; i < result.size(); i++) {\n                System.out.print(result.get(i));\n                if (i < result.size() - 1) {\n                    System.out.print(\" \");\n                }\n            }\n        } else {\n            System.out.println(-1);\n        }\n    }\n}",
+          "description": "Java版本的拓扑排序算法实现"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque, defaultdict\n\ndef topological_sort(n, edges):\n    inDegree = [0] * n # inDegree 记录每个文件的入度\n    umap = defaultdict(list) # 记录文件依赖关系\n\n    # 构建图和入度表\n    for s, t in edges:\n        inDegree[t] += 1\n        umap[s].append(t)\n\n    # 初始化队列，加入所有入度为0的节点\n    queue = deque([i for i in range(n) if inDegree[i] == 0])\n    result = []\n\n    while queue:\n        cur = queue.popleft()  # 当前选中的文件\n        result.append(cur)\n        for file in umap[cur]:  # 获取该文件指向的文件\n            inDegree[file] -= 1  # cur的指向的文件入度-1\n            if inDegree[file] == 0:\n                queue.append(file)\n\n    if len(result) == n:\n        print(\" \".join(map(str, result)))\n    else:\n        print(-1)\n\n\nif __name__ == \"__main__\":\n    n, m = map(int, input().split())\n    edges = [tuple(map(int, input().split())) for _ in range(m)]\n    topological_sort(n, edges)",
+          "description": "Python版本的拓扑排序算法实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "#include <queue>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <unordered_map>\nusing namespace std;\nint main() {\n    int m, n, s, t;\n    cin >> n >> m;\n    vector<int> inDegree(n, 0); // 记录每个文件的入度\n\n    unordered_map<int, vector<int>> umap;// 记录文件依赖关系\n    vector<int> result; // 记录结果\n\n    while (m--) {\n        // s->t，先有s才能有t\n        cin >> s >> t;\n        inDegree[t]++; // t的入度加一\n        umap[s].push_back(t); // 记录s指向哪些文件\n    }\n    queue<int> que;\n    for (int i = 0; i < n; i++) {\n        // 入度为0的文件，可以作为开头，先加入队列\n        if (inDegree[i] == 0) que.push(i);\n    }\n    while (que.size()) {\n        int  cur = que.front(); // 当前选中的文件\n        que.pop();\n        result.push_back(cur);\n        vector<int> files = umap[cur]; //获取该文件指向的文件\n        if (files.size()) { // cur有后续文件\n            for (int i = 0; i < files.size(); i++) {\n                inDegree[files[i]] --; // cur的指向的文件入度-1\n                if(inDegree[files[i]] == 0) que.push(files[i]);\n            }\n        }\n    }\n    if (result.size() == n) {\n        for (int i = 0; i < n - 1; i++) cout << result[i] << \" \";\n        cout << result[n - 1];\n    } else cout << -1 << endl;\n}",
+          "description": "C++实现拓扑排序解决软件构建问题"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n\n        List<List<Integer>> umap = new ArrayList<>(); // 记录文件依赖关系\n        int[] inDegree = new int[n]; // 记录每个文件的入度\n\n        for (int i = 0; i < n; i++)\n            umap.add(new ArrayList<>());\n\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            umap.get(s).add(t); // 记录s指向哪些文件\n            inDegree[t]++; // t的入度加一\n        }\n\n        Queue<Integer> queue = new LinkedList<>();\n        for (int i = 0; i < n; i++) {\n            if (inDegree[i] == 0) {\n                // 入度为0的文件，可以作为开头，先加入队列\n                queue.add(i);\n            }\n        }\n\n        List<Integer> result = new ArrayList<>();\n\n        // 拓扑排序\n        while (!queue.isEmpty()) {\n            int cur = queue.poll(); // 当前选中的文件\n            result.add(cur);\n            for (int file : umap.get(cur)) {\n                inDegree[file]--; // cur的指向的文件入度-1\n                if (inDegree[file] == 0) {\n                    queue.add(file);\n                }\n            }\n        }\n\n        if (result.size() == n) {\n            for (int i = 0; i < result.size(); i++) {\n                System.out.print(result.get(i));\n                if (i < result.size() - 1) {\n                    System.out.print(\" \");\n                }\n            }\n        } else {\n            System.out.println(-1);\n        }\n    }\n}",
+          "description": "Java实现拓扑排序解决软件构建问题"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque, defaultdict\ndef topological_sort(n, edges):\n    inDegree = [0] * n # inDegree 记录每个文件的入度\n    umap = defaultdict(list) # 记录文件依赖关系\n\n    # 构建图和入度表\n    for s, t in edges:\n        inDegree[t] += 1\n        umap[s].append(t)\n\n    # 初始化队列，加入所有入度为0的节点\n    queue = deque([i for i in range(n) if inDegree[i] == 0])\n    result = []\n\n    while queue:\n        cur = queue.popleft()  # 当前选中的文件\n        result.append(cur)\n        for file in umap[cur]:  # 获取该文件指向的文件\n            inDegree[file] -= 1  # cur的指向的文件入度-1\n            if inDegree[file] == 0:\n                queue.append(file)\n\n    if len(result) == n:\n        print(\" \".join(map(str, result)))\n    else:\n        print(-1)\n\nif __name__ == \"__main__\":\n    n, m = map(int, input().split())\n    edges = [tuple(map(int, input().split())) for _ in range(m)]\n    topological_sort(n, edges)",
+          "description": "Python实现拓扑排序解决软件构建问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <queue>",
+      "text": "#include <unordered_map>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <unordered_map>\nusing namespace std;\nint main() {\n    int m, n, s, t;\n    cin >> n >> m;\n    vector<int> inDegree(n, 0); // 记录每个文件的入度\n\n    unordered_map<int, vector<int>> umap;// 记录文件依赖关系\n    vector<int> result; // 记录结果\n\n    while (m--) {\n        // s->t，先有s才能有t\n        cin >> s >> t;\n        inDegree[t]++; // t的入度加一\n        umap[s].push_back(t); // 记录s指向哪些文件\n    }\n    queue<int> que;\n    for (int i = 0; i < n; i++) {\n        // 入度为0的文件，可以作为开头，先加入队列\n        if (inDegree[i] == 0) que.push(i);\n        //cout << inDegree[i] << endl;\n    }\n    // int count = 0;\n    while (que.size()) {\n        int  cur = que.front(); // 当前选中的文件\n        que.pop();\n        //count++;\n        result.push_back(cur);\n        vector<int> files = umap[cur]; //获取该文件指向的文件\n        if (files.size()) { // cur有后续文件\n            for (int i = 0; i < files.size(); i++) {\n                inDegree[files[i]] --; // cur的指向的文件入度-1\n                if(inDegree[files[i]] == 0) que.push(files[i]);\n            }\n        }\n    }\n    if (result.size() == n) {\n        for (int i = 0; i < n - 1; i++) cout << result[i] << \" \";\n        cout << result[n - 1];\n    } else cout << -1 << endl;\n}",
+          "description": "C++版本的拓扑排序实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n\n        List<List<Integer>> umap = new ArrayList<>(); // 记录文件依赖关系\n        int[] inDegree = new int[n]; // 记录每个文件的入度\n\n        for (int i = 0; i < n; i++)\n            umap.add(new ArrayList<>());\n\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            umap.get(s).add(t); // 记录s指向哪些文件\n            inDegree[t]++; // t的入度加一\n        }\n\n        Queue<Integer> queue = new LinkedList<>();\n        for (int i = 0; i < n; i++) {\n            if (inDegree[i] == 0) {\n                // 入度为0的文件，可以作为开头，先加入队列\n                queue.add(i);\n            }\n        }\n\n        List<Integer> result = new ArrayList<>();\n\n        // 拓扑排序\n        while (!queue.isEmpty()) {\n            int cur = queue.poll(); // 当前选中的文件\n            result.add(cur);\n            for (int file : umap.get(cur)) {\n                inDegree[file]--; // cur的指向的文件入度-1\n                if (inDegree[file] == 0) {\n                    queue.add(file);\n                }\n            }\n        }\n\n        if (result.size() == n) {\n            for (int i = 0; i < result.size(); i++) {\n                System.out.print(result.get(i));\n                if (i < result.size() - 1) {\n                    System.out.print(\" \");\n                }\n            }\n        } else {\n            System.out.println(-1);\n        }\n    }\n}",
+          "description": "Java版本的拓扑排序实现"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque, defaultdict\n\ndef topological_sort(n, edges):\n    inDegree = [0] * n # inDegree 记录每个文件的入度\n    umap = defaultdict(list) # 记录文件依赖关系\n\n    # 构建图和入度表\n    for s, t in edges:\n        inDegree[t] += 1\n        umap[s].append(t)\n\n    # 初始化队列，加入所有入度为0的节点\n    queue = deque([i for i in range(n) if inDegree[i] == 0])\n    result = []\n\n    while queue:\n        cur = queue.popleft()  # 当前选中的文件\n        result.append(cur)\n        for file in umap[cur]:  # 获取该文件指向的文件\n            inDegree[file] -= 1  # cur的指向的文件入度-1\n            if inDegree[file] == 0:\n                queue.append(file)\n\n    if len(result) == n:\n        print(\" \".join(map(str, result)))\n    else:\n        print(-1)\n\nif __name__ == \"__main__\":\n    n, m = map(int, input().split())\n    edges = [tuple(map(int, input().split())) for _ in range(m)]\n    topological_sort(n, edges)",
+          "description": "Python版本的拓扑排序实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <unordered_map>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <unordered_map>\nusing namespace std;\nint main() {\n    int m, n, s, t;\n    cin >> n >> m;\n    vector<int> inDegree(n, 0); // 记录每个文件的入度\n\n    unordered_map<int, vector<int>> umap;// 记录文件依赖关系\n    vector<int> result; // 记录结果\n\n    while (m--) {\n        // s->t，先有s才能有t\n        cin >> s >> t;\n        inDegree[t]++; // t的入度加一\n        umap[s].push_back(t); // 记录s指向哪些文件\n    }\n    queue<int> que;\n    for (int i = 0; i < n; i++) {\n        // 入度为0的文件，可以作为开头，先加入队列\n        if (inDegree[i] == 0) que.push(i);\n    }\n    while (que.size()) {\n        int  cur = que.front(); // 当前选中的文件\n        que.pop();\n        result.push_back(cur);\n        vector<int> files = umap[cur]; //获取该文件指向的文件\n        if (files.size()) { // cur有后续文件\n            for (int i = 0; i < files.size(); i++) {\n                inDegree[files[i]] --; // cur的指向的文件入度-1\n                if(inDegree[files[i]] == 0) que.push(files[i]);\n            }\n        }\n    }\n    if (result.size() == n) {\n        for (int i = 0; i < n - 1; i++) cout << result[i] << \" \";\n        cout << result[n - 1];\n    } else cout << -1 << endl;\n}",
+          "description": "使用C++实现拓扑排序算法。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n\n        List<List<Integer>> umap = new ArrayList<>(); // 记录文件依赖关系\n        int[] inDegree = new int[n]; // 记录每个文件的入度\n\n        for (int i = 0; i < n; i++)\n            umap.add(new ArrayList<>());\n\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            umap.get(s).add(t); // 记录s指向哪些文件\n            inDegree[t]++; // t的入度加一\n        }\n\n        Queue<Integer> queue = new LinkedList<>();\n        for (int i = 0; i < n; i++) {\n            if (inDegree[i] == 0) {\n                // 入度为0的文件，可以作为开头，先加入队列\n                queue.add(i);\n            }\n        }\n\n        List<Integer> result = new ArrayList<>();\n\n        // 拓扑排序\n        while (!queue.isEmpty()) {\n            int cur = queue.poll(); // 当前选中的文件\n            result.add(cur);\n            for (int file : umap.get(cur)) {\n                inDegree[file]--; // cur的指向的文件入度-1\n                if (inDegree[file] == 0) {\n                    queue.add(file);\n                }\n            }\n        }\n\n        if (result.size() == n) {\n            for (int i = 0; i < result.size(); i++) {\n                System.out.print(result.get(i));\n                if (i < result.size() - 1) {\n                    System.out.print(\" \");\n                }\n            }\n        } else {\n            System.out.println(-1);\n        }\n    }\n}",
+          "description": "使用Java实现拓扑排序算法。"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque, defaultdict\ndef topological_sort(n, edges):\n    inDegree = [0] * n # inDegree 记录每个文件的入度\n    umap = defaultdict(list) # 记录文件依赖关系\n\n    # 构建图和入度表\n    for s, t in edges:\n        inDegree[t] += 1\n        umap[s].append(t)\n\n    # 初始化队列，加入所有入度为0的节点\n    queue = deque([i for i in range(n) if inDegree[i] == 0])\n    result = []\n\n    while queue:\n        cur = queue.popleft()  # 当前选中的文件\n        result.append(cur)\n        for file in umap[cur]:  # 获取该文件指向的文件\n            inDegree[file] -= 1  # cur的指向的文件入度-1\n            if inDegree[file] == 0:\n                queue.append(file)\n\n    if len(result) == n:\n        print(\" \".join(map(str, result)))\n    else:\n        print(-1)\nif __name__ == \"__main__\":\n    n, m = map(int, input().split())\n    edges = [tuple(map(int, input().split())) for _ in range(m)]\n    topological_sort(n, edges)",
+          "description": "使用Python实现拓扑排序算法。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "import java.util.*; public class Main { public static void main(String[] args) { Scanner scanner = new Scanner(System.in); int n = scanner.nextInt(); int m = scanner.nextInt(); List<List<Integer>> umap = new ArrayList<>(); int[] inDegree = new int[n]; for (int i = 0; i < n; i++) umap.add(new ArrayList<>()); for (int i = 0; i < m; i++) { int s = scanner.nextInt(); int t = scanner.nextInt(); umap.get(s).add(t); inDegree[t]++; } Queue<Integer> queue = new LinkedList<>(); for (int i = 0; i < n; i++) { if (inDegree[i] == 0) { queue.add(i); } } List<Integer> result = new ArrayList<>(); while (!queue.isEmpty()) { int cur = queue.poll(); result.add(cur); for (int file : umap.get(cur)) { inDegree[file]--; if (inDegree[file] == 0) { queue.add(file); } } } if (result.size() == n) { for (int i = 0; i < result.size(); i++) { System.out.print(result.get(i)); if (i < result.size() - 1) { System.out.print(\" \"); } } } else { System.out.println(-1); } } }",
+          "description": "使用Java实现的拓扑排序算法，处理文件依赖关系并输出正确的文件处理顺序。"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque, defaultdict def topological_sort(n, edges): inDegree = [0] * n umap = defaultdict(list) for s, t in edges: inDegree[t] += 1 umap[s].append(t) queue = deque([i for i in range(n) if inDegree[i] == 0]) result = [] while queue: cur = queue.popleft() result.append(cur) for file in umap[cur]: inDegree[file] -= 1 if inDegree[file] == 0: queue.append(file) if len(result) == n: print(\" \".join(map(str, result))) else: print(-1) if __name__ == \"__main__\": n, m = map(int, input().split()) edges = [tuple(map(int, input().split())) for _ in range(m)] topological_sort(n, edges)",
+          "description": "使用Python实现的拓扑排序算法，处理文件依赖关系并输出正确的文件处理顺序。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream> #include <vector> #include <queue> #include <unordered_map> using namespace std; int main() { int m, n, s, t; cin >> n >> m; vector<int> inDegree(n, 0); unordered_map<int, vector<int>> umap; vector<int> result; while (m--) { cin >> s >> t; inDegree[t]++; umap[s].push_back(t); } queue<int> que; for (int i = 0; i < n; i++) { if (inDegree[i] == 0) que.push(i); } while (que.size()) { int cur = que.front(); que.pop(); result.push_back(cur); vector<int> files = umap[cur]; if (files.size()) { for (int i = 0; i < files.size(); i++) { inDegree[files[i]] --; if(inDegree[files[i]] == 0) que.push(files[i]); } } } if (result.size() == n) { for (int i = 0; i < n - 1; i++) cout << result[i] << \" \"; cout << result[n - 1]; } else cout << -1 << endl; }",
+          "description": "使用C++实现的拓扑排序算法，处理文件依赖关系并输出正确的文件处理顺序。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "import java.util.*;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <unordered_map>\nusing namespace std;\nint main() {\n    int m, n, s, t;\n    cin >> n >> m;\n    vector<int> inDegree(n, 0); // 记录每个文件的入度\n\n    unordered_map<int, vector<int>> umap;// 记录文件依赖关系\n    vector<int> result; // 记录结果\n\n    while (m--) {\n        // s->t，先有s才能有t\n        cin >> s >> t;\n        inDegree[t]++; // t的入度加一\n        umap[s].push_back(t); // 记录s指向哪些文件\n    }\n    queue<int> que;\n    for (int i = 0; i < n; i++) {\n        // 入度为0的文件，可以作为开头，先加入队列\n        if (inDegree[i] == 0) que.push(i);\n        //cout << inDegree[i] << endl;\n    }\n    // int count = 0;\n    while (que.size()) {\n        int  cur = que.front(); // 当前选中的文件\n        que.pop();\n        //count++;\n        result.push_back(cur);\n        vector<int> files = umap[cur]; //获取该文件指向的文件\n        if (files.size()) { // cur有后续文件\n            for (int i = 0; i < files.size(); i++) {\n                inDegree[files[i]] --; // cur的指向的文件入度-1\n                if(inDegree[files[i]] == 0) que.push(files[i]);\n            }\n        }\n    }\n    if (result.size() == n) {\n        for (int i = 0; i < n - 1; i++) cout << result[i] << \" \";\n        cout << result[n - 1];\n    } else cout << -1 << endl;\n}",
+          "description": "使用C++实现拓扑排序算法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n\n        List<List<Integer>> umap = new ArrayList<>(); // 记录文件依赖关系\n        int[] inDegree = new int[n]; // 记录每个文件的入度\n\n        for (int i = 0; i < n; i++)\n            umap.add(new ArrayList<>());\n\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            umap.get(s).add(t); // 记录s指向哪些文件\n            inDegree[t]++; // t的入度加一\n        }\n\n        Queue<Integer> queue = new LinkedList<>();\n        for (int i = 0; i < n; i++) {\n            if (inDegree[i] == 0) {\n                // 入度为0的文件，可以作为开头，先加入队列\n                queue.add(i);\n            }\n        }\n\n        List<Integer> result = new ArrayList<>();\n\n        // 拓扑排序\n        while (!queue.isEmpty()) {\n            int cur = queue.poll(); // 当前选中的文件\n            result.add(cur);\n            for (int file : umap.get(cur)) {\n                inDegree[file]--; // cur的指向的文件入度-1\n                if (inDegree[file] == 0) {\n                    queue.add(file);\n                }\n            }\n        }\n\n        if (result.size() == n) {\n            for (int i = 0; i < result.size(); i++) {\n                System.out.print(result.get(i));\n                if (i < result.size() - 1) {\n                    System.out.print(\" \");\n                }\n            }\n        } else {\n            System.out.println(-1);\n        }\n    }\n}",
+          "description": "使用Java实现拓扑排序算法"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque, defaultdict\ndef topological_sort(n, edges):\n    inDegree = [0] * n # inDegree 记录每个文件的入度\n    umap = defaultdict(list) # 记录文件依赖关系\n\n    # 构建图和入度表\n    for s, t in edges:\n        inDegree[t] += 1\n        umap[s].append(t)\n\n    # 初始化队列，加入所有入度为0的节点\n    queue = deque([i for i in range(n) if inDegree[i] == 0])\n    result = []\n\n    while queue:\n        cur = queue.popleft()  # 当前选中的文件\n        result.append(cur)\n        for file in umap[cur]:  # 获取该文件指向的文件\n            inDegree[file] -= 1  # cur的指向的文件入度-1\n            if inDegree[file] == 0:\n                queue.append(file)\n\n    if len(result) == n:\n        print(\" \".join(map(str, result)))\n    else:\n        print(-1)\n\nif __name__ == \"__main__\":\n    n, m = map(int, input().split())\n    edges = [tuple(map(int, input().split())) for _ in range(m)]\n    topological_sort(n, edges)",
+          "description": "使用Python实现拓扑排序算法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "from collections import deque, defaultdict",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <unordered_map>\nusing namespace std;\nint main() {\n    int m, n, s, t;\n    cin >> n >> m;\n    vector<int> inDegree(n, 0); // 记录每个文件的入度\n\n    unordered_map<int, vector<int>> umap;// 记录文件依赖关系\n    vector<int> result; // 记录结果\n\n    while (m--) {\n        // s->t，先有s才能有t\n        cin >> s >> t;\n        inDegree[t]++; // t的入度加一\n        umap[s].push_back(t); // 记录s指向哪些文件\n    }\n    queue<int> que;\n    for (int i = 0; i < n; i++) {\n        // 入度为0的文件，可以作为开头，先加入队列\n        if (inDegree[i] == 0) que.push(i);\n        //cout << inDegree[i] << endl;\n    }\n    // int count = 0;\n    while (que.size()) {\n        int  cur = que.front(); // 当前选中的文件\n        que.pop();\n        //count++;\n        result.push_back(cur);\n        vector<int> files = umap[cur]; //获取该文件指向的文件\n        if (files.size()) { // cur有后续文件\n            for (int i = 0; i < files.size(); i++) {\n                inDegree[files[i]] --; // cur的指向的文件入度-1\n                if(inDegree[files[i]] == 0) que.push(files[i]);\n            }\n        }\n    }\n    if (result.size() == n) {\n        for (int i = 0; i < n - 1; i++) cout << result[i] << \" \";\n        cout << result[n - 1];\n    } else cout << -1 << endl;\n}",
+          "description": "C++实现拓扑排序算法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n\n        List<List<Integer>> umap = new ArrayList<>(); // 记录文件依赖关系\n        int[] inDegree = new int[n]; // 记录每个文件的入度\n\n        for (int i = 0; i < n; i++)\n            umap.add(new ArrayList<>());\n\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            umap.get(s).add(t); // 记录s指向哪些文件\n            inDegree[t]++; // t的入度加一\n        }\n\n        Queue<Integer> queue = new LinkedList<>();\n        for (int i = 0; i < n; i++) {\n            if (inDegree[i] == 0) {\n                // 入度为0的文件，可以作为开头，先加入队列\n                queue.add(i);\n            }\n        }\n\n        List<Integer> result = new ArrayList<>();\n\n        // 拓扑排序\n        while (!queue.isEmpty()) {\n            int cur = queue.poll(); // 当前选中的文件\n            result.add(cur);\n            for (int file : umap.get(cur)) {\n                inDegree[file]--; // cur的指向的文件入度-1\n                if (inDegree[file] == 0) {\n                    queue.add(file);\n                }\n            }\n        }\n\n        if (result.size() == n) {\n            for (int i = 0; i < result.size(); i++) {\n                System.out.print(result.get(i));\n                if (i < result.size() - 1) {\n                    System.out.print(\" \");\n                }\n            }\n        } else {\n            System.out.println(-1);\n        }\n    }\n}",
+          "description": "Java实现拓扑排序算法"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque, defaultdict\ndef topological_sort(n, edges):\n    inDegree = [0] * n # inDegree 记录每个文件的入度\n    umap = defaultdict(list) # 记录文件依赖关系\n\n    # 构建图和入度表\n    for s, t in edges:\n        inDegree[t] += 1\n        umap[s].append(t)\n\n    # 初始化队列，加入所有入度为0的节点\n    queue = deque([i for i in range(n) if inDegree[i] == 0])\n    result = []\n\n    while queue:\n        cur = queue.popleft()  # 当前选中的文件\n        result.append(cur)\n        for file in umap[cur]:  # 获取该文件指向的文件\n            inDegree[file] -= 1  # cur的指向的文件入度-1\n            if inDegree[file] == 0:\n                queue.append(file)\n\n    if len(result) == n:\n        print(\" \".join(map(str, result)))\n    else:\n        print(-1)\n\nif __name__ == \"__main__\":\n    n, m = map(int, input().split())\n    edges = [tuple(map(int, input().split())) for _ in range(m)]\n    topological_sort(n, edges)",
+          "description": "Python实现拓扑排序算法"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <unordered_map>\nusing namespace std;\nint main() {\n    int m, n, s, t;\n    cin >> n >> m;\n    vector<int> inDegree(n, 0); // 记录每个文件的入度\n\n    unordered_map<int, vector<int>> umap;// 记录文件依赖关系\n    vector<int> result; // 记录结果\n\n    while (m--) {\n        // s->t，先有s才能有t\n        cin >> s >> t;\n        inDegree[t]++; // t的入度加一\n        umap[s].push_back(t); // 记录s指向哪些文件\n    }\n    queue<int> que;\n    for (int i = 0; i < n; i++) {\n        // 入度为0的文件，可以作为开头，先加入队列\n        if (inDegree[i] == 0) que.push(i);\n        //cout << inDegree[i] << endl;\n    }\n    // int count = 0;\n    while (que.size()) {\n        int  cur = que.front(); // 当前选中的文件\n        que.pop();\n        //count++;\n        result.push_back(cur);\n        vector<int> files = umap[cur]; //获取该文件指向的文件\n        if (files.size()) { // cur有后续文件\n            for (int i = 0; i < files.size(); i++) {\n                inDegree[files[i]] --; // cur的指向的文件入度-1\n                if(inDegree[files[i]] == 0) que.push(files[i]);\n            }\n        }\n    }\n    if (result.size() == n) {\n        for (int i = 0; i < n - 1; i++) cout << result[i] << \" \";\n        cout << result[n - 1];\n    } else cout << -1 << endl;\n}",
+      "description": "C++实现的拓扑排序算法"
+    },
+    {
+      "language": "java",
+      "code": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n\n        List<List<Integer>> umap = new ArrayList<>(); // 记录文件依赖关系\n        int[] inDegree = new int[n]; // 记录每个文件的入度\n\n        for (int i = 0; i < n; i++)\n            umap.add(new ArrayList<>());\n\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            umap.get(s).add(t); // 记录s指向哪些文件\n            inDegree[t]++; // t的入度加一\n        }\n\n        Queue<Integer> queue = new LinkedList<>();\n        for (int i = 0; i < n; i++) {\n            if (inDegree[i] == 0) {\n                // 入度为0的文件，可以作为开头，先加入队列\n                queue.add(i);\n            }\n        }\n\n        List<Integer> result = new ArrayList<>();\n\n        // 拓扑排序\n        while (!queue.isEmpty()) {\n            int cur = queue.poll(); // 当前选中的文件\n            result.add(cur);\n            for (int file : umap.get(cur)) {\n                inDegree[file]--; // cur的指向的文件入度-1\n                if (inDegree[file] == 0) {\n                    queue.add(file);\n                }\n            }\n        }\n\n        if (result.size() == n) {\n            for (int i = 0; i < result.size(); i++) {\n                System.out.print(result.get(i));\n                if (i < result.size() - 1) {\n                    System.out.print(\" \");\n                }\n            }\n        } else {\n            System.out.println(-1);\n        }\n    }\n}",
+      "description": "Java实现的拓扑排序算法"
+    },
+    {
+      "language": "python",
+      "code": "from collections import deque, defaultdict\ndef topological_sort(n, edges):\n    inDegree = [0] * n # inDegree 记录每个文件的入度\n    umap = defaultdict(list) # 记录文件依赖关系\n\n    # 构建图和入度表\n    for s, t in edges:\n        inDegree[t] += 1\n        umap[s].append(t)\n\n    # 初始化队列，加入所有入度为0的节点\n    queue = deque([i for i in range(n) if inDegree[i] == 0])\n    result = []\n\n    while queue:\n        cur = queue.popleft()  # 当前选中的文件\n        result.append(cur)\n        for file in umap[cur]:  # 获取该文件指向的文件\n            inDegree[file] -= 1  # cur的指向的文件入度-1\n            if inDegree[file] == 0:\n                queue.append(file)\n\n    if len(result) == n:\n        print(\" \".join(map(str, result)))\n    else:\n        print(-1)\n\nif __name__ == \"__main__\":\n    n, m = map(int, input().split())\n    edges = [tuple(map(int, input().split())) for _ in range(m)]\n    topological_sort(n, edges)",
+      "description": "Python实现的拓扑排序算法"
+    }
+  ],
+  "common_mistakes": [
+    "未正确初始化入度数组导致错误识别起点",
+    "在更新其他节点入度时忘记减一",
+    "忽略了检查最终结果集大小以判断是否存在环"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240510192157.png",
+      "description": "这张图片展示了一个有向图的数据结构，包含五个节点（0, 1, 2, 3, 4）和四条有向边，可用于图的遍历或最短路径算法分析。",
+      "context": "该图片展示了文件之间的依赖关系，用于说明如何通过拓扑排序确定文件处理顺序。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240510110836.png",
+      "description": "这张图片展示了一个有向图的数据结构，包含五个节点（0, 1, 2, 3, 4）及其之间的有向边，体现了图论中的基本概念。",
+      "context": "该图示例展示了如何从节点0开始进行拓扑排序的过程，其中节点0的入度为0，是拓扑排序中的起始节点。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240510113110.png",
+      "description": "这张图片展示了一个有向图的拓扑排序过程，节点0作为起点，结果集中首先包含节点0。",
+      "context": "展示了初始状态下图中各节点及其入度情况，用于开始拓扑排序过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240510113142.png",
+      "description": "这张图片展示了两个链表结构，分别是1→3和2→4，暗示了链表相关的算法或数据结构问题。",
+      "context": "展示了从图中移除入度为0的节点后的状态。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240510113345.png",
+      "description": "这张图片展示了两个链表（1->3 和 2->4）的结构，并指出结果集为包含节点值 0 和 1 的集合，暗示了链表相关算法或数据结构的解题过程。",
+      "context": "此图展示了在拓扑排序过程中，当存在多个入度为0的节点（如节点1和节点2）时的选择情况，说明了拓扑排序结果可以不唯一的原因。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240510113640.png",
+      "description": "这张图片展示了一个简单的有向图数据结构，包含节点2和4之间的单向边以及独立的节点3。",
+      "context": "展示了从图中移除一个入度为0的节点后的图形状态。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240510113853.png",
+      "description": "这张图片展示了图的遍历过程，结果集为[0, 1, 2]，当前节点为2，指向下一个节点4，同时显示了节点3的存在。",
+      "context": "展示了节点2和节点3入度都为0的情况，说明在这种情况下选择任一节点开始移除都是可行的。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240510114004.png",
+      "description": "这张图片展示了两个节点（编号为3和4），暗示了数据结构中的链表或树的节点关系，左侧的“代码随想录”标志表明这是与编程算法相关的主题。",
+      "context": "展示了移除节点2后，图中剩余节点的状态，此时节点3和节点4的入度都为0，说明可以任选其一加入结果集。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240510115115.png",
+      "description": "这张图片展示了一个有向图的拓扑排序过程，节点0被标记为结果集中的第一个元素。",
+      "context": "这张图片展示了存在有向环的图示例，用于说明当图中出现环时如何通过检查结果集元素数量是否等于图中节点总数来判断有向环的存在。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240510192157.png",
+      "description": "GIF展示了文件之间依赖关系的构建及其拓扑排序过程，逐步确定了文件处理的正确顺序。",
+      "context": "GIF动画展示了文件之间的依赖关系图，帮助理解如何通过拓扑排序确定文件处理的顺序。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240510110836.png",
+      "description": "GIF展示了使用BFS方法进行拓扑排序的过程，从寻找入度为0的节点开始，逐步移除这些节点并更新图的状态。",
+      "context": "该GIF动画展示了如何从一个有向无环图中通过观察节点的入度来确定拓扑排序的起始节点。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240510113110.png",
+      "description": "GIF展示了拓扑排序过程中，逐步找到入度为0的节点并将其从图中移除的操作。",
+      "context": "此GIF动画展示了从图中找到入度为0的节点并将其加入结果集的过程，是拓扑排序算法的第一步。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240510113142.png",
+      "description": "GIF展示了在拓扑排序过程中，将入度为0的节点从图中移除的操作。",
+      "context": "该GIF展示了在拓扑排序过程中，从图中移除一个入度为0的节点后的图形变化。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240510113345.png",
+      "description": "GIF展示了拓扑排序过程中，从图中移除入度为0的节点并将其加入结果集的操作。",
+      "context": "该GIF动画展示了在拓扑排序过程中，当存在多个入度为0的节点时，选择其中一个加入结果集，并从图中移除的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240510113640.png",
+      "description": "GIF展示了从有向图中移除一个入度为0的节点的过程。",
+      "context": "此GIF展示了在拓扑排序过程中，从图中移除一个入度为0的节点（这里是节点1）后的图形变化。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240510113853.png",
+      "description": "GIF展示了从图中选择入度为0的节点并将其移除的过程，逐步构建拓扑排序结果。",
+      "context": "此GIF展示了在拓扑排序过程中，从图中移除一个入度为0的节点（此处选择节点2）并将其加入结果集的动作。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240510114004.png",
+      "description": "GIF展示了在拓扑排序过程中，选择入度为0的节点加入结果集并从图中移除该节点的过程。",
+      "context": "该GIF展示了在拓扑排序过程中移除一个入度为0的节点（此处选择了节点2）后，更新图结构的状态。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240510115115.png",
+      "description": "GIF展示了在有向图中寻找入度为0的节点并移除的过程，最终揭示了图中存在的有向环。",
+      "context": "该GIF动画展示了在含有有向环的图中执行拓扑排序时，只能将入度为0的节点加入结果集，而无法继续处理形成环的其他节点的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\拓扑排序\\软件构建.txt",
+  "extracted_at": "2025-07-21T21:35:15.307791",
+  "raw_content": "软件构建\n卡码网：117. 软件构建(https://kamacoder.com/problempage.php?pid=1191)\n\n题目描述：\n\n某个大型软件项目的构建系统拥有 N 个文件，文件编号从 0 到 N - 1，在这些文件中，某些文件依赖于其他文件的内容，这意味着如果文件 A 依赖于文件 B，则必须在处理文件 A 之前处理文件 B （0 <= A, B <= N - 1）。请编写一个算法，用于确定文件处理的顺序。\n\n输入描述：\n\n第一行输入两个正整数 N, M。表示 N 个文件之间拥有 M 条依赖关系。\n\n后续 M 行，每行两个正整数 S 和 T，表示 T 文件依赖于 S 文件。\n\n输出描述：\n\n输出共一行，如果能处理成功，则输出文件顺序，用空格隔开。\n\n如果不能成功处理（相互依赖），则输出 -1。\n\n输入示例：\n\n5 4\n0 1\n0 2\n1 3\n2 4\n输出示例：\n\n0 1 2 3 4\n\n提示信息：\n\n文件依赖关系如下：\nhttps://file1.kamacoder.com/i/algo/20240510192157.png\n\n\n所以，文件处理的顺序除了示例中的顺序，还存在\n\n0 2 4 1 3\n\n0 2 1 3 4\n\n等等合法的顺序。\n\n数据范围：\n\n0 <= N <= 10 ^ 5\n1 <= M <= 10 ^ 9\n#拓扑排序的背景\n本题是拓扑排序的经典题目。\n\n一聊到 拓扑排序，一些录友可能会想这是排序，不会想到这是图论算法。\n\n其实拓扑排序是经典的图论问题。\n\n先说说 拓扑排序的应用场景。\n\n大学排课，例如 先上A课，才能上B课，上了B课才能上C课，上了A课才能上D课，等等一系列这样的依赖顺序。 问给规划出一条 完整的上课顺序。\n\n拓扑排序在文件处理上也有应用，我们在做项目安装文件包的时候，经常发现 复杂的文件依赖关系， A依赖B，B依赖C，B依赖D，C依赖E 等等。\n\n如果给出一条线性的依赖顺序来下载这些文件呢？\n\n有录友想上面的例子都很简单啊，我一眼能给排序出来。\n\n那如果上面的依赖关系是一百对呢，一千对甚至上万个依赖关系，这些依赖关系中可能还有循环依赖，你如何发现循环依赖呢，又如果排出线性顺序呢。\n\n所以 拓扑排序就是专门解决这类问题的。\n\n概括来说，给出一个 有向图，把这个有向图转成线性的排序 就叫拓扑排序。\n\n当然拓扑排序也要检测这个有向图 是否有环，即存在循环依赖的情况，因为这种情况是不能做线性排序的。\n\n所以拓扑排序也是图论中判断有向无环图的常用方法。\n\n#拓扑排序的思路\n拓扑排序指的是一种 解决问题的大体思路， 而具体算法，可能是广搜也可能是深搜。\n\n大家可能发现 各式各样的解法，纠结哪个是拓扑排序？\n\n其实只要能在把 有向无环图 进行线性排序 的算法 都可以叫做 拓扑排序。\n\n实现拓扑排序的算法有两种：卡恩算法（BFS）和DFS\n\n卡恩1962年提出这种解决拓扑排序的思路\n\n一般来说我们只需要掌握 BFS （广度优先搜索）就可以了，清晰易懂，如果还想多了解一些，可以再去学一下 DFS 的思路，但 DFS 不是本篇重点。\n\n接下来我们来讲解BFS的实现思路。\n\n以题目中示例为例如图：\nhttps://file1.kamacoder.com/i/algo/20240510110836.png\n\n\n做拓扑排序的话，如果肉眼去找开头的节点，一定能找到 节点0 吧，都知道要从节点0 开始。\n\n但为什么我们能找到 节点0呢，因为我们肉眼看着 这个图就是从 节点0出发的。\n\n作为出发节点，它有什么特征？\n\n你看节点0 的入度 为0 出度为2， 也就是 没有边指向它，而它有两条边是指出去的。\n\n节点的入度表示 有多少条边指向它，节点的出度表示有多少条边 从该节点出发。\n\n所以当我们做拓扑排序的时候，应该优先找 入度为 0 的节点，只有入度为0，它才是出发节点。 理解以上内容很重要！\n\n接下来我给出 拓扑排序的过程，其实就两步：\n\n找到入度为0 的节点，加入结果集\n将该节点从图中移除\n循环以上两步，直到 所有节点都在图中被移除了。\n\n结果集的顺序，就是我们想要的拓扑排序顺序 （结果集里顺序可能不唯一）\n\n#模拟过程\n用本题的示例来模拟这一过程：\n\n1、找到入度为0 的节点，加入结果集\n\nhttps://file1.kamacoder.com/i/algo/20240510113110.png\n\n2、将该节点从图中移除\n\nhttps://file1.kamacoder.com/i/algo/20240510113142.png\n\n1、找到入度为0 的节点，加入结果集\n\nhttps://file1.kamacoder.com/i/algo/20240510113345.png\n\n这里大家会发现，节点1 和 节点2 入度都为0， 选哪个呢？\n\n选哪个都行，所以这也是为什么拓扑排序的结果是不唯一的。\n\n2、将该节点从图中移除\n\nhttps://file1.kamacoder.com/i/algo/20240510113640.png\n\n1、找到入度为0 的节点，加入结果集\n\nhttps://file1.kamacoder.com/i/algo/20240510113853.png\n\n节点2 和 节点3 入度都为0，选哪个都行，这里选节点2\n\n2、将该节点从图中移除\n\nhttps://file1.kamacoder.com/i/algo/20240510114004.png\n\n后面的过程一样的，节点3 和 节点4，入度都为0，选哪个都行。\n\n最后结果集为： 0 1 2 3 4 。当然结果不唯一的。\n\n#判断有环\n如果有 有向环怎么办呢？例如这个图：\nhttps://file1.kamacoder.com/i/algo/20240510115115.png\n\n\n这个图，我们只能将入度为0 的节点0 接入结果集。\n\n之后，节点1、2、3、4 形成了环，找不到入度为0 的节点了，所以此时结果集里只有一个元素。\n\n那么如果我们发现结果集元素个数 不等于 图中节点个数，我们就可以认定图中一定有 有向环！\n\n这也是拓扑排序判断有向环的方法。\n\n通过以上过程的模拟大家会发现这个拓扑排序好像不难，还有点简单。\n\n#写代码\n理解思想后，确实不难，但代码写起来也不容易。\n\n为了每次可以找到所有节点的入度信息，我们要在初始化的时候，就把每个节点的入度 和 每个节点的依赖关系做统计。\n\n代码如下：\n\ncin >> n >> m;\nvector<int> inDegree(n, 0); // 记录每个文件的入度\nvector<int> result; // 记录结果\nunordered_map<int, vector<int>> umap; // 记录文件依赖关系\n\nwhile (m--) {\n    // s->t，先有s才能有t\n    cin >> s >> t;\n    inDegree[t]++; // t的入度加一\n    umap[s].push_back(t); // 记录s指向哪些文件\n}\n\n找入度为0 的节点，我们需要用一个队列放存放。\n\n因为每次寻找入度为0的节点，不一定只有一个节点，可能很多节点入度都为0，所以要将这些入度为0的节点放到队列里，依次去处理。\n\n代码如下：\n\n\nqueue<int> que;\nfor (int i = 0; i < n; i++) {\n    // 入度为0的节点，可以作为开头，先加入队列\n    if (inDegree[i] == 0) que.push(i);\n}\n开始从队列里遍历入度为0 的节点，将其放入结果集。\n\n\nwhile (que.size()) {\n    int  cur = que.front(); // 当前选中的节点\n    que.pop();\n    result.push_back(cur);\n    // 将该节点从图中移除 \n\n}\n这里面还有一个很重要的过程，如何把这个入度为0的节点从图中移除呢？\n\n首先我们为什么要把节点从图中移除？\n\n为的是将 该节点作为出发点所连接的边删掉。\n\n删掉的目的是什么呢？\n\n要把 该节点作为出发点所连接的节点的 入度 减一。\n\n如果这里不理解，看上面的模拟过程第一步：\n\nhttps://file1.kamacoder.com/i/algo/20240510113110.png\n\n这事节点1 和 节点2 的入度为 1。\n\n将节点0删除后，图为这样：\n\nhttps://file1.kamacoder.com/i/algo/20240510113142.png\n\n那么 节点0 作为出发点 所连接的节点的入度 就都做了 减一 的操作。\n\n此时 节点1 和 节点 2 的入度都为0， 这样才能作为下一轮选取的节点。\n\n所以，我们在代码实现的过程中，本质是要将 该节点作为出发点所连接的节点的 入度 减一 就可以了，这样好能根据入度找下一个节点，不用真在图里把这个节点删掉。\n\n该过程代码如下：\n\n\nwhile (que.size()) {\n    int  cur = que.front(); // 当前选中的节点\n    que.pop();\n    result.push_back(cur);\n    // 将该节点从图中移除 \n    vector<int> files = umap[cur]; //获取cur指向的节点\n    if (files.size()) { // 如果cur有指向的节点\n        for (int i = 0; i < files.size(); i++) { // 遍历cur指向的节点\n            inDegree[files[i]] --; // cur指向的节点入度都做减一操作\n            // 如果指向的节点减一之后，入度为0，说明是我们要选取的下一个节点，放入队列。\n            if(inDegree[files[i]] == 0) que.push(files[i]); \n        }\n    }\n\n}\n最后代码如下：\n\n#include <iostream>\n#include <vector>\n#include <queue>\n#include <unordered_map>\nusing namespace std;\nint main() {\n    int m, n, s, t;\n    cin >> n >> m;\n    vector<int> inDegree(n, 0); // 记录每个文件的入度\n\n    unordered_map<int, vector<int>> umap;// 记录文件依赖关系\n    vector<int> result; // 记录结果\n\n    while (m--) {\n        // s->t，先有s才能有t\n        cin >> s >> t;\n        inDegree[t]++; // t的入度加一\n        umap[s].push_back(t); // 记录s指向哪些文件\n    }\n    queue<int> que;\n    for (int i = 0; i < n; i++) {\n        // 入度为0的文件，可以作为开头，先加入队列\n        if (inDegree[i] == 0) que.push(i);\n        //cout << inDegree[i] << endl;\n    }\n    // int count = 0;\n    while (que.size()) {\n        int  cur = que.front(); // 当前选中的文件\n        que.pop();\n        //count++;\n        result.push_back(cur);\n        vector<int> files = umap[cur]; //获取该文件指向的文件\n        if (files.size()) { // cur有后续文件\n            for (int i = 0; i < files.size(); i++) {\n                inDegree[files[i]] --; // cur的指向的文件入度-1\n                if(inDegree[files[i]] == 0) que.push(files[i]);\n            }\n        }\n    }\n    if (result.size() == n) {\n        for (int i = 0; i < n - 1; i++) cout << result[i] << \" \";\n        cout << result[n - 1];\n    } else cout << -1 << endl;\n\n\n}\n#其他语言版本\n#Java\nimport java.util.*;\n\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n\n        List<List<Integer>> umap = new ArrayList<>(); // 记录文件依赖关系\n        int[] inDegree = new int[n]; // 记录每个文件的入度\n\n        for (int i = 0; i < n; i++)\n            umap.add(new ArrayList<>());\n\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            umap.get(s).add(t); // 记录s指向哪些文件\n            inDegree[t]++; // t的入度加一\n        }\n\n        Queue<Integer> queue = new LinkedList<>();\n        for (int i = 0; i < n; i++) {\n            if (inDegree[i] == 0) {\n                // 入度为0的文件，可以作为开头，先加入队列\n                queue.add(i);\n            }\n        }\n\n        List<Integer> result = new ArrayList<>();\n\n        // 拓扑排序\n        while (!queue.isEmpty()) {\n            int cur = queue.poll(); // 当前选中的文件\n            result.add(cur);\n            for (int file : umap.get(cur)) {\n                inDegree[file]--; // cur的指向的文件入度-1\n                if (inDegree[file] == 0) {\n                    queue.add(file);\n                }\n            }\n        }\n\n        if (result.size() == n) {\n            for (int i = 0; i < result.size(); i++) {\n                System.out.print(result.get(i));\n                if (i < result.size() - 1) {\n                    System.out.print(\" \");\n                }\n            }\n        } else {\n            System.out.println(-1);\n        }\n    }\n}\n#Python\nfrom collections import deque, defaultdict\n\ndef topological_sort(n, edges):\n    inDegree = [0] * n # inDegree 记录每个文件的入度\n    umap = defaultdict(list) # 记录文件依赖关系\n\n    # 构建图和入度表\n    for s, t in edges:\n        inDegree[t] += 1\n        umap[s].append(t)\n\n    # 初始化队列，加入所有入度为0的节点\n    queue = deque([i for i in range(n) if inDegree[i] == 0])\n    result = []\n\n    while queue:\n        cur = queue.popleft()  # 当前选中的文件\n        result.append(cur)\n        for file in umap[cur]:  # 获取该文件指向的文件\n            inDegree[file] -= 1  # cur的指向的文件入度-1\n            if inDegree[file] == 0:\n                queue.append(file)\n\n    if len(result) == n:\n        print(\" \".join(map(str, result)))\n    else:\n        print(-1)\n\n\nif __name__ == \"__main__\":\n    n, m = map(int, input().split())\n    edges = [tuple(map(int, input().split())) for _ in range(m)]\n    topological_sort(n, edges)"
+}

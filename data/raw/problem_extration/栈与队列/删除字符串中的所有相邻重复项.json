@@ -1,0 +1,317 @@
+{
+  "id": "AP_f7661c24",
+  "title": "删除字符串中的所有相邻重复项",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/remove-all-adjacent-duplicates-in-string/",
+  "description": "给出由小写字母组成的字符串 S，重复项删除操作会选择两个相邻且相同的字母，并删除它们。\n\n在 S 上反复执行重复项删除操作，直到无法继续删除。\n\n在完成所有重复项删除操作后返回最终的字符串。答案保证唯一。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "栈",
+    "字符串处理"
+  ],
+  "data_structure_tags": [
+    "栈"
+  ],
+  "technique_tags": [
+    "迭代",
+    "双端队列",
+    "双指针"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用栈来存储遍历过的字符，当遇到与栈顶相同的字符时，从栈中弹出该元素（即删除相邻重复项）。最后将栈中的剩余元素组成字符串并反转得到最终结果。此外，也可以直接用一个字符串作为栈来进行操作，这样可以省去栈转为字符串的过程。",
+  "key_insights": [
+    {
+      "content": "通过栈的数据结构特性，能够有效地解决寻找和删除相邻相同元素的问题，类似于解决括号匹配问题的方式。"
+    },
+    {
+      "content": "在本题中，直接利用字符串本身作为栈不仅可以简化代码实现，还能避免额外的数据转换步骤。"
+    },
+    {
+      "content": "除了使用栈外，还可以采用双指针的方法来模拟栈的操作，从而实现空间复杂度优化。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "正题",
+      "text": "本题要删除相邻相同元素，相对于20. 有效的括号 (https://programmercarl.com/0020.%E6%9C%89%E6%95%88%E7%9A%84%E6%8B%AC%E5%8F%B7.html)来说其实也是匹配问题，20. 有效的括号 是匹配左右括号，本题是匹配相邻元素，最后都是做消除的操作。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: string removeDuplicates(string S) {stack<char> st; for (char s : S) {if (st.empty() || s != st.top()) {st.push(s);} else {st.pop();}}string result = \"\"; while (!st.empty()) {result += st.top(); st.pop();}reverse (result.begin(), result.end());return result;}};",
+          "description": "C++解决方案，使用栈来解决相邻重复项删除问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: string removeDuplicates(string S) {string result;for(char s : S) {if(result.empty() || result.back() != s) {result.push_back(s);}else {result.pop_back();}}return result;}};",
+          "description": "C++解决方案，直接使用字符串作为栈来解决相邻重复项删除问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String removeDuplicates(String S) {ArrayDeque<Character> deque = new ArrayDeque<>();char ch;for (int i = 0; i < S.length(); i++) {ch = S.charAt(i);if (deque.isEmpty() || deque.peek() != ch) {deque.push(ch);} else {deque.pop();}}String str = \"\";while (!deque.isEmpty()) {str = deque.pop() + str;}return str;}}",
+          "description": "Java解决方案，使用双端队列作为栈来解决相邻重复项删除问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String removeDuplicates(String s) {StringBuffer res = new StringBuffer();int top = -1;for (int i = 0; i < s.length(); i++) {char c = s.charAt(i);if (top >= 0 && res.charAt(top) == c) {res.deleteCharAt(top);top--;} else {res.append(c);top++;}}return res.toString();}}",
+          "description": "Java解决方案，直接用字符串缓冲区作为栈来处理相邻重复项删除问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String removeDuplicates(String s) {char[] ch = s.toCharArray();int fast = 0, slow = 0;while(fast < s.length()){ch[slow] = ch[fast];if(slow > 0 && ch[slow] == ch[slow - 1]){slow--;}else{slow++;}fast++;}return new String(ch,0,slow);}}",
+          "description": "Java解决方案，使用双指针方法解决相邻重复项删除问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeDuplicates(self, s: str) -> str: res = list() for item in s: if res and res[-1] == item: res.pop() else: res.append(item) return \".join(res)",
+          "description": "Python解决方案，使用列表模拟栈来处理相邻重复项删除问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeDuplicates(self, s: str) -> str: res = list(s) slow = fast = 0 length = len(res) while fast < length: res[slow] = res[fast] if slow > 0 and res[slow] == res[slow - 1]: slow -= 1 else: slow += 1 fast += 1 return ''.join(res[0: slow])",
+          "description": "Python解决方案，采用双指针技术模拟栈行为以解决相邻重复项删除问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "题外话",
+      "text": "这道题目就像是我们玩过的游戏对对碰，如果相同的元素挨在一起就要消除。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: string removeDuplicates(string S) {stack<char> st; for (char s : S) {if (st.empty() || s != st.top()) {st.push(s);} else {st.pop();}} string result = \"\"; while (!st.empty()) {result += st.top(); st.pop();} reverse (result.begin(), result.end()); return result;}};",
+          "description": "使用栈来消除相邻重复项"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: string removeDuplicates(string S) {string result; for(char s : S) {if(result.empty() || result.back() != s) {result.push_back(s);}else {result.pop_back();}} return result;}};",
+          "description": "直接用字符串作为栈来消除相邻重复项"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String removeDuplicates(String S) {ArrayDeque<Character> deque = new ArrayDeque<>(); char ch; for (int i = 0; i < S.length(); i++) {ch = S.charAt(i); if (deque.isEmpty() || deque.peek() != ch) {deque.push(ch);} else {deque.pop();}} String str = \"\"; while (!deque.isEmpty()) {str = deque.pop() + str;} return str;}}",
+          "description": "使用 Deque 作为堆栈来消除相邻重复项"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String removeDuplicates(String s) {StringBuffer res = new StringBuffer(); int top = -1; for (int i = 0; i < s.length(); i++) {char c = s.charAt(i); if (top >= 0 && res.charAt(top) == c) {res.deleteCharAt(top); top--;} else {res.append(c); top++;}} return res.toString();}}",
+          "description": "使用字符串直接作为栈来消除相邻重复项"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String removeDuplicates(String s) {char[] ch = s.toCharArray(); int fast = 0, slow = 0; while(fast < s.length()) {ch[slow] = ch[fast]; if(slow > 0 && ch[slow] == ch[slow - 1]) {slow--;} else {slow++;} fast++;} return new String(ch,0,slow);}}",
+          "description": "使用双指针方法消除相邻重复项"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeDuplicates(self, s: str) -> str: res = list() for item in s: if res and res[-1] == item: res.pop() else: res.append(item) return \".join(res)",
+          "description": "Python中使用列表模拟栈来消除相邻重复项"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeDuplicates(self, s: str) -> str: res = list(s) slow = fast = 0 length = len(res) while fast < length: res[slow] = res[fast] if slow > 0 and res[slow] == res[slow - 1]: slow -= 1 else: slow += 1 fast += 1 return ''.join(res[0: slow])",
+          "description": "Python中使用双指针模拟栈来消除相邻重复项"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "class Solution {public: string removeDuplicates(string S) {stack<char> st; for (char s : S) {if (st.empty() || s != st.top()) {st.push(s);} else {st.pop();}} string result = \"\"; while (!st.empty()) {result += st.top(); st.pop();} reverse (result.begin(), result.end()); return result;}};",
+          "description": "使用栈来解决删除相邻重复项的问题"
+        },
+        {
+          "language": "C++",
+          "code": "class Solution {public: string removeDuplicates(string S) {string result; for(char s : S) {if(result.empty() || result.back() != s) {result.push_back(s);} else {result.pop_back();}} return result;}};",
+          "description": "直接用字符串作为栈来处理"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public String removeDuplicates(String S) {ArrayDeque<Character> deque = new ArrayDeque<>(); char ch; for (int i = 0; i < S.length(); i++) {ch = S.charAt(i); if (deque.isEmpty() || deque.peek() != ch) {deque.push(ch);} else {deque.pop();}} String str = \"\"; while (!deque.isEmpty()) {str = deque.pop() + str;} return str;}}",
+          "description": "使用Deque作为堆栈"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public String removeDuplicates(String s) {StringBuffer res = new StringBuffer(); int top = -1; for (int i = 0; i < s.length(); i++) {char c = s.charAt(i); if (top >= 0 && res.charAt(top) == c) {res.deleteCharAt(top); top--;} else {res.append(c); top++;}} return res.toString();}}",
+          "description": "将字符串直接当作栈使用"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public String removeDuplicates(String s) {char[] ch = s.toCharArray(); int fast = 0, slow = 0; while(fast < s.length()){ch[slow] = ch[fast]; if(slow > 0 && ch[slow] == ch[slow - 1]){slow--;}else{slow++;}fast++;} return new String(ch,0,slow);}}",
+          "description": "采用双指针方法"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def removeDuplicates(self, s: str) -> str: res = list() for item in s: if res and res[-1] == item: res.pop() else: res.append(item) return ''.join(res)",
+          "description": "使用列表模拟栈操作"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def removeDuplicates(self, s: str) -> str: res = list(s) slow = fast = 0 length = len(res) while fast < length: res[slow] = res[fast] if slow > 0 and res[slow] == res[slow - 1]: slow -= 1 else: slow += 1 fast += 1 return ''.join(res[0: slow])",
+          "description": "通过双指针模拟栈"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "使用 Deque 作为堆栈",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: string removeDuplicates(string S) {stack<char> st;for (char s : S) {if (st.empty() || s != st.top()) {st.push(s);} else {st.pop();}}string result = \"\";while (!st.empty()) {result += st.top();st.pop();}reverse (result.begin(), result.end());return result;}};",
+          "description": "使用栈来删除字符串中的所有相邻重复项"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: string removeDuplicates(string S) {string result;for(char s : S) {if(result.empty() || result.back() != s) {result.push_back(s);}else {result.pop_back();}}return result;}};",
+          "description": "直接用字符串作为栈，删除字符串中的所有相邻重复项"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String removeDuplicates(String S) {ArrayDeque<Character> deque = new ArrayDeque<>();char ch;for (int i = 0; i < S.length(); i++) {ch = S.charAt(i);if (deque.isEmpty() || deque.peek() != ch) {deque.push(ch);} else {deque.pop();}}String str = \"\";while (!deque.isEmpty()) {str = deque.pop() + str;}return str;}}",
+          "description": "使用 Deque 作为堆栈删除字符串中的所有相邻重复项"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String removeDuplicates(String s) {StringBuffer res = new StringBuffer();int top = -1;for (int i = 0; i < s.length(); i++) {char c = s.charAt(i);if (top >= 0 && res.charAt(top) == c) {res.deleteCharAt(top);top--;} else {res.append(c);top++;}}return res.toString();}}",
+          "description": "直接用字符串作为栈，删除字符串中的所有相邻重复项"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String removeDuplicates(String s) {char[] ch = s.toCharArray();int fast = 0, slow = 0;while(fast < s.length()){ch[slow] = ch[fast];if(slow > 0 && ch[slow] == ch[slow - 1]){slow--;}else{slow++;}fast++;}return new String(ch,0,slow);}}",
+          "description": "使用双指针方法删除字符串中的所有相邻重复项"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeDuplicates(self, s: str) -> str: res = list() for item in s: if res and res[-1] == item: res.pop() else: res.append(item) return ''.join(res)",
+          "description": "使用列表作为栈，删除字符串中的所有相邻重复项"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeDuplicates(self, s: str) -> str: res = list(s) slow = fast = 0 length = len(res) while fast < length: res[slow] = res[fast] if slow > 0 and res[slow] == res[slow - 1]: slow -= 1 else: slow += 1 fast += 1 return ''.join(res[0: slow])",
+          "description": "使用双指针模拟栈，删除字符串中的所有相邻重复项"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "# 方法一，使用栈",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: string removeDuplicates(string S) {stack<char> st; for (char s : S) {if (st.empty() || s != st.top()) {st.push(s);} else {st.pop();}} string result = \"\"; while (!st.empty()) {result += st.top(); st.pop();} reverse (result.begin(), result.end()); return result;}};",
+          "description": "使用栈来删除字符串中的所有相邻重复项"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: string removeDuplicates(string S) {string result; for(char s : S) {if(result.empty() || result.back() != s) {result.push_back(s);} else {result.pop_back();}} return result;}};",
+          "description": "将字符串直接作为栈来删除字符串中的所有相邻重复项"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String removeDuplicates(String S) {ArrayDeque<Character> deque = new ArrayDeque<>(); char ch; for (int i = 0; i < S.length(); i++) {ch = S.charAt(i); if (deque.isEmpty() || deque.peek() != ch) {deque.push(ch);} else {deque.pop();}} String str = \"\"; while (!deque.isEmpty()) {str = deque.pop() + str;} return str;}}",
+          "description": "使用 Deque 作为堆栈来删除字符串中的所有相邻重复项"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String removeDuplicates(String s) {StringBuffer res = new StringBuffer(); int top = -1; for (int i = 0; i < s.length(); i++) {char c = s.charAt(i); if (top >= 0 && res.charAt(top) == c) {res.deleteCharAt(top); top--;} else {res.append(c); top++;}} return res.toString();}}",
+          "description": "使用字符串直接作为栈来删除字符串中的所有相邻重复项"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String removeDuplicates(String s) {char[] ch = s.toCharArray(); int fast = 0, slow = 0; while(fast < s.length()){ch[slow] = ch[fast]; if(slow > 0 && ch[slow] == ch[slow - 1]){slow--;}else{slow++;}fast++;} return new String(ch,0,slow);}}",
+          "description": "使用双指针方法删除字符串中的所有相邻重复项"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeDuplicates(self, s: str) -> str: res = list() for item in s: if res and res[-1] == item: res.pop() else: res.append(item) return \".join(res)",
+          "description": "使用栈来删除字符串中的所有相邻重复项"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeDuplicates(self, s: str) -> str: res = list(s) slow = fast = 0 length = len(res) while fast < length: res[slow] = res[fast] if slow > 0 and res[slow] == res[slow - 1]: slow -= 1 else: slow += 1 fast += 1 return ''.join(res[0: slow])",
+          "description": "使用双指针模拟栈来删除字符串中的所有相邻重复项"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "C++",
+      "code": "class Solution {public: string removeDuplicates(string S) { stack<char> st; for (char s : S) { if (st.empty() || s != st.top()) { st.push(s); } else { st.pop(); } } string result = \"\"; while (!st.empty()) { result += st.top(); st.pop(); } reverse (result.begin(), result.end()); return result;}};",
+      "description": "使用栈来删除字符串中的所有相邻重复项"
+    },
+    {
+      "language": "C++",
+      "code": "class Solution {public: string removeDuplicates(string S) { string result; for(char s : S) { if(result.empty() || result.back() != s) { result.push_back(s); } else { result.pop_back(); } } return result;}};",
+      "description": "直接使用字符串作为栈来删除字符串中的所有相邻重复项"
+    },
+    {
+      "language": "Java",
+      "code": "class Solution { public String removeDuplicates(String S) { ArrayDeque<Character> deque = new ArrayDeque<>(); char ch; for (int i = 0; i < S.length(); i++) { ch = S.charAt(i); if (deque.isEmpty() || deque.peek() != ch) { deque.push(ch); } else { deque.pop(); } } String str = \"\"; while (!deque.isEmpty()) { str = deque.pop() + str; } return str; }}",
+      "description": "使用 Deque 作为堆栈来删除字符串中的所有相邻重复项"
+    },
+    {
+      "language": "Java",
+      "code": "class Solution { public String removeDuplicates(String s) { StringBuffer res = new StringBuffer(); int top = -1; for (int i = 0; i < s.length(); i++) { char c = s.charAt(i); if (top >= 0 && res.charAt(top) == c) { res.deleteCharAt(top); top--; } else { res.append(c); top++; } } return res.toString(); }}",
+      "description": "直接使用字符串作为栈来删除字符串中的所有相邻重复项"
+    },
+    {
+      "language": "Java",
+      "code": "class Solution { public String removeDuplicates(String s) { char[] ch = s.toCharArray(); int fast = 0, slow = 0; while(fast < s.length()) { ch[slow] = ch[fast]; if(slow > 0 && ch[slow] == ch[slow - 1]) { slow--; } else { slow++; } fast++; } return new String(ch,0,slow); }}",
+      "description": "使用双指针方法来删除字符串中的所有相邻重复项"
+    },
+    {
+      "language": "Python",
+      "code": "class Solution: def removeDuplicates(self, s: str) -> str: res = list() for item in s: if res and res[-1] == item: res.pop() else: res.append(item) return ''.join(res)",
+      "description": "使用列表模拟栈来删除字符串中的所有相邻重复项"
+    },
+    {
+      "language": "Python",
+      "code": "class Solution: def removeDuplicates(self, s: str) -> str: res = list(s) slow = fast = 0 length = len(res) while fast < length: res[slow] = res[fast] if slow > 0 and res[slow] == res[slow - 1]: slow -= 1 else: slow += 1 fast += 1 return ''.join(res[0: slow])",
+      "description": "使用双指针方法来删除字符串中的所有相邻重复项"
+    }
+  ],
+  "common_mistakes": [
+    "未考虑到对最终结果进行反转，因为从栈中取出元素是倒序的。",
+    "在使用字符串作为栈时忘记维护当前有效长度（或指针），导致逻辑错误。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/1047.%E5%88%A0%E9%99%A4%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89%E7%9B%B8%E9%82%BB%E9%87%8D%E5%A4%8D%E9%A1%B9.gif",
+      "description": "图片展示了一个字符串 \"abbaca\"，上方有一个未闭合的矩形框，暗示可能与栈数据结构相关的解题过程，如字符串消消乐问题。",
+      "context": "该动画展示了如何使用栈结构来删除字符串中的所有相邻重复项的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/1047.%E5%88%A0%E9%99%A4%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89%E7%9B%B8%E9%82%BB%E9%87%8D%E5%A4%8D%E9%A1%B9.gif",
+      "description": "GIF展示了使用栈结构删除字符串中所有相邻重复项的过程。",
+      "context": "GIF动画展示了如何使用栈来删除字符串中的相邻重复项，并通过弹出栈中剩余元素及反转得到最终结果的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\栈与队列\\删除字符串中的所有相邻重复项.txt",
+  "extracted_at": "2025-07-22T13:19:07.787502",
+  "raw_content": "删除字符串中的所有相邻重复项\n力扣题目链接(https://leetcode.cn/problems/remove-all-adjacent-duplicates-in-string/)\n\n给出由小写字母组成的字符串 S，重复项删除操作会选择两个相邻且相同的字母，并删除它们。\n\n在 S 上反复执行重复项删除操作，直到无法继续删除。\n\n在完成所有重复项删除操作后返回最终的字符串。答案保证唯一。\n\n示例：\n\n输入：\"abbaca\"\n输出：\"ca\"\n解释：例如，在 \"abbaca\" 中，我们可以删除 \"bb\" 由于两字母相邻且相同，这是此时唯一可以执行删除操作的重复项。之后我们得到字符串 \"aaca\"，其中又只有 \"aa\" 可以执行重复项删除操作，所以最后的字符串为 \"ca\"。\n提示：\n\n1 <= S.length <= 20000\nS 仅由小写英文字母组成。\n\n思路\n#正题\n本题要删除相邻相同元素，相对于20. 有效的括号 (https://programmercarl.com/0020.%E6%9C%89%E6%95%88%E7%9A%84%E6%8B%AC%E5%8F%B7.html)来说其实也是匹配问题，20. 有效的括号 是匹配左右括号，本题是匹配相邻元素，最后都是做消除的操作。\n\n本题也是用栈来解决的经典题目。\n\n那么栈里应该放的是什么元素呢？\n\n我们在删除相邻重复项的时候，其实就是要知道当前遍历的这个元素，我们在前一位是不是遍历过一样数值的元素，那么如何记录前面遍历过的元素呢？\n\n所以就是用栈来存放，那么栈的目的，就是存放遍历过的元素，当遍历当前的这个元素的时候，去栈里看一下我们是不是遍历过相同数值的相邻元素。\n\n然后再去做对应的消除操作。 如动画所示：\n\nhttps://file1.kamacoder.com/i/algo/1047.%E5%88%A0%E9%99%A4%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89%E7%9B%B8%E9%82%BB%E9%87%8D%E5%A4%8D%E9%A1%B9.gif\n\n从栈中弹出剩余元素，此时是字符串ac，因为从栈里弹出的元素是倒序的，所以再对字符串进行反转一下，就得到了最终的结果。\n\nC++代码 :\n\nclass Solution {\npublic:\n    string removeDuplicates(string S) {\n        stack<char> st;\n        for (char s : S) {\n            if (st.empty() || s != st.top()) {\n                st.push(s);\n            } else {\n                st.pop(); // s 与 st.top()相等的情况\n            }\n        }\n        string result = \"\";\n        while (!st.empty()) { // 将栈中元素放到result字符串汇总\n            result += st.top();\n            st.pop();\n        }\n        reverse (result.begin(), result.end()); // 此时字符串需要反转一下\n        return result;\n\n    }\n};\n时间复杂度: O(n)\n空间复杂度: O(n)\n当然可以拿字符串直接作为栈，这样省去了栈还要转为字符串的操作。\n\n代码如下：\n\nclass Solution {\npublic:\n    string removeDuplicates(string S) {\n        string result;\n        for(char s : S) {\n            if(result.empty() || result.back() != s) {\n                result.push_back(s);\n            }\n            else {\n                result.pop_back();\n            }\n        }\n        return result;\n    }\n};\n时间复杂度: O(n)\n空间复杂度: O(1)，返回值不计空间复杂度\n#题外话\n这道题目就像是我们玩过的游戏对对碰，如果相同的元素挨在一起就要消除。\n\n可能我们在玩游戏的时候感觉理所当然应该消除，但程序又怎么知道该如何消除呢，特别是消除之后又有新的元素可能挨在一起。\n\n此时游戏的后端逻辑就可以用一个栈来实现（我没有实际考察对对碰或者爱消除游戏的代码实现，仅从原理上进行推断）。\n\n游戏开发可能使用栈结构，编程语言的一些功能实现也会使用栈结构，实现函数递归调用就需要栈，但不是每种编程语言都支持递归，例如：\n\n递归的实现就是：每一次递归调用都会把函数的局部变量、参数值和返回地址等压入调用栈中，然后递归返回的时候，从栈顶弹出上一次递归的各项参数，所以这就是递归为什么可以返回上一层位置的原因。\n\n相信大家应该遇到过一种错误就是栈溢出，系统输出的异常是Segmentation fault（当然不是所有的Segmentation fault 都是栈溢出导致的） ，如果你使用了递归，就要想一想是不是无限递归了，那么系统调用栈就会溢出。\n\n而且在企业项目开发中，尽量不要使用递归！在项目比较大的时候，由于参数多，全局变量等等，使用递归很容易判断不充分return的条件，非常容易无限递归（或者递归层级过深），造成栈溢出错误（这种问题还不好排查！）\n\n#其他语言版本\n#Java：\n使用 Deque 作为堆栈\n\nclass Solution {\n    public String removeDuplicates(String S) {\n        //ArrayDeque会比LinkedList在除了删除元素这一点外会快一点\n        //参考：https://stackoverflow.com/questions/6163166/why-is-arraydeque-better-than-linkedlist\n        ArrayDeque<Character> deque = new ArrayDeque<>();\n        char ch;\n        for (int i = 0; i < S.length(); i++) {\n            ch = S.charAt(i);\n            if (deque.isEmpty() || deque.peek() != ch) {\n                deque.push(ch);\n            } else {\n                deque.pop();\n            }\n        }\n        String str = \"\";\n        //剩余的元素即为不重复的元素\n        while (!deque.isEmpty()) {\n            str = deque.pop() + str;\n        }\n        return str;\n    }\n}\n拿字符串直接作为栈，省去了栈还要转为字符串的操作。\n\nclass Solution {\n    public String removeDuplicates(String s) {\n        // 将 res 当做栈\n        // 也可以用 StringBuilder 来修改字符串，速度更快\n        // StringBuilder res = new StringBuilder();\n        StringBuffer res = new StringBuffer();\n        // top为 res 的长度\n        int top = -1;\n        for (int i = 0; i < s.length(); i++) {\n            char c = s.charAt(i);\n            // 当 top >= 0,即栈中有字符时，当前字符如果和栈中字符相等，弹出栈顶字符，同时 top--\n            if (top >= 0 && res.charAt(top) == c) {\n                res.deleteCharAt(top);\n                top--;\n            // 否则，将该字符 入栈，同时top++\n            } else {\n                res.append(c);\n                top++;\n            }\n        }\n        return res.toString();\n    }\n}\n拓展：双指针\n\nclass Solution {\n    public String removeDuplicates(String s) {\n        char[] ch = s.toCharArray();\n        int fast = 0;\n        int slow = 0;\n        while(fast < s.length()){\n            // 直接用fast指针覆盖slow指针的值\n            ch[slow] = ch[fast];\n            // 遇到前后相同值的，就跳过，即slow指针后退一步，下次循环就可以直接被覆盖掉了\n            if(slow > 0 && ch[slow] == ch[slow - 1]){\n                slow--;\n            }else{\n                slow++;\n            }\n            fast++;\n        }\n        return new String(ch,0,slow);\n    }\n}\n#Python：\n# 方法一，使用栈\nclass Solution:\n    def removeDuplicates(self, s: str) -> str:\n        res = list()\n        for item in s:\n            if res and res[-1] == item:\n                res.pop()\n            else:\n                res.append(item)\n        return \"\".join(res)  # 字符串拼接\n# 方法二，使用双指针模拟栈，如果不让用栈可以作为备选方法。\nclass Solution:\n    def removeDuplicates(self, s: str) -> str:\n        res = list(s)\n        slow = fast = 0\n        length = len(res)\n\n        while fast < length:\n            # 如果一样直接换，不一样会把后面的填在slow的位置\n            res[slow] = res[fast]\n            \n            # 如果发现和前一个一样，就退一格指针\n            if slow > 0 and res[slow] == res[slow - 1]:\n                slow -= 1\n            else:\n                slow += 1\n            fast += 1\n            \n        return ''.join(res[0: slow])"
+}

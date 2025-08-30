@@ -1,0 +1,305 @@
+{
+  "id": "AP_7c5c6303",
+  "title": "二叉树的最近公共祖先",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/",
+  "description": "一个二叉树, 找到该树中两个指定节点的最近公共祖先。\n\n百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”\n\n例如，给定如下二叉树:  root = [3,5,1,6,2,0,8,null,null,7,4]\n\nhttps://file1.kamacoder.com/i/algo/20201016173414722.png",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "二叉树",
+    "递归"
+  ],
+  "data_structure_tags": [
+    "树"
+  ],
+  "technique_tags": [
+    "后序遍历",
+    "回溯"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过后序遍历（左右中）的方式，自底向上查找两个指定节点p和q的最近公共祖先。在回溯过程中，利用递归函数返回值来判断当前节点是否为p或q的公共祖先。",
+  "key_insights": [
+    {
+      "content": "后序遍历（左右中）提供了一种从叶子到根部的访问方式，非常适合解决需要先探索子节点再做决策的问题。对于寻找最近公共祖先而言，这种方式允许我们先检查子节点是否包含目标节点p或q，然后再决定当前节点的角色。"
+    },
+    {
+      "content": "如果一个节点本身就是另一个节点的父节点，则它也是它们的最近公共祖先。这种情况下，直接返回该节点作为答案。此外，当左子树和右子树分别找到p和q时，当前节点即为所求的最近公共祖先。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "遇到这个题目首先想的是要是能自底向上查找就好了，这样就可以找到公共祖先了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        if (root == q || root == p || root == NULL) return root;\n        TreeNode* left = lowestCommonAncestor(root->left, p, q);\n        TreeNode* right = lowestCommonAncestor(root->right, p, q);\n        if (left != NULL && right != NULL) return root;\n        if (left == NULL) return right;\n        return left;\n    }\n};",
+          "description": "C++版本的二叉树最近公共祖先问题解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        if (root == null || root == p || root == q) {\n            return root;\n        }\n\n        TreeNode left = lowestCommonAncestor(root.left, p, q);\n        TreeNode right = lowestCommonAncestor(root.right, p, q);\n\n        if(left == null && right == null) {\n            return null;\n        }else if(left == null && right != null) {\n            return right;\n        }else if(left != null && right == null) {\n            return left;\n        }else {\n            return root;\n        }\n    }\n}",
+          "description": "Java版本的二叉树最近公共祖先问题解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        if root == q or root == p or root is None:\n            return root\n\n        left = self.lowestCommonAncestor(root.left, p, q)\n        right = self.lowestCommonAncestor(root.right, p, q)\n\n        if left is not None and right is not None:\n            return root\n\n        if left is None:\n            return right\n        return left",
+          "description": "Python版本的二叉树最近公共祖先问题解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "这道题目刷过的同学未必真正了解这里面回溯的过程，以及结果是如何一层一层传上去的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        if (root == q || root == p || root == NULL) return root;\n        TreeNode* left = lowestCommonAncestor(root->left, p, q);\n        TreeNode* right = lowestCommonAncestor(root->right, p, q);\n        if (left != NULL && right != NULL) return root;\n\n        if (left == NULL && right != NULL) return right;\n        else if (left != NULL && right == NULL) return left;\n        else  { //  (left == NULL && right == NULL)\n            return NULL;\n        }\n\n    }\n};",
+          "description": null
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        if (root == q || root == p || root == NULL) return root;\n        TreeNode* left = lowestCommonAncestor(root->left, p, q);\n        TreeNode* right = lowestCommonAncestor(root->right, p, q);\n        if (left != NULL && right != NULL) return root;\n        if (left == NULL) return right;\n        return left;\n    }\n};",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        if (root == null || root == p || root == q) { // 递归结束条件\n            return root;\n        }\n\n        // 后序遍历\n        TreeNode left = lowestCommonAncestor(root.left, p, q);\n        TreeNode right = lowestCommonAncestor(root.right, p, q);\n\n        if(left == null && right == null) { // 若未找到节点 p 或 q\n            return null;\n        }else if(left == null && right != null) { // 若找到一个节点\n            return right;\n        }else if(left != null && right == null) { // 若找到一个节点\n            return left;\n        }else { // 若找到两个节点\n            return root;\n        }\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        int max = Integer.MAX_VALUE;\n        Stack<TreeNode> st = new Stack<>();\n        TreeNode cur = root, pre = null;\n        while (cur != null || !st.isEmpty()) {\n            while (cur != null) {\n                st.push(cur);\n                cur = cur.left;\n            }\n            cur = st.pop();\n            if (cur.right == null || cur.right == pre) {\n                if (cur == p || cur == q) {\n                    if ((cur.left != null && cur.left.val == max) || (cur.right != null && cur.right.val == max)) {\n                        return cur;\n                    }\n                    cur.val = max;\n                }\n                if (cur.left != null && cur.left.val == max && cur.right != null && cur.right.val == max) {\n                    return cur;\n                }\n                if ((cur.left != null && cur.left.val == max) || (cur.right != null && cur.right.val == max)) {\n                    cur.val = max;\n                }\n                pre = cur;\n                cur = null;\n            } else {\n                st.push(cur);\n                cur = cur.right;\n            }\n        }\n        return null;\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        if root == q or root == p or root is None:\n            return root\n\n        left = self.lowestCommonAncestor(root.left, p, q)\n        right = self.lowestCommonAncestor(root.right, p, q)\n\n        if left is not None and right is not None:\n            return root\n\n        if left is None and right is not None:\n            return right\n        elif left is not None and right is None:\n            return left\n        else: \n            return None",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        if root == q or root == p or root is None:\n            return root\n\n        left = self.lowestCommonAncestor(root.left, p, q)\n        right = self.lowestCommonAncestor(root.right, p, q)\n\n        if left is not None and right is not None:\n            return root\n\n        if left is None:\n            return right\n        return left",
+          "description": null
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        if (root == q || root == p || root == NULL) return root;\n        TreeNode* left = lowestCommonAncestor(root->left, p, q);\n        TreeNode* right = lowestCommonAncestor(root->right, p, q);\n        if (left != NULL && right != NULL) return root;\n        if (left == NULL) return right;\n        return left;\n    }\n};",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        if (root == null || root == p || root == q) { \n            return root;\n        }\n\n        TreeNode left = lowestCommonAncestor(root.left, p, q);\n        TreeNode right = lowestCommonAncestor(root.right, p, q);\n\n        if(left == null && right == null) { \n            return null;\n        }else if(left == null && right != null) { \n            return right;\n        }else if(left != null && right == null) { \n            return left;\n        }else { \n            return root;\n        }\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        int max = Integer.MAX_VALUE;\n        Stack<TreeNode> st = new Stack<>();\n        TreeNode cur = root, pre = null;\n        while (cur != null || !st.isEmpty()) {\n            while (cur != null) {\n                st.push(cur);\n                cur = cur.left;\n            }\n            cur = st.pop();\n            if (cur.right == null || cur.right == pre) {\n                if (cur == p || cur == q) {\n                    if ((cur.left != null && cur.left.val == max) || (cur.right != null && cur.right.val == max)) {\n                        return cur;\n                    }\n                    cur.val = max;\n                }\n                if (cur.left != null && cur.left.val == max && cur.right != null && cur.right.val == max) {\n                    return cur;\n                }\n                if ((cur.left != null && cur.left.val == max) || (cur.right != null && cur.right.val == max)) {\n                    cur.val = max;\n                }\n                pre = cur;\n                cur = null;\n            } else {\n                st.push(cur);\n                cur = cur.right;\n            }\n        }\n        return null;\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        if root == q or root == p or root is None:\n            return root\n\n        left = self.lowestCommonAncestor(root.left, p, q)\n        right = self.lowestCommonAncestor(root.right, p, q)\n\n        if left is not None and right is not None:\n            return root\n\n        if left is None and right is not None:\n            return right\n        elif left is not None and right is None:\n            return left\n        else: \n            return None",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        if root == q or root == p or root is None:\n            return root\n\n        left = self.lowestCommonAncestor(root.left, p, q)\n        right = self.lowestCommonAncestor(root.right, p, q)\n\n        if left is not None and right is not None:\n            return root\n\n        if left is None:\n            return right\n        return left",
+          "description": null
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "递归",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        if (root == q || root == p || root == NULL) return root;\n        TreeNode* left = lowestCommonAncestor(root->left, p, q);\n        TreeNode* right = lowestCommonAncestor(root->right, p, q);\n        if (left != NULL && right != NULL) return root;\n\n        if (left == NULL && right != NULL) return right;\n        else if (left != NULL && right == NULL) return left;\n        else  { //  (left == NULL && right == NULL)\n            return NULL;\n        }\n\n    }\n};\nclass Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        if (root == q || root == p || root == NULL) return root;\n        TreeNode* left = lowestCommonAncestor(root->left, p, q);\n        TreeNode* right = lowestCommonAncestor(root->right, p, q);\n        if (left != NULL && right != NULL) return root;\n        if (left == NULL) return right;\n        return left;\n    }\n};",
+          "description": "C++版本的二叉树最近公共祖先问题的解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        if (root == null || root == p || root == q) { \n            return root;\n        }\n\n        TreeNode left = lowestCommonAncestor(root.left, p, q);\n        TreeNode right = lowestCommonAncestor(root.right, p, q);\n\n        if(left == null && right == null) { \n            return null;\n        }else if(left == null && right != null) { \n            return right;\n        }else if(left != null && right == null) { \n            return left;\n        }else { \n            return root;\n        }\n    }\n}\nclass Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        int max = Integer.MAX_VALUE;\n        Stack<TreeNode> st = new Stack<>();\n        TreeNode cur = root, pre = null;\n        while (cur != null || !st.isEmpty()) {\n            while (cur != null) {\n                st.push(cur);\n                cur = cur.left;\n            }\n            cur = st.pop();\n            if (cur.right == null || cur.right == pre) {\n                if (cur == p || cur == q) {\n                    if ((cur.left != null && cur.left.val == max) || (cur.right != null && cur.right.val == max)) {\n                        return cur;\n                    }\n                    cur.val = max;\n                }\n                if (cur.left != null && cur.left.val == max && cur.right != null && cur.right.val == max) {\n                    return cur;\n                }\n                if ((cur.left != null && cur.left.val == max) || (cur.right != null && cur.right.val == max)) {\n                    cur.val = max;\n                }\n                pre = cur;\n                cur = null;\n            } else {\n                st.push(cur);\n                cur = cur.right;\n            }\n        }\n        return null;\n    }\n}",
+          "description": "Java版本的二叉树最近公共祖先问题的递归与迭代解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        if root == q or root == p or root is None:\n            return root\n\n        left = self.lowestCommonAncestor(root.left, p, q)\n        right = self.lowestCommonAncestor(root.right, p, q)\n\n        if left is not None and right is not None:\n            return root\n\n        if left is None and right is not None:\n            return right\n        elif left is not None and right is None:\n            return left\n        else: \n            return None\nclass Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        if root == q or root == p or root is None:\n            return root\n\n        left = self.lowestCommonAncestor(root.left, p, q)\n        right = self.lowestCommonAncestor(root.right, p, q)\n\n        if left is not None and right is not None:\n            return root\n\n        if left is None:\n            return right\n        return left",
+          "description": "Python版本的二叉树最近公共祖先问题的两种递归解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "递归法（版本一）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        if (root == q || root == p || root == NULL) return root;\n        TreeNode* left = lowestCommonAncestor(root->left, p, q);\n        TreeNode* right = lowestCommonAncestor(root->right, p, q);\n        if (left != NULL && right != NULL) return root;\n\n        if (left == NULL && right != NULL) return right;\n        else if (left != NULL && right == NULL) return left;\n        else  { //  (left == NULL && right == NULL)\n            return NULL;\n        }\n\n    }\n};",
+          "description": "C++实现的递归法求二叉树最近公共祖先"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        if (root == q || root == p || root == NULL) return root;\n        TreeNode* left = lowestCommonAncestor(root->left, p, q);\n        TreeNode* right = lowestCommonAncestor(root->right, p, q);\n        if (left != NULL && right != NULL) return root;\n        if (left == NULL) return right;\n        return left;\n    }\n};",
+          "description": "C++实现的精简版递归法求二叉树最近公共祖先"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        if (root == null || root == p || root == q) { // 递归结束条件\n            return root;\n        }\n\n        // 后序遍历\n        TreeNode left = lowestCommonAncestor(root.left, p, q);\n        TreeNode right = lowestCommonAncestor(root.right, p, q);\n\n        if(left == null && right == null) { // 若未找到节点 p 或 q\n            return null;\n        }else if(left == null && right != null) { // 若找到一个节点\n            return right;\n        }else if(left != null && right == null) { // 若找到一个节点\n            return left;\n        }else { // 若找到两个节点\n            return root;\n        }\n    }\n}",
+          "description": "Java实现的递归法求二叉树最近公共祖先"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        int max = Integer.MAX_VALUE;\n        Stack<TreeNode> st = new Stack<>();\n        TreeNode cur = root, pre = null;\n        while (cur != null || !st.isEmpty()) {\n            while (cur != null) {\n                st.push(cur);\n                cur = cur.left;\n            }\n            cur = st.pop();\n            if (cur.right == null || cur.right == pre) {\n                // p/q是 中/左 或者 中/右 , 返回中\n                if (cur == p || cur == q) {\n                    if ((cur.left != null && cur.left.val == max) || (cur.right != null && cur.right.val == max)) {\n                        return cur;\n                    }\n                    cur.val = max;\n                }\n                // p/q是 左/右 , 返回中\n                if (cur.left != null && cur.left.val == max && cur.right != null && cur.right.val == max) {\n                    return cur;\n                }\n                // MAX_VALUE 往上传递\n                if ((cur.left != null && cur.left.val == max) || (cur.right != null && cur.right.val == max)) {\n                    cur.val = max;\n                }\n                pre = cur;\n                cur = null;\n            } else {\n                st.push(cur);\n                cur = cur.right;\n            }\n        }\n        return null;\n    }\n}",
+          "description": "Java实现的迭代法求二叉树最近公共祖先"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        if root == q or root == p or root is None:\n            return root\n\n        left = self.lowestCommonAncestor(root.left, p, q)\n        right = self.lowestCommonAncestor(root.right, p, q)\n\n        if left is not None and right is not None:\n            return root\n\n        if left is None and right is not None:\n            return right\n        elif left is not None and right is None:\n            return left\n        else: \n            return None",
+          "description": "Python实现的递归法（版本一）求二叉树最近公共祖先"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        if root == q or root == p or root is None:\n            return root\n\n        left = self.lowestCommonAncestor(root.left, p, q)\n        right = self.lowestCommonAncestor(root.right, p, q)\n\n        if left is not None and right is not None:\n            return root\n\n        if left is None:\n            return right\n        return left",
+          "description": "Python实现的递归法（版本二）精简版求二叉树最近公共祖先"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) { if (root == q || root == p || root == NULL) return root; TreeNode* left = lowestCommonAncestor(root->left, p, q); TreeNode* right = lowestCommonAncestor(root->right, p, q); if (left != NULL && right != NULL) return root; if (left == NULL && right != NULL) return right; else if (left != NULL && right == NULL) return left; else  { //  (left == NULL && right == NULL) return NULL; } }};",
+      "description": null
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) { if (root == q || root == p || root == NULL) return root; TreeNode* left = lowestCommonAncestor(root->left, p, q); TreeNode* right = lowestCommonAncestor(root->right, p, q); if (left != NULL && right != NULL) return root; if (left == NULL) return right; return left; }};",
+      "description": null
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) { if (root == null || root == p || root == q) { return root; } TreeNode left = lowestCommonAncestor(root.left, p, q); TreeNode right = lowestCommonAncestor(root.right, p, q); if(left == null && right == null) { return null; }else if(left == null && right != null) { return right; }else if(left != null && right == null) { return left; }else { return root; } }}",
+      "description": null
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) { int max = Integer.MAX_VALUE; Stack<TreeNode> st = new Stack<>(); TreeNode cur = root, pre = null; while (cur != null || !st.isEmpty()) { while (cur != null) { st.push(cur); cur = cur.left; } cur = st.pop(); if (cur.right == null || cur.right == pre) { if (cur == p || cur == q) { if ((cur.left != null && cur.left.val == max) || (cur.right != null && cur.right.val == max)) { return cur; } cur.val = max; } if (cur.left != null && cur.left.val == max && cur.right != null && cur.right.val == max) { return cur; } if ((cur.left != null && cur.left.val == max) || (cur.right != null && cur.right.val == max)) { cur.val = max; } pre = cur; cur = null; } else { st.push(cur); cur = cur.right; } } return null; }}",
+      "description": null
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def lowestCommonAncestor(self, root, p, q): if root == q or root == p or root is None: return root left = self.lowestCommonAncestor(root.left, p, q) right = self.lowestCommonAncestor(root.right, p, q) if left is not None and right is not None: return root if left is None and right is not None: return right elif left is not None and right is None: return left else: return None",
+      "description": null
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def lowestCommonAncestor(self, root, p, q): if root == q or root == p or root is None: return root left = self.lowestCommonAncestor(root.left, p, q) right = self.lowestCommonAncestor(root.right, p, q) if left is not None and right is not None: return root if left is None: return right return left",
+      "description": null
+    }
+  ],
+  "common_mistakes": [
+    "忽略了节点可以是自己的祖先这一条件。",
+    "没有正确理解递归过程中的返回逻辑，特别是在处理left与right变量时。",
+    "错误地认为只需搜索一条路径即可找到答案，而实际上可能需要遍历整棵树来确保没有遗漏任何可能性。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201016173414722.png",
+      "description": "这是一棵二叉树的示意图，根节点为3，展示了树的结构和节点间的连接关系。",
+      "context": "该图片展示了给定的二叉树结构，用于说明如何找到两个指定节点5和1以及5和4的最近公共祖先。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20220922173502.png",
+      "description": "该图展示了一棵二叉树，节点4是节点3（p）和节点1（q）的最近公共祖先。",
+      "context": "该图片展示了在二叉树中如何通过后序遍历找到节点p和q的最近公共祖先的一种情况。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20220922173530.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20220922173530.png",
+      "context": "该图片展示了二叉树中寻找节点q和p最近公共祖先的情况，包括当其中一个节点是另一个节点的直接或间接祖先时的情形。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/2021020415105872.png",
+      "description": "该图展示了一棵二叉树，通过查找节点6和5来确定它们的最近公共祖先为节点7，体现了二叉树中寻找最近公共祖先的算法过程。",
+      "context": "该图展示了即使在找到目标节点后仍需遍历整棵树的原因，特别强调了遍历根节点右子树的重要性以完成left和right变量的逻辑处理。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210204151125844.png",
+      "description": "这张图片展示了在二叉树中查找节点 `p=6` 和 `q=5` 的最近公共祖先（LCA）的过程，最终确定节点 `7` 为最近公共祖先。",
+      "context": "该图展示了当节点10的左子树未能找到目标节点而右子树成功找到时，如何确定最近公共祖先的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/202102041512582.png",
+      "description": "该图展示了在二叉树中查找节点 `p=6` 和 `q=5` 的最近公共祖先（LCA）的过程，最终确定节点 `7` 为最近公共祖先。",
+      "context": "该流程图展示了在二叉树中寻找两个节点的最小公共祖先时，如何通过回溯遍历整棵树并将结果返回给头结点的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201016173414722.png",
+      "description": "GIF展示了在给定二叉树中查找两个指定节点5和1的最近公共祖先的过程，最终定位到节点3。",
+      "context": "该GIF动画展示了给定二叉树结构以及如何寻找两个指定节点的最近公共祖先的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20220922173502.png",
+      "description": "GIF展示了在二叉树中通过后序遍历寻找两个指定节点的最近公共祖先的过程。",
+      "context": "该GIF动画展示了在二叉树中寻找节点p和q的最近公共祖先时，如何通过后序遍历（左右中）方式自底向上回溯，并根据左右子树返回值判断当前节点是否为所求最近公共祖先的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20220922173530.png",
+      "description": "GIF展示了在二叉树中寻找两个节点的最近公共祖先的过程，包括递归调用如何遍历左右子树并最终确定公共祖先。",
+      "context": "该GIF动画展示了在二叉树中寻找节点p和q最近公共祖先的过程，特别强调了即使当一个节点本身就是另一个节点的祖先时的情况。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/2021020415105872.png",
+      "description": "GIF展示了二叉树中寻找最近公共祖先时，递归遍历整棵树（包括左右子树）的过程。",
+      "context": "此GIF动画展示了在寻找最近公共祖先过程中，即使已经找到目标节点，也需要继续遍历根节点的右子树以完成后续逻辑处理的必要性。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210204151125844.png",
+      "description": "GIF展示了在寻找最近公共祖先过程中，如何通过递归调用处理左右子树返回值来确定并传递最近公共祖先节点的过程。",
+      "context": "该GIF动画展示了当节点10的左子树返回null而其右子树返回目标值7时，如何确定最近公共祖先并将其结果从底层逐层传递回根节点的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/202102041512582.png",
+      "description": "GIF展示了寻找二叉树中两个指定节点的最小公共祖先时，递归调用过程及结果如何从底层回溯到根节点的过程。",
+      "context": "此GIF动画展示了在二叉树中寻找两个指定节点的最小公共祖先时，如何通过回溯遍历整棵树并将结果返回给根节点的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\二叉树的最近公共祖先.txt",
+  "extracted_at": "2025-07-19T17:38:57.893127",
+  "raw_content": "二叉树的最近公共祖先\n力扣题目链接(https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/)\n\n给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。\n\n百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”\n\n例如，给定如下二叉树:  root = [3,5,1,6,2,0,8,null,null,7,4]\n\nhttps://file1.kamacoder.com/i/algo/20201016173414722.png\n\n示例 1: 输入: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1 输出: 3 解释: 节点 5 和节点 1 的最近公共祖先是节点 3。\n\n示例 2: 输入: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 4 输出: 5 解释: 节点 5 和节点 4 的最近公共祖先是节点 5。因为根据定义最近公共祖先节点可以为节点本身。\n\n说明:\n\n所有节点的值都是唯一的。\np、q 为不同节点且均存在于给定的二叉树中。\n\n\n#思路\n遇到这个题目首先想的是要是能自底向上查找就好了，这样就可以找到公共祖先了。\n\n那么二叉树如何可以自底向上查找呢？\n\n回溯啊，二叉树回溯的过程就是从底到上。\n\n后序遍历（左右中）就是天然的回溯过程，可以根据左右子树的返回值，来处理中节点的逻辑。\n\n接下来就看如何判断一个节点是节点q和节点p的公共祖先呢。\n\n首先最容易想到的一个情况：如果找到一个节点，发现左子树出现结点p，右子树出现节点q，或者 左子树出现结点q，右子树出现节点p，那么该节点就是节点p和q的最近公共祖先。 即情况一：\n\nhttps://file1.kamacoder.com/i/algo/20220922173502.png\n\n判断逻辑是 如果递归遍历遇到q，就将q返回，遇到p 就将p返回，那么如果 左右子树的返回值都不为空，说明此时的中节点，一定是q 和p 的最近祖先。\n\n那么有录友可能疑惑，会不会左子树 遇到q 返回，右子树也遇到q返回，这样并没有找到 q 和p的最近祖先。\n\n这么想的录友，要审题了，题目强调：二叉树节点数值是不重复的，而且一定存在 q 和 p。\n\n但是很多人容易忽略一个情况，就是节点本身p(q)，它拥有一个子孙节点q(p)。 情况二：\n\nhttps://file1.kamacoder.com/i/algo/20220922173530.png\n\n其实情况一 和 情况二 代码实现过程都是一样的，也可以说，实现情况一的逻辑，顺便包含了情况二。\n\n因为遇到 q 或者 p 就返回，这样也包含了 q 或者 p 本身就是 公共祖先的情况。\n\n这一点是很多录友容易忽略的，在下面的代码讲解中，可以再去体会。\n\n递归三部曲：\n\n确定递归函数返回值以及参数\n需要递归函数返回值，来告诉我们是否找到节点q或者p，那么返回值为bool类型就可以了。\n\n但我们还要返回最近公共节点，可以利用上题目中返回值是TreeNode * ，那么如果遇到p或者q，就把q或者p返回，返回值不为空，就说明找到了q或者p。\n\n代码如下：\n\nTreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q)\n确定终止条件\n遇到空的话，因为树都是空了，所以返回空。\n\n那么我们来说一说，如果 root == q，或者 root == p，说明找到 q p ，则将其返回，这个返回值，后面在中节点的处理过程中会用到，那么中节点的处理逻辑，下面讲解。\n\n代码如下：\n\nif (root == q || root == p || root == NULL) return root;\n确定单层递归逻辑\n值得注意的是 本题函数有返回值，是因为回溯的过程需要递归函数的返回值做判断，但本题我们依然要遍历树的所有节点。\n\n我们在二叉树：递归函数究竟什么时候需要返回值，什么时候不要返回值？ (https://programmercarl.com/0112.%E8%B7%AF%E5%BE%84%E6%80%BB%E5%92%8C.html)中说了 递归函数有返回值就是要遍历某一条边，但有返回值也要看如何处理返回值！\n\n如果递归函数有返回值，如何区分要搜索一条边，还是搜索整个树呢？\n\n搜索一条边的写法：\n\nif (递归函数(root->left)) return ;\n\nif (递归函数(root->right)) return ;\n搜索整个树写法：\n\nleft = 递归函数(root->left);  // 左\nright = 递归函数(root->right); // 右\nleft与right的逻辑处理;         // 中 \n看出区别了没？\n\n在递归函数有返回值的情况下：如果要搜索一条边，递归函数返回值不为空的时候，立刻返回，如果搜索整个树，直接用一个变量left、right接住返回值，这个left、right后序还有逻辑处理的需要，也就是后序遍历中处理中间节点的逻辑（也是回溯）。\n\n那么为什么要遍历整棵树呢？直观上来看，找到最近公共祖先，直接一路返回就可以了。\n\n如图：\nhttps://file1.kamacoder.com/i/algo/2021020415105872.png\n就像图中一样直接返回7。\n\n但事实上还要遍历根节点右子树（即使此时已经找到了目标节点了），也就是图中的节点4、15、20。\n\n因为在如下代码的后序遍历中，如果想利用left和right做逻辑处理， 不能立刻返回，而是要等left与right逻辑处理完之后才能返回。\n\nleft = 递归函数(root->left);  // 左\nright = 递归函数(root->right); // 右\nleft与right的逻辑处理;         // 中 \n所以此时大家要知道我们要遍历整棵树。知道这一点，对本题就有一定深度的理解了。\n\n那么先用left和right接住左子树和右子树的返回值，代码如下：\n\nTreeNode* left = lowestCommonAncestor(root->left, p, q);\nTreeNode* right = lowestCommonAncestor(root->right, p, q);\n\n如果left 和 right都不为空，说明此时root就是最近公共节点。这个比较好理解\n\n如果left为空，right不为空，就返回right，说明目标节点是通过right返回的，反之依然。\n\n这里有的同学就理解不了了，为什么left为空，right不为空，目标节点通过right返回呢？\n\n如图：\nhttps://file1.kamacoder.com/i/algo/20210204151125844.png\n\n图中节点10的左子树返回null，右子树返回目标值7，那么此时节点10的处理逻辑就是把右子树的返回值（最近公共祖先7）返回上去！\n\n这里也很重要，可能刷过这道题目的同学，都不清楚结果究竟是如何从底层一层一层传到头结点的。\n\n那么如果left和right都为空，则返回left或者right都是可以的，也就是返回空。\n\n代码如下：\n\nif (left == NULL && right != NULL) return right;\nelse if (left != NULL && right == NULL) return left;\nelse  { //  (left == NULL && right == NULL)\n    return NULL;\n}\n\n那么寻找最小公共祖先，完整流程图如下：\n\nhttps://file1.kamacoder.com/i/algo/202102041512582.png\n\n从图中，大家可以看到，我们是如何回溯遍历整棵二叉树，将结果返回给头结点的！\n\n整体代码如下：\n\nclass Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        if (root == q || root == p || root == NULL) return root;\n        TreeNode* left = lowestCommonAncestor(root->left, p, q);\n        TreeNode* right = lowestCommonAncestor(root->right, p, q);\n        if (left != NULL && right != NULL) return root;\n\n        if (left == NULL && right != NULL) return right;\n        else if (left != NULL && right == NULL) return left;\n        else  { //  (left == NULL && right == NULL)\n            return NULL;\n        }\n\n    }\n};\n稍加精简，代码如下：\n\nclass Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        if (root == q || root == p || root == NULL) return root;\n        TreeNode* left = lowestCommonAncestor(root->left, p, q);\n        TreeNode* right = lowestCommonAncestor(root->right, p, q);\n        if (left != NULL && right != NULL) return root;\n        if (left == NULL) return right;\n        return left;\n    }\n};\n#总结\n这道题目刷过的同学未必真正了解这里面回溯的过程，以及结果是如何一层一层传上去的。\n\n那么我给大家归纳如下三点：\n\n求最小公共祖先，需要从底向上遍历，那么二叉树，只能通过后序遍历（即：回溯）实现从底向上的遍历方式。\n\n在回溯的过程中，必然要遍历整棵二叉树，即使已经找到结果了，依然要把其他节点遍历完，因为要使用递归函数的返回值（也就是代码中的left和right）做逻辑判断。\n\n要理解如果返回值left为空，right不为空为什么要返回right，为什么可以用返回right传给上一层结果。\n\n可以说这里每一步，都是有难度的，都需要对二叉树，递归和回溯有一定的理解。\n\n本题没有给出迭代法，因为迭代法不适合模拟回溯的过程。理解递归的解法就够了。\n\n#其他语言版本\n#Java\n递归\n\nclass Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        if (root == null || root == p || root == q) { // 递归结束条件\n            return root;\n        }\n\n        // 后序遍历\n        TreeNode left = lowestCommonAncestor(root.left, p, q);\n        TreeNode right = lowestCommonAncestor(root.right, p, q);\n\n        if(left == null && right == null) { // 若未找到节点 p 或 q\n            return null;\n        }else if(left == null && right != null) { // 若找到一个节点\n            return right;\n        }else if(left != null && right == null) { // 若找到一个节点\n            return left;\n        }else { // 若找到两个节点\n            return root;\n        }\n    }\n}\n\n迭代\n\nclass Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        int max = Integer.MAX_VALUE;\n        Stack<TreeNode> st = new Stack<>();\n        TreeNode cur = root, pre = null;\n        while (cur != null || !st.isEmpty()) {\n            while (cur != null) {\n                st.push(cur);\n                cur = cur.left;\n            }\n            cur = st.pop();\n            if (cur.right == null || cur.right == pre) {\n                // p/q是 中/左 或者 中/右 , 返回中\n                if (cur == p || cur == q) {\n                    if ((cur.left != null && cur.left.val == max) || (cur.right != null && cur.right.val == max)) {\n                        return cur;\n                    }\n                    cur.val = max;\n                }\n                // p/q是 左/右 , 返回中\n                if (cur.left != null && cur.left.val == max && cur.right != null && cur.right.val == max) {\n                    return cur;\n                }\n                // MAX_VALUE 往上传递\n                if ((cur.left != null && cur.left.val == max) || (cur.right != null && cur.right.val == max)) {\n                    cur.val = max;\n                }\n                pre = cur;\n                cur = null;\n            } else {\n                st.push(cur);\n                cur = cur.right;\n            }\n        }\n        return null;\n    }\n}\n\n#Python\n递归法（版本一）\n\nclass Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        if root == q or root == p or root is None:\n            return root\n\n        left = self.lowestCommonAncestor(root.left, p, q)\n        right = self.lowestCommonAncestor(root.right, p, q)\n\n        if left is not None and right is not None:\n            return root\n\n        if left is None and right is not None:\n            return right\n        elif left is not None and right is None:\n            return left\n        else: \n            return None\n递归法（版本二）精简\n\nclass Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        if root == q or root == p or root is None:\n            return root\n\n        left = self.lowestCommonAncestor(root.left, p, q)\n        right = self.lowestCommonAncestor(root.right, p, q)\n\n        if left is not None and right is not None:\n            return root\n\n        if left is None:\n            return right\n        return left"
+}

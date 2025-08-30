@@ -1,0 +1,463 @@
+{
+  "id": "AP_cb7ffe81",
+  "title": "三数之和",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/3sum/",
+  "description": "一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有满足条件且不重复的三元组。\n\n注意： 答案中不可以包含重复的三元组。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "双指针",
+    "哈希"
+  ],
+  "data_structure_tags": [
+    "数组",
+    "集合"
+  ],
+  "technique_tags": [
+    "排序",
+    "去重"
+  ],
+  "difficulty": null,
+  "solution_approach": "首先对数组进行排序，然后遍历数组中的每个元素作为潜在的第一个元素a，在剩余部分使用双指针技巧从两端向中间查找另外两个数b和c，使得a+b+c=0。通过调整指针位置来控制和的大小，并且应用适当的去重逻辑避免重复结果。",
+  "key_insights": [
+    {
+      "content": "通过对数组进行排序，可以利用双指针技术有效地缩小搜索范围，并简化了处理重复值的问题。"
+    },
+    {
+      "content": "在排序后的数组中，可以通过移动左右指针快速找到满足条件的第二个与第三个元素，从而提高解题效率。"
+    },
+    {
+      "content": "为了防止生成重复的答案，在选择第一个元素时以及找到一组符合条件的三元组之后，都需要正确地跳过相同的元素。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "#哈希解法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) {vector<vector<int>> result;sort(nums.begin(), nums.end());for (int i = 0; i < nums.size(); i++) {if (nums[i] > 0)break;if (i > 0 && nums[i] == nums[i - 1])continue;unordered_set<int> set;for (int k = i + 1; k < nums.size(); k++) {if (k > i + 2 && nums[k] == nums[k - 1] && nums[k - 1] == nums[k - 2])continue;int target = 0 - (nums[i] + nums[k]);if (set.find(target) != set.end()) {result.push_back({nums[i], target, nums[k]});set.erase(target);} else {set.insert(nums[k]);}}}}return result;}};",
+          "description": "哈希解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) {vector<vector<int>> result;sort(nums.begin(), nums.end());for (int i = 0; i < nums.size(); i++) {if (nums[i] > 0)return result;if (i > 0 && nums[i] == nums[i - 1])continue;int left = i + 1;int right = nums.size() - 1;while (right > left) {if (nums[i] + nums[left] + nums[right] > 0) right--;else if (nums[i] + nums[left] + nums[right] < 0) left++;else {result.push_back(vector<int>{nums[i], nums[left], nums[right]});while (right > left && nums[right] == nums[right - 1]) right--;while (right > left && nums[left] == nums[left + 1]) left++;right--;left++;}}}}return result;}};",
+          "description": "双指针解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<List<Integer>> threeSum(int[] nums) {List<List<Integer>> result = new ArrayList<>();Arrays.sort(nums);for (int i = 0; i < nums.length; i++) {if (nums[i] > 0) return result;if (i > 0 && nums[i] == nums[i - 1]) continue;int left = i + 1;int right = nums.length - 1;while (right > left) {int sum = nums[i] + nums[left] + nums[right];if (sum > 0) right--;else if (sum < 0) left++;else {result.add(Arrays.asList(nums[i], nums[left], nums[right]));while (right > left && nums[right] == nums[right - 1]) right--;while (right > left && nums[left] == nums[left + 1]) left++;right--;left++;}}}}return result;}}",
+          "description": "Java版本的双指针解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<List<Integer>> threeSum(int[] nums) {List<List<Integer>> result = new ArrayList<>();Arrays.sort(nums);for (int i = 0; i < nums.length; i++) {if (nums[i] > 0) return result;if (i > 0 && nums[i] == nums[i - 1]) continue;HashSet<Integer> set = new HashSet<>();for (int j = i + 1; j < nums.length; j++) {if (j > i + 2 && nums[j] == nums[j - 1] && nums[j - 1] == nums[j - 2]) continue;int c = -nums[i] - nums[j];if (set.contains(c)) {result.add(Arrays.asList(nums[i], nums[j], c));set.remove(c);} else {set.add(nums[j]);}}}return result;}}",
+          "description": "Java版本使用哈希集合"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: return result if i > 0 and nums[i] == nums[i - 1]: continue left = i + 1 right = len(nums) - 1 while right > left: sum_ = nums[i] + nums[left] + nums[right] if sum_ < 0: left += 1 elif sum_ > 0: right -= 1 else: result.append([nums[i], nums[left], nums[right]]) while right > left and nums[right] == nums[right - 1]: right -= 1 while right > left and nums[left] == nums[left + 1]: left += 1 right -= 1 left += 1 return result",
+          "description": "Python版本的双指针解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: break if i > 0 and nums[i] == nums[i - 1]: continue d = {} for j in range(i + 1, len(nums)): if j > i + 2 and nums[j] == nums[j-1] == nums[j-2]: continue c = 0 - (nums[i] + nums[j]) if c in d: result.append([nums[i], nums[j], c]) d.pop(c) else: d[nums[j]] = j return result",
+          "description": "Python版本使用字典"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "哈希解法",
+      "text": "两层for循环就可以确定 两个数值，可以使用哈希法来确定 第三个数 0-(a+b) 或者 0 - (a + c) 是否在 数组里出现过，其实这个思路是正确的，但是我们有一个非常棘手的问题，就是题目中说的不可以包含重复的三元组。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) {vector<vector<int>> result;sort(nums.begin(), nums.end());for (int i = 0; i < nums.size(); i++) {if (nums[i] > 0) break;if (i > 0 && nums[i] == nums[i - 1]) continue;unordered_set<int> set;for (int k = i + 1; k < nums.size(); k++) {if (k > i + 2 && nums[k] == nums[k - 1] && nums[k - 1] == nums[k - 2]) continue;int target = 0 - (nums[i] + nums[k]);if (set.find(target) != set.end()) {result.push_back({nums[i], target, nums[k]});set.erase(target);} else {set.insert(nums[k]);}}}}return result;}};",
+          "description": "哈希法解决三数之和问题"
+        },
+        {
+          "language": "C++",
+          "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) {vector<vector<int>> result;sort(nums.begin(), nums.end());for (int i = 0; i < nums.size(); i++) {if (nums[i] > 0) return result;if (i > 0 && nums[i] == nums[i - 1]) continue;int left = i + 1, right = nums.size() - 1;while (right > left) {if (nums[i] + nums[left] + nums[right] > 0) right--;else if (nums[i] + nums[left] + nums[right] < 0) left++;else {result.push_back({nums[i], nums[left], nums[right]});while (right > left && nums[right] == nums[right - 1]) right--;while (right > left && nums[left] == nums[left + 1]) left++;right--;left++;}}}}return result;}};",
+          "description": "双指针法解决三数之和问题"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public List<List<Integer>> threeSum(int[] nums) {List<List<Integer>> result = new ArrayList<>();Arrays.sort(nums);for (int i = 0; i < nums.length; i++) {if (nums[i] > 0) return result;if (i > 0 && nums[i] == nums[i - 1]) continue;int left = i + 1, right = nums.length - 1;while (right > left) {int sum = nums[i] + nums[left] + nums[right];if (sum > 0) right--;else if (sum < 0) left++;else {result.add(Arrays.asList(nums[i], nums[left], nums[right]));while (right > left && nums[right] == nums[right - 1]) right--;while (right > left && nums[left] == nums[left + 1]) left++;right--;left++;}}}}return result;}};",
+          "description": "双指针法解决三数之和问题（Java版本）"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public List<List<Integer>> threeSum(int[] nums) {List<List<Integer>> result = new ArrayList<>();Arrays.sort(nums);for (int i = 0; i < nums.length; i++) {if (nums[i] > 0) return result;if (i > 0 && nums[i] == nums[i - 1]) continue;HashSet<Integer> set = new HashSet<>();for (int j = i + 1; j < nums.length; j++) {if (j > i + 2 && nums[j] == nums[j - 1] && nums[j - 1] == nums[j - 2]) continue;int c = -nums[i] - nums[j];if (set.contains(c)) {result.add(Arrays.asList(nums[i], nums[j], c));set.remove(c);} else {set.add(nums[j]);}}}}return result;}};",
+          "description": "使用哈希集合解决三数之和问题（Java版本）"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: return result if i > 0 and nums[i] == nums[i - 1]: continue left, right = i + 1, len(nums) - 1 while right > left: sum_ = nums[i] + nums[left] + nums[right] if sum_ < 0: left += 1 elif sum_ > 0: right -= 1 else: result.append([nums[i], nums[left], nums[right]]) while right > left and nums[right] == nums[right - 1]: right -= 1 while right > left and nums[left] == nums[left + 1]: left += 1 right -= 1 left += 1 return result",
+          "description": "双指针法解决三数之和问题（Python版本）"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: break if i > 0 and nums[i] == nums[i - 1]: continue d = {} for j in range(i + 1, len(nums)): if j > i + 2 and nums[j] == nums[j-1] == nums[j-2]: continue c = 0 - (nums[i] + nums[j]) if c in d: result.append([nums[i], nums[j], c]) d.pop(c) else: d[nums[j]] = j return result",
+          "description": "使用字典解决三数之和问题（Python版本）"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "双指针",
+      "text": "其实这道题目使用哈希法并不十分合适，因为在去重的操作中有很多细节需要注意，在面试中很难直接写出没有bug的代码。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) {vector<vector<int>> result;sort(nums.begin(), nums.end());for (int i = 0; i < nums.size(); i++) {if (nums[i] > 0)break;if (i > 0 && nums[i] == nums[i - 1])continue;unordered_set<int> set;for (int k = i + 1; k < nums.size(); k++) {if (k > i + 2 && nums[k] == nums[k - 1] && nums[k - 1] == nums[k - 2])continue;int target = 0 - (nums[i] + nums[k]);if (set.find(target) != set.end()) {result.push_back({nums[i], target, nums[k]});set.erase(target);}else {set.insert(nums[k]);}}}}return result;}};",
+          "description": "使用哈希法解决三数之和问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) {vector<vector<int>> result;sort(nums.begin(), nums.end());for (int i = 0; i < nums.size(); i++) {if (nums[i] > 0)return result;if (i > 0 && nums[i] == nums[i - 1])continue;int left = i + 1;int right = nums.size() - 1;while (right > left) {if (nums[i] + nums[left] + nums[right] > 0) right--;else if (nums[i] + nums[left] + nums[right] < 0) left++;else {result.push_back(vector<int>{nums[i], nums[left], nums[right]});while (right > left && nums[right] == nums[right - 1]) right--;while (right > left && nums[left] == nums[left + 1]) left++;right--;left++;}}}}return result;}};",
+          "description": "使用双指针方法解决三数之和问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<List<Integer>> threeSum(int[] nums) {List<List<Integer>> result = new ArrayList<>();Arrays.sort(nums);for (int i = 0; i < nums.length; i++) {if (nums[i] > 0)return result;if (i > 0 && nums[i] == nums[i - 1])continue;int left = i + 1;int right = nums.length - 1;while (right > left) {int sum = nums[i] + nums[left] + nums[right];if (sum > 0)right--;else if (sum < 0)left++;else {result.add(Arrays.asList(nums[i], nums[left], nums[right]));while (right > left && nums[right] == nums[right - 1]) right--;while (right > left && nums[left] == nums[left + 1]) left++;right--;left++;}}}}return result;}}",
+          "description": "Java版本，使用双指针方法解决三数之和问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<List<Integer>> threeSum(int[] nums) {List<List<Integer>> result = new ArrayList<>();Arrays.sort(nums);for (int i = 0; i < nums.length; i++) {if (nums[i] > 0) return result;if (i > 0 && nums[i] == nums[i - 1]) continue;HashSet<Integer> set = new HashSet<>();for (int j = i + 1; j < nums.length; j++) {if (j > i + 2 && nums[j] == nums[j - 1] && nums[j - 1] == nums[j - 2]) continue;int c = -nums[i] - nums[j];if (set.contains(c)) {result.add(Arrays.asList(nums[i], nums[j], c));set.remove(c);} else {set.add(nums[j]);}}}return result;}}",
+          "description": "Java版本，使用哈希集合解决三数之和问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: return result if i > 0 and nums[i] == nums[i - 1]: continue left = i + 1 right = len(nums) - 1 while right > left: sum_ = nums[i] + nums[left] + nums[right] if sum_ < 0: left += 1 elif sum_ > 0: right -= 1 else: result.append([nums[i], nums[left], nums[right]]) while right > left and nums[right] == nums[right - 1]: right -= 1 while right > left and nums[left] == nums[left + 1]: left += 1 right -= 1 left += 1 return result",
+          "description": "Python版本，使用双指针方法解决三数之和问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: break if i > 0 and nums[i] == nums[i - 1]: continue d = {} for j in range(i + 1, len(nums)): if j > i + 2 and nums[j] == nums[j-1] == nums[j-2]: continue c = 0 - (nums[i] + nums[j]) if c in d: result.append([nums[i], nums[j], c]) d.pop(c) else: d[nums[j]] = j return result",
+          "description": "Python版本，使用字典解决三数之和问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "去重逻辑的思考",
+      "text": "#a的去重",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) {vector<vector<int>> result; sort(nums.begin(), nums.end()); for (int i = 0; i < nums.size(); i++) { if (nums[i] > 0) break; if (i > 0 && nums[i] == nums[i - 1]) continue; unordered_set<int> set; for (int k = i + 1; k < nums.size(); k++) { if (k > i + 2 && nums[k] == nums[k - 1] && nums[k - 1] == nums[k - 2]) continue; int target = 0 - (nums[i] + nums[k]); if (set.find(target) != set.end()) { result.push_back({nums[i], target, nums[k]}); set.erase(target); } else { set.insert(nums[k]); } } } return result; }};",
+          "description": "哈希法实现三数之和"
+        },
+        {
+          "language": "C++",
+          "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) {vector<vector<int>> result; sort(nums.begin(), nums.end()); for (int i = 0; i < nums.size(); i++) { if (nums[i] > 0) return result; if (i > 0 && nums[i] == nums[i - 1]) continue; int left = i + 1, right = nums.size() - 1; while (right > left) { if (nums[i] + nums[left] + nums[right] > 0) right--; else if (nums[i] + nums[left] + nums[right] < 0) left++; else { result.push_back({nums[i], nums[left], nums[right]}); while (right > left && nums[right] == nums[right - 1]) right--; while (right > left && nums[left] == nums[left + 1]) left++; right--; left++; } } } return result; }};",
+          "description": "双指针法实现三数之和"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public List<List<Integer>> threeSum(int[] nums) {List<List<Integer>> result = new ArrayList<>(); Arrays.sort(nums); for (int i = 0; i < nums.length; i++) { if (nums[i] > 0) return result; if (i > 0 && nums[i] == nums[i - 1]) continue; int left = i + 1, right = nums.length - 1; while (right > left) { int sum = nums[i] + nums[left] + nums[right]; if (sum > 0) right--; else if (sum < 0) left++; else { result.add(Arrays.asList(nums[i], nums[left], nums[right])); while (right > left && nums[right] == nums[right - 1]) right--; while (right > left && nums[left] == nums[left + 1]) left++; right--; left++; } } } return result; }}",
+          "description": "Java版本的双指针法实现三数之和"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public List<List<Integer>> threeSum(int[] nums) {List<List<Integer>> result = new ArrayList<>(); Arrays.sort(nums); for (int i = 0; i < nums.length; i++) { if (nums[i] > 0) return result; if (i > 0 && nums[i] == nums[i - 1]) continue; HashSet<Integer> set = new HashSet<>(); for (int j = i + 1; j < nums.length; j++) { if (j > i + 2 && nums[j] == nums[j - 1] && nums[j - 1] == nums[j - 2]) continue; int c = -nums[i] - nums[j]; if (set.contains(c)) { result.add(Arrays.asList(nums[i], nums[j], c)); set.remove(c); } else { set.add(nums[j]); } } } return result; }}",
+          "description": "Java版本使用哈希集合实现三数之和"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: return result if i > 0 and nums[i] == nums[i - 1]: continue left, right = i + 1, len(nums) - 1 while right > left: sum_ = nums[i] + nums[left] + nums[right] if sum_ < 0: left += 1 elif sum_ > 0: right -= 1 else: result.append([nums[i], nums[left], nums[right]]) while right > left and nums[right] == nums[right - 1]: right -= 1 while right > left and nums[left] == nums[left + 1]: left += 1 right -= 1 left += 1 return result",
+          "description": "Python版本的双指针法实现三数之和"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: break if i > 0 and nums[i] == nums[i - 1]: continue d = {} for j in range(i + 1, len(nums)): if j > i + 2 and nums[j] == nums[j-1] == nums[j-2]: continue c = 0 - (nums[i] + nums[j]) if c in d: result.append([nums[i], nums[j], c]) d.pop(c) else: d[nums[j]] = j return result",
+          "description": "Python版本使用字典实现三数之和"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "a的去重",
+      "text": "说到去重，其实主要考虑三个数的去重。 a, b ,c, 对应的就是 nums[i]，nums[left]，nums[right]",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) {vector<vector<int>> result;sort(nums.begin(), nums.end());for (int i = 0; i < nums.size(); i++) {if (nums[i] > 0)break;if (i > 0 && nums[i] == nums[i - 1])continue;unordered_set<int> set;for (int k = i + 1; k < nums.size(); k++) {if (k > i + 2 && nums[k] == nums[k - 1] && nums[k - 1] == nums[k - 2])continue;int target = 0 - (nums[i] + nums[k]);if (set.find(target) != set.end()) {result.push_back({nums[i], target, nums[k]});set.erase(target);} else {set.insert(nums[k]);}}}}return result;}};",
+          "description": "C++哈希法实现三数之和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) {vector<vector<int>> result;sort(nums.begin(), nums.end());for (int i = 0; i < nums.size(); i++) {if (nums[i] > 0)return result;if (i > 0 && nums[i] == nums[i - 1])continue;int left = i + 1;int right = nums.size() - 1;while (right > left) {if (nums[i] + nums[left] + nums[right] > 0) right--;else if (nums[i] + nums[left] + nums[right] < 0) left++;else {result.push_back(vector<int>{nums[i], nums[left], nums[right]});while (right > left && nums[right] == nums[right - 1]) right--;while (right > left && nums[left] == nums[left + 1]) left++;right--;left++;}}}}return result;}};",
+          "description": "C++双指针法实现三数之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<List<Integer>> threeSum(int[] nums) {List<List<Integer>> result = new ArrayList<>();Arrays.sort(nums);for (int i = 0; i < nums.length; i++) {if (nums[i] > 0)return result;if (i > 0 && nums[i] == nums[i - 1])continue;int left = i + 1;int right = nums.length - 1;while (right > left) {int sum = nums[i] + nums[left] + nums[right];if (sum > 0) right--;else if (sum < 0) left++;else {result.add(Arrays.asList(nums[i], nums[left], nums[right]));while (right > left && nums[right] == nums[right - 1]) right--;while (right > left && nums[left] == nums[left + 1]) left++;right--;left++;}}}}return result;}}",
+          "description": "Java双指针法实现三数之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<List<Integer>> threeSum(int[] nums) {List<List<Integer>> result = new ArrayList<>();Arrays.sort(nums);for (int i = 0; i < nums.length; i++) {if (nums[i] > 0) return result;if (i > 0 && nums[i] == nums[i - 1]) continue;HashSet<Integer> set = new HashSet<>();for (int j = i + 1; j < nums.length; j++) {if (j > i + 2 && nums[j] == nums[j - 1] && nums[j - 1] == nums[j - 2]) continue;int c = -nums[i] - nums[j];if (set.contains(c)) {result.add(Arrays.asList(nums[i], nums[j], c));set.remove(c);} else {set.add(nums[j]);}}}return result;}}",
+          "description": "Java哈希集合实现三数之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: return result if i > 0 and nums[i] == nums[i - 1]: continue left = i + 1 right = len(nums) - 1 while right > left: sum_ = nums[i] + nums[left] + nums[right] if sum_ < 0: left += 1 elif sum_ > 0: right -= 1 else: result.append([nums[i], nums[left], nums[right]]) while right > left and nums[right] == nums[right - 1]: right -= 1 while right > left and nums[left] == nums[left + 1]: left += 1 right -= 1 left += 1 return result",
+          "description": "Python双指针法实现三数之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: break if i > 0 and nums[i] == nums[i - 1]: continue d = {} for j in range(i + 1, len(nums)): if j > i + 2 and nums[j] == nums[j-1] == nums[j-2]: continue c = 0 - (nums[i] + nums[j]) if c in d: result.append([nums[i], nums[j], c]) d.pop(c) else: d[nums[j]] = j return result",
+          "description": "Python字典实现三数之和"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "b与c的去重",
+      "text": "很多同学写本题的时候，去重的逻辑多加了 对right 和left 的去重：（代码中注释部分）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) {vector<vector<int>> result;sort(nums.begin(), nums.end());for (int i = 0; i < nums.size(); i++) {if (nums[i] > 0)break;if (i > 0 && nums[i] == nums[i - 1])continue;unordered_set<int> set;for (int k = i + 1; k < nums.size(); k++) {if (k > i + 2 && nums[k] == nums[k - 1] && nums[k - 1] == nums[k - 2])continue;int target = 0 - (nums[i] + nums[k]);if (set.find(target) != set.end()) {result.push_back({nums[i], target, nums[k]});set.erase(target);}else {set.insert(nums[k]);}}}return result;}};",
+          "description": "哈希法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) {vector<vector<int>> result;sort(nums.begin(), nums.end());for (int i = 0; i < nums.size(); i++) {if (nums[i] > 0) {return result;}if (i > 0 && nums[i] == nums[i - 1]) {continue;}int left = i + 1;int right = nums.size() - 1;while (right > left) {if (nums[i] + nums[left] + nums[right] > 0) right--;else if (nums[i] + nums[left] + nums[right] < 0) left++;else {result.push_back(vector<int>{nums[i], nums[left], nums[right]});while (right > left && nums[right] == nums[right - 1]) right--;while (right > left && nums[left] == nums[left + 1]) left++;right--;left++;}}}}return result;}};",
+          "description": "双指针"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<List<Integer>> threeSum(int[] nums) {List<List<Integer>> result = new ArrayList<>();Arrays.sort(nums);for (int i = 0; i < nums.length; i++) {if (nums[i] > 0) {return result;}if (i > 0 && nums[i] == nums[i - 1]) {continue;}int left = i + 1;int right = nums.length - 1;while (right > left) {int sum = nums[i] + nums[left] + nums[right];if (sum > 0) {right--;} else if (sum < 0) {left++;} else {result.add(Arrays.asList(nums[i], nums[left], nums[right]));while (right > left && nums[right] == nums[right - 1]) right--;while (right > left && nums[left] == nums[left + 1]) left++;right--;left++;}}}}return result;}}",
+          "description": "双指针"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<List<Integer>> threeSum(int[] nums) {List<List<Integer>> result = new ArrayList<>();Arrays.sort(nums);for (int i = 0; i < nums.length; i++) {if (nums[i] > 0) {return result;}if (i > 0 && nums[i] == nums[i - 1]) {continue;}HashSet<Integer> set = new HashSet<>();for (int j = i + 1; j < nums.length; j++) {if (j > i + 2 && nums[j] == nums[j - 1] && nums[j - 1] == nums[j - 2]) {continue;}int c = -nums[i] - nums[j];if (set.contains(c)) {result.add(Arrays.asList(nums[i], nums[j], c));set.remove(c);} else {set.add(nums[j]);}}}return result;}}",
+          "description": "使用哈希集合"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: return result if i > 0 and nums[i] == nums[i - 1]: continue left = i + 1 right = len(nums) - 1 while right > left: sum_ = nums[i] + nums[left] + nums[right] if sum_ < 0: left += 1 elif sum_ > 0: right -= 1 else: result.append([nums[i], nums[left], nums[right]]) while right > left and nums[right] == nums[right - 1]: right -= 1 while right > left and nums[left] == nums[left + 1]: left += 1 right -= 1 left += 1 return result",
+          "description": "双指针"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: break if i > 0 and nums[i] == nums[i - 1]: continue d = {} for j in range(i + 1, len(nums)): if j > i + 2 and nums[j] == nums[j-1] == nums[j-2]: continue c = 0 - (nums[i] + nums[j]) if c in d: result.append([nums[i], nums[j], c]) d.pop(c) else: d[nums[j]] = j return result",
+          "description": "使用字典"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "思考题",
+      "text": "既然三数之和可以使用双指针法，我们之前讲过的1.两数之和 (opens new window)，可不可以使用双指针法呢？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) { vector<vector<int>> result; sort(nums.begin(), nums.end()); for (int i = 0; i < nums.size(); i++) { if (nums[i] > 0) break; if (i > 0 && nums[i] == nums[i - 1]) continue; unordered_set<int> set; for (int k = i + 1; k < nums.size(); k++) { if (k > i + 2 && nums[k] == nums[k - 1] && nums[k - 1] == nums[k - 2]) continue; int target = 0 - (nums[i] + nums[k]); if (set.find(target) != set.end()) { result.push_back({nums[i], target, nums[k]}); set.erase(target); } else { set.insert(nums[k]); } } } return result; }};",
+          "description": "使用哈希法解决三数之和问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) { vector<vector<int>> result; sort(nums.begin(), nums.end()); for (int i = 0; i < nums.size(); i++) { if (nums[i] > 0) return result; if (i > 0 && nums[i] == nums[i - 1]) continue; int left = i + 1, right = nums.size() - 1; while (right > left) { if (nums[i] + nums[left] + nums[right] > 0) right--; else if (nums[i] + nums[left] + nums[right] < 0) left++; else { result.push_back({nums[i], nums[left], nums[right]}); while (right > left && nums[right] == nums[right - 1]) right--; while (right > left && nums[left] == nums[left + 1]) left++; right--; left++; } } } return result; }};",
+          "description": "使用双指针法解决三数之和问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<List<Integer>> threeSum(int[] nums) { List<List<Integer>> result = new ArrayList<>(); Arrays.sort(nums); for (int i = 0; i < nums.length; i++) { if (nums[i] > 0) return result; if (i > 0 && nums[i] == nums[i - 1]) continue; int left = i + 1, right = nums.length - 1; while (right > left) { int sum = nums[i] + nums[left] + nums[right]; if (sum > 0) right--; else if (sum < 0) left++; else { result.add(Arrays.asList(nums[i], nums[left], nums[right])); while (right > left && nums[right] == nums[right - 1]) right--; while (right > left && nums[left] == nums[left + 1]) left++; right--; left++; } } } return result; }}",
+          "description": "Java版本的双指针法解决三数之和问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<List<Integer>> threeSum(int[] nums) { List<List<Integer>> result = new ArrayList<>(); Arrays.sort(nums); for (int i = 0; i < nums.length; i++) { if (nums[i] > 0) return result; if (i > 0 && nums[i] == nums[i - 1]) continue; HashSet<Integer> set = new HashSet<>(); for (int j = i + 1; j < nums.length; j++) { if (j > i + 2 && nums[j] == nums[j - 1] && nums[j - 1] == nums[j - 2]) continue; int c = -nums[i] - nums[j]; if (set.contains(c)) { result.add(Arrays.asList(nums[i], nums[j], c)); set.remove(c); } else { set.add(nums[j]); } } } return result; }}",
+          "description": "Java版本的哈希集合方法解决三数之和问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: return result if i > 0 and nums[i] == nums[i - 1]: continue left, right = i + 1, len(nums) - 1 while right > left: sum_ = nums[i] + nums[left] + nums[right] if sum_ < 0: left += 1 elif sum_ > 0: right -= 1 else: result.append([nums[i], nums[left], nums[right]]) while right > left and nums[right] == nums[right - 1]: right -= 1 while right > left and nums[left] == nums[left + 1]: left += 1 right -= 1 left += 1 return result",
+          "description": "Python版本的双指针法解决三数之和问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: break if i > 0 and nums[i] == nums[i - 1]: continue d = {} for j in range(i + 1, len(nums)): if j > i + 2 and nums[j] == nums[j-1] == nums[j-2]: continue c = 0 - (nums[i] + nums[j]) if c in d: result.append([nums[i], nums[j], c]) d.pop(c) else: d[nums[j]] = j return result",
+          "description": "Python版本的字典方法解决三数之和问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) {vector<vector<int>> result;sort(nums.begin(), nums.end());for (int i = 0; i < nums.size(); i++) {if (nums[i] > 0)break;if (i > 0 && nums[i] == nums[i - 1])continue;unordered_set<int> set;for (int k = i + 1; k < nums.size(); k++) {if (k > i + 2 && nums[k] == nums[k - 1] && nums[k - 1] == nums[k - 2])continue;int target = 0 - (nums[i] + nums[k]);if (set.find(target) != set.end()) {result.push_back({nums[i], target, nums[k]});set.erase(target);}else {set.insert(nums[k]);}}}return result;}};",
+          "description": "哈希解法"
+        },
+        {
+          "language": "C++",
+          "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) {vector<vector<int>> result;sort(nums.begin(), nums.end());for (int i = 0; i < nums.size(); i++) {if (nums[i] > 0)return result;if (i > 0 && nums[i] == nums[i - 1])continue;int left = i + 1;int right = nums.size() - 1;while (right > left) {if (nums[i] + nums[left] + nums[right] > 0) right--;else if (nums[i] + nums[left] + nums[right] < 0) left++;else {result.push_back(vector<int>{nums[i], nums[left], nums[right]});while (right > left && nums[right] == nums[right - 1]) right--;while (right > left && nums[left] == nums[left + 1]) left++;right--;left++;}}}return result;}};",
+          "description": "双指针解法"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public List<List<Integer>> threeSum(int[] nums) {List<List<Integer>> result = new ArrayList<>();Arrays.sort(nums);for (int i = 0; i < nums.length; i++) {if (nums[i] > 0) {return result;}if (i > 0 && nums[i] == nums[i - 1]) {continue;}int left = i + 1;int right = nums.length - 1;while (right > left) {int sum = nums[i] + nums[left] + nums[right];if (sum > 0) {right--;} else if (sum < 0) {left++;} else {result.add(Arrays.asList(nums[i], nums[left], nums[right]));while (right > left && nums[right] == nums[right - 1]) right--;while (right > left && nums[left] == nums[left + 1]) left++;right--;left++;}}}return result;}}",
+          "description": "双指针解法"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public List<List<Integer>> threeSum(int[] nums) {List<List<Integer>> result = new ArrayList<>();Arrays.sort(nums);for (int i = 0; i < nums.length; i++) {if (nums[i] > 0) {return result;}if (i > 0 && nums[i] == nums[i - 1]) {continue;}HashSet<Integer> set = new HashSet<>();for (int j = i + 1; j < nums.length; j++) {if (j > i + 2 && nums[j] == nums[j - 1] && nums[j - 1] == nums[j - 2]) {continue;}int c = -nums[i] - nums[j];if (set.contains(c)) {result.add(Arrays.asList(nums[i], nums[j], c));set.remove(c);} else {set.add(nums[j]);}}}return result;}}",
+          "description": "哈希集合解法"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: return result if i > 0 and nums[i] == nums[i - 1]: continue left = i + 1 right = len(nums) - 1 while right > left: sum_ = nums[i] + nums[left] + nums[right] if sum_ < 0: left += 1 elif sum_ > 0: right -= 1 else: result.append([nums[i], nums[left], nums[right]]) while right > left and nums[right] == nums[right - 1]: right -= 1 while right > left and nums[left] == nums[left + 1]: left += 1 right -= 1 left += 1 return result",
+          "description": "双指针解法"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: break if i > 0 and nums[i] == nums[i - 1]: continue d = {} for j in range(i + 1, len(nums)): if j > i + 2 and nums[j] == nums[j-1] == nums[j-2]: continue c = 0 - (nums[i] + nums[j]) if c in d: result.append([nums[i], nums[j], c]) d.pop(c) else: d[nums[j]] = j return result",
+          "description": "使用字典的解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "（版本一） 双指针",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) {vector<vector<int>> result;sort(nums.begin(), nums.end());for (int i = 0; i < nums.size(); i++) {if (nums[i] > 0)return result;if (i > 0 && nums[i] == nums[i - 1])continue;int left = i + 1;int right = nums.size() - 1;while (right > left) {if (nums[i] + nums[left] + nums[right] > 0) right--;else if (nums[i] + nums[left] + nums[right] < 0) left++;else {result.push_back(vector<int>{nums[i], nums[left], nums[right]});while (right > left && nums[right] == nums[right - 1]) right--;while (right > left && nums[left] == nums[left + 1]) left++;right--;left++;}}}return result;}};",
+          "description": "双指针法解决三数之和问题"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public List<List<Integer>> threeSum(int[] nums) {List<List<Integer>> result = new ArrayList<>();Arrays.sort(nums);for (int i = 0; i < nums.length; i++) {if (nums[i] > 0) return result;if (i > 0 && nums[i] == nums[i - 1]) continue;int left = i + 1;int right = nums.length - 1;while (right > left) {int sum = nums[i] + nums[left] + nums[right];if (sum > 0) {right--;} else if (sum < 0) {left++;} else {result.add(Arrays.asList(nums[i], nums[left], nums[right]));while (right > left && nums[right] == nums[right - 1]) right--;while (right > left && nums[left] == nums[left + 1]) left++;right--;left++;}}}return result;}}",
+          "description": "Java版本的双指针法解决三数之和问题"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: return result if i > 0 and nums[i] == nums[i - 1]: continue left = i + 1 right = len(nums) - 1 while right > left: sum_ = nums[i] + nums[left] + nums[right] if sum_ < 0: left += 1 elif sum_ > 0: right -= 1 else: result.append([nums[i], nums[left], nums[right]]) while right > left and nums[right] == nums[right - 1]: right -= 1 while right > left and nums[left] == nums[left + 1]: left += 1 right -= 1 left += 1 return result",
+          "description": "Python版本的双指针法解决三数之和问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "（版本一） 双指针",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) {vector<vector<int>> result; sort(nums.begin(), nums.end()); for (int i = 0; i < nums.size(); i++) { if (nums[i] > 0) break; if (i > 0 && nums[i] == nums[i - 1]) continue; unordered_set<int> set; for (int k = i + 1; k < nums.size(); k++) { if (k > i + 2 && nums[k] == nums[k - 1] && nums[k - 1] == nums[k - 2]) continue; int target = 0 - (nums[i] + nums[k]); if (set.find(target) != set.end()) {result.push_back({nums[i], target, nums[k]}); set.erase(target);} else {set.insert(nums[k]);} } } return result;}};",
+          "description": "使用哈希表存储中间结果来查找满足条件的三元组"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) {vector<vector<int>> result; sort(nums.begin(), nums.end()); for (int i = 0; i < nums.size(); i++) { if (nums[i] > 0) return result; if (i > 0 && nums[i] == nums[i - 1]) continue; int left = i + 1, right = nums.size() - 1; while (right > left) {if (nums[i] + nums[left] + nums[right] > 0) right--; else if (nums[i] + nums[left] + nums[right] < 0) left++; else {result.push_back({nums[i], nums[left], nums[right]}); while (right > left && nums[right] == nums[right - 1]) right--; while (right > left && nums[left] == nums[left + 1]) left++; right--; left++;}} } return result;}};",
+          "description": "使用双指针法寻找满足条件的三元组"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<List<Integer>> threeSum(int[] nums) {List<List<Integer>> result = new ArrayList<>(); Arrays.sort(nums); for (int i = 0; i < nums.length; i++) {if (nums[i] > 0) return result; if (i > 0 && nums[i] == nums[i - 1]) continue; int left = i + 1, right = nums.length - 1; while (right > left) {int sum = nums[i] + nums[left] + nums[right]; if (sum > 0) right--; else if (sum < 0) left++; else {result.add(Arrays.asList(nums[i], nums[left], nums[right])); while (right > left && nums[right] == nums[right - 1]) right--; while (right > left && nums[left] == nums[left + 1]) left++; right--; left++;}}} return result;}}",
+          "description": "Java实现，使用双指针法寻找满足条件的三元组"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<List<Integer>> threeSum(int[] nums) {List<List<Integer>> result = new ArrayList<>(); Arrays.sort(nums); for (int i = 0; i < nums.length; i++) {if (nums[i] > 0) return result; if (i > 0 && nums[i] == nums[i - 1]) continue; HashSet<Integer> set = new HashSet<>(); for (int j = i + 1; j < nums.length; j++) {if (j > i + 2 && nums[j] == nums[j - 1] && nums[j - 1] == nums[j - 2]) continue; int c = -nums[i] - nums[j]; if (set.contains(c)) {result.add(Arrays.asList(nums[i], nums[j], c)); set.remove(c);} else {set.add(nums[j]);}}} return result;}}",
+          "description": "Java实现，使用哈希集合存储元素以寻找满足条件的三元组"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: return result if i > 0 and nums[i] == nums[i - 1]: continue left, right = i + 1, len(nums) - 1 while right > left: sum_ = nums[i] + nums[left] + nums[right] if sum_ < 0: left += 1 elif sum_ > 0: right -= 1 else: result.append([nums[i], nums[left], nums[right]]) while right > left and nums[right] == nums[right - 1]: right -= 1 while right > left and nums[left] == nums[left + 1]: left += 1 right -= 1 left += 1 return result",
+          "description": "Python实现，使用双指针法寻找满足条件的三元组"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: break if i > 0 and nums[i] == nums[i - 1]: continue d = {} for j in range(i + 1, len(nums)): if j > i + 2 and nums[j] == nums[j-1] == nums[j-2]: continue c = 0 - (nums[i] + nums[j]) if c in d: result.append([nums[i], nums[j], c]) d.pop(c) else: d[nums[j]] = j return result",
+          "description": "Python实现，使用字典存储元素以寻找满足条件的三元组"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(n)",
+    "explanation": "但还是比较费时的，因为不好做剪枝操作。"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) {vector<vector<int>> result; sort(nums.begin(), nums.end()); for (int i = 0; i < nums.size(); i++) { if (nums[i] > 0) break; if (i > 0 && nums[i] == nums[i - 1]) continue; unordered_set<int> set; for (int k = i + 1; k < nums.size(); k++) { if (k > i + 2 && nums[k] == nums[k - 1] && nums[k - 1] == nums[k - 2]) continue; int target = 0 - (nums[i] + nums[k]); if (set.find(target) != set.end()) { result.push_back({nums[i], target, nums[k]}); set.erase(target); } else { set.insert(nums[k]); } } } return result; }};",
+      "description": "使用哈希法解决三数之和问题"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: vector<vector<int>> threeSum(vector<int>& nums) {vector<vector<int>> result; sort(nums.begin(), nums.end()); for (int i = 0; i < nums.size(); i++) { if (nums[i] > 0) { return result; } if (i > 0 && nums[i] == nums[i - 1]) { continue; } int left = i + 1; int right = nums.size() - 1; while (right > left) { if (nums[i] + nums[left] + nums[right] > 0) right--; else if (nums[i] + nums[left] + nums[right] < 0) left++; else { result.push_back(vector<int>{nums[i], nums[left], nums[right]}); while (right > left && nums[right] == nums[right - 1]) right--; while (right > left && nums[left] == nums[left + 1]) left++; right--; left++; } } } return result; }};",
+      "description": "使用双指针法解决三数之和问题"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public List<List<Integer>> threeSum(int[] nums) {List<List<Integer>> result = new ArrayList<>(); Arrays.sort(nums); for (int i = 0; i < nums.length; i++) { if (nums[i] > 0) { return result; } if (i > 0 && nums[i] == nums[i - 1]) { continue; } int left = i + 1; int right = nums.length - 1; while (right > left) { int sum = nums[i] + nums[left] + nums[right]; if (sum > 0) { right--; } else if (sum < 0) { left++; } else { result.add(Arrays.asList(nums[i], nums[left], nums[right])); while (right > left && nums[right] == nums[right - 1]) right--; while (right > left && nums[left] == nums[left + 1]) left++; right--; left++; } } } return result; }}",
+      "description": "Java版本，使用双指针法解决三数之和问题"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public List<List<Integer>> threeSum(int[] nums) {List<List<Integer>> result = new ArrayList<>(); Arrays.sort(nums); for (int i = 0; i < nums.length; i++) { if (nums[i] > 0) { return result; } if (i > 0 && nums[i] == nums[i - 1]) { continue; } HashSet<Integer> set = new HashSet<>(); for (int j = i + 1; j < nums.length; j++) { if (j > i + 2 && nums[j] == nums[j - 1] && nums[j - 1] == nums[j - 2]) { continue; } int c = -nums[i] - nums[j]; if (set.contains(c)) { result.add(Arrays.asList(nums[i], nums[j], c)); set.remove(c); } else { set.add(nums[j]); } } } return result; }}",
+      "description": "Java版本，使用哈希集合解决三数之和问题"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: return result if i > 0 and nums[i] == nums[i - 1]: continue left = i + 1 right = len(nums) - 1 while right > left: sum_ = nums[i] + nums[left] + nums[right] if sum_ < 0: left += 1 elif sum_ > 0: right -= 1 else: result.append([nums[i], nums[left], nums[right]]) while right > left and nums[right] == nums[right - 1]: right -= 1 while right > left and nums[left] == nums[left + 1]: left += 1 right -= 1 left += 1 return result",
+      "description": "Python版本，使用双指针法解决三数之和问题"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def threeSum(self, nums: List[int]) -> List[List[int]]: result = [] nums.sort() for i in range(len(nums)): if nums[i] > 0: break if i > 0 and nums[i] == nums[i - 1]: continue d = {} for j in range(i + 1, len(nums)): if j > i + 2 and nums[j] == nums[j-1] == nums[j-2]: continue c = 0 - (nums[i] + nums[j]) if c in d: result.append([nums[i], nums[j], c]) d.pop(c) else: d[nums[j]] = j return result",
+      "description": "Python版本，使用字典解决三数之和问题"
+    }
+  ],
+  "common_mistakes": [
+    "在开始时没有对数组进行排序，导致后续操作复杂度增加。",
+    "对于相同元素的处理不当（例如错误地跳过了-1,-1,2这样的情况），可能导致遗漏某些有效解。",
+    "在找到一组解后立即停止搜索而未继续检查其他可能的组合。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/15.%E4%B8%89%E6%95%B0%E4%B9%8B%E5%92%8C.gif",
+      "description": "图片展示了一个包含六个元素的数组，分别为 -4, -1, -1, -1, -1, 2，适用于算法和数据结构中的数组操作或问题解决。",
+      "context": "动画展示了通过双指针法解决三数之和问题的具体过程，其中首先对数组进行排序，然后利用一个for循环配合左右两个指针在数组中寻找满足条件的三个数。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/15.%E4%B8%89%E6%95%B0%E4%B9%8B%E5%92%8C.gif",
+      "description": "该GIF展示了通过双指针法解决三数之和问题的过程，其中一固定指针遍历数组，另外两个指针（左指针和右指针）在剩余部分移动以寻找满足条件的三个数。",
+      "context": "此GIF动画展示了如何通过双指针法在已排序数组中寻找三个数使其和为零的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\双指针\\三数之和.txt",
+  "extracted_at": "2025-07-21T01:38:42.689207",
+  "raw_content": "三数之和\n力扣题目链接(https://leetcode.cn/problems/3sum/)\n\n给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有满足条件且不重复的三元组。\n\n注意： 答案中不可以包含重复的三元组。\n\n示例：\n\n给定数组 nums = [-1, 0, 1, 2, -1, -4]，\n\n满足要求的三元组集合为： [ [-1, 0, 1], [-1, -1, 2] ]\n\n\n注意[0， 0， 0， 0] 这组数据\n\n#思路\n#哈希解法\n两层for循环就可以确定 两个数值，可以使用哈希法来确定 第三个数 0-(a+b) 或者 0 - (a + c) 是否在 数组里出现过，其实这个思路是正确的，但是我们有一个非常棘手的问题，就是题目中说的不可以包含重复的三元组。\n\n把符合条件的三元组放进vector中，然后再去重，这样是非常费时的，很容易超时，也是这道题目通过率如此之低的根源所在。\n\n去重的过程不好处理，有很多小细节，如果在面试中很难想到位。\n\n时间复杂度可以做到O(n^2)，但还是比较费时的，因为不好做剪枝操作。\n\n大家可以尝试使用哈希法写一写，就知道其困难的程度了。\n\n哈希法C++代码:\n\nclass Solution {\npublic:\n    // 在一个数组中找到3个数形成的三元组，它们的和为0，不能重复使用（三数下标互不相同），且三元组不能重复。\n    // b（存储）== 0-(a+c)（检索）\n    vector<vector<int>> threeSum(vector<int>& nums) {\n        vector<vector<int>> result;\n        sort(nums.begin(), nums.end());\n        \n        for (int i = 0; i < nums.size(); i++) {\n            // 如果a是正数，a<b<c，不可能形成和为0的三元组\n            if (nums[i] > 0)\n                break;\n            \n            // [a, a, ...] 如果本轮a和上轮a相同，那么找到的b，c也是相同的，所以去重a\n            if (i > 0 && nums[i] == nums[i - 1])\n                continue;\n            \n            // 这个set的作用是存储b\n            unordered_set<int> set;\n            \n            for (int k = i + 1; k < nums.size(); k++) {\n                // 去重b=c时的b和c\n                if (k > i + 2 && nums[k] == nums[k - 1] && nums[k - 1] == nums[k - 2])\n                    continue;\n                \n                // a+b+c=0 <=> b=0-(a+c)\n                int target = 0 - (nums[i] + nums[k]);\n                if (set.find(target) != set.end()) {\n                    result.push_back({nums[i], target, nums[k]});   // nums[k]成为c\n                    set.erase(target);\n                }\n                else {\n                    set.insert(nums[k]);                            // nums[k]成为b\n                }\n            }\n        }\n\n        return result;\n    }\n};\n时间复杂度: O(n^2)\n空间复杂度: O(n)，额外的 set 开销\n#双指针\n其实这道题目使用哈希法并不十分合适，因为在去重的操作中有很多细节需要注意，在面试中很难直接写出没有bug的代码。\n\n而且使用哈希法 在使用两层for循环的时候，能做的剪枝操作很有限，虽然时间复杂度是O(n^2)，也是可以在leetcode上通过，但是程序的执行时间依然比较长 。\n\n接下来我来介绍另一个解法：双指针法，这道题目使用双指针法 要比哈希法高效一些，那么来讲解一下具体实现的思路。\n\n动画效果如下：\n\nhttps://file1.kamacoder.com/i/algo/15.%E4%B8%89%E6%95%B0%E4%B9%8B%E5%92%8C.gif\n\n拿这个nums数组来举例，首先将数组排序，然后有一层for循环，i从下标0的地方开始，同时定一个下标left 定义在i+1的位置上，定义下标right 在数组结尾的位置上。\n\n依然还是在数组中找到 abc 使得a + b +c =0，我们这里相当于 a = nums[i]，b = nums[left]，c = nums[right]。\n\n接下来如何移动left 和right呢， 如果nums[i] + nums[left] + nums[right] > 0 就说明 此时三数之和大了，因为数组是排序后了，所以right下标就应该向左移动，这样才能让三数之和小一些。\n\n如果 nums[i] + nums[left] + nums[right] < 0 说明 此时 三数之和小了，left 就向右移动，才能让三数之和大一些，直到left与right相遇为止。\n\n时间复杂度：O(n^2)。\n\nC++代码代码如下：\n\nclass Solution {\npublic:\n    vector<vector<int>> threeSum(vector<int>& nums) {\n        vector<vector<int>> result;\n        sort(nums.begin(), nums.end());\n        // 找出a + b + c = 0\n        // a = nums[i], b = nums[left], c = nums[right]\n        for (int i = 0; i < nums.size(); i++) {\n            // 排序之后如果第一个元素已经大于零，那么无论如何组合都不可能凑成三元组，直接返回结果就可以了\n            if (nums[i] > 0) {\n                return result;\n            }\n            // 错误去重a方法，将会漏掉-1,-1,2 这种情况\n            /*\n            if (nums[i] == nums[i + 1]) {\n                continue;\n            }\n            */\n            // 正确去重a方法\n            if (i > 0 && nums[i] == nums[i - 1]) {\n                continue;\n            }\n            int left = i + 1;\n            int right = nums.size() - 1;\n            while (right > left) {\n                // 去重复逻辑如果放在这里，0，0，0 的情况，可能直接导致 right<=left 了，从而漏掉了 0,0,0 这种三元组\n                /*\n                while (right > left && nums[right] == nums[right - 1]) right--;\n                while (right > left && nums[left] == nums[left + 1]) left++;\n                */\n                if (nums[i] + nums[left] + nums[right] > 0) right--;\n                else if (nums[i] + nums[left] + nums[right] < 0) left++;\n                else {\n                    result.push_back(vector<int>{nums[i], nums[left], nums[right]});\n                    // 去重逻辑应该放在找到一个三元组之后，对b 和 c去重\n                    while (right > left && nums[right] == nums[right - 1]) right--;\n                    while (right > left && nums[left] == nums[left + 1]) left++;\n\n                    // 找到答案时，双指针同时收缩\n                    right--;\n                    left++;\n                }\n            }\n\n        }\n        return result;\n    }\n};\n时间复杂度: O(n^2)\n空间复杂度: O(1)\n#去重逻辑的思考\n#a的去重\n说到去重，其实主要考虑三个数的去重。 a, b ,c, 对应的就是 nums[i]，nums[left]，nums[right]\n\na 如果重复了怎么办，a是nums里遍历的元素，那么应该直接跳过去。\n\n但这里有一个问题，是判断 nums[i] 与 nums[i + 1]是否相同，还是判断 nums[i] 与 nums[i-1] 是否相同。\n\n有同学可能想，这不都一样吗。\n\n其实不一样！\n\n都是和 nums[i]进行比较，是比较它的前一个，还是比较它的后一个。\n\n如果我们的写法是 这样：\n\nif (nums[i] == nums[i + 1]) { // 去重操作\n    continue;\n}\n那我们就把 三元组中出现重复元素的情况直接pass掉了。 例如{-1, -1 ,2} 这组数据，当遍历到第一个-1 的时候，判断 下一个也是-1，那这组数据就pass了。\n\n我们要做的是 不能有重复的三元组，但三元组内的元素是可以重复的！\n\n所以这里是有两个重复的维度。\n\n那么应该这么写：\n\nif (i > 0 && nums[i] == nums[i - 1]) {\n    continue;\n}\n这么写就是当前使用 nums[i]，我们判断前一位是不是一样的元素，在看 {-1, -1 ,2} 这组数据，当遍历到 第一个 -1 的时候，只要前一位没有-1，那么 {-1, -1 ,2} 这组数据一样可以收录到 结果集里。\n\n这是一个非常细节的思考过程。\n\n#b与c的去重\n很多同学写本题的时候，去重的逻辑多加了 对right 和left 的去重：（代码中注释部分）\n\nwhile (right > left) {\n    if (nums[i] + nums[left] + nums[right] > 0) {\n        right--;\n        // 去重 right\n        while (left < right && nums[right] == nums[right + 1]) right--;\n    } else if (nums[i] + nums[left] + nums[right] < 0) {\n        left++;\n        // 去重 left\n        while (left < right && nums[left] == nums[left - 1]) left++;\n    } else {\n    }\n}\n但细想一下，这种去重其实对提升程序运行效率是没有帮助的。\n\n拿right去重为例，即使不加这个去重逻辑，依然根据 while (right > left) 和 if (nums[i] + nums[left] + nums[right] > 0) 去完成right-- 的操作。\n\n多加了 while (left < right && nums[right] == nums[right + 1]) right--; 这一行代码，其实就是把 需要执行的逻辑提前执行了，但并没有减少 判断的逻辑。\n\n最直白的思考过程，就是right还是一个数一个数的减下去的，所以在哪里减的都是一样的。\n\n所以这种去重 是可以不加的。 仅仅是 把去重的逻辑提前了而已。\n\n#思考题\n既然三数之和可以使用双指针法，我们之前讲过的1.两数之和 (opens new window)，可不可以使用双指针法呢？\n\n如果不能，题意如何更改就可以使用双指针法呢？ 大家留言说出自己的想法吧！\n\n两数之和 就不能使用双指针法，因为1.两数之和 (opens new window)要求返回的是索引下标， 而双指针法一定要排序，一旦排序之后原数组的索引就被改变了。\n\n如果1.两数之和 (opens new window)要求返回的是数值的话，就可以使用双指针法了。\n\n#其他语言版本\n#Java：\n（版本一） 双指针\n\nclass Solution {\n    public List<List<Integer>> threeSum(int[] nums) {\n        List<List<Integer>> result = new ArrayList<>();\n        Arrays.sort(nums);\n\t// 找出a + b + c = 0\n        // a = nums[i], b = nums[left], c = nums[right]\n        for (int i = 0; i < nums.length; i++) {\n\t    // 排序之后如果第一个元素已经大于零，那么无论如何组合都不可能凑成三元组，直接返回结果就可以了\n            if (nums[i] > 0) { \n                return result;\n            }\n\n            if (i > 0 && nums[i] == nums[i - 1]) {  // 去重a\n                continue;\n            }\n\n            int left = i + 1;\n            int right = nums.length - 1;\n            while (right > left) {\n                int sum = nums[i] + nums[left] + nums[right];\n                if (sum > 0) {\n                    right--;\n                } else if (sum < 0) {\n                    left++;\n                } else {\n                    result.add(Arrays.asList(nums[i], nums[left], nums[right]));\n\t\t    // 去重逻辑应该放在找到一个三元组之后，对b 和 c去重\n                    while (right > left && nums[right] == nums[right - 1]) right--;\n                    while (right > left && nums[left] == nums[left + 1]) left++;\n                    \n                    right--; \n                    left++;\n                }\n            }\n        }\n        return result;\n    }\n}\n（版本二） 使用哈希集合\n\nclass Solution {\n    public List<List<Integer>> threeSum(int[] nums) {\n\tList<List<Integer>> result = new ArrayList<>();\n\tArrays.sort(nums);\n\n\tfor (int i = 0; i < nums.length; i++) {\n\t\t// 如果第一个元素大于零，不可能凑成三元组\n\t\tif (nums[i] > 0) {\n\t\t\treturn result;\n\t\t}\n\t\t// 三元组元素a去重\n\t\tif (i > 0 && nums[i] == nums[i - 1]) {\n\t\t\tcontinue;\n\t\t}\n\n\t\tHashSet<Integer> set = new HashSet<>();\n\t\tfor (int j = i + 1; j < nums.length; j++) {\n\t\t\t// 三元组元素b去重\n\t\t\tif (j > i + 2 && nums[j] == nums[j - 1] && nums[j - 1] == nums[j - 2]) {\n\t\t\t\tcontinue;\n\t\t\t}\n\n\t\t\tint c = -nums[i] - nums[j];\n\t\t\tif (set.contains(c)) {\n\t\t\t\tresult.add(Arrays.asList(nums[i], nums[j], c));\n\t\t\t\tset.remove(c); // 三元组元素c去重\n\t\t\t} else {\n\t\t\t\tset.add(nums[j]);\n\t\t\t}\n\t\t}\n\t}\n\treturn result;\n    }\n}\n#Python：\n（版本一） 双指针\n\nclass Solution:\n    def threeSum(self, nums: List[int]) -> List[List[int]]:\n        result = []\n        nums.sort()\n        \n        for i in range(len(nums)):\n            # 如果第一个元素已经大于0，不需要进一步检查\n            if nums[i] > 0:\n                return result\n            \n            # 跳过相同的元素以避免重复\n            if i > 0 and nums[i] == nums[i - 1]:\n                continue\n                \n            left = i + 1\n            right = len(nums) - 1\n            \n            while right > left:\n                sum_ = nums[i] + nums[left] + nums[right]\n                \n                if sum_ < 0:\n                    left += 1\n                elif sum_ > 0:\n                    right -= 1\n                else:\n                    result.append([nums[i], nums[left], nums[right]])\n                    \n                    # 跳过相同的元素以避免重复\n                    while right > left and nums[right] == nums[right - 1]:\n                        right -= 1\n                    while right > left and nums[left] == nums[left + 1]:\n                        left += 1\n                        \n                    right -= 1\n                    left += 1\n                    \n        return result\n（版本二） 使用字典\n\nclass Solution:\n    def threeSum(self, nums: List[int]) -> List[List[int]]:\n        result = []\n        nums.sort()\n        # 找出a + b + c = 0\n        # a = nums[i], b = nums[j], c = -(a + b)\n        for i in range(len(nums)):\n            # 排序之后如果第一个元素已经大于零，那么不可能凑成三元组\n            if nums[i] > 0:\n                break\n            if i > 0 and nums[i] == nums[i - 1]: #三元组元素a去重\n                continue\n            d = {}\n            for j in range(i + 1, len(nums)):\n                if j > i + 2 and nums[j] == nums[j-1] == nums[j-2]: # 三元组元素b去重\n                    continue\n                c = 0 - (nums[i] + nums[j])\n                if c in d:\n                    result.append([nums[i], nums[j], c])\n                    d.pop(c) # 三元组元素c去重\n                else:\n                    d[nums[j]] = j\n        return result"
+}

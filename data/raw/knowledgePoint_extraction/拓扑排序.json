@@ -1,0 +1,58 @@
+{
+  "id": "PT902",
+  "name": "拓扑排序",
+  "alias": [
+    "Topological sorting"
+  ],
+  "type": "problem_type",
+  "description": "给定一个有向无环图，将其转换为线性顺序的过程。拓扑排序是一种对有向无环图（DAG）的顶点进行线性排序的方法，使得对于任何有向边 (u, v)，顶点 u 总是在顶点 v 之前。",
+  "key_concepts": [
+    "有向无环图",
+    "线性排序",
+    "顶点",
+    "路径",
+    "依赖关系"
+  ],
+  "applications": [
+    "文件依赖处理",
+    "大学排课",
+    "课程安排",
+    "工程调度",
+    "任务调度"
+  ],
+  "created_at": "2025-07-19T13:02:11Z",
+  "updated_at": "2025-07-19T13:02:48Z",
+  "source_files": [
+    "拓扑排序_kama.txt",
+    "拓扑排序_wiki.txt"
+  ],
+  "spacy_entities": {
+    "ALGORITHM_PARADIGM": [
+      "BFS",
+      "DFS",
+      "广度优先搜索",
+      "图论"
+    ],
+    "DATA_STRUCTURE": [
+      "有向图",
+      "队列",
+      "图",
+      "deque",
+      "String",
+      "queue",
+      "集合"
+    ],
+    "CORE_CONCEPT": [
+      "初始化",
+      "顶点",
+      "路径",
+      "依赖关系"
+    ],
+    "PROBLEM_TYPE": [
+      "拓扑排序问题"
+    ],
+    "SPECIFIC_ALGORITHM": [
+      "拓扑排序"
+    ]
+  }
+}

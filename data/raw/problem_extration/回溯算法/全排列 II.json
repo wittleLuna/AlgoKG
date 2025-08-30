@@ -1,0 +1,214 @@
+{
+  "id": "AP_0c6123a8",
+  "title": "全排列 II",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/permutations-ii/",
+  "description": "一个可包含重复数字的序列 nums ，按任意顺序 返回所有不重复的全排列。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "回溯",
+    "排列"
+  ],
+  "data_structure_tags": [
+    "数组",
+    "布尔数组"
+  ],
+  "technique_tags": [
+    "排序",
+    "剪枝"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过对给定序列先进行排序，再使用回溯法生成所有可能的排列，并在过程中通过检查相邻元素是否相等以及前一元素是否已被使用来避免重复排列。",
+  "key_insights": [
+    {
+      "content": "为了去除重复排列，需要对输入数组先进行排序。然后，在递归构建排列的过程中，如果当前考虑的元素与前一个元素相同且前一个元素在同一树层上未被选择（即used[i-1] == false），则跳过当前元素以避免产生重复排列。"
+    },
+    {
+      "content": "对于树层上的去重（used[i - 1] == false），可以更高效地避免重复计算；而树枝上去重（used[i - 1] == true）虽然也能得到正确结果但效率较低。这是因为前者可以在较早阶段就阻止不必要的搜索路径。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目和46.全排列 (https://programmercarl.com/0046.%E5%85%A8%E6%8E%92%E5%88%97.html)的区别在与给定一个可包含重复数字的序列，要返回所有不重复的全排列。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<int>> result; vector<int> path; void backtracking (vector<int>& nums, vector<bool>& used) { if (path.size() == nums.size()) { result.push_back(path); return; } for (int i = 0; i < nums.size(); i++) { if (i > 0 && nums[i] == nums[i - 1] && used[i - 1] == false) { continue; } if (used[i] == false) { used[i] = true; path.push_back(nums[i]); backtracking(nums, used); path.pop_back(); used[i] = false; } } } public: vector<vector<int>> permuteUnique(vector<int>& nums) { result.clear(); path.clear(); sort(nums.begin(), nums.end()); vector<bool> used(nums.size(), false); backtracking(nums, used); return result; }};",
+          "description": "C++实现全排列II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { List<List<Integer>> result = new ArrayList<>(); List<Integer> path = new ArrayList<>(); public List<List<Integer>> permuteUnique(int[] nums) { boolean[] used = new boolean[nums.length]; Arrays.fill(used, false); Arrays.sort(nums); backTrack(nums, used); return result; } private void backTrack(int[] nums, boolean[] used) { if (path.size() == nums.length) { result.add(new ArrayList<>(path)); return; } for (int i = 0; i < nums.length; i++) { if (i > 0 && nums[i] == nums[i - 1] && used[i - 1] == false) { continue; } if (used[i] == false) { used[i] = true; path.add(nums[i]); backTrack(nums, used); path.remove(path.size() - 1); used[i] = false; } } }}",
+          "description": "Java实现全排列II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def permuteUnique(self, nums): nums.sort() result = [] self.backtracking(nums, [], [False] * len(nums), result) return result def backtracking(self, nums, path, used, result): if len(path) == len(nums): result.append(path[:]) return for i in range(len(nums)): if (i > 0 and nums[i] == nums[i - 1] and not used[i - 1]) or used[i]: continue used[i] = True path.append(nums[i]) self.backtracking(nums, path, used, result) path.pop() used[i] = False",
+          "description": "Python实现全排列II"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "拓展",
+      "text": "大家发现，去重最为关键的代码为：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking (vector<int>& nums, vector<bool>& used) {\n        if (path.size() == nums.size()) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = 0; i < nums.size(); i++) {\n            if (i > 0 && nums[i] == nums[i - 1] && used[i - 1] == false) {\n                continue;\n            }\n            if (used[i] == false) {\n                used[i] = true;\n                path.push_back(nums[i]);\n                backtracking(nums, used);\n                path.pop_back();\n                used[i] = false;\n            }\n        }\n    }\npublic:\n    vector<vector<int>> permuteUnique(vector<int>& nums) {\n        result.clear();\n        path.clear();\n        sort(nums.begin(), nums.end());\n        vector<bool> used(nums.size(), false);\n        backtracking(nums, used);\n        return result;\n    }\n};",
+          "description": "C++版本的全排列II解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<List<Integer>> result = new ArrayList<>();\n    List<Integer> path = new ArrayList<>();\n\n    public List<List<Integer>> permuteUnique(int[] nums) {\n        boolean[] used = new boolean[nums.length];\n        Arrays.fill(used, false);\n        Arrays.sort(nums);\n        backTrack(nums, used);\n        return result;\n    }\n\n    private void backTrack(int[] nums, boolean[] used) {\n        if (path.size() == nums.length) {\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = 0; i < nums.length; i++) {\n            if (i > 0 && nums[i] == nums[i - 1] && used[i - 1] == false) {\n                continue;\n            }\n            if (used[i] == false) {\n                used[i] = true;\n                path.add(nums[i]);\n                backTrack(nums, used);\n                path.remove(path.size() - 1);\n                used[i] = false;\n            }\n        }\n    }\n}",
+          "description": "Java版本的全排列II解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def permuteUnique(self, nums):\n        nums.sort()\n        result = []\n        self.backtracking(nums, [], [False] * len(nums), result)\n        return result\n\n    def backtracking(self, nums, path, used, result):\n        if len(path) == len(nums):\n            result.append(path[:])\n            return\n        for i in range(len(nums)):\n            if (i > 0 and nums[i] == nums[i - 1] and not used[i - 1]) or used[i]:\n                continue\n            used[i] = True\n            path.append(nums[i])\n            self.backtracking(nums, path, used, result)\n            path.pop()\n            used[i] = False",
+          "description": "Python版本的全排列II解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "这道题其实还是用了我们之前讲过的去重思路，但有意思的是，去重的代码中，这么写：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<int>> result; vector<int> path; void backtracking (vector<int>& nums, vector<bool>& used) { if (path.size() == nums.size()) { result.push_back(path); return; } for (int i = 0; i < nums.size(); i++) { if (i > 0 && nums[i] == nums[i - 1] && used[i - 1] == false) { continue; } if (used[i] == false) { used[i] = true; path.push_back(nums[i]); backtracking(nums, used); path.pop_back(); used[i] = false; } } }public: vector<vector<int>> permuteUnique(vector<int>& nums) { result.clear(); path.clear(); sort(nums.begin(), nums.end()); vector<bool> used(nums.size(), false); backtracking(nums, used); return result; }};",
+          "description": "C++实现的全排列II，通过回溯法找到所有不重复的排列。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { List<List<Integer>> result = new ArrayList<>(); List<Integer> path = new ArrayList<>(); public List<List<Integer>> permuteUnique(int[] nums) { boolean[] used = new boolean[nums.length]; Arrays.fill(used, false); Arrays.sort(nums); backTrack(nums, used); return result; } private void backTrack(int[] nums, boolean[] used) { if (path.size() == nums.length) { result.add(new ArrayList<>(path)); return; } for (int i = 0; i < nums.length; i++) { if (i > 0 && nums[i] == nums[i - 1] && used[i - 1] == false) { continue; } if (used[i] == false) { used[i] = true; path.add(nums[i]); backTrack(nums, used); path.remove(path.size() - 1); used[i] = false; } } }}",
+          "description": "Java实现的全排列II，使用回溯算法生成所有不重复的排列组合。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def permuteUnique(self, nums): nums.sort() result = [] self.backtracking(nums, [], [False] * len(nums), result) return result def backtracking(self, nums, path, used, result): if len(path) == len(nums): result.append(path[:]) return for i in range(len(nums)): if (i > 0 and nums[i] == nums[i - 1] and not used[i - 1]) or used[i]: continue used[i] = True path.append(nums[i]) self.backtracking(nums, path, used, result) path.pop() used[i] = False",
+          "description": "Python版本的全排列II解法，利用递归和回溯技术来获取不含重复项的所有排列。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<List<Integer>> result = new ArrayList<>();\n    List<Integer> path = new ArrayList<>();\n\n    public List<List<Integer>> permuteUnique(int[] nums) {\n        boolean[] used = new boolean[nums.length];\n        Arrays.fill(used, false);\n        Arrays.sort(nums);\n        backTrack(nums, used);\n        return result;\n    }\n\n    private void backTrack(int[] nums, boolean[] used) {\n        if (path.size() == nums.length) {\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = 0; i < nums.length; i++) {\n            if (i > 0 && nums[i] == nums[i - 1] && !used[i - 1]) {\n                continue;\n            }\n            if (!used[i]) {\n                used[i] = true;\n                path.add(nums[i]);\n                backTrack(nums, used);\n                path.remove(path.size() - 1);\n                used[i] = false;\n            }\n        }\n    }\n}",
+          "description": "Java实现全排列II，去重处理"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def permuteUnique(self, nums):\n        nums.sort()\n        result = []\n        self.backtracking(nums, [], [False] * len(nums), result)\n        return result\n\n    def backtracking(self, nums, path, used, result):\n        if len(path) == len(nums):\n            result.append(path[:])\n            return\n        for i in range(len(nums)):\n            if (i > 0 and nums[i] == nums[i - 1] and not used[i - 1]) or used[i]:\n                continue\n            used[i] = True\n            path.append(nums[i])\n            self.backtracking(nums, path, used, result)\n            path.pop()\n            used[i] = False",
+          "description": "Python实现全排列II，去重处理"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking (vector<int>& nums, vector<bool>& used) {\n        if (path.size() == nums.size()) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = 0; i < nums.size(); i++) {\n            if (i > 0 && nums[i] == nums[i - 1] && used[i - 1] == false) {\n                continue;\n            }\n            if (used[i] == false) {\n                used[i] = true;\n                path.push_back(nums[i]);\n                backtracking(nums, used);\n                path.pop_back();\n                used[i] = false;\n            }\n        }\n    }\npublic:\n    vector<vector<int>> permuteUnique(vector<int>& nums) {\n        result.clear();\n        path.clear();\n        sort(nums.begin(), nums.end());\n        vector<bool> used(nums.size(), false);\n        backtracking(nums, used);\n        return result;\n    }\n};",
+          "description": "C++实现的全排列II算法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<List<Integer>> result = new ArrayList<>();\n    List<Integer> path = new ArrayList<>();\n\n    public List<List<Integer>> permuteUnique(int[] nums) {\n        boolean[] used = new boolean[nums.length];\n        Arrays.fill(used, false);\n        Arrays.sort(nums);\n        backTrack(nums, used);\n        return result;\n    }\n\n    private void backTrack(int[] nums, boolean[] used) {\n        if (path.size() == nums.length) {\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = 0; i < nums.length; i++) {\n            if (i > 0 && nums[i] == nums[i - 1] && used[i - 1] == false) {\n                continue;\n            }\n            if (used[i] == false) {\n                used[i] = true;\n                path.add(nums[i]);\n                backTrack(nums, used);\n                path.remove(path.size() - 1);\n                used[i] = false;\n            }\n        }\n    }\n}",
+          "description": "Java实现的全排列II算法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def permuteUnique(self, nums):\n        nums.sort()\n        result = []\n        self.backtracking(nums, [], [False] * len(nums), result)\n        return result\n\n    def backtracking(self, nums, path, used, result):\n        if len(path) == len(nums):\n            result.append(path[:])\n            return\n        for i in range(len(nums)):\n            if (i > 0 and nums[i] == nums[i - 1] and not used[i - 1]) or used[i]:\n                continue\n            used[i] = True\n            path.append(nums[i])\n            self.backtracking(nums, path, used, result)\n            path.pop()\n            used[i] = False",
+          "description": "Python实现的全排列II算法"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n! * n)",
+    "space_complexity": "O(n)",
+    "explanation": "我们需要 O(n) 去复制最终放到 result 数组"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {private: vector<vector<int>> result; vector<int> path; void backtracking (vector<int>& nums, vector<bool>& used) { if (path.size() == nums.size()) { result.push_back(path); return; } for (int i = 0; i < nums.size(); i++) { if (i > 0 && nums[i] == nums[i - 1] && used[i - 1] == false) { continue; } if (used[i] == false) { used[i] = true; path.push_back(nums[i]); backtracking(nums, used); path.pop_back(); used[i] = false; } } }public: vector<vector<int>> permuteUnique(vector<int>& nums) { result.clear(); path.clear(); sort(nums.begin(), nums.end()); vector<bool> used(nums.size(), false); backtracking(nums, used); return result; }};",
+      "description": "使用C++实现的全排列II算法，通过回溯法生成所有不重复的排列。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { List<List<Integer>> result = new ArrayList<>(); List<Integer> path = new ArrayList<>(); public List<List<Integer>> permuteUnique(int[] nums) { boolean[] used = new boolean[nums.length]; Arrays.fill(used, false); Arrays.sort(nums); backTrack(nums, used); return result; } private void backTrack(int[] nums, boolean[] used) { if (path.size() == nums.length) { result.add(new ArrayList<>(path)); return; } for (int i = 0; i < nums.length; i++) { if (i > 0 && nums[i] == nums[i - 1] && used[i - 1] == false) { continue; } if (used[i] == false) { used[i] = true; path.add(nums[i]); backTrack(nums, used); path.remove(path.size() - 1); used[i] = false; } } }}",
+      "description": "使用Java实现的全排列II算法，采用回溯方法来避免重复排列，并利用布尔数组标记元素是否已被使用。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def permuteUnique(self, nums): nums.sort() result = [] self.backtracking(nums, [], [False] * len(nums), result) return result def backtracking(self, nums, path, used, result): if len(path) == len(nums): result.append(path[:]) return for i in range(len(nums)): if (i > 0 and nums[i] == nums[i - 1] and not used[i - 1]) or used[i]: continue used[i] = True path.append(nums[i]) self.backtracking(nums, path, used, result) path.pop() used[i] = False",
+      "description": "Python版本的全排列II解决方案，通过递归调用backtracking函数构建所有可能的排列组合，同时使用列表记录路径和已访问状态以避免重复。"
+    }
+  ],
+  "common_mistakes": [
+    "忘记对输入数组进行排序，导致去重逻辑失效。",
+    "仅使用 `if (i > 0 && nums[i] == nums[i - 1]) continue;` 而忽略 `used[i - 1]` 的状态，这会导致错误地跳过某些有效的排列组合。",
+    "误解了`used[i - 1]`的状态意义，从而选择了不正确的条件来判断是否应该跳过当前元素。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201124201331223.png",
+      "description": "这张图片展示了使用回溯算法对包含重复元素的数组进行排列组合的过程，通过树状图和状态标记（`used`数组）来避免重复解。",
+      "context": "该图展示了以[1,1,2]为例，在排列问题中通过树形结构进行去重的过程，强调了对同一树层上使用过的元素进行排除的重要性。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201124201406192.png",
+      "description": "这张图片展示了使用回溯算法生成集合{1, 1, 1}的所有排列的过程，特别强调了如何避免同一树层的重复元素选择。",
+      "context": "展示了当使用树层上去重(used[i - 1] == false)时，输入[1,1,1]的树形结构，体现了这种去重方式的高效性。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201124201431571.png",
+      "description": "这张图片展示了使用回溯算法生成集合{1,1,1}的所有排列组合的过程，特别关注了如何通过`used`数组避免重复元素的重复选取。",
+      "context": "展示了树枝上去重（used[i - 1] == true）时的树形结构，帮助理解不同去重方法对搜索效率的影响。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201124201331223.png",
+      "description": "GIF展示了通过树形结构解决排列问题时如何进行去重的过程。",
+      "context": "该GIF动画展示了如何通过对已排序数组[1,1,2]构建决策树并在同一层中去重，以解决排列问题中的重复元素处理。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201124201406192.png",
+      "description": "GIF展示了树层上去重过程中，对于输入[1,1,1]生成的树形结构演变，体现了如何通过检查前一元素是否已被使用来避免重复排列的生成过程。",
+      "context": "该GIF动画展示了使用树层去重(used[i - 1] == false)方法时，针对输入[1,1,1]生成的树形结构，直观地说明了这种方法如何有效避免重复计算。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201124201431571.png",
+      "description": "GIF展示了在解决排列问题时，采用树枝上去重（used[i - 1] == true）方法构建的树形搜索过程。",
+      "context": "该GIF动画展示了在树枝上去重（即当`used[i - 1] == true`时）的树型结构，帮助理解这种去重方式虽然能够得到正确答案但效率较低的原因。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\回溯算法\\全排列 II.txt",
+  "extracted_at": "2025-07-21T04:05:32.130077",
+  "raw_content": "全排列 II\n力扣题目链接(https://leetcode.cn/problems/permutations-ii/)\n\n给定一个可包含重复数字的序列 nums ，按任意顺序 返回所有不重复的全排列。\n\n示例 1：\n\n输入：nums = [1,1,2]\n输出： [[1,1,2], [1,2,1], [2,1,1]]\n示例 2：\n\n输入：nums = [1,2,3]\n输出：[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]\n提示：\n\n1 <= nums.length <= 8\n-10 <= nums[i] <= 10\n\n\n#思路\n这道题目和46.全排列 (https://programmercarl.com/0046.%E5%85%A8%E6%8E%92%E5%88%97.html)的区别在与给定一个可包含重复数字的序列，要返回所有不重复的全排列。\n\n这里又涉及到去重了。\n\n在40.组合总和II (https://programmercarl.com/0040.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8CII.html)、90.子集II (https://programmercarl.com/0090.%E5%AD%90%E9%9B%86II.html)我们分别详细讲解了组合问题和子集问题如何去重。\n\n那么排列问题其实也是一样的套路。\n\n还要强调的是去重一定要对元素进行排序，这样我们才方便通过相邻的节点来判断是否重复使用了。\n\n我以示例中的 [1,1,2]为例 （为了方便举例，已经排序）抽象为一棵树，去重过程如图：\n\nhttps://file1.kamacoder.com/i/algo/20201124201331223.png\n\n图中我们对同一树层，前一位（也就是nums[i-1]）如果使用过，那么就进行去重。\n\n一般来说：组合问题和排列问题是在树形结构的叶子节点上收集结果，而子集问题就是取树上所有节点的结果。\n\n在46.全排列 (https://programmercarl.com/0046.%E5%85%A8%E6%8E%92%E5%88%97.html)中已经详细讲解了排列问题的写法，在40.组合总和II (https://programmercarl.com/0040.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8CII.html)、90.子集II (https://programmercarl.com/0090.%E5%AD%90%E9%9B%86II.html)中详细讲解了去重的写法，所以这次我就不用回溯三部曲分析了，直接给出代码，如下：\n\nclass Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking (vector<int>& nums, vector<bool>& used) {\n        // 此时说明找到了一组\n        if (path.size() == nums.size()) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = 0; i < nums.size(); i++) {\n            // used[i - 1] == true，说明同一树枝nums[i - 1]使用过\n            // used[i - 1] == false，说明同一树层nums[i - 1]使用过\n            // 如果同一树层nums[i - 1]使用过则直接跳过\n            if (i > 0 && nums[i] == nums[i - 1] && used[i - 1] == false) {\n                continue;\n            }\n            if (used[i] == false) {\n                used[i] = true;\n                path.push_back(nums[i]);\n                backtracking(nums, used);\n                path.pop_back();\n                used[i] = false;\n            }\n        }\n    }\npublic:\n    vector<vector<int>> permuteUnique(vector<int>& nums) {\n        result.clear();\n        path.clear();\n        sort(nums.begin(), nums.end()); // 排序\n        vector<bool> used(nums.size(), false);\n        backtracking(nums, used);\n        return result;\n    }\n};\n\n// 时间复杂度: 最差情况所有元素都是唯一的。复杂度和全排列1都是 O(n! * n) 对于 n 个元素一共有 n! 中排列方案。而对于每一个答案，我们需要 O(n) 去复制最终放到 result 数组\n// 空间复杂度: O(n) 回溯树的深度取决于我们有多少个元素\n时间复杂度: O(n! * n)\n空间复杂度: O(n)\n#拓展\n大家发现，去重最为关键的代码为：\n\nif (i > 0 && nums[i] == nums[i - 1] && used[i - 1] == false) {\n    continue;\n}\n如果改成 used[i - 1] == true， 也是正确的!，去重代码如下：\n\nif (i > 0 && nums[i] == nums[i - 1] && used[i - 1] == true) {\n    continue;\n}\n这是为什么呢，就是上面我刚说的，如果要对树层中前一位去重，就用used[i - 1] == false，如果要对树枝前一位去重用used[i - 1] == true。\n\n对于排列问题，树层上去重和树枝上去重，都是可以的，但是树层上去重效率更高！\n\n这么说是不是有点抽象？\n\n来来来，我就用输入: [1,1,1] 来举一个例子。\n\n树层上去重(used[i - 1] == false)，的树形结构如下：\n\nhttps://file1.kamacoder.com/i/algo/20201124201406192.png\n\n树枝上去重（used[i - 1] == true）的树型结构如下：\n\nhttps://file1.kamacoder.com/i/algo/20201124201431571.png\n\n大家应该很清晰的看到，树层上对前一位去重非常彻底，效率很高，树枝上对前一位去重虽然最后可以得到答案，但是做了很多无用搜索。\n\n#总结\n这道题其实还是用了我们之前讲过的去重思路，但有意思的是，去重的代码中，这么写：\n\nif (i > 0 && nums[i] == nums[i - 1] && used[i - 1] == false) {\n    continue;\n}\n和这么写：\n\nif (i > 0 && nums[i] == nums[i - 1] && used[i - 1] == true) {\n    continue;\n}\n都是可以的，这也是很多同学做这道题目困惑的地方，知道used[i - 1] == false也行而used[i - 1] == true也行，但是就想不明白为啥。\n\n所以我通过举[1,1,1]的例子，把这两个去重的逻辑分别抽象成树形结构，大家可以一目了然：为什么两种写法都可以以及哪一种效率更高！\n\n这里可能大家又有疑惑，既然 used[i - 1] == false也行而used[i - 1] == true也行，那为什么还要写这个条件呢？\n\n直接这样写 不就完事了？\n\nif (i > 0 && nums[i] == nums[i - 1]) {\n    continue;\n}\n其实并不行，一定要加上 used[i - 1] == false或者used[i - 1] == true，因为 used[i - 1] 要一直是 true 或者一直是false 才可以，而不是 一会是true 一会又是false。 所以这个条件要写上。\n\n是不是豁然开朗了！！\n\n#其他语言版本\n#Java\nclass Solution {\n    //存放结果\n    List<List<Integer>> result = new ArrayList<>();\n    //暂存结果\n    List<Integer> path = new ArrayList<>();\n\n    public List<List<Integer>> permuteUnique(int[] nums) {\n        boolean[] used = new boolean[nums.length];\n        Arrays.fill(used, false);\n        Arrays.sort(nums);\n        backTrack(nums, used);\n        return result;\n    }\n\n    private void backTrack(int[] nums, boolean[] used) {\n        if (path.size() == nums.length) {\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = 0; i < nums.length; i++) {\n            // used[i - 1] == true，说明同⼀树⽀nums[i - 1]使⽤过\n            // used[i - 1] == false，说明同⼀树层nums[i - 1]使⽤过\n            // 如果同⼀树层nums[i - 1]使⽤过则直接跳过\n            if (i > 0 && nums[i] == nums[i - 1] && used[i - 1] == false) {\n                continue;\n            }\n            //如果同⼀树⽀nums[i]没使⽤过开始处理\n            if (used[i] == false) {\n                used[i] = true;//标记同⼀树⽀nums[i]使⽤过，防止同一树枝重复使用\n                path.add(nums[i]);\n                backTrack(nums, used);\n                path.remove(path.size() - 1);//回溯，说明同⼀树层nums[i]使⽤过，防止下一树层重复\n                used[i] = false;//回溯\n            }\n        }\n    }\n}\nPython\n\nclass Solution:\n    def permuteUnique(self, nums):\n        nums.sort()  # 排序\n        result = []\n        self.backtracking(nums, [], [False] * len(nums), result)\n        return result\n\n    def backtracking(self, nums, path, used, result):\n        if len(path) == len(nums):\n            result.append(path[:])\n            return\n        for i in range(len(nums)):\n            if (i > 0 and nums[i] == nums[i - 1] and not used[i - 1]) or used[i]:\n                continue\n            used[i] = True\n            path.append(nums[i])\n            self.backtracking(nums, path, used, result)\n            path.pop()\n            used[i] = False"
+}

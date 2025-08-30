@@ -1,0 +1,176 @@
+{
+  "id": "AP_f5b51344",
+  "title": "前 K 个高频元素",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/top-k-frequent-elements/",
+  "description": "一个非空的整数数组，返回其中出现频率前 k 高的元素。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "排序",
+    "堆"
+  ],
+  "data_structure_tags": [
+    "哈希表",
+    "优先级队列"
+  ],
+  "technique_tags": [
+    "计数",
+    "堆操作"
+  ],
+  "difficulty": null,
+  "solution_approach": "首先使用哈希表统计数组中每个元素出现的频率。然后利用优先级队列（小顶堆）维护当前遇到的k个最高频率元素。遍历哈希表中的所有频率，将它们加入到优先级队列中；如果队列大小超过k，则移除最小频率的元素以保持队列只包含前k个最高频率。最后从优先级队列中提取前k个高频元素。",
+  "key_insights": [
+    {
+      "content": "使用哈希表快速统计元素出现次数，并采用优先级队列来高效地管理前k个高频元素。"
+    },
+    {
+      "content": "虽然题目要求找出前k个高频元素看似适合用大顶堆，但考虑到只需维护k个最大的元素，小顶堆允许我们仅存储所需数量的元素并自动排除低于当前最小值的新元素，从而更高效。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "拓展",
+      "text": "大家对这个比较运算在建堆时是如何应用的，为什么左大于右就会建立小顶堆，反而建立大顶堆比较困惑。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: class mycomparison {public: bool operator()(const pair<int, int>& lhs, const pair<int, int>& rhs) {return lhs.second > rhs.second;}}; vector<int> topKFrequent(vector<int>& nums, int k) {unordered_map<int, int> map; for (int i = 0; i < nums.size(); i++) {map[nums[i]]++;} priority_queue<pair<int, int>, vector<pair<int, int>>, mycomparison> pri_que; for (unordered_map<int, int>::iterator it = map.begin(); it != map.end(); it++) {pri_que.push(*it); if (pri_que.size() > k) {pri_que.pop();}} vector<int> result(k); for (int i = k - 1; i >= 0; i--) {result[i] = pri_que.top().first; pri_que.pop();} return result;}};",
+          "description": "C++实现的小顶堆解决方案来找到数组中前K个高频元素。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] topKFrequent(int[] nums, int k) {PriorityQueue<int[]> pq = new PriorityQueue<>((o1, o2) -> o1[1] - o2[1]); int[] res = new int[k]; Map<Integer, Integer> map = new HashMap<>(); for (int num : nums) map.put(num, map.getOrDefault(num, 0) + 1); for (var x : map.entrySet()) {int[] tmp = new int[2]; tmp[0] = x.getKey(); tmp[1] = x.getValue(); pq.offer(tmp); if(pq.size() > k) {pq.poll();}} for (int i = 0; i < k; i++) {res[i] = pq.poll()[0];} return res;}}",
+          "description": "Java实现的小顶堆方案，用于找出数组里出现频率最高的k个数。"
+        },
+        {
+          "language": "python",
+          "code": "import heapq\nclass Solution:\n    def topKFrequent(self, nums, k):\n        map_ = {}\n        for i in range(len(nums)):\n            map_[nums[i]] = map_.get(nums[i], 0) + 1\n        pri_que = []\n        for key, freq in map_.items():\n            heapq.heappush(pri_que, (freq, key))\n            if len(pri_que) > k:\n                heapq.heappop(pri_que)\n        result = [0] * k\n        for i in range(k-1, -1, -1):\n            result[i] = heapq.heappop(pri_que)[1]\n        return result",
+          "description": "Python使用小顶堆方法确定列表中前K个最常出现的元素。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution { public int[] topKFrequent1(int[] nums, int k) { Map<Integer,Integer> map = new HashMap<>(); for (int num : nums) { map.put(num, map.getOrDefault(num,0) + 1); } PriorityQueue<int[]> pq = new PriorityQueue<>((pair1, pair2) -> pair2[1] - pair1[1]); for (Map.Entry<Integer, Integer> entry : map.entrySet()) { pq.add(new int[]{entry.getKey(), entry.getValue()}); } int[] ans = new int[k]; for (int i = 0; i < k; i++) { ans[i] = pq.poll()[0]; } return ans; } public int[] topKFrequent2(int[] nums, int k) { Map<Integer,Integer> map = new HashMap<>(); for (int num : nums) { map.put(num, map.getOrDefault(num, 0) + 1); } PriorityQueue<int[]> pq = new PriorityQueue<>((pair1, pair2) -> pair1[1] - pair2[1]); for (Map.Entry<Integer, Integer> entry : map.entrySet()) { if (pq.size() < k) { pq.add(new int[]{entry.getKey(), entry.getValue()}); } else { if (entry.getValue() > pq.peek()[1]) { pq.poll(); pq.add(new int[]{entry.getKey(), entry.getValue()}); } } } int[] ans = new int[k]; for (int i = k - 1; i >= 0; i--) { ans[i] = pq.poll()[0]; } return ans; } }",
+          "description": "Java实现的前K个高频元素解决方案，包括基于大顶堆和小顶堆两种方法。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int[] topKFrequent(int[] nums, int k) { PriorityQueue<int[]> pq = new PriorityQueue<>((o1, o2) -> o1[1] - o2[1]); int[] res = new int[k]; Map<Integer, Integer> map = new HashMap<>(); for (int num : nums) map.put(num, map.getOrDefault(num, 0) + 1); for (var x : map.entrySet()) { int[] tmp = new int[2]; tmp[0] = x.getKey(); tmp[1] = x.getValue(); pq.offer(tmp); if(pq.size() > k) { pq.poll(); } } for (int i = 0; i < k; i++) { res[i] = pq.poll()[0]; } return res; } }",
+          "description": "简化版Java代码实现前K个高频元素，使用优先级队列来维护大小为k的小顶堆。"
+        },
+        {
+          "language": "python",
+          "code": "import heapq class Solution: def topKFrequent(self, nums: List[int], k: int) -> List[int]: map_ = {} for i in range(len(nums)): map_[nums[i]] = map_.get(nums[i], 0) + 1 pri_que = [] for key, freq in map_.items(): heapq.heappush(pri_que, (freq, key)) if len(pri_que) > k: heapq.heappop(pri_que) result = [0] * k for i in range(k-1, -1, -1): result[i] = heapq.heappop(pri_que)[1] return result",
+          "description": "Python实现的前K个高频元素解决方案，利用heapq模块创建一个小顶堆来解决问题。"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict class Solution: def topKFrequent(self, nums: List[int], k: int) -> List[int]: time_dict = defaultdict(int) for num in nums: time_dict[num] += 1 index_dict = defaultdict(list) for key in time_dict: index_dict[time_dict[key]].append(key) key = list(index_dict.keys()) key.sort() result = [] cnt = 0 while key and cnt != k: result += index_dict[key[-1]] cnt += len(index_dict[key[-1]]) key.pop() return result[0: k]",
+          "description": "另一种Python实现方案，通过字典统计频率并排序后取前K个高频元素。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "/*Comparator接口说明:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: class mycomparison {public: bool operator()(const pair<int, int>& lhs, const pair<int, int>& rhs) {return lhs.second > rhs.second;}}; vector<int> topKFrequent(vector<int>& nums, int k) {unordered_map<int, int> map; for (int i = 0; i < nums.size(); i++) {map[nums[i]]++;} priority_queue<pair<int, int>, vector<pair<int, int>>, mycomparison> pri_que; for (unordered_map<int, int>::iterator it = map.begin(); it != map.end(); it++) {pri_que.push(*it); if (pri_que.size() > k) {pri_que.pop();}} vector<int> result(k); for (int i = k - 1; i >= 0; i--) {result[i] = pri_que.top().first; pri_que.pop();} return result;}};",
+          "description": "C++实现使用小顶堆找到数组中前k个高频元素"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] topKFrequent2(int[] nums, int k) {Map<Integer,Integer> map = new HashMap<>(); for (int num : nums) {map.put(num, map.getOrDefault(num, 0) + 1);} PriorityQueue<int[]> pq = new PriorityQueue<>((pair1, pair2) -> pair1[1] - pair2[1]); for (Map.Entry<Integer, Integer> entry : map.entrySet()) {if (pq.size() < k) {pq.add(new int[]{entry.getKey(), entry.getValue();} else {if (entry.getValue() > pq.peek()[1]) {pq.poll(); pq.add(new int[]{entry.getKey(), entry.getValue();}}} int[] ans = new int[k]; for (int i = k - 1; i >= 0; i--) {ans[i] = pq.poll()[0];} return ans;}}",
+          "description": "Java实现使用小顶堆找到数组中前k个高频元素"
+        },
+        {
+          "language": "python",
+          "code": "import heapq\nclass Solution:\n    def topKFrequent(self, nums: List[int], k: int) -> List[int]:\n        map_ = {}\n        for i in range(len(nums)):\n            map_[nums[i]] = map_.get(nums[i], 0) + 1\n        pri_que = []\n        for key, freq in map_.items():\n            heapq.heappush(pri_que, (freq, key))\n            if len(pri_que) > k:\n                heapq.heappop(pri_que)\n        result = [0] * k\n        for i in range(k-1, -1, -1):\n            result[i] = heapq.heappop(pri_que)[1]\n        return result",
+          "description": "Python实现使用小顶堆找到数组中前k个高频元素"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "解法一：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "class Solution {public: class mycomparison {public: bool operator()(const pair<int, int>& lhs, const pair<int, int>& rhs) {return lhs.second > rhs.second;}}; vector<int> topKFrequent(vector<int>& nums, int k) {unordered_map<int, int> map; for (int i = 0; i < nums.size(); i++) {map[nums[i]]++;} priority_queue<pair<int, int>, vector<pair<int, int>>, mycomparison> pri_que; for (unordered_map<int, int>::iterator it = map.begin(); it != map.end(); it++) {pri_que.push(*it); if (pri_que.size() > k) {pri_que.pop();}} vector<int> result(k); for (int i = k - 1; i >= 0; i--) {result[i] = pri_que.top().first; pri_que.pop();} return result;}};",
+          "description": "使用小顶堆来找到前k个高频元素"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public int[] topKFrequent(int[] nums, int k) {PriorityQueue<int[]> pq = new PriorityQueue<>((o1, o2) -> o1[1] - o2[1]); int[] res = new int[k]; Map<Integer, Integer> map = new HashMap<>(); for (int num : nums) map.put(num, map.getOrDefault(num, 0) + 1); for (var x : map.entrySet()) {int[] tmp = new int[2]; tmp[0] = x.getKey(); tmp[1] = x.getValue(); pq.offer(tmp); if(pq.size() > k) {pq.poll();}} for (int i = 0; i < k; i++) {res[i] = pq.poll()[0];} return res;}}",
+          "description": "基于小顶堆实现，寻找数组中出现频率最高的k个数"
+        },
+        {
+          "language": "Python",
+          "code": "import heapq\nclass Solution:\n    def topKFrequent(self, nums: List[int], k: int) -> List[int]:\n        map_ = {}\n        for i in range(len(nums)):\n            map_[nums[i]] = map_.get(nums[i], 0) + 1\n        pri_que = []\n        for key, freq in map_.items():\n            heapq.heappush(pri_que, (freq, key))\n            if len(pri_que) > k:\n                heapq.heappop(pri_que)\n        result = [0] * k\n        for i in range(k-1, -1, -1):\n            result[i] = heapq.heappop(pri_que)[1]\n        return result",
+          "description": "利用heapq模块创建小顶堆，以解决前k个高频元素问题"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(nlogk)",
+    "space_complexity": "O(n)",
+    "explanation": "n 是数组的大小。"
+  },
+  "code_solutions": [
+    {
+      "language": "C++",
+      "code": "class Solution {public: class mycomparison {public: bool operator()(const pair<int, int>& lhs, const pair<int, int>& rhs) {return lhs.second > rhs.second;}}; vector<int> topKFrequent(vector<int>& nums, int k) {unordered_map<int, int> map; for (int i = 0; i < nums.size(); i++) {map[nums[i]]++;} priority_queue<pair<int, int>, vector<pair<int, int>>, mycomparison> pri_que; for (unordered_map<int, int>::iterator it = map.begin(); it != map.end(); it++) {pri_que.push(*it); if (pri_que.size() > k) {pri_que.pop();}} vector<int> result(k); for (int i = k - 1; i >= 0; i--) {result[i] = pri_que.top().first; pri_que.pop();} return result;}};",
+      "description": "使用优先级队列实现的小顶堆来找到前K个高频元素"
+    },
+    {
+      "language": "Java",
+      "code": "class Solution {public int[] topKFrequent(int[] nums, int k) {PriorityQueue<int[]> pq = new PriorityQueue<>((o1, o2) -> o1[1] - o2[1]); int[] res = new int[k]; Map<Integer, Integer> map = new HashMap<>(); for (int num : nums) map.put(num, map.getOrDefault(num, 0) + 1); for (var x : map.entrySet()) {int[] tmp = new int[2]; tmp[0] = x.getKey(); tmp[1] = x.getValue(); pq.offer(tmp); if(pq.size() > k) {pq.poll();}} for (int i = 0; i < k; i++) {res[i] = pq.poll()[0];} return res;}}",
+      "description": "基于小顶堆实现的Java版本，用于找出数组中出现频率最高的前k个数"
+    },
+    {
+      "language": "Python",
+      "code": "import heapq\nclass Solution:\n    def topKFrequent(self, nums: List[int], k: int) -> List[int]:\n        map_ = {}\n        for i in range(len(nums)):\n            map_[nums[i]] = map_.get(nums[i], 0) + 1\n        pri_que = []\n        for key, freq in map_.items():\n            heapq.heappush(pri_que, (freq, key))\n            if len(pri_que) > k:\n                heapq.heappop(pri_que)\n        result = [0] * k\n        for i in range(k-1, -1, -1):\n            result[i] = heapq.heappop(pri_que)[1]\n        return result",
+      "description": "利用heapq模块创建一个小顶堆以找到列表中出现次数最多的前k个元素"
+    }
+  ],
+  "common_mistakes": [
+    "误认为需要对整个数组进行完全排序，而实际上只需要维护一个大小为k的有序子集。",
+    "混淆了大顶堆与小顶堆的应用场景，在本题中使用小顶堆更为合适。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/347.%E5%89%8DK%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0.jpg",
+      "description": "该图展示了如何使用哈希表和小顶堆来找到数组中前K个高频元素的算法过程。",
+      "context": "该图片展示了使用小顶堆来寻找前K个最大元素的过程，具体地，通过维护一个大小为K的小顶堆，每次将最小的元素弹出，以确保最终堆内保留的是频率最高的K个元素。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/347.%E5%89%8DK%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0.jpg",
+      "description": "GIF展示了使用小顶堆来寻找数组中前K个高频元素的过程。",
+      "context": "GIF动画展示了如何使用小顶堆来寻找并保留序列中前K个高频元素的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\栈与队列\\前 K 个高频元素.txt",
+  "extracted_at": "2025-07-22T13:26:41.860401",
+  "raw_content": "前 K 个高频元素\n力扣题目链接(https://leetcode.cn/problems/top-k-frequent-elements/)\n\n给定一个非空的整数数组，返回其中出现频率前 k 高的元素。\n\n示例 1:\n\n输入: nums = [1,1,1,2,2,3], k = 2\n输出: [1,2]\n示例 2:\n\n输入: nums = [1], k = 1\n输出: [1]\n提示：\n\n你可以假设给定的 k 总是合理的，且 1 ≤ k ≤ 数组中不相同的元素的个数。\n你的算法的时间复杂度必须优于 $O(n \\log n)$ , n 是数组的大小。\n题目数据保证答案唯一，换句话说，数组中前 k 个高频元素的集合是唯一的。\n你可以按任意顺序返回答案。\n\n思路\n这道题目主要涉及到如下三块内容：\n\n要统计元素出现频率\n对频率排序\n找出前K个高频元素\n首先统计元素出现的频率，这一类的问题可以使用map来进行统计。\n\n然后是对频率进行排序，这里我们可以使用一种 容器适配器就是优先级队列。\n\n什么是优先级队列呢？\n\n其实就是一个披着队列外衣的堆，因为优先级队列对外接口只是从队头取元素，从队尾添加元素，再无其他取元素的方式，看起来就是一个队列。\n\n而且优先级队列内部元素是自动依照元素的权值排列。那么它是如何有序排列的呢？\n\n缺省情况下priority_queue利用max-heap（大顶堆）完成对元素的排序，这个大顶堆是以vector为表现形式的complete binary tree（完全二叉树）。\n\n什么是堆呢？\n\n堆是一棵完全二叉树，树中每个结点的值都不小于（或不大于）其左右孩子的值。 如果父亲结点是大于等于左右孩子就是大顶堆，小于等于左右孩子就是小顶堆。\n\n所以大家经常说的大顶堆（堆头是最大元素），小顶堆（堆头是最小元素），如果懒得自己实现的话，就直接用priority_queue（优先级队列）就可以了，底层实现都是一样的，从小到大排就是小顶堆，从大到小排就是大顶堆。\n\n本题我们就要使用优先级队列来对部分频率进行排序。\n\n为什么不用快排呢， 使用快排要将map转换为vector的结构，然后对整个数组进行排序， 而这种场景下，我们其实只需要维护k个有序的序列就可以了，所以使用优先级队列是最优的。\n\n此时要思考一下，是使用小顶堆呢，还是大顶堆？\n\n有的同学一想，题目要求前 K 个高频元素，那么果断用大顶堆啊。\n\n那么问题来了，定义一个大小为k的大顶堆，在每次移动更新大顶堆的时候，每次弹出都把最大的元素弹出去了，那么怎么保留下来前K个高频元素呢。\n\n而且使用大顶堆就要把所有元素都进行排序，那能不能只排序k个元素呢？\n\n所以我们要用小顶堆，因为要统计最大前k个元素，只有小顶堆每次将最小的元素弹出，最后小顶堆里积累的才是前k个最大元素。\n\n寻找前k个最大元素流程如图所示：（图中的频率只有三个，所以正好构成一个大小为3的小顶堆，如果频率更多一些，则用这个小顶堆进行扫描）\n\nhttps://file1.kamacoder.com/i/algo/347.%E5%89%8DK%E4%B8%AA%E9%AB%98%E9%A2%91%E5%85%83%E7%B4%A0.jpg\n\n我们来看一下C++代码：\n\nclass Solution {\npublic:\n    // 小顶堆\n    class mycomparison {\n    public:\n        bool operator()(const pair<int, int>& lhs, const pair<int, int>& rhs) {\n            return lhs.second > rhs.second;\n        }\n    };\n    vector<int> topKFrequent(vector<int>& nums, int k) {\n        // 要统计元素出现频率\n        unordered_map<int, int> map; // map<nums[i],对应出现的次数>\n        for (int i = 0; i < nums.size(); i++) {\n            map[nums[i]]++;\n        }\n\n        // 对频率排序\n        // 定义一个小顶堆，大小为k\n        priority_queue<pair<int, int>, vector<pair<int, int>>, mycomparison> pri_que;\n\n        // 用固定大小为k的小顶堆，扫面所有频率的数值\n        for (unordered_map<int, int>::iterator it = map.begin(); it != map.end(); it++) {\n            pri_que.push(*it);\n            if (pri_que.size() > k) { // 如果堆的大小大于了K，则队列弹出，保证堆的大小一直为k\n                pri_que.pop();\n            }\n        }\n\n        // 找出前K个高频元素，因为小顶堆先弹出的是最小的，所以倒序来输出到数组\n        vector<int> result(k);\n        for (int i = k - 1; i >= 0; i--) {\n            result[i] = pri_que.top().first;\n            pri_que.pop();\n        }\n        return result;\n\n    }\n};\n时间复杂度: O(nlogk)\n空间复杂度: O(n)\n#拓展\n大家对这个比较运算在建堆时是如何应用的，为什么左大于右就会建立小顶堆，反而建立大顶堆比较困惑。\n\n确实 例如我们在写快排的cmp函数的时候，return left>right 就是从大到小，return left<right 就是从小到大。\n\n优先级队列的定义正好反过来了，可能和优先级队列的源码实现有关（我没有仔细研究），我估计是底层实现上优先队列队首指向后面，队尾指向最前面的缘故！\n\n#其他语言版本\n#Java：\n\n/*Comparator接口说明:\n * 返回负数，形参中第一个参数排在前面；返回正数，形参中第二个参数排在前面\n * 对于队列：排在前面意味着往队头靠\n * 对于堆（使用PriorityQueue实现）：从队头到队尾按从小到大排就是最小堆（小顶堆），\n *                                从队头到队尾按从大到小排就是最大堆（大顶堆）--->队头元素相当于堆的根节点\n * */\nclass Solution {\n    //解法1：基于大顶堆实现\n    public int[] topKFrequent1(int[] nums, int k) {\n        Map<Integer,Integer> map = new HashMap<>(); //key为数组元素值,val为对应出现次数\n        for (int num : nums) {\n            map.put(num, map.getOrDefault(num,0) + 1);\n        }\n        //在优先队列中存储二元组(num, cnt),cnt表示元素值num在数组中的出现次数\n        //出现次数按从队头到队尾的顺序是从大到小排,出现次数最多的在队头(相当于大顶堆)\n        PriorityQueue<int[]> pq = new PriorityQueue<>((pair1, pair2) -> pair2[1] - pair1[1]);\n        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {//大顶堆需要对所有元素进行排序\n            pq.add(new int[]{entry.getKey(), entry.getValue()});\n        }\n        int[] ans = new int[k];\n        for (int i = 0; i < k; i++) { //依次从队头弹出k个,就是出现频率前k高的元素\n            ans[i] = pq.poll()[0];\n        }\n        return ans;\n    }\n    //解法2：基于小顶堆实现\n    public int[] topKFrequent2(int[] nums, int k) {\n        Map<Integer,Integer> map = new HashMap<>(); //key为数组元素值,val为对应出现次数\n        for (int num : nums) {\n            map.put(num, map.getOrDefault(num, 0) + 1);\n        }\n        //在优先队列中存储二元组(num, cnt),cnt表示元素值num在数组中的出现次数\n        //出现次数按从队头到队尾的顺序是从小到大排,出现次数最低的在队头(相当于小顶堆)\n        PriorityQueue<int[]> pq = new PriorityQueue<>((pair1, pair2) -> pair1[1] - pair2[1]);\n        for (Map.Entry<Integer, Integer> entry : map.entrySet()) { //小顶堆只需要维持k个元素有序\n            if (pq.size() < k) { //小顶堆元素个数小于k个时直接加\n                pq.add(new int[]{entry.getKey(), entry.getValue()});\n            } else {\n                if (entry.getValue() > pq.peek()[1]) { //当前元素出现次数大于小顶堆的根结点(这k个元素中出现次数最少的那个)\n                    pq.poll(); //弹出队头(小顶堆的根结点),即把堆里出现次数最少的那个删除,留下的就是出现次数多的了\n                    pq.add(new int[]{entry.getKey(), entry.getValue()});\n                }\n            }\n        }\n        int[] ans = new int[k];\n        for (int i = k - 1; i >= 0; i--) { //依次弹出小顶堆,先弹出的是堆的根,出现次数少,后面弹出的出现次数多\n            ans[i] = pq.poll()[0];\n        }\n        return ans;\n    }\n}\n简化版代码：\n\nclass Solution {\n    public int[] topKFrequent(int[] nums, int k) {\n        // 优先级队列，为了避免复杂 api 操作，pq 存储数组\n        // lambda 表达式设置优先级队列从大到小存储 o1 - o2 为从小到大，o2 - o1 反之\n        PriorityQueue<int[]> pq = new PriorityQueue<>((o1, o2) -> o1[1] - o2[1]);\n        int[] res = new int[k]; // 答案数组为 k 个元素\n        Map<Integer, Integer> map = new HashMap<>(); // 记录元素出现次数\n        for (int num : nums) map.put(num, map.getOrDefault(num, 0) + 1);\n        for (var x : map.entrySet()) { // entrySet 获取 k-v Set 集合\n            // 将 kv 转化成数组\n            int[] tmp = new int[2];\n            tmp[0] = x.getKey();\n            tmp[1] = x.getValue();\n            pq.offer(tmp);\n            // 下面的代码是根据小根堆实现的，我只保留优先队列的最后的k个，只要超出了k我就将最小的弹出，剩余的k个就是答案\n            if(pq.size() > k) {\n                pq.poll();\n            }\n        }\n        for (int i = 0; i < k; i++) {\n            res[i] = pq.poll()[0]; // 获取优先队列里的元素\n        }\n        return res;\n    }\n}\n#Python：\n解法一：\n\n#时间复杂度：O(nlogk)\n#空间复杂度：O(n)\nimport heapq\nclass Solution:\n    def topKFrequent(self, nums: List[int], k: int) -> List[int]:\n        #要统计元素出现频率\n        map_ = {} #nums[i]:对应出现的次数\n        for i in range(len(nums)):\n            map_[nums[i]] = map_.get(nums[i], 0) + 1\n        \n        #对频率排序\n        #定义一个小顶堆，大小为k\n        pri_que = [] #小顶堆\n        \n        #用固定大小为k的小顶堆，扫描所有频率的数值\n        for key, freq in map_.items():\n            heapq.heappush(pri_que, (freq, key))\n            if len(pri_que) > k: #如果堆的大小大于了K，则队列弹出，保证堆的大小一直为k\n                heapq.heappop(pri_que)\n        \n        #找出前K个高频元素，因为小顶堆先弹出的是最小的，所以倒序来输出到数组\n        result = [0] * k\n        for i in range(k-1, -1, -1):\n            result[i] = heapq.heappop(pri_que)[1]\n        return result\n解法二：\n\nclass Solution:\n    def topKFrequent(self, nums: List[int], k: int) -> List[int]:\n        # 使用字典统计数字出现次数\n        time_dict = defaultdict(int)\n        for num in nums:\n            time_dict[num] += 1\n        # 更改字典，key为出现次数，value为相应的数字的集合\n        index_dict = defaultdict(list)\n        for key in time_dict:\n            index_dict[time_dict[key]].append(key)\n        # 排序\n        key = list(index_dict.keys())\n        key.sort()\n        result = []\n        cnt = 0\n        # 获取前k项\n        while key and cnt != k:\n            result += index_dict[key[-1]]\n            cnt += len(index_dict[key[-1]])\n            key.pop()\n\n        return result[0: k]"
+}

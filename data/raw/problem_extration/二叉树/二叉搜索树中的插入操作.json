@@ -1,0 +1,567 @@
+{
+  "id": "AP_9a078c8e",
+  "title": "二叉搜索树中的插入操作",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/insert-into-a-binary-search-tree/",
+  "description": "给定二叉搜索树（BST）的根节点和要插入树中的值，将值插入二叉搜索树。 返回插入后二叉搜索树的根节点。 输入数据保证，新值和原始二叉搜索树中的任意节点值都不同。\n\n注意，可能存在多种有效的插入方式，只要树在插入后仍保持为二叉搜索树即可。 你可以返回任意有效的结果。\n\nhttps://file1.kamacoder.com/i/algo/20201019173259554.png\n\n提示：\n\n给定的树上的节点数介于 0 和 10^4 之间\n每个节点都有一个唯一整数值，取值范围从 0 到 10^8\n-10^8 <= val <= 10^8\n新值和原始二叉搜索树中的任意节点值都不同",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "二叉搜索树",
+    "递归算法",
+    "迭代算法"
+  ],
+  "data_structure_tags": [
+    "二叉树"
+  ],
+  "technique_tags": [
+    "递归",
+    "迭代",
+    "指针操作"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过递归或迭代的方式遍历二叉搜索树，直到找到合适的空位插入新节点。递归方法中利用返回值简化父子节点间的连接操作；迭代法则需维护当前节点及其父节点的信息以完成插入。",
+  "key_insights": [
+    {
+      "content": "根据二叉搜索树的左子树所有节点值小于根节点值、右子树所有节点值大于根节点值的性质，可以确定新节点应该被插入到哪个位置。"
+    },
+    {
+      "content": "虽然题目提示有多种有效插入方式，但最简单直接的方法是按照二叉搜索树规则遍历并插入新节点。"
+    },
+    {
+      "content": "递归方法在处理父子节点关系时更加直观简洁，而迭代法则需要额外变量来追踪父节点。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目其实是一道简单题目，但是题目中的提示：有多种有效的插入方式，还可以重构二叉搜索树，一下子吓退了不少人，瞬间感觉题目复杂了很多。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* insertIntoBST(TreeNode* root, int val) {if (root == NULL) {TreeNode* node = new TreeNode(val);return node;}if (root->val > val) root->left = insertIntoBST(root->left, val);if (root->val < val) root->right = insertIntoBST(root->right, val);return root;}};",
+          "description": "递归方式实现二叉搜索树插入"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: TreeNode* parent; void traversal(TreeNode* cur, int val) {if (cur == NULL) {TreeNode* node = new TreeNode(val);if (val > parent->val) parent->right = node;else parent->left = node;return;}parent = cur;if (cur->val > val) traversal(cur->left, val);if (cur->val < val) traversal(cur->right, val);return;} public: TreeNode* insertIntoBST(TreeNode* root, int val) {parent = new TreeNode(0);if (root == NULL) {root = new TreeNode(val);}traversal(root, val);return root;}};",
+          "description": "使用额外变量记录父节点的递归方式实现二叉搜索树插入"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* insertIntoBST(TreeNode* root, int val) {if (root == NULL) {TreeNode* node = new TreeNode(val);return node;}TreeNode* cur = root;TreeNode* parent = root;while (cur != NULL) {parent = cur;if (cur->val > val) cur = cur->left;else cur = cur->right;}TreeNode* node = new TreeNode(val);if (val < parent->val) parent->left = node;else parent->right = node;return root;}};",
+          "description": "迭代方式实现二叉搜索树插入"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode insertIntoBST(TreeNode root, int val) {if (root == null) return new TreeNode(val);TreeNode newRoot = root;TreeNode pre = root;while (root != null) {pre = root;if (root.val > val) {root = root.left;} else if (root.val < val) {root = root.right;}}if (pre.val > val) {pre.left = new TreeNode(val);} else {pre.right = new TreeNode(val);}return newRoot;}}",
+          "description": "Java迭代方式实现二叉搜索树插入"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode insertIntoBST(TreeNode root, int val) {if (root == null) return new TreeNode(val);if (root.val < val){root.right = insertIntoBST(root.right, val);}else if (root.val > val){root.left = insertIntoBST(root.left, val);}return root;}}",
+          "description": "Java递归方式实现二叉搜索树插入"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.parent = None def traversal(self, cur, val): if cur is None: node = TreeNode(val) if val > self.parent.val: self.parent.right = node else: self.parent.left = node return self.parent = cur if cur.val > val: self.traversal(cur.left, val) if cur.val < val: self.traversal(cur.right, val) def insertIntoBST(self, root, val): self.parent = TreeNode(0) if root is None: return TreeNode(val) self.traversal(root, val) return root",
+          "description": "Python使用额外变量记录父节点的递归方式实现二叉搜索树插入"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]: if root is None or root.val == val: return TreeNode(val) elif root.val > val: if root.left is None: root.left = TreeNode(val) else: self.insertIntoBST(root.left, val) elif root.val < val: if root.right is None: root.right = TreeNode(val) else: self.insertIntoBST(root.right, val) return root",
+          "description": "Python直接递归方式实现二叉搜索树插入"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def insertIntoBST(self, root, val): if root is None: node = TreeNode(val) return node if root.val > val: root.left = self.insertIntoBST(root.left, val) if root.val < val: root.right = self.insertIntoBST(root.right, val) return root",
+          "description": "Python简洁递归方式实现二叉搜索树插入"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def insertIntoBST(self, root, val): if root is None: node = TreeNode(val) return node cur = root parent = root while cur is not None: parent = cur if cur.val > val: cur = cur.left else: cur = cur.right node = TreeNode(val) if val < parent.val: parent.left = node else: parent.right = node return root",
+          "description": "Python迭代方式实现二叉搜索树插入"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def insertIntoBST(self, root, val): if root is None: return TreeNode(val) parent = None cur = root while cur: parent = cur if val < cur.val: cur = cur.left else: cur = cur.right if val < parent.val: parent.left = TreeNode(val) else: parent.right = TreeNode(val) return root",
+          "description": "Python另一种迭代方式实现二叉搜索树插入"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]: if not root: return TreeNode(val) cur = root while cur: if val < cur.val: if not cur.left: cur.left = TreeNode(val) return root else: cur = cur.left elif val > cur.val: if not cur.right: cur.right = TreeNode(val) return root else: cur = cur.right",
+          "description": "Python精简迭代方式实现二叉搜索树插入"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "递归",
+      "text": "递归三部曲：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "TreeNode* insertIntoBST(TreeNode* root, int val) {\n    if (root == NULL) {\n        TreeNode* node = new TreeNode(val);\n        return node;\n    }\n    if (root->val > val) root->left = insertIntoBST(root->left, val);\n    if (root->val < val) root->right = insertIntoBST(root->right, val);\n    return root;\n}",
+          "description": "递归插入二叉搜索树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    TreeNode* parent;\n    void traversal(TreeNode* cur, int val) {\n        if (cur == NULL) {\n            TreeNode* node = new TreeNode(val);\n            if (val > parent->val) parent->right = node;\n            else parent->left = node;\n            return;\n        }\n        parent = cur;\n        if (cur->val > val) traversal(cur->left, val);\n        if (cur->val < val) traversal(cur->right, val);\n        return;\n    }\npublic:\n    TreeNode* insertIntoBST(TreeNode* root, int val) {\n        parent = new TreeNode(0);\n        if (root == NULL) {\n            root = new TreeNode(val);\n        }\n        traversal(root, val);\n        return root;\n    }\n};",
+          "description": "使用辅助变量parent的递归插入方法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* insertIntoBST(TreeNode* root, int val) {\n        if (root == NULL) {\n            TreeNode* node = new TreeNode(val);\n            return node;\n        }\n        TreeNode* cur = root;\n        TreeNode* parent = root; \n        while (cur != NULL) {\n            parent = cur;\n            if (cur->val > val) cur = cur->left;\n            else cur = cur->right;\n        }\n        TreeNode* node = new TreeNode(val);\n        if (val < parent->val) parent->left = node;\n        else parent->right = node;\n        return root;\n    }\n};",
+          "description": "迭代法插入二叉搜索树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode insertIntoBST(TreeNode root, int val) {\n        if (root == null) return new TreeNode(val);\n        TreeNode newRoot = root;\n        TreeNode pre = root;\n        while (root != null) {\n            pre = root;\n            if (root.val > val) {\n                root = root.left;\n            } else if (root.val < val) {\n                root = root.right;\n            }\n        }\n        if (pre.val > val) {\n            pre.left = new TreeNode(val);\n        } else {\n            pre.right = new TreeNode(val);\n        }\n        return newRoot;\n    }\n}",
+          "description": "Java实现，迭代插入二叉搜索树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode insertIntoBST(TreeNode root, int val) {\n        if (root == null)\n            return new TreeNode(val);\n        if (root.val < val){\n            root.right = insertIntoBST(root.right, val);\n        }else if (root.val > val){\n            root.left = insertIntoBST(root.left, val);\n        }\n        return root;\n    }\n}",
+          "description": "Java实现，递归插入二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.parent = None\n\n    def traversal(self, cur, val):\n        if cur is None:\n            node = TreeNode(val)\n            if val > self.parent.val:\n                self.parent.right = node\n            else:\n                self.parent.left = node\n            return\n\n        self.parent = cur\n        if cur.val > val:\n            self.traversal(cur.left, val)\n        if cur.val < val:\n            self.traversal(cur.right, val)\n\n    def insertIntoBST(self, root, val):\n        self.parent = TreeNode(0)\n        if root is None:\n            return TreeNode(val)\n        self.traversal(root, val)\n        return root",
+          "description": "Python实现，使用辅助变量parent的递归插入方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:\n        if root is None or root.val == val:\n            return TreeNode(val)\n        elif root.val > val:\n            if root.left is None:\n                root.left = TreeNode(val)\n            else:\n                self.insertIntoBST(root.left, val)\n        elif root.val < val:\n            if root.right is None:\n                root.right = TreeNode(val)\n            else:\n                self.insertIntoBST(root.right, val)\n        return root",
+          "description": "Python实现，递归插入二叉搜索树版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def insertIntoBST(self, root, val):\n        if root is None:\n            node = TreeNode(val)\n            return node\n\n        if root.val > val:\n            root.left = self.insertIntoBST(root.left, val)\n        if root.val < val:\n            root.right = self.insertIntoBST(root.right, val)\n\n        return root",
+          "description": "Python实现，递归插入二叉搜索树版本三"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def insertIntoBST(self, root, val):\n        if root is None:  # 如果根节点为空，创建新节点作为根节点并返回\n            node = TreeNode(val)\n            return node\n\n        cur = root\n        parent = root  # 记录上一个节点，用于连接新节点\n        while cur is not None:\n            parent = cur\n            if cur.val > val:\n                cur = cur.left\n            else:\n                cur = cur.right\n\n        node = TreeNode(val)\n        if val < parent.val:\n            parent.left = node  # 将新节点连接到父节点的左子树\n        else:\n            parent.right = node  # 将新节点连接到父节点的右子树\n\n        return root",
+          "description": "Python实现，迭代法插入二叉搜索树版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def insertIntoBST(self, root, val):\n        if root is None:\n            return TreeNode(val)\n        parent = None\n        cur = root\n        while cur:\n            parent = cur\n            if val < cur.val:\n                cur = cur.left\n            else:\n                cur = cur.right\n        if val < parent.val:\n            parent.left = TreeNode(val)\n        else:\n            parent.right = TreeNode(val)\n        return root",
+          "description": "Python实现，迭代法插入二叉搜索树版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:\n        if not root: # 如果根节点为空，创建新节点作为根节点并返回\n            return TreeNode(val)\n        cur = root\n        while cur:\n            if val < cur.val:\n                if not cur.left: # 如果此时父节点的左子树为空\n                    cur.left = TreeNode(val) # 将新节点连接到父节点的左子树\n                    return root\n                else:\n                    cur = cur.left\n            elif val > cur.val:\n                if not cur.right: # 如果此时父节点的左子树为空\n                    cur.right = TreeNode(val) # 将新节点连接到父节点的右子树\n                    return root\n                else:\n                    cur = cur.right",
+          "description": "Python实现，精简版迭代法插入二叉搜索树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "迭代",
+      "text": "再来看看迭代法，对二叉搜索树迭代写法不熟悉，可以看这篇：二叉树：二叉搜索树登场！(https://programmercarl.com/0700.%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E6%90%9C%E7%B4%A2.html)",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "TreeNode* insertIntoBST(TreeNode* root, int val) {\n    if (root == NULL) {\n        TreeNode* node = new TreeNode(val);\n        return node;\n    }\n    if (root->val > val) root->left = insertIntoBST(root->left, val);\n    if (root->val < val) root->right = insertIntoBST(root->right, val);\n    return root;\n}",
+          "description": null
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    TreeNode* parent;\n    void traversal(TreeNode* cur, int val) {\n        if (cur == NULL) {\n            TreeNode* node = new TreeNode(val);\n            if (val > parent->val) parent->right = node;\n            else parent->left = node;\n            return;\n        }\n        parent = cur;\n        if (cur->val > val) traversal(cur->left, val);\n        if (cur->val < val) traversal(cur->right, val);\n        return;\n    }\n\npublic:\n    TreeNode* insertIntoBST(TreeNode* root, int val) {\n        parent = new TreeNode(0);\n        if (root == NULL) {\n            root = new TreeNode(val);\n        }\n        traversal(root, val);\n        return root;\n    }\n};",
+          "description": null
+        },
+        {
+          "language": "cpp",
+          "code": "TreeNode* insertIntoBST(TreeNode* root, int val) {\n    if (root == NULL) {\n        TreeNode* node = new TreeNode(val);\n        return node;\n    }\n    TreeNode* cur = root;\n    TreeNode* parent = root; \n    while (cur != NULL) {\n        parent = cur;\n        if (cur->val > val) cur = cur->left;\n        else cur = cur->right;\n    }\n    TreeNode* node = new TreeNode(val);\n    if (val < parent->val) parent->left = node;\n    else parent->right = node;\n    return root;\n}",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "public TreeNode insertIntoBST(TreeNode root, int val) {\n    if (root == null) return new TreeNode(val);\n    TreeNode newRoot = root;\n    TreeNode pre = root;\n    while (root != null) {\n        pre = root;\n        if (root.val > val) {\n            root = root.left;\n        } else if (root.val < val) {\n            root = root.right;\n        }\n    }\n    if (pre.val > val) {\n        pre.left = new TreeNode(val);\n    } else {\n        pre.right = new TreeNode(val);\n    }\n    return newRoot;\n}",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "public TreeNode insertIntoBST(TreeNode root, int val) {\n    if (root == null) return new TreeNode(val);\n    if (root.val < val){\n        root.right = insertIntoBST(root.right, val);\n    }else if (root.val > val){\n        root.left = insertIntoBST(root.left, val);\n    }\n    return root;\n}",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "def __init__(self):\n    self.parent = None\n\ndef traversal(self, cur, val):\n    if cur is None:\n        node = TreeNode(val)\n        if val > self.parent.val:\n            self.parent.right = node\n        else:\n            self.parent.left = node\n        return\n\n    self.parent = cur\n    if cur.val > val:\n        self.traversal(cur.left, val)\n    if cur.val < val:\n        self.traversal(cur.right, val)\n\ndef insertIntoBST(self, root, val):\n    self.parent = TreeNode(0)\n    if root is None:\n        return TreeNode(val)\n    self.traversal(root, val)\n    return root",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:\n    if root is None or root.val == val:\n        return TreeNode(val)\n    elif root.val > val:\n        if root.left is None:\n            root.left = TreeNode(val)\n        else:\n            self.insertIntoBST(root.left, val)\n    elif root.val < val:\n        if root.right is None:\n            root.right = TreeNode(val)\n        else:\n            self.insertIntoBST(root.right, val)\n    return root",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "def insertIntoBST(self, root, val):\n    if root is None:\n        node = TreeNode(val)\n        return node\n\n    if root.val > val:\n        root.left = self.insertIntoBST(root.left, val)\n    if root.val < val:\n        root.right = self.insertIntoBST(root.right, val)\n\n    return root",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "def insertIntoBST(self, root, val):\n    if root is None:  # 如果根节点为空，创建新节点作为根节点并返回\n        node = TreeNode(val)\n        return node\n\n    cur = root\n    parent = root  # 记录上一个节点，用于连接新节点\n    while cur is not None:\n        parent = cur\n        if cur.val > val:\n            cur = cur.left\n        else:\n            cur = cur.right\n\n    node = TreeNode(val)\n    if val < parent.val:\n        parent.left = node  # 将新节点连接到父节点的左子树\n    else:\n        parent.right = node  # 将新节点连接到父节点的右子树\n\n    return root",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "def insertIntoBST(self, root, val):\n    if root is None:\n        return TreeNode(val)\n    parent = None\n    cur = root\n    while cur:\n        parent = cur\n        if val < cur.val:\n            cur = cur.left\n        else:\n            cur = cur.right\n    if val < parent.val:\n        parent.left = TreeNode(val)\n    else:\n        parent.right = TreeNode(val)\n    return root",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:\n    if not root: # 如果根节点为空，创建新节点作为根节点并返回\n        return TreeNode(val)\n    cur = root\n    while cur:\n        if val < cur.val:\n            if not cur.left: # 如果此时父节点的左子树为空\n                cur.left = TreeNode(val) # 将新节点连接到父节点的左子树\n                return root\n            else:\n                cur = cur.left\n        elif val > cur.val:\n            if not cur.right: # 如果此时父节点的左子树为空\n                cur.right = TreeNode(val) # 将新节点连接到父节点的右子树\n                return root\n            else:\n                cur = cur.right",
+          "description": null
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "首先在二叉搜索树中的插入操作，大家不用恐惧其重构搜索树，其实根本不用重构。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "TreeNode* insertIntoBST(TreeNode* root, int val) {\n    if (root == NULL) {\n        TreeNode* node = new TreeNode(val);\n        return node;\n    }\n    if (root->val > val) root->left = insertIntoBST(root->left, val);\n    if (root->val < val) root->right = insertIntoBST(root->right, val);\n    return root;\n}",
+          "description": "递归方式实现二叉搜索树的插入"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    TreeNode* parent;\n    void traversal(TreeNode* cur, int val) {\n        if (cur == NULL) {\n            TreeNode* node = new TreeNode(val);\n            if (val > parent->val) parent->right = node;\n            else parent->left = node;\n            return;\n        }\n        parent = cur;\n        if (cur->val > val) traversal(cur->left, val);\n        if (cur->val < val) traversal(cur->right, val);\n        return;\n    }\n\npublic:\n    TreeNode* insertIntoBST(TreeNode* root, int val) {\n        parent = new TreeNode(0);\n        if (root == NULL) {\n            root = new TreeNode(val);\n        }\n        traversal(root, val);\n        return root;\n    }\n};",
+          "description": "使用额外变量记录父节点的二叉搜索树插入"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* insertIntoBST(TreeNode* root, int val) {\n        if (root == NULL) {\n            TreeNode* node = new TreeNode(val);\n            return node;\n        }\n        TreeNode* cur = root;\n        TreeNode* parent = root; \n        while (cur != NULL) {\n            parent = cur;\n            if (cur->val > val) cur = cur->left;\n            else cur = cur->right;\n        }\n        TreeNode* node = new TreeNode(val);\n        if (val < parent->val) parent->left = node;\n        else parent->right = node;\n        return root;\n    }\n};",
+          "description": "迭代法实现二叉搜索树的插入"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode insertIntoBST(TreeNode root, int val) {\n        if (root == null) return new TreeNode(val);\n        TreeNode newRoot = root;\n        TreeNode pre = root;\n        while (root != null) {\n            pre = root;\n            if (root.val > val) {\n                root = root.left;\n            } else if (root.val < val) {\n                root = root.right;\n            } \n        }\n        if (pre.val > val) {\n            pre.left = new TreeNode(val);\n        } else {\n            pre.right = new TreeNode(val);\n        }\n\n        return newRoot;\n    }\n}",
+          "description": "Java版本的迭代法实现二叉搜索树的插入"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode insertIntoBST(TreeNode root, int val) {\n        if (root == null) \n            return new TreeNode(val);\n\n        if (root.val < val){\n            root.right = insertIntoBST(root.right, val); \n        }else if (root.val > val){\n            root.left = insertIntoBST(root.left, val); \n        }\n        return root;\n    }\n}",
+          "description": "Java版本的递归法实现二叉搜索树的插入"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.parent = None\n\n    def traversal(self, cur, val):\n        if cur is None:\n            node = TreeNode(val)\n            if val > self.parent.val:\n                self.parent.right = node\n            else:\n                self.parent.left = node\n            return\n\n        self.parent = cur\n        if cur.val > val:\n            self.traversal(cur.left, val)\n        if cur.val < val:\n            self.traversal(cur.right, val)\n\n    def insertIntoBST(self, root, val):\n        self.parent = TreeNode(0)\n        if root is None:\n            return TreeNode(val)\n        self.traversal(root, val)\n        return root",
+          "description": "Python版本，使用额外变量记录父节点的二叉搜索树插入"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:\n        if root is None or root.val == val:\n            return TreeNode(val)\n        elif root.val > val:\n            if root.left is None:\n                root.left = TreeNode(val)\n            else:\n                self.insertIntoBST(root.left, val)\n        elif root.val < val:\n            if root.right is None:\n                root.right = TreeNode(val)\n            else:\n                self.insertIntoBST(root.right, val)\n        return root",
+          "description": "Python版本的递归法实现二叉搜索树的插入（版本二）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def insertIntoBST(self, root, val):\n        if root is None:\n            node = TreeNode(val)\n            return node\n\n        if root.val > val:\n            root.left = self.insertIntoBST(root.left, val)\n        if root.val < val:\n            root.right = self.insertIntoBST(root.right, val)\n\n        return root",
+          "description": "Python版本的递归法实现二叉搜索树的插入（版本三）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def insertIntoBST(self, root, val):\n        if root is None:  # 如果根节点为空，创建新节点作为根节点并返回\n            node = TreeNode(val)\n            return node\n\n        cur = root\n        parent = root  # 记录上一个节点，用于连接新节点\n        while cur is not None:\n            parent = cur\n            if cur.val > val:\n                cur = cur.left\n            else:\n                cur = cur.right\n\n        node = TreeNode(val)\n        if val < parent.val:\n            parent.left = node  # 将新节点连接到父节点的左子树\n        else:\n            parent.right = node  # 将新节点连接到父节点的右子树\n\n        return root",
+          "description": "Python版本的迭代法实现二叉搜索树的插入（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def insertIntoBST(self, root, val):\n        if root is None:\n            return TreeNode(val)\n        parent = None\n        cur = root\n        while cur:\n            parent = cur\n            if val < cur.val:\n                cur = cur.left\n            else:\n                cur = cur.right\n        if val < parent.val:\n            parent.left = TreeNode(val)\n        else:\n            parent.right = TreeNode(val)\n        return root",
+          "description": "Python版本的迭代法实现二叉搜索树的插入（版本二）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:\n        if not root: # 如果根节点为空，创建新节点作为根节点并返回\n            return TreeNode(val)\n        cur = root\n        while cur:\n            if val < cur.val:\n                if not cur.left: # 如果此时父节点的左子树为空\n                    cur.left = TreeNode(val) # 将新节点连接到父节点的左子树\n                    return root\n                else:\n                    cur = cur.left\n            elif val > cur.val:\n                if not cur.right: # 如果此时父节点的左子树为空\n                    cur.right = TreeNode(val) # 将新节点连接到父节点的右子树\n                    return root\n                else:\n                    cur = cur.right",
+          "description": "Python版本的精简迭代法实现二叉搜索树的插入"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* insertIntoBST(TreeNode* root, int val) {if (root == NULL) {TreeNode* node = new TreeNode(val);return node;}if (root->val > val) root->left = insertIntoBST(root->left, val);if (root->val < val) root->right = insertIntoBST(root->right, val);return root;}};",
+          "description": "使用递归方法在二叉搜索树中插入新节点"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: TreeNode* parent; void traversal(TreeNode* cur, int val) {if (cur == NULL) {TreeNode* node = new TreeNode(val);if (val > parent->val) parent->right = node;else parent->left = node;return;}parent = cur;if (cur->val > val) traversal(cur->left, val);if (cur->val < val) traversal(cur->right, val);return;} public: TreeNode* insertIntoBST(TreeNode* root, int val) {parent = new TreeNode(0);if (root == NULL) {root = new TreeNode(val);}traversal(root, val);return root;}};",
+          "description": "使用无返回值的递归函数在二叉搜索树中插入新节点"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* insertIntoBST(TreeNode* root, int val) {if (root == NULL) {TreeNode* node = new TreeNode(val);return node;}TreeNode* cur = root;TreeNode* parent = root;while (cur != NULL) {parent = cur;if (cur->val > val) cur = cur->left;else cur = cur->right;}TreeNode* node = new TreeNode(val);if (val < parent->val) parent->left = node;else parent->right = node;return root;}};",
+          "description": "使用迭代法在二叉搜索树中插入新节点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode insertIntoBST(TreeNode root, int val) {if (root == null) return new TreeNode(val);TreeNode newRoot = root;TreeNode pre = root;while (root != null) {pre = root;if (root.val > val) {root = root.left;} else if (root.val < val) {root = root.right;}}if (pre.val > val) {pre.left = new TreeNode(val);} else {pre.right = new TreeNode(val);}return newRoot;}}",
+          "description": "Java语言实现，使用迭代法在二叉搜索树中插入新节点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode insertIntoBST(TreeNode root, int val) {if (root == null) return new TreeNode(val);if (root.val < val){root.right = insertIntoBST(root.right, val);}else if (root.val > val){root.left = insertIntoBST(root.left, val);}return root;}}",
+          "description": "Java语言实现，使用递归法在二叉搜索树中插入新节点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.parent = None def traversal(self, cur, val): if cur is None: node = TreeNode(val) if val > self.parent.val: self.parent.right = node else: self.parent.left = node return self.parent = cur if cur.val > val: self.traversal(cur.left, val) if cur.val < val: self.traversal(cur.right, val) def insertIntoBST(self, root, val): self.parent = TreeNode(0) if root is None: return TreeNode(val) self.traversal(root, val) return root",
+          "description": "Python语言实现，使用递归法（版本一）在二叉搜索树中插入新节点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]: if root is None or root.val == val: return TreeNode(val) elif root.val > val: if root.left is None: root.left = TreeNode(val) else: self.insertIntoBST(root.left, val) elif root.val < val: if root.right is None: root.right = TreeNode(val) else: self.insertIntoBST(root.right, val) return root",
+          "description": "Python语言实现，使用递归法（版本二）在二叉搜索树中插入新节点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def insertIntoBST(self, root, val): if root is None: node = TreeNode(val) return node if root.val > val: root.left = self.insertIntoBST(root.left, val) if root.val < val: root.right = self.insertIntoBST(root.right, val) return root",
+          "description": "Python语言实现，使用递归法（版本三）在二叉搜索树中插入新节点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def insertIntoBST(self, root, val): if root is None: node = TreeNode(val) return node cur = root parent = root while cur is not None: parent = cur if cur.val > val: cur = cur.left else: cur = cur.right node = TreeNode(val) if val < parent.val: parent.left = node else: parent.right = node return root",
+          "description": "Python语言实现，使用迭代法（版本一）在二叉搜索树中插入新节点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def insertIntoBST(self, root, val): if root is None: return TreeNode(val) parent = None cur = root while cur: parent = cur if val < cur.val: cur = cur.left else: cur = cur.right if val < parent.val: parent.left = TreeNode(val) else: parent.right = TreeNode(val) return root",
+          "description": "Python语言实现，使用迭代法（版本二）在二叉搜索树中插入新节点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]: if not root: return TreeNode(val) cur = root while cur: if val < cur.val: if not cur.left: cur.left = TreeNode(val) return root else: cur = cur.left elif val > cur.val: if not cur.right: cur.right = TreeNode(val) return root else: cur = cur.right",
+          "description": "Python语言实现，使用迭代法（精简版）在二叉搜索树中插入新节点"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* insertIntoBST(TreeNode* root, int val) {\n        if (root == NULL) {\n            TreeNode* node = new TreeNode(val);\n            return node;\n        }\n        if (root->val > val) root->left = insertIntoBST(root->left, val);\n        if (root->val < val) root->right = insertIntoBST(root->right, val);\n        return root;\n    }\n};",
+          "description": "递归方式实现二叉搜索树插入"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    TreeNode* parent;\n    void traversal(TreeNode* cur, int val) {\n        if (cur == NULL) {\n            TreeNode* node = new TreeNode(val);\n            if (val > parent->val) parent->right = node;\n            else parent->left = node;\n            return;\n        }\n        parent = cur;\n        if (cur->val > val) traversal(cur->left, val);\n        if (cur->val < val) traversal(cur->right, val);\n        return;\n    }\n\npublic:\n    TreeNode* insertIntoBST(TreeNode* root, int val) {\n        parent = new TreeNode(0);\n        if (root == NULL) {\n            root = new TreeNode(val);\n        }\n        traversal(root, val);\n        return root;\n    }\n};",
+          "description": "使用额外父节点指针的递归方式实现二叉搜索树插入"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* insertIntoBST(TreeNode* root, int val) {\n        if (root == NULL) {\n            TreeNode* node = new TreeNode(val);\n            return node;\n        }\n        TreeNode* cur = root;\n        TreeNode* parent = root; // 这个很重要，需要记录上一个节点，否则无法赋值新节点\n        while (cur != NULL) {\n            parent = cur;\n            if (cur->val > val) cur = cur->left;\n            else cur = cur->right;\n        }\n        TreeNode* node = new TreeNode(val);\n        if (val < parent->val) parent->left = node;// 此时是用parent节点的进行赋值\n        else parent->right = node;\n        return root;\n    }\n};",
+          "description": "迭代方式实现二叉搜索树插入"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode insertIntoBST(TreeNode root, int val) {\n        if (root == null) return new TreeNode(val);\n        TreeNode newRoot = root;\n        TreeNode pre = root;\n        while (root != null) {\n            pre = root;\n            if (root.val > val) {\n                root = root.left;\n            } else if (root.val < val) {\n                root = root.right;\n            } \n        }\n        if (pre.val > val) {\n            pre.left = new TreeNode(val);\n        } else {\n            pre.right = new TreeNode(val);\n        }\n\n        return newRoot;\n    }\n}",
+          "description": "Java迭代方式实现二叉搜索树插入"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode insertIntoBST(TreeNode root, int val) {\n        if (root == null) // 如果当前节点为空，也就意味着val找到了合适的位置，此时创建节点直接返回。\n            return new TreeNode(val);\n\n        if (root.val < val){\n            root.right = insertIntoBST(root.right, val); // 递归创建右子树\n        }else if (root.val > val){\n            root.left = insertIntoBST(root.left, val); // 递归创建左子树\n        }\n        return root;\n    }\n}",
+          "description": "Java递归方式实现二叉搜索树插入"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.parent = None\n\n    def traversal(self, cur, val):\n        if cur is None:\n            node = TreeNode(val)\n            if val > self.parent.val:\n                self.parent.right = node\n            else:\n                self.parent.left = node\n            return\n\n        self.parent = cur\n        if cur.val > val:\n            self.traversal(cur.left, val)\n        if cur.val < val:\n            self.traversal(cur.right, val)\n\n    def insertIntoBST(self, root, val):\n        self.parent = TreeNode(0)\n        if root is None:\n            return TreeNode(val)\n        self.traversal(root, val)\n        return root",
+          "description": "Python使用额外父节点指针的递归方式实现二叉搜索树插入"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:\n        if root is None or root.val == val:\n            return TreeNode(val)\n        elif root.val > val:\n            if root.left is None:\n                root.left = TreeNode(val)\n            else:\n                self.insertIntoBST(root.left, val)\n        elif root.val < val:\n            if root.right is None:\n                root.right = TreeNode(val)\n            else:\n                self.insertIntoBST(root.right, val)\n        return root",
+          "description": "Python递归方式实现二叉搜索树插入"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def insertIntoBST(self, root, val):\n        if root is None:\n            node = TreeNode(val)\n            return node\n\n        if root.val > val:\n            root.left = self.insertIntoBST(root.left, val)\n        if root.val < val:\n            root.right = self.insertIntoBST(root.right, val)\n\n        return root",
+          "description": "Python递归方式实现二叉搜索树插入"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def insertIntoBST(self, root, val):\n        if root is None:  # 如果根节点为空，创建新节点作为根节点并返回\n            node = TreeNode(val)\n            return node\n\n        cur = root\n        parent = root  # 记录上一个节点，用于连接新节点\n        while cur is not None:\n            parent = cur\n            if cur.val > val:\n                cur = cur.left\n            else:\n                cur = cur.right\n\n        node = TreeNode(val)\n        if val < parent.val:\n            parent.left = node  # 将新节点连接到父节点的左子树\n        else:\n            parent.right = node  # 将新节点连接到父节点的右子树\n\n        return root",
+          "description": "Python迭代方式实现二叉搜索树插入"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def insertIntoBST(self, root, val):\n        if root is None:\n            return TreeNode(val)\n        parent = None\n        cur = root\n        while cur:\n            parent = cur\n            if val < cur.val:\n                cur = cur.left\n            else:\n                cur = cur.right\n        if val < parent.val:\n            parent.left = TreeNode(val)\n        else:\n            parent.right = TreeNode(val)\n        return root",
+          "description": "Python迭代方式实现二叉搜索树插入"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:\n        if not root: # 如果根节点为空，创建新节点作为根节点并返回\n            return TreeNode(val)\n        cur = root\n        while cur:\n            if val < cur.val:\n                if not cur.left: # 如果此时父节点的左子树为空\n                    cur.left = TreeNode(val) # 将新节点连接到父节点的左子树\n                    return root\n                else:\n                    cur = cur.left\n            elif val > cur.val:\n                if not cur.right: # 如果此时父节点的左子树为空\n                    cur.right = TreeNode(val) # 将新节点连接到父节点的右子树\n                    return root\n                else:\n                    cur = cur.right",
+          "description": "Python精简迭代方式实现二叉搜索树插入"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "递归法（版本一）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* insertIntoBST(TreeNode* root, int val) {if (root == NULL) {TreeNode* node = new TreeNode(val);return node;}if (root->val > val) root->left = insertIntoBST(root->left, val);if (root->val < val) root->right = insertIntoBST(root->right, val);return root;}};",
+          "description": "递归插入二叉搜索树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: TreeNode* parent; void traversal(TreeNode* cur, int val) {if (cur == NULL) {TreeNode* node = new TreeNode(val);if (val > parent->val) parent->right = node;else parent->left = node;return;}parent = cur;if (cur->val > val) traversal(cur->left, val);if (cur->val < val) traversal(cur->right, val);return;}public: TreeNode* insertIntoBST(TreeNode* root, int val) {parent = new TreeNode(0);if (root == NULL) {root = new TreeNode(val);}traversal(root, val);return root;}};",
+          "description": "通过父节点记录的非返回值递归插入"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* insertIntoBST(TreeNode* root, int val) {if (root == NULL) {TreeNode* node = new TreeNode(val);return node;}TreeNode* cur = root;TreeNode* parent = root;while (cur != NULL) {parent = cur;if (cur->val > val) cur = cur->left;else cur = cur->right;}TreeNode* node = new TreeNode(val);if (val < parent->val) parent->left = node;else parent->right = node;return root;}};",
+          "description": "迭代法插入二叉搜索树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode insertIntoBST(TreeNode root, int val) {if (root == null) return new TreeNode(val);TreeNode newRoot = root;TreeNode pre = root;while (root != null) {pre = root;if (root.val > val) {root = root.left;} else if (root.val < val) {root = root.right;}}if (pre.val > val) {pre.left = new TreeNode(val);} else {pre.right = new TreeNode(val);}return newRoot;}}",
+          "description": "Java版本迭代法插入二叉搜索树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode insertIntoBST(TreeNode root, int val) {if (root == null) return new TreeNode(val);if (root.val < val){root.right = insertIntoBST(root.right, val);}else if (root.val > val){root.left = insertIntoBST(root.left, val);}return root;}}",
+          "description": "Java版本递归法插入二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.parent = None def traversal(self, cur, val): if cur is None: node = TreeNode(val) if val > self.parent.val: self.parent.right = node else: self.parent.left = node return self.parent = cur if cur.val > val: self.traversal(cur.left, val) if cur.val < val: self.traversal(cur.right, val) def insertIntoBST(self, root, val): self.parent = TreeNode(0) if root is None: return TreeNode(val) self.traversal(root, val) return root",
+          "description": "Python版本通过父节点记录的非返回值递归插入"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]: if root is None or root.val == val: return TreeNode(val) elif root.val > val: if root.left is None: root.left = TreeNode(val) else: self.insertIntoBST(root.left, val) elif root.val < val: if root.right is None: root.right = TreeNode(val) else: self.insertIntoBST(root.right, val) return root",
+          "description": "Python版本递归插入二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def insertIntoBST(self, root, val): if root is None: node = TreeNode(val) return node if root.val > val: root.left = self.insertIntoBST(root.left, val) if root.val < val: root.right = self.insertIntoBST(root.right, val) return root",
+          "description": "Python版本递归插入二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def insertIntoBST(self, root, val): if root is None: node = TreeNode(val) return node cur = root parent = root while cur is not None: parent = cur if cur.val > val: cur = cur.left else: cur = cur.right node = TreeNode(val) if val < parent.val: parent.left = node else: parent.right = node return root",
+          "description": "Python版本迭代法插入二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def insertIntoBST(self, root, val): if root is None: return TreeNode(val) parent = None cur = root while cur: parent = cur if val < cur.val: cur = cur.left else: cur = cur.right if val < parent.val: parent.left = TreeNode(val) else: parent.right = TreeNode(val) return root",
+          "description": "Python版本迭代法插入二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]: if not root: return TreeNode(val) cur = root while cur: if val < cur.val: if not cur.left: cur.left = TreeNode(val) return root else: cur = cur.left elif val > cur.val: if not cur.right: cur.right = TreeNode(val) return root else: cur = cur.right",
+          "description": "Python版本精简迭代法插入二叉搜索树"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {\npublic:\n    TreeNode* insertIntoBST(TreeNode* root, int val) {\n        if (root == NULL) {\n            TreeNode* node = new TreeNode(val);\n            return node;\n        }\n        if (root->val > val) root->left = insertIntoBST(root->left, val);\n        if (root->val < val) root->right = insertIntoBST(root->right, val);\n        return root;\n    }\n};",
+      "description": null
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {\nprivate:\n    TreeNode* parent;\n    void traversal(TreeNode* cur, int val) {\n        if (cur == NULL) {\n            TreeNode* node = new TreeNode(val);\n            if (val > parent->val) parent->right = node;\n            else parent->left = node;\n            return;\n        }\n        parent = cur;\n        if (cur->val > val) traversal(cur->left, val);\n        if (cur->val < val) traversal(cur->right, val);\n        return;\n    }\n\npublic:\n    TreeNode* insertIntoBST(TreeNode* root, int val) {\n        parent = new TreeNode(0);\n        if (root == NULL) {\n            root = new TreeNode(val);\n        }\n        traversal(root, val);\n        return root;\n    }\n};",
+      "description": null
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {\npublic:\n    TreeNode* insertIntoBST(TreeNode* root, int val) {\n        if (root == NULL) {\n            TreeNode* node = new TreeNode(val);\n            return node;\n        }\n        TreeNode* cur = root;\n        TreeNode* parent = root; \n        while (cur != NULL) {\n            parent = cur;\n            if (cur->val > val) cur = cur->left;\n            else cur = cur->right;\n        }\n        TreeNode* node = new TreeNode(val);\n        if (val < parent->val) parent->left = node;\n        else parent->right = node;\n        return root;\n    }\n};",
+      "description": null
+    },
+    {
+      "language": "java",
+      "code": "class Solution {\n    public TreeNode insertIntoBST(TreeNode root, int val) {\n        if (root == null) return new TreeNode(val);\n        TreeNode newRoot = root;\n        TreeNode pre = root;\n        while (root != null) {\n            pre = root;\n            if (root.val > val) {\n                root = root.left;\n            } else if (root.val < val) {\n                root = root.right;\n            } \n        }\n        if (pre.val > val) {\n            pre.left = new TreeNode(val);\n        } else {\n            pre.right = new TreeNode(val);\n        }\n\n        return newRoot;\n    }\n}",
+      "description": null
+    },
+    {
+      "language": "java",
+      "code": "class Solution {\n    public TreeNode insertIntoBST(TreeNode root, int val) {\n        if (root == null) \n            return new TreeNode(val);\n        if (root.val < val){\n            root.right = insertIntoBST(root.right, val); \n        }else if (root.val > val){\n            root.left = insertIntoBST(root.left, val); \n        }\n        return root;\n    }\n}",
+      "description": null
+    },
+    {
+      "language": "python",
+      "code": "class Solution:\n    def __init__(self):\n        self.parent = None\n\n    def traversal(self, cur, val):\n        if cur is None:\n            node = TreeNode(val)\n            if val > self.parent.val:\n                self.parent.right = node\n            else:\n                self.parent.left = node\n            return\n\n        self.parent = cur\n        if cur.val > val:\n            self.traversal(cur.left, val)\n        if cur.val < val:\n            self.traversal(cur.right, val)\n\n    def insertIntoBST(self, root, val):\n        self.parent = TreeNode(0)\n        if root is None:\n            return TreeNode(val)\n        self.traversal(root, val)\n        return root",
+      "description": null
+    },
+    {
+      "language": "python",
+      "code": "class Solution:\n    def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:\n        if root is None or root.val == val:\n            return TreeNode(val)\n        elif root.val > val:\n            if root.left is None:\n                root.left = TreeNode(val)\n            else:\n                self.insertIntoBST(root.left, val)\n        elif root.val < val:\n            if root.right is None:\n                root.right = TreeNode(val)\n            else:\n                self.insertIntoBST(root.right, val)\n        return root",
+      "description": null
+    },
+    {
+      "language": "python",
+      "code": "class Solution:\n    def insertIntoBST(self, root, val):\n        if root is None:\n            node = TreeNode(val)\n            return node\n\n        if root.val > val:\n            root.left = self.insertIntoBST(root.left, val)\n        if root.val < val:\n            root.right = self.insertIntoBST(root.right, val)\n\n        return root",
+      "description": null
+    },
+    {
+      "language": "python",
+      "code": "class Solution:\n    def insertIntoBST(self, root, val):\n        if root is None:  # 如果根节点为空，创建新节点作为根节点并返回\n            node = TreeNode(val)\n            return node\n\n        cur = root\n        parent = root  # 记录上一个节点，用于连接新节点\n        while cur is not None:\n            parent = cur\n            if cur.val > val:\n                cur = cur.left\n            else:\n                cur = cur.right\n\n        node = TreeNode(val)\n        if val < parent.val:\n            parent.left = node  # 将新节点连接到父节点的左子树\n        else:\n            parent.right = node  # 将新节点连接到父节点的右子树\n\n        return root",
+      "description": null
+    },
+    {
+      "language": "python",
+      "code": "class Solution:\n    def insertIntoBST(self, root, val):\n        if root is None:\n            return TreeNode(val)\n        parent = None\n        cur = root\n        while cur:\n            parent = cur\n            if val < cur.val:\n                cur = cur.left\n            else:\n                cur = cur.right\n        if val < parent.val:\n            parent.left = TreeNode(val)\n        else:\n            parent.right = TreeNode(val)\n        return root",
+      "description": null
+    },
+    {
+      "language": "python",
+      "code": "class Solution:\n    def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:\n        if not root: # 如果根节点为空，创建新节点作为根节点并返回\n            return TreeNode(val)\n        cur = root\n        while cur:\n            if val < cur.val:\n                if not cur.left: # 如果此时父节点的左子树为空\n                    cur.left = TreeNode(val) # 将新节点连接到父节点的左子树\n                    return root\n                else:\n                    cur = cur.left\n            elif val > cur.val:\n                if not cur.right: # 如果此时父节点的左子树为空\n                    cur.right = TreeNode(val) # 将新节点连接到父节点的右子树\n                    return root\n                else:\n                    cur = cur.right",
+      "description": null
+    }
+  ],
+  "common_mistakes": [
+    "忘记考虑根节点为空的情况。",
+    "未正确更新父节点引用，导致新节点无法正确挂接到树上。",
+    "尝试对已经存在的值进行插入，尽管题目保证不会发生这种情况，但在实际应用中需要注意检查。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201019173259554.png",
+      "description": "该图片展示了二叉搜索树的插入操作，具体为在给定的二叉搜索树中插入值5后的两种有效树结构。",
+      "context": "该图片展示了二叉搜索树的结构以及如何根据题目要求将一个新值插入到树中的示例。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/701.%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E6%8F%92%E5%85%A5%E6%93%8D%E4%BD%9C.gif",
+      "description": "这是一棵二叉树的示意图，节点值分别为4、2、7、1和3，展示了二叉树的基本结构。",
+      "context": "该图片展示了在二叉搜索树中按照规则遍历并找到合适位置插入新节点的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/701.%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E6%8F%92%E5%85%A5%E6%93%8D%E4%BD%9C.gif",
+      "description": "GIF展示了在二叉搜索树中按规则遍历并找到合适位置插入新节点的过程。",
+      "context": "GIF动画展示了如何在二叉搜索树中按照规则找到合适的位置并插入新值的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\二叉搜索树中的插入操作.txt",
+  "extracted_at": "2025-07-19T15:58:39.792583",
+  "raw_content": "二叉搜索树中的插入操作\n力扣题目链接(https://leetcode.cn/problems/insert-into-a-binary-search-tree/)\n\n给定二叉搜索树（BST）的根节点和要插入树中的值，将值插入二叉搜索树。 返回插入后二叉搜索树的根节点。 输入数据保证，新值和原始二叉搜索树中的任意节点值都不同。\n\n注意，可能存在多种有效的插入方式，只要树在插入后仍保持为二叉搜索树即可。 你可以返回任意有效的结果。\n\nhttps://file1.kamacoder.com/i/algo/20201019173259554.png\n\n提示：\n\n给定的树上的节点数介于 0 和 10^4 之间\n每个节点都有一个唯一整数值，取值范围从 0 到 10^8\n-10^8 <= val <= 10^8\n新值和原始二叉搜索树中的任意节点值都不同\n\n#思路\n这道题目其实是一道简单题目，但是题目中的提示：有多种有效的插入方式，还可以重构二叉搜索树，一下子吓退了不少人，瞬间感觉题目复杂了很多。\n\n其实可以不考虑题目中提示所说的改变树的结构的插入方式。\n\n如下演示视频中可以看出：只要按照二叉搜索树的规则去遍历，遇到空节点就插入节点就可以了。\n\nhttps://file1.kamacoder.com/i/algo/701.%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E6%8F%92%E5%85%A5%E6%93%8D%E4%BD%9C.gif\n\n例如插入元素10 ，需要找到末尾节点插入便可，一样的道理来插入元素15，插入元素0，插入元素6，需要调整二叉树的结构么？ 并不需要。。\n\n只要遍历二叉搜索树，找到空节点 插入元素就可以了，那么这道题其实就简单了。\n\n接下来就是遍历二叉搜索树的过程了。\n\n#递归\n递归三部曲：\n\n确定递归函数参数以及返回值\n参数就是根节点指针，以及要插入元素，这里递归函数要不要有返回值呢？\n\n可以有，也可以没有，但递归函数如果没有返回值的话，实现是比较麻烦的，下面也会给出其具体实现代码。\n\n有返回值的话，可以利用返回值完成新加入的节点与其父节点的赋值操作。（下面会进一步解释）\n\n递归函数的返回类型为节点类型TreeNode * 。\n\n代码如下：\n\nTreeNode* insertIntoBST(TreeNode* root, int val)\n确定终止条件\n终止条件就是找到遍历的节点为null的时候，就是要插入节点的位置了，并把插入的节点返回。\n\n代码如下：\n\nif (root == NULL) {\n    TreeNode* node = new TreeNode(val);\n    return node;\n}\n这里把添加的节点返回给上一层，就完成了父子节点的赋值操作了，详细再往下看。\n\n确定单层递归的逻辑\n此时要明确，需要遍历整棵树么？\n\n别忘了这是搜索树，遍历整棵搜索树简直是对搜索树的侮辱。\n\n搜索树是有方向了，可以根据插入元素的数值，决定递归方向。\n\n代码如下：\n\nif (root->val > val) root->left = insertIntoBST(root->left, val);\nif (root->val < val) root->right = insertIntoBST(root->right, val);\nreturn root;\n到这里，大家应该能感受到，如何通过递归函数返回值完成了新加入节点的父子关系赋值操作了，下一层将加入节点返回，本层用root->left或者root->right将其接住。\n\n整体代码如下：\n\nclass Solution {\npublic:\n    TreeNode* insertIntoBST(TreeNode* root, int val) {\n        if (root == NULL) {\n            TreeNode* node = new TreeNode(val);\n            return node;\n        }\n        if (root->val > val) root->left = insertIntoBST(root->left, val);\n        if (root->val < val) root->right = insertIntoBST(root->right, val);\n        return root;\n    }\n};\n可以看出代码并不复杂。\n\n刚刚说了递归函数不用返回值也可以，找到插入的节点位置，直接让其父节点指向插入节点，结束递归，也是可以的。\n\n那么递归函数定义如下：\n\nTreeNode* parent; // 记录遍历节点的父节点\nvoid traversal(TreeNode* cur, int val)\n没有返回值，需要记录上一个节点（parent），遇到空节点了，就让parent左孩子或者右孩子指向新插入的节点。然后结束递归。\n\n代码如下：\n\nclass Solution {\nprivate:\n    TreeNode* parent;\n    void traversal(TreeNode* cur, int val) {\n        if (cur == NULL) {\n            TreeNode* node = new TreeNode(val);\n            if (val > parent->val) parent->right = node;\n            else parent->left = node;\n            return;\n        }\n        parent = cur;\n        if (cur->val > val) traversal(cur->left, val);\n        if (cur->val < val) traversal(cur->right, val);\n        return;\n    }\n\npublic:\n    TreeNode* insertIntoBST(TreeNode* root, int val) {\n        parent = new TreeNode(0);\n        if (root == NULL) {\n            root = new TreeNode(val);\n        }\n        traversal(root, val);\n        return root;\n    }\n};\n可以看出还是麻烦一些的。\n\n我之所以举这个例子，是想说明通过递归函数的返回值完成父子节点的赋值是可以带来便利的。\n\n网上千篇一律的代码，可能会误导大家认为通过递归函数返回节点 这样的写法是天经地义，其实这里是有优化的！\n\n#迭代\n再来看看迭代法，对二叉搜索树迭代写法不熟悉，可以看这篇：二叉树：二叉搜索树登场！(https://programmercarl.com/0700.%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E6%90%9C%E7%B4%A2.html)\n\n在迭代法遍历的过程中，需要记录一下当前遍历的节点的父节点，这样才能做插入节点的操作。\n\n在二叉树：搜索树的最小绝对差 (https://programmercarl.com/0530.%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E7%BB%9D%E5%AF%B9%E5%B7%AE.html)和二叉树：我的众数是多少？ (https://programmercarl.com/0501.%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E4%BC%97%E6%95%B0.html)中，都是用了记录pre和cur两个指针的技巧，本题也是一样的。\n\n代码如下：\n\nclass Solution {\npublic:\n    TreeNode* insertIntoBST(TreeNode* root, int val) {\n        if (root == NULL) {\n            TreeNode* node = new TreeNode(val);\n            return node;\n        }\n        TreeNode* cur = root;\n        TreeNode* parent = root; // 这个很重要，需要记录上一个节点，否则无法赋值新节点\n        while (cur != NULL) {\n            parent = cur;\n            if (cur->val > val) cur = cur->left;\n            else cur = cur->right;\n        }\n        TreeNode* node = new TreeNode(val);\n        if (val < parent->val) parent->left = node;// 此时是用parent节点的进行赋值\n        else parent->right = node;\n        return root;\n    }\n};\n#总结\n首先在二叉搜索树中的插入操作，大家不用恐惧其重构搜索树，其实根本不用重构。\n\n然后在递归中，我们重点讲了如何通过递归函数的返回值完成新加入节点和其父节点的赋值操作，并强调了搜索树的有序性。\n\n最后依然给出了迭代的方法，迭代的方法就需要记录当前遍历节点的父节点了，这个和没有返回值的递归函数实现的代码逻辑是一样的。\n\n#其他语言版本\n#Java\nclass Solution {\n    public TreeNode insertIntoBST(TreeNode root, int val) {\n        if (root == null) return new TreeNode(val);\n        TreeNode newRoot = root;\n        TreeNode pre = root;\n        while (root != null) {\n            pre = root;\n            if (root.val > val) {\n                root = root.left;\n            } else if (root.val < val) {\n                root = root.right;\n            } \n        }\n        if (pre.val > val) {\n            pre.left = new TreeNode(val);\n        } else {\n            pre.right = new TreeNode(val);\n        }\n\n        return newRoot;\n    }\n}\n递归法\n\nclass Solution {\n    public TreeNode insertIntoBST(TreeNode root, int val) {\n        if (root == null) // 如果当前节点为空，也就意味着val找到了合适的位置，此时创建节点直接返回。\n            return new TreeNode(val);\n            \n        if (root.val < val){\n            root.right = insertIntoBST(root.right, val); // 递归创建右子树\n        }else if (root.val > val){\n            root.left = insertIntoBST(root.left, val); // 递归创建左子树\n        }\n        return root;\n    }\n}\n#Python\n递归法（版本一）\n\nclass Solution:\n    def __init__(self):\n        self.parent = None\n\n    def traversal(self, cur, val):\n        if cur is None:\n            node = TreeNode(val)\n            if val > self.parent.val:\n                self.parent.right = node\n            else:\n                self.parent.left = node\n            return\n\n        self.parent = cur\n        if cur.val > val:\n            self.traversal(cur.left, val)\n        if cur.val < val:\n            self.traversal(cur.right, val)\n\n    def insertIntoBST(self, root, val):\n        self.parent = TreeNode(0)\n        if root is None:\n            return TreeNode(val)\n        self.traversal(root, val)\n        return root\n递归法（版本二）\n\nclass Solution:\n    def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:\n        if root is None or root.val == val:\n            return TreeNode(val)\n        elif root.val > val:\n            if root.left is None:\n                root.left = TreeNode(val)\n            else:\n                self.insertIntoBST(root.left, val)\n        elif root.val < val:\n            if root.right is None:\n                root.right = TreeNode(val)\n            else:\n                self.insertIntoBST(root.right, val)\n        return root\n递归法（版本三）\n\nclass Solution:\n    def insertIntoBST(self, root, val):\n        if root is None:\n            node = TreeNode(val)\n            return node\n\n        if root.val > val:\n            root.left = self.insertIntoBST(root.left, val)\n        if root.val < val:\n            root.right = self.insertIntoBST(root.right, val)\n\n        return root\n迭代法（版本一）\n\nclass Solution:\n    def insertIntoBST(self, root, val):\n        if root is None:  # 如果根节点为空，创建新节点作为根节点并返回\n            node = TreeNode(val)\n            return node\n\n        cur = root\n        parent = root  # 记录上一个节点，用于连接新节点\n        while cur is not None:\n            parent = cur\n            if cur.val > val:\n                cur = cur.left\n            else:\n                cur = cur.right\n\n        node = TreeNode(val)\n        if val < parent.val:\n            parent.left = node  # 将新节点连接到父节点的左子树\n        else:\n            parent.right = node  # 将新节点连接到父节点的右子树\n\n        return root            \n迭代法（版本二）\n\nclass Solution:\n    def insertIntoBST(self, root, val):\n        if root is None:\n            return TreeNode(val)\n        parent = None\n        cur = root\n        while cur:\n            parent = cur\n            if val < cur.val:\n                cur = cur.left\n            else:\n                cur = cur.right\n        if val < parent.val:\n            parent.left = TreeNode(val)\n        else:\n            parent.right = TreeNode(val)\n        return root\n迭代法（精简）\n\nclass Solution:\n    def insertIntoBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:\n        if not root: # 如果根节点为空，创建新节点作为根节点并返回\n            return TreeNode(val)\n        cur = root\n        while cur:\n            if val < cur.val:\n                if not cur.left: # 如果此时父节点的左子树为空\n                    cur.left = TreeNode(val) # 将新节点连接到父节点的左子树\n                    return root\n                else:\n                    cur = cur.left\n            elif val > cur.val:\n                if not cur.right: # 如果此时父节点的左子树为空\n                    cur.right = TreeNode(val) # 将新节点连接到父节点的右子树\n                    return root\n                else:\n                    cur = cur.right"
+}

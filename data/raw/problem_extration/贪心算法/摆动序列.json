@@ -1,0 +1,694 @@
+{
+  "id": "AP_7e25e187",
+  "title": "摆动序列",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/wiggle-subsequence/",
+  "description": "一个整数序列，返回作为摆动序列的最长子序列的长度。 通过从原始序列中删除一些（也可以不删除）元素来获得子序列，剩下的元素保持其原始顺序。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "贪心算法",
+    "动态规划"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "差分计算",
+    "条件判断",
+    "状态转移"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过遍历数组，利用当前差值（curDiff）和前一个差值（preDiff）来判断是否形成了摆动序列。当遇到摆动点时增加计数器result，并仅在摆动变化时更新preDiff。对于动态规划方法，则基于每个元素作为波峰或波谷的最大摆动子序列长度进行状态转移。",
+  "key_insights": [
+    {
+      "content": "通过删除单调坡度上的非端点节点以形成更多的局部峰值，从而达到最长摆动序列的整体优化目标。"
+    },
+    {
+      "content": "对于上下坡中或单调坡中的平坡，采用特定规则处理，即允许prediff为0时也记录峰值，确保统一处理逻辑。"
+    },
+    {
+      "content": "使用动态规划可以分别追踪以每个位置为山峰或山谷的最长摆动子序列长度，从而找到全局最优解。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "#思路 1（贪心解法）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int wiggleMaxLength(vector<int>& nums) {if (nums.size() <= 1) return nums.size();int curDiff = 0; // 当前一对差值int preDiff = 0; // 前一对差值int result = 1;  // 记录峰值个数，序列默认序列最右边有一个峰值for (int i = 0; i < nums.size() - 1; i++) {curDiff = nums[i + 1] - nums[i];if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {result++;}preDiff = curDiff;}return result;}};",
+          "description": "贪心算法求解摆动序列的长度"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int wiggleMaxLength(vector<int>& nums) {if (nums.size() <= 1) return nums.size();int curDiff = 0; // 当前一对差值int preDiff = 0; // 前一对差值int result = 1;  // 记录峰值个数，序列默认序列最右边有一个峰值for (int i = 0; i < nums.size() - 1; i++) {curDiff = nums[i + 1] - nums[i];if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {result++;preDiff = curDiff;}}return result;}};",
+          "description": "优化后的贪心算法求解摆动序列的长度"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int dp[1005][2]; int wiggleMaxLength(vector<int>& nums) {memset(dp, 0, sizeof dp);dp[0][0] = dp[0][1] = 1;for (int i = 1; i < nums.size(); ++i) {dp[i][0] = dp[i][1] = 1;for (int j = 0; j < i; ++j) {if (nums[j] > nums[i]) dp[i][1] = max(dp[i][1], dp[j][0] + 1);}for (int j = 0; j < i; ++j) {if (nums[j] < nums[i]) dp[i][0] = max(dp[i][0], dp[j][1] + 1);}}return max(dp[nums.size() - 1][0], dp[nums.size() - 1][1]);}};",
+          "description": "动态规划方法求解摆动序列的长度"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int wiggleMaxLength(int[] nums) {if (nums.length <= 1) {return nums.length;}int curDiff = 0;int preDiff = 0;int count = 1;for (int i = 1; i < nums.length; i++) {curDiff = nums[i] - nums[i - 1];if ((curDiff > 0 && preDiff <= 0) || (curDiff < 0 && preDiff >= 0)) {count++;preDiff = curDiff;}}return count;}}",
+          "description": "Java实现贪心算法求解摆动序列的长度"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int wiggleMaxLength(int[] nums) {int dp[][] = new int[nums.length][2];dp[0][0] = dp[0][1] = 1;for (int i = 1; i < nums.length; i++){dp[i][0] = dp[i][1] = 1;for (int j = 0; j < i; j++){if (nums[j] > nums[i]){dp[i][1] = Math.max(dp[i][1], dp[j][0] + 1);}if (nums[j] < nums[i]){dp[i][0] = Math.max(dp[i][0], dp[j][1] + 1);}}}return Math.max(dp[nums.length - 1][0], dp[nums.length - 1][1]);}}",
+          "description": "Java实现动态规划方法求解摆动序列的长度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): if len(nums) <= 1: return len(nums) curDiff = 0 preDiff = 0 result = 1 for i in range(len(nums) - 1): curDiff = nums[i + 1] - nums[i] if (preDiff <= 0 and curDiff > 0) or (preDiff >= 0 and curDiff < 0): result += 1 preDiff = curDiff return result",
+          "description": "Python实现贪心算法（版本一）求解摆动序列的长度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums: List[int]) -> int: if len(nums) <= 1: return len(nums) preDiff, curDiff, result = 0, 0, 1 for i in range(len(nums) - 1): curDiff = nums[i + 1] - nums[i] if curDiff * preDiff <= 0 and curDiff !=0: result += 1 preDiff = curDiff return result",
+          "description": "Python实现贪心算法（版本二）求解摆动序列的长度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums: List[int]) -> int: dp = [] for i in range(len(nums)): dp.append([1, 1]) for j in range(i): if nums[j] > nums[i]: dp[i][1] = max(dp[i][1], dp[j][0] + 1) if nums[j] < nums[i]: dp[i][0] = max(dp[i][0], dp[j][1] + 1) return max(dp[-1][0], dp[-1][1])",
+          "description": "Python实现动态规划（版本一）求解摆动序列的长度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): dp = [[0, 0] for _ in range(len(nums))] dp[0][0] = dp[0][1] = 1 for i in range(1, len(nums)): dp[i][0] = dp[i][1] = 1 for j in range(i): if nums[j] > nums[i]: dp[i][1] = max(dp[i][1], dp[j][0] + 1) for j in range(i): if nums[j] < nums[i]: dp[i][0] = max(dp[i][0], dp[j][1] + 1) return max(dp[-1][0], dp[-1][1])",
+          "description": "Python实现动态规划（版本二）求解摆动序列的长度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): if len(nums) <= 1: return len(nums) up = down = 1 for i in range(1, len(nums)): if nums[i] > nums[i-1]: up = down + 1 elif nums[i] < nums[i-1]: down = up + 1 return max(up, down)",
+          "description": "Python实现动态规划（版本三）优化求解摆动序列的长度"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "思路 1（贪心解法）",
+      "text": "本题要求通过从原始序列中删除一些（也可以不删除）元素来获得子序列，剩下的元素保持其原始顺序。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int wiggleMaxLength(vector<int>& nums) {if (nums.size() <= 1) return nums.size();int curDiff = 0; // 当前一对差值int preDiff = 0; // 前一对差值int result = 1;  // 记录峰值个数，序列默认序列最右边有一个峰值for (int i = 0; i < nums.size() - 1; i++) {curDiff = nums[i + 1] - nums[i];// 出现峰值if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {result++;}preDiff = curDiff;}return result;}};",
+          "description": "贪心算法版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int wiggleMaxLength(vector<int>& nums) {if (nums.size() <= 1) return nums.size();int curDiff = 0; // 当前一对差值int preDiff = 0; // 前一对差值int result = 1;  // 记录峰值个数，序列默认序列最右边有一个峰值for (int i = 0; i < nums.size() - 1; i++) {curDiff = nums[i + 1] - nums[i];// 出现峰值if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {result++;preDiff = curDiff; // 注意这里，只在摆动变化的时候更新prediff}}}return result;}};",
+          "description": "贪心算法版本二"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int dp[1005][2];int wiggleMaxLength(vector<int>& nums) {memset(dp, 0, sizeof dp);dp[0][0] = dp[0][1] = 1;for (int i = 1; i < nums.size(); ++i) {dp[i][0] = dp[i][1] = 1;for (int j = 0; j < i; ++j) {if (nums[j] > nums[i]) dp[i][1] = max(dp[i][1], dp[j][0] + 1);}for (int j = 0; j < i; ++j) {if (nums[j] < nums[i]) dp[i][0] = max(dp[i][0], dp[j][1] + 1);}}return max(dp[nums.size() - 1][0], dp[nums.size() - 1][1]);}};",
+          "description": "动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int wiggleMaxLength(int[] nums) {if (nums.length <= 1) {return nums.length;}//当前差值int curDiff = 0;//上一个差值int preDiff = 0;int count = 1;for (int i = 1; i < nums.length; i++) {//得到当前差值curDiff = nums[i] - nums[i - 1];//如果当前差值和上一个差值为一正一负//等于0的情况表示初始时的preDiffif ((curDiff > 0 && preDiff <= 0) || (curDiff < 0 && preDiff >= 0)) {count++;preDiff = curDiff;}}return count;}}",
+          "description": "Java贪心算法实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int wiggleMaxLength(int[] nums) {int dp[][] = new int[nums.length][2];dp[0][0] = dp[0][1] = 1;for (int i = 1; i < nums.length; i++){dp[i][0] = dp[i][1] = 1;for (int j = 0; j < i; j++){if (nums[j] > nums[i]){dp[i][1] = Math.max(dp[i][1], dp[j][0] + 1);}if (nums[j] < nums[i]){dp[i][0] = Math.max(dp[i][0], dp[j][1] + 1);}}}return Math.max(dp[nums.length - 1][0], dp[nums.length - 1][1]);}}",
+          "description": "Java动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): if len(nums) <= 1: return len(nums) # 如果数组长度为0或1，则返回数组长度 curDiff = 0 # 当前一对元素的差值 preDiff = 0 # 前一对元素的差值 result = 1 # 记录峰值的个数，初始为1（默认最右边的元素被视为峰值） for i in range(len(nums) - 1): curDiff = nums[i + 1] - nums[i] # 计算下一个元素与当前元素的差值 # 如果遇到一个峰值 if (preDiff <= 0 and curDiff > 0) or (preDiff >= 0 and curDiff < 0): result += 1 # 峰值个数加1 preDiff = curDiff # 注意这里，只在摆动变化的时候更新preDiff return result # 返回最长摆动子序列的长度",
+          "description": "Python贪心算法版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums: List[int]) -> int: if len(nums) <= 1: return len(nums) # 如果数组长度为0或1，则返回数组长度 preDiff,curDiff ,result  = 0,0,1 #题目里nums长度大于等于1，当长度为1时，其实到不了for循环里去，所以不用考虑nums长度 for i in range(len(nums) - 1): curDiff = nums[i + 1] - nums[i] if curDiff * preDiff <= 0 and curDiff !=0: #差值为0时，不算摆动 result += 1 preDiff = curDiff #如果当前差值和上一个差值为一正一负时，才需要用当前差值替代上一个差值 return result",
+          "description": "Python贪心算法版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums: List[int]) -> int: # 0 i 作为波峰的最大长度 # 1 i 作为波谷的最大长度 # dp是一个列表，列表中每个元素是长度为 2 的列表 dp = [] for i in range(len(nums)): # 初始为[1, 1] dp.append([1, 1]) for j in range(i): # nums[i] 为波谷 if nums[j] > nums[i]: dp[i][1] = max(dp[i][1], dp[j][0] + 1) # nums[i] 为波峰 if nums[j] < nums[i]: dp[i][0] = max(dp[i][0], dp[j][1] + 1) return max(dp[-1][0], dp[-1][1])",
+          "description": "Python动态规划版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): dp = [[0, 0] for _ in range(len(nums))] # 创建二维dp数组，用于记录摆动序列的最大长度 dp[0][0] = dp[0][1] = 1 # 初始条件，序列中的第一个元素默认为峰值，最小长度为1 for i in range(1, len(nums)): dp[i][0] = dp[i][1] = 1 # 初始化当前位置的dp值为1 for j in range(i): if nums[j] > nums[i]: dp[i][1] = max(dp[i][1], dp[j][0] + 1) # 如果前一个数比当前数大，可以形成一个上升峰值，更新dp[i][1] for j in range(i): if nums[j] < nums[i]: dp[i][0] = max(dp[i][0], dp[j][1] + 1) # 如果前一个数比当前数小，可以形成一个下降峰值，更新dp[i][0] return max(dp[-1][0], dp[-1][1]) # 返回最大的摆动序列长度",
+          "description": "Python动态规划版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): if len(nums) <= 1: return len(nums) # 如果数组长度为0或1，则返回数组长度 up = down = 1 # 记录上升和下降摆动序列的最大长度 for i in range(1, len(nums)): if nums[i] > nums[i-1]: up = down + 1 # 如果当前数比前一个数大，则可以形成一个上升峰值 elif nums[i] < nums[i-1]: down = up + 1 # 如果当前数比前一个数小，则可以形成一个下降峰值 return max(up, down) # 返回上升和下降摆动序列的最大长度",
+          "description": "Python动态规划优化版"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "情况一：上下坡中有平坡",
+      "text": "例如 [1,2,2,2,2,1]这样的数组，如图：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int wiggleMaxLength(vector<int>& nums) {if (nums.size() <= 1) return nums.size();int curDiff = 0; // 当前一对差值int preDiff = 0; // 前一对差值int result = 1;  // 记录峰值个数，序列默认序列最右边有一个峰值for (int i = 0; i < nums.size() - 1; i++) {curDiff = nums[i + 1] - nums[i]; // 出现峰值if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {result++;}preDiff = curDiff;}return result;}};",
+          "description": "C++贪心算法求解摆动序列"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int dp[1005][2];int wiggleMaxLength(vector<int>& nums) {memset(dp, 0, sizeof dp);dp[0][0] = dp[0][1] = 1;for (int i = 1; i < nums.size(); ++i) {dp[i][0] = dp[i][1] = 1;for (int j = 0; j < i; ++j) {if (nums[j] > nums[i]) dp[i][1] = max(dp[i][1], dp[j][0] + 1);}for (int j = 0; j < i; ++j) {if (nums[j] < nums[i]) dp[i][0] = max(dp[i][0], dp[j][1] + 1);}}return max(dp[nums.size() - 1][0], dp[nums.size() - 1][1]);}};",
+          "description": "C++动态规划算法求解摆动序列"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int wiggleMaxLength(int[] nums) {if (nums.length <= 1) {return nums.length;}int curDiff = 0;int preDiff = 0;int count = 1;for (int i = 1; i < nums.length; i++) {curDiff = nums[i] - nums[i - 1];if ((curDiff > 0 && preDiff <= 0) || (curDiff < 0 && preDiff >= 0)) {count++;preDiff = curDiff;}}return count;}}",
+          "description": "Java贪心算法求解摆动序列"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int wiggleMaxLength(int[] nums) {int dp[][] = new int[nums.length][2];dp[0][0] = dp[0][1] = 1;for (int i = 1; i < nums.length; i++){dp[i][0] = dp[i][1] = 1;for (int j = 0; j < i; j++){if (nums[j] > nums[i]){dp[i][1] = Math.max(dp[i][1], dp[j][0] + 1);}if (nums[j] < nums[i]){dp[i][0] = Math.max(dp[i][0], dp[j][1] + 1);}}}return Math.max(dp[nums.length - 1][0], dp[nums.length - 1][1]);}}",
+          "description": "Java动态规划算法求解摆动序列"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): if len(nums) <= 1: return len(nums) curDiff = 0 preDiff = 0 result = 1 for i in range(len(nums) - 1): curDiff = nums[i + 1] - nums[i] if (preDiff <= 0 and curDiff > 0) or (preDiff >= 0 and curDiff < 0): result += 1 preDiff = curDiff return result",
+          "description": "Python贪心算法求解摆动序列（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums: List[int]) -> int: if len(nums) <= 1: return len(nums) preDiff, curDiff, result = 0, 0, 1 for i in range(len(nums) - 1): curDiff = nums[i + 1] - nums[i] if curDiff * preDiff <= 0 and curDiff !=0: result += 1 preDiff = curDiff return result",
+          "description": "Python贪心算法求解摆动序列（版本二）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums: List[int]) -> int: dp = [] for i in range(len(nums)): dp.append([1, 1]) for j in range(i): if nums[j] > nums[i]: dp[i][1] = max(dp[i][1], dp[j][0] + 1) if nums[j] < nums[i]: dp[i][0] = max(dp[i][0], dp[j][1] + 1) return max(dp[-1][0], dp[-1][1])",
+          "description": "Python动态规划算法求解摆动序列（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): dp = [[0, 0] for _ in range(len(nums))] dp[0][0] = dp[0][1] = 1 for i in range(1, len(nums)): dp[i][0] = dp[i][1] = 1 for j in range(i): if nums[j] > nums[i]: dp[i][1] = max(dp[i][1], dp[j][0] + 1) for j in range(i): if nums[j] < nums[i]: dp[i][0] = max(dp[i][0], dp[j][1] + 1) return max(dp[-1][0], dp[-1][1])",
+          "description": "Python动态规划算法求解摆动序列（版本二）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): if len(nums) <= 1: return len(nums) up = down = 1 for i in range(1, len(nums)): if nums[i] > nums[i-1]: up = down + 1 elif nums[i] < nums[i-1]: down = up + 1 return max(up, down)",
+          "description": "Python动态规划优化算法求解摆动序列"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "情况二：数组首尾两端",
+      "text": "所以本题统计峰值的时候，数组最左面和最右面如何统计呢？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int wiggleMaxLength(vector<int>& nums) {if (nums.size() <= 1) return nums.size();int curDiff = 0; int preDiff = 0;int result = 1;for (int i = 0; i < nums.size() - 1; i++) {curDiff = nums[i + 1] - nums[i];if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {result++;}preDiff = curDiff;}return result;}};",
+          "description": "贪心算法版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int wiggleMaxLength(vector<int>& nums) {if (nums.size() <= 1) return nums.size();int curDiff = 0; int preDiff = 0;int result = 1;for (int i = 0; i < nums.size() - 1; i++) {curDiff = nums[i + 1] - nums[i];if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {result++;preDiff = curDiff;}}return result;}};",
+          "description": "贪心算法版本二"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int dp[1005][2];int wiggleMaxLength(vector<int>& nums) {memset(dp, 0, sizeof dp);dp[0][0] = dp[0][1] = 1;for (int i = 1; i < nums.size(); ++i) {dp[i][0] = dp[i][1] = 1;for (int j = 0; j < i; ++j) {if (nums[j] > nums[i]) dp[i][1] = max(dp[i][1], dp[j][0] + 1);}for (int j = 0; j < i; ++j) {if (nums[j] < nums[i]) dp[i][0] = max(dp[i][0], dp[j][1] + 1);}}}return max(dp[nums.size() - 1][0], dp[nums.size() - 1][1]);}};",
+          "description": "动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int wiggleMaxLength(int[] nums) {if (nums.length <= 1) {return nums.length;}int curDiff = 0;int preDiff = 0;int count = 1;for (int i = 1; i < nums.length; i++) {curDiff = nums[i] - nums[i - 1];if ((curDiff > 0 && preDiff <= 0) || (curDiff < 0 && preDiff >= 0)) {count++;preDiff = curDiff;}}return count;}}",
+          "description": "Java贪心算法实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int wiggleMaxLength(int[] nums) {int dp[][] = new int[nums.length][2];dp[0][0] = dp[0][1] = 1;for (int i = 1; i < nums.length; i++){dp[i][0] = dp[i][1] = 1;for (int j = 0; j < i; j++){if (nums[j] > nums[i]){dp[i][1] = Math.max(dp[i][1], dp[j][0] + 1);}if (nums[j] < nums[i]){dp[i][0] = Math.max(dp[i][0], dp[j][1] + 1);}}}return Math.max(dp[nums.length - 1][0], dp[nums.length - 1][1]);}}",
+          "description": "Java动态规划实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): if len(nums) <= 1: return len(nums) curDiff = 0 preDiff = 0 result = 1 for i in range(len(nums) - 1): curDiff = nums[i + 1] - nums[i] if (preDiff <= 0 and curDiff > 0) or (preDiff >= 0 and curDiff < 0): result += 1 preDiff = curDiff return result",
+          "description": "Python贪心算法版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums: List[int]) -> int: if len(nums) <= 1: return len(nums) preDiff, curDiff, result = 0, 0, 1 for i in range(len(nums) - 1): curDiff = nums[i + 1] - nums[i] if curDiff * preDiff <= 0 and curDiff != 0: result += 1 preDiff = curDiff return result",
+          "description": "Python贪心算法版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums: List[int]) -> int: dp = [] for i in range(len(nums)): dp.append([1, 1]) for j in range(i): if nums[j] > nums[i]: dp[i][1] = max(dp[i][1], dp[j][0] + 1) if nums[j] < nums[i]: dp[i][0] = max(dp[i][0], dp[j][1] + 1) return max(dp[-1][0], dp[-1][1])",
+          "description": "Python动态规划版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): dp = [[0, 0] for _ in range(len(nums))] dp[0][0] = dp[0][1] = 1 for i in range(1, len(nums)): dp[i][0] = dp[i][1] = 1 for j in range(i): if nums[j] > nums[i]: dp[i][1] = max(dp[i][1], dp[j][0] + 1) for j in range(i): if nums[j] < nums[i]: dp[i][0] = max(dp[i][0], dp[j][1] + 1) return max(dp[-1][0], dp[-1][1])",
+          "description": "Python动态规划版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): if len(nums) <= 1: return len(nums) up = down = 1 for i in range(1, len(nums)): if nums[i] > nums[i-1]: up = down + 1 elif nums[i] < nums[i-1]: down = up + 1 return max(up, down)",
+          "description": "Python动态规划优化版"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "情况三：单调坡度有平坡",
+      "text": "在版本一中，我们忽略了一种情况，即 如果在一个单调坡度上有平坡，例如[1,2,2,2,3,4]，如图：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int wiggleMaxLength(vector<int>& nums) {if (nums.size() <= 1) return nums.size();int curDiff = 0; int preDiff = 0; int result = 1; for (int i = 0; i < nums.size() - 1; i++) {curDiff = nums[i + 1] - nums[i];if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {result++;}preDiff = curDiff;}return result;}};",
+          "description": "贪心算法版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int wiggleMaxLength(vector<int>& nums) {if (nums.size() <= 1) return nums.size();int curDiff = 0; int preDiff = 0; int result = 1; for (int i = 0; i < nums.size() - 1; i++) {curDiff = nums[i + 1] - nums[i];if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {result++;preDiff = curDiff;}}return result;}};",
+          "description": "贪心算法版本二"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int dp[1005][2];int wiggleMaxLength(vector<int>& nums) {memset(dp, 0, sizeof dp);dp[0][0] = dp[0][1] = 1;for (int i = 1; i < nums.size(); ++i) {dp[i][0] = dp[i][1] = 1;for (int j = 0; j < i; ++j) {if (nums[j] > nums[i]) dp[i][1] = max(dp[i][1], dp[j][0] + 1);}for (int j = 0; j < i; ++j) {if (nums[j] < nums[i]) dp[i][0] = max(dp[i][0], dp[j][1] + 1);}}return max(dp[nums.size() - 1][0], dp[nums.size() - 1][1]);}};",
+          "description": "动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int wiggleMaxLength(int[] nums) {if (nums.length <= 1) return nums.length;int curDiff = 0, preDiff = 0, count = 1;for (int i = 1; i < nums.length; i++) {curDiff = nums[i] - nums[i - 1];if ((curDiff > 0 && preDiff <= 0) || (curDiff < 0 && preDiff >= 0)) {count++;preDiff = curDiff;}}return count;}}",
+          "description": "贪心算法Java实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int wiggleMaxLength(int[] nums) {int dp[][] = new int[nums.length][2];dp[0][0] = dp[0][1] = 1;for (int i = 1; i < nums.length; i++){dp[i][0] = dp[i][1] = 1;for (int j = 0; j < i; j++){if (nums[j] > nums[i]){dp[i][1] = Math.max(dp[i][1], dp[j][0] + 1);}if (nums[j] < nums[i]){dp[i][0] = Math.max(dp[i][0], dp[j][1] + 1);}}}return Math.max(dp[nums.length - 1][0], dp[nums.length - 1][1]);}}",
+          "description": "动态规划Java实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): if len(nums) <= 1: return len(nums) curDiff = 0 preDiff = 0 result = 1 for i in range(len(nums) - 1): curDiff = nums[i + 1] - nums[i] if (preDiff <= 0 and curDiff > 0) or (preDiff >= 0 and curDiff < 0): result += 1 preDiff = curDiff return result",
+          "description": "贪心算法Python版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums: List[int]) -> int: if len(nums) <= 1: return len(nums) preDiff, curDiff, result = 0, 0, 1 for i in range(len(nums) - 1): curDiff = nums[i + 1] - nums[i] if curDiff * preDiff <= 0 and curDiff != 0: result += 1 preDiff = curDiff return result",
+          "description": "贪心算法Python版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums: List[int]) -> int: dp = [] for i in range(len(nums)): dp.append([1, 1]) for j in range(i): if nums[j] > nums[i]: dp[i][1] = max(dp[i][1], dp[j][0] + 1) if nums[j] < nums[i]: dp[i][0] = max(dp[i][0], dp[j][1] + 1) return max(dp[-1][0], dp[-1][1])",
+          "description": "动态规划Python版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): dp = [[0, 0] for _ in range(len(nums))] dp[0][0] = dp[0][1] = 1 for i in range(1, len(nums)): dp[i][0] = dp[i][1] = 1 for j in range(i): if nums[j] > nums[i]: dp[i][1] = max(dp[i][1], dp[j][0] + 1) for j in range(i): if nums[j] < nums[i]: dp[i][0] = max(dp[i][0], dp[j][1] + 1) return max(dp[-1][0], dp[-1][1])",
+          "description": "动态规划Python版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): if len(nums) <= 1: return len(nums) up = down = 1 for i in range(1, len(nums)): if nums[i] > nums[i-1]: up = down + 1 elif nums[i] < nums[i-1]: down = up + 1 return max(up, down)",
+          "description": "优化后的动态规划Python实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "思路 2（动态规划）",
+      "text": "考虑用动态规划的思想来解决这个问题。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int wiggleMaxLength(vector<int>& nums) {\n        if (nums.size() <= 1) return nums.size();\n        int curDiff = 0; \n        int preDiff = 0; \n        int result = 1;  \n        for (int i = 0; i < nums.size() - 1; i++) {\n            curDiff = nums[i + 1] - nums[i];\n            if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {\n                result++;\n            }\n            preDiff = curDiff;\n        }\n        return result;\n    }\n};",
+          "description": "贪心算法版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int wiggleMaxLength(vector<int>& nums) {\n        if (nums.size() <= 1) return nums.size();\n        int curDiff = 0; \n        int preDiff = 0; \n        int result = 1;  \n        for (int i = 0; i < nums.size() - 1; i++) {\n            curDiff = nums[i + 1] - nums[i];\n            if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {\n                result++;\n                preDiff = curDiff; \n            }\n        }\n        return result;\n    }\n};",
+          "description": "贪心算法版本二"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int dp[1005][2];\n    int wiggleMaxLength(vector<int>& nums) {\n        memset(dp, 0, sizeof dp);\n        dp[0][0] = dp[0][1] = 1;\n        for (int i = 1; i < nums.size(); ++i) {\n            dp[i][0] = dp[i][1] = 1;\n            for (int j = 0; j < i; ++j) {\n                if (nums[j] > nums[i]) dp[i][1] = max(dp[i][1], dp[j][0] + 1);\n            }\n            for (int j = 0; j < i; ++j) {\n                if (nums[j] < nums[i]) dp[i][0] = max(dp[i][0], dp[j][1] + 1);\n            }\n        }\n        return max(dp[nums.size() - 1][0], dp[nums.size() - 1][1]);\n    }\n};",
+          "description": "动态规划版本"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int wiggleMaxLength(int[] nums) {\n        if (nums.length <= 1) {\n            return nums.length;\n        }\n        int curDiff = 0;\n        int preDiff = 0;\n        int count = 1;\n        for (int i = 1; i < nums.length; i++) {\n            curDiff = nums[i] - nums[i - 1];\n            if ((curDiff > 0 && preDiff <= 0) || (curDiff < 0 && preDiff >= 0)) {\n                count++;\n                preDiff = curDiff;\n            }\n        }\n        return count;\n    }\n}",
+          "description": "贪心算法Java版本"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int wiggleMaxLength(int[] nums) {\n        int dp[][] = new int[nums.length][2];\n        dp[0][0] = dp[0][1] = 1;\n        for (int i = 1; i < nums.length; i++){\n            dp[i][0] = dp[i][1] = 1;\n            for (int j = 0; j < i; j++){\n                if (nums[j] > nums[i]){\n                    dp[i][1] = Math.max(dp[i][1], dp[j][0] + 1);\n                }\n                if (nums[j] < nums[i]){\n                    dp[i][0] = Math.max(dp[i][0], dp[j][1] + 1);\n                }\n            }\n        }\n        return Math.max(dp[nums.length - 1][0], dp[nums.length - 1][1]);\n    }\n}",
+          "description": "动态规划Java版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def wiggleMaxLength(self, nums):\n        if len(nums) <= 1:\n            return len(nums)\n        curDiff = 0\n        preDiff = 0\n        result = 1\n        for i in range(len(nums) - 1):\n            curDiff = nums[i + 1] - nums[i]\n            if (preDiff <= 0 and curDiff > 0) or (preDiff >= 0 and curDiff < 0):\n                result += 1\n                preDiff = curDiff\n        return result",
+          "description": "贪心算法Python版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def wiggleMaxLength(self, nums: List[int]) -> int:\n        if len(nums) <= 1:\n            return len(nums)\n        preDiff, curDiff, result = 0, 0, 1\n        for i in range(len(nums) - 1):\n            curDiff = nums[i + 1] - nums[i]\n            if curDiff * preDiff <= 0 and curDiff != 0:\n                result += 1\n                preDiff = curDiff\n        return result",
+          "description": "贪心算法Python版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def wiggleMaxLength(self, nums: List[int]) -> int:\n        dp = []\n        for i in range(len(nums)):\n            dp.append([1, 1])\n            for j in range(i):\n                if nums[j] > nums[i]:\n                    dp[i][1] = max(dp[i][1], dp[j][0] + 1)\n                if nums[j] < nums[i]:\n                    dp[i][0] = max(dp[i][0], dp[j][1] + 1)\n        return max(dp[-1][0], dp[-1][1])",
+          "description": "动态规划Python版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def wiggleMaxLength(self, nums):\n        dp = [[0, 0] for _ in range(len(nums))]\n        dp[0][0] = dp[0][1] = 1\n        for i in range(1, len(nums)):\n            dp[i][0] = dp[i][1] = 1\n            for j in range(i):\n                if nums[j] > nums[i]:\n                    dp[i][1] = max(dp[i][1], dp[j][0] + 1)\n            for j in range(i):\n                if nums[j] < nums[i]:\n                    dp[i][0] = max(dp[i][0], dp[j][1] + 1)\n        return max(dp[-1][0], dp[-1][1])",
+          "description": "动态规划Python版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def wiggleMaxLength(self, nums):\n        if len(nums) <= 1:\n            return len(nums)\n        up = down = 1\n        for i in range(1, len(nums)):\n            if nums[i] > nums[i-1]:\n                up = down + 1\n            elif nums[i] < nums[i-1]:\n                down = up + 1\n        return max(up, down)",
+          "description": "动态规划优化版"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int wiggleMaxLength(vector<int>& nums) {if (nums.size() <= 1) return nums.size();int curDiff = 0; int preDiff = 0; int result = 1;for (int i = 0; i < nums.size() - 1; i++) {curDiff = nums[i + 1] - nums[i];if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {result++;}preDiff = curDiff;}return result;}};",
+          "description": "贪心算法，版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int wiggleMaxLength(vector<int>& nums) {if (nums.size() <= 1) return nums.size();int curDiff = 0; int preDiff = 0; int result = 1;for (int i = 0; i < nums.size() - 1; i++) {curDiff = nums[i + 1] - nums[i];if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {result++;preDiff = curDiff;}}return result;}};",
+          "description": "贪心算法，版本二"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int dp[1005][2];int wiggleMaxLength(vector<int>& nums) {memset(dp, 0, sizeof dp);dp[0][0] = dp[0][1] = 1;for (int i = 1; i < nums.size(); ++i) {dp[i][0] = dp[i][1] = 1;for (int j = 0; j < i; ++j) {if (nums[j] > nums[i]) dp[i][1] = max(dp[i][1], dp[j][0] + 1);}for (int j = 0; j < i; ++j) {if (nums[j] < nums[i]) dp[i][0] = max(dp[i][0], dp[j][1] + 1);}}return max(dp[nums.size() - 1][0], dp[nums.size() - 1][1]);}};",
+          "description": "动态规划"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int wiggleMaxLength(int[] nums) {if (nums.length <= 1) {return nums.length;}int curDiff = 0;int preDiff = 0;int count = 1;for (int i = 1; i < nums.length; i++) {curDiff = nums[i] - nums[i - 1];if ((curDiff > 0 && preDiff <= 0) || (curDiff < 0 && preDiff >= 0)) {count++;preDiff = curDiff;}}return count;}}",
+          "description": "贪心算法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int wiggleMaxLength(int[] nums) {int dp[][] = new int[nums.length][2];dp[0][0] = dp[0][1] = 1;for (int i = 1; i < nums.length; i++){dp[i][0] = dp[i][1] = 1;for (int j = 0; j < i; j++){if (nums[j] > nums[i]){dp[i][1] = Math.max(dp[i][1], dp[j][0] + 1);}if (nums[j] < nums[i]){dp[i][0] = Math.max(dp[i][0], dp[j][1] + 1);}}}return Math.max(dp[nums.length - 1][0], dp[nums.length - 1][1]);}}",
+          "description": "动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): if len(nums) <= 1: return len(nums) curDiff = 0 preDiff = 0 result = 1 for i in range(len(nums) - 1): curDiff = nums[i + 1] - nums[i] if (preDiff <= 0 and curDiff > 0) or (preDiff >= 0 and curDiff < 0): result += 1 preDiff = curDiff return result",
+          "description": "贪心算法，版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums: List[int]) -> int: if len(nums) <= 1: return len(nums) preDiff,curDiff ,result = 0,0,1 for i in range(len(nums) - 1): curDiff = nums[i + 1] - nums[i] if curDiff * preDiff <= 0 and curDiff !=0: result += 1 preDiff = curDiff return result",
+          "description": "贪心算法，版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums: List[int]) -> int: dp = [] for i in range(len(nums)): dp.append([1, 1]) for j in range(i): if nums[j] > nums[i]: dp[i][1] = max(dp[i][1], dp[j][0] + 1) if nums[j] < nums[i]: dp[i][0] = max(dp[i][0], dp[j][1] + 1) return max(dp[-1][0], dp[-1][1])",
+          "description": "动态规划，版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): dp = [[0, 0] for _ in range(len(nums))] dp[0][0] = dp[0][1] = 1 for i in range(1, len(nums)): dp[i][0] = dp[i][1] = 1 for j in range(i): if nums[j] > nums[i]: dp[i][1] = max(dp[i][1], dp[j][0] + 1) for j in range(i): if nums[j] < nums[i]: dp[i][0] = max(dp[i][0], dp[j][1] + 1) return max(dp[-1][0], dp[-1][1])",
+          "description": "动态规划，版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): if len(nums) <= 1: return len(nums) up = down = 1 for i in range(1, len(nums)): if nums[i] > nums[i-1]: up = down + 1 elif nums[i] < nums[i-1]: down = up + 1 return max(up, down)",
+          "description": "动态规划优化"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int wiggleMaxLength(vector<int>& nums) {if (nums.size() <= 1) return nums.size();int curDiff = 0; int preDiff = 0;int result = 1;for (int i = 0; i < nums.size() - 1; i++) {curDiff = nums[i + 1] - nums[i];if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {result++;}preDiff = curDiff;}return result;}};",
+          "description": "贪心算法版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int wiggleMaxLength(vector<int>& nums) {if (nums.size() <= 1) return nums.size();int curDiff = 0; int preDiff = 0;int result = 1;for (int i = 0; i < nums.size() - 1; i++) {curDiff = nums[i + 1] - nums[i];if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {result++;preDiff = curDiff;}}return result;}};",
+          "description": "贪心算法版本二"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int dp[1005][2];int wiggleMaxLength(vector<int>& nums) {memset(dp, 0, sizeof dp);dp[0][0] = dp[0][1] = 1;for (int i = 1; i < nums.size(); ++i) {dp[i][0] = dp[i][1] = 1;for (int j = 0; j < i; ++j) {if (nums[j] > nums[i]) dp[i][1] = max(dp[i][1], dp[j][0] + 1);}for (int j = 0; j < i; ++j) {if (nums[j] < nums[i]) dp[i][0] = max(dp[i][0], dp[j][1] + 1);}}return max(dp[nums.size() - 1][0], dp[nums.size() - 1][1]);}};",
+          "description": "动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int wiggleMaxLength(int[] nums) {if (nums.length <= 1) {return nums.length;}int curDiff = 0;int preDiff = 0;int count = 1;for (int i = 1; i < nums.length; i++) {curDiff = nums[i] - nums[i - 1];if ((curDiff > 0 && preDiff <= 0) || (curDiff < 0 && preDiff >= 0)) {count++;preDiff = curDiff;}}return count;}}",
+          "description": "Java贪心算法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int wiggleMaxLength(int[] nums) {int dp[][] = new int[nums.length][2];dp[0][0] = dp[0][1] = 1;for (int i = 1; i < nums.length; i++){dp[i][0] = dp[i][1] = 1;for (int j = 0; j < i; j++){if (nums[j] > nums[i]){dp[i][1] = Math.max(dp[i][1], dp[j][0] + 1);}if (nums[j] < nums[i]){dp[i][0] = Math.max(dp[i][0], dp[j][1] + 1);}}}return Math.max(dp[nums.length - 1][0], dp[nums.length - 1][1]);}}",
+          "description": "Java动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): if len(nums) <= 1: return len(nums) curDiff = 0 preDiff = 0 result = 1 for i in range(len(nums) - 1): curDiff = nums[i + 1] - nums[i] if (preDiff <= 0 and curDiff > 0) or (preDiff >= 0 and curDiff < 0): result += 1 preDiff = curDiff return result",
+          "description": "Python贪心算法版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums: List[int]) -> int: if len(nums) <= 1: return len(nums) preDiff, curDiff, result = 0, 0, 1 for i in range(len(nums) - 1): curDiff = nums[i + 1] - nums[i] if curDiff * preDiff <= 0 and curDiff !=0: result += 1 preDiff = curDiff return result",
+          "description": "Python贪心算法版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums: List[int]) -> int: dp = [] for i in range(len(nums)): dp.append([1, 1]) for j in range(i): if nums[j] > nums[i]: dp[i][1] = max(dp[i][1], dp[j][0] + 1) if nums[j] < nums[i]: dp[i][0] = max(dp[i][0], dp[j][1] + 1) return max(dp[-1][0], dp[-1][1])",
+          "description": "Python动态规划版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): dp = [[0, 0] for _ in range(len(nums))] dp[0][0] = dp[0][1] = 1 for i in range(1, len(nums)): dp[i][0] = dp[i][1] = 1 for j in range(i): if nums[j] > nums[i]: dp[i][1] = max(dp[i][1], dp[j][0] + 1) for j in range(i): if nums[j] < nums[i]: dp[i][0] = max(dp[i][0], dp[j][1] + 1) return max(dp[-1][0], dp[-1][1])",
+          "description": "Python动态规划版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): if len(nums) <= 1: return len(nums) up = down = 1 for i in range(1, len(nums)): if nums[i] > nums[i-1]: up = down + 1 elif nums[i] < nums[i-1]: down = up + 1 return max(up, down)",
+          "description": "Python动态规划优化版本"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "贪心（版本一）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int wiggleMaxLength(vector<int>& nums) {if (nums.size() <= 1) return nums.size();int curDiff = 0; int preDiff = 0; int result = 1;for (int i = 0; i < nums.size() - 1; i++) {curDiff = nums[i + 1] - nums[i];if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {result++;}preDiff = curDiff;}return result;}};",
+          "description": "贪心算法版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int wiggleMaxLength(vector<int>& nums) {if (nums.size() <= 1) return nums.size();int curDiff = 0; int preDiff = 0; int result = 1;for (int i = 0; i < nums.size() - 1; i++) {curDiff = nums[i + 1] - nums[i];if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {result++;preDiff = curDiff;}}return result;}};",
+          "description": "贪心算法版本二"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int dp[1005][2]; int wiggleMaxLength(vector<int>& nums) {memset(dp, 0, sizeof dp);dp[0][0] = dp[0][1] = 1;for (int i = 1; i < nums.size(); ++i) {dp[i][0] = dp[i][1] = 1;for (int j = 0; j < i; ++j) {if (nums[j] > nums[i]) dp[i][1] = max(dp[i][1], dp[j][0] + 1);}for (int j = 0; j < i; ++j) {if (nums[j] < nums[i]) dp[i][0] = max(dp[i][0], dp[j][1] + 1);}}return max(dp[nums.size() - 1][0], dp[nums.size() - 1][1]);}};",
+          "description": "动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int wiggleMaxLength(int[] nums) {if (nums.length <= 1) {return nums.length;}int curDiff = 0;int preDiff = 0;int count = 1;for (int i = 1; i < nums.length; i++) {curDiff = nums[i] - nums[i - 1];if ((curDiff > 0 && preDiff <= 0) || (curDiff < 0 && preDiff >= 0)) {count++;preDiff = curDiff;}}return count;}}",
+          "description": "Java贪心算法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int wiggleMaxLength(int[] nums) {int dp[][] = new int[nums.length][2];dp[0][0] = dp[0][1] = 1;for (int i = 1; i < nums.length; i++){dp[i][0] = dp[i][1] = 1;for (int j = 0; j < i; j++){if (nums[j] > nums[i]){dp[i][1] = Math.max(dp[i][1], dp[j][0] + 1);}if (nums[j] < nums[i]){dp[i][0] = Math.max(dp[i][0], dp[j][1] + 1);}}}return Math.max(dp[nums.length - 1][0], dp[nums.length - 1][1]);}}",
+          "description": "Java动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): if len(nums) <= 1: return len(nums) curDiff = 0 preDiff = 0 result = 1 for i in range(len(nums) - 1): curDiff = nums[i + 1] - nums[i] if (preDiff <= 0 and curDiff > 0) or (preDiff >= 0 and curDiff < 0): result += 1 preDiff = curDiff return result",
+          "description": "Python贪心算法版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums: List[int]) -> int: if len(nums) <= 1: return len(nums) preDiff, curDiff, result = 0, 0, 1 for i in range(len(nums) - 1): curDiff = nums[i + 1] - nums[i] if curDiff * preDiff <= 0 and curDiff != 0: result += 1 preDiff = curDiff return result",
+          "description": "Python贪心算法版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums: List[int]) -> int: dp = [] for i in range(len(nums)): dp.append([1, 1]) for j in range(i): if nums[j] > nums[i]: dp[i][1] = max(dp[i][1], dp[j][0] + 1) if nums[j] < nums[i]: dp[i][0] = max(dp[i][0], dp[j][1] + 1) return max(dp[-1][0], dp[-1][1])",
+          "description": "Python动态规划版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): dp = [[0, 0] for _ in range(len(nums))] dp[0][0] = dp[0][1] = 1 for i in range(1, len(nums)): dp[i][0] = dp[i][1] = 1 for j in range(i): if nums[j] > nums[i]: dp[i][1] = max(dp[i][1], dp[j][0] + 1) for j in range(i): if nums[j] < nums[i]: dp[i][0] = max(dp[i][0], dp[j][1] + 1) return max(dp[-1][0], dp[-1][1])",
+          "description": "Python动态规划版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wiggleMaxLength(self, nums): if len(nums) <= 1: return len(nums) up = down = 1 for i in range(1, len(nums)): if nums[i] > nums[i-1]: up = down + 1 elif nums[i] < nums[i-1]: down = up + 1 return max(up, down)",
+          "description": "Python动态规划优化版"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int wiggleMaxLength(vector<int>& nums) {if (nums.size() <= 1) return nums.size();int curDiff = 0; int preDiff = 0; int result = 1; for (int i = 0; i < nums.size() - 1; i++) {curDiff = nums[i + 1] - nums[i]; if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {result++;} preDiff = curDiff;} return result;}};",
+      "description": "贪心算法版本一"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int wiggleMaxLength(vector<int>& nums) {if (nums.size() <= 1) return nums.size();int curDiff = 0; int preDiff = 0; int result = 1; for (int i = 0; i < nums.size() - 1; i++) {curDiff = nums[i + 1] - nums[i]; if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {result++; preDiff = curDiff;}} return result;}};",
+      "description": "贪心算法版本二"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int dp[1005][2]; int wiggleMaxLength(vector<int>& nums) {memset(dp, 0, sizeof dp);dp[0][0] = dp[0][1] = 1;for (int i = 1; i < nums.size(); ++i) {dp[i][0] = dp[i][1] = 1;for (int j = 0; j < i; ++j) {if (nums[j] > nums[i]) dp[i][1] = max(dp[i][1], dp[j][0] + 1);}for (int j = 0; j < i; ++j) {if (nums[j] < nums[i]) dp[i][0] = max(dp[i][0], dp[j][1] + 1);}}return max(dp[nums.size() - 1][0], dp[nums.size() - 1][1]);}};",
+      "description": "动态规划解法"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int wiggleMaxLength(int[] nums) {if (nums.length <= 1) {return nums.length;}int curDiff = 0;int preDiff = 0;int count = 1;for (int i = 1; i < nums.length; i++) {curDiff = nums[i] - nums[i - 1];if ((curDiff > 0 && preDiff <= 0) || (curDiff < 0 && preDiff >= 0)) {count++;preDiff = curDiff;}}return count;}}",
+      "description": "贪心算法Java实现"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int wiggleMaxLength(int[] nums) {int dp[][] = new int[nums.length][2];dp[0][0] = dp[0][1] = 1;for (int i = 1; i < nums.length; i++){dp[i][0] = dp[i][1] = 1;for (int j = 0; j < i; j++){if (nums[j] > nums[i]){dp[i][1] = Math.max(dp[i][1], dp[j][0] + 1);}if (nums[j] < nums[i]){dp[i][0] = Math.max(dp[i][0], dp[j][1] + 1);}}}return Math.max(dp[nums.length - 1][0], dp[nums.length - 1][1]);}}",
+      "description": "动态规划Java实现"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def wiggleMaxLength(self, nums): if len(nums) <= 1: return len(nums) curDiff = 0 preDiff = 0 result = 1 for i in range(len(nums) - 1): curDiff = nums[i + 1] - nums[i] if (preDiff <= 0 and curDiff > 0) or (preDiff >= 0 and curDiff < 0): result += 1 preDiff = curDiff return result",
+      "description": "贪心算法Python版本一"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def wiggleMaxLength(self, nums: List[int]) -> int: if len(nums) <= 1: return len(nums) preDiff,curDiff ,result = 0,0,1 for i in range(len(nums) - 1): curDiff = nums[i + 1] - nums[i] if curDiff * preDiff <= 0 and curDiff !=0: result += 1 preDiff = curDiff return result",
+      "description": "贪心算法Python版本二"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def wiggleMaxLength(self, nums: List[int]) -> int: dp = [] for i in range(len(nums)): dp.append([1, 1]) for j in range(i): if nums[j] > nums[i]: dp[i][1] = max(dp[i][1], dp[j][0] + 1) if nums[j] < nums[i]: dp[i][0] = max(dp[i][0], dp[j][1] + 1) return max(dp[-1][0], dp[-1][1])",
+      "description": "动态规划Python版本一"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def wiggleMaxLength(self, nums): dp = [[0, 0] for _ in range(len(nums))] dp[0][0] = dp[0][1] = 1 for i in range(1, len(nums)): dp[i][0] = dp[i][1] = 1 for j in range(i): if nums[j] > nums[i]: dp[i][1] = max(dp[i][1], dp[j][0] + 1) for j in range(i): if nums[j] < nums[i]: dp[i][0] = max(dp[i][0], dp[j][1] + 1) return max(dp[-1][0], dp[-1][1])",
+      "description": "动态规划Python版本二"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def wiggleMaxLength(self, nums): if len(nums) <= 1: return len(nums) up = down = 1 for i in range(1, len(nums)): if nums[i] > nums[i-1]: up = down + 1 elif nums[i] < nums[i-1]: down = up + 1 return max(up, down)",
+      "description": "动态规划优化版"
+    }
+  ],
+  "common_mistakes": [
+    "未考虑数组首尾特殊情况导致错误的峰值统计。",
+    "在单调区间内存在平坡时不当更新preDiff引起误判。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201124174327597.png",
+      "description": "这张图片展示了在数组 `[1,17,5,10,13,15,10,5,16,8]` 中寻找最长递增子序列的过程，其中红色叉号标记了不满足递增条件的元素。",
+      "context": "该图展示了如何通过删除单调坡度上的节点（除了两端）来增加局部峰值数量，进而解释了获得最长摆动序列的方法。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230106170449.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20230106170449.png",
+      "context": "该图展示了数组[1,2,2,2,2,1]的初始状态，用于说明在计算摇摆序列长度时遇到平坡（连续相同数值）的情况如何处理。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230106172613.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20230106172613.png",
+      "context": "该图展示了在处理数组[1,2,2,2,2,1]时，按照删除左边重复元素（即三个2）规则后得到的摇摆序列示意图。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201124174357612.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20201124174357612.png",
+      "context": "该图片展示了通过假设数组最前面增加一个相同的数字来形成坡度，进而帮助理解和应用波谷判断规则的情况。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230108171505.png",
+      "description": "这张图片展示了在数组中寻找峰值的算法过程，通过比较当前元素与前一个元素的差值（curdiff）来判断峰值位置。",
+      "context": "该图展示了在数组[1,2,2,2,3,4]中，虽然存在平坡，但根据摆动序列的定义，实际只有两个峰值点，用以说明当单调坡度上出现平坡时，如何正确判断摆动次数。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230108174452.png",
+      "description": "这张图片展示了两种包含平坡的单调序列（1-2-2-3-4 和 1-2-2-2-2-1），用于解释算法或数据结构中的特定模式识别问题。",
+      "context": "该图展示了平坡的两种情况，帮助理解在解决摆动序列问题时需要特别考虑的异常情况。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201124174327597.png",
+      "description": "GIF展示了通过删除单调坡度上的节点来增加局部峰值，从而形成最长摆动序列的过程。",
+      "context": "GIF动画展示了如何通过删除单调坡度上的非端点元素来增加局部峰值数量，进而构建一个更长的摆动序列的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230106170449.png",
+      "description": "GIF展示了数组[1,2,2,2,2,1]中如何通过删除平坡部分来保持摇摆序列峰值的过程。",
+      "context": "该GIF动画展示了如何处理数组中出现平坡的情况，特别是当遇到连续相同数值时，通过删除左侧重复值来计算摇摆序列长度的方法。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230106172613.png",
+      "description": "GIF展示了在处理数组[1,2,2,2,2,1]时，根据特定规则（删除左边重复元素）来识别并统计摇摆序列峰值的过程。",
+      "context": "该GIF动画展示了如何通过删除数组中重复元素（本例中为左侧的三个'2'）来计算摇摆序列长度的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201124174357612.png",
+      "description": "GIF展示了如何通过假设数组最前面有一个与首个元素相同的虚拟数字来计算只有两个不同元素的数组的摆动序列长度。",
+      "context": "该GIF动画展示了如何通过在数组前假设添加一个相同数字来构造坡度，从而帮助识别摆动序列中的波峰与波谷。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230108171505.png",
+      "description": "GIF展示了数组元素值的变化过程，特别强调了在遇到平坡时算法如何正确处理摆动数的计算。",
+      "context": "该GIF动画展示了当数组中存在单调坡度和平坡时，如何正确识别摆动序列，而不是错误地将平坡部分视为峰值。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230108174452.png",
+      "description": "GIF展示了算法在处理数组时识别摆动序列（山峰与山谷）的过程，特别是如何处理平坡情况。",
+      "context": "该GIF动画展示了平坡的两种情况，帮助理解在处理摆动序列问题时需要特别考虑的异常情形。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\贪心算法\\摆动序列.txt",
+  "extracted_at": "2025-07-22T16:09:24.877852",
+  "raw_content": "摆动序列\n力扣题目链接(https://leetcode.cn/problems/wiggle-subsequence/)\n\n如果连续数字之间的差严格地在正数和负数之间交替，则数字序列称为摆动序列。第一个差（如果存在的话）可能是正数或负数。少于两个元素的序列也是摆动序列。\n\n例如， [1,7,4,9,2,5] 是一个摆动序列，因为差值 (6,-3,5,-7,3)  是正负交替出现的。相反, [1,4,7,2,5]  和  [1,7,4,5,5] 不是摆动序列，第一个序列是因为它的前两个差值都是正数，第二个序列是因为它的最后一个差值为零。\n\n给定一个整数序列，返回作为摆动序列的最长子序列的长度。 通过从原始序列中删除一些（也可以不删除）元素来获得子序列，剩下的元素保持其原始顺序。\n\n示例 1:\n\n输入: [1,7,4,9,2,5]\n输出: 6\n解释: 整个序列均为摆动序列。\n示例 2:\n\n输入: [1,17,5,10,13,15,10,5,16,8]\n输出: 7\n解释: 这个序列包含几个长度为 7 摆动序列，其中一个可为[1,17,10,13,10,16,8]。\n示例 3:\n\n输入: [1,2,3,4,5,6,7,8,9]\n输出: 2\n\n#思路\n#思路 1（贪心解法）\n本题要求通过从原始序列中删除一些（也可以不删除）元素来获得子序列，剩下的元素保持其原始顺序。\n\n相信这么一说吓退不少同学，这要求最大摆动序列又可以修改数组，这得如何修改呢？\n\n来分析一下，要求删除元素使其达到最大摆动序列，应该删除什么元素呢？\n\n用示例二来举例，如图所示：\n\nhttps://file1.kamacoder.com/i/algo/20201124174327597.png\n\n局部最优：删除单调坡度上的节点（不包括单调坡度两端的节点），那么这个坡度就可以有两个局部峰值。\n\n整体最优：整个序列有最多的局部峰值，从而达到最长摆动序列。\n\n局部最优推出全局最优，并举不出反例，那么试试贪心！\n\n（为方便表述，以下说的峰值都是指局部峰值）\n\n实际操作上，其实连删除的操作都不用做，因为题目要求的是最长摆动子序列的长度，所以只需要统计数组的峰值数量就可以了（相当于是删除单一坡度上的节点，然后统计长度）\n\n这就是贪心所贪的地方，让峰值尽可能的保持峰值，然后删除单一坡度上的节点\n\n在计算是否有峰值的时候，大家知道遍历的下标 i ，计算 prediff（nums[i] - nums[i-1]） 和 curdiff（nums[i+1] - nums[i]），如果prediff < 0 && curdiff > 0 或者 prediff > 0 && curdiff < 0 此时就有波动就需要统计。\n\n这是我们思考本题的一个大体思路，但本题要考虑三种情况：\n\n情况一：上下坡中有平坡\n情况二：数组首尾两端\n情况三：单调坡中有平坡\n#情况一：上下坡中有平坡\n例如 [1,2,2,2,2,1]这样的数组，如图：\n\nhttps://file1.kamacoder.com/i/algo/20230106170449.png\n\n它的摇摆序列长度是多少呢？ 其实是长度是 3，也就是我们在删除的时候 要不删除左面的三个 2，要不就删除右边的三个 2。\n\n如图，可以统一规则，删除左边的三个 2：\n\nhttps://file1.kamacoder.com/i/algo/20230106172613.png\n\n在图中，当 i 指向第一个 2 的时候，prediff > 0 && curdiff = 0 ，当 i 指向最后一个 2 的时候 prediff = 0 && curdiff < 0。\n\n如果我们采用，删左面三个 2 的规则，那么 当 prediff = 0 && curdiff < 0 也要记录一个峰值，因为他是把之前相同的元素都删掉留下的峰值。\n\n所以我们记录峰值的条件应该是： (preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)，为什么这里允许 prediff == 0 ，就是为了 上面我说的这种情况。\n\n#情况二：数组首尾两端\n所以本题统计峰值的时候，数组最左面和最右面如何统计呢？\n\n题目中说了，如果只有两个不同的元素，那摆动序列也是 2。\n\n例如序列[2,5]，如果靠统计差值来计算峰值个数就需要考虑数组最左面和最右面的特殊情况。\n\n因为我们在计算 prediff（nums[i] - nums[i-1]） 和 curdiff（nums[i+1] - nums[i]）的时候，至少需要三个数字才能计算，而数组只有两个数字。\n\n这里我们可以写死，就是 如果只有两个元素，且元素不同，那么结果为 2。\n\n不写死的话，如何和我们的判断规则结合在一起呢？\n\n可以假设，数组最前面还有一个数字，那这个数字应该是什么呢？\n\n之前我们在 讨论 情况一：相同数字连续 的时候， prediff = 0 ，curdiff < 0 或者 >0 也记为波谷。\n\n那么为了规则统一，针对序列[2,5]，可以假设为[2,2,5]，这样它就有坡度了即 preDiff = 0，如图：\n\nhttps://file1.kamacoder.com/i/algo/20201124174357612.png\n\n针对以上情形，result 初始为 1（默认最右面有一个峰值），此时 curDiff > 0 && preDiff <= 0，那么 result++（计算了左面的峰值），最后得到的 result 就是 2（峰值个数为 2 即摆动序列长度为 2）\n\n经过以上分析后，我们可以写出如下代码：\n\n// 版本一\nclass Solution {\npublic:\n    int wiggleMaxLength(vector<int>& nums) {\n        if (nums.size() <= 1) return nums.size();\n        int curDiff = 0; // 当前一对差值\n        int preDiff = 0; // 前一对差值\n        int result = 1;  // 记录峰值个数，序列默认序列最右边有一个峰值\n        for (int i = 0; i < nums.size() - 1; i++) {\n            curDiff = nums[i + 1] - nums[i];\n            // 出现峰值\n            if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {\n                result++;\n            }\n            preDiff = curDiff;\n        }\n        return result;\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(1)\n此时大家是不是发现 以上代码提交也不能通过本题？\n\n所以此时我们要讨论情况三！\n\n#情况三：单调坡度有平坡\n在版本一中，我们忽略了一种情况，即 如果在一个单调坡度上有平坡，例如[1,2,2,2,3,4]，如图：\n\nhttps://file1.kamacoder.com/i/algo/20230108171505.png\n\n图中，我们可以看出，版本一的代码在三个地方记录峰值，但其实结果因为是 2，因为 单调中的平坡 不能算峰值（即摆动）。\n\n之所以版本一会出问题，是因为我们实时更新了 prediff。\n\n那么我们应该什么时候更新 prediff 呢？\n\n我们只需要在 这个坡度 摆动变化的时候，更新 prediff 就行，这样 prediff 在 单调区间有平坡的时候 就不会发生变化，造成我们的误判。\n\n所以本题的最终代码为：\n\n\n// 版本二\nclass Solution {\npublic:\n    int wiggleMaxLength(vector<int>& nums) {\n        if (nums.size() <= 1) return nums.size();\n        int curDiff = 0; // 当前一对差值\n        int preDiff = 0; // 前一对差值\n        int result = 1;  // 记录峰值个数，序列默认序列最右边有一个峰值\n        for (int i = 0; i < nums.size() - 1; i++) {\n            curDiff = nums[i + 1] - nums[i];\n            // 出现峰值\n            if ((preDiff <= 0 && curDiff > 0) || (preDiff >= 0 && curDiff < 0)) {\n                result++;\n                preDiff = curDiff; // 注意这里，只在摆动变化的时候更新prediff\n            }\n        }\n        return result;\n    }\n};\n其实本题看起来好像简单，但需要考虑的情况还是很复杂的，而且很难一次性想到位。\n\n本题异常情况的本质，就是要考虑平坡， 平坡分两种，一个是 上下中间有平坡，一个是单调有平坡，如图：\n\nhttps://file1.kamacoder.com/i/algo/20230108174452.png\n\n#思路 2（动态规划）\n考虑用动态规划的思想来解决这个问题。\n\n很容易可以发现，对于我们当前考虑的这个数，要么是作为山峰（即 nums[i] > nums[i-1]），要么是作为山谷（即 nums[i] < nums[i - 1]）。\n\n设 dp 状态dp[i][0]，表示考虑前 i 个数，第 i 个数作为山峰的摆动子序列的最长长度\n设 dp 状态dp[i][1]，表示考虑前 i 个数，第 i 个数作为山谷的摆动子序列的最长长度\n则转移方程为：\n\ndp[i][0] = max(dp[i][0], dp[j][1] + 1)，其中0 < j < i且nums[j] < nums[i]，表示将 nums[i]接到前面某个山谷后面，作为山峰。\ndp[i][1] = max(dp[i][1], dp[j][0] + 1)，其中0 < j < i且nums[j] > nums[i]，表示将 nums[i]接到前面某个山峰后面，作为山谷。\n初始状态：\n\n由于一个数可以接到前面的某个数后面，也可以以自身为子序列的起点，所以初始状态为：dp[0][0] = dp[0][1] = 1。\n\nC++代码如下：\n\nclass Solution {\npublic:\n    int dp[1005][2];\n    int wiggleMaxLength(vector<int>& nums) {\n        memset(dp, 0, sizeof dp);\n        dp[0][0] = dp[0][1] = 1;\n        for (int i = 1; i < nums.size(); ++i) {\n            dp[i][0] = dp[i][1] = 1;\n            for (int j = 0; j < i; ++j) {\n                if (nums[j] > nums[i]) dp[i][1] = max(dp[i][1], dp[j][0] + 1);\n            }\n            for (int j = 0; j < i; ++j) {\n                if (nums[j] < nums[i]) dp[i][0] = max(dp[i][0], dp[j][1] + 1);\n            }\n        }\n        return max(dp[nums.size() - 1][0], dp[nums.size() - 1][1]);\n    }\n};\n时间复杂度：O(n^2)\n空间复杂度：O(n)\n进阶\n\n可以用两棵线段树来维护区间的最大值\n\n每次更新dp[i][0]，则在tree1的nums[i]位置值更新为dp[i][0]\n每次更新dp[i][1]，则在tree2的nums[i]位置值更新为dp[i][1]\n则 dp 转移方程中就没有必要 j 从 0 遍历到 i-1，可以直接在线段树中查询指定区间的值即可。\n时间复杂度：O(nlog n)\n\n空间复杂度：O(n)\n\n#其他语言版本\n#Java\nclass Solution {\n    public int wiggleMaxLength(int[] nums) {\n        if (nums.length <= 1) {\n            return nums.length;\n        }\n        //当前差值\n        int curDiff = 0;\n        //上一个差值\n        int preDiff = 0;\n        int count = 1;\n        for (int i = 1; i < nums.length; i++) {\n            //得到当前差值\n            curDiff = nums[i] - nums[i - 1];\n            //如果当前差值和上一个差值为一正一负\n            //等于0的情况表示初始时的preDiff\n            if ((curDiff > 0 && preDiff <= 0) || (curDiff < 0 && preDiff >= 0)) {\n                count++;\n                preDiff = curDiff;\n            }\n        }\n        return count;\n    }\n}\n// DP\nclass Solution {\n    public int wiggleMaxLength(int[] nums) {\n        // 0 i 作为波峰的最大长度\n        // 1 i 作为波谷的最大长度\n        int dp[][] = new int[nums.length][2];\n\n        dp[0][0] = dp[0][1] = 1;\n        for (int i = 1; i < nums.length; i++){\n            //i 自己可以成为波峰或者波谷\n            dp[i][0] = dp[i][1] = 1;\n\n            for (int j = 0; j < i; j++){\n                if (nums[j] > nums[i]){\n                    // i 是波谷\n                    dp[i][1] = Math.max(dp[i][1], dp[j][0] + 1);\n                }\n                if (nums[j] < nums[i]){\n                    // i 是波峰\n                    dp[i][0] = Math.max(dp[i][0], dp[j][1] + 1);\n                }\n            }\n        }\n\n        return Math.max(dp[nums.length - 1][0], dp[nums.length - 1][1]);\n    }\n}\n#Python\n贪心（版本一）\n\nclass Solution:\n    def wiggleMaxLength(self, nums):\n        if len(nums) <= 1:\n            return len(nums)  # 如果数组长度为0或1，则返回数组长度\n        curDiff = 0  # 当前一对元素的差值\n        preDiff = 0  # 前一对元素的差值\n        result = 1  # 记录峰值的个数，初始为1（默认最右边的元素被视为峰值）\n        for i in range(len(nums) - 1):\n            curDiff = nums[i + 1] - nums[i]  # 计算下一个元素与当前元素的差值\n            # 如果遇到一个峰值\n            if (preDiff <= 0 and curDiff > 0) or (preDiff >= 0 and curDiff < 0):\n                result += 1  # 峰值个数加1\n                preDiff = curDiff  # 注意这里，只在摆动变化的时候更新preDiff\n        return result  # 返回最长摆动子序列的长度\n\n贪心（版本二）\n\nclass Solution:\n    def wiggleMaxLength(self, nums: List[int]) -> int:\n        if len(nums) <= 1:\n            return len(nums)  # 如果数组长度为0或1，则返回数组长度\n        preDiff,curDiff ,result  = 0,0,1  #题目里nums长度大于等于1，当长度为1时，其实到不了for循环里去，所以不用考虑nums长度\n        for i in range(len(nums) - 1):\n            curDiff = nums[i + 1] - nums[i]\n            if curDiff * preDiff <= 0 and curDiff !=0:  #差值为0时，不算摆动\n                result += 1\n                preDiff = curDiff  #如果当前差值和上一个差值为一正一负时，才需要用当前差值替代上一个差值\n        return result\n\n动态规划（版本一）\n\nclass Solution:\n    def wiggleMaxLength(self, nums: List[int]) -> int:\n        # 0 i 作为波峰的最大长度\n        # 1 i 作为波谷的最大长度\n        # dp是一个列表，列表中每个元素是长度为 2 的列表\n        dp = []\n        for i in range(len(nums)):\n            # 初始为[1, 1]\n            dp.append([1, 1])\n            for j in range(i):\n                # nums[i] 为波谷\n                if nums[j] > nums[i]:\n                    dp[i][1] = max(dp[i][1], dp[j][0] + 1)\n                # nums[i] 为波峰\n                if nums[j] < nums[i]:\n                    dp[i][0] = max(dp[i][0], dp[j][1] + 1)\n        return max(dp[-1][0], dp[-1][1])\n动态规划（版本二）\n\nclass Solution:\n    def wiggleMaxLength(self, nums):\n        dp = [[0, 0] for _ in range(len(nums))]  # 创建二维dp数组，用于记录摆动序列的最大长度\n        dp[0][0] = dp[0][1] = 1  # 初始条件，序列中的第一个元素默认为峰值，最小长度为1\n        for i in range(1, len(nums)):\n            dp[i][0] = dp[i][1] = 1  # 初始化当前位置的dp值为1\n            for j in range(i):\n                if nums[j] > nums[i]:\n                    dp[i][1] = max(dp[i][1], dp[j][0] + 1)  # 如果前一个数比当前数大，可以形成一个上升峰值，更新dp[i][1]\n            for j in range(i):\n                if nums[j] < nums[i]:\n                    dp[i][0] = max(dp[i][0], dp[j][1] + 1)  # 如果前一个数比当前数小，可以形成一个下降峰值，更新dp[i][0]\n        return max(dp[-1][0], dp[-1][1])  # 返回最大的摆动序列长度\n\n动态规划（版本三）优化\n\nclass Solution:\n    def wiggleMaxLength(self, nums):\n        if len(nums) <= 1:\n            return len(nums)  # 如果数组长度为0或1，则返回数组长度\n        \n        up = down = 1  # 记录上升和下降摆动序列的最大长度\n        for i in range(1, len(nums)):\n            if nums[i] > nums[i-1]:\n                up = down + 1  # 如果当前数比前一个数大，则可以形成一个上升峰值\n            elif nums[i] < nums[i-1]:\n                down = up + 1  # 如果当前数比前一个数小，则可以形成一个下降峰值\n        \n        return max(up, down)  # 返回上升和下降摆动序列的最大长度"
+}

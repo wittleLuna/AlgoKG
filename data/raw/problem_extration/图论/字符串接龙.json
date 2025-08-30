@@ -1,0 +1,316 @@
+{
+  "id": "AP_0dae23cc",
+  "title": "字符串接龙",
+  "alternative_titles": [],
+  "platform": "kamacoder",
+  "url": "https://kamacoder.com/problempage.php?pid=1183",
+  "description": "两个字符串 beginStr 和 endStr 和一个字典 strList，找到从 beginStr 到 endStr 的最短转换序列中的字符串数目。如果不存在这样的转换序列，返回 0。\n\n输入描述\n\n第一行包含一个整数 N，表示字典 strList 中的字符串数量。 第二行包含两个字符串，用空格隔开，分别代表 beginStr 和 endStr。 后续 N 行，每行一个字符串，代表 strList 中的字符串。\n\n输出描述\n\n输出一个整数，代表从 beginStr 转换到 endStr 需要的最短转换序列中的字符串数量。如果不存在这样的转换序列，则输出 0。\n\n输入",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "Breadth-First Search (BFS)",
+    "Graph Theory"
+  ],
+  "data_structure_tags": [
+    "Queue",
+    "Set",
+    "Map"
+  ],
+  "technique_tags": [
+    "String Manipulation",
+    "Character Replacement"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过广度优先搜索(BFS)算法来寻找从beginStr到endStr的最短转换序列。首先将每个字符串看作图中的一个节点，并且如果两个字符串之间只差一个字符，则认为这两个节点是相连的。接着使用BFS从beginStr开始遍历，直到找到endStr或遍历结束。",
+  "key_insights": [
+    {
+      "content": "由于题目要求的是最短转换序列长度而非具体路径，因此使用BFS是最直接有效的方法。一旦在BFS过程中遇到endStr,则当前路径即为所求最短路径。"
+    },
+    {
+      "content": "对于每一个当前字符串，尝试将其每个位置上的字符逐一替换成其他26个字母之一，以此方式生成与当前字符串仅相差一个字符的所有可能的新字符串。这样可以有效地找出所有与当前节点相邻的节点。"
+    },
+    {
+      "content": "需要使用标记位（如set）来避免重复访问同一个字符串，防止陷入死循环。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "以示例1为例，从这个图中可以看出 abc 到 def的路线 不止一条，但最短的一条路径上是4个节点。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "#include <iostream>\n#include <vector>\n#include <string>\n#include <unordered_set>\n#include <unordered_map>\n#include <queue>\nusing namespace std;\nint main() {\n    string beginStr, endStr, str;\n    int n;\n    cin >> n;\n    unordered_set<string> strSet;\n    cin >> beginStr >> endStr;\n    for (int i = 0; i < n; i++) {\n        cin >> str;\n        strSet.insert(str);\n    }\n\n    unordered_map<string, int> visitMap; \n    queue<string> que;\n    que.push(beginStr);\n    visitMap.insert(pair<string, int>(beginStr, 1));\n\n    while(!que.empty()) {\n        string word = que.front();\n        que.pop();\n        int path = visitMap[word]; \n\n        for (int i = 0; i < word.size(); i++) {\n            string newWord = word; \n\n            for (int j = 0 ; j < 26; j++) {\n                newWord[i] = j + 'a';\n                if (newWord == endStr) { \n                    cout <<  path + 1 << endl; \n                    return 0;\n                }\n                if (strSet.find(newWord) != strSet.end()\n                        && visitMap.find(newWord) == visitMap.end()) {\n                    visitMap.insert(pair<string, int>(newWord, path + 1));\n                    que.push(newWord);\n                }\n            }\n        }\n    }\n    cout << 0 << endl;\n}",
+          "description": "使用广度优先搜索找到从beginStr转换到endStr的最短路径长度。"
+        },
+        {
+          "language": "Java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        scanner.nextLine();\n        String beginStr = scanner.next();\n        String endStr = scanner.next();\n        scanner.nextLine();\n        List<String> wordList = new ArrayList<>();\n        wordList.add(beginStr);\n        wordList.add(endStr);\n        for (int i = 0; i < n; i++) {\n            wordList.add(scanner.nextLine());\n        }\n        int count = bfs(beginStr, endStr, wordList);\n        System.out.println(count);\n    }\n    public static int bfs(String beginStr, String endStr, List<String> wordList) {\n        int len = 1;\n        Set<String> set = new HashSet<>(wordList);\n        Set<String> visited = new HashSet<>();\n        Queue<String> q = new LinkedList<>();\n        visited.add(beginStr);\n        q.add(beginStr);\n        q.add(null);\n        while (!q.isEmpty()) {\n            String node = q.remove();\n            if (node == null) {\n                if (!q.isEmpty()) {\n                    len++;\n                    q.add(null);\n                }\n                continue;\n            }\n            char[] charArray = node.toCharArray();\n            for (int i = 0; i < charArray.length; i++) {\n                char old = charArray[i];\n                for (char j = 'a'; j <= 'z'; j++) {\n                    charArray[i] = j;\n                    String newWord = new String(charArray);\n                    if (set.contains(newWord) && !visited.contains(newWord)) {\n                        q.add(newWord);\n                        visited.add(newWord);\n                        if (newWord.equals(endStr)) return len + 1;\n                    }\n                }\n                charArray[i] = old;\n            }\n        }\n        return 0;\n    }\n}",
+          "description": "利用广度优先搜索算法找出从开始字符串到结束字符串的最短转换序列长度。"
+        },
+        {
+          "language": "Python",
+          "code": "def judge(s1,s2):\n    count=0\n    for i in range(len(s1)):\n        if s1[i]!=s2[i]:\n            count+=1\n    return count==1\nif __name__=='__main__':\n    n=int(input())\n    beginstr,endstr=map(str,input().split())\n    if beginstr==endstr:\n        print(0)\n        exit()\n    strlist=[]\n    for i in range(n):\n        strlist.append(input())\n    visit=[False for i in range(n)]\n    queue=[[beginstr,1]]\n    while queue:\n        str,step=queue.pop(0)\n        if judge(str,endstr):\n            print(step+1)\n            exit()\n        for i in range(n):\n            if visit[i]==False and judge(strlist[i],str):\n                visit[i]=True\n                queue.append([strlist[i],step+1])\n    print(0)",
+          "description": "定义了一个判断函数来检查两个字符串是否只有一个字符不同，并通过广度优先搜索方法计算出从起始字符串到目标字符串所需的最短步数。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <string>\n#include <unordered_set>\n#include <unordered_map>\n#include <queue>\nusing namespace std;\nint main() {\n    string beginStr, endStr, str;\n    int n;\n    cin >> n;\n    unordered_set<string> strSet;\n    cin >> beginStr >> endStr;\n    for (int i = 0; i < n; i++) {\n        cin >> str;\n        strSet.insert(str);\n    }\n\n    unordered_map<string, int> visitMap;\n    queue<string> que;\n    que.push(beginStr);\n    visitMap.insert(pair<string, int>(beginStr, 1));\n\n    while(!que.empty()) {\n        string word = que.front();\n        que.pop();\n        int path = visitMap[word];\n\n        for (int i = 0; i < word.size(); i++) {\n            string newWord = word;\n            for (int j = 0 ; j < 26; j++) {\n                newWord[i] = j + 'a';\n                if (newWord == endStr) {\n                    cout <<  path + 1 << endl;\n                    return 0;\n                }\n                if (strSet.find(newWord) != strSet.end() && visitMap.find(newWord) == visitMap.end()) {\n                    visitMap.insert(pair<string, int>(newWord, path + 1));\n                    que.push(newWord);\n                }\n            }\n        }\n    }\n    cout << 0 << endl;\n}",
+          "description": "C++代码实现了从给定的开始字符串到结束字符串之间最短转换序列的查找。使用了广度优先搜索算法来遍历所有可能的转换路径，并通过一个队列和哈希表来记录访问过的字符串及其对应的路径长度。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        scanner.nextLine();\n        String beginStr = scanner.next();\n        String endStr = scanner.next();\n        scanner.nextLine();\n        List<String> wordList = new ArrayList<>();\n        wordList.add(beginStr);\n        wordList.add(endStr);\n        for (int i = 0; i < n; i++) {\n            wordList.add(scanner.nextLine());\n        }\n        int count = bfs(beginStr, endStr, wordList);\n        System.out.println(count);\n    }\n    public static int bfs(String beginStr, String endStr, List<String> wordList) {\n        int len = 1;\n        Set<String> set = new HashSet<>(wordList);\n        Set<String> visited = new HashSet<>();\n        Queue<String> q = new LinkedList<>();\n        visited.add(beginStr);\n        q.add(beginStr);\n        q.add(null);\n        while (!q.isEmpty()) {\n            String node = q.remove();\n            if (node == null) {\n                if (!q.isEmpty()) {\n                    len++;\n                    q.add(null);\n                }\n                continue;\n            }\n            char[] charArray = node.toCharArray();\n            for (int i = 0; i < charArray.length; i++) {\n                char old = charArray[i];\n                for (char j = 'a'; j <= 'z'; j++) {\n                    charArray[i] = j;\n                    String newWord = new String(charArray);\n                    if (set.contains(newWord) && !visited.contains(newWord)) {\n                        q.add(newWord);\n                        visited.add(newWord);\n                        if (newWord.equals(endStr)) return len + 1;\n                    }\n                }\n                charArray[i] = old;\n            }\n        }\n        return 0;\n    }\n}",
+          "description": "Java版本的解决方案同样采用了广度优先搜索算法来解决从一个字符串转换到另一个字符串的问题。它首先读取输入数据，然后使用BFS算法找到最短路径长度。此实现也利用了集合来存储已访问的字符串以及当前层的标记。"
+        },
+        {
+          "language": "python",
+          "code": "def judge(s1,s2):\n    count=0\n    for i in range(len(s1)):\n        if s1[i]!=s2[i]:\n            count+=1\n    return count==1\nif __name__=='__main__':\n    n=int(input())\n    beginstr,endstr=map(str,input().split())\n    if beginstr==endstr:\n        print(0)\n        exit()\n    strlist=[]\n    for i in range(n):\n        strlist.append(input())\n    visit=[False for i in range(n)]\n    queue=[[beginstr,1]]\n    while queue:\n        str,step=queue.pop(0)\n        if judge(str,endstr):\n            print(step+1)\n            exit()\n        for i in range(n):\n            if visit[i]==False and judge(strlist[i],str):\n                visit[i]=True\n                queue.append([strlist[i],step+1])\n    print(0)",
+          "description": "Python版的解法使用了一个辅助函数judge来判断两个字符串是否只有一个字符不同。主程序中，先读入所有的输入信息，然后用广度优先搜索算法尝试找到从起始字符串到目标字符串的最短路径。如果找到了符合条件的路径，则输出该路径长度；否则输出0表示不存在这样的路径。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "#include <string>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "#include <iostream>\n#include <vector>\n#include <string>\n#include <unordered_set>\n#include <unordered_map>\n#include <queue>\nusing namespace std;\nint main() {\n    string beginStr, endStr, str;\n    int n;\n    cin >> n;\n    unordered_set<string> strSet;\n    cin >> beginStr >> endStr;\n    for (int i = 0; i < n; i++) {\n        cin >> str;\n        strSet.insert(str);\n    }\n\n    // 记录strSet里的字符串是否被访问过，同时记录路径长度\n    unordered_map<string, int> visitMap; // <记录的字符串，路径长度>\n\n    // 初始化队列\n    queue<string> que;\n    que.push(beginStr);\n\n    // 初始化visitMap\n    visitMap.insert(pair<string, int>(beginStr, 1));\n\n    while(!que.empty()) {\n        string word = que.front();\n        que.pop();\n        int path = visitMap[word]; // 这个字符串在路径中的长度\n\n        // 开始在这个str中，挨个字符去替换\n        for (int i = 0; i < word.size(); i++) {\n            string newWord = word; // 用一个新字符串替换str，因为每次要置换一个字符\n\n            // 遍历26的字母\n            for (int j = 0 ; j < 26; j++) {\n                newWord[i] = j + 'a';\n                if (newWord == endStr) { // 发现替换字母后，字符串与终点字符串相同\n                    cout <<  path + 1 << endl; // 找到了路径 \n                    return 0;\n                }\n                // 字符串集合里出现了newWord，并且newWord没有被访问过\n                if (strSet.find(newWord) != strSet.end()\n                        && visitMap.find(newWord) == visitMap.end()) {\n                    // 添加访问信息，并将新字符串放到队列中\n                    visitMap.insert(pair<string, int>(newWord, path + 1));\n                    que.push(newWord);\n                }\n            }\n        }\n    }\n\n    // 没找到输出0\n    cout << 0 << endl;\n}",
+          "description": "使用广度优先搜索算法从开始字符串变换到结束字符串，计算最短路径。"
+        },
+        {
+          "language": "Java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        scanner.nextLine();\n        String beginStr = scanner.next();\n        String endStr = scanner.next();\n        scanner.nextLine();\n        List<String> wordList = new ArrayList<>();\n        wordList.add(beginStr);\n        wordList.add(endStr);\n        for (int i = 0; i < n; i++) {\n            wordList.add(scanner.nextLine());\n        }\n        int count = bfs(beginStr, endStr, wordList);\n        System.out.println(count);\n    }\n\n    public static int bfs(String beginStr, String endStr, List<String> wordList) {\n        int len = 1;\n        Set<String> set = new HashSet<>(wordList);\n        Set<String> visited = new HashSet<>();\n        Queue<String> q = new LinkedList<>();\n        visited.add(beginStr);\n        q.add(beginStr);\n        q.add(null);\n        while (!q.isEmpty()) {\n            String node = q.remove();\n            if (node == null) {\n                if (!q.isEmpty()) {\n                    len++;\n                    q.add(null);\n                }\n                continue;\n            }\n            char[] charArray = node.toCharArray();\n            for (int i = 0; i < charArray.length; i++) {\n                char old = charArray[i];\n                for (char j = 'a'; j <= 'z'; j++) {\n                    charArray[i] = j;\n                    String newWord = new String(charArray);\n                    if (set.contains(newWord) && !visited.contains(newWord)) {\n                        q.add(newWord);\n                        visited.add(newWord);\n                        if (newWord.equals(endStr)) return len + 1;\n                    }\n                }\n                charArray[i] = old;\n            }\n        }\n        return 0;\n    }\n}",
+          "description": "使用广度优先搜索算法从开始字符串变换到结束字符串，计算最短路径。"
+        },
+        {
+          "language": "Python",
+          "code": "def judge(s1,s2):\n    count=0\n    for i in range(len(s1)):\n        if s1[i]!=s2[i]:\n            count+=1\n    return count==1\n\nif __name__=='__main__':\n    n=int(input())\n    beginstr,endstr=map(str,input().split())\n    if beginstr==endstr:\n        print(0)\n        exit()\n    strlist=[]\n    for i in range(n):\n        strlist.append(input())\n    \n    # use bfs\n    visit=[False for i in range(n)]\n    queue=[[beginstr,1]]\n    while queue:\n        str,step=queue.pop(0)\n        if judge(str,endstr):\n            print(step+1)\n            exit()\n        for i in range(n):\n            if visit[i]==False and judge(strlist[i],str):\n                visit[i]=True\n                queue.append([strlist[i],step+1])\n    print(0)",
+          "description": "使用广度优先搜索算法从开始字符串变换到结束字符串，计算最短路径。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <string>",
+      "text": "#include <unordered_set>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "#include <iostream>\n#include <vector>\n#include <string>\n#include <unordered_set>\n#include <unordered_map>\n#include <queue>\nusing namespace std;\nint main() {\n    string beginStr, endStr, str;\n    int n;\n    cin >> n;\n    unordered_set<string> strSet;\n    cin >> beginStr >> endStr;\n    for (int i = 0; i < n; i++) {\n        cin >> str;\n        strSet.insert(str);\n    }\n\n    // 记录strSet里的字符串是否被访问过，同时记录路径长度\n    unordered_map<string, int> visitMap; // <记录的字符串，路径长度>\n\n    // 初始化队列\n    queue<string> que;\n    que.push(beginStr);\n\n    // 初始化visitMap\n    visitMap.insert(pair<string, int>(beginStr, 1));\n\n    while(!que.empty()) {\n        string word = que.front();\n        que.pop();\n        int path = visitMap[word]; // 这个字符串在路径中的长度\n\n        // 开始在这个str中，挨个字符去替换\n        for (int i = 0; i < word.size(); i++) {\n            string newWord = word; // 用一个新字符串替换str，因为每次要置换一个字符\n\n            // 遍历26的字母\n            for (int j = 0 ; j < 26; j++) {\n                newWord[i] = j + 'a';\n                if (newWord == endStr) { // 发现替换字母后，字符串与终点字符串相同\n                    cout <<  path + 1 << endl; // 找到了路径 \n                    return 0;\n                }\n                // 字符串集合里出现了newWord，并且newWord没有被访问过\n                if (strSet.find(newWord) != strSet.end()\n                        && visitMap.find(newWord) == visitMap.end()) {\n                    // 添加访问信息，并将新字符串放到队列中\n                    visitMap.insert(pair<string, int>(newWord, path + 1));\n                    que.push(newWord);\n                }\n            }\n        }\n    }\n\n    // 没找到输出0\n    cout << 0 << endl;\n}",
+          "description": "使用广度优先搜索算法解决字符串转换问题"
+        },
+        {
+          "language": "Java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        scanner.nextLine();\n        String beginStr = scanner.next();\n        String endStr = scanner.next();\n        scanner.nextLine();\n        List<String> wordList = new ArrayList<>();\n        wordList.add(beginStr);\n        wordList.add(endStr);\n        for (int i = 0; i < n; i++) {\n            wordList.add(scanner.nextLine());\n        }\n        int count = bfs(beginStr, endStr, wordList);\n        System.out.println(count);\n    }\n\n    public static int bfs(String beginStr, String endStr, List<String> wordList) {\n        int len = 1;\n        Set<String> set = new HashSet<>(wordList);\n        Set<String> visited = new HashSet<>();\n        Queue<String> q = new LinkedList<>();\n        visited.add(beginStr);\n        q.add(beginStr);\n        q.add(null);\n        while (!q.isEmpty()) {\n            String node = q.remove();\n            if (node == null) {\n                if (!q.isEmpty()) {\n                    len++;\n                    q.add(null);\n                }\n                continue;\n            }\n            char[] charArray = node.toCharArray();\n            for (int i = 0; i < charArray.length; i++) {\n                char old = charArray[i];\n                for (char j = 'a'; j <= 'z'; j++) {\n                    charArray[i] = j;\n                    String newWord = new String(charArray);\n                    if (set.contains(newWord) && !visited.contains(newWord)) {\n                        q.add(newWord);\n                        visited.add(newWord);\n                        if (newWord.equals(endStr)) return len + 1;\n                    }\n                }\n                charArray[i] = old;\n            }\n        }\n        return 0;\n    }\n}",
+          "description": "使用广度优先搜索算法解决字符串转换问题"
+        },
+        {
+          "language": "Python",
+          "code": "def judge(s1,s2):\n    count=0\n    for i in range(len(s1)):\n        if s1[i]!=s2[i]:\n            count+=1\n    return count==1\n\nif __name__=='__main__':\n    n=int(input())\n    beginstr,endstr=map(str,input().split())\n    if beginstr==endstr:\n        print(0)\n        exit()\n    strlist=[]\n    for i in range(n):\n        strlist.append(input())\n    \n    # use bfs\n    visit=[False for i in range(n)]\n    queue=[[beginstr,1]]\n    while queue:\n        str,step=queue.pop(0)\n        if judge(str,endstr):\n            print(step+1)\n            exit()\n        for i in range(n):\n            if visit[i]==False and judge(strlist[i],str):\n                visit[i]=True\n                queue.append([strlist[i],step+1])\n    print(0)",
+          "description": "使用广度优先搜索算法解决字符串转换问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <unordered_set>",
+      "text": "#include <unordered_map>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <string>\n#include <unordered_set>\n#include <unordered_map>\n#include <queue>\nusing namespace std;\nint main() {\n    string beginStr, endStr, str;\n    int n;\n    cin >> n;\n    unordered_set<string> strSet;\n    cin >> beginStr >> endStr;\n    for (int i = 0; i < n; i++) {\n        cin >> str;\n        strSet.insert(str);\n    }\n\n    // 记录strSet里的字符串是否被访问过，同时记录路径长度\n    unordered_map<string, int> visitMap; // <记录的字符串，路径长度>\n\n    // 初始化队列\n    queue<string> que;\n    que.push(beginStr);\n\n    // 初始化visitMap\n    visitMap.insert(pair<string, int>(beginStr, 1));\n\n    while(!que.empty()) {\n        string word = que.front();\n        que.pop();\n        int path = visitMap[word]; // 这个字符串在路径中的长度\n\n        // 开始在这个str中，挨个字符去替换\n        for (int i = 0; i < word.size(); i++) {\n            string newWord = word; // 用一个新字符串替换str，因为每次要置换一个字符\n\n            // 遍历26的字母\n            for (int j = 0 ; j < 26; j++) {\n                newWord[i] = j + 'a';\n                if (newWord == endStr) { // 发现替换字母后，字符串与终点字符串相同\n                    cout <<  path + 1 << endl; // 找到了路径 \n                    return 0;\n                }\n                // 字符串集合里出现了newWord，并且newWord没有被访问过\n                if (strSet.find(newWord) != strSet.end()\n                        && visitMap.find(newWord) == visitMap.end()) {\n                    // 添加访问信息，并将新字符串放到队列中\n                    visitMap.insert(pair<string, int>(newWord, path + 1));\n                    que.push(newWord);\n                }\n            }\n        }\n    }\n\n    // 没找到输出0\n    cout << 0 << endl;\n}",
+          "description": "使用C++实现的字符串接龙问题解决方案，采用广度优先搜索算法。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        scanner.nextLine();\n        String beginStr = scanner.next();\n        String endStr = scanner.next();\n        scanner.nextLine();\n        List<String> wordList = new ArrayList<>();\n        wordList.add(beginStr);\n        wordList.add(endStr);\n        for (int i = 0; i < n; i++) {\n            wordList.add(scanner.nextLine());\n        }\n        int count = bfs(beginStr, endStr, wordList);\n        System.out.println(count);\n    }\n    public static int bfs(String beginStr, String endStr, List<String> wordList) {\n        int len = 1;\n        Set<String> set = new HashSet<>(wordList);\n        Set<String> visited = new HashSet<>();\n        Queue<String> q = new LinkedList<>();\n        visited.add(beginStr);\n        q.add(beginStr);\n        q.add(null);\n        while (!q.isEmpty()) {\n            String node = q.remove();\n            if (node == null) {\n                if (!q.isEmpty()) {\n                    len++;\n                    q.add(null);\n                }\n                continue;\n            }\n            char[] charArray = node.toCharArray();\n            for (int i = 0; i < charArray.length; i++) {\n                char old = charArray[i];\n                for (char j = 'a'; j <= 'z'; j++) {\n                    charArray[i] = j;\n                    String newWord = new String(charArray);\n                    if (set.contains(newWord) && !visited.contains(newWord)) {\n                        q.add(newWord);\n                        visited.add(newWord);\n                        if (newWord.equals(endStr)) return len + 1;\n                    }\n                }\n                charArray[i] = old;\n            }\n        }\n        return 0;\n    }\n}",
+          "description": "使用Java实现的字符串接龙问题解决方案，同样基于广度优先搜索方法。"
+        },
+        {
+          "language": "python",
+          "code": "def judge(s1,s2):\n    count=0\n    for i in range(len(s1)):\n        if s1[i]!=s2[i]:\n            count+=1\n    return count==1\nif __name__=='__main__':\n    n=int(input())\n    beginstr,endstr=map(str,input().split())\n    if beginstr==endstr:\n        print(0)\n        exit()\n    strlist=[]\n    for i in range(n):\n        strlist.append(input())\n    visit=[False for i in range(n)]\n    queue=[[beginstr,1]]\n    while queue:\n        str,step=queue.pop(0)\n        if judge(str,endstr):\n            print(step+1)\n            exit()\n        for i in range(n):\n            if visit[i]==False and judge(strlist[i],str):\n                visit[i]=True\n                queue.append([strlist[i],step+1])\n    print(0)",
+          "description": "Python版本的字符串接龙问题解决策略，利用了广度优先搜索来查找最短转换序列。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <unordered_map>",
+      "text": "#include <queue>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "#include <iostream>\n#include <vector>\n#include <string>\n#include <unordered_set>\n#include <unordered_map>\n#include <queue>\nusing namespace std;\nint main() {\n    string beginStr, endStr, str;\n    int n;\n    cin >> n;\n    unordered_set<string> strSet;\n    cin >> beginStr >> endStr;\n    for (int i = 0; i < n; i++) {\n        cin >> str;\n        strSet.insert(str);\n    }\n\n    // 记录strSet里的字符串是否被访问过，同时记录路径长度\n    unordered_map<string, int> visitMap; // <记录的字符串，路径长度>\n\n    // 初始化队列\n    queue<string> que;\n    que.push(beginStr);\n\n    // 初始化visitMap\n    visitMap.insert(pair<string, int>(beginStr, 1));\n\n    while(!que.empty()) {\n        string word = que.front();\n        que.pop();\n        int path = visitMap[word]; // 这个字符串在路径中的长度\n\n        // 开始在这个str中，挨个字符去替换\n        for (int i = 0; i < word.size(); i++) {\n            string newWord = word; // 用一个新字符串替换str，因为每次要置换一个字符\n\n            // 遍历26的字母\n            for (int j = 0 ; j < 26; j++) {\n                newWord[i] = j + 'a';\n                if (newWord == endStr) { // 发现替换字母后，字符串与终点字符串相同\n                    cout <<  path + 1 << endl; // 找到了路径 \n                    return 0;\n                }\n                // 字符串集合里出现了newWord，并且newWord没有被访问过\n                if (strSet.find(newWord) != strSet.end()\n                        && visitMap.find(newWord) == visitMap.end()) {\n                    // 添加访问信息，并将新字符串放到队列中\n                    visitMap.insert(pair<string, int>(newWord, path + 1));\n                    que.push(newWord);\n                }\n            }\n        }\n    }\n\n    // 没找到输出0\n    cout << 0 << endl;\n}",
+          "description": "使用BFS算法寻找从beginStr到endStr的最短转换序列。"
+        },
+        {
+          "language": "Java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        scanner.nextLine();\n        String beginStr = scanner.next();\n        String endStr = scanner.next();\n        scanner.nextLine();\n        List<String> wordList = new ArrayList<>();\n        wordList.add(beginStr);\n        wordList.add(endStr);\n        for (int i = 0; i < n; i++) {\n            wordList.add(scanner.nextLine());\n        }\n        int count = bfs(beginStr, endStr, wordList);\n        System.out.println(count);\n    }\n\n    public static int bfs(String beginStr, String endStr, List<String> wordList) {\n        int len = 1;\n        Set<String> set = new HashSet<>(wordList);\n        Set<String> visited = new HashSet<>();\n        Queue<String> q = new LinkedList<>();\n        visited.add(beginStr);\n        q.add(beginStr);\n        q.add(null);\n        while (!q.isEmpty()) {\n            String node = q.remove();\n            if (node == null) {\n                if (!q.isEmpty()) {\n                    len++;\n                    q.add(null);\n                }\n                continue;\n            }\n            char[] charArray = node.toCharArray();\n            for (int i = 0; i < charArray.length; i++) {\n                char old = charArray[i];\n                for (char j = 'a'; j <= 'z'; j++) {\n                    charArray[i] = j;\n                    String newWord = new String(charArray);\n                    if (set.contains(newWord) && !visited.contains(newWord)) {\n                        q.add(newWord);\n                        visited.add(newWord);\n                        if (newWord.equals(endStr)) return len + 1;\n                    }\n                }\n                charArray[i] = old;\n            }\n        }\n        return 0;\n    }\n}",
+          "description": "使用BFS算法寻找从beginStr到endStr的最短转换序列。"
+        },
+        {
+          "language": "Python",
+          "code": "def judge(s1,s2):\n    count=0\n    for i in range(len(s1)):\n        if s1[i]!=s2[i]:\n            count+=1\n    return count==1\n\nif __name__=='__main__':\n    n=int(input())\n    beginstr,endstr=map(str,input().split())\n    if beginstr==endstr:\n        print(0)\n        exit()\n    strlist=[]\n    for i in range(n):\n        strlist.append(input())\n    visit=[False for i in range(n)]\n    queue=[[beginstr,1]]\n    while queue:\n        str,step=queue.pop(0)\n        if judge(str,endstr):\n            print(step+1)\n            exit()\n        for i in range(n):\n            if visit[i]==False and judge(strlist[i],str):\n                visit[i]=True\n                queue.append([strlist[i],step+1])\n    print(0)",
+          "description": "使用BFS算法寻找从beginStr到endStr的最短转换序列。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <queue>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <string>\n#include <unordered_set>\n#include <unordered_map>\n#include <queue>\nusing namespace std;\nint main() {\n    string beginStr, endStr, str;\n    int n;\n    cin >> n;\n    unordered_set<string> strSet;\n    cin >> beginStr >> endStr;\n    for (int i = 0; i < n; i++) {\n        cin >> str;\n        strSet.insert(str);\n    }\n\n    // 记录strSet里的字符串是否被访问过，同时记录路径长度\n    unordered_map<string, int> visitMap; // <记录的字符串，路径长度>\n\n    // 初始化队列\n    queue<string> que;\n    que.push(beginStr);\n\n    // 初始化visitMap\n    visitMap.insert(pair<string, int>(beginStr, 1));\n\n    while(!que.empty()) {\n        string word = que.front();\n        que.pop();\n        int path = visitMap[word]; // 这个字符串在路径中的长度\n\n        // 开始在这个str中，挨个字符去替换\n        for (int i = 0; i < word.size(); i++) {\n            string newWord = word; // 用一个新字符串替换str，因为每次要置换一个字符\n\n            // 遍历26的字母\n            for (int j = 0 ; j < 26; j++) {\n                newWord[i] = j + 'a';\n                if (newWord == endStr) { // 发现替换字母后，字符串与终点字符串相同\n                    cout <<  path + 1 << endl; // 找到了路径 \n                    return 0;\n                }\n                // 字符串集合里出现了newWord，并且newWord没有被访问过\n                if (strSet.find(newWord) != strSet.end()\n                        && visitMap.find(newWord) == visitMap.end()) {\n                    // 添加访问信息，并将新字符串放到队列中\n                    visitMap.insert(pair<string, int>(newWord, path + 1));\n                    que.push(newWord);\n                }\n            }\n        }\n    }\n\n    // 没找到输出0\n    cout << 0 << endl;\n}",
+          "description": "C++实现从beginStr到endStr的最短转换序列"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        scanner.nextLine();\n        String beginStr = scanner.next();\n        String endStr = scanner.next();\n        scanner.nextLine();\n        List<String> wordList = new ArrayList<>();\n        wordList.add(beginStr);\n        wordList.add(endStr);\n        for (int i = 0; i < n; i++) {\n            wordList.add(scanner.nextLine());\n        }\n        int count = bfs(beginStr, endStr, wordList);\n        System.out.println(count);\n    }\n\n    public static int bfs(String beginStr, String endStr, List<String> wordList) {\n        int len = 1;\n        Set<String> set = new HashSet<>(wordList);\n        Set<String> visited = new HashSet<>();\n        Queue<String> q = new LinkedList<>();\n        visited.add(beginStr);\n        q.add(beginStr);\n        q.add(null);\n        while (!q.isEmpty()) {\n            String node = q.remove();\n            if (node == null) {\n                if (!q.isEmpty()) {\n                    len++;\n                    q.add(null);\n                }\n                continue;\n            }\n            char[] charArray = node.toCharArray();\n            for (int i = 0; i < charArray.length; i++) {\n                char old = charArray[i];\n                for (char j = 'a'; j <= 'z'; j++) {\n                    charArray[i] = j;\n                    String newWord = new String(charArray);\n                    if (set.contains(newWord) && !visited.contains(newWord)) {\n                        q.add(newWord);\n                        visited.add(newWord);\n                        if (newWord.equals(endStr)) return len + 1;\n                    }\n                }\n                charArray[i] = old;\n            }\n        }\n        return 0;\n    }\n}",
+          "description": "Java实现从beginStr到endStr的最短转换序列"
+        },
+        {
+          "language": "python",
+          "code": "def judge(s1,s2):\n    count=0\n    for i in range(len(s1)):\n        if s1[i]!=s2[i]:\n            count+=1\n    return count==1\n\nif __name__=='__main__':\n    n=int(input())\n    beginstr,endstr=map(str,input().split())\n    if beginstr==endstr:\n        print(0)\n        exit()\n    strlist=[]\n    for i in range(n):\n        strlist.append(input())\n    visit=[False for i in range(n)]\n    queue=[[beginstr,1]]\n    while queue:\n        str,step=queue.pop(0)\n        if judge(str,endstr):\n            print(step+1)\n            exit()\n        for i in range(n):\n            if visit[i]==False and judge(strlist[i],str):\n                visit[i]=True\n                queue.append([strlist[i],step+1])\n    print(0)",
+          "description": "Python实现从beginStr到endStr的最短转换序列"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "#include <iostream>\n#include <vector>\n#include <string>\n#include <unordered_set>\n#include <unordered_map>\n#include <queue>\nusing namespace std;\nint main() {\n    string beginStr, endStr, str;\n    int n;\n    cin >> n;\n    unordered_set<string> strSet;\n    cin >> beginStr >> endStr;\n    for (int i = 0; i < n; i++) {\n        cin >> str;\n        strSet.insert(str);\n    }\n\n    // 记录strSet里的字符串是否被访问过，同时记录路径长度\n    unordered_map<string, int> visitMap; // <记录的字符串，路径长度>\n\n    // 初始化队列\n    queue<string> que;\n    que.push(beginStr);\n\n    // 初始化visitMap\n    visitMap.insert(pair<string, int>(beginStr, 1));\n\n    while(!que.empty()) {\n        string word = que.front();\n        que.pop();\n        int path = visitMap[word]; // 这个字符串在路径中的长度\n\n        // 开始在这个str中，挨个字符去替换\n        for (int i = 0; i < word.size(); i++) {\n            string newWord = word; // 用一个新字符串替换str，因为每次要置换一个字符\n\n            // 遍历26的字母\n            for (int j = 0 ; j < 26; j++) {\n                newWord[i] = j + 'a';\n                if (newWord == endStr) { // 发现替换字母后，字符串与终点字符串相同\n                    cout <<  path + 1 << endl; // 找到了路径 \n                    return 0;\n                }\n                // 字符串集合里出现了newWord，并且newWord没有被访问过\n                if (strSet.find(newWord) != strSet.end()\n                        && visitMap.find(newWord) == visitMap.end()) {\n                    // 添加访问信息，并将新字符串放到队列中\n                    visitMap.insert(pair<string, int>(newWord, path + 1));\n                    que.push(newWord);\n                }\n            }\n        }\n    }\n\n    // 没找到输出0\n    cout << 0 << endl;\n}",
+          "description": "使用广度优先搜索（BFS）来寻找从开始字符串到结束字符串的最短转换序列。"
+        },
+        {
+          "language": "Java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        scanner.nextLine();\n        String beginStr = scanner.next();\n        String endStr = scanner.next();\n        scanner.nextLine();\n        List<String> wordList = new ArrayList<>();\n        wordList.add(beginStr);\n        wordList.add(endStr);\n        for (int i = 0; i < n; i++) {\n            wordList.add(scanner.nextLine());\n        }\n        int count = bfs(beginStr, endStr, wordList);\n        System.out.println(count);\n    }\n\n    public static int bfs(String beginStr, String endStr, List<String> wordList) {\n        int len = 1;\n        Set<String> set = new HashSet<>(wordList);\n        Set<String> visited = new HashSet<>();\n        Queue<String> q = new LinkedList<>();\n        visited.add(beginStr);\n        q.add(beginStr);\n        q.add(null);\n        while (!q.isEmpty()) {\n            String node = q.remove();\n            if (node == null) {\n                if (!q.isEmpty()) {\n                    len++;\n                    q.add(null);\n                }\n                continue;\n            }\n            char[] charArray = node.toCharArray();\n            for (int i = 0; i < charArray.length; i++) {\n                char old = charArray[i];\n                for (char j = 'a'; j <= 'z'; j++) {\n                    charArray[i] = j;\n                    String newWord = new String(charArray);\n                    if (set.contains(newWord) && !visited.contains(newWord)) {\n                        q.add(newWord);\n                        visited.add(newWord);\n                        if (newWord.equals(endStr)) return len + 1;\n                    }\n                }\n                charArray[i] = old;\n            }\n        }\n        return 0;\n    }\n}",
+          "description": "使用广度优先搜索（BFS）算法来查找从起始字符串到目标字符串的最短转换路径。"
+        },
+        {
+          "language": "Python",
+          "code": "def judge(s1,s2):\n    count=0\n    for i in range(len(s1)):\n        if s1[i]!=s2[i]:\n            count+=1\n    return count==1\n\nif __name__=='__main__':\n    n=int(input())\n    beginstr,endstr=map(str,input().split())\n    if beginstr==endstr:\n        print(0)\n        exit()\n    strlist=[]\n    for i in range(n):\n        strlist.append(input())\n    \n    # use bfs\n    visit=[False for i in range(n)]\n    queue=[[beginstr,1]]\n    while queue:\n        str,step=queue.pop(0)\n        if judge(str,endstr):\n            print(step+1)\n            exit()\n        for i in range(n):\n            if visit[i]==False and judge(strlist[i],str):\n                visit[i]=True\n                queue.append([strlist[i],step+1])\n    print(0)",
+          "description": "通过定义辅助函数judge来判断两个字符串是否只有一个字符不同，然后利用广度优先搜索（BFS）来解决字符串转换问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "import java.util.*;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <string>\n#include <unordered_set>\n#include <unordered_map>\n#include <queue>\nusing namespace std;\nint main() {\n    string beginStr, endStr, str;\n    int n;\n    cin >> n;\n    unordered_set<string> strSet;\n    cin >> beginStr >> endStr;\n    for (int i = 0; i < n; i++) {\n        cin >> str;\n        strSet.insert(str);\n    }\n\n    // 记录strSet里的字符串是否被访问过，同时记录路径长度\n    unordered_map<string, int> visitMap; // <记录的字符串，路径长度>\n\n    // 初始化队列\n    queue<string> que;\n    que.push(beginStr);\n\n    // 初始化visitMap\n    visitMap.insert(pair<string, int>(beginStr, 1));\n\n    while(!que.empty()) {\n        string word = que.front();\n        que.pop();\n        int path = visitMap[word]; // 这个字符串在路径中的长度\n\n        // 开始在这个str中，挨个字符去替换\n        for (int i = 0; i < word.size(); i++) {\n            string newWord = word; // 用一个新字符串替换str，因为每次要置换一个字符\n\n            // 遍历26的字母\n            for (int j = 0 ; j < 26; j++) {\n                newWord[i] = j + 'a';\n                if (newWord == endStr) { // 发现替换字母后，字符串与终点字符串相同\n                    cout <<  path + 1 << endl; // 找到了路径 \n                    return 0;\n                }\n                // 字符串集合里出现了newWord，并且newWord没有被访问过\n                if (strSet.find(newWord) != strSet.end()\n                        && visitMap.find(newWord) == visitMap.end()) {\n                    // 添加访问信息，并将新字符串放到队列中\n                    visitMap.insert(pair<string, int>(newWord, path + 1));\n                    que.push(newWord);\n                }\n            }\n        }\n    }\n\n    // 没找到输出0\n    cout << 0 << endl;\n}",
+          "description": "C++代码实现从给定起点到终点的最短转换序列"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        scanner.nextLine();\n        String beginStr = scanner.next();\n        String endStr = scanner.next();\n        scanner.nextLine();\n        List<String> wordList = new ArrayList<>();\n        wordList.add(beginStr);\n        wordList.add(endStr);\n        for (int i = 0; i < n; i++) {\n            wordList.add(scanner.nextLine());\n        }\n        int count = bfs(beginStr, endStr, wordList);\n        System.out.println(count);\n    }\n\n    public static int bfs(String beginStr, String endStr, List<String> wordList) {\n        int len = 1;\n        Set<String> set = new HashSet<>(wordList);\n        Set<String> visited = new HashSet<>();\n        Queue<String> q = new LinkedList<>();\n        visited.add(beginStr);\n        q.add(beginStr);\n        q.add(null);\n        while (!q.isEmpty()) {\n            String node = q.remove();\n            if (node == null) {\n                if (!q.isEmpty()) {\n                    len++;\n                    q.add(null);\n                }\n                continue;\n            }\n            char[] charArray = node.toCharArray();\n            for (int i = 0; i < charArray.length; i++) {\n                char old = charArray[i];\n                for (char j = 'a'; j <= 'z'; j++) {\n                    charArray[i] = j;\n                    String newWord = new String(charArray);\n                    if (set.contains(newWord) && !visited.contains(newWord)) {\n                        q.add(newWord);\n                        visited.add(newWord);\n                        if (newWord.equals(endStr)) return len + 1;\n                    }\n                }\n                charArray[i] = old;\n            }\n        }\n        return 0;\n    }\n}",
+          "description": "Java代码实现从给定起点到终点的最短转换序列"
+        },
+        {
+          "language": "python",
+          "code": "def judge(s1,s2):\n    count=0\n    for i in range(len(s1)):\n        if s1[i]!=s2[i]:\n            count+=1\n    return count==1\n\nif __name__=='__main__':\n    n=int(input())\n    beginstr,endstr=map(str,input().split())\n    if beginstr==endstr:\n        print(0)\n        exit()\n    strlist=[]\n    for i in range(n):\n        strlist.append(input())\n    \n    # use bfs\n    visit=[False for i in range(n)]\n    queue=[[beginstr,1]]\n    while queue:\n        str,step=queue.pop(0)\n        if judge(str,endstr):\n            print(step+1)\n            exit()\n        for i in range(n):\n            if visit[i]==False and judge(strlist[i],str):\n                visit[i]=True\n                queue.append([strlist[i],step+1])\n    print(0)",
+          "description": "Python代码实现从给定起点到终点的最短转换序列"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "def judge(s1,s2):",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "#include <iostream>\n#include <vector>\n#include <string>\n#include <unordered_set>\n#include <unordered_map>\n#include <queue>\nusing namespace std;\nint main() {\n    string beginStr, endStr, str;\n    int n;\n    cin >> n;\n    unordered_set<string> strSet;\n    cin >> beginStr >> endStr;\n    for (int i = 0; i < n; i++) {\n        cin >> str;\n        strSet.insert(str);\n    }\n\n    // 记录strSet里的字符串是否被访问过，同时记录路径长度\n    unordered_map<string, int> visitMap; // <记录的字符串，路径长度>\n\n    // 初始化队列\n    queue<string> que;\n    que.push(beginStr);\n\n    // 初始化visitMap\n    visitMap.insert(pair<string, int>(beginStr, 1));\n\n    while(!que.empty()) {\n        string word = que.front();\n        que.pop();\n        int path = visitMap[word]; // 这个字符串在路径中的长度\n\n        // 开始在这个str中，挨个字符去替换\n        for (int i = 0; i < word.size(); i++) {\n            string newWord = word; // 用一个新字符串替换str，因为每次要置换一个字符\n\n            // 遍历26的字母\n            for (int j = 0 ; j < 26; j++) {\n                newWord[i] = j + 'a';\n                if (newWord == endStr) { // 发现替换字母后，字符串与终点字符串相同\n                    cout <<  path + 1 << endl; // 找到了路径 \n                    return 0;\n                }\n                // 字符串集合里出现了newWord，并且newWord没有被访问过\n                if (strSet.find(newWord) != strSet.end()\n                        && visitMap.find(newWord) == visitMap.end()) {\n                    // 添加访问信息，并将新字符串放到队列中\n                    visitMap.insert(pair<string, int>(newWord, path + 1));\n                    que.push(newWord);\n                }\n            }\n        }\n    }\n\n    // 没找到输出0\n    cout << 0 << endl;\n}",
+          "description": "使用广度优先搜索算法求解从开始字符串到结束字符串的最短转换序列"
+        },
+        {
+          "language": "Java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        scanner.nextLine();\n        String beginStr = scanner.next();\n        String endStr = scanner.next();\n        scanner.nextLine();\n        List<String> wordList = new ArrayList<>();\n        wordList.add(beginStr);\n        wordList.add(endStr);\n        for (int i = 0; i < n; i++) {\n            wordList.add(scanner.nextLine());\n        }\n        int count = bfs(beginStr, endStr, wordList);\n        System.out.println(count);\n    }\n\n    public static int bfs(String beginStr, String endStr, List<String> wordList) {\n        int len = 1;\n        Set<String> set = new HashSet<>(wordList);\n        Set<String> visited = new HashSet<>();\n        Queue<String> q = new LinkedList<>();\n        visited.add(beginStr);\n        q.add(beginStr);\n        q.add(null);\n        while (!q.isEmpty()) {\n            String node = q.remove();\n            if (node == null) {\n                if (!q.isEmpty()) {\n                    len++;\n                    q.add(null);\n                }\n                continue;\n            }\n            char[] charArray = node.toCharArray();\n            for (int i = 0; i < charArray.length; i++) {\n                char old = charArray[i];\n                for (char j = 'a'; j <= 'z'; j++) {\n                    charArray[i] = j;\n                    String newWord = new String(charArray);\n                    if (set.contains(newWord) && !visited.contains(newWord)) {\n                        q.add(newWord);\n                        visited.add(newWord);\n                        if (newWord.equals(endStr)) return len + 1;\n                    }\n                }\n                charArray[i] = old;\n            }\n        }\n        return 0;\n    }\n}",
+          "description": "使用广度优先搜索算法求解从开始字符串到结束字符串的最短转换序列"
+        },
+        {
+          "language": "Python",
+          "code": "def judge(s1,s2):\n    count=0\n    for i in range(len(s1)):\n        if s1[i]!=s2[i]:\n            count+=1\n    return count==1\n\nif __name__=='__main__':\n    n=int(input())\n    beginstr,endstr=map(str,input().split())\n    if beginstr==endstr:\n        print(0)\n        exit()\n    strlist=[]\n    for i in range(n):\n        strlist.append(input())\n    \n    # use bfs\n    visit=[False for i in range(n)]\n    queue=[[beginstr,1]]\n    while queue:\n        str,step=queue.pop(0)\n        if judge(str,endstr):\n            print(step+1)\n            exit()\n        for i in range(n):\n            if visit[i]==False and judge(strlist[i],str):\n                visit[i]=True\n                queue.append([strlist[i],step+1])\n    print(0)",
+          "description": "使用广度优先搜索算法求解从开始字符串到结束字符串的最短转换序列"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "C++",
+      "code": "#include <iostream>\n#include <vector>\n#include <string>\n#include <unordered_set>\n#include <unordered_map>\n#include <queue>\nusing namespace std;\nint main() {\n    string beginStr, endStr, str;\n    int n;\n    cin >> n;\n    unordered_set<string> strSet;\n    cin >> beginStr >> endStr;\n    for (int i = 0; i < n; i++) {\n        cin >> str;\n        strSet.insert(str);\n    }\n\n    // 记录strSet里的字符串是否被访问过，同时记录路径长度\n    unordered_map<string, int> visitMap; // <记录的字符串，路径长度>\n\n    // 初始化队列\n    queue<string> que;\n    que.push(beginStr);\n\n    // 初始化visitMap\n    visitMap.insert(pair<string, int>(beginStr, 1));\n\n    while(!que.empty()) {\n        string word = que.front();\n        que.pop();\n        int path = visitMap[word]; // 这个字符串在路径中的长度\n\n        // 开始在这个str中，挨个字符去替换\n        for (int i = 0; i < word.size(); i++) {\n            string newWord = word; // 用一个新字符串替换str，因为每次要置换一个字符\n\n            // 遍历26的字母\n            for (int j = 0 ; j < 26; j++) {\n                newWord[i] = j + 'a';\n                if (newWord == endStr) { // 发现替换字母后，字符串与终点字符串相同\n                    cout <<  path + 1 << endl; // 找到了路径 \n                    return 0;\n                }\n                // 字符串集合里出现了newWord，并且newWord没有被访问过\n                if (strSet.find(newWord) != strSet.end()\n                        && visitMap.find(newWord) == visitMap.end()) {\n                    // 添加访问信息，并将新字符串放到队列中\n                    visitMap.insert(pair<string, int>(newWord, path + 1));\n                    que.push(newWord);\n                }\n            }\n        }\n    }\n\n    // 没找到输出0\n    cout << 0 << endl;\n}",
+      "description": "使用广度优先搜索从开始字符串转换到结束字符串"
+    },
+    {
+      "language": "Java",
+      "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        scanner.nextLine();\n        String beginStr = scanner.next();\n        String endStr = scanner.next();\n        scanner.nextLine();\n        List<String> wordList = new ArrayList<>();\n        wordList.add(beginStr);\n        wordList.add(endStr);\n        for (int i = 0; i < n; i++) {\n            wordList.add(scanner.nextLine());\n        }\n        int count = bfs(beginStr, endStr, wordList);\n        System.out.println(count);\n    }\n\n    public static int bfs(String beginStr, String endStr, List<String> wordList) {\n        int len = 1;\n        Set<String> set = new HashSet<>(wordList);\n        Set<String> visited = new HashSet<>();\n        Queue<String> q = new LinkedList<>();\n        visited.add(beginStr);\n        q.add(beginStr);\n        q.add(null);\n        while (!q.isEmpty()) {\n            String node = q.remove();\n            if (node == null) {\n                if (!q.isEmpty()) {\n                    len++;\n                    q.add(null);\n                }\n                continue;\n            }\n            char[] charArray = node.toCharArray();\n            for (int i = 0; i < charArray.length; i++) {\n                char old = charArray[i];\n                for (char j = 'a'; j <= 'z'; j++) {\n                    charArray[i] = j;\n                    String newWord = new String(charArray);\n                    if (set.contains(newWord) && !visited.contains(newWord)) {\n                        q.add(newWord);\n                        visited.add(newWord);\n                        if (newWord.equals(endStr)) return len + 1;\n                    }\n                }\n                charArray[i] = old;\n            }\n        }\n        return 0;\n    }\n}",
+      "description": "使用广度优先搜索从开始字符串转换到结束字符串"
+    },
+    {
+      "language": "Python",
+      "code": "def judge(s1,s2):\n    count=0\n    for i in range(len(s1)):\n        if s1[i]!=s2[i]:\n            count+=1\n    return count==1\n\nif __name__=='__main__':\n    n=int(input())\n    beginstr,endstr=map(str,input().split())\n    if beginstr==endstr:\n        print(0)\n        exit()\n    strlist=[]\n    for i in range(n):\n        strlist.append(input())\n    \n    # use bfs\n    visit=[False for i in range(n)]\n    queue=[[beginstr,1]]\n    while queue:\n        str,step=queue.pop(0)\n        if judge(str,endstr):\n            print(step+1)\n            exit()\n        for i in range(n):\n            if visit[i]==False and judge(strlist[i],str):\n                visit[i]=True\n                queue.append([strlist[i],step+1])\n    print(0)",
+      "description": "使用广度优先搜索从开始字符串转换到结束字符串"
+    }
+  ],
+  "common_mistakes": [
+    "忘记标记已访问过的节点，导致无限循环。",
+    "未正确处理字符串集合中不存在目标字符串的情况。",
+    "忽略了对字符串长度进行检查，可能导致程序运行错误。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20250317105155.png",
+      "description": "这张图片展示了一个图数据结构，包含多个节点（如abc、dbc、def等）及其之间的连接关系，体现了图的遍历或搜索算法。",
+      "context": "该图片展示了从字符串\"abc\"到\"def\"通过中间节点的多条转换路径，用以辅助理解如何在给定字符串列表中寻找最短转换序列。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20250317105155.png",
+      "description": "这张图片展示了一个图数据结构，包含多个节点（如abc、dbc、def等）及其之间的连接关系，体现了图的遍历或搜索算法。",
+      "context": "该图片展示了从字符串\"abc\"到\"def\"转换过程中可能经过的路径，帮助理解寻找最短转换序列的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20250317105155.png",
+      "description": "GIF展示了从起始字符串到目标字符串在给定字符串列表中寻找最短转换路径的过程。",
+      "context": "GIF动画展示了从起始字符串到目标字符串在给定字符串列表中寻找最短转换路径的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\图论\\字符串接龙.txt",
+  "extracted_at": "2025-07-21T13:25:44.134482",
+  "raw_content": "字符串接龙\n卡码网题目链接（ACM模式）(https://kamacoder.com/problempage.php?pid=1183)\n\n题目描述\n\n字典 strList 中从字符串 beginStr 和 endStr 的转换序列是一个按下述规格形成的序列：\n\n序列中第一个字符串是 beginStr。\n\n序列中最后一个字符串是 endStr。\n\n每次转换只能改变一个位置的字符（例如 ftr 可以转化 fty ，但 ftr 不能转化 frx）。\n\n转换过程中的中间字符串必须是字典 strList 中的字符串。\n\nbeginStr 和 endStr 不在 字典 strList 中\n\n字符串中只有小写的26个字母\n\n给你两个字符串 beginStr 和 endStr 和一个字典 strList，找到从 beginStr 到 endStr 的最短转换序列中的字符串数目。如果不存在这样的转换序列，返回 0。\n\n输入描述\n\n第一行包含一个整数 N，表示字典 strList 中的字符串数量。 第二行包含两个字符串，用空格隔开，分别代表 beginStr 和 endStr。 后续 N 行，每行一个字符串，代表 strList 中的字符串。\n\n输出描述\n\n输出一个整数，代表从 beginStr 转换到 endStr 需要的最短转换序列中的字符串数量。如果不存在这样的转换序列，则输出 0。\n\n输入示例\n\n6\nabc def\nefc\ndbc\nebc\ndec\ndfc\nyhn\n输出示例\n\n4\n\n提示信息\n\n从 startStr 到 endStr，在 strList 中最短的路径为 abc -> dbc -> dec -> def，所以输出结果为 4\n\n数据范围：\n\n2 <= N <= 500\n\nhttps://file1.kamacoder.com/i/algo/20250317105155.png\n\n#思路\n\n以示例1为例，从这个图中可以看出 abc 到 def的路线 不止一条，但最短的一条路径上是4个节点。\n\nhttps://file1.kamacoder.com/i/algo/20250317105155.png\n\n本题只需要求出最短路径的长度就可以了，不用找出具体路径。\n\n所以这道题要解决两个问题：\n\n1、图中的线是如何连在一起的\n\n在搜索的过程中，我们可以枚举，用26个字母替换当前字符串的每一个字符，在看替换后 是否在 strList里出现过，就可以判断 两个字符串 是否是链接的。\n\n2、起点和终点的最短路径长度\n\n首先题目中并没有给出点与点之间的连线，而是要我们自己去连，条件是字符只能差一个。\n\n所以判断点与点之间的关系，需要判断是不是差一个字符，如果差一个字符，那就是有链接。\n\n然后就是求起点和终点的最短路径长度，在无权图中，求最短路，用深搜或者广搜就行，没必要用最短路算法。\n\n在无权图中，用广搜求最短路最为合适，广搜只要搜到了终点，那么一定是最短的路径。因为广搜就是以起点中心向四周扩散的搜索。\n\n本题如果用深搜，会比较麻烦，要在到达终点的不同路径中选则一条最短路。\n\n而广搜只要达到终点，一定是最短路。\n\n另外需要有一个注意点：\n\n本题是一个无向图，需要用标记位，标记着节点是否走过，否则就会死循环！\n使用set来检查字符串是否出现在字符串集合里更快一些\nC++代码如下：（详细注释）\n\n#include <iostream>\n#include <vector>\n#include <string>\n#include <unordered_set>\n#include <unordered_map>\n#include <queue>\nusing namespace std;\nint main() {\n    string beginStr, endStr, str;\n    int n;\n    cin >> n;\n    unordered_set<string> strSet;\n    cin >> beginStr >> endStr;\n    for (int i = 0; i < n; i++) {\n        cin >> str;\n        strSet.insert(str);\n    }\n\n    // 记录strSet里的字符串是否被访问过，同时记录路径长度\n    unordered_map<string, int> visitMap; // <记录的字符串，路径长度>\n\n    // 初始化队列\n    queue<string> que;\n    que.push(beginStr);\n\n    // 初始化visitMap\n    visitMap.insert(pair<string, int>(beginStr, 1));\n\n    while(!que.empty()) {\n        string word = que.front();\n        que.pop();\n        int path = visitMap[word]; // 这个字符串在路径中的长度\n\n        // 开始在这个str中，挨个字符去替换\n        for (int i = 0; i < word.size(); i++) {\n            string newWord = word; // 用一个新字符串替换str，因为每次要置换一个字符\n\n            // 遍历26的字母\n            for (int j = 0 ; j < 26; j++) {\n                newWord[i] = j + 'a';\n                if (newWord == endStr) { // 发现替换字母后，字符串与终点字符串相同\n                    cout <<  path + 1 << endl; // 找到了路径 \n                    return 0;\n                }\n                // 字符串集合里出现了newWord，并且newWord没有被访问过\n                if (strSet.find(newWord) != strSet.end()\n                        && visitMap.find(newWord) == visitMap.end()) {\n                    // 添加访问信息，并将新字符串放到队列中\n                    visitMap.insert(pair<string, int>(newWord, path + 1));\n                    que.push(newWord);\n                }\n            }\n        }\n    }\n\n    // 没找到输出0\n    cout << 0 << endl;\n\n}\n当然本题也可以用双向BFS，就是从头尾两端进行搜索，大家感兴趣，可以自己去实现，这里就不再做详细讲解了。\n\n#其他语言版本\n#Java\nimport java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        scanner.nextLine();\n        String beginStr = scanner.next();\n        String endStr = scanner.next();\n        scanner.nextLine();\n        List<String> wordList = new ArrayList<>();\n        wordList.add(beginStr);\n        wordList.add(endStr);\n        for (int i = 0; i < n; i++) {\n            wordList.add(scanner.nextLine());\n        }\n        int count = bfs(beginStr, endStr, wordList);\n        System.out.println(count);\n    }\n\n    /**\n     * 广度优先搜索-寻找最短路径\n     */\n    public static int bfs(String beginStr, String endStr, List<String> wordList) {\n        int len = 1;\n        Set<String> set = new HashSet<>(wordList);\n        Set<String> visited = new HashSet<>();\n        Queue<String> q = new LinkedList<>();\n        visited.add(beginStr);\n        q.add(beginStr);\n        q.add(null);\n        while (!q.isEmpty()) {\n            String node = q.remove();\n            //上一层结束，若下一层还有节点进入下一层\n            if (node == null) {\n                if (!q.isEmpty()) {\n                    len++;\n                    q.add(null);\n                }\n                continue;\n            }\n            char[] charArray = node.toCharArray();\n            //寻找邻接节点\n            for (int i = 0; i < charArray.length; i++) {\n                //记录旧值，用于回滚修改\n                char old = charArray[i];\n                for (char j = 'a'; j <= 'z'; j++) {\n                    charArray[i] = j;\n                    String newWord = new String(charArray);\n                    if (set.contains(newWord) && !visited.contains(newWord)) {\n                        q.add(newWord);\n                        visited.add(newWord);\n                        //找到结尾\n                        if (newWord.equals(endStr)) return len + 1;\n                    }\n                }\n                charArray[i] = old;\n            }\n        }\n        return 0;\n    }\n}\n\n#Python\ndef judge(s1,s2):\n    count=0\n    for i in range(len(s1)):\n        if s1[i]!=s2[i]:\n            count+=1\n    return count==1\n\nif __name__=='__main__':\n    n=int(input())\n    beginstr,endstr=map(str,input().split())\n    if beginstr==endstr:\n        print(0)\n        exit()\n    strlist=[]\n    for i in range(n):\n        strlist.append(input())\n    \n    # use bfs\n    visit=[False for i in range(n)]\n    queue=[[beginstr,1]]\n    while queue:\n        str,step=queue.pop(0)\n        if judge(str,endstr):\n            print(step+1)\n            exit()\n        for i in range(n):\n            if visit[i]==False and judge(strlist[i],str):\n                visit[i]=True\n                queue.append([strlist[i],step+1])\n    print(0)"
+}

@@ -1,0 +1,52 @@
+{
+  "id": "DS118",
+  "name": "栈",
+  "alias": [
+    "LIFO表"
+  ],
+  "type": "data_structure",
+  "description": "栈是一种后进先出（LIFO）的线性数据结构，常用于OI中。可以使用数组或STL中的std::stack来实现。此外，还介绍了队列的基本原理以及它们在C++标准库中的实现。",
+  "key_concepts": [
+    "后进先出",
+    "线性数据结构",
+    "先进先出",
+    "容器适配器"
+  ],
+  "applications": [
+    "表达式求值",
+    "括号匹配",
+    "函数调用栈",
+    "数据结构应用",
+    "编程语言中的数据结构实现"
+  ],
+  "created_at": "2025-07-19T13:03:41Z",
+  "updated_at": "2025-07-19T13:04:17Z",
+  "source_files": [
+    "栈与队列.txt",
+    "栈与队列_kama.txt"
+  ],
+  "spacy_entities": {
+    "COMPLEXITY": [
+      "O(1)"
+    ],
+    "DATA_STRUCTURE": [
+      "堆",
+      "队列",
+      "数组",
+      "双端队列",
+      "栈",
+      "优先队列",
+      "deque",
+      "list",
+      "stack",
+      "queue",
+      "图",
+      "链表"
+    ],
+    "CORE_CONCEPT": [
+      "迭代",
+      "初始化",
+      "后进先出"
+    ]
+  }
+}

@@ -1,0 +1,443 @@
+二叉树的最大深度
+力扣题目链接(https://leetcode.cn/problems/maximum-depth-of-binary-tree/)
+
+给定一个二叉树，找出其最大深度。
+
+二叉树的深度为根节点到最远叶子节点的最长路径上的节点数。
+
+说明: 叶子节点是指没有子节点的节点。
+
+示例： 给定二叉树 [3,9,20,null,null,15,7]，
+
+https://file1.kamacoder.com/i/algo/20210203153031914-20230310121809902.png
+
+返回它的最大深度 3 。
+
+思路
+看完本篇可以一起做了如下两道题目：
+
+104.二叉树的最大深度(https://leetcode.cn/problems/maximum-depth-of-binary-tree/)
+559.n叉树的最大深度(https://leetcode.cn/problems/maximum-depth-of-n-ary-tree/)
+
+递归法
+本题可以使用前序（中左右），也可以使用后序遍历（左右中），使用前序求的就是深度，使用后序求的是高度。
+
+二叉树节点的深度：指从根节点到该节点的最长简单路径边的条数或者节点数（取决于深度从0开始还是从1开始）
+二叉树节点的高度：指从该节点到叶子节点的最长简单路径边的条数或者节点数（取决于高度从0开始还是从1开始）
+而根节点的高度就是二叉树的最大深度，所以本题中我们通过后序求的根节点高度来求的二叉树最大深度。
+
+这一点其实是很多同学没有想清楚的，很多题解同样没有讲清楚。
+
+我先用后序遍历（左右中）来计算树的高度。
+
+确定递归函数的参数和返回值：参数就是传入树的根节点，返回就返回这棵树的深度，所以返回值为int类型。
+代码如下：
+
+int getdepth(TreeNode* node)
+确定终止条件：如果为空节点的话，就返回0，表示高度为0。
+代码如下：
+
+if (node == NULL) return 0;
+确定单层递归的逻辑：先求它的左子树的深度，再求右子树的深度，最后取左右深度最大的数值 再+1 （加1是因为算上当前中间节点）就是目前节点为根节点的树的深度。
+代码如下：
+
+int leftdepth = getdepth(node->left);       // 左
+int rightdepth = getdepth(node->right);     // 右
+int depth = 1 + max(leftdepth, rightdepth); // 中
+return depth;
+所以整体c++代码如下：
+
+class Solution {
+public:
+    int getdepth(TreeNode* node) {
+        if (node == NULL) return 0;
+        int leftdepth = getdepth(node->left);       // 左
+        int rightdepth = getdepth(node->right);     // 右
+        int depth = 1 + max(leftdepth, rightdepth); // 中
+        return depth;
+    }
+    int maxDepth(TreeNode* root) {
+        return getdepth(root);
+    }
+};
+代码精简之后c++代码如下：
+
+class Solution {
+public:
+    int maxDepth(TreeNode* root) {
+        if (root == null) return 0;
+        return 1 + max(maxDepth(root->left), maxDepth(root->right));
+    }
+};
+
+精简之后的代码根本看不出是哪种遍历方式，也看不出递归三部曲的步骤，所以如果对二叉树的操作还不熟练，尽量不要直接照着精简代码来学。
+
+本题当然也可以使用前序，代码如下：(充分表现出求深度回溯的过程)
+
+class Solution {
+public:
+    int result;
+    void getdepth(TreeNode* node, int depth) {
+        result = depth > result ? depth : result; // 中
+
+        if (node->left == NULL && node->right == NULL) return ;
+
+        if (node->left) { // 左
+            depth++;    // 深度+1
+            getdepth(node->left, depth);
+            depth--;    // 回溯，深度-1
+        }
+        if (node->right) { // 右
+            depth++;    // 深度+1
+            getdepth(node->right, depth);
+            depth--;    // 回溯，深度-1
+        }
+        return ;
+    }
+    int maxDepth(TreeNode* root) {
+        result = 0;
+        if (root == NULL) return result;
+        getdepth(root, 1);
+        return result;
+    }
+};
+可以看出使用了前序（中左右）的遍历顺序，这才是真正求深度的逻辑！
+
+注意以上代码是为了把细节体现出来，简化一下代码如下：
+
+class Solution {
+public:
+    int result;
+    void getdepth(TreeNode* node, int depth) {
+        result = depth > result ? depth : result; // 中
+        if (node->left == NULL && node->right == NULL) return ;
+        if (node->left) { // 左
+            getdepth(node->left, depth + 1);
+        }
+        if (node->right) { // 右
+            getdepth(node->right, depth + 1);
+        }
+        return ;
+    }
+    int maxDepth(TreeNode* root) {
+        result = 0;
+        if (root == 0) return result;
+        getdepth(root, 1);
+        return result;
+    }
+};
+#迭代法
+使用迭代法的话，使用层序遍历是最为合适的，因为最大的深度就是二叉树的层数，和层序遍历的方式极其吻合。
+
+在二叉树中，一层一层的来遍历二叉树，记录一下遍历的层数就是二叉树的深度，如图所示：
+
+https://file1.kamacoder.com/i/algo/20200810193056585.png
+
+所以这道题的迭代法就是一道模板题，可以使用二叉树层序遍历的模板来解决的。
+
+如果对层序遍历还不清楚的话，可以看这篇：二叉树：层序遍历登场！(opens new window)
+
+c++代码如下：
+
+class Solution {
+public:
+    int maxDepth(TreeNode* root) {
+        if (root == NULL) return 0;
+        int depth = 0;
+        queue<TreeNode*> que;
+        que.push(root);
+        while(!que.empty()) {
+            int size = que.size();
+            depth++; // 记录深度
+            for (int i = 0; i < size; i++) {
+                TreeNode* node = que.front();
+                que.pop();
+                if (node->left) que.push(node->left);
+                if (node->right) que.push(node->right);
+            }
+        }
+        return depth;
+    }
+};
+那么我们可以顺便解决一下n叉树的最大深度问题
+
+#相关题目推荐
+#559.n叉树的最大深度
+力扣题目链接(https://leetcode.cn/problems/maximum-depth-of-n-ary-tree/)
+
+给定一个 n 叉树，找到其最大深度。
+
+最大深度是指从根节点到最远叶子节点的最长路径上的节点总数。
+
+例如，给定一个 3叉树 :
+
+https://file1.kamacoder.com/i/algo/2021020315313214.png
+
+我们应返回其最大深度，3。
+
+#思路
+依然可以提供递归法和迭代法，来解决这个问题，思路是和二叉树思路一样的，直接给出代码如下：
+
+#递归法
+c++代码：
+
+class Solution {
+public:
+    int maxDepth(Node* root) {
+        if (root == 0) return 0;
+        int depth = 0;
+        for (int i = 0; i < root->children.size(); i++) {
+            depth = max (depth, maxDepth(root->children[i]));
+        }
+        return depth + 1;
+    }
+};
+#迭代法
+依然是层序遍历，代码如下：
+
+class Solution {
+public:
+    int maxDepth(Node* root) {
+        queue<Node*> que;
+        if (root != NULL) que.push(root);
+        int depth = 0;
+        while (!que.empty()) {
+            int size = que.size();
+            depth++; // 记录深度
+            for (int i = 0; i < size; i++) {
+                Node* node = que.front();
+                que.pop();
+                for (int j = 0; j < node->children.size(); j++) {
+                    if (node->children[j]) que.push(node->children[j]);
+                }
+            }
+        }
+        return depth;
+    }
+};
+#其他语言版本
+#Java:
+104.二叉树的最大深度
+
+class Solution {
+    /**
+     * 递归法
+     */
+    public int maxDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        int leftDepth = maxDepth(root.left);
+        int rightDepth = maxDepth(root.right);
+        return Math.max(leftDepth, rightDepth) + 1;
+    }
+}
+class Solution {
+  /**
+   * 递归法(求深度法)
+   */
+    //定义最大深度
+    int maxnum = 0;
+
+    public int maxDepth(TreeNode root) {
+        ans(root,0);
+        return maxnum;
+    }
+    
+    //递归求解最大深度
+    void ans(TreeNode tr,int tmp){
+        if(tr==null) return;
+        tmp++;
+        maxnum = maxnum<tmp?tmp:maxnum;
+        ans(tr.left,tmp);
+        ans(tr.right,tmp);
+        tmp--;
+    }
+}
+class Solution {
+    /**
+     * 迭代法，使用层序遍历
+     */
+    public int maxDepth(TreeNode root) {
+        if(root == null) {
+            return 0;
+        }
+        Deque<TreeNode> deque = new LinkedList<>();
+        deque.offer(root);
+        int depth = 0;
+        while (!deque.isEmpty()) {
+            int size = deque.size();
+            depth++;
+            for (int i = 0; i < size; i++) {
+                TreeNode node = deque.poll();
+                if (node.left != null) {
+                    deque.offer(node.left);
+                }
+                if (node.right != null) {
+                    deque.offer(node.right);
+                }
+            }
+        }
+        return depth;
+    }
+}
+559.n叉树的最大深度
+
+class Solution {
+    /*递归法，后序遍历求root节点的高度*/
+    public int maxDepth(Node root) {
+        if (root == null) return 0;
+
+        int depth = 0;
+        if (root.children != null){
+            for (Node child : root.children){
+                depth = Math.max(depth, maxDepth(child));
+            }
+        }
+
+        return depth + 1; //中节点
+    }  
+}
+class Solution {
+    /**
+     * 迭代法，使用层序遍历
+     */
+    public int maxDepth(Node root) {
+        if (root == null)   return 0;
+        int depth = 0;
+        Queue<Node> que = new LinkedList<>();
+        que.offer(root);
+        while (!que.isEmpty())
+        {
+            depth ++;
+            int len = que.size();
+            while (len > 0)
+            {
+                Node node = que.poll();
+                for (int i = 0; i < node.children.size(); i++)
+                    if (node.children.get(i) != null) 
+                        que.offer(node.children.get(i));
+                len--;
+            }
+        }
+        return depth;
+    }
+}
+#Python :
+104.二叉树的最大深度
+
+递归法：
+
+class Solution:
+    def maxdepth(self, root: treenode) -> int:
+        return self.getdepth(root)
+        
+    def getdepth(self, node):
+        if not node:
+            return 0
+        leftheight = self.getdepth(node.left) #左
+        rightheight = self.getdepth(node.right) #右
+        height = 1 + max(leftheight, rightheight) #中
+        return height
+递归法：精简代码
+
+class Solution:
+    def maxdepth(self, root: treenode) -> int:
+        if not root:
+            return 0
+        return 1 + max(self.maxdepth(root.left), self.maxdepth(root.right))
+层序遍历迭代法：
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def maxDepth(self, root: TreeNode) -> int:
+        if not root:
+            return 0
+        
+        depth = 0
+        queue = collections.deque([root])
+        
+        while queue:
+            depth += 1
+            for _ in range(len(queue)):
+                node = queue.popleft()
+                if node.left:
+                    queue.append(node.left)
+                if node.right:
+                    queue.append(node.right)
+        
+        return depth
+
+559.n叉树的最大深度
+
+递归法：
+
+class Solution:
+    def maxDepth(self, root: 'Node') -> int:
+        if not root:
+            return 0
+        
+        max_depth = 1
+        
+        for child in root.children:
+            max_depth = max(max_depth, self.maxDepth(child) + 1)
+        
+        return max_depth
+迭代法：
+
+"""
+# Definition for a Node.
+class Node:
+    def __init__(self, val=None, children=None):
+        self.val = val
+        self.children = children
+"""
+
+class Solution:
+    def maxDepth(self, root: TreeNode) -> int:
+        if not root:
+            return 0
+        
+        depth = 0
+        queue = collections.deque([root])
+        
+        while queue:
+            depth += 1
+            for _ in range(len(queue)):
+                node = queue.popleft()
+                for child in node.children:
+                    queue.append(child)
+        
+        return depth
+
+使用栈
+
+"""
+# Definition for a Node.
+class Node:
+    def __init__(self, val=None, children=None):
+        self.val = val
+        self.children = children
+"""
+
+class Solution:
+    def maxDepth(self, root: 'Node') -> int:
+        if not root:
+            return 0
+        
+        max_depth = 0
+        
+        stack = [(root, 1)]
+        
+        while stack:
+            node, depth = stack.pop()
+            max_depth = max(max_depth, depth)
+            for child in node.children:
+                stack.append((child, depth + 1))
+        
+        return max_depth

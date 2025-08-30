@@ -1,0 +1,14 @@
+# 忽略大文件
+models/
+data/
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+# Git 和系统文件
+.git/
+.DS_Store

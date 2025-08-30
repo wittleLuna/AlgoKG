@@ -1,0 +1,262 @@
+{
+  "id": "AP_5a3e59e2",
+  "title": "爬楼梯（进阶版）",
+  "alternative_titles": [],
+  "platform": "kamacoder",
+  "url": "https://kamacoder.com/problempage.php?pid=1067",
+  "description": "n 是一个正整数。\n\n输入描述：输入共一行，包含两个正整数，分别表示n, m\n\n输出描述：输出一个整数，表示爬到楼顶的方法数。\n\n输入",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "动态规划",
+    "完全背包"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "递归式设计",
+    "状态转移",
+    "背包问题"
+  ],
+  "difficulty": null,
+  "solution_approach": "将爬楼梯转化为一个完全背包问题求解，其中每次可选的台阶数(1到m)看作是物品，楼顶为背包容量。通过动态规划的方法构建dp数组，计算出到达每层楼的不同方法总数。",
+  "key_insights": [
+    {
+      "content": "将爬楼梯问题抽象成一个完全背包问题，每个台阶的选择相当于背包中的物品，而楼梯总数则相当于背包的最大容量。"
+    },
+    {
+      "content": "如果已知到达第i-j级阶梯的所有方法数dp[i-j]，则可以通过累加这些方法数来更新到达当前级阶梯i的方法数dp[i]。"
+    },
+    {
+      "content": "初始化dp[0]=1表示从起点出发（0级）的方式只有1种，这为后续动态规划过程提供了基础；其余dp值初始化为0以确保不影响最终结果。"
+    },
+    {
+      "content": "遍历顺序上，先遍历背包容量再遍历物品选择，保证了排列组合方式的多样性被正确统计。"
+    },
+    {
+      "content": "此问题可以有效考察候选人对于动态规划及背包问题的理解深度。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "之前讲这道题目的时候，因为还没有讲背包问题，所以就只是讲了一下爬楼梯最直接的动规方法（斐波那契）。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    while (cin >> n >> m) {\n        vector<int> dp(n + 1, 0);\n        dp[0] = 1;\n        for (int i = 1; i <= n; i++) { \n            for (int j = 1; j <= m; j++) { \n                if (i - j >= 0) dp[i] += dp[i - j];\n            }\n        }\n        cout << dp[n] << endl;\n    }\n}",
+          "description": "C++实现爬楼梯问题"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\nclass climbStairs{\n    public static void main(String [] args){\n        Scanner sc = new Scanner(System.in);\n        int m, n;\n        while (sc.hasNextInt()) {\n            n = sc.nextInt();\n            m = sc.nextInt();\n            int[] dp = new int[n + 1];\n            dp[0] = 1;\n            for (int j = 1; j <= n; j++) {\n                for (int i = 1; i <= m; i++) {\n                    if (j - i >= 0) dp[j] += dp[j - i];\n                }\n            }\n            System.out.println(dp[n]);\n        }\n    }\n}",
+          "description": "Java实现爬楼梯问题"
+        },
+        {
+          "language": "python",
+          "code": "def climbing_stairs(n,m):\n    dp = [0]*(n+1)\n    dp[0] = 1\n    for j in range(1,n+1):\n        for i in range(1,m+1):\n            if j>=i:\n                dp[j] += dp[j-i]\n    return dp[n]\nif __name__ == '__main__':\n    n,m = list(map(int,input().split(' ')))\n    print(climbing_stairs(n,m))",
+          "description": "Python3实现爬楼梯问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    while (cin >> n >> m) {\n        vector<int> dp(n + 1, 0);\n        dp[0] = 1;\n        for (int i = 1; i <= n; i++) { // 遍历背包\n            for (int j = 1; j <= m; j++) { // 遍历物品\n                if (i - j >= 0) dp[i] += dp[i - j];\n            }\n        }\n        cout << dp[n] << endl;\n    }\n}",
+          "description": "使用C++实现的爬楼梯问题，通过动态规划方法解决。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\nclass climbStairs{\n    public static void main(String [] args){\n        Scanner sc = new Scanner(System.in);\n        int m, n;\n        while (sc.hasNextInt()) {\n            n = sc.nextInt();\n            m = sc.nextInt();\n            int[] dp = new int[n + 1];\n            dp[0] = 1;\n            for (int j = 1; j <= n; j++) {\n                for (int i = 1; i <= m; i++) {\n                    if (j - i >= 0) dp[j] += dp[j - i];\n                }\n            }\n            System.out.println(dp[n]);\n        }\n    }\n}",
+          "description": "Java版本的爬楼梯解决方案，同样采用了动态规划技术来计算到达楼顶的不同方法数。"
+        },
+        {
+          "language": "python",
+          "code": "def climbing_stairs(n,m):\n    dp = [0]*(n+1)\n    dp[0] = 1\n    for j in range(1,n+1):\n        for i in range(1,m+1):\n            if j>=i:\n                dp[j] += dp[j-i]\n    return dp[n]\n\nif __name__ == '__main__':\n    n,m = list(map(int,input().split(' ')))\n    print(climbing_stairs(n,m))",
+          "description": "Python语言实现的爬楼梯算法，利用了列表和循环结构来存储并计算可能的方法总数。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    while (cin >> n >> m) {\n        vector<int> dp(n + 1, 0);\n        dp[0] = 1;\n        for (int i = 1; i <= n; i++) { // 遍历背包\n            for (int j = 1; j <= m; j++) { // 遍历物品\n                if (i - j >= 0) dp[i] += dp[i - j];\n            }\n        }\n        cout << dp[n] << endl;\n    }\n}",
+          "description": "C++代码实现爬楼梯问题"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\nclass climbStairs{\n    public static void main(String [] args){\n        Scanner sc = new Scanner(System.in);\n        int m, n;\n        while (sc.hasNextInt()) {\n            n = sc.nextInt();\n            m = sc.nextInt();\n            int[] dp = new int[n + 1];\n            dp[0] = 1;\n            for (int j = 1; j <= n; j++) {\n                for (int i = 1; i <= m; i++) {\n                    if (j - i >= 0) dp[j] += dp[j - i];\n                }\n            }\n            System.out.println(dp[n]);\n        }\n    }\n}",
+          "description": "Java代码实现爬楼梯问题"
+        },
+        {
+          "language": "python",
+          "code": "def climbing_stairs(n,m):\n    dp = [0]*(n+1)\n    dp[0] = 1\n    for j in range(1,n+1):\n        for i in range(1,m+1):\n            if j>=i:\n                dp[j] += dp[j-i]\n    return dp[n]\nif __name__ == '__main__':\n    n,m = list(map(int,input().split(' ')))\n    print(climbing_stairs(n,m))",
+          "description": "Python代码实现爬楼梯问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "本题看起来是一道简单题目，稍稍进阶一下其实就是一个完全背包！",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    while (cin >> n >> m) {\n        vector<int> dp(n + 1, 0);\n        dp[0] = 1;\n        for (int i = 1; i <= n; i++) { // 遍历背包\n            for (int j = 1; j <= m; j++) { // 遍历物品\n                if (i - j >= 0) dp[i] += dp[i - j];\n            }\n        }\n        cout << dp[n] << endl;\n    }\n}",
+          "description": "C++实现的爬楼梯问题"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\nclass climbStairs{\n    public static void main(String [] args){\n        Scanner sc = new Scanner(System.in);\n        int m, n;\n        while (sc.hasNextInt()) {\n            n = sc.nextInt();\n            m = sc.nextInt();\n\n            int[] dp = new int[n + 1];\n            dp[0] = 1;\n            for (int j = 1; j <= n; j++) {\n                for (int i = 1; i <= m; i++) {\n                    if (j - i >= 0) dp[j] += dp[j - i];\n                }\n            }\n            System.out.println(dp[n]);\n        }\n    }\n}",
+          "description": "Java实现的爬楼梯问题"
+        },
+        {
+          "language": "python",
+          "code": "def climbing_stairs(n,m):\n    dp = [0]*(n+1)\n    dp[0] = 1\n    for j in range(1,n+1):\n        for i in range(1,m+1):\n            if j>=i:\n                dp[j] += dp[j-i]\n    return dp[n]\nif __name__ == '__main__':\n    n,m = list(map(int,input().split(' ')))\n    print(climbing_stairs(n,m))",
+          "description": "Python3实现的爬楼梯问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    while (cin >> n >> m) {\n        vector<int> dp(n + 1, 0);\n        dp[0] = 1;\n        for (int i = 1; i <= n; i++) { // 遍历背包\n            for (int j = 1; j <= m; j++) { // 遍历物品\n                if (i - j >= 0) dp[i] += dp[i - j];\n            }\n        }\n        cout << dp[n] << endl;\n    }\n}",
+          "description": "C++版本的爬楼梯问题解决方案"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\nclass climbStairs{\n    public static void main(String [] args){\n        Scanner sc = new Scanner(System.in);\n        int m, n;\n        while (sc.hasNextInt()) {\n            n = sc.nextInt();\n            m = sc.nextInt();\n            int[] dp = new int[n + 1];\n            dp[0] = 1;\n            for (int j = 1; j <= n; j++) {\n                for (int i = 1; i <= m; i++) {\n                    if (j - i >= 0) dp[j] += dp[j - i];\n                }\n            }\n            System.out.println(dp[n]);\n        }\n    }\n}",
+          "description": "Java版本的爬楼梯问题解决方案"
+        },
+        {
+          "language": "python",
+          "code": "def climbing_stairs(n,m):\n    dp = [0]*(n+1)\n    dp[0] = 1 \n    for j in range(1,n+1):\n        for i in range(1,m+1):\n            if j>=i:\n                dp[j] += dp[j-i]\n    return dp[n]\n\nif __name__ == '__main__':\n    n,m = list(map(int,input().split(' ')))\n    print(climbing_stairs(n,m))",
+          "description": "Python版本的爬楼梯问题解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java:",
+      "text": "import java.util.Scanner;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;class climbStairs{public static void main(String [] args){Scanner sc = new Scanner(System.in);int m, n;while (sc.hasNextInt()) {n = sc.nextInt();m = sc.nextInt();int[] dp = new int[n + 1];dp[0] = 1;for (int j = 1; j <= n; j++) {for (int i = 1; i <= m; i++) {if (j - i >= 0) dp[j] += dp[j - i];}}System.out.println(dp[n]);}}}",
+          "description": "Java版本爬楼梯问题解决方案"
+        },
+        {
+          "language": "python",
+          "code": "def climbing_stairs(n,m):dp = [0]*(n+1)dp[0] = 1for j in range(1,n+1):for i in range(1,m+1):if j>=i:dp[j] += dp[j-i]return dp[n]if __name__ == '__main__':n,m = list(map(int,input().split(' ')))print(climbing_stairs(n,m))",
+          "description": "Python版本爬楼梯问题解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python3：",
+      "text": "def climbing_stairs(n,m):",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    while (cin >> n >> m) {\n        vector<int> dp(n + 1, 0);\n        dp[0] = 1;\n        for (int i = 1; i <= n; i++) { // 遍历背包\n            for (int j = 1; j <= m; j++) { // 遍历物品\n                if (i - j >= 0) dp[i] += dp[i - j];\n            }\n        }\n        cout << dp[n] << endl;\n    }\n}",
+          "description": "C++版本的爬楼梯问题解决方案"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\nclass climbStairs{\n    public static void main(String [] args){\n        Scanner sc = new Scanner(System.in);\n        int m, n;\n        while (sc.hasNextInt()) {\n            n = sc.nextInt();\n            m = sc.nextInt();\n            int[] dp = new int[n + 1];\n            dp[0] = 1;\n            for (int j = 1; j <= n; j++) {\n                for (int i = 1; i <= m; i++) {\n                    if (j - i >= 0) dp[j] += dp[j - i];\n                }\n            }\n            System.out.println(dp[n]);\n        }\n    }\n}",
+          "description": "Java版本的爬楼梯问题解决方案"
+        },
+        {
+          "language": "python",
+          "code": "def climbing_stairs(n,m):\n    dp = [0]*(n+1) # 背包总容量\n    dp[0] = 1 \n    for j in range(1,n+1):\n        for i in range(1,m+1):\n            if j>=i:\n                dp[j] += dp[j-i]\n    return dp[n]\nif __name__ == '__main__':\n    n,m = list(map(int,input().split(' ')))\n    print(climbing_stairs(n,m))",
+          "description": "Python3版本的爬楼梯问题解决方案"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n * m)",
+    "space_complexity": "O(n)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    while (cin >> n >> m) {\n        vector<int> dp(n + 1, 0);\n        dp[0] = 1;\n        for (int i = 1; i <= n; i++) { \n            for (int j = 1; j <= m; j++) { \n                if (i - j >= 0) dp[i] += dp[i - j];\n            }\n        }\n        cout << dp[n] << endl;\n    }\n}",
+      "description": "使用C++解决爬楼梯问题，通过动态规划计算到达楼顶的不同方法数。"
+    },
+    {
+      "language": "java",
+      "code": "import java.util.Scanner;\nclass climbStairs{\n    public static void main(String [] args){\n        Scanner sc = new Scanner(System.in);\n        int m, n;\n        while (sc.hasNextInt()) {\n            n = sc.nextInt();\n            m = sc.nextInt();\n\n            int[] dp = new int[n + 1];\n            dp[0] = 1;\n            for (int j = 1; j <= n; j++) {\n                for (int i = 1; i <= m; i++) {\n                    if (j - i >= 0) dp[j] += dp[j - i];\n                }\n            }\n            System.out.println(dp[n]);\n        }\n    }\n}",
+      "description": "使用Java实现的爬楼梯解决方案，采用动态规划策略来找出所有可能的方法总数。"
+    },
+    {
+      "language": "python",
+      "code": "def climbing_stairs(n,m):\n    dp = [0]*(n+1)\n    dp[0] = 1 \n    for j in range(1,n+1):\n        for i in range(1,m+1):\n            if j>=i:\n                dp[j] += dp[j-i]\n    return dp[n]\n\nif __name__ == '__main__':\n    n,m = list(map(int,input().split(' ')))\n    print(climbing_stairs(n,m))",
+      "description": "Python版本的爬楼梯算法实现，利用了动态规划的思想来计算出到达指定台阶的所有不同方式数量。"
+    }
+  ],
+  "common_mistakes": [
+    "没有正确理解题目要求的排列而非组合问题，导致循环顺序错误。",
+    "忽略了当n=0时的情况处理，直接设所有dp[n]为0而不是根据实际情况设置dp[0]=1。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://kamacoder.com/problempage.php?pid=1067",
+      "description": "图片链接: https://kamacoder.com/problempage.php?pid=1067",
+      "context": "该图片链接指向了卡码网上关于“爬楼梯（进阶版）”问题的具体页面，提供了题目详情及可能的解决方法。"
+    },
+    {
+      "type": "image",
+      "content": "https://programmercarl.com/0070.%E7%88%AC%E6%A5%BC%E6%A2%AF.html",
+      "description": "图片链接: https://programmercarl.com/0070.%E7%88%AC%E6%A5%BC%E6%A2%AF.html",
+      "context": "该图片展示了爬楼梯问题的具体情境，帮助理解当有n个台阶且每次可以爬1到m个台阶时，到达楼顶的不同方法数。"
+    },
+    {
+      "type": "image",
+      "content": "https://programmercarl.com/0377.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8C%E2%85%A3.html",
+      "description": "图片链接: https://programmercarl.com/0377.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8C%E2%85%A3.html",
+      "context": "该图片链接指向了一个关于组合总和问题的详细解释页面，与文中提到的“动态规划：377. 组合总和 Ⅳ”直接相关，用于进一步说明如何利用动态规划解决楼梯攀爬问题的方法。"
+    },
+    {
+      "type": "image",
+      "content": "https://programmercarl.com/0494.%E7%9B%AE%E6%A0%87%E5%92%8C.html",
+      "description": "图片链接: https://programmercarl.com/0494.%E7%9B%AE%E6%A0%87%E5%92%8C.html",
+      "context": "该图片链接指向了对动态规划题目“494.目标和”的详细解析，用以辅助说明如何通过类似的方法解决当前讨论的问题。"
+    },
+    {
+      "type": "image",
+      "content": "https://programmercarl.com/0518.%E9%9B%B6%E9%92%B1%E5%85%91%E6%8D%A2II.html",
+      "description": "图片链接: https://programmercarl.com/0518.%E9%9B%B6%E9%92%B1%E5%85%91%E6%8D%A2II.html",
+      "context": "该图片链接指向了关于动态规划解决零钱兑换问题的详细解析，用以辅助说明文中提到的递推公式的应用方式。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\动态规划\\爬楼梯（进阶版）.txt",
+  "extracted_at": "2025-07-20T21:54:18.898048",
+  "raw_content": "爬楼梯（进阶版）\n卡码网：57. 爬楼梯(https://kamacoder.com/problempage.php?pid=1067)\n\n假设你正在爬楼梯。需要 n 阶你才能到达楼顶。\n\n每次你可以爬至多m (1 <= m < n)个台阶。你有多少种不同的方法可以爬到楼顶呢？\n\n注意：给定 n 是一个正整数。\n\n输入描述：输入共一行，包含两个正整数，分别表示n, m\n\n输出描述：输出一个整数，表示爬到楼顶的方法数。\n\n输入示例：3 2\n\n输出示例：3\n\n提示：\n\n当 m = 2，n = 3 时，n = 3 这表示一共有三个台阶，m = 2 代表你每次可以爬一个台阶或者两个台阶。\n\n此时你有三种方法可以爬到楼顶。\n\n1 阶 + 1 阶 + 1 阶段\n1 阶 + 2 阶\n2 阶 + 1 阶\n#思路\n之前讲这道题目的时候，因为还没有讲背包问题，所以就只是讲了一下爬楼梯最直接的动规方法（斐波那契）。\n\n这次终于讲到了背包问题，我选择带录友们再爬一次楼梯！\n\n这道题目 我们在动态规划：爬楼梯 (https://programmercarl.com/0070.%E7%88%AC%E6%A5%BC%E6%A2%AF.html)中已经讲过一次了，这次我又给本题加点料，力扣上没有原题，所以可以在卡码网57. 爬楼梯 (https://kamacoder.com/problempage.php?pid=1067)上来刷这道题目。\n\n我们之前做的 爬楼梯 是只能至多爬两个台阶。\n\n这次改为：一步一个台阶，两个台阶，三个台阶，.......，直到 m个台阶。问有多少种不同的方法可以爬到楼顶呢？\n\n这又有难度了，这其实是一个完全背包问题。\n\n1阶，2阶，.... m阶就是物品，楼顶就是背包。\n\n每一阶可以重复使用，例如跳了1阶，还可以继续跳1阶。\n\n问跳到楼顶有几种方法其实就是问装满背包有几种方法。\n\n此时大家应该发现这就是一个完全背包问题了！\n\n和昨天的题目动态规划：377. 组合总和 Ⅳ (https://programmercarl.com/0377.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8C%E2%85%A3.html)基本就是一道题了。\n\n动规五部曲分析如下：\n\n确定dp数组以及下标的含义\ndp[i]：爬到有i个台阶的楼顶，有dp[i]种方法。\n\n确定递推公式\n在动态规划：494.目标和 (https://programmercarl.com/0494.%E7%9B%AE%E6%A0%87%E5%92%8C.html)、 动态规划：518.零钱兑换II (https://programmercarl.com/0518.%E9%9B%B6%E9%92%B1%E5%85%91%E6%8D%A2II.html)、动态规划：377. 组合总和 Ⅳ (https://programmercarl.com/0377.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8C%E2%85%A3.html)中我们都讲过了，求装满背包有几种方法，递推公式一般都是dp[i] += dp[i - nums[j]];\n\n本题呢，dp[i]有几种来源，dp[i - 1]，dp[i - 2]，dp[i - 3] 等等，即：dp[i - j]\n\n那么递推公式为：dp[i] += dp[i - j]\n\ndp数组如何初始化\n既然递归公式是 dp[i] += dp[i - j]，那么dp[0] 一定为1，dp[0]是递归中一切数值的基础所在，如果dp[0]是0的话，其他数值都是0了。\n\n下标非0的dp[i]初始化为0，因为dp[i]是靠dp[i-j]累计上来的，dp[i]本身为0这样才不会影响结果\n\n确定遍历顺序\n这是背包里求排列问题，即：1、2 步 和 2、1 步都是上三个台阶，但是这两种方法不一样！\n\n所以需将target放在外循环，将nums放在内循环。\n\n每一步可以走多次，这是完全背包，内循环需要从前向后遍历。\n\n举例来推导dp数组\n介于本题和动态规划：377. 组合总和 Ⅳ (https://programmercarl.com/0377.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8C%E2%85%A3.html)几乎是一样的，这里我就不再重复举例了。\n\n以上分析完毕，C++代码如下：\n\n#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, m;\n    while (cin >> n >> m) {\n        vector<int> dp(n + 1, 0);\n        dp[0] = 1;\n        for (int i = 1; i <= n; i++) { // 遍历背包\n            for (int j = 1; j <= m; j++) { // 遍历物品\n                if (i - j >= 0) dp[i] += dp[i - j];\n            }\n        }\n        cout << dp[n] << endl;\n    }\n}\n时间复杂度: O(n * m)\n空间复杂度: O(n)\n代码中m表示最多可以爬m个台阶，代码中把m改成2就是 力扣：70.爬楼梯的解题思路。\n\n当然注意 力扣是 核心代码模式，卡码网是ACM模式\n\n#总结\n本题看起来是一道简单题目，稍稍进阶一下其实就是一个完全背包！\n\n如果我来面试的话，我就会先给候选人出一个 本题原题，看其表现，如果顺利写出来，进而在要求每次可以爬[1 - m]个台阶应该怎么写。\n\n顺便再考察一下两个for循环的嵌套顺序，为什么target放外面，nums放里面。\n\n这就能考察对背包问题本质的掌握程度，候选人是不是刷题背公式，一眼就看出来了。\n\n这么一连套下来，如果候选人都能答出来，相信任何一位面试官都是非常满意的。\n\n本题代码不长，题目也很普通，但稍稍一进阶就可以考察完全背包，而且题目进阶的内容在leetcode上并没有原题，一定程度上就可以排除掉刷题党了，简直是面试题目的绝佳选择！\n\n#其他语言版本\n#Java:\nimport java.util.Scanner;\nclass climbStairs{\n    public static void main(String [] args){\n        Scanner sc = new Scanner(System.in);\n        int m, n;\n        while (sc.hasNextInt()) {\n            // 从键盘输入参数，中间用空格隔开\n            n = sc.nextInt();\n            m = sc.nextInt();\n\n            // 求排列问题，先遍历背包再遍历物品\n            int[] dp = new int[n + 1];\n            dp[0] = 1;\n            for (int j = 1; j <= n; j++) {\n                for (int i = 1; i <= m; i++) {\n                    if (j - i >= 0) dp[j] += dp[j - i];\n                }\n            }\n            System.out.println(dp[n]);\n        }\n    }\n}\n#Python3：\ndef climbing_stairs(n,m):\n    dp = [0]*(n+1) # 背包总容量\n    dp[0] = 1 \n    # 排列题，注意循环顺序，背包在外物品在内\n    for j in range(1,n+1):\n        for i in range(1,m+1):\n            if j>=i:\n                dp[j] += dp[j-i] # 这里i就是重量而非index\n    return dp[n]\n\nif __name__ == '__main__':\n    n,m = list(map(int,input().split(' ')))\n    print(climbing_stairs(n,m))"
+}

@@ -1,0 +1,330 @@
+{
+  "id": "AP_ca73d1d1",
+  "title": "链表相交",
+  "alternative_titles": [
+    "160.链表相交"
+  ],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/intersection-of-two-linked-lists-lcci/",
+  "description": "两个单链表的头节点 headA 和 headB ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 null 。",
+  "examples": [
+    {
+      "input": "见图",
+      "output": "见图",
+      "explanation": null,
+      "image": "https://file1.kamacoder.com/i/algo/20211219221723.png"
+    },
+    {
+      "input": "见图",
+      "output": "见图",
+      "explanation": null,
+      "image": "https://file1.kamacoder.com/i/algo/20211219221749.png"
+    },
+    {
+      "input": "见图",
+      "output": "见图",
+      "explanation": null,
+      "image": "https://file1.kamacoder.com/i/algo/20211219221812.png"
+    }
+  ],
+  "constraints": [],
+  "algorithm_tags": [
+    "双指针"
+  ],
+  "data_structure_tags": [
+    "链表"
+  ],
+  "technique_tags": [
+    "迭代",
+    "相对定位"
+  ],
+  "difficulty": null,
+  "solution_approach": "首先计算两个链表的长度，然后将较长链表的指针移动到与较短链表末尾对齐的位置。之后同时遍历两个链表直至找到相同的节点（即两链表的交点），如果未找到则返回null。",
+  "key_insights": [
+    {
+      "content": "通过先让长链表走完长度差值的距离，使得两个链表在剩余部分上长度相同，从而可以同步遍历直到找到交点或结束。"
+    },
+    {
+      "content": "题目要求找到的是两个链表开始相交的第一个节点，而不是数值相等的节点。因此，比较时关注的是节点地址是否相同。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "简单来说，就是求两个链表交点节点的指针。 这里同学们要注意，交点不是数值相等，而是指针相等。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {ListNode* curA = headA;ListNode* curB = headB;int lenA = 0, lenB = 0;while (curA != NULL) {lenA++;curA = curA->next;}while (curB != NULL) {lenB++;curB = curB->next;}curA = headA;curB = headB;if (lenB > lenA) {swap (lenA, lenB);swap (curA, curB);}int gap = lenA - lenB;while (gap--) {curA = curA->next;}while (curA != NULL) {if (curA == curB) {return curA;}curA = curA->next;curB = curB->next;}return NULL;}};",
+          "description": "C++ 版本的解决方案，首先计算两个链表的长度，然后让较长链表的指针先移动到与较短链表对齐的位置，最后同步移动两个指针直到找到交点或遍历结束。"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution {public ListNode getIntersectionNode(ListNode headA, ListNode headB) {ListNode curA = headA;ListNode curB = headB;int lenA = 0, lenB = 0;while (curA != null) {lenA++;curA = curA.next;}while (curB != null) {lenB++;curB = curB.next;}curA = headA;curB = headB;if (lenB > lenA) {int tmpLen = lenA;lenA = lenB;lenB = tmpLen;ListNode tmpNode = curA;curA = curB;curB = tmpNode;}int gap = lenA - lenB;while (gap-- > 0) {curA = curA.next;}while (curA != null) {if (curA == curB) {return curA;}curA = curA.next;curB = curB.next;}return null;}}",
+          "description": "Java 版本一的解决方案，逻辑与C++版本类似，通过先行调整长链表的起始位置来实现两链表同步移动以寻找交点。"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution {public ListNode getIntersectionNode(ListNode headA, ListNode headB) {ListNode p1 = headA, p2 = headB;while (p1 != p2) {if (p1 == null) p1 = headB;else            p1 = p1.next;if (p2 == null) p2 = headA;else            p2 = p2.next;}return p1;}}",
+          "description": "Java 版本二的解决方案，采用合并链表的方式实现同步移动，当一个链表到达末尾时转而遍历另一个链表，直到找到交点。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:lenA, lenB = 0, 0cur = headAwhile cur:         # 求链表A的长度cur = cur.nextlenA += 1cur = headB while cur:         # 求链表B的长度cur = cur.nextlenB += 1curA, curB = headA, headBif lenA > lenB:     # 让curB为最长链表的头，lenB为其长度curA, curB = curB, curAlenA, lenB = lenB, lenAfor _ in range(lenB - lenA):  # 让curA和curB在同一起点上（末尾位置对齐）curB = curB.nextwhile curA:         #  遍历curA 和 curB，遇到相同则直接返回if curA == curB:return curAelsecurA = curA.nextcurB = curB.nextreturn None",
+          "description": "Python 版本一的解决方案，通过预先计算链表长度并调整指针位置来查找交点。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:lenA = self.getLength(headA)lenB = self.getLength(headB)if lenA > lenB:headA = self.moveForward(headA, lenA - lenB)else:headB = self.moveForward(headB, lenB - lenA)while headA and headB:if headA == headB:return headAheadA = headA.nextheadB = headB.nexreturn Nonedef getLength(self, head: ListNode) -> int:length = 0while head:length += 1head = head.nextreturn lengthdef moveForward(self, head: ListNode, steps: int) -> ListNode:while steps > 0:head = head.nextsteps -= 1return head",
+          "description": "Python 版本二的解决方案，通过封装获取链表长度和前移节点的方法来提高代码复用性，并实现两链表同步移动以找交点。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:dis = self.getLength(headA) - self.getLength(headB)if dis > 0:headA = self.moveForward(headA, dis)else:headB = self.moveForward(headB, abs(dis))while headA and headB:if headA == headB:return headAheadA = headA.nextheadB = headB.nexreturn Nonedef getLength(self, head: ListNode) -> int:length = 0while head:length += 1head = head.nextreturn lengthdef moveForward(self, head: ListNode, steps: int) -> ListNode:while steps > 0:head = head.nextsteps -= 1return head",
+          "description": "Python 版本三的解决方案，进一步简化了版本二的实现，在保持功能不变的前提下使代码更加紧凑。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:if not headA or not headB:return NonpointerA = headApointerB = headBwhile pointerA != pointerB:pointerA = pointerA.next if pointerA else headBpointerB = pointerB.next if pointerB else headAreturn pointerA",
+          "description": "Python 版本四的解决方案，利用等比例法思想，通过不断交换链表头部直至两指针相遇来找出交点。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {\n        ListNode* curA = headA;\n        ListNode* curB = headB;\n        int lenA = 0, lenB = 0;\n        while (curA != NULL) { \n            lenA++;\n            curA = curA->next;\n        }\n        while (curB != NULL) { \n            lenB++;\n            curB = curB->next;\n        }\n        curA = headA;\n        curB = headB;\n        if (lenB > lenA) {\n            swap (lenA, lenB);\n            swap (curA, curB);\n        }\n        int gap = lenA - lenB;\n        while (gap--) {\n            curA = curA->next;\n        }\n        while (curA != NULL) {\n            if (curA == curB) {\n                return curA;\n            }\n            curA = curA->next;\n            curB = curB->next;\n        }\n        return NULL;\n    }\n};",
+          "description": "C++版本，通过计算两个链表的长度差来同步移动指针找到交点"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution {\n    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {\n        ListNode curA = headA;\n        ListNode curB = headB;\n        int lenA = 0, lenB = 0;\n        while (curA != null) { \n            lenA++;\n            curA = curA.next;\n        }\n        while (curB != null) { \n            lenB++;\n            curB = curB.next;\n        }\n        curA = headA;\n        curB = headB;\n        if (lenB > lenA) {\n            int tmpLen = lenA;\n            lenA = lenB;\n            lenB = tmpLen;\n            ListNode tmpNode = curA;\n            curA = curB;\n            curB = tmpNode;\n        }\n        int gap = lenA - lenB;\n        while (gap-- > 0) {\n            curA = curA.next;\n        }\n        while (curA != null) {\n            if (curA == curB) {\n                return curA;\n            }\n            curA = curA.next;\n            curB = curB.next;\n        }\n        return null;\n    }\n}",
+          "description": "Java版本一，先行移动长链表实现同步移动以找到交点"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution {\n    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {\n        ListNode p1 = headA, p2 = headB;\n        while (p1 != p2) {\n            if (p1 == null) p1 = headB;\n            else p1 = p1.next;\n            if (p2 == null) p2 = headA;\n            else p2 = p2.next;\n        }\n        return p1;\n    }\n}",
+          "description": "Java版本二，合并链表实现同步移动以找到交点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:\n        lenA, lenB = 0, 0\n        cur = headA\n        while cur:         \n            cur = cur.next \n            lenA += 1\n        cur = headB \n        while cur:         \n            cur = cur.next \n            lenB += 1\n        curA, curB = headA, headB\n        if lenA > lenB:     \n            curA, curB = curB, curA\n            lenA, lenB = lenB, lenA \n        for _ in range(lenB - lenA):  \n            curB = curB.next \n        while curA:         \n            if curA == curB:\n                return curA\n            else:\n                curA = curA.next \n                curB = curB.next\n        return None",
+          "description": "Python版本一，求长度后同时出发寻找交点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:\n        lenA = self.getLength(headA)\n        lenB = self.getLength(headB)\n        if lenA > lenB:\n            headA = self.moveForward(headA, lenA - lenB)\n        else:\n            headB = self.moveForward(headB, lenB - lenA)\n        while headA and headB:\n            if headA == headB:\n                return headA\n            headA = headA.next\n            headB = headB.next\n        return None\n    def getLength(self, head: ListNode) -> int:\n        length = 0\n        while head:\n            length += 1\n            head = head.next\n        return length\n    def moveForward(self, head: ListNode, steps: int) -> ListNode:\n        while steps > 0:\n            head = head.next\n            steps -= 1\n        return head",
+          "description": "Python版本二，代码复用方式求长度并同步移动指针寻找交点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:\n        dis = self.getLength(headA) - self.getLength(headB)\n        if dis > 0:\n            headA = self.moveForward(headA, dis)\n        else:\n            headB = self.moveForward(headB, abs(dis))\n        while headA and headB:\n            if headA == headB:\n                return headA\n            headA = headA.next\n            headB = headB.next\n        return None\n    def getLength(self, head: ListNode) -> int:\n        length = 0\n        while head:\n            length += 1\n            head = head.next\n        return length\n    def moveForward(self, head: ListNode, steps: int) -> ListNode:\n        while steps > 0:\n            head = head.next\n            steps -= 1\n        return head",
+          "description": "Python版本三，进一步精简后的代码复用方式求长度并同步移动指针寻找交点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:\n        if not headA or not headB:\n            return None\n        pointerA = headA\n        pointerB = headB\n        while pointerA != pointerB:\n            pointerA = pointerA.next if pointerA else headB\n            pointerB = pointerB.next if pointerB else headA\n        return pointerA",
+          "description": "Python版本四，等比例法同步移动指针寻找交点"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "(版本一)先行移动长链表实现同步移动",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {ListNode* curA = headA;ListNode* curB = headB;int lenA = 0, lenB = 0;while (curA != NULL) {lenA++;curA = curA->next;}while (curB != NULL) {lenB++;curB = curB->next;}curA = headA;curB = headB;if (lenB > lenA) {swap (lenA, lenB);swap (curA, curB);}int gap = lenA - lenB;while (gap--) {curA = curA->next;}while (curA != NULL) {if (curA == curB) {return curA;}curA = curA->next;curB = curB->next;}return NULL;}};",
+          "description": "C++实现：先行移动长链表实现同步移动"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution {public ListNode getIntersectionNode(ListNode headA, ListNode headB) {ListNode curA = headA;ListNode curB = headB;int lenA = 0, lenB = 0;while (curA != null) {lenA++;curA = curA.next;}while (curB != null) {lenB++;curB = curB.next;}curA = headA;curB = headB;if (lenB > lenA) {int tmpLen = lenA;lenA = lenB;lenB = tmpLen;ListNode tmpNode = curA;curA = curB;curB = tmpNode;}int gap = lenA - lenB;while (gap-- > 0) {curA = curA.next;}while (curA != null) {if (curA == curB) {return curA;}curA = curA.next;curB = curB.next;}return null;}}",
+          "description": "Java实现：先行移动长链表实现同步移动"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution {public ListNode getIntersectionNode(ListNode headA, ListNode headB) {ListNode p1 = headA, p2 = headB;while (p1 != p2) {if (p1 == null) p1 = headB;else p1 = p1.next;if (p2 == null) p2 = headA;else p2 = p2.next;}return p1;}}",
+          "description": "Java实现：合并链表实现同步移动"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode: lenA, lenB = 0, 0 cur = headA while cur: cur = cur.next lenA += 1 cur = headB while cur: cur = cur.next lenB += 1 curA, curB = headA, headB if lenA > lenB: curA, curB = curB, curA lenA, lenB = lenB, lenA for _ in range(lenB - lenA): curB = curB.next while curA: if curA == curB: return curA else: curA = curA.next curB = curB.next return None",
+          "description": "Python实现：求长度，同时出发"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode: lenA = self.getLength(headA) lenB = self.getLength(headB) if lenA > lenB: headA = self.moveForward(headA, lenA - lenB) else: headB = self.moveForward(headB, lenB - lenA) while headA and headB: if headA == headB: return headA headA = headA.next headB = headB.next return None def getLength(self, head: ListNode) -> int: length = 0 while head: length += 1 head = head.next return length def moveForward(self, head: ListNode, steps: int) -> ListNode: while steps > 0: head = head.next steps -= 1 return head",
+          "description": "Python实现：求长度，同时出发（代码复用）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode: dis = self.getLength(headA) - self.getLength(headB) if dis > 0: headA = self.moveForward(headA, dis) else: headB = self.moveForward(headB, abs(dis)) while headA and headB: if headA == headB: return headA headA = headA.next headB = headB.next return None def getLength(self, head: ListNode) -> int: length = 0 while head: length += 1 head = head.next return length def moveForward(self, head: ListNode, steps: int) -> ListNode: while steps > 0: head = head.next steps -= 1 return head",
+          "description": "Python实现：求长度，同时出发（代码复用 + 精简）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode: if not headA or not headB: return None pointerA = headA pointerB = headB while pointerA != pointerB: pointerA = pointerA.next if pointerA else headB pointerB = pointerB.next if pointerB else headA return pointerA",
+          "description": "Python实现：等比例法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "（版本一）求长度，同时出发",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {\n        ListNode* curA = headA;\n        ListNode* curB = headB;\n        int lenA = 0, lenB = 0;\n        while (curA != NULL) { // 求链表A的长度\n            lenA++;\n            curA = curA->next;\n        }\n        while (curB != NULL) { // 求链表B的长度\n            lenB++;\n            curB = curB->next;\n        }\n        curA = headA;\n        curB = headB;\n        // 让curA为最长链表的头，lenA为其长度\n        if (lenB > lenA) {\n            swap (lenA, lenB);\n            swap (curA, curB);\n        }\n        // 求长度差\n        int gap = lenA - lenB;\n        // 让curA和curB在同一起点上（末尾位置对齐）\n        while (gap--) {\n            curA = curA->next;\n        }\n        // 遍历curA 和 curB，遇到相同则直接返回\n        while (curA != NULL) {\n            if (curA == curB) {\n                return curA;\n            }\n            curA = curA->next;\n            curB = curB->next;\n        }\n        return NULL;\n    }\n};",
+          "description": "C++实现求两个单链表相交起始节点。"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution {\n    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {\n        ListNode curA = headA;\n        ListNode curB = headB;\n        int lenA = 0, lenB = 0;\n        while (curA != null) { // 求链表A的长度\n            lenA++;\n            curA = curA.next;\n        }\n        while (curB != null) { // 求链表B的长度\n            lenB++;\n            curB = curB.next;\n        }\n        curA = headA;\n        curB = headB;\n        // 让curA为最长链表的头，lenA为其长度\n        if (lenB > lenA) {\n            //1. swap (lenA, lenB);\n            int tmpLen = lenA;\n            lenA = lenB;\n            lenB = tmpLen;\n            //2. swap (curA, curB);\n            ListNode tmpNode = curA;\n            curA = curB;\n            curB = tmpNode;\n        }\n        // 求长度差\n        int gap = lenA - lenB;\n        // 让curA和curB在同一起点上（末尾位置对齐）\n        while (gap-- > 0) {\n            curA = curA.next;\n        }\n        // 遍历curA 和 curB，遇到相同则直接返回\n        while (curA != null) {\n            if (curA == curB) {\n                return curA;\n            }\n            curA = curA.next;\n            curB = curB.next;\n        }\n        return null;\n    }\n}\npublic class Solution {\n    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {\n        // p1 指向 A 链表头结点，p2 指向 B 链表头结点\n        ListNode p1 = headA, p2 = headB;\n        while (p1 != p2) {\n            // p1 走一步，如果走到 A 链表末尾，转到 B 链表\n            if (p1 == null) p1 = headB;\n            else            p1 = p1.next;\n            // p2 走一步，如果走到 B 链表末尾，转到 A 链表\n            if (p2 == null) p2 = headA;\n            else            p2 = p2.next;\n        }\n        return p1;\n    }\n}",
+          "description": "Java实现求两个单链表相交起始节点，包括先行移动长链表实现同步移动和合并链表实现同步移动两种方法。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:\n        lenA, lenB = 0, 0\n        cur = headA\n        while cur:         # 求链表A的长度\n            cur = cur.next \n            lenA += 1\n        cur = headB \n        while cur:         # 求链表B的长度\n            cur = cur.next \n            lenB += 1\n        curA, curB = headA, headB\n        if lenA > lenB:     # 让curB为最长链表的头，lenB为其长度\n            curA, curB = curB, curA\n            lenA, lenB = lenB, lenA \n        for _ in range(lenB - lenA):  # 让curA和curB在同一起点上（末尾位置对齐）\n            curB = curB.next \n        while curA:         #  遍历curA 和 curB，遇到相同则直接返回\n            if curA == curB:\n                return curA\n            else:\n                curA = curA.next \n                curB = curB.next\n        return None \nclass Solution:\n    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:\n        lenA = self.getLength(headA)\n        lenB = self.getLength(headB)\n        \n        # 通过移动较长的链表，使两链表长度相等\n        if lenA > lenB:\n            headA = self.moveForward(headA, lenA - lenB)\n        else:\n            headB = self.moveForward(headB, lenB - lenA)\n        \n        # 将两个头向前移动，直到它们相交\n        while headA and headB:\n            if headA == headB:\n                return headA\n            headA = headA.next\n            headB = headB.next\n        \n        return None\n    \n    def getLength(self, head: ListNode) -> int:\n        length = 0\n        while head:\n            length += 1\n            head = head.next\n        return length\n    \n    def moveForward(self, head: ListNode, steps: int) -> ListNode:\n        while steps > 0:\n            head = head.next\n            steps -= 1\n        return head\nclass Solution:\n    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:\n        dis = self.getLength(headA) - self.getLength(headB)\n        \n        # 通过移动较长的链表，使两链表长度相等\n        if dis > 0:\n            headA = self.moveForward(headA, dis)\n        else:\n            headB = self.moveForward(headB, abs(dis))\n        \n        # 将两个头向前移动，直到它们相交\n        while headA and headB:\n            if headA == headB:\n                return headA\n            headA = headA.next\n            headB = headB.next\n        \n        return None\n    \n    def getLength(self, head: ListNode) -> int:\n        length = 0\n        while head:\n            length += 1\n            head = head.next\n        return length\n    \n    def moveForward(self, head: ListNode, steps: int) -> ListNode:\n        while steps > 0:\n            head = head.next\n            steps -= 1\n        return head\nclass Solution:\n    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:\n        # 处理边缘情况\n        if not headA or not headB:\n            return None\n        \n        # 在每个链表的头部初始化两个指针\n        pointerA = headA\n        pointerB = headB\n        \n        # 遍历两个链表直到指针相交\n        while pointerA != pointerB:\n            # 将指针向前移动一个节点\n            pointerA = pointerA.next if pointerA else headB\n            pointerB = pointerB.next if pointerB else headA\n        \n        # 如果相交，指针将位于交点节点，如果没有交点，值为None\n        return pointerA",
+          "description": "Python实现求两个单链表相交起始节点，提供了多个版本的实现方式。"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n + m)",
+    "space_complexity": "O(1)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {ListNode* curA = headA;ListNode* curB = headB;int lenA = 0, lenB = 0;while (curA != NULL) {lenA++;curA = curA->next;}while (curB != NULL) {lenB++;curB = curB->next;}curA = headA;curB = headB;if (lenB > lenA) {swap (lenA, lenB);swap (curA, curB);}int gap = lenA - lenB;while (gap--) {curA = curA->next;}while (curA != NULL) {if (curA == curB) {return curA;}curA = curA->next;curB = curB->next;}return NULL;}};",
+      "description": "使用C++实现的链表相交问题解决方案"
+    },
+    {
+      "language": "java",
+      "code": "public class Solution {public ListNode getIntersectionNode(ListNode headA, ListNode headB) {ListNode curA = headA;ListNode curB = headB;int lenA = 0, lenB = 0;while (curA != null) {lenA++;curA = curA.next;}while (curB != null) {lenB++;curB = curB.next;}curA = headA;curB = headB;if (lenB > lenA) {int tmpLen = lenA;lenA = lenB;lenB = tmpLen;ListNode tmpNode = curA;curA = curB;curB = tmpNode;}int gap = lenA - lenB;while (gap-- > 0) {curA = curA.next;}while (curA != null) {if (curA == curB) {return curA;}curA = curA.next;curB = curB.next;}return null;}}",
+      "description": "使用Java实现的链表相交问题解决方案（版本一）"
+    },
+    {
+      "language": "java",
+      "code": "public class Solution {public ListNode getIntersectionNode(ListNode headA, ListNode headB) {ListNode p1 = headA, p2 = headB;while (p1 != p2) {if (p1 == null) p1 = headB;else            p1 = p1.next;if (p2 == null) p2 = headA;else            p2 = p2.next;}return p1;}}",
+      "description": "使用Java实现的链表相交问题解决方案（版本二）"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode: lenA, lenB = 0, 0 cur = headA while cur:         # 求链表A的长度 cur = cur.next lenA += 1 cur = headB while cur:         # 求链表B的长度 cur = cur.next lenB += 1 curA, curB = headA, headB if lenA > lenB:     # 让curB为最长链表的头，lenB为其长度 curA, curB = curB, curA lenA, lenB = lenB, lenA for _ in range(lenB - lenA):  # 让curA和curB在同一起点上（末尾位置对齐） curB = curB.next while curA:         #  遍历curA 和 curB，遇到相同则直接返回 if curA == curB: return curA else: curA = curA.next curB = curB.next return None",
+      "description": "使用Python实现的链表相交问题解决方案（版本一）"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode: lenA = self.getLength(headA) lenB = self.getLength(headB) if lenA > lenB: headA = self.moveForward(headA, lenA - lenB) else: headB = self.moveForward(headB, lenB - lenA) while headA and headB: if headA == headB: return headA headA = headA.next headB = headB.next return None def getLength(self, head: ListNode) -> int: length = 0 while head: length += 1 head = head.next return length def moveForward(self, head: ListNode, steps: int) -> ListNode: while steps > 0: head = head.next steps -= 1 return head",
+      "description": "使用Python实现的链表相交问题解决方案（版本二）"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode: dis = self.getLength(headA) - self.getLength(headB) if dis > 0: headA = self.moveForward(headA, dis) else: headB = self.moveForward(headB, abs(dis)) while headA and headB: if headA == headB: return headA headA = headA.next headB = headB.next return None def getLength(self, head: ListNode) -> int: length = 0 while head: length += 1 head = head.next return length def moveForward(self, head: ListNode, steps: int) -> ListNode: while steps > 0: head = head.next steps -= 1 return head",
+      "description": "使用Python实现的链表相交问题解决方案（版本三）"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode: if not headA or not headB: return None pointerA = headA pointerB = headB while pointerA != pointerB: pointerA = pointerA.next if pointerA else headB pointerB = pointerB.next if pointerB else headA return pointerA",
+      "description": "使用Python实现的链表相交问题解决方案（版本四）"
+    }
+  ],
+  "common_mistakes": [
+    "误以为需要比较节点存储的数据值来判断是否相交，而忽略了实际是检查节点本身是否为同一对象。",
+    "未考虑当两链表长度不一时如何处理，直接尝试从头开始同步遍历可能导致错过正确的交点。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20211219221657.png",
+      "description": "这张图片展示了两个链表（A和B）在节点c1处相交，涉及链表相交问题的算法分析。",
+      "context": "该图片展示了两个单链表从节点c1开始相交的情形，用于直观说明题目中链表相交的概念。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20211219221723.png",
+      "description": "该图片展示了两个相交链表（A和B）的结构及其相交节点的查找问题，具体为在给定的链表中找到值为8的相交节点。",
+      "context": "示例 1 的图示展示了两个链表在特定节点相交的情况。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20211219221749.png",
+      "description": "该图展示了两个相交链表（A和B）的结构，重点在于找到它们的相交节点（值为2），涉及链表遍历和比较的算法。",
+      "context": "展示了示例2中两个链表相交的情况，帮助理解题目要求。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20211219221812.png",
+      "description": "该图片描述了两个不相交的链表（A: [2, 6, 4] 和 B: [1, 5]），并解释了在给定条件下（intersectVal = 0，skipA = 3，skipB = 2）如何判断它们是否相交，最终返回 null 表示不相交。",
+      "context": "这张图片展示了示例3中的链表结构，用于说明如何寻找两个链表的交点节点。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/面试题02.07.链表相交_1.png",
+      "description": "图中展示了两个链表（链表A和链表B），分别由指针curA和curB指向其头部，链表A包含8个节点（3, 9, 8, 7, 6, 5, 4, 2），链表B包含4个节点（11, 5, 4, 4），这通常用于链表相关算法的示例或问题描述。",
+      "context": "图片相关说明"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/面试题02.07.链表相交_2.png",
+      "description": "该图展示了两个链表（链表A和链表B）及其当前指针（curA和curB）的位置，用于算法分析或链表操作的解题过程。",
+      "context": "图片相关说明"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20211219221657.png",
+      "description": "GIF展示了两个单链表从各自头节点开始移动直至找到相交起始节点c1的过程。",
+      "context": "GIF动画展示了两个单链表从各自的头节点开始遍历直至在节点c1处相交的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20211219221723.png",
+      "description": "GIF展示了两个链表从各自头节点开始移动直到找到相交节点的过程。",
+      "context": "GIF动画展示了示例1中两个单链表相交于某个节点的过程，帮助理解如何找到并返回两链表的首个共同节点。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20211219221749.png",
+      "description": "GIF展示了两个单链表从头节点开始同步遍历直至找到相交节点的过程。",
+      "context": "GIF动画展示了两个链表从各自头节点开始同步移动，直到找到相交节点的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20211219221812.png",
+      "description": "GIF展示了两个单链表通过移动指针至相同起始位置后同步前进，最终找到相交节点的过程。",
+      "context": "GIF动画展示了两个链表从头节点开始同步移动直至找到相交节点的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/%E9%9D%A2%E8%AF%95%E9%A2%9802.07.%E9%93%BE%E8%A1%A8%E7%9B%B8%E4%BA%A4_1.png",
+      "description": "该GIF展示了两个链表通过移动指针至末尾对齐后，逐步同步向前移动以寻找交点的过程。",
+      "context": "该GIF动画展示了两个链表从头节点开始直到找到相同节点指针的过程，帮助理解如何通过调整起始位置来对齐两个不同长度的链表。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/%E9%9D%A2%E8%AF%95%E9%A2%9802.07.%E9%93%BE%E8%A1%A8%E7%9B%B8%E4%BA%A4_2.png",
+      "description": "GIF展示了两个链表通过移动指针至末尾对齐，进而寻找相同节点的过程。",
+      "context": "该GIF动画展示了如何通过调整两个链表指针的位置使其末尾对齐，进而寻找两链表交点的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\双指针\\链表相交.txt",
+  "extracted_at": "2025-07-21T03:01:27.241578",
+  "raw_content": "链表相交\n同：160.链表相交\n\n力扣题目链接(https://leetcode.cn/problems/intersection-of-two-linked-lists-lcci/)\n\n给你两个单链表的头节点 headA 和 headB ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 null 。\n\n图示两个链表在节点 c1 开始相交：\n\nhttps://file1.kamacoder.com/i/algo/20211219221657.png\n\n题目数据 保证 整个链式结构中不存在环。\n\n注意，函数返回结果后，链表必须 保持其原始结构 。\n\n示例 1：\n\nhttps://file1.kamacoder.com/i/algo/20211219221723.png\n\n示例 2：\n\nhttps://file1.kamacoder.com/i/algo/20211219221749.png\n\n示例 3：\n\nhttps://file1.kamacoder.com/i/algo/20211219221812.png\n\n#思路\n简单来说，就是求两个链表交点节点的指针。 这里同学们要注意，交点不是数值相等，而是指针相等。\n\n为了方便举例，假设节点元素数值相等，则节点指针相等。\n\n看如下两个链表，目前curA指向链表A的头结点，curB指向链表B的头结点：\n\nhttps://file1.kamacoder.com/i/algo/%E9%9D%A2%E8%AF%95%E9%A2%9802.07.%E9%93%BE%E8%A1%A8%E7%9B%B8%E4%BA%A4_1.png\n\n我们求出两个链表的长度，并求出两个链表长度的差值，然后让curA移动到，和curB 末尾对齐的位置，如图：\n\nhttps://file1.kamacoder.com/i/algo/%E9%9D%A2%E8%AF%95%E9%A2%9802.07.%E9%93%BE%E8%A1%A8%E7%9B%B8%E4%BA%A4_2.png\n\n此时我们就可以比较curA和curB是否相同，如果不相同，同时向后移动curA和curB，如果遇到curA == curB，则找到交点。\n\n否则循环退出返回空指针。\n\nC++代码如下：\n\nclass Solution {\npublic:\n    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {\n        ListNode* curA = headA;\n        ListNode* curB = headB;\n        int lenA = 0, lenB = 0;\n        while (curA != NULL) { // 求链表A的长度\n            lenA++;\n            curA = curA->next;\n        }\n        while (curB != NULL) { // 求链表B的长度\n            lenB++;\n            curB = curB->next;\n        }\n        curA = headA;\n        curB = headB;\n        // 让curA为最长链表的头，lenA为其长度\n        if (lenB > lenA) {\n            swap (lenA, lenB);\n            swap (curA, curB);\n        }\n        // 求长度差\n        int gap = lenA - lenB;\n        // 让curA和curB在同一起点上（末尾位置对齐）\n        while (gap--) {\n            curA = curA->next;\n        }\n        // 遍历curA 和 curB，遇到相同则直接返回\n        while (curA != NULL) {\n            if (curA == curB) {\n                return curA;\n            }\n            curA = curA->next;\n            curB = curB->next;\n        }\n        return NULL;\n    }\n};\n时间复杂度：O(n + m)\n空间复杂度：O(1)\n#其他语言版本\n#Java：\n(版本一)先行移动长链表实现同步移动\npublic class Solution {\n    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {\n        ListNode curA = headA;\n        ListNode curB = headB;\n        int lenA = 0, lenB = 0;\n        while (curA != null) { // 求链表A的长度\n            lenA++;\n            curA = curA.next;\n        }\n        while (curB != null) { // 求链表B的长度\n            lenB++;\n            curB = curB.next;\n        }\n        curA = headA;\n        curB = headB;\n        // 让curA为最长链表的头，lenA为其长度\n        if (lenB > lenA) {\n            //1. swap (lenA, lenB);\n            int tmpLen = lenA;\n            lenA = lenB;\n            lenB = tmpLen;\n            //2. swap (curA, curB);\n            ListNode tmpNode = curA;\n            curA = curB;\n            curB = tmpNode;\n        }\n        // 求长度差\n        int gap = lenA - lenB;\n        // 让curA和curB在同一起点上（末尾位置对齐）\n        while (gap-- > 0) {\n            curA = curA.next;\n        }\n        // 遍历curA 和 curB，遇到相同则直接返回\n        while (curA != null) {\n            if (curA == curB) {\n                return curA;\n            }\n            curA = curA.next;\n            curB = curB.next;\n        }\n        return null;\n    }\n\n}\n\n(版本二) 合并链表实现同步移动\npublic class Solution {\n    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {\n\t\t// p1 指向 A 链表头结点，p2 指向 B 链表头结点\n\t\tListNode p1 = headA, p2 = headB;\n\t\twhile (p1 != p2) {\n\t\t\t// p1 走一步，如果走到 A 链表末尾，转到 B 链表\n\t\t\tif (p1 == null) p1 = headB;\n\t\t\telse            p1 = p1.next;\n\t\t\t// p2 走一步，如果走到 B 链表末尾，转到 A 链表\n\t\t\tif (p2 == null) p2 = headA;\n\t\t\telse            p2 = p2.next;\n\t\t}\n\t\treturn p1;\n    }\n}\n#Python：\n\n（版本一）求长度，同时出发\n\nclass Solution:\n    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:\n        lenA, lenB = 0, 0\n        cur = headA\n        while cur:         # 求链表A的长度\n            cur = cur.next \n            lenA += 1\n        cur = headB \n        while cur:         # 求链表B的长度\n            cur = cur.next \n            lenB += 1\n        curA, curB = headA, headB\n        if lenA > lenB:     # 让curB为最长链表的头，lenB为其长度\n            curA, curB = curB, curA\n            lenA, lenB = lenB, lenA \n        for _ in range(lenB - lenA):  # 让curA和curB在同一起点上（末尾位置对齐）\n            curB = curB.next \n        while curA:         #  遍历curA 和 curB，遇到相同则直接返回\n            if curA == curB:\n                return curA\n            else:\n                curA = curA.next \n                curB = curB.next\n        return None \n（版本二）求长度，同时出发 （代码复用）\nclass Solution:\n    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:\n        lenA = self.getLength(headA)\n        lenB = self.getLength(headB)\n        \n        # 通过移动较长的链表，使两链表长度相等\n        if lenA > lenB:\n            headA = self.moveForward(headA, lenA - lenB)\n        else:\n            headB = self.moveForward(headB, lenB - lenA)\n        \n        # 将两个头向前移动，直到它们相交\n        while headA and headB:\n            if headA == headB:\n                return headA\n            headA = headA.next\n            headB = headB.next\n        \n        return None\n    \n    def getLength(self, head: ListNode) -> int:\n        length = 0\n        while head:\n            length += 1\n            head = head.next\n        return length\n    \n    def moveForward(self, head: ListNode, steps: int) -> ListNode:\n        while steps > 0:\n            head = head.next\n            steps -= 1\n        return head\n（版本三）求长度，同时出发 （代码复用 + 精简）\nclass Solution:\n    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:\n        dis = self.getLength(headA) - self.getLength(headB)\n        \n        # 通过移动较长的链表，使两链表长度相等\n        if dis > 0:\n            headA = self.moveForward(headA, dis)\n        else:\n            headB = self.moveForward(headB, abs(dis))\n        \n        # 将两个头向前移动，直到它们相交\n        while headA and headB:\n            if headA == headB:\n                return headA\n            headA = headA.next\n            headB = headB.next\n        \n        return None\n    \n    def getLength(self, head: ListNode) -> int:\n        length = 0\n        while head:\n            length += 1\n            head = head.next\n        return length\n    \n    def moveForward(self, head: ListNode, steps: int) -> ListNode:\n        while steps > 0:\n            head = head.next\n            steps -= 1\n        return head\n（版本四）等比例法\n# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, x):\n#         self.val = x\n#         self.next = None\n\n\nclass Solution:\n    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:\n        # 处理边缘情况\n        if not headA or not headB:\n            return None\n        \n        # 在每个链表的头部初始化两个指针\n        pointerA = headA\n        pointerB = headB\n        \n        # 遍历两个链表直到指针相交\n        while pointerA != pointerB:\n            # 将指针向前移动一个节点\n            pointerA = pointerA.next if pointerA else headB\n            pointerB = pointerB.next if pointerB else headA\n        \n        # 如果相交，指针将位于交点节点，如果没有交点，值为None\n        return pointerA"
+}

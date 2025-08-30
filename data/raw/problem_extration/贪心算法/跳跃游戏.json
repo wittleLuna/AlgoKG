@@ -1,0 +1,251 @@
+{
+  "id": "AP_1e4a8ee6",
+  "title": "跳跃游戏",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/jump-game/",
+  "description": "一个非负整数数组，你最初位于数组的第一个位置。\n\n数组中的每个元素代表你在该位置可以跳跃的最大长度。\n\n判断你是否能够到达最后一个位置。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "贪心算法"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "迭代"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过贪心算法计算当前位置可以跳跃覆盖的最大范围，并持续更新这个范围，直到判断是否能够覆盖到最后一个位置。该方法避免了直接考虑每次跳跃的具体步数。",
+  "key_insights": [
+    {
+      "content": "解决问题的关键在于追踪从起始点开始能够触及的最大范围（即覆盖范围），而不是在每一步中具体跳跃多少。"
+    },
+    {
+      "content": "只要当前覆盖范围能够达到或超过数组末尾，则表明可以通过某种方式到达终点。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "刚看到本题一开始可能想：当前位置元素如果是 3，我究竟是跳一步呢，还是两步呢，还是三步呢，究竟跳几步才是最优呢？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canJump(vector<int>& nums) {int cover = 0;if (nums.size() == 1) return true;for (int i = 0; i <= cover; i++) {cover = max(i + nums[i], cover);if (cover >= nums.size() - 1) return true;}return false;}};",
+          "description": "C++版本的跳跃游戏解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canJump(int[] nums) {if (nums.length == 1) {return true;}int coverRange = 0;for (int i = 0; i <= coverRange; i++) {coverRange = Math.max(coverRange, i + nums[i]);if (coverRange >= nums.length - 1) {return true;}}return false;}}",
+          "description": "Java版本的跳跃游戏解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canJump(self, nums: List[int]) -> bool: cover = 0 if len(nums) == 1: return True i = 0 while i <= cover: cover = max(i + nums[i], cover) if cover >= len(nums) - 1: return True i += 1 return False",
+          "description": "Python版本使用while循环实现的跳跃游戏解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canJump(self, nums: List[int]) -> bool: cover = 0 if len(nums) == 1: return True for i in range(len(nums)): if i <= cover: cover = max(i + nums[i], cover) if cover >= len(nums) - 1: return True return False",
+          "description": "Python版本使用for循环实现的跳跃游戏解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canJump(self, nums: List[int]) -> bool: far = nums[0] for i in range(len(nums)): if i > far: return False far = max(far, nums[i]+i) return True",
+          "description": "基于当前最远可到达位置判断的Python版本跳跃游戏解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "这道题目关键点在于：不用拘泥于每次究竟跳几步，而是看覆盖范围，覆盖范围内一定是可以跳过来的，不用管是怎么跳的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canJump(vector<int>& nums) {int cover = 0;if (nums.size() == 1) return true;for (int i = 0; i <= cover; i++) {cover = max(i + nums[i], cover);if (cover >= nums.size() - 1) return true;}return false;}};",
+          "description": "C++版本的跳跃游戏解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canJump(int[] nums) {if (nums.length == 1) {return true;}int coverRange = 0;for (int i = 0; i <= coverRange; i++) {coverRange = Math.max(coverRange, i + nums[i]);if (coverRange >= nums.length - 1) {return true;}}return false;}}",
+          "description": "Java版本的跳跃游戏解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canJump(self, nums: List[int]) -> bool: cover = 0 if len(nums) == 1: return True i = 0 while i <= cover: cover = max(i + nums[i], cover) if cover >= len(nums) - 1: return True i += 1 return False",
+          "description": "Python版本的跳跃游戏解决方案，使用while循环"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canJump(self, nums: List[int]) -> bool: cover = 0 if len(nums) == 1: return True for i in range(len(nums)): if i <= cover: cover = max(i + nums[i], cover) if cover >= len(nums) - 1: return True return False",
+          "description": "Python版本的跳跃游戏解决方案，使用for循环"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canJump(self, nums: List[int]) -> bool: far = nums[0] for i in range(len(nums)): if i > far: return False far = max(far, nums[i]+i) return True",
+          "description": "基于当前最远可到达位置判断的Python版本跳跃游戏解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canJump(vector<int>& nums) {int cover = 0;if (nums.size() == 1) return true;for (int i = 0; i <= cover; i++) {cover = max(i + nums[i], cover);if (cover >= nums.size() - 1) return true;}return false;}};",
+          "description": "C++版本的跳跃游戏解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canJump(int[] nums) {if (nums.length == 1) {return true;}int coverRange = 0;for (int i = 0; i <= coverRange; i++) {coverRange = Math.max(coverRange, i + nums[i]);if (coverRange >= nums.length - 1) {return true;}}return false;}}",
+          "description": "Java版本的跳跃游戏解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canJump(self, nums: List[int]) -> bool: cover = 0 if len(nums) == 1: return True i = 0 while i <= cover: cover = max(i + nums[i], cover) if cover >= len(nums) - 1: return True i += 1 return False",
+          "description": "Python版本的跳跃游戏解决方案之一，使用while循环"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canJump(self, nums: List[int]) -> bool: cover = 0 if len(nums) == 1: return True for i in range(len(nums)): if i <= cover: cover = max(i + nums[i], cover) if cover >= len(nums) - 1: return True return False",
+          "description": "Python版本的跳跃游戏解决方案之二，基于for循环"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canJump(self, nums: List[int]) -> bool: far = nums[0] for i in range(len(nums)): if i > far: return False far = max(far, nums[i]+i) return True",
+          "description": "Python版本的跳跃游戏解决方案之三，基于当前位置最远可达距离"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canJump(vector<int>& nums) {int cover = 0;if (nums.size() == 1) return true;for (int i = 0; i <= cover; i++) {cover = max(i + nums[i], cover);if (cover >= nums.size() - 1) return true;}return false;}};",
+          "description": "C++实现的跳跃游戏解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canJump(int[] nums) {if (nums.length == 1) {return true;}int coverRange = 0;for (int i = 0; i <= coverRange; i++) {coverRange = Math.max(coverRange, i + nums[i]);if (coverRange >= nums.length - 1) {return true;}}return false;}}",
+          "description": "Java实现的跳跃游戏解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canJump(self, nums: List[int]) -> bool: cover = 0 if len(nums) == 1: return True i = 0 while i <= cover: cover = max(i + nums[i], cover) if cover >= len(nums) - 1: return True i += 1 return False",
+          "description": "Python实现的跳跃游戏解决方案，使用while循环"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canJump(self, nums: List[int]) -> bool: cover = 0 if len(nums) == 1: return True for i in range(len(nums)): if i <= cover: cover = max(i + nums[i], cover) if cover >= len(nums) - 1: return True return False",
+          "description": "Python实现的跳跃游戏解决方案，使用for循环"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canJump(self, nums: List[int]) -> bool: far = nums[0] for i in range(len(nums)): if i > far: return False far = max(far, nums[i]+i) return True",
+          "description": "基于当前最远可到达位置判断的Python跳跃游戏解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "class Solution:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canJump(vector<int>& nums) {int cover = 0;if (nums.size() == 1) return true;for (int i = 0; i <= cover; i++) {cover = max(i + nums[i], cover);if (cover >= nums.size() - 1) return true;}return false;}};",
+          "description": "C++版本的跳跃游戏解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canJump(int[] nums) {if (nums.length == 1) {return true;}int coverRange = 0;for (int i = 0; i <= coverRange; i++) {coverRange = Math.max(coverRange, i + nums[i]);if (coverRange >= nums.length - 1) {return true;}}return false;}}",
+          "description": "Java版本的跳跃游戏解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canJump(self, nums: List[int]) -> bool: cover = 0 if len(nums) == 1: return True i = 0 while i <= cover: cover = max(i + nums[i], cover) if cover >= len(nums) - 1: return True i += 1 return False",
+          "description": "Python版本的跳跃游戏解决方案（使用while循环）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canJump(self, nums: List[int]) -> bool: cover = 0 if len(nums) == 1: return True for i in range(len(nums)): if i <= cover: cover = max(i + nums[i], cover) if cover >= len(nums) - 1: return True return False",
+          "description": "Python版本的跳跃游戏解决方案（使用for循环）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canJump(self, nums: List[int]) -> bool: far = nums[0] for i in range(len(nums)): if i > far: return False far = max(far, nums[i]+i) return True",
+          "description": "基于当前最远可到达位置判断的Python版本跳跃游戏解决方案"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "C++",
+      "code": "class Solution {public:bool canJump(vector<int>& nums) {int cover = 0;if (nums.size() == 1) return true;for (int i = 0; i <= cover; i++) {cover = max(i + nums[i], cover);if (cover >= nums.size() - 1) return true;}return false;}};",
+      "description": "使用贪心算法解决跳跃游戏问题，通过维护一个可跳的覆盖范围来判断是否可以到达最后一个位置。"
+    },
+    {
+      "language": "Java",
+      "code": "class Solution {public boolean canJump(int[] nums) {if (nums.length == 1) {return true;}int coverRange = 0;for (int i = 0; i <= coverRange; i++) {coverRange = Math.max(coverRange, i + nums[i]);if (coverRange >= nums.length - 1) {return true;}}return false;}}",
+      "description": "采用贪心策略，通过遍历数组并更新最大可达索引来确定是否能够达到最后一个元素。"
+    },
+    {
+      "language": "Python",
+      "code": "class Solution: def canJump(self, nums: List[int]) -> bool: cover = 0 if len(nums) == 1: return True i = 0 while i <= cover: cover = max(i + nums[i], cover) if cover >= len(nums) - 1: return True i += 1 return False",
+      "description": "基于贪心方法，在循环中更新能到达的最大距离，以判断是否能从起点跳到终点。"
+    },
+    {
+      "language": "Python",
+      "code": "class Solution: def canJump(self, nums: List[int]) -> bool: cover = 0 if len(nums) == 1: return True for i in range(len(nums)): if i <= cover: cover = max(i + nums[i], cover) if cover >= len(nums) - 1: return True return False",
+      "description": "使用for循环实现版本，逻辑与while循环版本相同，都是为了找到能否跳跃至最后位置。"
+    },
+    {
+      "language": "Python",
+      "code": "class Solution: def canJump(self, nums: List[int]) -> bool: far = nums[0] for i in range(len(nums)): if i > far: return False far = max(far, nums[i]+i) return True",
+      "description": "另一种解法，追踪当前最远可到达的位置，如果在任何时候当前位置超出了最远可到达位置，则返回False。"
+    }
+  ],
+  "common_mistakes": [
+    "错误地试图为每个位置确定最佳跳跃距离，而不是利用覆盖范围的概念。",
+    "忽略了即使在某个位置上无法进一步前进（即值为0的位置），如果之前已能覆盖到该位置之后的区域，那么问题仍然可解。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230203105634.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20230203105634.png",
+      "context": "该图展示了如何通过更新最大覆盖范围来判断是否能够到达终点的过程，形象地解释了贪心算法的应用。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230203105634.png",
+      "description": "GIF展示了通过贪心算法逐步更新跳跃覆盖范围以达到终点的过程。",
+      "context": "GIF动画展示了通过每次移动取最大跳跃步数来逐步扩展覆盖范围，直至判断是否能够到达终点的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\贪心算法\\跳跃游戏.txt",
+  "extracted_at": "2025-07-22T17:23:09.173553",
+  "raw_content": "跳跃游戏\n力扣题目链接(https://leetcode.cn/problems/jump-game/)\n\n给定一个非负整数数组，你最初位于数组的第一个位置。\n\n数组中的每个元素代表你在该位置可以跳跃的最大长度。\n\n判断你是否能够到达最后一个位置。\n\n示例  1:\n\n输入: [2,3,1,1,4]\n输出: true\n解释: 我们可以先跳 1 步，从位置 0 到达 位置 1, 然后再从位置 1 跳 3 步到达最后一个位置。\n示例  2:\n\n输入: [3,2,1,0,4]\n输出: false\n解释: 无论怎样，你总会到达索引为 3 的位置。但该位置的最大跳跃长度是 0 ， 所以你永远不可能到达最后一个位置。\n\n\n#思路\n刚看到本题一开始可能想：当前位置元素如果是 3，我究竟是跳一步呢，还是两步呢，还是三步呢，究竟跳几步才是最优呢？\n\n其实跳几步无所谓，关键在于可跳的覆盖范围！\n\n不一定非要明确一次究竟跳几步，每次取最大的跳跃步数，这个就是可以跳跃的覆盖范围。\n\n这个范围内，别管是怎么跳的，反正一定可以跳过来。\n\n那么这个问题就转化为跳跃覆盖范围究竟可不可以覆盖到终点！\n\n每次移动取最大跳跃步数（得到最大的覆盖范围），每移动一个单位，就更新最大覆盖范围。\n\n贪心算法局部最优解：每次取最大跳跃步数（取最大覆盖范围），整体最优解：最后得到整体最大覆盖范围，看是否能到终点。\n\n局部最优推出全局最优，找不出反例，试试贪心！\n\n如图：\n\nhttps://file1.kamacoder.com/i/algo/20230203105634.png\n\ni 每次移动只能在 cover 的范围内移动，每移动一个元素，cover 得到该元素数值（新的覆盖范围）的补充，让 i 继续移动下去。\n\n而 cover 每次只取 max(该元素数值补充后的范围, cover 本身范围)。\n\n如果 cover 大于等于了终点下标，直接 return true 就可以了。\n\nC++代码如下：\n\nclass Solution {\npublic:\n    bool canJump(vector<int>& nums) {\n        int cover = 0;\n        if (nums.size() == 1) return true; // 只有一个元素，就是能达到\n        for (int i = 0; i <= cover; i++) { // 注意这里是小于等于cover\n            cover = max(i + nums[i], cover);\n            if (cover >= nums.size() - 1) return true; // 说明可以覆盖到终点了\n        }\n        return false;\n    }\n};\n时间复杂度: O(n)\n空间复杂度: O(1)\n#总结\n这道题目关键点在于：不用拘泥于每次究竟跳几步，而是看覆盖范围，覆盖范围内一定是可以跳过来的，不用管是怎么跳的。\n\n大家可以看出思路想出来了，代码还是非常简单的。\n\n一些同学可能感觉，我在讲贪心系列的时候，题目和题目之间貌似没有什么联系？\n\n是真的就是没什么联系，因为贪心无套路！没有个整体的贪心框架解决一系列问题，只能是接触各种类型的题目锻炼自己的贪心思维！\n\n#其他语言版本\n#Java\nclass Solution {\n    public boolean canJump(int[] nums) {\n        if (nums.length == 1) {\n            return true;\n        }\n        //覆盖范围, 初始覆盖范围应该是0，因为下面的迭代是从下标0开始的\n        int coverRange = 0;\n        //在覆盖范围内更新最大的覆盖范围\n        for (int i = 0; i <= coverRange; i++) {\n            coverRange = Math.max(coverRange, i + nums[i]);\n            if (coverRange >= nums.length - 1) {\n                return true;\n            }\n        }\n        return false;\n    }\n}\n#Python\nclass Solution:\n    def canJump(self, nums: List[int]) -> bool:\n        cover = 0\n        if len(nums) == 1: return True\n        i = 0\n        # python不支持动态修改for循环中变量,使用while循环代替\n        while i <= cover:\n            cover = max(i + nums[i], cover)\n            if cover >= len(nums) - 1: return True\n            i += 1\n        return False\n## for循环\nclass Solution:\n    def canJump(self, nums: List[int]) -> bool:\n        cover = 0\n        if len(nums) == 1: return True\n        for i in range(len(nums)):\n            if i <= cover:\n                cover = max(i + nums[i], cover)\n                if cover >= len(nums) - 1: return True\n        return False\n## 基于当前最远可到达位置判断\nclass Solution:\n    def canJump(self, nums: List[int]) -> bool:\n        far = nums[0]\n        for i in range(len(nums)):\n            # 要考虑两个情况\n            # 1. i <= far - 表示 当前位置i 可以到达\n            # 2. i > far - 表示 当前位置i 无法到达\n            if i > far:\n                return False\n            far = max(far, nums[i]+i)\n        # 如果循环正常结束，表示最后一个位置也可以到达，否则会在中途直接退出\n        # 关键点在于，要想明白其实列表中的每个位置都是需要验证能否到达的\n        return True"
+}

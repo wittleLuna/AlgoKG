@@ -1,0 +1,372 @@
+{
+  "id": "AP_8bf0a2b7",
+  "title": "两个数组的交集",
+  "alternative_titles": [],
+  "platform": "kamacoder",
+  "url": "https://file1.kamacoder.com/i/algo/20200818193523911.png",
+  "description": "题意：给定两个数组，编写一个函数来计算它们的交集。\n\n349. 两个数组的交集\n\n说明： 输出结果中的每个元素一定是唯一的。 我们可以不考虑输出结果的顺序。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "哈希"
+  ],
+  "data_structure_tags": [
+    "集合",
+    "数组"
+  ],
+  "technique_tags": [
+    "空间换时间",
+    "哈希查找"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用哈希数据结构unordered_set来存储一个数组中的元素，然后遍历另一个数组检查元素是否存在于该集合中，从而找出两个数组的交集。最后将结果转换成列表或数组返回。",
+  "key_insights": [
+    {
+      "content": "通过使用unordered_set这种哈希表实现，可以有效地减少查找时间复杂度至O(1)，从而使得整个算法的时间复杂度降低到线性级别。"
+    },
+    {
+      "content": "题目要求输出结果中的每个元素都是唯一的且不考虑顺序，因此选择set这类容器正好满足需求——自动去重且不保证内部元素有序。"
+    },
+    {
+      "content": "在数值范围已知的情况下（如本题后来添加的限制条件），可以使用数组作为哈希表以节省空间并提高效率。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目，主要要学会使用一种哈希数据结构：unordered_set，这个数据结构可以解决很多类似的问题。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> intersection(vector<int>& nums1, vector<int>& nums2) { unordered_set<int> result_set; unordered_set<int> nums_set(nums1.begin(), nums1.end()); for (int num : nums2) { if (nums_set.find(num) != nums_set.end()) { result_set.insert(num); } } return vector<int>(result_set.begin(), result_set.end()); }};",
+          "description": "C++ 使用unordered_set解决两数组交集问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> intersection(vector<int>& nums1, vector<int>& nums2) { unordered_set<int> result_set; int hash[1005] = {0}; for (int num : nums1) { hash[num] = 1; } for (int num : nums2) { if (hash[num] == 1) { result_set.insert(num); } } return vector<int>(result_set.begin(), result_set.end()); }};",
+          "description": "C++ 使用固定大小数组作为哈希表解决两数组交集问题"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.HashSet; import java.util.Set; class Solution { public int[] intersection(int[] nums1, int[] nums2) { Set<Integer> set1 = new HashSet<>(); Set<Integer> resSet = new HashSet<>(); for (int i : nums1) { set1.add(i); } for (int i : nums2) { if (set1.contains(i)) { resSet.add(i); } } int[] arr = new int[resSet.size()]; int j = 0; for(int i : resSet){ arr[j++] = i; } return arr; }}",
+          "description": "Java 使用HashSet解决两数组交集问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int[] intersection(int[] nums1, int[] nums2) { int[] hash1 = new int[1002]; int[] hash2 = new int[1002]; for(int i : nums1) hash1[i]++; for(int i : nums2) hash2[i]++; List<Integer> resList = new ArrayList<>(); for(int i = 0; i < 1002; i++) if(hash1[i] > 0 && hash2[i] > 0) resList.add(i); int index = 0; int res[] = new int[resList.size()]; for(int i : resList) res[index++] = i; return res; }}",
+          "description": "Java 使用固定大小数组作为哈希表解决两数组交集问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: table = {} for num in nums1: table[num] = table.get(num, 0) + 1 res = set() for num in nums2: if num in table: res.add(num) del table[num] return list(res)",
+          "description": "Python 使用字典和集合解决两数组交集问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: count1 = [0]*1001 count2 = [0]*1001 result = [] for i in range(len(nums1)): count1[nums1[i]]+=1 for j in range(len(nums2)): count2[nums2[j]]+=1 for k in range(1001): if count1[k]*count2[k]>0: result.append(k) return result",
+          "description": "Python 使用数组解决两数组交集问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: return list(set(nums1) & set(nums2))",
+          "description": "Python 使用集合操作解决两数组交集问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "拓展",
+      "text": "那有同学可能问了，遇到哈希问题我直接都用set不就得了，用什么数组啊。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {unordered_set<int> result_set; unordered_set<int> nums_set(nums1.begin(), nums1.end()); for (int num : nums2) {if (nums_set.find(num) != nums_set.end()) {result_set.insert(num);}} return vector<int>(result_set.begin(), result_set.end());}};",
+          "description": "使用unordered_set求解两个数组的交集"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {unordered_set<int> result_set; int hash[1005] = {0}; for (int num : nums1) {hash[num] = 1;} for (int num : nums2) {if (hash[num] == 1) {result_set.insert(num);}} return vector<int>(result_set.begin(), result_set.end());}};",
+          "description": "使用数组作为哈希表求解两个数组的交集"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.HashSet; import java.util.Set; class Solution {public int[] intersection(int[] nums1, int[] nums2) {Set<Integer> set1 = new HashSet<>(); Set<Integer> resSet = new HashSet<>(); for (int i : nums1) {set1.add(i);} for (int i : nums2) {if (set1.contains(i)) {resSet.add(i);}} int[] arr = new int[resSet.size()]; int j = 0; for(int i : resSet){arr[j++] = i;} return arr;}}",
+          "description": "使用HashSet求解两个数组的交集"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] intersection(int[] nums1, int[] nums2) {int[] hash1 = new int[1002]; int[] hash2 = new int[1002]; for(int i : nums1) hash1[i]++; for(int i : nums2) hash2[i]++; List<Integer> resList = new ArrayList<>(); for(int i = 0; i < 1002; i++) if(hash1[i] > 0 && hash2[i] > 0) resList.add(i); int index = 0; int res[] = new int[resList.size()]; for(int i : resList) res[index++] = i; return res;}}",
+          "description": "使用数组哈希求解两个数组的交集"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: table = {} for num in nums1: table[num] = table.get(num, 0) + 1 res = set() for num in nums2: if num in table: res.add(num) del table[num] return list(res)",
+          "description": "使用字典和集合求解两个数组的交集"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: count1 = [0]*1001 count2 = [0]*1001 result = [] for i in range(len(nums1)): count1[nums1[i]]+=1 for j in range(len(nums2)): count2[nums2[j]]+=1 for k in range(1001): if count1[k]*count2[k]>0: result.append(k) return result",
+          "description": "使用数组求解两个数组的交集"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: return list(set(nums1) & set(nums2))",
+          "description": "使用集合运算求解两个数组的交集"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "后记",
+      "text": "本题后面 力扣改了 题目描述 和 后台测试数据，增添了 数值范围：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {unordered_set<int> result_set; unordered_set<int> nums_set(nums1.begin(), nums1.end()); for (int num : nums2) { if (nums_set.find(num) != nums_set.end()) { result_set.insert(num); }} return vector<int>(result_set.begin(), result_set.end());}};",
+          "description": "C++版本，使用unordered_set"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {unordered_set<int> result_set; int hash[1005] = {0}; for (int num : nums1) { hash[num] = 1; } for (int num : nums2) { if (hash[num] == 1) { result_set.insert(num); }} return vector<int>(result_set.begin(), result_set.end());}};",
+          "description": "C++版本，使用数组作为哈希表"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.HashSet; import java.util.Set; class Solution {public int[] intersection(int[] nums1, int[] nums2) {if (nums1 == null || nums1.length == 0 || nums2 == null || nums2.length == 0) {return new int[0];} Set<Integer> set1 = new HashSet<>(); Set<Integer> resSet = new HashSet<>(); for (int i : nums1) {set1.add(i);} for (int i : nums2) {if (set1.contains(i)) {resSet.add(i);}} return res.stream().mapToInt(Integer::intValue).toArray();}}",
+          "description": "Java版本，使用HashSet"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] intersection(int[] nums1, int[] nums2) {int[] hash1 = new int[1002]; int[] hash2 = new int[1002]; for(int i : nums1) hash1[i]++; for(int i : nums2) hash2[i]++; List<Integer> resList = new ArrayList<>(); for(int i = 0; i < 1002; i++) if(hash1[i] > 0 && hash2[i] > 0) resList.add(i); int index = 0; int res[] = new int[resList.size()]; for(int i : resList) res[index++] = i; return res;}}",
+          "description": "Java版本，使用数组作为哈希表"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: table = {} for num in nums1: table[num] = table.get(num, 0) + 1 res = set() for num in nums2: if num in table: res.add(num) del table[num] return list(res)",
+          "description": "Python3版本，使用字典和集合"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: count1 = [0]*1001 count2 = [0]*1001 result = [] for i in range(len(nums1)): count1[nums1[i]]+=1 for j in range(len(nums2)): count2[nums2[j]]+=1 for k in range(1001): if count1[k]*count2[k]>0: result.append(k) return result",
+          "description": "Python3版本，使用数组作为哈希表"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: return list(set(nums1) & set(nums2))",
+          "description": "Python3版本，直接使用集合操作"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {unordered_set<int> result_set; unordered_set<int> nums_set(nums1.begin(), nums1.end()); for (int num : nums2) {if (nums_set.find(num) != nums_set.end()) {result_set.insert(num);}} return vector<int>(result_set.begin(), result_set.end());}};",
+          "description": "C++实现，使用unordered_set求两个数组的交集"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {unordered_set<int> result_set; int hash[1005] = {0}; for (int num : nums1) {hash[num] = 1;} for (int num : nums2) {if (hash[num] == 1) {result_set.insert(num);}} return vector<int>(result_set.begin(), result_set.end());}};",
+          "description": "C++实现，使用固定大小的数组作为哈希表求两个数组的交集"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.HashSet;import java.util.Set;class Solution {public int[] intersection(int[] nums1, int[] nums2) {Set<Integer> set1 = new HashSet<>(); Set<Integer> resSet = new HashSet<>(); for (int i : nums1) {set1.add(i);} for (int i : nums2) {if (set1.contains(i)) {resSet.add(i);}} int[] arr = new int[resSet.size()]; int j = 0; for(int i : resSet){arr[j++] = i;} return arr;}}",
+          "description": "Java实现，使用HashSet求两个数组的交集"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] intersection(int[] nums1, int[] nums2) {int[] hash1 = new int[1002]; int[] hash2 = new int[1002]; for(int i : nums1) hash1[i]++; for(int i : nums2) hash2[i]++; List<Integer> resList = new ArrayList<>(); for(int i = 0; i < 1002; i++) if(hash1[i] > 0 && hash2[i] > 0) resList.add(i); int index = 0; int res[] = new int[resList.size()]; for(int i : resList) res[index++] = i; return res;}}",
+          "description": "Java实现，使用固定大小的数组作为哈希表求两个数组的交集"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: table = {} for num in nums1: table[num] = table.get(num, 0) + 1 res = set() for num in nums2: if num in table: res.add(num) del table[num] return list(res)",
+          "description": "Python3实现，使用字典和集合求两个数组的交集"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: count1 = [0]*1001 count2 = [0]*1001 result = [] for i in range(len(nums1)): count1[nums1[i]]+=1 for j in range(len(nums2)): count2[nums2[j]]+=1 for k in range(1001): if count1[k]*count2[k]>0: result.append(k) return result",
+          "description": "Python3实现，使用数组求两个数组的交集"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: return list(set(nums1) & set(nums2))",
+          "description": "Python3实现，直接使用集合操作求两个数组的交集"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "版本一：使用HashSet",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> intersection(vector<int>& nums1, vector<int>& nums2) { unordered_set<int> result_set; unordered_set<int> nums_set(nums1.begin(), nums1.end()); for (int num : nums2) { if (nums_set.find(num) != nums_set.end()) { result_set.insert(num); } } return vector<int>(result_set.begin(), result_set.end()); }};",
+          "description": "C++ 使用unordered_set实现两个数组的交集"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> intersection(vector<int>& nums1, vector<int>& nums2) { unordered_set<int> result_set; int hash[1005] = {0}; for (int num : nums1) { hash[num] = 1; } for (int num : nums2) { if (hash[num] == 1) { result_set.insert(num); } } return vector<int>(result_set.begin(), result_set.end()); }};",
+          "description": "C++ 使用数组作为哈希表实现两个数组的交集"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.HashSet;import java.util.Set;class Solution {public int[] intersection(int[] nums1, int[] nums2) {Set<Integer> set1 = new HashSet<>();Set<Integer> resSet = new HashSet<>();for (int i : nums1) {set1.add(i);}for (int i : nums2) {if (set1.contains(i)) {resSet.add(i);}}int[] arr = new int[resSet.size()];int j = 0;for(int i : resSet){arr[j++] = i;}return arr;}}",
+          "description": "Java 使用HashSet实现两个数组的交集"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] intersection(int[] nums1, int[] nums2) {int[] hash1 = new int[1002];int[] hash2 = new int[1002];for(int i : nums1)hash1[i]++;for(int i : nums2)hash2[i]++;List<Integer> resList = new ArrayList<>();for(int i = 0; i < 1002; i++)if(hash1[i] > 0 && hash2[i] > 0)resList.add(i);int index = 0;int res[] = new int[resList.size()];for(int i : resList)res[index++] = i;return res;}}",
+          "description": "Java 使用数组作为哈希表实现两个数组的交集"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: table = {} for num in nums1: table[num] = table.get(num, 0) + 1 res = set() for num in nums2: if num in table: res.add(num) del table[num] return list(res)",
+          "description": "Python 使用字典和集合实现两个数组的交集"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: count1 = [0]*1001 count2 = [0]*1001 result = [] for i in range(len(nums1)): count1[nums1[i]]+=1 for j in range(len(nums2)): count2[nums2[j]]+=1 for k in range(1001): if count1[k]*count2[k]>0: result.append(k) return result",
+          "description": "Python 使用数组实现两个数组的交集"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: return list(set(nums1) & set(nums2))",
+          "description": "Python 使用集合操作实现两个数组的交集"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python3：",
+      "text": "（版本一） 使用字典和集合",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {unordered_set<int> result_set; unordered_set<int> nums_set(nums1.begin(), nums1.end()); for (int num : nums2) {if (nums_set.find(num) != nums_set.end()) {result_set.insert(num);}} return vector<int>(result_set.begin(), result_set.end());}};",
+          "description": "C++版本一，使用unordered_set求两数组交集"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {unordered_set<int> result_set; int hash[1005] = {0}; for (int num : nums1) {hash[num] = 1;} for (int num : nums2) {if (hash[num] == 1) {result_set.insert(num);}} return vector<int>(result_set.begin(), result_set.end());}};",
+          "description": "C++版本二，使用数组作为哈希表求两数组交集"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.HashSet;import java.util.Set;class Solution {public int[] intersection(int[] nums1, int[] nums2) {Set<Integer> set1 = new HashSet<>(); Set<Integer> resSet = new HashSet<>(); for (int i : nums1) {set1.add(i);} for (int i : nums2) {if (set1.contains(i)) {resSet.add(i);}} int[] arr = new int[resSet.size()]; int j = 0; for(int i : resSet){arr[j++] = i;} return arr;}}",
+          "description": "Java版本一，使用HashSet求两数组交集"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[] intersection(int[] nums1, int[] nums2) {int[] hash1 = new int[1002]; int[] hash2 = new int[1002]; for(int i : nums1) hash1[i]++; for(int i : nums2) hash2[i]++; List<Integer> resList = new ArrayList<>(); for(int i = 0; i < 1002; i++) if(hash1[i] > 0 && hash2[i] > 0) resList.add(i); int index = 0; int res[] = new int[resList.size()]; for(int i : resList) res[index++] = i; return res;}}",
+          "description": "Java版本二，使用数组作为哈希表求两数组交集"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: table = {} for num in nums1: table[num] = table.get(num, 0) + 1 res = set() for num in nums2: if num in table: res.add(num) del table[num] return list(res)",
+          "description": "Python版本一，使用字典和集合求两数组交集"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: count1 = [0]*1001 count2 = [0]*1001 result = [] for i in range(len(nums1)): count1[nums1[i]]+=1 for j in range(len(nums2)): count2[nums2[j]]+=1 for k in range(1001): if count1[k]*count2[k]>0: result.append(k) return result",
+          "description": "Python版本二，使用数组求两数组交集"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: return list(set(nums1) & set(nums2))",
+          "description": "Python版本三，直接使用集合操作求两数组交集"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n + m)",
+    "space_complexity": "O(n)",
+    "explanation": "那来看看使用哈希法进一步优化。"
+  },
+  "code_solutions": [
+    {
+      "language": "C++",
+      "code": "class Solution {public: vector<int> intersection(vector<int>& nums1, vector<int>& nums2) { unordered_set<int> result_set; unordered_set<int> nums_set(nums1.begin(), nums1.end()); for (int num : nums2) { if (nums_set.find(num) != nums_set.end()) { result_set.insert(num); } } return vector<int>(result_set.begin(), result_set.end()); }};",
+      "description": "使用unordered_set计算两个数组的交集"
+    },
+    {
+      "language": "C++",
+      "code": "class Solution {public: vector<int> intersection(vector<int>& nums1, vector<int>& nums2) { unordered_set<int> result_set; int hash[1005] = {0}; for (int num : nums1) { hash[num] = 1; } for (int num : nums2) { if (hash[num] == 1) { result_set.insert(num); } } return vector<int>(result_set.begin(), result_set.end()); }};",
+      "description": "使用数组哈希表计算两个数组的交集"
+    },
+    {
+      "language": "Java",
+      "code": "import java.util.HashSet;import java.util.Set;class Solution { public int[] intersection(int[] nums1, int[] nums2) { Set<Integer> set1 = new HashSet<>(); Set<Integer> resSet = new HashSet<>(); for (int i : nums1) { set1.add(i); } for (int i : nums2) { if (set1.contains(i)) { resSet.add(i); } } return resSet.stream().mapToInt(Integer::intValue).toArray(); }}",
+      "description": "使用HashSet计算两个数组的交集"
+    },
+    {
+      "language": "Java",
+      "code": "class Solution { public int[] intersection(int[] nums1, int[] nums2) { int[] hash1 = new int[1002]; int[] hash2 = new int[1002]; for(int i : nums1) hash1[i]++; for(int i : nums2) hash2[i]++; List<Integer> resList = new ArrayList<>(); for(int i = 0; i < 1002; i++) if(hash1[i] > 0 && hash2[i] > 0) resList.add(i); int index = 0; int res[] = new int[resList.size()]; for(int i : resList) res[index++] = i; return res; }}",
+      "description": "使用Hash数组计算两个数组的交集"
+    },
+    {
+      "language": "Python",
+      "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: table = {} for num in nums1: table[num] = table.get(num, 0) + 1 res = set() for num in nums2: if num in table: res.add(num) del table[num] return list(res)",
+      "description": "使用字典和集合计算两个数组的交集"
+    },
+    {
+      "language": "Python",
+      "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: count1 = [0]*1001 count2 = [0]*1001 result = [] for i in range(len(nums1)): count1[nums1[i]]+=1 for j in range(len(nums2)): count2[nums2[j]]+=1 for k in range(1001): if count1[k]*count2[k]>0: result.append(k) return result",
+      "description": "使用数组计算两个数组的交集"
+    },
+    {
+      "language": "Python",
+      "code": "class Solution: def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]: return list(set(nums1) & set(nums2))",
+      "description": "直接使用集合操作计算两个数组的交集"
+    }
+  ],
+  "common_mistakes": [
+    "直接使用暴力搜索导致时间复杂度过高。",
+    "忽视了题目对结果唯一性的要求，未使用适当的数据结构（如set）去除重复项。",
+    "在数值范围限制内时仍坚持使用复杂的数据结构而非简单数组作为哈希表，增加了不必要的开销。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20200818193523911.png",
+      "description": "该图片展示了两个示例，要求找到两个数组的交集元素，涉及数组操作和集合数据结构的使用。",
+      "context": "该图片展示了力扣上关于求两个数组交集问题的题目页面。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20220707173513.png",
+      "description": "该图展示了使用 `unordered_set` 数据结构来找出两个数组 `nums1` 和 `nums2` 的交集元素的过程。",
+      "context": "该图展示了使用`unordered_set`来实现两个数组交集的算法思路。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20200818193523911.png",
+      "description": "GIF展示了使用哈希表（unordered_set）来找出两个数组交集的过程。",
+      "context": "GIF动画展示了如何使用哈希数据结构（unordered_set）来找出两个数组交集的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20220707173513.png",
+      "description": "GIF展示了使用unordered_set来找出两个整数数组交集的过程。",
+      "context": "该GIF动画展示了如何使用`unordered_set`来找出两个整数数组的交集，同时避免了结果中的重复元素。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\哈希表\\两个数组的交集.txt",
+  "extracted_at": "2025-07-21T03:21:19.132769",
+  "raw_content": "两个数组的交集\n力扣题目链接(https://file1.kamacoder.com/i/algo/20200818193523911.png)\n\n题意：给定两个数组，编写一个函数来计算它们的交集。\n\n349. 两个数组的交集\n\n说明： 输出结果中的每个元素一定是唯一的。 我们可以不考虑输出结果的顺序。\n\n\n\n#思路\n这道题目，主要要学会使用一种哈希数据结构：unordered_set，这个数据结构可以解决很多类似的问题。\n\n注意题目特意说明：输出结果中的每个元素一定是唯一的，也就是说输出的结果的去重的， 同时可以不考虑输出结果的顺序\n\n这道题用暴力的解法时间复杂度是O(n^2)，那来看看使用哈希法进一步优化。\n\n那么用数组来做哈希表也是不错的选择，例如242. 有效的字母异位词(opens new window)\n\n但是要注意，使用数组来做哈希的题目，是因为题目都限制了数值的大小。\n\n而这道题目没有限制数值的大小，就无法使用数组来做哈希表了。\n\n而且如果哈希值比较少、特别分散、跨度非常大，使用数组就造成空间的极大浪费。\n\n此时就要使用另一种结构体了，set ，关于set，C++ 给提供了如下三种可用的数据结构：\n\nstd::set\nstd::multiset\nstd::unordered_set\nstd::set和std::multiset底层实现都是红黑树，std::unordered_set的底层实现是哈希表， 使用unordered_set 读写效率是最高的，并不需要对数据进行排序，而且还不要让数据重复，所以选择unordered_set。\n\n思路如图所示：\n\nhttps://file1.kamacoder.com/i/algo/20220707173513.png\n\nC++代码如下：\n\nclass Solution {\npublic:\n    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {\n        unordered_set<int> result_set; // 存放结果，之所以用set是为了给结果集去重\n        unordered_set<int> nums_set(nums1.begin(), nums1.end());\n        for (int num : nums2) {\n            // 发现nums2的元素 在nums_set里又出现过\n            if (nums_set.find(num) != nums_set.end()) {\n                result_set.insert(num);\n            }\n        }\n        return vector<int>(result_set.begin(), result_set.end());\n    }\n};\n时间复杂度: O(n + m) m 是最后要把 set转成vector\n空间复杂度: O(n)\n#拓展\n那有同学可能问了，遇到哈希问题我直接都用set不就得了，用什么数组啊。\n\n直接使用set 不仅占用空间比数组大，而且速度要比数组慢，set把数值映射到key上都要做hash计算的。\n\n不要小瞧 这个耗时，在数据量大的情况，差距是很明显的。\n\n#后记\n本题后面 力扣改了 题目描述 和 后台测试数据，增添了 数值范围：\n\n1 <= nums1.length, nums2.length <= 1000\n0 <= nums1[i], nums2[i] <= 1000\n所以就可以 使用数组来做哈希表了， 因为数组都是 1000以内的。\n\n对应C++代码如下：\n\nclass Solution {\npublic:\n    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {\n        unordered_set<int> result_set; // 存放结果，之所以用set是为了给结果集去重\n        int hash[1005] = {0}; // 默认数值为0\n        for (int num : nums1) { // nums1中出现的字母在hash数组中做记录\n            hash[num] = 1;\n        }\n        for (int num : nums2) { // nums2中出现话，result记录\n            if (hash[num] == 1) {\n                result_set.insert(num);\n            }\n        }\n        return vector<int>(result_set.begin(), result_set.end());\n    }\n};\n时间复杂度: O(m + n)\n空间复杂度: O(n)\n#其他语言版本\n#Java：\n版本一：使用HashSet\n\n// 时间复杂度O(n+m+k) 空间复杂度O(n+k)\n// 其中n是数组nums1的长度，m是数组nums2的长度，k是交集元素的个数\n\nimport java.util.HashSet;\nimport java.util.Set;\n\nclass Solution {\n    public int[] intersection(int[] nums1, int[] nums2) {\n        if (nums1 == null || nums1.length == 0 || nums2 == null || nums2.length == 0) {\n            return new int[0];\n        }\n        Set<Integer> set1 = new HashSet<>();\n        Set<Integer> resSet = new HashSet<>();\n        //遍历数组1\n        for (int i : nums1) {\n            set1.add(i);\n        }\n        //遍历数组2的过程中判断哈希表中是否存在该元素\n        for (int i : nums2) {\n            if (set1.contains(i)) {\n                resSet.add(i);\n            }\n        }\n      \n        //方法1：将结果集合转为数组\n        return res.stream().mapToInt(Integer::intValue).toArray();\n        /**\n         * 将 Set<Integer> 转换为 int[] 数组：\n         * 1. stream() : Collection 接口的方法，将集合转换为 Stream<Integer>\n         * 2. mapToInt(Integer::intValue) : \n         *    - 中间操作，将 Stream<Integer> 转换为 IntStream\n         *    - 使用方法引用 Integer::intValue，将 Integer 对象拆箱为 int 基本类型\n         * 3. toArray() : 终端操作，将 IntStream 转换为 int[] 数组。\n         */\n        \n        //方法2：另外申请一个数组存放setRes中的元素,最后返回数组\n        int[] arr = new int[resSet.size()];\n        int j = 0;\n        for(int i : resSet){\n            arr[j++] = i;\n        }\n        \n        return arr;\n    }\n}\n版本二：使用Hash數組\n\nclass Solution {\n    public int[] intersection(int[] nums1, int[] nums2) {\n        int[] hash1 = new int[1002];\n        int[] hash2 = new int[1002];\n        for(int i : nums1)\n            hash1[i]++;\n        for(int i : nums2)\n            hash2[i]++;\n        List<Integer> resList = new ArrayList<>();\n        for(int i = 0; i < 1002; i++)\n            if(hash1[i] > 0 && hash2[i] > 0)\n                resList.add(i);\n        int index = 0;\n        int res[] = new int[resList.size()];\n        for(int i : resList)\n            res[index++] = i;\n        return res;\n    }\n}\n#Python3：\n（版本一） 使用字典和集合\n\nclass Solution:\n    def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]:\n    # 使用哈希表存储一个数组中的所有元素\n        table = {}\n        for num in nums1:\n            table[num] = table.get(num, 0) + 1\n        \n        # 使用集合存储结果\n        res = set()\n        for num in nums2:\n            if num in table:\n                res.add(num)\n                del table[num]\n        \n        return list(res)\n（版本二） 使用数组\n\n\t\nclass Solution:\n    def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]:\n        count1 = [0]*1001\n        count2 = [0]*1001\n        result = []\n        for i in range(len(nums1)):\n            count1[nums1[i]]+=1\n        for j in range(len(nums2)):\n            count2[nums2[j]]+=1\n        for k in range(1001):\n            if count1[k]*count2[k]>0:\n                result.append(k)\n        return result\n\t\n（版本三） 使用集合\n\nclass Solution:\n    def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]:\n        return list(set(nums1) & set(nums2))"
+}

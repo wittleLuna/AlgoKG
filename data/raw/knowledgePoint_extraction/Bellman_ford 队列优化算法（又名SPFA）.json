@@ -1,0 +1,75 @@
+{
+  "id": "SA566",
+  "name": "Bellman_ford 队列优化算法",
+  "alias": [
+    "SPFA",
+    "Queue improved Bellman-Ford",
+    "Shortest Path Faster Algorithm"
+  ],
+  "type": "specific_algorithm",
+  "description": "一种用于求解单源最短路径问题的算法，通过队列优化来提高效率。SPFA是一种基于Bellman-Ford算法并使用队列进行优化的算法，特别适用于存在负权边的情况。",
+  "key_concepts": [
+    "最短路径",
+    "松弛操作",
+    "负权边",
+    "负环检测"
+  ],
+  "applications": [
+    "城市间货物运输",
+    "网络路由",
+    "图论",
+    "网络流",
+    "路径规划"
+  ],
+  "created_at": "2025-07-19T12:31:58Z",
+  "updated_at": "2025-07-19T12:32:25Z",
+  "source_files": [
+    "Bellman_ford 队列优化算法（又名SPFA）_kama.txt",
+    "Bellman_ford 队列优化算法（又名SPFA）_wiki.txt"
+  ],
+  "spacy_entities": {
+    "COMPLEXITY": [
+      "O(n)",
+      "O(N)",
+      "O(nm)"
+    ],
+    "DATA_STRUCTURE": [
+      "堆",
+      "队列",
+      "数组",
+      "图",
+      "栈",
+      "邻接表",
+      "Queue",
+      "graph",
+      "deque",
+      "String",
+      "array",
+      "queue",
+      "双端队列"
+    ],
+    "CORE_CONCEPT": [
+      "初始化",
+      "时间复杂度",
+      "路径",
+      "负权回路"
+    ],
+    "PROBLEM_TYPE": [
+      "最短路径问题"
+    ],
+    "SPECIFIC_ALGORITHM": [
+      "SPFA",
+      "Dijkstra",
+      "Bellman–Ford"
+    ],
+    "TECHNIQUE": [
+      "松弛操作",
+      "BFS",
+      "DFS"
+    ],
+    "ALGORITHM_PARADIGM": [
+      "BFS",
+      "DFS"
+    ]
+  }
+}

@@ -1,0 +1,266 @@
+{
+  "id": "AP_02215536",
+  "title": "替换数字",
+  "alternative_titles": [],
+  "platform": "kamacoder",
+  "url": "https://kamacoder.com/problempage.php?pid=1064",
+  "description": "",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "双指针",
+    "字符串处理"
+  ],
+  "data_structure_tags": [
+    "字符串"
+  ],
+  "technique_tags": [
+    "原地算法",
+    "空间优化"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过预先计算需要替换的数字字符数量来扩充字符串长度，然后使用双指针方法从后向前遍历并替换数字字符为'number'，从而避免了每次替换时移动后续元素的问题。",
+  "key_insights": [
+    {
+      "content": "通过先统计数字字符的数量，并基于此扩充字符串大小，可以一次性调整好最终所需的空间，而不需要在替换过程中频繁调整。"
+    },
+    {
+      "content": "采用双指针法（一个指向新数组末尾，另一个指向旧数组末尾），从后往前填充新的字符到扩展后的字符串中，确保了替换操作是线性时间完成的。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "如果想把这道题目做到极致，就不要只用额外的辅助空间了！ （不过使用Java和Python刷题的录友，一定要使用辅助空间，因为Java和Python里的string不能修改）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\nusing namespace std;\nint main() {\n    string s;\n    while (cin >> s) {\n        int sOldIndex = s.size() - 1;\n        int count = 0; // 统计数字的个数\n        for (int i = 0; i < s.size(); i++) {\n            if (s[i] >= '0' && s[i] <= '9') {\n                count++;\n            }\n        }\n        // 扩充字符串s的大小，也就是将每个数字替换成\"number\"之后的大小\n        s.resize(s.size() + count * 5);\n        int sNewIndex = s.size() - 1;\n        // 从后往前将数字替换为\"number\"\n        while (sOldIndex >= 0) {\n            if (s[sOldIndex] >= '0' && s[sOldIndex] <= '9') {\n                s[sNewIndex--] = 'r';\n                s[sNewIndex--] = 'e';\n                s[sNewIndex--] = 'b';\n                s[sNewIndex--] = 'm';\n                s[sNewIndex--] = 'u';\n                s[sNewIndex--] = 'n';\n            } else {\n                s[sNewIndex--] = s[sOldIndex];\n            }\n            sOldIndex--;\n        }\n        cout << s << endl;       \n    }\n}",
+          "description": "C++实现，使用双指针方法在原地修改字符串。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static String replaceNumber(String s) {\n        int count = 0; // 统计数字的个数\n        int sOldSize = s.length();\n        for (int i = 0; i < s.length(); i++) {\n            if(Character.isDigit(s.charAt(i))){\n                count++;\n            }\n        }\n        // 扩充字符串s的大小，也就是每个空格替换成\"number\"之后的大小\n        char[] newS = new char[s.length() + count * 5];\n        int sNewSize = newS.length;\n        // 将旧字符串的内容填入新数组\n        System.arraycopy(s.toCharArray(), 0, newS, 0, sOldSize);\n        // 从后先前将空格替换为\"number\"\n        for (int i = sNewSize - 1, j = sOldSize - 1; j < i; j--, i--) {\n            if (!Character.isDigit(newS[j])) {\n                newS[i] = newS[j];\n            } else {\n                newS[i] = 'r';\n                newS[i - 1] = 'e';\n                newS[i - 2] = 'b';\n                newS[i - 3] = 'm';\n                newS[i - 4] = 'u';\n                newS[i - 5] = 'n';\n                i -= 5;\n            }\n        }\n        return new String(newS);\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String s = scanner.next();\n        System.out.println(replaceNumber(s));\n        scanner.close();\n    }\n}",
+          "description": "Java实现，通过创建新的字符数组来替换数字，并从后向前填充以避免元素移动。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String s = sc.next();\n        int len = s.length();\n        for (int i = 0; i < s.length(); i++) {\n            if (s.charAt(i) >= 0 && s.charAt(i) <= '9') {\n                len += 5;\n            }\n        }\n        char[] ret = new char[len];\n        for (int i = 0; i < s.length(); i++) {\n            ret[i] = s.charAt(i);\n        }\n        for (int i = s.length() - 1, j = len - 1; i >= 0; i--) {\n            if ('0' <= ret[i] && ret[i] <= '9') {\n                ret[j--] = 'r';\n                ret[j--] = 'e';\n                ret[j--] = 'b';\n                ret[j--] = 'm';\n                ret[j--] = 'u';\n                ret[j--] = 'n';\n            } else {\n                ret[j--] = ret[i];\n            }\n        }\n        System.out.println(ret);\n    }\n}",
+          "description": "另一种Java实现方式，同样采用双指针法从后向前处理字符串。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object):\n    def subsitute_numbers(self, s):\n        count = sum(1 for char in s if char.isdigit()) # 统计数字的个数\n        expand_len = len(s) + (count * 5)  # 计算扩充后字符串的大小， x->number， 每有一个数字就要增加五个长度\n        res = [''] * expand_len\n        new_index = expand_len - 1 # 指向扩充后字符串末尾\n        old_index = len(s) - 1 # 指向原字符串末尾\n        while old_index >= 0: # 从后往前， 遇到数字替换成“number”\n            if s[old_index].isdigit():\n                res[new_index-5:new_index+1] = \"number\"\n                new_index -= 6\n            else:\n                res[new_index] = s[old_index]\n                new_index -= 1\n            old_index -= 1\n        return \".join(res)\nif __name__ == \"__main__\":\n    solution = Solution()\n    while True:\n        try:\n            s = input()\n            result = solution.subsitute_numbers(s)\n            print(result)\n        except EOFError:\n            break",
+          "description": "Python版本实现，利用列表操作和双指针技术高效完成任务。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\nusing namespace std;\nint main() {\n    string s;\n    while (cin >> s) {\n        int sOldIndex = s.size() - 1;\n        int count = 0; // 统计数字的个数\n        for (int i = 0; i < s.size(); i++) {\n            if (s[i] >= '0' && s[i] <= '9') {\n                count++;\n            }\n        }\n        // 扩充字符串s的大小，也就是将每个数字替换成\"number\"之后的大小\n        s.resize(s.size() + count * 5);\n        int sNewIndex = s.size() - 1;\n        // 从后往前将数字替换为\"number\"\n        while (sOldIndex >= 0) {\n            if (s[sOldIndex] >= '0' && s[sOldIndex] <= '9') {\n                s[sNewIndex--] = 'r';\n                s[sNewIndex--] = 'e';\n                s[sNewIndex--] = 'b';\n                s[sNewIndex--] = 'm';\n                s[sNewIndex--] = 'u';\n                s[sNewIndex--] = 'n';\n            } else {\n                s[sNewIndex--] = s[sOldIndex];\n            }\n            sOldIndex--;\n        }\n        cout << s << endl;       \n    }\n}",
+          "description": "C++版本实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static String replaceNumber(String s) {\n        int count = 0; // 统计数字的个数\n        int sOldSize = s.length();\n        for (int i = 0; i < s.length(); i++) {\n            if(Character.isDigit(s.charAt(i))){\n                count++;\n            }\n        }\n        char[] newS = new char[s.length() + count * 5];\n        int sNewSize = newS.length;\n        System.arraycopy(s.toCharArray(), 0, newS, 0, sOldSize);\n        for (int i = sNewSize - 1, j = sOldSize - 1; j < i; j--, i--) {\n            if (!Character.isDigit(newS[j])) {\n                newS[i] = newS[j];\n            } else {\n                newS[i] = 'r';\n                newS[i - 1] = 'e';\n                newS[i - 2] = 'b';\n                newS[i - 3] = 'm';\n                newS[i - 4] = 'u';\n                newS[i - 5] = 'n';\n                i -= 5;\n            }\n        }\n        return new String(newS);\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String s = scanner.next();\n        System.out.println(replaceNumber(s));\n        scanner.close();\n    }\n}",
+          "description": "Java版本实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object):\n    def subsitute_numbers(self, s):\n        count = sum(1 for char in s if char.isdigit())\n        expand_len = len(s) + (count * 5)\n        res = [''] * expand_len\n        new_index = expand_len - 1\n        old_index = len(s) - 1\n        while old_index >= 0:\n            if s[old_index].isdigit():\n                res[new_index-5:new_index+1] = \"number\"\n                new_index -= 6\n            else:\n                res[new_index] = s[old_index]\n                new_index -= 1\n            old_index -= 1\n        return \".join(res)\nif __name__ == \"__main__\":\n    solution = Solution()\n    while True:\n        try:\n            s = input()\n            result = solution.subsitute_numbers(s)\n            print(result)\n        except EOFError:\n            break",
+          "description": "Python版本实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "拓展",
+      "text": "这里也给大家拓展一下字符串和数组有什么差别，",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "#include <iostream>\nusing namespace std;\nint main() {\n    string s;\n    while (cin >> s) {\n        int sOldIndex = s.size() - 1;\n        int count = 0; // 统计数字的个数\n        for (int i = 0; i < s.size(); i++) {\n            if (s[i] >= '0' && s[i] <= '9') {\n                count++;\n            }\n        }\n        // 扩充字符串s的大小，也就是将每个数字替换成\"number\"之后的大小\n        s.resize(s.size() + count * 5);\n        int sNewIndex = s.size() - 1;\n        // 从后往前将数字替换为\"number\"\n        while (sOldIndex >= 0) {\n            if (s[sOldIndex] >= '0' && s[sOldIndex] <= '9') {\n                s[sNewIndex--] = 'r';\n                s[sNewIndex--] = 'e';\n                s[sNewIndex--] = 'b';\n                s[sNewIndex--] = 'm';\n                s[sNewIndex--] = 'u';\n                s[sNewIndex--] = 'n';\n            } else {\n                s[sNewIndex--] = s[sOldIndex];\n            }\n            sOldIndex--;\n        }\n        cout << s << endl;       \n    }\n}",
+          "description": "使用双指针法在原字符串上进行修改，将所有数字字符替换为'number'。"
+        },
+        {
+          "language": "Java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static String replaceNumber(String s) {\n        int count = 0; // 统计数字的个数\n        int sOldSize = s.length();\n        for (int i = 0; i < s.length(); i++) {\n            if(Character.isDigit(s.charAt(i))){\n                count++;\n            }\n        }\n        char[] newS = new char[s.length() + count * 5];\n        int sNewSize = newS.length;\n        System.arraycopy(s.toCharArray(), 0, newS, 0, sOldSize);\n        for (int i = sNewSize - 1, j = sOldSize - 1; j < i; j--, i--) {\n            if (!Character.isDigit(newS[j])) {\n                newS[i] = newS[j];\n            } else {\n                newS[i] = 'r';\n                newS[i - 1] = 'e';\n                newS[i - 2] = 'b';\n                newS[i - 3] = 'm';\n                newS[i - 4] = 'u';\n                newS[i - 5] = 'n';\n                i -= 5;\n            }\n        }\n        return new String(newS);\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String s = scanner.next();\n        System.out.println(replaceNumber(s));\n        scanner.close();\n    }\n}",
+          "description": "通过创建一个新的字符数组来存储替换后的字符串，遍历原字符串并计算需要替换的数字数量以确定新数组的大小。"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution(object):\n    def subsitute_numbers(self, s):\n        count = sum(1 for char in s if char.isdigit())\n        expand_len = len(s) + (count * 5)\n        res = [''] * expand_len\n        new_index = expand_len - 1\n        old_index = len(s) - 1\n        while old_index >= 0:\n            if s[old_index].isdigit():\n                res[new_index-5:new_index+1] = list(\"number\")\n                new_index -= 6\n            else:\n                res[new_index] = s[old_index]\n                new_index -= 1\n            old_index -= 1\n        return ''.join(res)\nif __name__ == \"__main__\":\n    solution = Solution()\n    while True:\n        try:\n            s = input()\n            result = solution.subsitute_numbers(s)\n            print(result)\n        except EOFError:\n            break",
+          "description": "定义了一个Solution类，其中包含subsitute_numbers方法用于替换字符串中的数字字符。此方法首先计算出需要扩展的长度，然后利用列表来构建新的字符串，并最终返回拼接后的结果。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#C：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\nusing namespace std;\nint main() {\n    string s;\n    while (cin >> s) {\n        int sOldIndex = s.size() - 1;\n        int count = 0; // 统计数字的个数\n        for (int i = 0; i < s.size(); i++) {\n            if (s[i] >= '0' && s[i] <= '9') {\n                count++;\n            }\n        }\n        // 扩充字符串s的大小，也就是将每个数字替换成\"number\"之后的大小\n        s.resize(s.size() + count * 5);\n        int sNewIndex = s.size() - 1;\n        // 从后往前将数字替换为\"number\"\n        while (sOldIndex >= 0) {\n            if (s[sOldIndex] >= '0' && s[sOldIndex] <= '9') {\n                s[sNewIndex--] = 'r';\n                s[sNewIndex--] = 'e';\n                s[sNewIndex--] = 'b';\n                s[sNewIndex--] = 'm';\n                s[sNewIndex--] = 'u';\n                s[sNewIndex--] = 'n';\n            } else {\n                s[sNewIndex--] = s[sOldIndex];\n            }\n            sOldIndex--;\n        }\n        cout << s << endl;       \n    }\n}",
+          "description": "C++实现：读取输入字符串，统计数字字符数量，并将这些数字字符替换为'number'。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static String replaceNumber(String s) {\n        int count = 0; // 统计数字的个数\n        int sOldSize = s.length();\n        for (int i = 0; i < s.length(); i++) {\n            if(Character.isDigit(s.charAt(i))){\n                count++;\n            }\n        }\n        char[] newS = new char[s.length() + count * 5];\n        int sNewSize = newS.length;\n        System.arraycopy(s.toCharArray(), 0, newS, 0, sOldSize);\n        for (int i = sNewSize - 1, j = sOldSize - 1; j < i; j--, i--) {\n            if (!Character.isDigit(newS[j])) {\n                newS[i] = newS[j];\n            } else {\n                newS[i] = 'r';\n                newS[i - 1] = 'e';\n                newS[i - 2] = 'b';\n                newS[i - 3] = 'm';\n                newS[i - 4] = 'u';\n                newS[i - 5] = 'n';\n                i -= 5;\n            }\n        }\n        return new String(newS);\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String s = scanner.next();\n        System.out.println(replaceNumber(s));\n        scanner.close();\n    }\n}",
+          "description": "Java实现：通过统计并替换字符串中的数字字符来生成新的字符串。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object):\n    def subsitute_numbers(self, s):\n        count = sum(1 for char in s if char.isdigit())\n        expand_len = len(s) + (count * 5)\n        res = [''] * expand_len\n        new_index = expand_len - 1\n        old_index = len(s) - 1\n        while old_index >= 0:\n            if s[old_index].isdigit():\n                res[new_index-5:new_index+1] = 'number'\n                new_index -= 6\n            else:\n                res[new_index] = s[old_index]\n                new_index -= 1\n            old_index -= 1\n        return ''.join(res)\nif __name__ == '__main__':\n    solution = Solution()\n    while True:\n        try:\n            s = input()\n            result = solution.subsitute_numbers(s)\n            print(result)\n        except EOFError:\n            break",
+          "description": "Python实现：定义一个类方法用于替换字符串中的数字字符为'number'。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "C：",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\nusing namespace std;\nint main() {\n    string s;\n    while (cin >> s) {\n        int sOldIndex = s.size() - 1;\n        int count = 0; \n        for (int i = 0; i < s.size(); i++) {\n            if (s[i] >= '0' && s[i] <= '9') {\n                count++;\n            }\n        }\n        s.resize(s.size() + count * 5);\n        int sNewIndex = s.size() - 1;\n        while (sOldIndex >= 0) {\n            if (s[sOldIndex] >= '0' && s[sOldIndex] <= '9') {\n                s[sNewIndex--] = 'r';\n                s[sNewIndex--] = 'e';\n                s[sNewIndex--] = 'b';\n                s[sNewIndex--] = 'm';\n                s[sNewIndex--] = 'u';\n                s[sNewIndex--] = 'n';\n            } else {\n                s[sNewIndex--] = s[sOldIndex];\n            }\n            sOldIndex--;\n        }\n        cout << s << endl;      \n    }\n}",
+          "description": "C++版本的解决方案，使用双指针从后向前替换数字字符。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static String replaceNumber(String s) {\n        int count = 0; \n        int sOldSize = s.length();\n        for (int i = 0; i < s.length(); i++) {\n            if(Character.isDigit(s.charAt(i))){\n                count++;\n            }\n        }\n        char[] newS = new char[s.length() + count * 5];\n        int sNewSize = newS.length;\n        System.arraycopy(s.toCharArray(), 0, newS, 0, sOldSize);\n        for (int i = sNewSize - 1, j = sOldSize - 1; j < i; j--, i--) {\n            if (!Character.isDigit(newS[j])) {\n                newS[i] = newS[j];\n            } else {\n                newS[i] = 'r';\n                newS[i - 1] = 'e';\n                newS[i - 2] = 'b';\n                newS[i - 3] = 'm';\n                newS[i - 4] = 'u';\n                newS[i - 5] = 'n';\n                i -= 5;\n            }\n        }\n        return new String(newS);\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String s = scanner.next();\n        System.out.println(replaceNumber(s));\n        scanner.close();\n    }\n}",
+          "description": "Java版本的第一个解决方案，创建一个新的char数组来存储替换后的字符串。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String s = sc.next();\n        int len = s.length();\n        for (int i = 0; i < s.length(); i++) {\n            if (s.charAt(i) >= '0' && s.charAt(i) <= '9') {\n                len += 5;\n            }\n        }\n        char[] ret = new char[len];\n        for (int i = 0; i < s.length(); i++) {\n            ret[i] = s.charAt(i);\n        }\n        for (int i = s.length() - 1, j = len - 1; i >= 0; i--) {\n            if ('0' <= ret[i] && ret[i] <= '9') {\n                ret[j--] = 'r';\n                ret[j--] = 'e';\n                ret[j--] = 'b';\n                ret[j--] = 'm';\n                ret[j--] = 'u';\n                ret[j--] = 'n';\n            } else {\n                ret[j--] = ret[i];\n            }\n        }\n        System.out.println(ret);\n    }\n}",
+          "description": "Java版本的第二个解决方案，同样采用新数组但直接在新数组上进行操作。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object):\n    def subsitute_numbers(self, s):\n        count = sum(1 for char in s if char.isdigit())\n        expand_len = len(s) + (count * 5)\n        res = [''] * expand_len\n        new_index = expand_len - 1\n        old_index = len(s) - 1\n        while old_index >= 0:\n            if s[old_index].isdigit():\n                res[new_index-5:new_index+1] = \"number\"\n                new_index -= 6\n            else:\n                res[new_index] = s[old_index]\n                new_index -= 1\n            old_index -= 1\n        return \".join(res)\nif __name__ == \"__main__\":\n    solution = Solution()\n    while True:\n        try:\n            s = input()\n            result = solution.subsitute_numbers(s)\n            print(result)\n        except EOFError:\n            break",
+          "description": "Python版本的解决方案，使用列表和切片来实现数字到'number'的替换。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "解法一",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\nusing namespace std;\nint main() {\n    string s;\n    while (cin >> s) {\n        int sOldIndex = s.size() - 1;\n        int count = 0; // 统计数字的个数\n        for (int i = 0; i < s.size(); i++) {\n            if (s[i] >= '0' && s[i] <= '9') {\n                count++;\n            }\n        }\n        // 扩充字符串s的大小，也就是将每个数字替换成\"number\"之后的大小\n        s.resize(s.size() + count * 5);\n        int sNewIndex = s.size() - 1;\n        // 从后往前将数字替换为\"number\"\n        while (sOldIndex >= 0) {\n            if (s[sOldIndex] >= '0' && s[sOldIndex] <= '9') {\n                s[sNewIndex--] = 'r';\n                s[sNewIndex--] = 'e';\n                s[sNewIndex--] = 'b';\n                s[sNewIndex--] = 'm';\n                s[sNewIndex--] = 'u';\n                s[sNewIndex--] = 'n';\n            } else {\n                s[sNewIndex--] = s[sOldIndex];\n            }\n            sOldIndex--;\n        }\n        cout << s << endl;       \n    }\n}",
+          "description": "C++版本解决方案"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static String replaceNumber(String s) {\n        int count = 0; // 统计数字的个数\n        int sOldSize = s.length();\n        for (int i = 0; i < s.length(); i++) {\n            if(Character.isDigit(s.charAt(i))){\n                count++;\n            }\n        }\n        char[] newS = new char[s.length() + count * 5];\n        int sNewSize = newS.length;\n        System.arraycopy(s.toCharArray(), 0, newS, 0, sOldSize);\n        for (int i = sNewSize - 1, j = sOldSize - 1; j < i; j--, i--) {\n            if (!Character.isDigit(newS[j])) {\n                newS[i] = newS[j];\n            } else {\n                newS[i] = 'r';\n                newS[i - 1] = 'e';\n                newS[i - 2] = 'b';\n                newS[i - 3] = 'm';\n                newS[i - 4] = 'u';\n                newS[i - 5] = 'n';\n                i -= 5;\n            }\n        }\n        return new String(newS);\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String s = scanner.next();\n        System.out.println(replaceNumber(s));\n        scanner.close();\n    }\n}",
+          "description": "Java版本解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object):\n    def subsitute_numbers(self, s):\n        count = sum(1 for char in s if char.isdigit())\n        expand_len = len(s) + (count * 5)\n        res = [''] * expand_len\n        new_index = expand_len - 1\n        old_index = len(s) - 1\n        while old_index >= 0:\n            if s[old_index].isdigit():\n                res[new_index-5:new_index+1] = \"number\"\n                new_index -= 6\n            else:\n                res[new_index] = s[old_index]\n                new_index -= 1\n            old_index -= 1\n        return ''.join(res)\nif __name__ == '__main__':\n    solution = Solution()\n    while True:\n        try:\n            s = input()\n            result = solution.subsitute_numbers(s)\n            print(result)\n        except EOFError:\n            break",
+          "description": "Python版本解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "class Solution(object):",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\nusing namespace std;\nint main() {\n    string s;\n    while (cin >> s) {\n        int sOldIndex = s.size() - 1;\n        int count = 0; \n        for (int i = 0; i < s.size(); i++) {\n            if (s[i] >= '0' && s[i] <= '9') {\n                count++;\n            }\n        }\n        s.resize(s.size() + count * 5);\n        int sNewIndex = s.size() - 1;\n        while (sOldIndex >= 0) {\n            if (s[sOldIndex] >= '0' && s[sOldIndex] <= '9') {\n                s[sNewIndex--] = 'r';\n                s[sNewIndex--] = 'e';\n                s[sNewIndex--] = 'b';\n                s[sNewIndex--] = 'm';\n                s[sNewIndex--] = 'u';\n                s[sNewIndex--] = 'n';\n            } else {\n                s[sNewIndex--] = s[sOldIndex];\n            }\n            sOldIndex--;\n        }\n        cout << s << endl;       \n    }\n}",
+          "description": "C++实现，将字符串中的数字替换为'number'"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static String replaceNumber(String s) {\n        int count = 0; \n        int sOldSize = s.length();\n        for (int i = 0; i < s.length(); i++) {\n            if(Character.isDigit(s.charAt(i))){\n                count++;\n            }\n        }\n        char[] newS = new char[s.length() + count * 5];\n        int sNewSize = newS.length;\n        System.arraycopy(s.toCharArray(), 0, newS, 0, sOldSize);\n        for (int i = sNewSize - 1, j = sOldSize - 1; j < i; j--, i--) {\n            if (!Character.isDigit(newS[j])) {\n                newS[i] = newS[j];\n            } else {\n                newS[i] = 'r';\n                newS[i - 1] = 'e';\n                newS[i - 2] = 'b';\n                newS[i - 3] = 'm';\n                newS[i - 4] = 'u';\n                newS[i - 5] = 'n';\n                i -= 5;\n            }\n        }\n        return new String(newS);\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String s = scanner.next();\n        System.out.println(replaceNumber(s));\n        scanner.close();\n    }\n}",
+          "description": "Java实现，使用辅助空间将字符串中的数字替换为'number'"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String s = sc.next();\n        int len = s.length();\n        for (int i = 0; i < s.length(); i++) {\n            if (s.charAt(i) >= 0 && s.charAt(i) <= '9') {\n                len += 5;\n            }\n        }\n        char[] ret = new char[len];\n        for (int i = 0; i < s.length(); i++) {\n            ret[i] = s.charAt(i);\n        }\n        for (int i = s.length() - 1, j = len - 1; i >= 0; i--) {\n            if ('0' <= ret[i] && ret[i] <= '9') {\n                ret[j--] = 'r';\n                ret[j--] = 'e';\n                ret[j--] = 'b';\n                ret[j--] = 'm';\n                ret[j--] = 'u';\n                ret[j--] = 'n';\n            } else {\n                ret[j--] = ret[i];\n            }\n        }\n        System.out.println(ret);\n    }\n}",
+          "description": "Java实现，不直接修改原字符串，而是创建新数组进行操作"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object):\n    def subsitute_numbers(self, s):\n        count = sum(1 for char in s if char.isdigit())\n        expand_len = len(s) + (count * 5)\n        res = [''] * expand_len\n        new_index = expand_len - 1\n        old_index = len(s) - 1\n        while old_index >= 0:\n            if s[old_index].isdigit():\n                res[new_index-5:new_index+1] = list(\"number\")\n                new_index -= 6\n            else:\n                res[new_index] = s[old_index]\n                new_index -= 1\n            old_index -= 1\n        return ''.join(res)\n\nif __name__ == \"__main__\":\n    solution = Solution()\n    while True:\n        try:\n            s = input()\n            result = solution.subsitute_numbers(s)\n            print(result)\n        except EOFError:\n            break",
+          "description": "Python实现，利用列表操作来替换字符串中的数字"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "C++",
+      "code": "#include <iostream>\nusing namespace std;\nint main() {\n    string s;\n    while (cin >> s) {\n        int sOldIndex = s.size() - 1;\n        int count = 0; \n        for (int i = 0; i < s.size(); i++) {\n            if (s[i] >= '0' && s[i] <= '9') {\n                count++;\n            }\n        }\n        s.resize(s.size() + count * 5);\n        int sNewIndex = s.size() - 1;\n        while (sOldIndex >= 0) {\n            if (s[sOldIndex] >= '0' && s[sOldIndex] <= '9') {\n                s[sNewIndex--] = 'r';\n                s[sNewIndex--] = 'e';\n                s[sNewIndex--] = 'b';\n                s[sNewIndex--] = 'm';\n                s[sNewIndex--] = 'u';\n                s[sNewIndex--] = 'n';\n            } else {\n                s[sNewIndex--] = s[sOldIndex];\n            }\n            sOldIndex--;\n        }\n        cout << s << endl;       \n    }\n}",
+      "description": "使用双指针方法从后向前替换字符串中的数字为'number'。"
+    },
+    {
+      "language": "Java",
+      "code": "import java.util.Scanner;\npublic class Main {\n    public static String replaceNumber(String s) {\n        int count = 0; \n        int sOldSize = s.length();\n        for (int i = 0; i < s.length(); i++) {\n            if(Character.isDigit(s.charAt(i))){\n                count++;\n            }\n        }\n        char[] newS = new char[s.length() + count * 5];\n        int sNewSize = newS.length;\n        System.arraycopy(s.toCharArray(), 0, newS, 0, sOldSize);\n        for (int i = sNewSize - 1, j = sOldSize - 1; j < i; j--, i--) {\n            if (!Character.isDigit(newS[j])) {\n                newS[i] = newS[j];\n            } else {\n                newS[i] = 'r';\n                newS[i - 1] = 'e';\n                newS[i - 2] = 'b';\n                newS[i - 3] = 'm';\n                newS[i - 4] = 'u';\n                newS[i - 5] = 'n';\n                i -= 5;\n            }\n        }\n        return new String(newS);\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String s = scanner.next();\n        System.out.println(replaceNumber(s));\n        scanner.close();\n    }\n}",
+      "description": "通过创建一个新的字符数组来扩展原始字符串，并从后向前替换数字为'number'。"
+    },
+    {
+      "language": "Python",
+      "code": "class Solution(object):\n    def subsitute_numbers(self, s):\n        count = sum(1 for char in s if char.isdigit())\n        expand_len = len(s) + (count * 5)\n        res = [''] * expand_len\n        new_index = expand_len - 1\n        old_index = len(s) - 1\n        while old_index >= 0:\n            if s[old_index].isdigit():\n                res[new_index-5:new_index+1] = \"number\"\n                new_index -= 6\n            else:\n                res[new_index] = s[old_index]\n                new_index -= 1\n            old_index -= 1\n        return ''.join(res)\nif __name__ == '__main__':\n    solution = Solution()\n    while True:\n        try:\n            s = input()\n            result = solution.subsitute_numbers(s)\n            print(result)\n        except EOFError:\n            break",
+      "description": "定义了一个类Solution，其中包含一个方法用于将字符串中的数字替换为'number'，并使用了列表操作来实现这一功能。"
+    }
+  ],
+  "common_mistakes": [
+    "直接从前向后替换数字会导致额外的时间开销，因为每次插入新字符都需要移动其后的所有字符。",
+    "忽略语言特性：如Java和Python中String不可变性，需要使用可变数据结构如char[]或StringBuilder进行操作。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20231030165201.png",
+      "description": "这张图片展示了数组扩容的过程，从一个包含元素 'a', 5, 'b' 的小数组扩展到一个包含相同元素但容量更大的新数组。",
+      "context": "展示了字符串 \"a5b\" 转换为 \"anumberb\" 后长度变化的示意图。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20231030173058.png",
+      "description": "这张图片展示了在数组中从后向前填充字符的算法过程，涉及旧数组和新数组的遍历与赋值操作。",
+      "context": "该图展示了使用双指针法从后向前替换字符串中的数字字符为\"number\"的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20231030165201.png",
+      "description": "GIF展示了字符串中每个数字被替换为\"number\"后，数组从后向前填充的过程。",
+      "context": "该GIF展示了如何通过先扩充数组再从后向前替换数字字符的方法，将字符串中的每个数字字符替换成\"number\"的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20231030173058.png",
+      "description": "GIF展示了通过双指针法从后向前替换字符串中数字字符为\"number\"的过程。",
+      "context": "该GIF动画展示了使用双指针方法从后向前替换字符串中的数字字符为\"number\"的过程，直观地说明了为何选择这种方式可以提高效率。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\双指针\\替换数字.txt",
+  "extracted_at": "2025-07-21T02:21:15.904066",
+  "raw_content": "替换数字\n卡码网题目链接(https://kamacoder.com/problempage.php?pid=1064)\n\n给定一个字符串 s，它包含小写字母和数字字符，请编写一个函数，将字符串中的字母字符保持不变，而将每个数字字符替换为number。\n\n例如，对于输入字符串 \"a1b2c3\"，函数应该将其转换为 \"anumberbnumbercnumber\"。\n\n对于输入字符串 \"a5b\"，函数应该将其转换为 \"anumberb\"\n\n输入：一个字符串 s,s 仅包含小写字母和数字字符。\n\n输出：打印一个新的字符串，其中每个数字字符都被替换为了number\n\n样例输入：a1b2c3\n\n样例输出：anumberbnumbercnumber\n\n数据范围：1 <= s.length < 10000。\n\n#思路\n如果想把这道题目做到极致，就不要只用额外的辅助空间了！ （不过使用Java和Python刷题的录友，一定要使用辅助空间，因为Java和Python里的string不能修改）\n\n首先扩充数组到每个数字字符替换成 \"number\" 之后的大小。\n\n例如 字符串 \"a5b\" 的长度为3，那么 将 数字字符变成字符串 \"number\" 之后的字符串为 \"anumberb\" 长度为 8。\n\n如图：\n\nhttps://file1.kamacoder.com/i/algo/20231030165201.png\n\n然后从后向前替换数字字符，也就是双指针法，过程如下：i指向新长度的末尾，j指向旧长度的末尾。\n\nhttps://file1.kamacoder.com/i/algo/20231030173058.png\n\n有同学问了，为什么要从后向前填充，从前向后填充不行么？\n\n从前向后填充就是O(n^2)的算法了，因为每次添加元素都要将添加元素之后的所有元素整体向后移动。\n\n其实很多数组填充类的问题，其做法都是先预先给数组扩容带填充后的大小，然后在从后向前进行操作。\n\n这么做有两个好处：\n\n不用申请新数组。\n从后向前填充元素，避免了从前向后填充元素时，每次添加元素都要将添加元素之后的所有元素向后移动的问题。\nC++代码如下：\n\n#include <iostream>\nusing namespace std;\nint main() {\n    string s;\n    while (cin >> s) {\n        int sOldIndex = s.size() - 1;\n        int count = 0; // 统计数字的个数\n        for (int i = 0; i < s.size(); i++) {\n            if (s[i] >= '0' && s[i] <= '9') {\n                count++;\n            }\n        }\n        // 扩充字符串s的大小，也就是将每个数字替换成\"number\"之后的大小\n        s.resize(s.size() + count * 5);\n        int sNewIndex = s.size() - 1;\n        // 从后往前将数字替换为\"number\"\n        while (sOldIndex >= 0) {\n            if (s[sOldIndex] >= '0' && s[sOldIndex] <= '9') {\n                s[sNewIndex--] = 'r';\n                s[sNewIndex--] = 'e';\n                s[sNewIndex--] = 'b';\n                s[sNewIndex--] = 'm';\n                s[sNewIndex--] = 'u';\n                s[sNewIndex--] = 'n';\n            } else {\n                s[sNewIndex--] = s[sOldIndex];\n            }\n            sOldIndex--;\n        }\n        cout << s << endl;       \n    }\n}\n\n\n时间复杂度：O(n)\n空间复杂度：O(1)\n此时算上本题，我们已经做了七道双指针相关的题目了分别是：\n\n27.移除元素(opens new window)\n15.三数之和(opens new window)\n18.四数之和(opens new window)\n206.翻转链表(opens new window)\n142.环形链表II(opens new window)\n344.反转字符串(opens new window)\n#拓展\n这里也给大家拓展一下字符串和数组有什么差别，\n\n字符串是若干字符组成的有限序列，也可以理解为是一个字符数组，但是很多语言对字符串做了特殊的规定，接下来我来说一说C/C++中的字符串。\n\n在C语言中，把一个字符串存入一个数组时，也把结束符 '\\0'存入数组，并以此作为该字符串是否结束的标志。\n\n例如这段代码：\n\nchar a[5] = \"asd\";\nfor (int i = 0; a[i] != '\\0'; i++) {\n}\n在C++中，提供一个string类，string类会提供 size接口，可以用来判断string类字符串是否结束，就不用'\\0'来判断是否结束。\n\n例如这段代码:\n\nstring a = \"asd\";\nfor (int i = 0; i < a.size(); i++) {\n}\n那么vector< char > 和 string 又有什么区别呢？\n\n其实在基本操作上没有区别，但是 string提供更多的字符串处理的相关接口，例如string 重载了+，而vector却没有。\n\n所以想处理字符串，我们还是会定义一个string类型。\n\n#其他语言版本\n#C：\n#Java：\n解法一\n\nimport java.util.Scanner;\n\npublic class Main {\n    \n    public static String replaceNumber(String s) {\n        int count = 0; // 统计数字的个数\n        int sOldSize = s.length();\n        for (int i = 0; i < s.length(); i++) {\n            if(Character.isDigit(s.charAt(i))){\n                count++;\n            }\n        }\n        // 扩充字符串s的大小，也就是每个空格替换成\"number\"之后的大小\n        char[] newS = new char[s.length() + count * 5];\n        int sNewSize = newS.length;\n        // 将旧字符串的内容填入新数组\n        System.arraycopy(s.toCharArray(), 0, newS, 0, sOldSize);\n        // 从后先前将空格替换为\"number\"\n        for (int i = sNewSize - 1, j = sOldSize - 1; j < i; j--, i--) {\n            if (!Character.isDigit(newS[j])) {\n                newS[i] = newS[j];\n            } else {\n                newS[i] = 'r';\n                newS[i - 1] = 'e';\n                newS[i - 2] = 'b';\n                newS[i - 3] = 'm';\n                newS[i - 4] = 'u';\n                newS[i - 5] = 'n';\n                i -= 5;\n            }\n        }\n        return new String(newS);\n    };\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        String s = scanner.next();\n        System.out.println(replaceNumber(s));\n        scanner.close();\n    }\n}\n解法二\n\n// 为了还原题目本意，先把原数组复制到扩展长度后的新数组，然后不再使用原数组、原地对新数组进行操作。\nimport java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String s = sc.next();\n        int len = s.length();\n        for (int i = 0; i < s.length(); i++) {\n            if (s.charAt(i) >= 0 && s.charAt(i) <= '9') {\n                len += 5;\n            }\n        }\n        \n        char[] ret = new char[len];\n        for (int i = 0; i < s.length(); i++) {\n            ret[i] = s.charAt(i);\n        }\n        for (int i = s.length() - 1, j = len - 1; i >= 0; i--) {\n            if ('0' <= ret[i] && ret[i] <= '9') {\n                ret[j--] = 'r';\n                ret[j--] = 'e';\n                ret[j--] = 'b';\n                ret[j--] = 'm';\n                ret[j--] = 'u';\n                ret[j--] = 'n';\n            } else {\n                ret[j--] = ret[i];\n            }\n        }\n        System.out.println(ret);\n    }\n}\n#Python：\nclass Solution(object):\n    def subsitute_numbers(self, s):\n        \"\"\"\n        :type s: str\n        :rtype: str\n        \"\"\"\n        \n        count = sum(1 for char in s if char.isdigit()) # 统计数字的个数\n        expand_len = len(s) + (count * 5)  # 计算扩充后字符串的大小， x->number， 每有一个数字就要增加五个长度\n        res = [''] * expand_len\n        \n        new_index = expand_len - 1 # 指向扩充后字符串末尾\n        old_index = len(s) - 1 # 指向原字符串末尾\n        \n        while old_index >= 0: # 从后往前， 遇到数字替换成“number”\n            if s[old_index].isdigit():\n                res[new_index-5:new_index+1] = \"number\"\n                new_index -= 6\n            else:\n                res[new_index] = s[old_index]\n                new_index -= 1\n            old_index -= 1\n        \n        return \"\".join(res)\n        \nif __name__ == \"__main__\":\n    solution = Solution()\n\n    while True:\n        try:\n            s = input()\n            result = solution.subsitute_numbers(s)\n            print(result)\n        except EOFError:\n            break"
+}

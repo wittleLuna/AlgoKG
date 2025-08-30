@@ -1,0 +1,186 @@
+{
+  "id": "AP_7bb31d9f",
+  "title": "二叉树的层次遍历 II",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/binary-tree-level-order-traversal-ii/",
+  "description": "给定一个二叉树，返回其节点值自底向上的层次遍历。 （即按从叶子节点所在层到根节点所在的层，逐层从左向右遍历）\n\nhttps://file1.kamacoder.com/i/algo/20210203151058308.png",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "广度优先搜索",
+    "层次遍历"
+  ],
+  "data_structure_tags": [
+    "二叉树",
+    "队列"
+  ],
+  "technique_tags": [
+    "列表反转",
+    "头部插入"
+  ],
+  "difficulty": null,
+  "solution_approach": "首先执行常规的层次遍历（广度优先搜索），然后在结果上进行反转来满足题目要求自底向上的层次遍历。",
+  "key_insights": [
+    {
+      "content": "通过维护一个队列来存储每一层的所有节点，并逐个处理这些节点，同时将下一层的节点加入队列。"
+    },
+    {
+      "content": "完成正常的层次遍历后，只需简单地将得到的结果列表反转即可获得自底向上的层次遍历顺序。"
+    },
+    {
+      "content": "另一种方法是在遍历时直接从头部插入新层，这样可以避免最后一步的反转操作。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "相对于102.二叉树的层序遍历，就是最后把result数组反转一下就可以了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> levelOrderBottom(TreeNode* root) { queue<TreeNode*> que; if (root != NULL) que.push(root); vector<vector<int>> result; while (!que.empty()) { int size = que.size(); vector<int> vec; for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); vec.push_back(node->val); if (node->left) que.push(node->left); if (node->right) que.push(node->right); } result.push_back(vec); } reverse(result.begin(), result.end()); return result;}};",
+          "description": "C++实现的二叉树层次遍历II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def levelOrderBottom(self, root: TreeNode) -> List[List[int]]: if not root: return [] queue = collections.deque([root]) result = [] while queue: level = [] for _ in range(len(queue)): cur = queue.popleft() level.append(cur.val) if cur.left: queue.append(cur.left) if cur.right: queue.append(cur.right) result.append(level) return result[::-1]",
+          "description": "Python实现的二叉树层次遍历II"
+        },
+        {
+          "language": "java",
+          "code": "public class N0107 { public List<List<Integer>> solution1(TreeNode root) { List<List<Integer>> list = new ArrayList<>(); Deque<TreeNode> que = new LinkedList<>(); if (root == null) { return list; } que.offerLast(root); while (!que.isEmpty()) { List<Integer> levelList = new ArrayList<>(); int levelSize = que.size(); for (int i = 0; i < levelSize; i++) { TreeNode peek = que.peekFirst(); levelList.add(que.pollFirst().val); if (peek.left != null) { que.offerLast(peek.left); } if (peek.right != null) { que.offerLast(peek.right); } } list.add(levelList); } List<List<Integer>> result = new ArrayList<>(); for (int i = list.size() - 1; i >= 0; i--) { result.add(list.get(i)); } return result; }} class Solution { public List<List<Integer>> levelOrderBottom(TreeNode root) { LinkedList<List<Integer>> ans = new LinkedList<>(); Queue<TreeNode> q = new LinkedList<>(); if (root != null) q.offer(root); while (!q.isEmpty()) { int size = q.size(); List<Integer> temp = new ArrayList<>(); for (int i = 0; i < size; i++) { TreeNode node = q.poll(); temp.add(node.val); if (node.left != null) q.offer(node.left); if (node.right != null) q.offer(node.right); } ans.addFirst(temp); } return ans; }}",
+          "description": "Java实现的二叉树层次遍历II"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Python：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> levelOrderBottom(TreeNode* root) { queue<TreeNode*> que; if (root != NULL) que.push(root); vector<vector<int>> result; while (!que.empty()) { int size = que.size(); vector<int> vec; for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); vec.push_back(node->val); if (node->left) que.push(node->left); if (node->right) que.push(node->right); } result.push_back(vec); } reverse(result.begin(), result.end()); return result;}};",
+          "description": "C++实现的二叉树自底向上的层次遍历"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\nclass TreeNode:\n def __init__(self, val=0, left=None, right=None):\n self.val = val\n self.left = left\n self.right = right\nclass Solution:\n def levelOrderBottom(self, root: TreeNode) -> list:\n if not root:\n return []\n queue = deque([root])\n result = []\n while queue:\n level = []\n for _ in range(len(queue)):\n cur = queue.popleft()\n level.append(cur.val)\n if cur.left:\n queue.append(cur.left)\n if cur.right:\n queue.append(cur.right)\n result.append(level)\n return result[::-1]",
+          "description": "Python实现的二叉树自底向上的层次遍历"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*; public class N0107 { public List<List<Integer>> solution1(TreeNode root) { List<List<Integer>> list = new ArrayList<>(); Deque<TreeNode> que = new LinkedList<>(); if (root == null) { return list; } que.offerLast(root); while (!que.isEmpty()) { List<Integer> levelList = new ArrayList<>(); int levelSize = que.size(); for (int i = 0; i < levelSize; i++) { TreeNode peek = que.peekFirst(); levelList.add(que.pollFirst().val); if (peek.left != null) { que.offerLast(peek.left); } if (peek.right != null) { que.offerLast(peek.right); } } list.add(levelList); } List<List<Integer>> result = new ArrayList<>(); for (int i = list.size() - 1; i >= 0; i-- ) { result.add(list.get(i)); } return result; }} class TreeNode { int val; TreeNode left; TreeNode right; TreeNode(int x) { val = x; }}",
+          "description": "Java实现的二叉树自底向上的层次遍历，使用了队列和迭代的方法。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "class Solution:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> levelOrderBottom(TreeNode* root) {queue<TreeNode*> que;if (root != NULL) que.push(root);vector<vector<int>> result;while (!que.empty()) {int size = que.size();vector<int> vec;for (int i = 0; i < size; i++) {TreeNode* node = que.front();que.pop();vec.push_back(node->val);if (node->left) que.push(node->left);if (node->right) que.push(node->right);}result.push_back(vec);}reverse(result.begin(), result.end());return result;}};",
+          "description": "C++实现二叉树自底向上的层次遍历"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def levelOrderBottom(self, root: TreeNode) -> List[List[int]]: if not root: return [] queue = collections.deque([root]) result = [] while queue: level = [] for _ in range(len(queue)): cur = queue.popleft() level.append(cur.val) if cur.left: queue.append(cur.left) if cur.right: queue.append(cur.right) result.append(level) return result[::-1]",
+          "description": "Python实现二叉树自底向上的层次遍历"
+        },
+        {
+          "language": "java",
+          "code": "public class N0107 { public List<List<Integer>> solution1(TreeNode root) { List<List<Integer>> list = new ArrayList<>(); Deque<TreeNode> que = new LinkedList<>(); if (root == null) { return list; } que.offerLast(root); while (!que.isEmpty()) { List<Integer> levelList = new ArrayList<>(); int levelSize = que.size(); for (int i = 0; i < levelSize; i++) { TreeNode peek = que.peekFirst(); levelList.add(que.pollFirst().val); if (peek.left != null) { que.offerLast(peek.left); } if (peek.right != null) { que.offerLast(peek.right); } } list.add(levelList); } List<List<Integer>> result = new ArrayList<>(); for (int i = list.size() - 1; i >= 0; i-- ) { result.add(list.get(i)); } return result; }}",
+          "description": "Java实现二叉树自底向上的层次遍历"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<List<Integer>> levelOrderBottom(TreeNode root) { LinkedList<List<Integer>> ans = new LinkedList<>(); Queue<TreeNode> q = new LinkedList<>(); if (root != null) q.offer(root); while (!q.isEmpty()) { int size = q.size(); List<Integer> temp = new ArrayList<>(); for (int i = 0; i < size; i ++) { TreeNode node = q.poll(); temp.add(node.val); if (node.left != null) q.offer(node.left); if (node.right != null) q.offer(node.right); } ans.addFirst(temp); } return ans; }}",
+          "description": "优化后的Java实现，使用链表直接在头部插入新层"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "// 107. 二叉树的层序遍历 II",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> levelOrderBottom(TreeNode* root) { queue<TreeNode*> que; if (root != NULL) que.push(root); vector<vector<int>> result; while (!que.empty()) { int size = que.size(); vector<int> vec; for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); vec.push_back(node->val); if (node->left) que.push(node->left); if (node->right) que.push(node->right); } result.push_back(vec); } reverse(result.begin(), result.end()); return result;}};",
+          "description": "C++实现的二叉树自底向上的层次遍历"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\nclass Solution:\n    def levelOrderBottom(self, root: TreeNode) -> list:\n        if not root:\n            return []\n        queue = deque([root])\n        result = []\n        while queue:\n            level = []\n            for _ in range(len(queue)):\n                cur = queue.popleft()\n                level.append(cur.val)\n                if cur.left:\n                    queue.append(cur.left)\n                if cur.right:\n                    queue.append(cur.right)\n            result.append(level)\n        return result[::-1]",
+          "description": "Python实现的二叉树自底向上的层次遍历"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*; public class N0107 { public List<List<Integer>> solution1(TreeNode root) { List<List<Integer>> list = new ArrayList<>(); Deque<TreeNode> que = new LinkedList<>(); if (root == null) { return list; } que.offerLast(root); while (!que.isEmpty()) { List<Integer> levelList = new ArrayList<>(); int levelSize = que.size(); for (int i = 0; i < levelSize; i++) { TreeNode peek = que.peekFirst(); levelList.add(que.pollFirst().val); if (peek.left != null) { que.offerLast(peek.left); } if (peek.right != null) { que.offerLast(peek.right); } } list.add(levelList); } List<List<Integer>> result = new ArrayList<>(); for (int i = list.size() - 1; i >= 0; i--) { result.add(list.get(i)); } return result; }} class TreeNode { int val; TreeNode left; TreeNode right; TreeNode(int x) { val = x; }}",
+          "description": "Java实现的二叉树自底向上的层次遍历，使用了额外的空间来存储结果后再进行反转"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*; class Solution { public List<List<Integer>> levelOrderBottom(TreeNode root) { LinkedList<List<Integer>> ans = new LinkedList<>(); Queue<TreeNode> q = new LinkedList<>(); if (root != null) q.offer(root); while (!q.isEmpty()) { int size = q.size(); List<Integer> temp = new ArrayList<>(); for (int i = 0; i < size; i++) { TreeNode node = q.poll(); temp.add(node.val); if (node.left != null) q.offer(node.left); if (node.right != null) q.offer(node.right); } ans.addFirst(temp); } return ans; }}",
+          "description": "优化版Java实现的二叉树自底向上的层次遍历，直接在头部插入新层以避免最后的结果反转"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: vector<vector<int>> levelOrderBottom(TreeNode* root) { queue<TreeNode*> que; if (root != NULL) que.push(root); vector<vector<int>> result; while (!que.empty()) { int size = que.size(); vector<int> vec; for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); vec.push_back(node->val); if (node->left) que.push(node->left); if (node->right) que.push(node->right); } result.push_back(vec); } reverse(result.begin(), result.end()); return result;}};",
+      "description": "C++实现的二叉树层次遍历II"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def levelOrderBottom(self, root: TreeNode) -> List[List[int]]: if not root: return [] queue = collections.deque([root]) result = [] while queue: level = [] for _ in range(len(queue)): cur = queue.popleft() level.append(cur.val) if cur.left: queue.append(cur.left) if cur.right: queue.append(cur.right) result.append(level) return result[::-1]",
+      "description": "Python实现的二叉树层次遍历II"
+    },
+    {
+      "language": "java",
+      "code": "public class N0107 { public List<List<Integer>> solution1(TreeNode root) { List<List<Integer>> list = new ArrayList<>(); Deque<TreeNode> que = new LinkedList<>(); if (root == null) { return list; } que.offerLast(root); while (!que.isEmpty()) { List<Integer> levelList = new ArrayList<>(); int levelSize = que.size(); for (int i = 0; i < levelSize; i++) { TreeNode peek = que.peekFirst(); levelList.add(que.pollFirst().val); if (peek.left != null) { que.offerLast(peek.left); } if (peek.right != null) { que.offerLast(peek.right); } } list.add(levelList); } List<List<Integer>> result = new ArrayList<>(); for (int i = list.size() - 1; i >= 0; i-- ) { result.add(list.get(i)); } return result; }}",
+      "description": "Java实现的二叉树层次遍历II"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public List<List<Integer>> levelOrderBottom(TreeNode root) { LinkedList<List<Integer>> ans = new LinkedList<>(); Queue<TreeNode> q = new LinkedList<>(); if (root != null) q.offer(root); while (!q.isEmpty()) { int size = q.size(); List<Integer> temp = new ArrayList<>(); for (int i = 0; i < size; i ++) { TreeNode node = q.poll(); temp.add(node.val); if (node.left != null) q.offer(node.left); if (node.right != null) q.offer(node.right); } ans.addFirst(temp); } return ans; }}",
+      "description": "另一种Java实现的二叉树层次遍历II"
+    }
+  ],
+  "common_mistakes": [
+    "忘记处理空树的情况。",
+    "没有正确管理队列中的元素，导致访问了空指针。",
+    "未考虑使用更高效的数据结构或算法优化（如直接采用链表并从头部添加新层）以减少额外的空间开销。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210203151058308.png",
+      "description": "该图片展示了如何对给定的二叉树进行自底向上的层次遍历，并返回每一层节点值的列表。",
+      "context": "该图片展示了二叉树的结构，用于说明题目中要求实现的自底向上的层次遍历过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210203151058308.png",
+      "description": "GIF展示了二叉树从叶子节点到根节点自底向上层次遍历的过程。",
+      "context": "该GIF动画展示了二叉树自底向上层次遍历的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\二叉树的层序遍历\\二叉树的层序遍历Ⅱ.txt",
+  "extracted_at": "2025-07-20T11:09:51.864214",
+  "raw_content": "二叉树的层次遍历 II\n力扣题目链接(https://leetcode.cn/problems/binary-tree-level-order-traversal-ii/)\n\n给定一个二叉树，返回其节点值自底向上的层次遍历。 （即按从叶子节点所在层到根节点所在的层，逐层从左向右遍历）\n\nhttps://file1.kamacoder.com/i/algo/20210203151058308.png\n\n#思路\n相对于102.二叉树的层序遍历，就是最后把result数组反转一下就可以了。\n\nC++代码：\n\nclass Solution {\npublic:\n    vector<vector<int>> levelOrderBottom(TreeNode* root) {\n        queue<TreeNode*> que;\n        if (root != NULL) que.push(root);\n        vector<vector<int>> result;\n        while (!que.empty()) {\n            int size = que.size();\n            vector<int> vec;\n            for (int i = 0; i < size; i++) {\n                TreeNode* node = que.front();\n                que.pop();\n                vec.push_back(node->val);\n                if (node->left) que.push(node->left);\n                if (node->right) que.push(node->right);\n            }\n            result.push_back(vec);\n        }\n        reverse(result.begin(), result.end()); // 在这里反转一下数组即可\n        return result;\n\n    }\n};\n#其他语言版本\n#Python：\nclass Solution:\n    \"\"\"二叉树层序遍历II迭代解法\"\"\"\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def levelOrderBottom(self, root: TreeNode) -> List[List[int]]:\n        if not root:\n            return []\n        queue = collections.deque([root])\n        result = []\n        while queue:\n            level = []\n            for _ in range(len(queue)):\n                cur = queue.popleft()\n                level.append(cur.val)\n                if cur.left:\n                    queue.append(cur.left)\n                if cur.right:\n                    queue.append(cur.right)\n            result.append(level)\n        return result[::-1]\n#Java：\n// 107. 二叉树的层序遍历 II\npublic class N0107 {\n\n    /**\n     * 解法：队列，迭代。\n     * 层序遍历，再翻转数组即可。\n     */\n    public List<List<Integer>> solution1(TreeNode root) {\n        List<List<Integer>> list = new ArrayList<>();\n        Deque<TreeNode> que = new LinkedList<>();\n\n        if (root == null) {\n            return list;\n        }\n\n        que.offerLast(root);\n        while (!que.isEmpty()) {\n            List<Integer> levelList = new ArrayList<>();\n\n            int levelSize = que.size();\n            for (int i = 0; i < levelSize; i++) {\n                TreeNode peek = que.peekFirst();\n                levelList.add(que.pollFirst().val);\n\n                if (peek.left != null) {\n                    que.offerLast(peek.left);\n                }\n                if (peek.right != null) {\n                    que.offerLast(peek.right);\n                }\n            }\n            list.add(levelList);\n        }\n\n        List<List<Integer>> result = new ArrayList<>();\n        for (int i = list.size() - 1; i >= 0; i-- ) {\n            result.add(list.get(i));\n        }\n\n        return result;\n    }\n}\n/**\n * 思路和模板相同, 对收集答案的方式做了优化, 最后不需要反转\n */\nclass Solution {\n    public List<List<Integer>> levelOrderBottom(TreeNode root) {\n        // 利用链表可以进行 O(1) 头部插入, 这样最后答案不需要再反转\n        LinkedList<List<Integer>> ans = new LinkedList<>();\n\n        Queue<TreeNode> q = new LinkedList<>();\n\n        if (root != null) q.offer(root);\n\n        while (!q.isEmpty()) {\n            int size = q.size();\n\n            List<Integer> temp = new ArrayList<>();\n\n            for (int i = 0; i < size; i ++) {\n                TreeNode node = q.poll();\n\n                temp.add(node.val);\n\n                if (node.left != null) q.offer(node.left);\n\n                if (node.right != null) q.offer(node.right);\n            }\n\n            // 新遍历到的层插到头部, 这样就满足按照层次反序的要求\n            ans.addFirst(temp);\n        }\n\n        return ans;\n    }"
+}

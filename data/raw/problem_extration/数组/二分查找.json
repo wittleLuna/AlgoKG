@@ -1,0 +1,382 @@
+{
+  "id": "AP_672b3e67",
+  "title": "704. 二分查找",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/binary-search/",
+  "description": "一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target  ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "二分查找",
+    "搜索"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "循环不变量",
+    "边界条件处理"
+  ],
+  "difficulty": null,
+  "solution_approach": "题目要求在有序数组中查找目标值的位置，采用二分查找算法。该算法通过不断地将搜索区间减半来快速定位目标值。根据区间的定义不同（左闭右闭或左闭右开），有两种不同的实现方式。",
+  "key_insights": [
+    {
+      "content": "无论选择哪种区间定义（[left, right] 或 [left, right)），在实现过程中都必须保持这一定义的一致性，即循环不变量规则。这是保证逻辑正确性的关键。"
+    },
+    {
+      "content": "基于不同的区间定义，while循环条件以及更新right指针的方式会有所不同。例如，在左闭右闭区间中使用 `<=` 来检查循环条件，并且当目标值小于中间值时，更新right为middle - 1；而在左闭右开区间中则使用 `<` 并直接设置right等于middle。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目的前提是数组为有序数组，同时题目还强调数组中无重复元素，因为一旦有重复元素，使用二分查找法返回的元素下标可能不是唯一的，这些都是使用二分法的前提条件，当大家看到题目描述满足如上条件的时候，可要想一想是不是可以用二分法了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int search(vector<int>& nums, int target) {int left = 0;int right = nums.size() - 1;while (left <= right) {int middle = left + ((right - left) / 2);if (nums[middle] > target) {right = middle - 1;} else if (nums[middle] < target) {left = middle + 1;} else {return middle;}}return -1;}};",
+          "description": "C++实现的二分查找版本一，使用左闭右闭区间。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int search(vector<int>& nums, int target) {int left = 0;int right = nums.size();while (left < right) {int middle = left + ((right - left) >> 1);if (nums[middle] > target) {right = middle;} else if (nums[middle] < target) {left = middle + 1;} else {return middle;}}return -1;}};",
+          "description": "C++实现的二分查找版本二，使用左闭右开区间。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int search(int[] nums, int target) {if (target < nums[0] || target > nums[nums.length - 1]) {return -1;}int left = 0, right = nums.length - 1;while (left <= right) {int mid = left + ((right - left) >> 1);if (nums[mid] == target) {return mid;} else if (nums[mid] < target) {left = mid + 1;} else {right = mid - 1;}}return -1;}}",
+          "description": "Java实现的二分查找版本一，使用左闭右闭区间。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int search(int[] nums, int target) {int left = 0, right = nums.length;while (left < right) {int mid = left + ((right - left) >> 1);if (nums[mid] == target) {return mid;} else if (nums[mid] < target) {left = mid + 1;} else {right = mid;}}return -1;}}",
+          "description": "Java实现的二分查找版本二，使用左闭右开区间。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def search(self, nums: List[int], target: int) -> int: left, right = 0, len(nums) - 1 while left <= right: middle = left + (right - left) // 2 if nums[middle] > target: right = middle - 1 elif nums[middle] < target: left = middle + 1 else: return middle return -1",
+          "description": "Python实现的二分查找版本一，使用左闭右闭区间。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def search(self, nums: List[int], target: int) -> int: left, right = 0, len(nums) while left < right: middle = left + (right - left) // 2 if nums[middle] > target: right = middle elif nums[middle] < target: left = middle + 1 else: return middle return -1",
+          "description": "Python实现的二分查找版本二，使用左闭右开区间。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "二分法第一种写法",
+      "text": "第一种写法，我们定义 target 是在一个在左闭右闭的区间里，也就是[left, right] （这个很重要非常重要）。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int search(vector<int>& nums, int target) {int left = 0;int right = nums.size() - 1;while (left <= right) {int middle = left + ((right - left) / 2);if (nums[middle] > target) {right = middle - 1;} else if (nums[middle] < target) {left = middle + 1;} else {return middle;}}return -1;}};",
+          "description": "C++版本一：左闭右闭区间"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int search(vector<int>& nums, int target) {int left = 0;int right = nums.size();while (left < right) {int middle = left + ((right - left) >> 1);if (nums[middle] > target) {right = middle;} else if (nums[middle] < target) {left = middle + 1;} else {return middle;}}return -1;}};",
+          "description": "C++版本二：左闭右开区间"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int search(int[] nums, int target) {if (target < nums[0] || target > nums[nums.length - 1]) {return -1;}int left = 0, right = nums.length - 1;while (left <= right) {int mid = left + ((right - left) >> 1);if (nums[mid] == target) {return mid;}else if (nums[mid] < target) {left = mid + 1;}else {right = mid - 1;}}return -1;}}",
+          "description": "Java版本一：左闭右闭区间"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int search(int[] nums, int target) {int left = 0, right = nums.length;while (left < right) {int mid = left + ((right - left) >> 1);if (nums[mid] == target) {return mid;}else if (nums[mid] < target) {left = mid + 1;}else {right = mid;}}return -1;}}",
+          "description": "Java版本二：左闭右开区间"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def search(self, nums: List[int], target: int) -> int: left, right = 0, len(nums) - 1 while left <= right: middle = left + (right - left) // 2 if nums[middle] > target: right = middle - 1 elif nums[middle] < target: left = middle + 1 else: return middle return -1",
+          "description": "Python版本一：左闭右闭区间"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def search(self, nums: List[int], target: int) -> int: left, right = 0, len(nums) while left < right: middle = left + (right - left) // 2 if nums[middle] > target: right = middle elif nums[middle] < target: left = middle + 1 else: return middle return -1",
+          "description": "Python版本二：左闭右开区间"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "二分法第二种写法",
+      "text": "如果说定义 target 是在一个在左闭右开的区间里，也就是[left, right) ，那么二分法的边界处理方式则截然不同。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int search(vector<int>& nums, int target) {int left = 0;int right = nums.size() - 1;while (left <= right) {int middle = left + ((right - left) / 2);if (nums[middle] > target) {right = middle - 1;} else if (nums[middle] < target) {left = middle + 1;} else {return middle;}}return -1;}};",
+          "description": "C++实现的二分查找算法，定义target在左闭右闭区间里"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int search(vector<int>& nums, int target) {int left = 0;int right = nums.size();while (left < right) {int middle = left + ((right - left) >> 1);if (nums[middle] > target) {right = middle;} else if (nums[middle] < target) {left = middle + 1;} else {return middle;}}return -1;}};",
+          "description": "C++实现的二分查找算法，定义target在左闭右开区间里"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int search(int[] nums, int target) {if (target < nums[0] || target > nums[nums.length - 1]) {return -1;}int left = 0, right = nums.length - 1;while (left <= right) {int mid = left + ((right - left) >> 1);if (nums[mid] == target) {return mid;} else if (nums[mid] < target) {left = mid + 1;} else {right = mid - 1;}}return -1;}}",
+          "description": "Java实现的二分查找算法，定义target在左闭右闭区间里"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int search(int[] nums, int target) {int left = 0, right = nums.length;while (left < right) {int mid = left + ((right - left) >> 1);if (nums[mid] == target) {return mid;} else if (nums[mid] < target) {left = mid + 1;} else {right = mid;}}return -1;}}",
+          "description": "Java实现的二分查找算法，定义target在左闭右开区间里"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def search(self, nums: List[int], target: int) -> int: left, right = 0, len(nums) - 1 while left <= right: middle = left + (right - left) // 2 if nums[middle] > target: right = middle - 1 elif nums[middle] < target: left = middle + 1 else: return middle return -1",
+          "description": "Python实现的二分查找算法，定义target在左闭右闭区间里"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def search(self, nums: List[int], target: int) -> int: left, right = 0, len(nums) while left < right: middle = left + (right - left) // 2 if nums[middle] > target: right = middle elif nums[middle] < target: left = middle + 1 else: return middle return -1",
+          "description": "Python实现的二分查找算法，定义target在左闭右开区间里"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "二分法是非常重要的基础算法，为什么很多同学对于二分法都是一看就会，一写就废？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int search(vector<int>& nums, int target) {int left = 0;int right = nums.size() - 1;while (left <= right) {int middle = left + ((right - left) / 2);if (nums[middle] > target) {right = middle - 1;} else if (nums[middle] < target) {left = middle + 1;} else {return middle;}}return -1;}};",
+          "description": "C++实现的二分查找算法，使用左闭右闭区间"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int search(vector<int>& nums, int target) {int left = 0;int right = nums.size();while (left < right) {int middle = left + ((right - left) >> 1);if (nums[middle] > target) {right = middle;} else if (nums[middle] < target) {left = middle + 1;} else {return middle;}}return -1;}};",
+          "description": "C++实现的二分查找算法，使用左闭右开区间"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int search(int[] nums, int target) {if (target < nums[0] || target > nums[nums.length - 1]) {return -1;}int left = 0, right = nums.length - 1;while (left <= right) {int mid = left + ((right - left) >> 1);if (nums[mid] == target) {return mid;}else if (nums[mid] < target) {left = mid + 1;}else {right = mid - 1;}}return -1;}}",
+          "description": "Java实现的二分查找算法，使用左闭右闭区间"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int search(int[] nums, int target) {int left = 0, right = nums.length;while (left < right) {int mid = left + ((right - left) >> 1);if (nums[mid] == target) {return mid;}else if (nums[mid] < target) {left = mid + 1;}else {right = mid;}}return -1;}}",
+          "description": "Java实现的二分查找算法，使用左闭右开区间"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def search(self, nums: List[int], target: int) -> int: left, right = 0, len(nums) - 1 while left <= right: middle = left + (right - left) // 2 if nums[middle] > target: right = middle - 1 elif nums[middle] < target: left = middle + 1 else: return middle return -1",
+          "description": "Python实现的二分查找算法，使用左闭右闭区间"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def search(self, nums: List[int], target: int) -> int: left, right = 0, len(nums) while left < right: middle = left + (right - left) // 2 if nums[middle] > target: right = middle elif nums[middle] < target: left = middle + 1 else: return middle return -1",
+          "description": "Python实现的二分查找算法，使用左闭右开区间"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "相关题目推荐",
+      "text": "35.搜索插入位置(opens new window)",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int search(vector<int>& nums, int target) {int left = 0;int right = nums.size() - 1;while (left <= right) {int middle = left + ((right - left) / 2);if (nums[middle] > target) {right = middle - 1;} else if (nums[middle] < target) {left = middle + 1;} else {return middle;}}return -1;}};",
+          "description": "二分查找（左闭右闭区间）"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int search(vector<int>& nums, int target) {int left = 0;int right = nums.size();while (left < right) {int middle = left + ((right - left) >> 1);if (nums[middle] > target) {right = middle;} else if (nums[middle] < target) {left = middle + 1;} else {return middle;}}return -1;}};",
+          "description": "二分查找（左闭右开区间）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int search(int[] nums, int target) {if (target < nums[0] || target > nums[nums.length - 1]) {return -1;}int left = 0, right = nums.length - 1;while (left <= right) {int mid = left + ((right - left) >> 1);if (nums[mid] == target) {return mid;} else if (nums[mid] < target) {left = mid + 1;} else {right = mid - 1;}}return -1;}}",
+          "description": "二分查找（Java，左闭右闭区间）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int search(int[] nums, int target) {int left = 0, right = nums.length;while (left < right) {int mid = left + ((right - left) >> 1);if (nums[mid] == target) {return mid;} else if (nums[mid] < target) {left = mid + 1;} else {right = mid;}}return -1;}}",
+          "description": "二分查找（Java，左闭右开区间）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def search(self, nums: List[int], target: int) -> int: left, right = 0, len(nums) - 1 while left <= right: middle = left + (right - left) // 2 if nums[middle] > target: right = middle - 1 elif nums[middle] < target: left = middle + 1 else: return middle return -1",
+          "description": "二分查找（Python，左闭右闭区间）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def search(self, nums: List[int], target: int) -> int: left, right = 0, len(nums) while left < right: middle = left + (right - left) // 2 if nums[middle] > target: right = middle elif nums[middle] < target: left = middle + 1 else: return middle return -1",
+          "description": "二分查找（Python，左闭右开区间）"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int search(int[] nums, int target) {\n        if (target < nums[0] || target > nums[nums.length - 1]) {\n            return -1;\n        }\n        int left = 0, right = nums.length - 1;\n        while (left <= right) {\n            int mid = left + ((right - left) >> 1);\n            if (nums[mid] == target) {\n                return mid;\n            }\n            else if (nums[mid] < target) {\n                left = mid + 1;\n            }\n            else { \n                right = mid - 1;\n            }\n        }\n        return -1;\n    }\n}",
+          "description": "二分查找，左闭右闭区间"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int search(int[] nums, int target) {\n        int left = 0, right = nums.length;\n        while (left < right) {\n            int mid = left + ((right - left) >> 1);\n            if (nums[mid] == target) {\n                return mid;\n            }\n            else if (nums[mid] < target) {\n                left = mid + 1;\n            }\n            else { \n                right = mid;\n            }\n        }\n        return -1;\n    }\n}",
+          "description": "二分查找，左闭右开区间"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def search(self, nums: List[int], target: int) -> int:\n        left, right = 0, len(nums) - 1\n        while left <= right:\n            middle = left + (right - left) // 2\n            if nums[middle] > target:\n                right = middle - 1\n            elif nums[middle] < target:\n                left = middle + 1\n            else:\n                return middle\n        return -1",
+          "description": "二分查找，左闭右闭区间"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def search(self, nums: List[int], target: int) -> int:\n        left, right = 0, len(nums)\n        while left < right:\n            middle = left + (right - left) // 2\n            if nums[middle] > target:\n                right = middle\n            elif nums[middle] < target:\n                left = middle + 1\n            else:\n                return middle\n        return -1",
+          "description": "二分查找，左闭右开区间"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "（版本一）左闭右闭区间",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int search(vector<int>& nums, int target) {int left = 0;int right = nums.size() - 1;while (left <= right) {int middle = left + ((right - left) / 2);if (nums[middle] > target) {right = middle - 1;} else if (nums[middle] < target) {left = middle + 1;} else {return middle;}}return -1;}};",
+          "description": "二分查找，左闭右闭区间"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int search(vector<int>& nums, int target) {int left = 0;int right = nums.size();while (left < right) {int middle = left + ((right - left) >> 1);if (nums[middle] > target) {right = middle;} else if (nums[middle] < target) {left = middle + 1;} else {return middle;}}return -1;}};",
+          "description": "二分查找，左闭右开区间"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int search(int[] nums, int target) {if (target < nums[0] || target > nums[nums.length - 1]) {return -1;}int left = 0, right = nums.length - 1;while (left <= right) {int mid = left + ((right - left) >> 1);if (nums[mid] == target) {return mid;}else if (nums[mid] < target) {left = mid + 1;}else {right = mid - 1;}}return -1;}}",
+          "description": "Java实现，二分查找，左闭右闭区间"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int search(int[] nums, int target) {int left = 0, right = nums.length;while (left < right) {int mid = left + ((right - left) >> 1);if (nums[mid] == target) {return mid;}else if (nums[mid] < target) {left = mid + 1;}else {right = mid;}}return -1;}}",
+          "description": "Java实现，二分查找，左闭右开区间"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def search(self, nums: List[int], target: int) -> int: left, right = 0, len(nums) - 1 while left <= right: middle = left + (right - left) // 2 if nums[middle] > target: right = middle - 1 elif nums[middle] < target: left = middle + 1 else: return middle return -1",
+          "description": "Python实现，二分查找，左闭右闭区间"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def search(self, nums: List[int], target: int) -> int: left, right = 0, len(nums) while left < right: middle = left + (right - left) // 2 if nums[middle] > target: right = middle elif nums[middle] < target: left = middle + 1 else: return middle return -1",
+          "description": "Python实现，二分查找，左闭右开区间"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "（版本一）左闭右闭区间",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int search(vector<int>& nums, int target) {int left = 0;int right = nums.size() - 1;while (left <= right) {int middle = left + ((right - left) / 2);if (nums[middle] > target) {right = middle - 1;} else if (nums[middle] < target) {left = middle + 1;} else {return middle;}}return -1;}};",
+          "description": "C++实现的二分查找算法，采用左闭右闭区间"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int search(vector<int>& nums, int target) {int left = 0;int right = nums.size();while (left < right) {int middle = left + ((right - left) >> 1);if (nums[middle] > target) {right = middle;} else if (nums[middle] < target) {left = middle + 1;} else {return middle;}}return -1;}};",
+          "description": "C++实现的二分查找算法，采用左闭右开区间"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int search(int[] nums, int target) {if (target < nums[0] || target > nums[nums.length - 1]) {return -1;}int left = 0, right = nums.length - 1;while (left <= right) {int mid = left + ((right - left) >> 1);if (nums[mid] == target) {return mid;}else if (nums[mid] < target) {left = mid + 1;}else {right = mid - 1;}}return -1;}}",
+          "description": "Java实现的二分查找算法，采用左闭右闭区间"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int search(int[] nums, int target) {int left = 0, right = nums.length;while (left < right) {int mid = left + ((right - left) >> 1);if (nums[mid] == target) {return mid;}else if (nums[mid] < target) {left = mid + 1;}else {right = mid;}}return -1;}}",
+          "description": "Java实现的二分查找算法，采用左闭右开区间"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def search(self, nums: List[int], target: int) -> int: left, right = 0, len(nums) - 1 while left <= right: middle = left + (right - left) // 2 if nums[middle] > target: right = middle - 1 elif nums[middle] < target: left = middle + 1 else: return middle return -1",
+          "description": "Python实现的二分查找算法，采用左闭右闭区间"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def search(self, nums: List[int], target: int) -> int: left, right = 0, len(nums) while left < right: middle = left + (right - left) // 2 if nums[middle] > target: right = middle elif nums[middle] < target: left = middle + 1 else: return middle return -1",
+          "description": "Python实现的二分查找算法，采用左闭右开区间"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(log n)",
+    "space_complexity": "O(1)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int search(vector<int>& nums, int target) {int left = 0;int right = nums.size() - 1;while (left <= right) {int middle = left + ((right - left) / 2);if (nums[middle] > target) {right = middle - 1;} else if (nums[middle] < target) {left = middle + 1;} else {return middle;}}return -1;}};",
+      "description": null
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int search(vector<int>& nums, int target) {int left = 0;int right = nums.size();while (left < right) {int middle = left + ((right - left) >> 1);if (nums[middle] > target) {right = middle;} else if (nums[middle] < target) {left = middle + 1;} else {return middle;}}return -1;}}",
+      "description": null
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public int search(int[] nums, int target) { if (target < nums[0] || target > nums[nums.length - 1]) { return -1; } int left = 0, right = nums.length - 1; while (left <= right) { int mid = left + ((right - left) >> 1); if (nums[mid] == target) { return mid; } else if (nums[mid] < target) { left = mid + 1; } else { right = mid - 1; } } return -1; }}",
+      "description": null
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public int search(int[] nums, int target) { int left = 0, right = nums.length; while (left < right) { int mid = left + ((right - left) >> 1); if (nums[mid] == target) { return mid; } else if (nums[mid] < target) { left = mid + 1; } else { right = mid; } } return -1; }}",
+      "description": null
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def search(self, nums: List[int], target: int) -> int: left, right = 0, len(nums) - 1 while left <= right: middle = left + (right - left) // 2 if nums[middle] > target: right = middle - 1 elif nums[middle] < target: left = middle + 1 else: return middle return -1",
+      "description": null
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def search(self, nums: List[int], target: int) -> int: left, right = 0, len(nums) while left < right: middle = left + (right - left) // 2 if nums[middle] > target: right = middle elif nums[middle] < target: left = middle + 1 else: return middle return -1",
+      "description": null
+    }
+  ],
+  "common_mistakes": [
+    "忽略数组元素无重复性的假设，导致对于有重复值的情况无法给出唯一解。",
+    "没有明确选择一种区间定义并坚持到底，从而导致逻辑混乱。",
+    "对于左右边界的更新操作不一致，破坏了循环不变量原则。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://leetcode.cn/problems/binary-search/",
+      "description": "图片链接: https://leetcode.cn/problems/binary-search/",
+      "context": "该图片链接指向了力扣上关于“二分查找”问题的详情页面，用于提供题目描述、示例和提交解答的入口。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\数组\\二分查找.txt",
+  "extracted_at": "2025-07-21T21:44:38.721426",
+  "raw_content": "704. 二分查找\n力扣题目链接(https://leetcode.cn/problems/binary-search/)\n\n给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target  ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。\n\n示例 1:\n\n输入: nums = [-1,0,3,5,9,12], target = 9     \n输出: 4       \n解释: 9 出现在 nums 中并且下标为 4     \n示例 2:\n\n输入: nums = [-1,0,3,5,9,12], target = 2     \n输出: -1        \n解释: 2 不存在 nums 中因此返回 -1        \n提示：\n\n你可以假设 nums 中的所有元素是不重复的。\nn 将在 [1, 10000]之间。\nnums 的每个元素都将在 [-9999, 9999]之间。\n\n\n#思路\n这道题目的前提是数组为有序数组，同时题目还强调数组中无重复元素，因为一旦有重复元素，使用二分查找法返回的元素下标可能不是唯一的，这些都是使用二分法的前提条件，当大家看到题目描述满足如上条件的时候，可要想一想是不是可以用二分法了。\n\n二分查找涉及的很多的边界条件，逻辑比较简单，但就是写不好。例如到底是 while(left < right) 还是 while(left <= right)，到底是right = middle呢，还是要right = middle - 1呢？\n\n大家写二分法经常写乱，主要是因为对区间的定义没有想清楚，区间的定义就是不变量。要在二分查找的过程中，保持不变量，就是在while寻找中每一次边界的处理都要坚持根据区间的定义来操作，这就是循环不变量规则。\n\n写二分法，区间的定义一般为两种，左闭右闭即[left, right]，或者左闭右开即[left, right)。\n\n下面我用这两种区间的定义分别讲解两种不同的二分写法。\n\n#二分法第一种写法\n第一种写法，我们定义 target 是在一个在左闭右闭的区间里，也就是[left, right] （这个很重要非常重要）。\n\n区间的定义这就决定了二分法的代码应该如何写，因为定义target在[left, right]区间，所以有如下两点：\n\nwhile (left <= right) 要使用 <= ，因为left == right是有意义的，所以使用 <=\nif (nums[middle] > target) right 要赋值为 middle - 1，因为当前这个nums[middle]一定不是target，那么接下来要查找的左区间结束下标位置就是 middle - 1\n例如在数组：1,2,3,4,7,9,10中查找元素2，如图所示：\n\n704.二分查找\n\n代码如下：（详细注释）\n\n// 版本一\nclass Solution {\npublic:\n    int search(vector<int>& nums, int target) {\n        int left = 0;\n        int right = nums.size() - 1; // 定义target在左闭右闭的区间里，[left, right]\n        while (left <= right) { // 当left==right，区间[left, right]依然有效，所以用 <=\n            int middle = left + ((right - left) / 2);// 防止溢出 等同于(left + right)/2\n            if (nums[middle] > target) {\n                right = middle - 1; // target 在左区间，所以[left, middle - 1]\n            } else if (nums[middle] < target) {\n                left = middle + 1; // target 在右区间，所以[middle + 1, right]\n            } else { // nums[middle] == target\n                return middle; // 数组中找到目标值，直接返回下标\n            }\n        }\n        // 未找到目标值\n        return -1;\n    }\n};\n\n时间复杂度：O(log n)\n空间复杂度：O(1)\n#二分法第二种写法\n如果说定义 target 是在一个在左闭右开的区间里，也就是[left, right) ，那么二分法的边界处理方式则截然不同。\n\n有如下两点：\n\nwhile (left < right)，这里使用 < ,因为left == right在区间[left, right)是没有意义的\nif (nums[middle] > target) right 更新为 middle，因为当前nums[middle]不等于target，去左区间继续寻找，而寻找区间是左闭右开区间，所以right更新为middle，即：下一个查询区间不会去比较nums[middle]\n在数组：1,2,3,4,7,9,10中查找元素2，如图所示：（注意和方法一的区别）\n\n704.二分查找1\n\n代码如下：（详细注释）\n\n// 版本二\nclass Solution {\npublic:\n    int search(vector<int>& nums, int target) {\n        int left = 0;\n        int right = nums.size(); // 定义target在左闭右开的区间里，即：[left, right)\n        while (left < right) { // 因为left == right的时候，在[left, right)是无效的空间，所以使用 <\n            int middle = left + ((right - left) >> 1);\n            if (nums[middle] > target) {\n                right = middle; // target 在左区间，在[left, middle)中\n            } else if (nums[middle] < target) {\n                left = middle + 1; // target 在右区间，在[middle + 1, right)中\n            } else { // nums[middle] == target\n                return middle; // 数组中找到目标值，直接返回下标\n            }\n        }\n        // 未找到目标值\n        return -1;\n    }\n};\n时间复杂度：O(log n)\n空间复杂度：O(1)\n#总结\n二分法是非常重要的基础算法，为什么很多同学对于二分法都是一看就会，一写就废？\n\n其实主要就是对区间的定义没有理解清楚，在循环中没有始终坚持根据查找区间的定义来做边界处理。\n\n区间的定义就是不变量，那么在循环中坚持根据查找区间的定义来做边界处理，就是循环不变量规则。\n\n本篇根据两种常见的区间定义，给出了两种二分法的写法，每一个边界为什么这么处理，都根据区间的定义做了详细介绍。\n\n相信看完本篇应该对二分法有更深刻的理解了。\n\n#相关题目推荐\n35.搜索插入位置(opens new window)\n34.在排序数组中查找元素的第一个和最后一个位置(opens new window)\n69.x 的平方根(opens new window)\n367.有效的完全平方数(opens new window)\n#其他语言版本\n#Java：\n（版本一）左闭右闭区间\n\nclass Solution {\n    public int search(int[] nums, int target) {\n        // 避免当 target 小于nums[0] nums[nums.length - 1]时多次循环运算\n        if (target < nums[0] || target > nums[nums.length - 1]) {\n            return -1;\n        }\n        int left = 0, right = nums.length - 1;\n        while (left <= right) {\n            int mid = left + ((right - left) >> 1);\n            if (nums[mid] == target) {\n                return mid;\n            }\n            else if (nums[mid] < target) {\n                left = mid + 1;\n            }\n            else { // nums[mid] > target\n                right = mid - 1;\n            }\n        }\n        // 未找到目标值\n        return -1;\n    }\n}\n（版本二）左闭右开区间\n\nclass Solution {\n    public int search(int[] nums, int target) {\n        int left = 0, right = nums.length;\n        while (left < right) {\n            int mid = left + ((right - left) >> 1);\n            if (nums[mid] == target) {\n                return mid;\n            }\n            else if (nums[mid] < target) {\n                left = mid + 1;\n            }\n            else { // nums[mid] > target\n                right = mid;\n            }\n        }\n        // 未找到目标值\n        return -1;\n    }\n}\n#Python：\n（版本一）左闭右闭区间\n\nclass Solution:\n    def search(self, nums: List[int], target: int) -> int:\n        left, right = 0, len(nums) - 1  # 定义target在左闭右闭的区间里，[left, right]\n\n        while left <= right:\n            middle = left + (right - left) // 2\n            \n            if nums[middle] > target:\n                right = middle - 1  # target在左区间，所以[left, middle - 1]\n            elif nums[middle] < target:\n                left = middle + 1  # target在右区间，所以[middle + 1, right]\n            else:\n                return middle  # 数组中找到目标值，直接返回下标\n        return -1  # 未找到目标值\n（版本二）左闭右开区间\n\nclass Solution:\n    def search(self, nums: List[int], target: int) -> int:\n        left, right = 0, len(nums)  # 定义target在左闭右开的区间里，即：[left, right)\n\n        while left < right:  # 因为left == right的时候，在[left, right)是无效的空间，所以使用 <\n            middle = left + (right - left) // 2\n\n            if nums[middle] > target:\n                right = middle  # target 在左区间，在[left, middle)中\n            elif nums[middle] < target:\n                left = middle + 1  # target 在右区间，在[middle + 1, right)中\n            else:\n                return middle  # 数组中找到目标值，直接返回下标\n        return -1  # 未找到目标值"
+}

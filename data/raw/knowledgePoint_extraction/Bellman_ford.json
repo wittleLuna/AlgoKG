@@ -1,0 +1,63 @@
+{
+  "id": "SA317",
+  "name": "Bellman_ford算法",
+  "alias": [
+    "贝尔曼-福特算法"
+  ],
+  "type": "specific_algorithm",
+  "description": "用于解决带负权值的单源最短路径问题，通过多次松弛操作来找到从起点到所有其他顶点的最短路径。",
+  "key_concepts": [
+    "松弛操作",
+    "负权边",
+    "单源最短路径"
+  ],
+  "applications": [
+    "网络路由",
+    "运输成本优化",
+    "金融交易"
+  ],
+  "created_at": "2025-07-19T12:32:36Z",
+  "updated_at": "2025-07-19T12:32:36Z",
+  "source_files": [
+    "Bellman_ford_kama.txt"
+  ],
+  "spacy_entities": {
+    "PROBLEM_TYPE": [
+      "背包问题",
+      "单源最短路径问题",
+      "子序列"
+    ],
+    "ALGORITHM_PARADIGM": [
+      "动态规划"
+    ],
+    "DATA_STRUCTURE": [
+      "有向图",
+      "数组",
+      "图",
+      "String",
+      "array"
+    ],
+    "CORE_CONCEPT": [
+      "递归",
+      "动态规划",
+      "初始化",
+      "全局最优",
+      "空间复杂度",
+      "时间复杂度",
+      "单源最短路径",
+      "负权边",
+      "路径"
+    ],
+    "SPECIFIC_ALGORITHM": [
+      "Bellman_ford算法",
+      "Dijkstra算法",
+      "dijkstra"
+    ],
+    "TECHNIQUE": [
+      "松弛操作"
+    ],
+    "COMPLEXITY": [
+      "O(nm)"
+    ]
+  }
+}

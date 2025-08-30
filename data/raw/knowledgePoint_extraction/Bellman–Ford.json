@@ -1,0 +1,46 @@
+{
+  "id": "SA362",
+  "name": "Bellman–Ford 算法",
+  "alias": [
+    "SPFA"
+  ],
+  "type": "specific_algorithm",
+  "description": "一种基于松弛操作的最短路算法，可以求出有负权的图的最短路，并可以对最短路不存在的情况进行判断。",
+  "key_concepts": [
+    "松弛操作",
+    "最短路径",
+    "负环检测"
+  ],
+  "applications": [
+    "图论问题",
+    "网络流问题"
+  ],
+  "created_at": "2025-07-19T12:32:44Z",
+  "updated_at": "2025-07-19T12:32:44Z",
+  "source_files": [
+    "Bellman–Ford_wiki.txt"
+  ],
+  "spacy_entities": {
+    "DATA_STRUCTURE": [
+      "图"
+    ],
+    "CORE_CONCEPT": [
+      "时间复杂度",
+      "最优子结构",
+      "路径"
+    ],
+    "PROBLEM_TYPE": [
+      "最短路径问题"
+    ],
+    "SPECIFIC_ALGORITHM": [
+      "Dijkstra算法",
+      "Dijkstra"
+    ],
+    "TECHNIQUE": [
+      "松弛操作"
+    ],
+    "COMPLEXITY": [
+      "O(nm)"
+    ]
+  }
+}

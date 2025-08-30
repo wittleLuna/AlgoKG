@@ -1,0 +1,467 @@
+{
+  "id": "AP_1c46b0cb",
+  "title": "左叶子之和",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/sum-of-left-leaves/",
+  "description": "二叉树的所有左叶子之和。",
+  "examples": [
+    {
+      "input": "见图",
+      "output": "见图",
+      "explanation": null,
+      "image": "https://file1.kamacoder.com/i/algo/20210204151927654.png"
+    }
+  ],
+  "constraints": [],
+  "algorithm_tags": [
+    "二叉树",
+    "递归",
+    "迭代"
+  ],
+  "data_structure_tags": [
+    "栈",
+    "树"
+  ],
+  "technique_tags": [
+    "后序遍历",
+    "前序遍历",
+    "层序遍历"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过递归或迭代的方式遍历二叉树，并累加所有符合条件的左叶子节点的值。使用后序遍历（左右中）来确保在访问当前节点之前已经处理了它的子节点。",
+  "key_insights": [
+    {
+      "content": "如果一个节点的左孩子不为空且这个左孩子的左右孩子都为空，则该左孩子为左叶子。"
+    },
+    {
+      "content": "只有通过父节点才能正确判断其左孩子是否为左叶子。"
+    },
+    {
+      "content": "对于算法初学者，理解递归三部曲有助于更好地解决此类问题：确定递归函数的参数和返回值、终止条件以及单层递归逻辑。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "首先要注意是判断左叶子，不是二叉树左侧节点，所以不要上来想着层序遍历。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int sumOfLeftLeaves(TreeNode* root) {if (root == NULL) return 0;int leftValue = 0;if (root->left != NULL && root->left->left == NULL && root->left->right == NULL) {leftValue = root->left->val;}return leftValue + sumOfLeftLeaves(root->left) + sumOfLeftLeaves(root->right);}};",
+          "description": "递归法计算左叶子之和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int sumOfLeftLeaves(TreeNode* root) {stack<TreeNode*> st;if (root == NULL) return 0;st.push(root);int result = 0;while (!st.empty()) {TreeNode* node = st.top();st.pop();if (node->left != NULL && node->left->left == NULL && node->left->right == NULL) {result += node->left->val;}if (node->right) st.push(node->right);if (node->left) st.push(node->left);}return result;}};",
+          "description": "迭代法计算左叶子之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int sumOfLeftLeaves(TreeNode root) {if (root == null) return 0;int leftValue = sumOfLeftLeaves(root.left);int rightValue = sumOfLeftLeaves(root.right);int midValue = 0;if (root.left != null && root.left.left == null && root.left.right == null) {midValue = root.left.val;}int sum = midValue + leftValue + rightValue;return sum;}}",
+          "description": "Java递归法计算左叶子之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int sumOfLeftLeaves(TreeNode root) {if (root == null) return 0;Stack<TreeNode> stack = new Stack<> ();stack.add(root);int result = 0;while (!stack.isEmpty()) {TreeNode node = stack.pop();if (node.left != null && node.left.left == null && node.left.right == null) {result += node.left.val;}if (node.right != null) stack.add(node.right);if (node.left != null) stack.add(node.left);}return result;}}",
+          "description": "Java迭代法计算左叶子之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sumOfLeftLeaves(self, root): if root is None: return 0 leftValue = 0 if root.left is not None and root.left.left is None and root.left.right is None: leftValue = root.left.val return leftValue + self.sumOfLeftLeaves(root.left) + self.sumOfLeftLeaves(root.right)",
+          "description": "Python递归精简版计算左叶子之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sumOfLeftLeaves(self, root): if root is None: return 0 st = [root] result = 0 while st: node = st.pop() if node.left and node.left.left is None and node.left.right is None: result += node.left.val if node.right: st.append(node.right) if node.left: st.append(node.left) return result",
+          "description": "Python迭代法计算左叶子之和"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "递归法",
+      "text": "递归的遍历顺序为后序遍历（左右中），是因为要通过递归函数的返回值来累加求取左叶子数值之和。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int sumOfLeftLeaves(TreeNode* root) { if (root == NULL) return 0; if (root->left == NULL && root->right== NULL) return 0; int leftValue = sumOfLeftLeaves(root->left); if (root->left && !root->left->left && !root->left->right) { leftValue = root->left->val; } int rightValue = sumOfLeftLeaves(root->right); int sum = leftValue + rightValue; return sum; }};",
+          "description": "递归法求解左叶子之和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int sumOfLeftLeaves(TreeNode* root) { if (root == NULL) return 0; int leftValue = 0; if (root->left != NULL && root->left->left == NULL && root->left->right == NULL) { leftValue = root->left->val; } return leftValue + sumOfLeftLeaves(root->left) + sumOfLeftLeaves(root->right); }};",
+          "description": "精简版递归法求解左叶子之和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int sumOfLeftLeaves(TreeNode* root) { stack<TreeNode*> st; if (root == NULL) return 0; st.push(root); int result = 0; while (!st.empty()) { TreeNode* node = st.top(); st.pop(); if (node->left != NULL && node->left->left == NULL && node->left->right == NULL) { result += node->left->val; } if (node->right) st.push(node->right); if (node->left) st.push(node->left); } return result; }};",
+          "description": "迭代法（使用栈）求解左叶子之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int sumOfLeftLeaves(TreeNode root) { if (root == null) return 0; int leftValue = sumOfLeftLeaves(root.left); int rightValue = sumOfLeftLeaves(root.right); int midValue = 0; if (root.left != null && root.left.left == null && root.left.right == null) { midValue = root.left.val; } int sum = midValue + leftValue + rightValue; return sum; }};",
+          "description": "Java递归法求解左叶子之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int sumOfLeftLeaves(TreeNode root) { if (root == null) return 0; Stack<TreeNode> stack = new Stack<> (); stack.add(root); int result = 0; while (!stack.isEmpty()) { TreeNode node = stack.pop(); if (node.left != null && node.left.left == null && node.left.right == null) { result += node.left.val; } if (node.right != null) stack.add(node.right); if (node.left != null) stack.add(node.left); } return result; }};",
+          "description": "Java迭代法（使用栈）求解左叶子之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int sumOfLeftLeaves(TreeNode root) { int sum = 0; if (root == null) return 0; Queue<TreeNode> queue = new LinkedList<>(); queue.offer(root); while (!queue.isEmpty()) { int size = queue.size(); while (size -- > 0) { TreeNode node = queue.poll(); if (node.left != null) { queue.offer(node.left); if (node.left.left == null && node.left.right == null){ sum += node.left.val; } } if (node.right != null) queue.offer(node.right); } } return sum; }};",
+          "description": "Java层序遍历迭代法求解左叶子之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sumOfLeftLeaves(self, root): if root is None: return 0 if root.left is None and root.right is None: return 0 leftValue = self.sumOfLeftLeaves(root.left) if root.left and not root.left.left and not root.left.right: leftValue = root.left.val rightValue = self.sumOfLeftLeaves(root.right) sum_val = leftValue + rightValue return sum_val",
+          "description": "Python递归法求解左叶子之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sumOfLeftLeaves(self, root): if root is None: return 0 leftValue = 0 if root.left is not None and root.left.left is None and root.left.right is None: leftValue = root.left.val return leftValue + self.sumOfLeftLeaves(root.left) + self.sumOfLeftLeaves(root.right)",
+          "description": "Python递归精简版求解左叶子之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sumOfLeftLeaves(self, root): if root is None: return 0 st = [root] result = 0 while st: node = st.pop() if node.left and node.left.left is None and node.left.right is None: result += node.left.val if node.right: st.append(node.right) if node.left: st.append(node.left) return result",
+          "description": "Python迭代法求解左叶子之和"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "迭代法",
+      "text": "本题迭代法使用前中后序都是可以的，只要把左叶子节点统计出来，就可以了，那么参考文章 二叉树：听说递归能做的，栈也能做！ (https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E8%BF%AD%E4%BB%A3%E9%81%8D%E5%8E%86.html)和二叉树：迭代法统一写法 (https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E7%BB%9F%E4%B8%80%E8%BF%AD%E4%BB%A3%E6%B3%95.html)中的写法，可以写出一个前序遍历的迭代法。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int sumOfLeftLeaves(TreeNode* root) { if (root == NULL) return 0; stack<TreeNode*> st; st.push(root); int result = 0; while (!st.empty()) { TreeNode* node = st.top(); st.pop(); if (node->left != NULL && node->left->left == NULL && node->left->right == NULL) { result += node->left->val; } if (node->right) st.push(node->right); if (node->left) st.push(node->left);} return result;}};",
+          "description": "C++迭代法计算二叉树所有左叶子之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int sumOfLeftLeaves(TreeNode root) { if (root == null) return 0; Stack<TreeNode> stack = new Stack<> (); stack.add(root); int result = 0; while (!stack.isEmpty()) { TreeNode node = stack.pop(); if (node.left != null && node.left.left == null && node.left.right == null) { result += node.left.val; } if (node.right != null) stack.add(node.right); if (node.left != null) stack.add(node.left);} return result;}}",
+          "description": "Java迭代法计算二叉树所有左叶子之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sumOfLeftLeaves(self, root): if root is None: return 0 st = [root] result = 0 while st: node = st.pop() if node.left and node.left.left is None and node.left.right is None: result += node.left.val if node.right: st.append(node.right) if node.left: st.append(node.left) return result",
+          "description": "Python迭代法计算二叉树所有左叶子之和"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "这道题目要求左叶子之和，其实是比较绕的，因为不能判断本节点是不是左叶子节点。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int sumOfLeftLeaves(TreeNode* root) { if (root == NULL) return 0; if (root->left == NULL && root->right== NULL) return 0; int leftValue = sumOfLeftLeaves(root->left); if (root->left && !root->left->left && !root->left->right) { leftValue = root->left->val; } int rightValue = sumOfLeftLeaves(root->right); int sum = leftValue + rightValue; return sum; }};",
+          "description": "递归法计算左叶子之和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int sumOfLeftLeaves(TreeNode* root) { if (root == NULL) return 0; int leftValue = 0; if (root->left != NULL && root->left->left == NULL && root->left->right == NULL) { leftValue = root->left->val; } return leftValue + sumOfLeftLeaves(root->left) + sumOfLeftLeaves(root->right);}};",
+          "description": "精简版递归法计算左叶子之和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int sumOfLeftLeaves(TreeNode* root) { stack<TreeNode*> st; if (root == NULL) return 0; st.push(root); int result = 0; while (!st.empty()) { TreeNode* node = st.top(); st.pop(); if (node->left != NULL && node->left->left == NULL && node->left->right == NULL) { result += node->left->val; } if (node->right) st.push(node->right); if (node->left) st.push(node->left); } return result;}};",
+          "description": "迭代法（使用栈）计算左叶子之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int sumOfLeftLeaves(TreeNode root) { if (root == null) return 0; int leftValue = sumOfLeftLeaves(root.left); int rightValue = sumOfLeftLeaves(root.right); int midValue = 0; if (root.left != null && root.left.left == null && root.left.right == null) { midValue = root.left.val; } int sum = midValue + leftValue + rightValue; return sum; }}",
+          "description": "Java递归法计算左叶子之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int sumOfLeftLeaves(TreeNode root) { if (root == null) return 0; Stack<TreeNode> stack = new Stack<>(); stack.add(root); int result = 0; while (!stack.isEmpty()) { TreeNode node = stack.pop(); if (node.left != null && node.left.left == null && node.left.right == null) { result += node.left.val; } if (node.right != null) stack.add(node.right); if (node.left != null) stack.add(node.left); } return result; }}",
+          "description": "Java迭代法（使用栈）计算左叶子之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int sumOfLeftLeaves(TreeNode root) { int sum = 0; if (root == null) return 0; Queue<TreeNode> queue = new LinkedList<>(); queue.offer(root); while (!queue.isEmpty()) { int size = queue.size(); while (size -- > 0) { TreeNode node = queue.poll(); if (node.left != null) { queue.offer(node.left); if (node.left.left == null && node.left.right == null){ sum += node.left.val; } } if (node.right != null) queue.offer(node.right); } } return sum; }}",
+          "description": "Java层序遍历迭代法计算左叶子之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sumOfLeftLeaves(self, root): if root is None: return 0 if root.left is None and root.right is None: return 0 leftValue = self.sumOfLeftLeaves(root.left) if root.left and not root.left.left and not root.left.right: leftValue = root.left.val rightValue = self.sumOfLeftLeaves(root.right) sum_val = leftValue + rightValue return sum_val",
+          "description": "Python递归法计算左叶子之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sumOfLeftLeaves(self, root): if root is None: return 0 leftValue = 0 if root.left is not None and root.left.left is None and root.left.right is None: leftValue = root.left.val return leftValue + self.sumOfLeftLeaves(root.left) + self.sumOfLeftLeaves(root.right)",
+          "description": "Python递归精简版计算左叶子之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sumOfLeftLeaves(self, root): if root is None: return 0 st = [root] result = 0 while st: node = st.pop() if node.left and node.left.left is None and node.left.right is None: result += node.left.val if node.right: st.append(node.right) if node.left: st.append(node.left) return result",
+          "description": "Python迭代法计算左叶子之和"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int sumOfLeftLeaves(TreeNode* root) { if (root == NULL) return 0; if (root->left == NULL && root->right== NULL) return 0; int leftValue = sumOfLeftLeaves(root->left); if (root->left && !root->left->left && !root->left->right) { leftValue = root->left->val; } int rightValue = sumOfLeftLeaves(root->right); int sum = leftValue + rightValue; return sum; }};",
+          "description": "递归法求解二叉树的左叶子之和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int sumOfLeftLeaves(TreeNode* root) { if (root == NULL) return 0; int leftValue = 0; if (root->left != NULL && root->left->left == NULL && root->left->right == NULL) { leftValue = root->left->val; } return leftValue + sumOfLeftLeaves(root->left) + sumOfLeftLeaves(root->right);}};",
+          "description": "精简版递归法求解二叉树的左叶子之和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int sumOfLeftLeaves(TreeNode* root) { stack<TreeNode*> st; if (root == NULL) return 0; st.push(root); int result = 0; while (!st.empty()) { TreeNode* node = st.top(); st.pop(); if (node->left != NULL && node->left->left == NULL && node->left->right == NULL) { result += node->left->val; } if (node->right) st.push(node->right); if (node->left) st.push(node->left); } return result;}};",
+          "description": "迭代法（使用栈）求解二叉树的左叶子之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int sumOfLeftLeaves(TreeNode root) { if (root == null) return 0; int leftValue = sumOfLeftLeaves(root.left); int rightValue = sumOfLeftLeaves(root.right); int midValue = 0; if (root.left != null && root.left.left == null && root.left.right == null) { midValue = root.left.val; } int sum = midValue + leftValue + rightValue; return sum;}}",
+          "description": "Java递归法求解二叉树的左叶子之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int sumOfLeftLeaves(TreeNode root) { if (root == null) return 0; Stack<TreeNode> stack = new Stack<>(); stack.add(root); int result = 0; while (!stack.isEmpty()) { TreeNode node = stack.pop(); if (node.left != null && node.left.left == null && node.left.right == null) { result += node.left.val; } if (node.right != null) stack.add(node.right); if (node.left != null) stack.add(node.left); } return result;}}",
+          "description": "Java迭代法（使用栈）求解二叉树的左叶子之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int sumOfLeftLeaves(TreeNode root) { int sum = 0; if (root == null) return 0; Queue<TreeNode> queue = new LinkedList<>(); queue.offer(root); while (!queue.isEmpty()) { int size = queue.size(); while (size -- > 0) { TreeNode node = queue.poll(); if (node.left != null) { queue.offer(node.left); if (node.left.left == null && node.left.right == null){ sum += node.left.val; } } if (node.right != null) queue.offer(node.right); } } return sum;}}",
+          "description": "Java层序遍历迭代法求解二叉树的左叶子之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sumOfLeftLeaves(self, root): if root is None: return 0 if root.left is None and root.right is None: return 0 leftValue = self.sumOfLeftLeaves(root.left) if root.left and not root.left.left and not root.left.right: leftValue = root.left.val rightValue = self.sumOfLeftLeaves(root.right) sum_val = leftValue + rightValue return sum_val",
+          "description": "Python递归法求解二叉树的左叶子之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sumOfLeftLeaves(self, root): if root is None: return 0 leftValue = 0 if root.left is not None and root.left.left is None and root.left.right is None: leftValue = root.left.val return leftValue + self.sumOfLeftLeaves(root.left) + self.sumOfLeftLeaves(root.right)",
+          "description": "Python递归精简版求解二叉树的左叶子之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sumOfLeftLeaves(self, root): if root is None: return 0 st = [root] result = 0 while st: node = st.pop() if node.left and node.left.left is None and node.left.right is None: result += node.left.val if node.right: st.append(node.right) if node.left: st.append(node.left) return result",
+          "description": "Python迭代法求解二叉树的左叶子之和"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "递归",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int sumOfLeftLeaves(TreeNode* root) { if (root == NULL) return 0; if (root->left == NULL && root->right== NULL) return 0; int leftValue = sumOfLeftLeaves(root->left); if (root->left && !root->left->left && !root->left->right) { leftValue = root->left->val; } int rightValue = sumOfLeftLeaves(root->right); int sum = leftValue + rightValue; return sum; }};",
+          "description": "递归求解左叶子之和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int sumOfLeftLeaves(TreeNode* root) { if (root == NULL) return 0; int leftValue = 0; if (root->left != NULL && root->left->left == NULL && root->left->right == NULL) { leftValue = root->left->val; } return leftValue + sumOfLeftLeaves(root->left) + sumOfLeftLeaves(root->right);}};",
+          "description": "精简版递归求解左叶子之和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int sumOfLeftLeaves(TreeNode* root) { stack<TreeNode*> st; if (root == NULL) return 0; st.push(root); int result = 0; while (!st.empty()) { TreeNode* node = st.top(); st.pop(); if (node->left != NULL && node->left->left == NULL && node->left->right == NULL) { result += node->left->val; } if (node->right) st.push(node->right); if (node->left) st.push(node->left); } return result;}};",
+          "description": "迭代法求解左叶子之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int sumOfLeftLeaves(TreeNode root) { if (root == null) return 0; int leftValue = sumOfLeftLeaves(root.left); int rightValue = sumOfLeftLeaves(root.right); int midValue = 0; if (root.left != null && root.left.left == null && root.left.right == null) { midValue = root.left.val; } int sum = midValue + leftValue + rightValue; return sum;}}",
+          "description": "Java递归求解左叶子之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int sumOfLeftLeaves(TreeNode root) { if (root == null) return 0; Stack<TreeNode> stack = new Stack<>(); stack.add(root); int result = 0; while (!stack.isEmpty()) { TreeNode node = stack.pop(); if (node.left != null && node.left.left == null && node.left.right == null) { result += node.left.val; } if (node.right != null) stack.add(node.right); if (node.left != null) stack.add(node.left); } return result;}}",
+          "description": "Java迭代法求解左叶子之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int sumOfLeftLeaves(TreeNode root) { int sum = 0; if (root == null) return 0; Queue<TreeNode> queue = new LinkedList<>(); queue.offer(root); while (!queue.isEmpty()) { int size = queue.size(); while (size -- > 0) { TreeNode node = queue.poll(); if (node.left != null) { queue.offer(node.left); if (node.left.left == null && node.left.right == null){ sum += node.left.val; } } if (node.right != null) queue.offer(node.right); } } return sum;}}",
+          "description": "Java层序遍历迭代法求解左叶子之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sumOfLeftLeaves(self, root): if root is None: return 0 if root.left is None and root.right is None: return 0 leftValue = self.sumOfLeftLeaves(root.left) if root.left and not root.left.left and not root.left.right: leftValue = root.left.val rightValue = self.sumOfLeftLeaves(root.right) sum_val = leftValue + rightValue return sum_val",
+          "description": "Python递归求解左叶子之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sumOfLeftLeaves(self, root): if root is None: return 0 leftValue = 0 if root.left is not None and root.left.left is None and root.left.right is None: leftValue = root.left.val return leftValue + self.sumOfLeftLeaves(root.left) + self.sumOfLeftLeaves(root.right)",
+          "description": "Python递归精简版求解左叶子之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sumOfLeftLeaves(self, root): if root is None: return 0 st = [root] result = 0 while st: node = st.pop() if node.left and node.left.left is None and node.left.right is None: result += node.left.val if node.right: st.append(node.right) if node.left: st.append(node.left) return result",
+          "description": "Python迭代法求解左叶子之和"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python:",
+      "text": "递归",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int sumOfLeftLeaves(TreeNode* root) { if (root == NULL) return 0; if (root->left == NULL && root->right== NULL) return 0; int leftValue = sumOfLeftLeaves(root->left); if (root->left && !root->left->left && !root->left->right) { leftValue = root->left->val; } int rightValue = sumOfLeftLeaves(root->right); int sum = leftValue + rightValue; return sum; }};",
+          "description": "递归法求解左叶子之和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int sumOfLeftLeaves(TreeNode* root) { if (root == NULL) return 0; int leftValue = 0; if (root->left != NULL && root->left->left == NULL && root->left->right == NULL) { leftValue = root->left->val; } return leftValue + sumOfLeftLeaves(root->left) + sumOfLeftLeaves(root->right);}};",
+          "description": "精简版递归法求解左叶子之和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int sumOfLeftLeaves(TreeNode* root) { stack<TreeNode*> st; if (root == NULL) return 0; st.push(root); int result = 0; while (!st.empty()) { TreeNode* node = st.top(); st.pop(); if (node->left != NULL && node->left->left == NULL && node->left->right == NULL) { result += node->left->val; } if (node->right) st.push(node->right); if (node->left) st.push(node->left); } return result;}};",
+          "description": "迭代法求解左叶子之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int sumOfLeftLeaves(TreeNode root) { if (root == null) return 0; int leftValue = sumOfLeftLeaves(root.left); int rightValue = sumOfLeftLeaves(root.right); int midValue = 0; if (root.left != null && root.left.left == null && root.left.right == null) { midValue = root.left.val; } int sum = midValue + leftValue + rightValue; return sum;}}",
+          "description": "Java递归法求解左叶子之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int sumOfLeftLeaves(TreeNode root) { if (root == null) return 0; Stack<TreeNode> stack = new Stack<> (); stack.add(root); int result = 0; while (!stack.isEmpty()) { TreeNode node = stack.pop(); if (node.left != null && node.left.left == null && node.left.right == null) { result += node.left.val; } if (node.right != null) stack.add(node.right); if (node.left != null) stack.add(node.left); } return result;}}",
+          "description": "Java迭代法求解左叶子之和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int sumOfLeftLeaves(TreeNode root) { int sum = 0; if (root == null) return 0; Queue<TreeNode> queue = new LinkedList<>(); queue.offer(root); while (!queue.isEmpty()) { int size = queue.size(); while (size -- > 0) { TreeNode node = queue.poll(); if (node.left != null) { queue.offer(node.left); if (node.left.left == null && node.left.right == null){ sum += node.left.val; } } if (node.right != null) queue.offer(node.right); } } return sum;}}",
+          "description": "Java层序遍历迭代法求解左叶子之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sumOfLeftLeaves(self, root): if root is None: return 0 if root.left is None and root.right is None: return 0 leftValue = self.sumOfLeftLeaves(root.left) if root.left and not root.left.left and not root.left.right: leftValue = root.left.val rightValue = self.sumOfLeftLeaves(root.right) sum_val = leftValue + rightValue return sum_val",
+          "description": "Python递归法求解左叶子之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sumOfLeftLeaves(self, root): if root is None: return 0 leftValue = 0 if root.left is not None and root.left.left is None and root.left.right is None: leftValue = root.left.val return leftValue + self.sumOfLeftLeaves(root.left) + self.sumOfLeftLeaves(root.right)",
+          "description": "Python递归精简版求解左叶子之和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sumOfLeftLeaves(self, root): if root is None: return 0 st = [root] result = 0 while st: node = st.pop() if node.left and node.left.left is None and node.left.right is None: result += node.left.val if node.right: st.append(node.right) if node.left: st.append(node.left) return result",
+          "description": "Python迭代法求解左叶子之和"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "int leftValue = sumOfLeftLeaves(root->left);    // 左\nif (root->left && !root->left->left && !root->left->right) {\n    leftValue = root->left->val;\n}\nint rightValue = sumOfLeftLeaves(root->right);  // 右\n\nint sum = leftValue + rightValue;               // 中\nreturn sum;",
+      "description": "递归法计算左叶子节点之和"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {\npublic:\n    int sumOfLeftLeaves(TreeNode* root) {\n        if (root == NULL) return 0;\n        int leftValue = 0;\n        if (root->left != NULL && root->left->left == NULL && root->left->right == NULL) {\n            leftValue = root->left->val;\n        }\n        return leftValue + sumOfLeftLeaves(root->left) + sumOfLeftLeaves(root->right);\n    }\n};",
+      "description": "精简版递归法计算左叶子节点之和"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {\npublic:\n    int sumOfLeftLeaves(TreeNode* root) {\n        stack<TreeNode*> st;\n        if (root == NULL) return 0;\n        st.push(root);\n        int result = 0;\n        while (!st.empty()) {\n            TreeNode* node = st.top();\n            st.pop();\n            if (node->left != NULL && node->left->left == NULL && node->left->right == NULL) {\n                result += node->left->val;\n            }\n            if (node->right) st.push(node->right);\n            if (node->left) st.push(node->left);\n        }\n        return result;\n    }\n};",
+      "description": "迭代法（使用栈）计算左叶子节点之和"
+    },
+    {
+      "language": "java",
+      "code": "public int sumOfLeftLeaves(TreeNode root) {\n    if (root == null) return 0;\n    int leftValue = sumOfLeftLeaves(root.left);    // 左\n    int rightValue = sumOfLeftLeaves(root.right);  // 右\n\n    int midValue = 0;\n    if (root.left != null && root.left.left == null && root.left.right == null) { \n        midValue = root.left.val;\n    }\n    int sum = midValue + leftValue + rightValue;  // 中\n    return sum;\n}",
+      "description": "Java版本递归法计算左叶子节点之和"
+    },
+    {
+      "language": "java",
+      "code": "public int sumOfLeftLeaves(TreeNode root) {\n    if (root == null) return 0;\n    Stack<TreeNode> stack = new Stack<> ();\n    stack.add(root);\n    int result = 0;\n    while (!stack.isEmpty()) {\n        TreeNode node = stack.pop();\n        if (node.left != null && node.left.left == null && node.left.right == null) {\n            result += node.left.val;\n        }\n        if (node.right != null) stack.add(node.right);\n        if (node.left != null) stack.add(node.left);\n    }\n    return result;\n}",
+      "description": "Java版本迭代法（使用栈）计算左叶子节点之和"
+    },
+    {
+      "language": "java",
+      "code": "public int sumOfLeftLeaves(TreeNode root) {\n    int sum = 0;\n    if (root == null) return 0;\n    Queue<TreeNode> queue = new LinkedList<>();\n    queue.offer(root);\n    while (!queue.isEmpty()) {\n        int size = queue.size();\n        while (size -- > 0) {\n            TreeNode node = queue.poll();\n            if (node.left != null) { // 左节点不为空\n                queue.offer(node.left);\n                if (node.left.left == null && node.left.right == null){ // 左叶子节点\n                    sum += node.left.val;\n                }\n            }\n            if (node.right != null) queue.offer(node.right);\n        }\n    }\n    return sum;\n}",
+      "description": "Java版本层序遍历迭代法计算左叶子节点之和"
+    },
+    {
+      "language": "python",
+      "code": "def sumOfLeftLeaves(self, root):\n    if root is None:\n        return 0\n    if root.left is None and root.right is None:\n        return 0\n\n    leftValue = self.sumOfLeftLeaves(root.left)  # 左\n    if root.left and not root.left.left and not root.left.right:  # 左子树是左叶子的情况\n        leftValue = root.left.val\n\n    rightValue = self.sumOfLeftLeaves(root.right)  # 右\n\n    sum_val = leftValue + rightValue  # 中\n    return sum_val",
+      "description": "Python版本递归法计算左叶子节点之和"
+    },
+    {
+      "language": "python",
+      "code": "def sumOfLeftLeaves(self, root):\n    if root is None:\n        return 0\n    leftValue = 0\n    if root.left is not None and root.left.left is None and root.left.right is None:\n        leftValue = root.left.val\n    return leftValue + self.sumOfLeftLeaves(root.left) + self.sumOfLeftLeaves(root.right)",
+      "description": "Python版本精简递归法计算左叶子节点之和"
+    },
+    {
+      "language": "python",
+      "code": "def sumOfLeftLeaves(self, root):\n    if root is None:\n        return 0\n    st = [root]\n    result = 0\n    while st:\n        node = st.pop()\n        if node.left and node.left.left is None and node.left.right is None:\n            result += node.left.val\n        if node.right:\n            st.append(node.right)\n        if node.left:\n            st.append(node.left)\n    return result",
+      "description": "Python版本迭代法（使用列表模拟栈）计算左叶子节点之和"
+    }
+  ],
+  "common_mistakes": [
+    "直接尝试用层序遍历来解决问题而忽略了题目要求的是左叶子而不是左侧节点。",
+    "未充分理解题目中的'左叶子'定义，可能误将非叶子节点也计算在内。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210204151927654.png",
+      "description": "该图片展示了一棵二叉树，要求计算所有左叶子节点的值之和（9 + 15 = 24）。",
+      "context": "该图片展示了用于计算所有左叶子节点之和的一个示例二叉树。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20220902165805.png",
+      "description": "这张图片展示了一棵二叉树，重点在于计算所有左叶子节点的值之和（6 + 15 = 21），体现了树结构中的遍历算法应用。",
+      "context": "这张图片展示了没有左叶子的二叉树示例，用以说明并非所有二叉树都含有左叶子节点。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20220902165805.png",
+      "description": "这张图片展示了一棵二叉树，重点在于计算所有左叶子节点的值之和（6 + 15 = 21），体现了树结构中的遍历算法应用。",
+      "context": "这张图片展示了没有左叶子节点的二叉树示例，用于帮助理解左叶子节点的具体定义。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210204151927654.png",
+      "description": "GIF展示了计算给定二叉树所有左叶子节点之和的过程。",
+      "context": "该GIF动画展示了如何遍历一棵二叉树以识别并求和所有左叶子节点的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20220902165805.png",
+      "description": "GIF展示了二叉树遍历过程，特别强调了如何识别并累加左叶子节点的过程。",
+      "context": "GIF动画展示了如何通过父节点判断其左孩子是否为左叶子的过程，帮助理解左叶子的定义及识别方法。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20220902165805.png",
+      "description": "GIF动画展示了如何通过遍历二叉树来识别并计算所有左叶子节点的值的过程。",
+      "context": "GIF动画展示了如何通过父节点判断其左孩子是否为左叶子的过程，帮助理解左叶子的定义及识别方法。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\左叶子之和.txt",
+  "extracted_at": "2025-07-19T21:44:16.563011",
+  "raw_content": "左叶子之和\n力扣题目链接(https://leetcode.cn/problems/sum-of-left-leaves/)\n\n计算给定二叉树的所有左叶子之和。\n\n示例：\n\nhttps://file1.kamacoder.com/i/algo/20210204151927654.png\n\n\n#思路\n首先要注意是判断左叶子，不是二叉树左侧节点，所以不要上来想着层序遍历。\n\n因为题目中其实没有说清楚左叶子究竟是什么节点，那么我来给出左叶子的明确定义：节点A的左孩子不为空，且左孩子的左右孩子都为空（说明是叶子节点），那么A节点的左孩子为左叶子节点\n\n大家思考一下如下图中二叉树，左叶子之和究竟是多少？\n\nhttps://file1.kamacoder.com/i/algo/20220902165805.png 其实是0，因为这棵树根本没有左叶子！\n\n但看这个图的左叶子之和是多少？\n\nhttps://file1.kamacoder.com/i/algo/20220902165805.png\n\n相信通过这两个图，大家对最左叶子的定义有明确理解了。\n\n那么判断当前节点是不是左叶子是无法判断的，必须要通过节点的父节点来判断其左孩子是不是左叶子。\n\n如果该节点的左节点不为空，该节点的左节点的左节点为空，该节点的左节点的右节点为空，则找到了一个左叶子，判断代码如下：\n\nif (node->left != NULL && node->left->left == NULL && node->left->right == NULL) {\n    左叶子节点处理逻辑\n}\n#递归法\n递归的遍历顺序为后序遍历（左右中），是因为要通过递归函数的返回值来累加求取左叶子数值之和。\n\n递归三部曲：\n\n确定递归函数的参数和返回值\n判断一个树的左叶子节点之和，那么一定要传入树的根节点，递归函数的返回值为数值之和，所以为int\n\n使用题目中给出的函数就可以了。\n\n确定终止条件\n如果遍历到空节点，那么左叶子值一定是0\n\nif (root == NULL) return 0;\n注意，只有当前遍历的节点是父节点，才能判断其子节点是不是左叶子。 所以如果当前遍历的节点是叶子节点，那其左叶子也必定是0，那么终止条件为：\n\nif (root == NULL) return 0;\nif (root->left == NULL && root->right== NULL) return 0; //其实这个也可以不写，如果不写不影响结果，但就会让递归多进行了一层。\n确定单层递归的逻辑\n当遇到左叶子节点的时候，记录数值，然后通过递归求取左子树左叶子之和，和 右子树左叶子之和，相加便是整个树的左叶子之和。\n\n代码如下：\n\nint leftValue = sumOfLeftLeaves(root->left);    // 左\nif (root->left && !root->left->left && !root->left->right) {\n    leftValue = root->left->val;\n}\nint rightValue = sumOfLeftLeaves(root->right);  // 右\n\nint sum = leftValue + rightValue;               // 中\nreturn sum;\n\n整体递归代码如下：\n\nclass Solution {\npublic:\n    int sumOfLeftLeaves(TreeNode* root) {\n        if (root == NULL) return 0;\n        if (root->left == NULL && root->right== NULL) return 0;\n\n        int leftValue = sumOfLeftLeaves(root->left);    // 左\n        if (root->left && !root->left->left && !root->left->right) { // 左子树就是一个左叶子的情况\n            leftValue = root->left->val;\n        }\n        int rightValue = sumOfLeftLeaves(root->right);  // 右\n\n        int sum = leftValue + rightValue;               // 中\n        return sum;\n    }\n};\n\n以上代码精简之后如下：\n\nclass Solution {\npublic:\n    int sumOfLeftLeaves(TreeNode* root) {\n        if (root == NULL) return 0;\n        int leftValue = 0;\n        if (root->left != NULL && root->left->left == NULL && root->left->right == NULL) {\n            leftValue = root->left->val;\n        }\n        return leftValue + sumOfLeftLeaves(root->left) + sumOfLeftLeaves(root->right);\n    }\n};\n精简之后的代码其实看不出来用的是什么遍历方式了，对于算法初学者以上根据第一个版本来学习。\n\n#迭代法\n本题迭代法使用前中后序都是可以的，只要把左叶子节点统计出来，就可以了，那么参考文章 二叉树：听说递归能做的，栈也能做！ (https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E8%BF%AD%E4%BB%A3%E9%81%8D%E5%8E%86.html)和二叉树：迭代法统一写法 (https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E7%BB%9F%E4%B8%80%E8%BF%AD%E4%BB%A3%E6%B3%95.html)中的写法，可以写出一个前序遍历的迭代法。\n\n判断条件都是一样的，代码如下：\n\n\nclass Solution {\npublic:\n    int sumOfLeftLeaves(TreeNode* root) {\n        stack<TreeNode*> st;\n        if (root == NULL) return 0;\n        st.push(root);\n        int result = 0;\n        while (!st.empty()) {\n            TreeNode* node = st.top();\n            st.pop();\n            if (node->left != NULL && node->left->left == NULL && node->left->right == NULL) {\n                result += node->left->val;\n            }\n            if (node->right) st.push(node->right);\n            if (node->left) st.push(node->left);\n        }\n        return result;\n    }\n};\n#总结\n这道题目要求左叶子之和，其实是比较绕的，因为不能判断本节点是不是左叶子节点。\n\n此时就要通过节点的父节点来判断其左孩子是不是左叶子了。\n\n平时我们解二叉树的题目时，已经习惯了通过节点的左右孩子判断本节点的属性，而本题我们要通过节点的父节点判断本节点的属性。\n\n希望通过这道题目，可以扩展大家对二叉树的解题思路。\n\n#其他语言版本\n#Java：\n递归\n\nclass Solution {\n    public int sumOfLeftLeaves(TreeNode root) {\n        if (root == null) return 0;\n        int leftValue = sumOfLeftLeaves(root.left);    // 左\n        int rightValue = sumOfLeftLeaves(root.right);  // 右\n                                                       \n        int midValue = 0;\n        if (root.left != null && root.left.left == null && root.left.right == null) { \n            midValue = root.left.val;\n        }\n        int sum = midValue + leftValue + rightValue;  // 中\n        return sum;\n    }\n}\n迭代\n\nclass Solution {\n    public int sumOfLeftLeaves(TreeNode root) {\n        if (root == null) return 0;\n        Stack<TreeNode> stack = new Stack<> ();\n        stack.add(root);\n        int result = 0;\n        while (!stack.isEmpty()) {\n            TreeNode node = stack.pop();\n            if (node.left != null && node.left.left == null && node.left.right == null) {\n                result += node.left.val;\n            }\n            if (node.right != null) stack.add(node.right);\n            if (node.left != null) stack.add(node.left);\n        }\n        return result;\n    }\n}\n// 层序遍历迭代法\nclass Solution {\n    public int sumOfLeftLeaves(TreeNode root) {\n        int sum = 0;\n        if (root == null) return 0;\n        Queue<TreeNode> queue = new LinkedList<>();\n        queue.offer(root);\n        while (!queue.isEmpty()) {\n            int size = queue.size();\n            while (size -- > 0) {\n                TreeNode node = queue.poll();\n                if (node.left != null) { // 左节点不为空\n                    queue.offer(node.left);\n                    if (node.left.left == null && node.left.right == null){ // 左叶子节点\n                        sum += node.left.val;\n                    }\n                }\n                if (node.right != null) queue.offer(node.right);\n            }\n        }\n        return sum;\n    }\n}\n#Python:\n递归\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def sumOfLeftLeaves(self, root):\n        if root is None:\n            return 0\n        if root.left is None and root.right is None:\n            return 0\n        \n        leftValue = self.sumOfLeftLeaves(root.left)  # 左\n        if root.left and not root.left.left and not root.left.right:  # 左子树是左叶子的情况\n            leftValue = root.left.val\n            \n        rightValue = self.sumOfLeftLeaves(root.right)  # 右\n\n        sum_val = leftValue + rightValue  # 中\n        return sum_val\n递归精简版\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def sumOfLeftLeaves(self, root):\n        if root is None:\n            return 0\n        leftValue = 0\n        if root.left is not None and root.left.left is None and root.left.right is None:\n            leftValue = root.left.val\n        return leftValue + self.sumOfLeftLeaves(root.left) + self.sumOfLeftLeaves(root.right)\n迭代法\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def sumOfLeftLeaves(self, root):\n        if root is None:\n            return 0\n        st = [root]\n        result = 0\n        while st:\n            node = st.pop()\n            if node.left and node.left.left is None and node.left.right is None:\n                result += node.left.val\n            if node.right:\n                st.append(node.right)\n            if node.left:\n                st.append(node.left)\n        return result"
+}

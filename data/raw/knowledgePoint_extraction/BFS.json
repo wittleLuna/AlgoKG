@@ -1,0 +1,78 @@
+{
+  "id": "SA510",
+  "name": "BFS",
+  "alias": [
+    "宽度优先搜索",
+    "广度优先搜索",
+    "bfs"
+  ],
+  "type": "specific_algorithm",
+  "description": "BFS（Breadth First Search），也称为广度优先搜索，是一种图论中的基础搜索算法。它通过一圈一圈的方式从起点开始搜索，利用队列实现先进先出的原则，以找到从起点到其他节点的最短路径。",
+  "key_concepts": [
+    "最短路径",
+    "图论",
+    "搜索算法",
+    "一圈一圈搜索",
+    "队列",
+    "先进先出"
+  ],
+  "applications": [
+    "图遍历",
+    "最短路径问题",
+    "连通性检测",
+    "岛屿问题"
+  ],
+  "created_at": "2025-07-19T12:32:56Z",
+  "updated_at": "2025-07-19T12:33:28Z",
+  "source_files": [
+    "BFS_wiki.txt",
+    "BFS_kama.txt"
+  ],
+  "spacy_entities": {
+    "COMPLEXITY": [
+      "O(n²)",
+      "O(n^2)",
+      "O(n)",
+      "O(n + m)"
+    ],
+    "ALGORITHM_PARADIGM": [
+      "BFS",
+      "DFS",
+      "广度优先搜索",
+      "图论",
+      "贪心",
+      "深度优先搜索",
+      "dfs",
+      "bfs"
+    ],
+    "DATA_STRUCTURE": [
+      "堆",
+      "队列",
+      "数组",
+      "树",
+      "图",
+      "二叉堆",
+      "双端队列",
+      "优先队列",
+      "deque",
+      "queue",
+      "二叉树",
+      "栈"
+    ],
+    "CORE_CONCEPT": [
+      "空间复杂度",
+      "时间复杂度",
+      "最短路径",
+      "图遍历",
+      "路径",
+      "回溯"
+    ],
+    "PROBLEM_TYPE": [
+      "最短路径问题"
+    ],
+    "SPECIFIC_ALGORITHM": [
+      "BFS",
+      "Dijkstra"
+    ]
+  }
+}

@@ -1,0 +1,464 @@
+{
+  "id": "AP_05d9dcbb",
+  "title": "平衡二叉树",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/balanced-binary-tree/",
+  "description": "一个二叉树，判断它是否是高度平衡的二叉树。\n\n本题中，一棵高度平衡二叉树定义为：一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过1。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "二叉树",
+    "递归"
+  ],
+  "data_structure_tags": [
+    "树"
+  ],
+  "technique_tags": [
+    "后序遍历",
+    "递归"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过后序遍历二叉树来计算每个节点的高度，并判断以该节点为根的子树是否平衡。如果发现不平衡，则返回-1作为标记；否则返回该子树的高度。",
+  "key_insights": [
+    {
+      "content": "由于需要先知道左右子树的高度才能判断当前节点是否满足平衡条件，因此选择后序遍历（左右中）来处理问题。"
+    },
+    {
+      "content": "通过让递归函数返回-1来标识已检测到不平衡的情况，从而避免了额外的状态变量或异常处理机制。"
+    },
+    {
+      "content": "求深度适合用前序遍历，而求高度适合用后序遍历。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "题外话",
+      "text": "咋眼一看这道题目和104.二叉树的最大深度 (https://programmercarl.com/0104.%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%A4%A7%E6%B7%B1%E5%BA%A6.html)很像，其实有很大区别。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int result; void getDepth(TreeNode* node, int depth) {result = depth > result ? depth : result; if (node->left == NULL && node->right == NULL) return ; if (node->left) {depth++; getDepth(node->left, depth); depth--;} if (node->right) {depth++; getDepth(node->right, depth); depth--;} return ;} int maxDepth(TreeNode* root) {result = 0; if (root == NULL) return result; getDepth(root, 1); return result;}};",
+          "description": "使用前序遍历求二叉树的最大深度"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int result; void getDepth(TreeNode* node, int depth) {result = depth > result ? depth : result; if (node->left == NULL && node->right == NULL) return ; if (node->left) getDepth(node->left, depth + 1); if (node->right) getDepth(node->right, depth + 1);} int maxDepth(TreeNode* root) {result = 0; if (root == 0) return result; getDepth(root, 1); return result;}};",
+          "description": "简化版的前序遍历求二叉树最大深度"
+        },
+        {
+          "language": "cpp",
+          "code": "int getHeight(TreeNode* node) {if (node == NULL) return 0; int leftHeight = getHeight(node->left); if (leftHeight == -1) return -1; int rightHeight = getHeight(node->right); if (rightHeight == -1) return -1; return abs(leftHeight - rightHeight) > 1 ? -1 : 1 + max(leftHeight, rightHeight);}",
+          "description": "递归函数用于获取以当前节点为根的子树的高度，如果不是平衡二叉树则返回-1"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int getHeight(TreeNode* node) {if (node == NULL) return 0; int leftHeight = getHeight(node->left); if (leftHeight == -1) return -1; int rightHeight = getHeight(node->right); if (rightHeight == -1) return -1; return abs(leftHeight - rightHeight) > 1 ? -1 : 1 + max(leftHeight, rightHeight);} bool isBalanced(TreeNode* root) {return getHeight(root) == -1 ? false : true;}};",
+          "description": "完整的递归解决方案来判断给定的二叉树是否是高度平衡的"
+        },
+        {
+          "language": "cpp",
+          "code": "int getDepth(TreeNode* cur) {stack<TreeNode*> st; if (cur != NULL) st.push(cur); int depth = 0, result = 0; while (!st.empty()) {TreeNode* node = st.top(); if (node != NULL) {st.pop(); st.push(node); st.push(NULL); depth++; if (node->right) st.push(node->right); if (node->left) st.push(node->left);} else {st.pop(); node = st.top(); st.pop(); depth--;} result = result > depth ? result : depth;} return result;} bool isBalanced(TreeNode* root) {stack<TreeNode*> st; if (root == NULL) return true; st.push(root); while (!st.empty()) {TreeNode* node = st.top(); st.pop(); if (abs(getDepth(node->left) - getDepth(node->right)) > 1) return false; if (node->right) st.push(node->right); if (node->left) st.push(node->left);} return true;}",
+          "description": "迭代方法来判断二叉树是否平衡，通过栈模拟后序遍历来计算每个节点的高度"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isBalanced(TreeNode root) {return getHeight(root) != -1;} private int getHeight(TreeNode root) {if (root == null) return 0; int leftHeight = getHeight(root.left); if (leftHeight == -1) return -1; int rightHeight = getHeight(root.right); if (rightHeight == -1) return -1; if (Math.abs(leftHeight - rightHeight) > 1) return -1; return Math.max(leftHeight, rightHeight) + 1;}}",
+          "description": "Java实现的递归方法来检查二叉树是否平衡"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isBalanced(TreeNode root) {...} public int getHeight(TreeNode root) {...}}",
+          "description": "Java版本的迭代法，通过层序遍历来计算节点高度并判断是否平衡"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isBalanced(self, root: TreeNode) -> bool: if self.get_height(root) != -1: return True else: return False def get_height(self, root: TreeNode) -> int: if not root: return 0 if (left_height := self.get_height(root.left)) == -1: return -1 if (right_height := self.get_height(root.right)) == -1: return -1 if abs(left_height - right_height) > 1: return -1 else: return 1 + max(left_height, right_height)",
+          "description": "Python实现的递归方法来检查二叉树是否平衡"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isBalanced(self, root: Optional[TreeNode]) -> bool: return self.get_hight(root) != -1 def get_hight(self, node): if not node: return 0 left = self.get_hight(node.left) right = self.get_hight(node.right) if left == -1 or right == -1 or abs(left - right) > 1: return -1 return max(left, right) + 1",
+          "description": "简化版的Python递归方法来检查二叉树是否平衡"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def getDepth(self, cur): st = [] if cur is not None: st.append(cur) depth = 0 result = 0 while st: node = st[-1] if node is not None: st.pop() st.append(node) st.append(None) depth += 1 if node.right: st.append(node.right) if node.left: st.append(node.left) else: node = st.pop() st.pop() depth -= 1 result = max(result, depth) return result def isBalanced(self, root): st = [] if root is None: return True st.append(root) while st: node = st.pop() if abs(self.getDepth(node.left) - self.getDepth(node.right)) > 1: return False if node.right: st.append(node.right) if node.left: st.append(node.left) return True",
+          "description": "Python实现的迭代方法来检查二叉树是否平衡"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "本题思路",
+      "text": "#递归",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int result; void getDepth(TreeNode* node, int depth) {result = depth > result ? depth : result; if (node->left == NULL && node->right == NULL) return ; if (node->left) {depth++; getDepth(node->left, depth); depth--;} if (node->right) {depth++; getDepth(node->right, depth); depth--;}} int maxDepth(TreeNode* root) {result = 0; if (root == NULL) return result; getDepth(root, 1); return result;}};",
+          "description": "C++代码实现求二叉树的最大深度"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int result; void getDepth(TreeNode* node, int depth) {result = depth > result ? depth : result; if (node->left == NULL && node->right == NULL) return ; if (node->left) {getDepth(node->left, depth + 1);} if (node->right) {getDepth(node->right, depth + 1);}} int maxDepth(TreeNode* root) {result = 0; if (root == 0) return result; getDepth(root, 1); return result;}};",
+          "description": "简化后的C++代码实现求二叉树的最大深度"
+        },
+        {
+          "language": "cpp",
+          "code": "int getHeight(TreeNode* node) {if (node == NULL) {return 0;} int leftHeight = getHeight(node->left); if (leftHeight == -1) return -1; int rightHeight = getHeight(node->right); if (rightHeight == -1) return -1; return abs(leftHeight - rightHeight) > 1 ? -1 : 1 + max(leftHeight, rightHeight);}",
+          "description": "C++代码用于获取节点的高度，判断是否为平衡二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int getHeight(TreeNode* node) {if (node == NULL) {return 0;} int leftHeight = getHeight(node->left); if (leftHeight == -1) return -1; int rightHeight = getHeight(node->right); if (rightHeight == -1) return -1; return abs(leftHeight - rightHeight) > 1 ? -1 : 1 + max(leftHeight, rightHeight);} bool isBalanced(TreeNode* root) {return getHeight(root) == -1 ? false : true;}};",
+          "description": "完整的C++解决方案，使用递归判断二叉树是否平衡"
+        },
+        {
+          "language": "cpp",
+          "code": "int getDepth(TreeNode* cur) {stack<TreeNode*> st; if (cur != NULL) st.push(cur); int depth = 0; int result = 0; while (!st.empty()) {TreeNode* node = st.top(); if (node != NULL) {st.pop(); st.push(node); st.push(NULL); depth++; if (node->right) st.push(node->right); if (node->left) st.push(node->left);} else {st.pop(); node = st.top(); st.pop(); depth--;} result = result > depth ? result : depth;} return result;}",
+          "description": "C++函数通过栈模拟后序遍历计算节点高度"
+        },
+        {
+          "language": "cpp",
+          "code": "bool isBalanced(TreeNode* root) {stack<TreeNode*> st; if (root == NULL) return true; st.push(root); while (!st.empty()) {TreeNode* node = st.top(); st.pop(); if (abs(getDepth(node->left) - getDepth(node->right)) > 1) {return false;} if (node->right) st.push(node->right); if (node->left) st.push(node->left);} return true;}",
+          "description": "C++迭代法判断二叉树是否平衡"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isBalanced(TreeNode root) {return getHeight(root) != -1;} private int getHeight(TreeNode root) {if (root == null) {return 0;} int leftHeight = getHeight(root.left); if (leftHeight == -1) {return -1;} int rightHeight = getHeight(root.right); if (rightHeight == -1) {return -1;} if (Math.abs(leftHeight - rightHeight) > 1) {return -1;} return Math.max(leftHeight, rightHeight) + 1;}}",
+          "description": "Java递归方法判断二叉树是否平衡"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isBalanced(TreeNode root) {...} public int getHeight(TreeNode root) {...}}",
+          "description": "Java迭代法（效率较低）判断二叉树是否平衡"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isBalanced(TreeNode root) {...} public int getHeight(TreeNode root) {...}}",
+          "description": "Java优化迭代法判断二叉树是否平衡"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isBalanced(self, root: TreeNode) -> bool: if self.get_height(root) != -1: return True else: return False def get_height(self, root: TreeNode) -> int: if not root: return 0 if (left_height := self.get_height(root.left)) == -1: return -1 if (right_height := self.get_height(root.right)) == -1: return -1 if abs(left_height - right_height) > 1: return -1 else: return 1 + max(left_height, right_height)",
+          "description": "Python递归方法判断二叉树是否平衡"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isBalanced(self, root: Optional[TreeNode]) -> bool: return self.get_hight(root) != -1 def get_hight(self, node): if not node: return 0 left = self.get_hight(node.left) right = self.get_hight(node.right) if left == -1 or right == -1 or abs(left - right) > 1: return -1 return max(left, right) + 1",
+          "description": "Python递归方法精简版判断二叉树是否平衡"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def getDepth(self, cur): st = [] if cur is not None: st.append(cur) depth = 0 result = 0 while st: node = st[-1] if node is not None: st.pop() st.append(node) st.append(None) depth += 1 if node.right: st.append(node.right) if node.left: st.append(node.left) else: node = st.pop() st.pop() depth -= 1 result = max(result, depth) return result def isBalanced(self, root): st = [] if root is None: return True st.append(root) while st: node = st.pop() if abs(self.getDepth(node.left) - self.getDepth(node.right)) > 1: return False if node.right: st.append(node.right) if node.left: st.append(node.left) return True",
+          "description": "Python迭代法判断二叉树是否平衡"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isBalanced(self, root: Optional[TreeNode]) -> bool: if not root: return True height_map = {} stack = [root] while stack: node = stack.pop() if node: stack.append(node) stack.append(None) if node.right: stack.append(node.right) if node.left: stack.append(node.left) else: real_node = stack.pop() left, right = height_map.get(real_node.left, 0), height_map.get(real_node.right, 0) if abs(left - right) > 1: return False height_map[real_node] = 1 + max(left, right) return True",
+          "description": "Python迭代法精简版判断二叉树是否平衡"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "递归",
+      "text": "此时大家应该明白了既然要求比较高度，必然是要后序遍历。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "int getHeight(TreeNode* node) { if (node == NULL) { return 0; } int leftHeight = getHeight(node->left); if (leftHeight == -1) return -1; int rightHeight = getHeight(node->right); if (rightHeight == -1) return -1; return abs(leftHeight - rightHeight) > 1 ? -1 : 1 + max(leftHeight, rightHeight); } bool isBalanced(TreeNode* root) { return getHeight(root) == -1 ? false : true; }",
+          "description": "C++递归法判断二叉树是否平衡"
+        },
+        {
+          "language": "cpp",
+          "code": "int getDepth(TreeNode* cur) { stack<TreeNode*> st; if (cur != NULL) st.push(cur); int depth = 0; int result = 0; while (!st.empty()) { TreeNode* node = st.top(); if (node != NULL) { st.pop(); st.push(node); st.push(NULL); depth++; if (node->right) st.push(node->right); if (node->left) st.push(node->left); } else { st.pop(); node = st.top(); st.pop(); depth--; } result = result > depth ? result : depth; } return result; } bool isBalanced(TreeNode* root) { stack<TreeNode*> st; if (root == NULL) return true; st.push(root); while (!st.empty()) { TreeNode* node = st.top(); st.pop(); if (abs(getDepth(node->left) - getDepth(node->right)) > 1) { return false; } if (node->right) st.push(node->right); if (node->left) st.push(node->left); } return true; }",
+          "description": "C++迭代法判断二叉树是否平衡"
+        },
+        {
+          "language": "java",
+          "code": "public boolean isBalanced(TreeNode root) { return getHeight(root) != -1; } private int getHeight(TreeNode root) { if (root == null) { return 0; } int leftHeight = getHeight(root.left); if (leftHeight == -1) { return -1; } int rightHeight = getHeight(root.right); if (rightHeight == -1) { return -1; } if (Math.abs(leftHeight - rightHeight) > 1) { return -1; } return Math.max(leftHeight, rightHeight) + 1; }",
+          "description": "Java递归法判断二叉树是否平衡"
+        },
+        {
+          "language": "java",
+          "code": "public boolean isBalanced(TreeNode root) { if (root == null) { return true; } Stack<TreeNode> stack = new Stack<>(); TreeNode pre = null; while (root != null || !stack.isEmpty()) { while (root != null) { stack.push(root); root = root.left; } TreeNode inNode = stack.peek(); if (inNode.right == null || inNode.right == pre) { if (Math.abs(getHeight(inNode.left) - getHeight(inNode.right)) > 1) { return false; } stack.pop(); pre = inNode; root = null; } else { root = inNode.right; } } return true; } public int getHeight(TreeNode root) { if (root == null) { return 0; } Deque<TreeNode> deque = new LinkedList<>(); deque.offer(root); int depth = 0; while (!deque.isEmpty()) { int size = deque.size(); depth++; for (int i = 0; i < size; i++) { TreeNode poll = deque.poll(); if (poll.left != null) { deque.offer(poll.left); } if (poll.right != null) { deque.offer(poll.right); } } } return depth; }",
+          "description": "Java迭代法判断二叉树是否平衡"
+        },
+        {
+          "language": "python",
+          "code": "def isBalanced(self, root: TreeNode) -> bool: if self.get_height(root) != -1: return True else: return False def get_height(self, root: TreeNode) -> int: if not root: return 0 if (left_height := self.get_height(root.left)) == -1: return -1 if (right_height := self.get_height(root.right)) == -1: return -1 if abs(left_height - right_height) > 1: return -1 else: return 1 + max(left_height, right_height)",
+          "description": "Python递归法判断二叉树是否平衡"
+        },
+        {
+          "language": "python",
+          "code": "def isBalanced(self, root: Optional[TreeNode]) -> bool: return self.get_hight(root) != -1 def get_hight(self, node): if not node: return 0 left = self.get_hight(node.left) right = self.get_hight(node.right) if left == -1 or right == -1 or abs(left - right) > 1: return -1 return max(left, right) + 1",
+          "description": "Python递归法精简版判断二叉树是否平衡"
+        },
+        {
+          "language": "python",
+          "code": "def getDepth(self, cur): st = [] if cur is not None: st.append(cur) depth = 0 result = 0 while st: node = st[-1] if node is not None: st.pop() st.append(node) st.append(None) depth += 1 if node.right: st.append(node.right) if node.left: st.append(node.left) else: node = st.pop() st.pop() depth -= 1 result = max(result, depth) return result def isBalanced(self, root): st = [] if root is None: return True st.append(root) while st: node = st.pop() if abs(self.getDepth(node.left) - self.getDepth(node.right)) > 1: return False if node.right: st.append(node.right) if node.left: st.append(node.left) return True",
+          "description": "Python迭代法判断二叉树是否平衡"
+        },
+        {
+          "language": "python",
+          "code": "def isBalanced(self, root: Optional[TreeNode]) -> bool: if not root: return True height_map = {} stack = [root] while stack: node = stack.pop() if node: stack.append(node) stack.append(None) if node.right: stack.append(node.right) if node.left: stack.append(node.left) else: real_node = stack.pop() left, right = height_map.get(real_node.left, 0), height_map.get(real_node.right, 0) if abs(left - right) > 1: return False height_map[real_node] = 1 + max(left, right) return True",
+          "description": "Python迭代法精简版判断二叉树是否平衡"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "迭代",
+      "text": "在104.二叉树的最大深度 (https://programmercarl.com/0104.%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%A4%A7%E6%B7%B1%E5%BA%A6.html)中我们可以使用层序遍历来求深度，但是就不能直接用层序遍历来求高度了，这就体现出求高度和求深度的不同。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int result; void getDepth(TreeNode* node, int depth) { result = depth > result ? depth : result; if (node->left == NULL && node->right == NULL) return ; if (node->left) { depth++; getDepth(node->left, depth); depth--; } if (node->right) { depth++; getDepth(node->right, depth); depth--; } return ; } int maxDepth(TreeNode* root) { result = 0; if (root == NULL) return result; getDepth(root, 1); return result; }};",
+          "description": "使用前序遍历求二叉树的最大深度"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int getHeight(TreeNode* node) { if (node == NULL) { return 0; } int leftHeight = getHeight(node->left); if (leftHeight == -1) return -1; int rightHeight = getHeight(node->right); if (rightHeight == -1) return -1; return abs(leftHeight - rightHeight) > 1 ? -1 : 1 + max(leftHeight, rightHeight); } bool isBalanced(TreeNode* root) { return getHeight(root) == -1 ? false : true; }};",
+          "description": "使用后序遍历判断二叉树是否为平衡二叉树（递归方法）"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: int getDepth(TreeNode* cur) { stack<TreeNode*> st; if (cur != NULL) st.push(cur); int depth = 0; int result = 0; while (!st.empty()) { TreeNode* node = st.top(); if (node != NULL) { st.pop(); st.push(node); st.push(NULL); depth++; if (node->right) st.push(node->right); if (node->left) st.push(node->left); } else { st.pop(); node = st.top(); st.pop(); depth--; } result = result > depth ? result : depth; } return result; } public: bool isBalanced(TreeNode* root) { stack<TreeNode*> st; if (root == NULL) return true; st.push(root); while (!st.empty()) { TreeNode* node = st.top(); st.pop(); if (abs(getDepth(node->left) - getDepth(node->right)) > 1) { return false; } if (node->right) st.push(node->right); if (node->left) st.push(node->left); } return true; }};",
+          "description": "使用迭代法判断二叉树是否为平衡二叉树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isBalanced(TreeNode root) {return getHeight(root) != -1;} private int getHeight(TreeNode root) {if (root == null) {return 0;} int leftHeight = getHeight(root.left);if (leftHeight == -1) {return -1;} int rightHeight = getHeight(root.right);if (rightHeight == -1) {return -1;} if (Math.abs(leftHeight - rightHeight) > 1) {return -1;} return Math.max(leftHeight, rightHeight) + 1;}}",
+          "description": "使用递归法判断二叉树是否为平衡二叉树（Java版）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isBalanced(TreeNode root) {...} public int getHeight(TreeNode root) {...}}",
+          "description": "使用迭代法判断二叉树是否为平衡二叉树（Java版）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isBalanced(self, root: TreeNode) -> bool: if self.get_height(root) != -1: return True else: return False def get_height(self, root: TreeNode) -> int: if not root: return 0 if (left_height := self.get_height(root.left)) == -1: return -1 if (right_height := self.get_height(root.right)) == -1: return -1 if abs(left_height - right_height) > 1: return -1 else: return 1 + max(left_height, right_height)",
+          "description": "使用递归法判断二叉树是否为平衡二叉树（Python版）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def getDepth(self, cur): st = [] if cur is not None: st.append(cur) depth = 0 result = 0 while st: node = st[-1] if node is not None: st.pop() st.append(node) st.append(None) depth += 1 if node.right: st.append(node.right) if node.left: st.append(node.left) else: node = st.pop() st.pop() depth -= 1 result = max(result, depth) return result def isBalanced(self, root): st = [] if root is None: return True st.append(root) while st: node = st.pop() if abs(self.getDepth(node.left) - self.getDepth(node.right)) > 1: return False if node.right: st.append(node.right) if node.left: st.append(node.left) return True",
+          "description": "使用迭代法判断二叉树是否为平衡二叉树（Python版）"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "通过本题可以了解求二叉树深度 和 二叉树高度的差异，求深度适合用前序遍历，而求高度适合用后序遍历。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int result; void getDepth(TreeNode* node, int depth) { result = depth > result ? depth : result; if (node->left == NULL && node->right == NULL) return ; if (node->left) { depth++; getDepth(node->left, depth); depth--; } if (node->right) { depth++; getDepth(node->right, depth); depth--; } return ; } int maxDepth(TreeNode* root) { result = 0; if (root == NULL) return result; getDepth(root, 1); return result; }};",
+          "description": "C++实现的求二叉树最大深度"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int getHeight(TreeNode* node) { if (node == NULL) { return 0; } int leftHeight = getHeight(node->left); if (leftHeight == -1) return -1; int rightHeight = getHeight(node->right); if (rightHeight == -1) return -1; return abs(leftHeight - rightHeight) > 1 ? -1 : 1 + max(leftHeight, rightHeight); } bool isBalanced(TreeNode* root) { return getHeight(root) == -1 ? false : true; }};",
+          "description": "C++实现的判断二叉树是否平衡"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean isBalanced(TreeNode root) { return getHeight(root) != -1; } private int getHeight(TreeNode root) { if (root == null) { return 0; } int leftHeight = getHeight(root.left); if (leftHeight == -1) { return -1; } int rightHeight = getHeight(root.right); if (rightHeight == -1) { return -1; } if (Math.abs(leftHeight - rightHeight) > 1) { return -1; } return Math.max(leftHeight, rightHeight) + 1; }}",
+          "description": "Java实现的判断二叉树是否平衡"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean isBalanced(TreeNode root) { if (root == null) { return true; } Stack<TreeNode> stack = new Stack<>(); TreeNode pre = null; while (root != null || !stack.isEmpty()) { while (root != null) { stack.push(root); root = root.left; } TreeNode inNode = stack.peek(); if (inNode.right == null || inNode.right == pre) { if (Math.abs(getHeight(inNode.left) - getHeight(inNode.right)) > 1) { return false; } stack.pop(); pre = inNode; root = null; } else { root = inNode.right; } } return true; } public int getHeight(TreeNode root) { if (root == null) { return 0; } Deque<TreeNode> deque = new LinkedList<>(); deque.offer(root); int depth = 0; while (!deque.isEmpty()) { int size = deque.size(); depth++; for (int i = 0; i < size; i++) { TreeNode poll = deque.poll(); if (poll.left != null) { deque.offer(poll.left); } if (poll.right != null) { deque.offer(poll.right); } } } return depth; }}",
+          "description": "Java使用迭代法判断二叉树是否平衡"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isBalanced(self, root: TreeNode) -> bool: if self.get_height(root) != -1: return True else: return False def get_height(self, root: TreeNode) -> int: if not root: return 0 if (left_height := self.get_height(root.left)) == -1: return -1 if (right_height := self.get_height(root.right)) == -1: return -1 if abs(left_height - right_height) > 1: return -1 else: return 1 + max(left_height, right_height)",
+          "description": "Python实现的判断二叉树是否平衡"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isBalanced(self, root: Optional[TreeNode]) -> bool: return self.get_hight(root) != -1 def get_hight(self, node): if not node: return 0 left = self.get_hight(node.left) right = self.get_hight(node.right) if left == -1 or right == -1 or abs(left - right) > 1: return -1 return max(left, right) + 1",
+          "description": "Python精简版实现的判断二叉树是否平衡"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def getDepth(self, cur): st = [] if cur is not None: st.append(cur) depth = 0 result = 0 while st: node = st[-1] if node is not None: st.pop() st.append(node) st.append(None) depth += 1 if node.right: st.append(node.right) if node.left: st.append(node.left) else: node = st.pop() st.pop() depth -= 1 result = max(result, depth) return result def isBalanced(self, root): st = [] if root is None: return True st.append(root) while st: node = st.pop() if abs(self.getDepth(node.left) - self.getDepth(node.right)) > 1: return False if node.right: st.append(node.right) if node.left: st.append(node.left) return True",
+          "description": "Python使用迭代法判断二叉树是否平衡"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution {\n   public boolean isBalanced(TreeNode root) {\n        return getHeight(root) != -1;\n    }\n\n    private int getHeight(TreeNode root) {\n        if (root == null) {\n            return 0;\n        }\n        int leftHeight = getHeight(root.left);\n        if (leftHeight == -1) {\n            return -1;\n        }\n        int rightHeight = getHeight(root.right);\n        if (rightHeight == -1) {\n            return -1;\n        }\n        if (Math.abs(leftHeight - rightHeight) > 1) {\n            return -1;\n        }\n        return Math.max(leftHeight, rightHeight) + 1;\n    }\n}",
+          "description": "Java递归法判断二叉树是否为平衡二叉树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n   public boolean isBalanced(TreeNode root) {\n        if (root == null) {\n            return true;\n        }\n        Stack<TreeNode> stack = new Stack<>();\n        TreeNode pre = null;\n        while (root!= null || !stack.isEmpty()) {\n            while (root != null) {\n                stack.push(root);\n                root = root.left;\n            }\n            TreeNode inNode = stack.peek();\n            if (inNode.right == null || inNode.right == pre) {\n                if (Math.abs(getHeight(inNode.left) - getHeight(inNode.right)) > 1) {\n                    return false;\n                }\n                stack.pop();\n                pre = inNode;\n                root = null;\n            } else {\n                root = inNode.right;\n            }\n        }\n        return true;\n    }\n\n    public int getHeight(TreeNode root) {\n        if (root == null) {\n            return 0;\n        }\n        Deque<TreeNode> deque = new LinkedList<>();\n        deque.offer(root);\n        int depth = 0;\n        while (!deque.isEmpty()) {\n            int size = deque.size();\n            depth++;\n            for (int i = 0; i < size; i++) {\n                TreeNode poll = deque.poll();\n                if (poll.left != null) {\n                    deque.offer(poll.left);\n                }\n                if (poll.right != null) {\n                    deque.offer(poll.right);\n                }\n            }\n        }\n        return depth;\n    }\n}",
+          "description": "Java迭代法判断二叉树是否为平衡二叉树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def isBalanced(self, root: Optional[TreeNode]) -> bool:\n        return self.get_height(root) != -1\n    \n    def get_height(self, node):\n        if not node:\n            return 0\n        left = self.get_height(node.left)\n        right = self.get_height(node.right)\n        if left == -1 or right == -1 or abs(left - right) > 1:\n            return -1\n        return max(left, right) + 1",
+          "description": "Python递归法判断二叉树是否为平衡二叉树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def getDepth(self, cur):\n        st = []\n        if cur is not None:\n            st.append(cur)\n        depth = 0\n        result = 0\n        while st:\n            node = st[-1]\n            if node is not None:\n                st.pop()\n                st.append(node)\n                st.append(None)\n                depth += 1\n                if node.right:\n                    st.append(node.right)\n                if node.left:\n                    st.append(node.left)\n\n            else:               \n                node = st.pop()\n                st.pop()\n                depth -= 1\n            result = max(result, depth)\n        return result\n\n    def isBalanced(self, root):\n        st = []\n        if root is None:\n            return True\n        st.append(root)\n        while st:\n            node = st.pop()\n            if abs(self.getDepth(node.left) - self.getDepth(node.right)) > 1:\n                return False\n            if node.right:\n                st.append(node.right)\n            if node.left:\n                st.append(node.left)\n        return True",
+          "description": "Python迭代法判断二叉树是否为平衡二叉树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java:",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int result; void getDepth(TreeNode* node, int depth) {result = depth > result ? depth : result; if (node->left == NULL && node->right == NULL) return ; if (node->left) {depth++; getDepth(node->left, depth); depth--;} if (node->right) {depth++; getDepth(node->right, depth); depth--;} return ;} int maxDepth(TreeNode* root) {result = 0; if (root == NULL) return result; getDepth(root, 1); return result;}};",
+          "description": "求二叉树的最大深度（前序遍历）"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int getHeight(TreeNode* node) {if (node == NULL) {return 0;} int leftHeight = getHeight(node->left); if (leftHeight == -1) return -1; int rightHeight = getHeight(node->right); if (rightHeight == -1) return -1; return abs(leftHeight - rightHeight) > 1 ? -1 : 1 + max(leftHeight, rightHeight);} bool isBalanced(TreeNode* root) {return getHeight(root) == -1 ? false : true;}};",
+          "description": "判断是否为平衡二叉树（递归法）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isBalanced(TreeNode root) {return getHeight(root) != -1;} private int getHeight(TreeNode root) {if (root == null) {return 0;} int leftHeight = getHeight(root.left); if (leftHeight == -1) {return -1;} int rightHeight = getHeight(root.right); if (rightHeight == -1) {return -1;} if (Math.abs(leftHeight - rightHeight) > 1) {return -1;} return Math.max(leftHeight, rightHeight) + 1;}}",
+          "description": "判断是否为平衡二叉树（递归法，Java实现）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isBalanced(self, root: Optional[TreeNode]) -> bool: return self.get_hight(root) != -1 def get_hight(self, node): if not node: return 0 left = self.get_hight(node.left) right = self.get_hight(node.right) if left == -1 or right == -1 or abs(left - right) > 1: return -1 return max(left, right) + 1",
+          "description": "判断是否为平衡二叉树（递归法，Python实现）"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: int getDepth(TreeNode* cur) {stack<TreeNode*> st; if (cur != NULL) st.push(cur); int depth = 0; int result = 0; while (!st.empty()) {TreeNode* node = st.top(); if (node != NULL) {st.pop(); st.push(node); st.push(NULL); depth++; if (node->right) st.push(node->right); if (node->left) st.push(node->left);} else {st.pop(); node = st.top(); st.pop(); depth--;} result = result > depth ? result : depth;} return result;} public: bool isBalanced(TreeNode* root) {stack<TreeNode*> st; if (root == NULL) return true; st.push(root); while (!st.empty()) {TreeNode* node = st.top(); st.pop(); if (abs(getDepth(node->left) - getDepth(node->right)) > 1) {return false;} if (node->right) st.push(node->right); if (node->left) st.push(node->left);} return true;}};",
+          "description": "判断是否为平衡二叉树（迭代法）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def getDepth(self, cur): st = [] if cur is not None: st.append(cur) depth = 0 result = 0 while st: node = st[-1] if node is not None: st.pop() st.append(node) st.append(None) depth += 1 if node.right: st.append(node.right) if node.left: st.append(node.left) else: node = st.pop() st.pop() depth -= 1 result = max(result, depth) return result def isBalanced(self, root): st = [] if root is None: return True st.append(root) while st: node = st.pop() if abs(self.getDepth(node.left) - self.getDepth(node.right)) > 1: return False if node.right: st.append(node.right) if node.left: st.append(node.left) return True",
+          "description": "判断是否为平衡二叉树（迭代法，Python实现）"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python:",
+      "text": "递归法：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    // 返回以该节点为根节点的二叉树的高度，如果不是平衡二叉树了则返回-1\n    int getHeight(TreeNode* node) {\n        if (node == NULL) {\n            return 0;\n        }\n        int leftHeight = getHeight(node->left);\n        if (leftHeight == -1) return -1;\n        int rightHeight = getHeight(node->right);\n        if (rightHeight == -1) return -1;\n        return abs(leftHeight - rightHeight) > 1 ? -1 : 1 + max(leftHeight, rightHeight);\n    }\n    bool isBalanced(TreeNode* root) {\n        return getHeight(root) == -1 ? false : true;\n    }\n};",
+          "description": "递归法判断二叉树是否是高度平衡的"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n   public boolean isBalanced(TreeNode root) {\n        return getHeight(root) != -1;\n    }\n\n    private int getHeight(TreeNode root) {\n        if (root == null) {\n            return 0;\n        }\n        int leftHeight = getHeight(root.left);\n        if (leftHeight == -1) {\n            return -1;\n        }\n        int rightHeight = getHeight(root.right);\n        if (rightHeight == -1) {\n            return -1;\n        }\n        if (Math.abs(leftHeight - rightHeight) > 1) {\n            return -1;\n        }\n        return Math.max(leftHeight, rightHeight) + 1;\n    }\n}",
+          "description": "Java版本递归法判断二叉树是否是高度平衡的"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def isBalanced(self, root: TreeNode) -> bool:\n        if self.get_height(root) != -1:\n            return True\n        else:\n            return False\n\n    def get_height(self, root: TreeNode) -> int:\n        if not root:\n            return 0\n        if (left_height := self.get_height(root.left)) == -1:\n            return -1\n        if (right_height := self.get_height(root.right)) == -1:\n            return -1\n        if abs(left_height - right_height) > 1:\n            return -1\n        else:\n            return 1 + max(left_height, right_height)",
+          "description": "Python版本递归法判断二叉树是否是高度平衡的"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n^2)",
+    "space_complexity": null,
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int result; void getDepth(TreeNode* node, int depth) {result = depth > result ? depth : result; if (node->left == NULL && node->right == NULL) return ; if (node->left) {depth++; getDepth(node->left, depth); depth--;} if (node->right) {depth++; getDepth(node->right, depth); depth--;} return ;} int maxDepth(TreeNode* root) {result = 0; if (root == NULL) return result; getDepth(root, 1); return result;}};",
+      "description": "C++实现求二叉树最大深度"
+    },
+    {
+      "language": "cpp",
+      "code": "int getHeight(TreeNode* node) {if (node == NULL) {return 0;} int leftHeight = getHeight(node->left); if (leftHeight == -1) return -1; int rightHeight = getHeight(node->right); if (rightHeight == -1) return -1; return abs(leftHeight - rightHeight) > 1 ? -1 : 1 + max(leftHeight, rightHeight);} bool isBalanced(TreeNode* root) {return getHeight(root) == -1 ? false : true;}",
+      "description": "C++递归实现判断平衡二叉树"
+    },
+    {
+      "language": "java",
+      "code": "public boolean isBalanced(TreeNode root) {return getHeight(root) != -1;} private int getHeight(TreeNode root) {if (root == null) {return 0;} int leftHeight = getHeight(root.left); if (leftHeight == -1) {return -1;} int rightHeight = getHeight(root.right); if (rightHeight == -1) {return -1;} if (Math.abs(leftHeight - rightHeight) > 1) {return -1;} return Math.max(leftHeight, rightHeight) + 1;}",
+      "description": "Java递归实现判断平衡二叉树"
+    },
+    {
+      "language": "python",
+      "code": "def isBalanced(self, root: TreeNode) -> bool: if self.get_height(root) != -1: return True else: return False def get_height(self, root: TreeNode) -> int: if not root: return 0 if (left_height := self.get_height(root.left)) == -1: return -1 if (right_height := self.get_height(root.right)) == -1: return -1 if abs(left_height - right_height) > 1: return -1 else: return 1 + max(left_height, right_height)",
+      "description": "Python递归实现判断平衡二叉树"
+    }
+  ],
+  "common_mistakes": [
+    "误将前序遍历用于求解本题，导致无法正确获取子树高度信息。",
+    "未考虑到当子树已经不平衡时应立即停止进一步检查并返回结果。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/2021020315542230.png",
+      "description": "这是一棵二叉树的示意图，根节点为3，左子节点为9，右子节点为20（其左子节点为15，右子节点为7）。",
+      "context": "该图片展示了示例1中的给定二叉树[3,9,20,null,null,15,7]，用于说明如何判断一棵二叉树是否为高度平衡的二叉树。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210203155447919.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20210203155447919.png",
+      "context": "该图片展示了示例2中的给定二叉树 [1,2,2,3,3,null,null,4,4]，用于说明这棵树不符合高度平衡二叉树的定义。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210203155515650.png",
+      "description": "这张图片展示了一棵二叉树及其节点的高度和深度计算，强调了在算法题解中（如LeetCode）以节点为单位进行高度与深度的度量方法。",
+      "context": "该图展示了在LeetCode中如何按照节点来计算二叉树的深度与高度，用以说明根节点的深度为1的标准。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/2021020315542230.png",
+      "description": "GIF展示了判断给定二叉树是否为高度平衡二叉树的过程，通过递归计算每个节点左右子树的高度差来验证。",
+      "context": "GIF动画展示了如何通过遍历给定的二叉树[3,9,20,null,null,15,7]来判断其是否为高度平衡的二叉树的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210203155447919.png",
+      "description": "GIF展示了不平衡二叉树的结构及其节点高度计算过程，最终表明该树不符合平衡条件。",
+      "context": "该GIF动画展示了不符合高度平衡条件的二叉树结构，帮助理解为何给定示例返回false。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210203155515650.png",
+      "description": "GIF展示了二叉树节点深度与高度的计算过程，通过对比不同路径边数来区分两者概念。",
+      "context": "该GIF动画展示了如何根据节点计算二叉树的深度与高度，通过具体示例帮助理解这两种概念的区别。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\平衡二叉树.txt",
+  "extracted_at": "2025-07-19T22:02:14.979147",
+  "raw_content": "平衡二叉树\n力扣题目链接(https://leetcode.cn/problems/balanced-binary-tree/)\n\n给定一个二叉树，判断它是否是高度平衡的二叉树。\n\n本题中，一棵高度平衡二叉树定义为：一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过1。\n\n示例 1:\n\n给定二叉树 [3,9,20,null,null,15,7]\n\nhttps://file1.kamacoder.com/i/algo/2021020315542230.png\n\n返回 true 。\n\n示例 2:\n\n给定二叉树 [1,2,2,3,3,null,null,4,4]\n\nhttps://file1.kamacoder.com/i/algo/20210203155447919.png\n\n返回 false 。\n\n\n#题外话\n咋眼一看这道题目和104.二叉树的最大深度 (https://programmercarl.com/0104.%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%A4%A7%E6%B7%B1%E5%BA%A6.html)很像，其实有很大区别。\n\n这里强调一波概念：\n\n二叉树节点的深度：指从根节点到该节点的最长简单路径边的条数。\n二叉树节点的高度：指从该节点到叶子节点的最长简单路径边的条数。\n但leetcode中强调的深度和高度很明显是按照节点来计算的，如图：\n\nhttps://file1.kamacoder.com/i/algo/20210203155515650.png\n\n关于根节点的深度究竟是1 还是 0，不同的地方有不一样的标准，leetcode的题目中都是以节点为一度，即根节点深度是1。但维基百科上定义用边为一度，即根节点的深度是0，我们暂时以leetcode为准（毕竟要在这上面刷题）。\n\n因为求深度可以从上到下去查 所以需要前序遍历（中左右），而高度只能从下到上去查，所以只能后序遍历（左右中）\n\n有的同学一定疑惑，为什么104.二叉树的最大深度 (https://programmercarl.com/0104.%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%A4%A7%E6%B7%B1%E5%BA%A6.html)中求的是二叉树的最大深度，也用的是后序遍历。\n\n那是因为代码的逻辑其实是求的根节点的高度，而根节点的高度就是这棵树的最大深度，所以才可以使用后序遍历。\n\n在104.二叉树的最大深度 (https://programmercarl.com/0104.%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%A4%A7%E6%B7%B1%E5%BA%A6.html)中，如果真正求取二叉树的最大深度，代码应该写成如下：（前序遍历）\n\nclass Solution {\npublic:\n    int result;\n    void getDepth(TreeNode* node, int depth) {\n        result = depth > result ? depth : result; // 中\n\n        if (node->left == NULL && node->right == NULL) return ;\n\n        if (node->left) { // 左\n            depth++;    // 深度+1\n            getDepth(node->left, depth);\n            depth--;    // 回溯，深度-1\n        }\n        if (node->right) { // 右\n            depth++;    // 深度+1\n            getDepth(node->right, depth);\n            depth--;    // 回溯，深度-1\n        }\n        return ;\n    }\n    int maxDepth(TreeNode* root) {\n        result = 0;\n        if (root == NULL) return result;\n        getDepth(root, 1);\n        return result;\n    }\n};\n可以看出使用了前序（中左右）的遍历顺序，这才是真正求深度的逻辑！\n\n注意以上代码是为了把细节体现出来，简化一下代码如下：\n\nclass Solution {\npublic:\n    int result;\n    void getDepth(TreeNode* node, int depth) {\n        result = depth > result ? depth : result; // 中\n        if (node->left == NULL && node->right == NULL) return ;\n        if (node->left) { // 左\n            getDepth(node->left, depth + 1);\n        }\n        if (node->right) { // 右\n            getDepth(node->right, depth + 1);\n        }\n        return ;\n    }\n    int maxDepth(TreeNode* root) {\n        result = 0;\n        if (root == 0) return result;\n        getDepth(root, 1);\n        return result;\n    }\n};\n#本题思路\n#递归\n此时大家应该明白了既然要求比较高度，必然是要后序遍历。\n\n递归三步曲分析：\n\n明确递归函数的参数和返回值\n参数：当前传入节点。 返回值：以当前传入节点为根节点的树的高度。\n\n那么如何标记左右子树是否差值大于1呢？\n\n如果当前传入节点为根节点的二叉树已经不是二叉平衡树了，还返回高度的话就没有意义了。\n\n所以如果已经不是二叉平衡树了，可以返回-1 来标记已经不符合平衡树的规则了。\n\n代码如下：\n\n// -1 表示已经不是平衡二叉树了，否则返回值是以该节点为根节点树的高度\nint getHeight(TreeNode* node)\n明确终止条件\n递归的过程中依然是遇到空节点了为终止，返回0，表示当前节点为根节点的树高度为0\n\n代码如下：\n\nif (node == NULL) {\n    return 0;\n}\n明确单层递归的逻辑\n如何判断以当前传入节点为根节点的二叉树是否是平衡二叉树呢？当然是其左子树高度和其右子树高度的差值。\n\n分别求出其左右子树的高度，然后如果差值小于等于1，则返回当前二叉树的高度，否则返回-1，表示已经不是二叉平衡树了。\n\n代码如下：\n\nint leftHeight = getHeight(node->left); // 左\nif (leftHeight == -1) return -1;\nint rightHeight = getHeight(node->right); // 右\nif (rightHeight == -1) return -1;\n\nint result;\nif (abs(leftHeight - rightHeight) > 1) {  // 中\n    result = -1;\n} else {\n    result = 1 + max(leftHeight, rightHeight); // 以当前节点为根节点的树的最大高度\n}\n\nreturn result;\n代码精简之后如下：\n\nint leftHeight = getHeight(node->left);\nif (leftHeight == -1) return -1;\nint rightHeight = getHeight(node->right);\nif (rightHeight == -1) return -1;\nreturn abs(leftHeight - rightHeight) > 1 ? -1 : 1 + max(leftHeight, rightHeight);\n此时递归的函数就已经写出来了，这个递归的函数传入节点指针，返回以该节点为根节点的二叉树的高度，如果不是二叉平衡树，则返回-1。\n\ngetHeight整体代码如下：\n\nint getHeight(TreeNode* node) {\n    if (node == NULL) {\n        return 0;\n    }\n    int leftHeight = getHeight(node->left);\n    if (leftHeight == -1) return -1;\n    int rightHeight = getHeight(node->right);\n    if (rightHeight == -1) return -1;\n    return abs(leftHeight - rightHeight) > 1 ? -1 : 1 + max(leftHeight, rightHeight);\n}\n最后本题整体递归代码如下：\n\nclass Solution {\npublic:\n    // 返回以该节点为根节点的二叉树的高度，如果不是平衡二叉树了则返回-1\n    int getHeight(TreeNode* node) {\n        if (node == NULL) {\n            return 0;\n        }\n        int leftHeight = getHeight(node->left);\n        if (leftHeight == -1) return -1;\n        int rightHeight = getHeight(node->right);\n        if (rightHeight == -1) return -1;\n        return abs(leftHeight - rightHeight) > 1 ? -1 : 1 + max(leftHeight, rightHeight);\n    }\n    bool isBalanced(TreeNode* root) {\n        return getHeight(root) == -1 ? false : true;\n    }\n};\n#迭代\n在104.二叉树的最大深度 (https://programmercarl.com/0104.%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%A4%A7%E6%B7%B1%E5%BA%A6.html)中我们可以使用层序遍历来求深度，但是就不能直接用层序遍历来求高度了，这就体现出求高度和求深度的不同。\n\n本题的迭代方式可以先定义一个函数，专门用来求高度。\n\n这个函数通过栈模拟的后序遍历找每一个节点的高度（其实是通过求传入节点为根节点的最大深度来求的高度）\n\n代码如下：\n\n// cur节点的最大深度，就是cur的高度\nint getDepth(TreeNode* cur) {\n    stack<TreeNode*> st;\n    if (cur != NULL) st.push(cur);\n    int depth = 0; // 记录深度\n    int result = 0;\n    while (!st.empty()) {\n        TreeNode* node = st.top();\n        if (node != NULL) {\n            st.pop();\n            st.push(node);                          // 中\n            st.push(NULL);\n            depth++;\n            if (node->right) st.push(node->right);  // 右\n            if (node->left) st.push(node->left);    // 左\n\n        } else {\n            st.pop();\n            node = st.top();\n            st.pop();\n            depth--;\n        }\n        result = result > depth ? result : depth;\n    }\n    return result;\n}\n然后再用栈来模拟后序遍历，遍历每一个节点的时候，再去判断左右孩子的高度是否符合，代码如下：\n\nbool isBalanced(TreeNode* root) {\n    stack<TreeNode*> st;\n    if (root == NULL) return true;\n    st.push(root);\n    while (!st.empty()) {\n        TreeNode* node = st.top();                       // 中\n        st.pop();\n        if (abs(getDepth(node->left) - getDepth(node->right)) > 1) { // 判断左右孩子高度是否符合\n            return false;\n        }\n        if (node->right) st.push(node->right);           // 右（空节点不入栈）\n        if (node->left) st.push(node->left);             // 左（空节点不入栈）\n    }\n    return true;\n}\n整体代码如下：\n\nclass Solution {\nprivate:\n    int getDepth(TreeNode* cur) {\n        stack<TreeNode*> st;\n        if (cur != NULL) st.push(cur);\n        int depth = 0; // 记录深度\n        int result = 0;\n        while (!st.empty()) {\n            TreeNode* node = st.top();\n            if (node != NULL) {\n                st.pop();\n                st.push(node);                          // 中\n                st.push(NULL);\n                depth++;\n                if (node->right) st.push(node->right);  // 右\n                if (node->left) st.push(node->left);    // 左\n\n            } else {\n                st.pop();\n                node = st.top();\n                st.pop();\n                depth--;\n            }\n            result = result > depth ? result : depth;\n        }\n        return result;\n    }\n\npublic:\n    bool isBalanced(TreeNode* root) {\n        stack<TreeNode*> st;\n        if (root == NULL) return true;\n        st.push(root);\n        while (!st.empty()) {\n            TreeNode* node = st.top();                       // 中\n            st.pop();\n            if (abs(getDepth(node->left) - getDepth(node->right)) > 1) {\n                return false;\n            }\n            if (node->right) st.push(node->right);           // 右（空节点不入栈）\n            if (node->left) st.push(node->left);             // 左（空节点不入栈）\n        }\n        return true;\n    }\n};\n当然此题用迭代法，其实效率很低，因为没有很好的模拟回溯的过程，所以迭代法有很多重复的计算。\n\n虽然理论上所有的递归都可以用迭代来实现，但是有的场景难度可能比较大。\n\n例如：都知道回溯法其实就是递归，但是很少人用迭代的方式去实现回溯算法！\n\n因为对于回溯算法已经是非常复杂的递归了，如果再用迭代的话，就是自己给自己找麻烦，效率也并不一定高。\n\n#总结\n通过本题可以了解求二叉树深度 和 二叉树高度的差异，求深度适合用前序遍历，而求高度适合用后序遍历。\n\n本题迭代法其实有点复杂，大家可以有一个思路，也不一定说非要写出来。\n\n但是递归方式是一定要掌握的！\n\n#其他语言版本\n#Java:\nclass Solution {\n   /**\n     * 递归法\n     */\n    public boolean isBalanced(TreeNode root) {\n        return getHeight(root) != -1;\n    }\n\n    private int getHeight(TreeNode root) {\n        if (root == null) {\n            return 0;\n        }\n        int leftHeight = getHeight(root.left);\n        if (leftHeight == -1) {\n            return -1;\n        }\n        int rightHeight = getHeight(root.right);\n        if (rightHeight == -1) {\n            return -1;\n        }\n        // 左右子树高度差大于1，return -1表示已经不是平衡树了\n        if (Math.abs(leftHeight - rightHeight) > 1) {\n            return -1;\n        }\n        return Math.max(leftHeight, rightHeight) + 1;\n    }\n}\n\nclass Solution {\n   /**\n     * 迭代法，效率较低，计算高度时会重复遍历\n     * 时间复杂度：O(n^2)\n     */\n    public boolean isBalanced(TreeNode root) {\n        if (root == null) {\n            return true;\n        }\n        Stack<TreeNode> stack = new Stack<>();\n        TreeNode pre = null;\n        while (root!= null || !stack.isEmpty()) {\n            while (root != null) {\n                stack.push(root);\n                root = root.left;\n            }\n            TreeNode inNode = stack.peek();\n            // 右结点为null或已经遍历过\n            if (inNode.right == null || inNode.right == pre) {\n                // 比较左右子树的高度差，输出\n                if (Math.abs(getHeight(inNode.left) - getHeight(inNode.right)) > 1) {\n                    return false;\n                }\n                stack.pop();\n                pre = inNode;\n                root = null;// 当前结点下，没有要遍历的结点了\n            } else {\n                root = inNode.right;// 右结点还没遍历，遍历右结点\n            }\n        }\n        return true;\n    }\n\n    /**\n     * 层序遍历，求结点的高度\n     */\n    public int getHeight(TreeNode root) {\n        if (root == null) {\n            return 0;\n        }\n        Deque<TreeNode> deque = new LinkedList<>();\n        deque.offer(root);\n        int depth = 0;\n        while (!deque.isEmpty()) {\n            int size = deque.size();\n            depth++;\n            for (int i = 0; i < size; i++) {\n                TreeNode poll = deque.poll();\n                if (poll.left != null) {\n                    deque.offer(poll.left);\n                }\n                if (poll.right != null) {\n                    deque.offer(poll.right);\n                }\n            }\n        }\n        return depth;\n    }\n}\n\nclass Solution {\n   /**\n     * 优化迭代法，针对暴力迭代法的getHeight方法做优化，利用TreeNode.val来保存当前结点的高度，这样就不会有重复遍历\n     * 获取高度算法时间复杂度可以降到O(1)，总的时间复杂度降为O(n)。\n     * 时间复杂度：O(n)\n     */\n    public boolean isBalanced(TreeNode root) {\n        if (root == null) {\n            return true;\n        }\n        Stack<TreeNode> stack = new Stack<>();\n        TreeNode pre = null;\n        while (root != null || !stack.isEmpty()) {\n            while (root != null) {\n                stack.push(root);\n                root = root.left;\n            }\n            TreeNode inNode = stack.peek();\n            // 右结点为null或已经遍历过\n            if (inNode.right == null || inNode.right == pre) {\n                // 输出\n                if (Math.abs(getHeight(inNode.left) - getHeight(inNode.right)) > 1) {\n                    return false;\n                }\n                stack.pop();\n                pre = inNode;\n                root = null;// 当前结点下，没有要遍历的结点了\n            } else {\n                root = inNode.right;// 右结点还没遍历，遍历右结点\n            }\n        }\n        return true;\n    }\n\n    /**\n     * 求结点的高度\n     */\n    public int getHeight(TreeNode root) {\n        if (root == null) {\n            return 0;\n        }\n        int leftHeight = root.left != null ? root.left.val : 0;\n        int rightHeight = root.right != null ? root.right.val : 0;\n        int height = Math.max(leftHeight, rightHeight) + 1;\n        root.val = height;// 用TreeNode.val来保存当前结点的高度\n        return height;\n    }\n}\n#Python:\n递归法：\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def isBalanced(self, root: TreeNode) -> bool:\n        if self.get_height(root) != -1:\n            return True\n        else:\n            return False\n\n    def get_height(self, root: TreeNode) -> int:\n        # Base Case\n        if not root:\n            return 0\n        # 左\n        if (left_height := self.get_height(root.left)) == -1:\n            return -1\n        # 右\n        if (right_height := self.get_height(root.right)) == -1:\n            return -1\n        # 中\n        if abs(left_height - right_height) > 1:\n            return -1\n        else:\n            return 1 + max(left_height, right_height)\n递归法精简版：\n\nclass Solution:\n    def isBalanced(self, root: Optional[TreeNode]) -> bool:\n        return self.get_hight(root) != -1\n    def get_hight(self, node):\n        if not node:\n            return 0\n        left = self.get_hight(node.left)\n        right = self.get_hight(node.right)\n        if left == -1 or right == -1 or abs(left - right) > 1:\n            return -1\n        return max(left, right) + 1\n迭代法：\n\nclass Solution:\n    def getDepth(self, cur):\n        st = []\n        if cur is not None:\n            st.append(cur)\n        depth = 0\n        result = 0\n        while st:\n            node = st[-1]\n            if node is not None:\n                st.pop()\n                st.append(node)                           # 中\n                st.append(None)\n                depth += 1\n                if node.right:\n                    st.append(node.right)                 # 右\n                if node.left:\n                    st.append(node.left)                   # 左\n\n            else:               \n                node = st.pop()\n                st.pop()\n                depth -= 1\n            result = max(result, depth)\n        return result\n\n    def isBalanced(self, root):\n        st = []\n        if root is None:\n            return True\n        st.append(root)\n        while st:\n            node = st.pop()                                 # 中\n            if abs(self.getDepth(node.left) - self.getDepth(node.right)) > 1:\n                return False\n            if node.right:\n                st.append(node.right)                       # 右（空节点不入栈）\n            if node.left:\n                st.append(node.left)                         # 左（空节点不入栈）\n        return True\n\n迭代法精简版：\n\nclass Solution:\n    def isBalanced(self, root: Optional[TreeNode]) -> bool:\n        if not root:\n            return True\n\n        height_map = {}\n        stack = [root]\n        while stack:\n            node = stack.pop()\n            if node:\n                stack.append(node)              # 中\n                stack.append(None)\n                # 采用数组进行迭代，先将右节点加入，保证左节点能够先出栈\n                if node.right:                  # 右\n                    stack.append(node.right)\n                if node.left:                   # 左\n                    stack.append(node.left)\n            else:\n                real_node = stack.pop()\n                left, right = height_map.get(real_node.left, 0), height_map.get(real_node.right, 0)\n                if abs(left - right) > 1:\n                    return False\n                height_map[real_node] = 1 + max(left, right)\n        return True"
+}

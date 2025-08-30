@@ -1,0 +1,449 @@
+{
+  "id": "AP_a89a091d",
+  "title": "力扣题目链接(https://leetcode.cn/problems/remove-element/)",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/remove-element/",
+  "description": "一个数组 nums 和一个值 val，你需要 原地 移除所有数值等于 val 的元素，并返回移除后数组的新长度。\n\n不要使用额外的数组空间，你必须仅使用 O(1) 额外空间并原地修改输入数组。\n\n元素的顺序可以改变。你不需要考虑数组中超出新长度后面的元素。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "双指针",
+    "数组处理"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "原地修改",
+    "线性扫描"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过使用双指针法（快慢指针）来实现数组中元素的原地移除，从而达到O(1)的空间复杂度要求。同时，这种方法也保证了时间复杂度为O(n)，使得算法高效且符合题目对空间和时间的要求。",
+  "key_insights": [
+    {
+      "content": "采用一个快指针用于遍历整个数组寻找不等于val的元素，而慢指针则用来记录新数组的位置。这样可以在一次遍历过程中完成数组的更新，避免了暴力解法中的二次遍历导致的时间效率低下。"
+    },
+    {
+      "content": "通过对原始数组直接进行操作并调整其内部元素的位置，可以不用创建新的数组或数据结构，从而满足题目对于O(1)空间复杂度的需求。"
+    },
+    {
+      "content": "相向双指针法也是一种有效的解决方法，通过左右两个指针相互靠近的方式，可以更有效地找到并替换需要移除的元素，进一步优化了算法执行过程。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "有的同学可能说了，多余的元素，删掉不就得了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int removeElement(vector<int>& nums, int val) {int size = nums.size(); for (int i = 0; i < size; i++) {if (nums[i] == val) {for (int j = i + 1; j < size; j++) {nums[j - 1] = nums[j];}i--;size--;} }return size;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int removeElement(vector<int>& nums, int val) {int slowIndex = 0; for (int fastIndex = 0; fastIndex < nums.size(); fastIndex++) {if (val != nums[fastIndex]) {nums[slowIndex++] = nums[fastIndex];}} return slowIndex;}};",
+          "description": "双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int n = nums.length; for (int i = 0; i < n; i++) {if (nums[i] == val) {for (int j = i + 1; j < n; j++) {nums[j - 1] = nums[j];}i--;n--;} }return n;}}",
+          "description": "暴力法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int slowIndex = 0; for (int fastIndex = 0; fastIndex < nums.length; fastIndex++) {if (nums[fastIndex] != val) {nums[slowIndex] = nums[fastIndex];slowIndex++;}} return slowIndex;}}",
+          "description": "快慢指针"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int left = 0;int right = nums.length - 1;while(right >= 0 && nums[right] == val) right--; while(left <= right) {if(nums[left] == val) {nums[left] = nums[right];right--; }left++;while(right >= 0 && nums[right] == val) right--;}} return left;}}",
+          "description": "相向双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int left = 0;int right = nums.length - 1;while(left <= right){ if(nums[left] == val){nums[left] = nums[right];right--;}else {left++;}}} return left;}}",
+          "description": "相向双指针法（版本二）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: fast = 0 slow = 0 size = len(nums) while fast < size: if nums[fast] != val: nums[slow] = nums[fast] slow += 1 fast += 1 return slow",
+          "description": "快慢指针法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: i, l = 0, len(nums) while i < l: if nums[i] == val: for j in range(i+1, l): nums[j - 1] = nums[j] l -= 1 i -= 1 i += 1 return l",
+          "description": "暴力法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: n = len(nums) left, right = 0, n - 1 while left <= right: while left <= right and nums[left] != val: left += 1 while left <= right and nums[right] == val: right -= 1 if left < right: nums[left] = nums[right] left += 1 right -= 1 return left",
+          "description": "相向双指针法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "暴力解法",
+      "text": "这个题目暴力的解法就是两层for循环，一个for循环遍历数组元素 ，第二个for循环更新数组。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int removeElement(vector<int>& nums, int val) {int size = nums.size(); for (int i = 0; i < size; i++) {if (nums[i] == val) {for (int j = i + 1; j < size; j++) {nums[j - 1] = nums[j];}i--;size--;} }return size;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int removeElement(vector<int>& nums, int val) {int slowIndex = 0; for (int fastIndex = 0; fastIndex < nums.size(); fastIndex++) {if (val != nums[fastIndex]) {nums[slowIndex++] = nums[fastIndex];}} return slowIndex;}};",
+          "description": "双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int n = nums.length; for (int i = 0; i < n; i++) {if (nums[i] == val) {for (int j = i + 1; j < n; j++) {nums[j - 1] = nums[j];}i--;n--;} }return n;}}",
+          "description": "暴力解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int slowIndex = 0; for (int fastIndex = 0; fastIndex < nums.length; fastIndex++) {if (nums[fastIndex] != val) {nums[slowIndex] = nums[fastIndex];slowIndex++;}} return slowIndex;}}",
+          "description": "快慢指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int left = 0; int right = nums.length - 1; while(right >= 0 && nums[right] == val) right--; while(left <= right) {if(nums[left] == val) {nums[left] = nums[right];right--; }left++;while(right >= 0 && nums[right] == val) right--; }return left;}}",
+          "description": "相向双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int left = 0; int right = nums.length - 1; while(left <= right){if(nums[left] == val){nums[left] = nums[right];right--;}else {left++;}} return left;}}",
+          "description": "相向双指针法（版本二）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: fast = 0 slow = 0 size = len(nums) while fast < size: if nums[fast] != val: nums[slow] = nums[fast] slow += 1 fast += 1 return slow",
+          "description": "快慢指针法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: i, l = 0, len(nums) while i < l: if nums[i] == val: for j in range(i+1, l): nums[j - 1] = nums[j] l -= 1 i -= 1 i += 1 return l",
+          "description": "暴力法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: n = len(nums) left, right  = 0, n - 1 while left <= right: while left <= right and nums[left] != val: left += 1 while left <= right and nums[right] == val: right -= 1 if left < right: nums[left] = nums[right] left += 1 right -= 1 return left",
+          "description": "相向双指针法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "双指针法",
+      "text": "双指针法（快慢指针法）： 通过一个快指针和慢指针在一个for循环下完成两个for循环的工作。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int removeElement(vector<int>& nums, int val) {int size = nums.size(); for (int i = 0; i < size; i++) {if (nums[i] == val) {for (int j = i + 1; j < size; j++) {nums[j - 1] = nums[j];}i--;size--;}}return size;}};",
+          "description": "暴力解法，移除数组中等于给定值的所有元素"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int removeElement(vector<int>& nums, int val) {int slowIndex = 0; for (int fastIndex = 0; fastIndex < nums.size(); fastIndex++) {if (val != nums[fastIndex]) {nums[slowIndex++] = nums[fastIndex];}}return slowIndex;}};",
+          "description": "双指针法（快慢指针），移除数组中等于给定值的所有元素"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int n = nums.length; for (int i = 0; i < n; i++) {if (nums[i] == val) {for (int j = i + 1; j < n; j++) {nums[j - 1] = nums[j];}i--;n--;}}return n;}}",
+          "description": "Java实现的暴力解法，移除数组中等于给定值的所有元素"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int slowIndex = 0; for (int fastIndex = 0; fastIndex < nums.length; fastIndex++) {if (nums[fastIndex] != val) {nums[slowIndex] = nums[fastIndex];slowIndex++;}}return slowIndex;}}",
+          "description": "Java实现的双指针法（快慢指针），移除数组中等于给定值的所有元素"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: fast = 0 slow = 0 size = len(nums) while fast < size: if nums[fast] != val: nums[slow] = nums[fast] slow += 1 fast += 1 return slow",
+          "description": "Python实现的双指针法（快慢指针），移除数组中等于给定值的所有元素"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: i, l = 0, len(nums) while i < l: if nums[i] == val: for j in range(i+1, l): nums[j - 1] = nums[j] l -= 1 i -= 1 i += 1 return l",
+          "description": "Python实现的暴力解法，移除数组中等于给定值的所有元素"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "相关题目推荐",
+      "text": "26.删除排序数组中的重复项(https://leetcode.cn/problems/remove-duplicates-from-sorted-array/)",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int removeElement(vector<int>& nums, int val) {int size = nums.size(); for (int i = 0; i < size; i++) {if (nums[i] == val) {for (int j = i + 1; j < size; j++) {nums[j - 1] = nums[j];}i--;size--;}}return size;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int removeElement(vector<int>& nums, int val) {int slowIndex = 0; for (int fastIndex = 0; fastIndex < nums.size(); fastIndex++) {if (val != nums[fastIndex]) {nums[slowIndex++] = nums[fastIndex];}}return slowIndex;}};",
+          "description": "双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int n = nums.length; for (int i = 0; i < n; i++) {if (nums[i] == val) {for (int j = i + 1; j < n; j++) {nums[j - 1] = nums[j];}i--;n--;}}return n;}}",
+          "description": "暴力法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int slowIndex = 0; for (int fastIndex = 0; fastIndex < nums.length; fastIndex++) {if (nums[fastIndex] != val) {nums[slowIndex] = nums[fastIndex];slowIndex++;}}return slowIndex;}}",
+          "description": "快慢指针"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int left = 0; int right = nums.length - 1; while(right >= 0 && nums[right] == val) right--; while(left <= right) {if(nums[left] == val) {nums[left] = nums[right];right--;}}left++;while(right >= 0 && nums[right] == val) right--;}return left;}}",
+          "description": "相向双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int left = 0; int right = nums.length - 1; while(left <= right){if(nums[left] == val){nums[left] = nums[right];right--;}else {left++;}}}return left;}}",
+          "description": "相向双指针法（版本二）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: fast = 0 slow = 0 size = len(nums) while fast < size: if nums[fast] != val: nums[slow] = nums[fast] slow += 1 fast += 1 return slow",
+          "description": "快慢指针法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: i, l = 0, len(nums) while i < l: if nums[i] == val: for j in range(i+1, l): nums[j - 1] = nums[j] l -= 1 i -= 1 i += 1 return l",
+          "description": "暴力法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: n = len(nums) left, right = 0, n - 1 while left <= right: while left <= right and nums[left] != val: left += 1 while left <= right and nums[right] == val: right -= 1 if left < right: nums[left] = nums[right] left += 1 right -= 1 return left",
+          "description": "相向双指针法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int removeElement(vector<int>& nums, int val) {int size = nums.size(); for (int i = 0; i < size; i++) {if (nums[i] == val) {for (int j = i + 1; j < size; j++) {nums[j - 1] = nums[j];}i--;size--;} }return size;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int removeElement(vector<int>& nums, int val) {int slowIndex = 0; for (int fastIndex = 0; fastIndex < nums.size(); fastIndex++) {if (val != nums[fastIndex]) {nums[slowIndex++] = nums[fastIndex];}} return slowIndex;}};",
+          "description": "双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int n = nums.length; for (int i = 0; i < n; i++) {if (nums[i] == val) {for (int j = i + 1; j < n; j++) {nums[j - 1] = nums[j];}i--;n--;} }return n;}}",
+          "description": "暴力法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int slowIndex = 0; for (int fastIndex = 0; fastIndex < nums.length; fastIndex++) {if (nums[fastIndex] != val) {nums[slowIndex] = nums[fastIndex];slowIndex++;}} return slowIndex;}}",
+          "description": "快慢指针"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int left = 0; int right = nums.length - 1; while(right >= 0 && nums[right] == val) right--; while(left <= right) {if(nums[left] == val) {nums[left] = nums[right];right--;}left++;while(right >= 0 && nums[right] == val) right--; } return left;}}",
+          "description": "相向双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int left = 0; int right = nums.length - 1; while(left <= right){if(nums[left] == val){nums[left] = nums[right];right--;}else {left++;}} return left;}}",
+          "description": "相向双指针法（版本二）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: fast = 0 slow = 0 size = len(nums) while fast < size: if nums[fast] != val: nums[slow] = nums[fast] slow += 1 fast += 1 return slow",
+          "description": "快慢指针法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: i, l = 0, len(nums) while i < l: if nums[i] == val: for j in range(i+1, l): nums[j - 1] = nums[j] l -= 1 i -= 1 i += 1 return l",
+          "description": "暴力法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: n = len(nums) left, right = 0, n - 1 while left <= right: while left <= right and nums[left] != val: left += 1 while left <= right and nums[right] == val: right -= 1 if left < right: nums[left] = nums[right] left += 1 right -= 1 return left",
+          "description": "相向双指针法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int removeElement(vector<int>& nums, int val) {int size = nums.size(); for (int i = 0; i < size; i++) {if (nums[i] == val) {for (int j = i + 1; j < size; j++) {nums[j - 1] = nums[j];}i--;size--;}}return size;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int removeElement(vector<int>& nums, int val) {int slowIndex = 0; for (int fastIndex = 0; fastIndex < nums.size(); fastIndex++) {if (val != nums[fastIndex]) {nums[slowIndex++] = nums[fastIndex];}} return slowIndex;}};",
+          "description": "双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int n = nums.length; for (int i = 0; i < n; i++) {if (nums[i] == val) {for (int j = i + 1; j < n; j++) {nums[j - 1] = nums[j];}i--;n--;}} return n;}}",
+          "description": "暴力法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int slowIndex = 0; for (int fastIndex = 0; fastIndex < nums.length; fastIndex++) {if (nums[fastIndex] != val) {nums[slowIndex] = nums[fastIndex];slowIndex++;}} return slowIndex;}}",
+          "description": "快慢指针"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int left = 0; int right = nums.length - 1; while(right >= 0 && nums[right] == val) right--; while(left <= right) {if(nums[left] == val) {nums[left] = nums[right];right--;}}left++;while(right >= 0 && nums[right] == val) right--; } return left;}}",
+          "description": "相向双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int left = 0; int right = nums.length - 1; while(left <= right){if(nums[left] == val){nums[left] = nums[right];right--;}else {left++;}}} return left;}}",
+          "description": "相向双指针法（版本二）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: fast = 0 slow = 0 size = len(nums) while fast < size: if nums[fast] != val: nums[slow] = nums[fast] slow += 1 fast += 1 return slow",
+          "description": "快慢指针法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: i, l = 0, len(nums) while i < l: if nums[i] == val: for j in range(i+1, l): nums[j - 1] = nums[j] l -= 1 i -= 1 i += 1 return l",
+          "description": "暴力法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: n = len(nums) left, right = 0, n - 1 while left <= right: while left <= right and nums[left] != val: left += 1 while left <= right and nums[right] == val: right -= 1 if left < right: nums[left] = nums[right] left += 1 right -= 1 return left",
+          "description": "相向双指针法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "（版本一）快慢指针法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int removeElement(vector<int>& nums, int val) {int slowIndex = 0;for (int fastIndex = 0; fastIndex < nums.size(); fastIndex++) {if (val != nums[fastIndex]) {nums[slowIndex++] = nums[fastIndex];}}return slowIndex;}};",
+          "description": "C++版本，使用快慢指针法移除数组中的指定值"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int removeElement(int[] nums, int val) {int slowIndex = 0;for (int fastIndex = 0; fastIndex < nums.length; fastIndex++) {if (nums[fastIndex] != val) {nums[slowIndex] = nums[fastIndex];slowIndex++;}}return slowIndex;}}",
+          "description": "Java版本，使用快慢指针法移除数组中的指定值"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: fast = 0 slow = 0 size = len(nums) while fast < size: if nums[fast] != val: nums[slow] = nums[fast] slow += 1 fast += 1 return slow",
+          "description": "Python版本，使用快慢指针法移除数组中的指定值"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(1)",
+    "explanation": "这道题目暴力解法在leetcode上是可以过的。"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int removeElement(vector<int>& nums, int val) {int size = nums.size(); for (int i = 0; i < size; i++) {if (nums[i] == val) {for (int j = i + 1; j < size; j++) {nums[j - 1] = nums[j];}i--;size--;} }return size;}};",
+      "description": "暴力解法"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int removeElement(vector<int>& nums, int val) {int slowIndex = 0; for (int fastIndex = 0; fastIndex < nums.size(); fastIndex++) {if (val != nums[fastIndex]) {nums[slowIndex++] = nums[fastIndex];}}return slowIndex;}};",
+      "description": "双指针法"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int removeElement(int[] nums, int val) {int n = nums.length; for (int i = 0; i < n; i++) {if (nums[i] == val) {for (int j = i + 1; j < n; j++) {nums[j - 1] = nums[j];}i--;n--;}}return n;}}",
+      "description": "暴力解法"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int removeElement(int[] nums, int val) {int slowIndex = 0; for (int fastIndex = 0; fastIndex < nums.length; fastIndex++) {if (nums[fastIndex] != val) {nums[slowIndex] = nums[fastIndex];slowIndex++;}}return slowIndex;}}",
+      "description": "快慢指针"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int removeElement(int[] nums, int val) {int left = 0; int right = nums.length - 1; while(right >= 0 && nums[right] == val) right--; while(left <= right) {if(nums[left] == val) {nums[left] = nums[right];right--;}}left++;while(right >= 0 && nums[right] == val) right--;}return left;}}",
+      "description": "相向双指针法"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int removeElement(int[] nums, int val) {int left = 0; int right = nums.length - 1; while(left <= right){if(nums[left] == val){nums[left] = nums[right];right--;}else {left++;}}}return left;}}",
+      "description": "相向双指针法（版本二）"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: fast = 0 slow = 0 size = len(nums) while fast < size: if nums[fast] != val: nums[slow] = nums[fast] slow += 1 fast += 1 return slow",
+      "description": "快慢指针法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: i, l = 0, len(nums) while i < l: if nums[i] == val: for j in range(i+1, l): nums[j - 1] = nums[j] l -= 1 i -= 1 i += 1 return l",
+      "description": "暴力法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def removeElement(self, nums: List[int], val: int) -> int: n = len(nums) left, right = 0, n - 1 while left <= right: while left <= right and nums[left] != val: left += 1 while left <= right and nums[right] == val: right -= 1 if left < right: nums[left] = nums[right] left += 1 right -= 1 return left",
+      "description": "相向双指针法"
+    }
+  ],
+  "common_mistakes": [
+    "误认为可以直接删除数组中的元素而不考虑内存连续性问题。",
+    "忽视了需要在原数组上进行修改这一要求，而尝试使用额外的数据结构存储结果。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/27.%E7%A7%BB%E9%99%A4%E5%85%83%E7%B4%A0-%E6%9A%B4%E5%8A%9B%E8%A7%A3%E6%B3%95.gif",
+      "description": "该图片展示了一个数组删除指定元素（2）的算法过程，初始数组为 `[0,1,2,3,3,0,4,2]`，当前索引 `i` 指向第一个元素 `0`。",
+      "context": "该图片展示了使用暴力解法移除数组中指定元素的过程，通过两层for循环来遍历和更新数组。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/27.%E7%A7%BB%E9%99%A4%E5%85%83%E7%B4%A0-%E5%8F%8C%E6%8C%87%E9%92%88%E6%B3%95.gif",
+      "description": "这张图片展示了使用双指针（fastIndex 和 slowIndex）在数组中删除指定元素（这里是2）的算法过程。",
+      "context": "该图片展示了双指针法（快慢指针法）在数组中移除指定元素的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/27.%E7%A7%BB%E9%99%A4%E5%85%83%E7%B4%A0-%E6%9A%B4%E5%8A%9B%E8%A7%A3%E6%B3%95.gif",
+      "description": "GIF展示了通过两层for循环遍历数组并移除指定值元素的过程，其中当发现目标值时，后续元素依次前移覆盖该位置。",
+      "context": "该GIF动画展示了使用暴力解法（通过两层for循环）从数组中移除指定元素的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/27.%E7%A7%BB%E9%99%A4%E5%85%83%E7%B4%A0-%E5%8F%8C%E6%8C%87%E9%92%88%E6%B3%95.gif",
+      "description": "GIF展示了使用双指针法移除数组中指定元素的过程，其中快指针用于遍历数组找到非目标值，慢指针则用于标记新数组的位置。",
+      "context": "该GIF动画展示了使用双指针法（快慢指针）从数组中移除特定值的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\双指针\\移除元素.txt",
+  "extracted_at": "2025-07-21T02:36:29.681222",
+  "raw_content": "力扣题目链接(https://leetcode.cn/problems/remove-element/)\n\n给你一个数组 nums 和一个值 val，你需要 原地 移除所有数值等于 val 的元素，并返回移除后数组的新长度。\n\n不要使用额外的数组空间，你必须仅使用 O(1) 额外空间并原地修改输入数组。\n\n元素的顺序可以改变。你不需要考虑数组中超出新长度后面的元素。\n\n示例 1: 给定 nums = [3,2,2,3], val = 3, 函数应该返回新的长度 2, 并且 nums 中的前两个元素均为 2。 你不需要考虑数组中超出新长度后面的元素。\n\n示例 2: 给定 nums = [0,1,2,2,3,0,4,2], val = 2, 函数应该返回新的长度 5, 并且 nums 中的前五个元素为 0, 1, 3, 0, 4。\n\n你不需要考虑数组中超出新长度后面的元素。\n\n\n#思路\n有的同学可能说了，多余的元素，删掉不就得了。\n\n要知道数组的元素在内存地址中是连续的，不能单独删除数组中的某个元素，只能覆盖。\n\n数组的基础知识可以看这里程序员算法面试中，必须掌握的数组理论知识 (opens new window)。\n\n#暴力解法\n这个题目暴力的解法就是两层for循环，一个for循环遍历数组元素 ，第二个for循环更新数组。\n\n删除过程如下：\n\nhttps://file1.kamacoder.com/i/algo/27.%E7%A7%BB%E9%99%A4%E5%85%83%E7%B4%A0-%E6%9A%B4%E5%8A%9B%E8%A7%A3%E6%B3%95.gif\n\n很明显暴力解法的时间复杂度是O(n^2)，这道题目暴力解法在leetcode上是可以过的。\n\n代码如下：\n\n// 时间复杂度：O(n^2)\n// 空间复杂度：O(1)\nclass Solution {\npublic:\n    int removeElement(vector<int>& nums, int val) {\n        int size = nums.size();\n        for (int i = 0; i < size; i++) {\n            if (nums[i] == val) { // 发现需要移除的元素，就将数组集体向前移动一位\n                for (int j = i + 1; j < size; j++) {\n                    nums[j - 1] = nums[j];\n                }\n                i--; // 因为下标i以后的数值都向前移动了一位，所以i也向前移动一位\n                size--; // 此时数组的大小-1\n            }\n        }\n        return size;\n\n    }\n};\n时间复杂度：O(n^2)\n空间复杂度：O(1)\n#双指针法\n双指针法（快慢指针法）： 通过一个快指针和慢指针在一个for循环下完成两个for循环的工作。\n\n定义快慢指针\n\n快指针：寻找新数组的元素 ，新数组就是不含有目标元素的数组\n慢指针：指向更新 新数组下标的位置\n很多同学这道题目做的很懵，就是不理解 快慢指针究竟都是什么含义，所以一定要明确含义，后面的思路就更容易理解了。\n\n删除过程如下：\n\nhttps://file1.kamacoder.com/i/algo/27.%E7%A7%BB%E9%99%A4%E5%85%83%E7%B4%A0-%E5%8F%8C%E6%8C%87%E9%92%88%E6%B3%95.gif\n\n很多同学不了解\n\n双指针法（快慢指针法）在数组和链表的操作中是非常常见的，很多考察数组、链表、字符串等操作的面试题，都使用双指针法。\n\n后续都会一一介绍到，本题代码如下：\n\n// 时间复杂度：O(n)\n// 空间复杂度：O(1)\nclass Solution {\npublic:\n    int removeElement(vector<int>& nums, int val) {\n        int slowIndex = 0;\n        for (int fastIndex = 0; fastIndex < nums.size(); fastIndex++) {\n            if (val != nums[fastIndex]) {\n                nums[slowIndex++] = nums[fastIndex];\n            }\n        }\n        return slowIndex;\n    }\n};\n注意这些实现方法并没有改变元素的相对位置！\n\n时间复杂度：O(n)\n空间复杂度：O(1)\n#相关题目推荐\n26.删除排序数组中的重复项(https://leetcode.cn/problems/remove-duplicates-from-sorted-array/)\n283.移动零(https://leetcode.cn/problems/move-zeroes/)\n844.比较含退格的字符串(https://leetcode.cn/problems/backspace-string-compare/)\n977.有序数组的平方(https://leetcode.cn/problems/squares-of-a-sorted-array/)\n\n#其他语言版本\n#Java：\nclass Solution {\n    public int removeElement(int[] nums, int val) {\n\t// 暴力法\n        int n = nums.length;\n        for (int i = 0; i < n; i++) {\n            if (nums[i] == val) {\n                for (int j = i + 1; j < n; j++) {\n                    nums[j - 1] = nums[j];\n                }\n                i--;\n                n--;\n            }\n        }\n        return n;\n    }\n}\nclass Solution {\n    public int removeElement(int[] nums, int val) {\n        // 快慢指针\n        int slowIndex = 0;\n        for (int fastIndex = 0; fastIndex < nums.length; fastIndex++) {\n            if (nums[fastIndex] != val) {\n                nums[slowIndex] = nums[fastIndex];\n                slowIndex++;\n            }\n        }\n        return slowIndex;\n    }\n}\n//相向双指针法\nclass Solution {\n    public int removeElement(int[] nums, int val) {\n        int left = 0;\n        int right = nums.length - 1;\n        while(right >= 0 && nums[right] == val) right--; //将right移到从右数第一个值不为val的位置\n        while(left <= right) {\n            if(nums[left] == val) { //left位置的元素需要移除\n                //将right位置的元素移到left（覆盖），right位置移除\n                nums[left] = nums[right];\n                right--;\n            }\n            left++;\n            while(right >= 0 && nums[right] == val) right--;\n        }\n        return left;\n    }\n}\n// 相向双指针法（版本二）\nclass Solution {\n    public int removeElement(int[] nums, int val) {\n        int left = 0;\n        int right = nums.length - 1;\n        while(left <= right){\n            if(nums[left] == val){\n                nums[left] = nums[right];\n                right--;\n            }else {\n                // 这里兼容了right指针指向的值与val相等的情况\n                left++;\n            }\n        }\n        return left;\n    }\n}\n#Python：\n（版本一）快慢指针法\nclass Solution:\n    def removeElement(self, nums: List[int], val: int) -> int:\n        # 快慢指针\n        fast = 0  # 快指针\n        slow = 0  # 慢指针\n        size = len(nums)\n        while fast < size:  # 不加等于是因为，a = size 时，nums[a] 会越界\n            # slow 用来收集不等于 val 的值，如果 fast 对应值不等于 val，则把它与 slow 替换\n            if nums[fast] != val:\n                nums[slow] = nums[fast]\n                slow += 1\n            fast += 1\n        return slow\n（版本二）暴力法\nclass Solution:\n    def removeElement(self, nums: List[int], val: int) -> int:\n        i, l = 0, len(nums)\n        while i < l:\n            if nums[i] == val: # 找到等于目标值的节点\n                for j in range(i+1, l): # 移除该元素，并将后面元素向前平移\n                    nums[j - 1] = nums[j]\n                l -= 1\n                i -= 1\n            i += 1\n        return l\n                \n# 相向双指针法\n# 时间复杂度 O(n)\n# 空间复杂度 O(1)\nclass Solution:\n    def removeElement(self, nums: List[int], val: int) -> int:\n        n = len(nums)\n        left, right  = 0, n - 1\n        while left <= right:\n            while left <= right and nums[left] != val:\n                left += 1\n            while left <= right and nums[right] == val:\n                right -= 1\n            if left < right:\n                nums[left] = nums[right]\n                left += 1\n                right -= 1\n        return left"
+}

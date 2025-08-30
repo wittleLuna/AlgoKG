@@ -1,0 +1,631 @@
+{
+  "id": "AP_e692a29e",
+  "title": "寻宝_prim",
+  "alternative_titles": [],
+  "platform": "kamacoder",
+  "url": "https://kamacoder.com/problempage.php?pid=1053",
+  "description": "一张地图，其中包括了所有的岛屿，以及它们之间的距离。以最小化公路建设长度，确保可以链接到所有岛屿。\n\n输入描述：\n\n第一行包含两个整数V和E，V代表顶点数，E代表边数。顶点编号是从1到V。例如：V=2，一个有两个顶点，分别是1和2。\n\n接下来共有E行，每行三个整数v1，v2和val，v1和v2为边的起点和终点，val代表边的权值。\n\n输出描述：\n\n输出联通所有岛屿的最小路径总距离\n\n输入",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "图论",
+    "最小生成树"
+  ],
+  "data_structure_tags": [
+    "数组",
+    "优先队列（可选）"
+  ],
+  "technique_tags": [
+    "贪心算法",
+    "动态更新"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用Prim算法从节点角度出发，通过贪心策略每次寻找距离当前生成树最近的节点，并将其加入到最小生成树中。整个过程围绕初始化、选择最近节点、更新距离三步循环进行，直到所有节点都被包含在生成树内。",
+  "key_insights": [
+    {
+      "content": "minDist数组用来记录每个节点到当前最小生成树的最短距离。这是Prim算法的核心，确保每次都能找到与现有生成树距离最近的新节点来扩展生成树，从而保证最终形成的生成树总边权最小。"
+    },
+    {
+      "content": "通过每次迭代时都选择距离当前生成树最近的一个节点加入，可以逐步构建出连接所有顶点且总权重最小的树。这是因为每次的选择都是局部最优解，而这些局部最优解组合起来就是全局最优解。"
+    },
+    {
+      "content": "使用一维parent数组记录最小生成树中的边，有助于后续输出具体的边信息。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "1 初始状态",
+      "text": "minDist数组里的数值初始化为最大数，因为本题节点距离不会超过10000，所以初始化最大数为10001就可以。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n    for (int i = 1; i < v; i++) {\n        int cur = -1;\n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n            }\n        }\n    }\n    int result = 0;\n    for (int i = 2; i <= v; i++) {\n        result += minDist[i];\n    }\n    cout << result << endl;\n}",
+          "description": "C++实现的Prim算法求最小生成树"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n\n        boolean[] isInTree = new boolean[v + 1];\n\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n\n            isInTree[cur] = true;\n\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java实现的Prim算法求最小生成树"
+        },
+        {
+          "language": "python",
+          "code": "v, e = list(map(int, input().strip().split()))\ngraph = [[10001] * (v+1) for _ in range(v+1)]\nfor _ in range(e):\n    x, y, w = list(map(int, input().strip().split()))\n    graph[x][y] = w\n    graph[y][x] = w\n\nvisited = [False] * (v + 1)\nminDist = [10001] * (v + 1)\n\nfor _ in range(1, v + 1):\n    min_val = 10002\n    cur = -1\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] < min_val:\n            cur = j\n            min_val = minDist[j]\n    visited[cur] = True\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] > graph[cur][j]:\n            minDist[j] = graph[cur][j]\n\nans = 0\nfor i in range(2, v + 1):\n    ans += minDist[i]\nprint(ans)",
+          "description": "Python实现的Prim算法求最小生成树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "2",
+      "text": "1、prim三部曲，第一步：选距离生成树最近节点",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n    for (int i = 1; i < v; i++) {\n        int cur = -1;\n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n            }\n        }\n    }\n    int result = 0;\n    for (int i = 2; i <= v; i++) {\n        result += minDist[i];\n    }\n    cout << result << endl;\n}",
+          "description": "C++实现的Prim算法，用于求解最小生成树问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n        boolean[] isInTree = new boolean[v + 1];\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n            isInTree[cur] = true;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java实现的Prim算法，用于求解最小生成树问题。"
+        },
+        {
+          "language": "python",
+          "code": "v, e = list(map(int, input().strip().split()))\ngraph = [[10001] * (v+1) for _ in range(v+1)]\nfor _ in range(e):\n    x, y, w = list(map(int, input().strip().split()))\n    graph[x][y] = w\n    graph[y][x] = w\nvisited = [False] * (v + 1)\nminDist = [10001] * (v + 1)\nfor _ in range(1, v + 1):\n    min_val = 10002\n    cur = -1\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] < min_val:\n            cur = j\n            min_val = minDist[j]\n    visited[cur] = True\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] > graph[cur][j]:\n            minDist[j] = graph[cur][j]\nans = 0\nfor i in range(2, v + 1):\n    ans += minDist[i]\nprint(ans)",
+          "description": "Python实现的Prim算法，用于求解最小生成树问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "3",
+      "text": "1、prim三部曲，第一步：选距离生成树最近节点",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n    for (int i = 1; i < v; i++) {\n        int cur = -1;\n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n            }\n        }\n    }\n    int result = 0;\n    for (int i = 2; i <= v; i++) {\n        result += minDist[i];\n    }\n    cout << result << endl;\n}",
+          "description": "C++实现的Prim算法，用于求解最小生成树问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n        boolean[] isInTree = new boolean[v + 1];\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n            isInTree[cur] = true;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java实现的Prim算法，用于求解最小生成树问题。"
+        },
+        {
+          "language": "python",
+          "code": "v, e = list(map(int, input().strip().split()))\ngraph = [[10001] * (v+1) for _ in range(v+1)]\nfor _ in range(e):\n    x, y, w = list(map(int, input().strip().split()))\n    graph[x][y] = w\n    graph[y][x] = w\nvisited = [False] * (v + 1)\nminDist = [10001] * (v + 1)\nfor _ in range(1, v + 1):\n    min_val = 10002\n    cur = -1\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] < min_val:\n            cur = j\n            min_val = minDist[j]\n    visited[cur] = True\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] > graph[cur][j]:\n            minDist[j] = graph[cur][j]\nans = 0\nfor i in range(2, v + 1):\n    ans += minDist[i]\nprint(ans)",
+          "description": "Python实现的Prim算法，用于求解最小生成树问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "4",
+      "text": "1、prim三部曲，第一步：选距离生成树最近节点",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n    for (int i = 1; i < v; i++) {\n        int cur = -1;\n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n            }\n        }\n    }\n    int result = 0;\n    for (int i = 2; i <= v; i++) {\n        result += minDist[i];\n    }\n    cout << result << endl;\n}",
+          "description": "C++实现的Prim算法，用于求解最小生成树问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n        boolean[] isInTree = new boolean[v + 1];\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n            isInTree[cur] = true;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java实现的Prim算法，用于求解最小生成树问题。"
+        },
+        {
+          "language": "python",
+          "code": "v, e = list(map(int, input().strip().split()))\ngraph = [[10001] * (v+1) for _ in range(v+1)]\nfor _ in range(e):\n    x, y, w = list(map(int, input().strip().split()))\n    graph[x][y] = w\n    graph[y][x] = w\nvisited = [False] * (v + 1)\nminDist = [10001] * (v + 1)\nfor _ in range(1, v + 1):\n    min_val = 10002\n    cur = -1\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] < min_val:\n            cur = j\n            min_val = minDist[j]\n    visited[cur] = True\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] > graph[cur][j]:\n            minDist[j] = graph[cur][j]\nans = 0\nfor i in range(2, v + 1):\n    ans += minDist[i]\nprint(ans)",
+          "description": "Python实现的Prim算法，用于求解最小生成树问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "5",
+      "text": "1、prim三部曲，第一步：选距离生成树最近节点",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n    for (int i = 1; i < v; i++) {\n        int cur = -1; \n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) { \n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n            }\n        }\n    }\n    int result = 0;\n    for (int i = 2; i <= v; i++) { \n        result += minDist[i];\n    }\n    cout << result << endl;\n}",
+          "description": "C++实现的Prim算法，用于求解最小生成树问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n        boolean[] isInTree = new boolean[v + 1];\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n            isInTree[cur] = true;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java实现的Prim算法，用于求解最小生成树问题。"
+        },
+        {
+          "language": "python",
+          "code": "def prim(v, e, edges):\n    import sys\n    import heapq\n    grid = [[10001] * (v + 1) for _ in range(v + 1)]\n    for edge in edges:\n        x, y, k = edge\n        grid[x][y] = k\n        grid[y][x] = k\n    minDist = [10001] * (v + 1)\n    isInTree = [False] * (v + 1)\n    for i in range(1, v):\n        cur = -1\n        minVal = sys.maxsize\n        for j in range(1, v + 1):\n            if not isInTree[j] and minDist[j] < minVal:\n                minVal = minDist[j]\n                cur = j\n        isInTree[cur] = True\n        for j in range(1, v + 1):\n            if not isInTree[j] and grid[cur][j] < minDist[j]:\n                minDist[j] = grid[cur][j]\n    result = sum(minDist[2:v+1])\n    return result\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    v = int(data[0])\n    e = int(data[1])\n    edges = []\n    index = 2\n    for _ in range(e):\n        x = int(data[index])\n        y = int(data[index + 1])\n        k = int(data[index + 2])\n        edges.append((x, y, k))\n        index += 3\n    result = prim(v, e, edges)\n    print(result)",
+          "description": "Python实现的Prim算法，用于求解最小生成树问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "6",
+      "text": "1、prim三部曲，第一步：选距离生成树最近节点",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n    for (int i = 1; i < v; i++) {\n        int cur = -1;\n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n            }\n        }\n    }\n    int result = 0;\n    for (int i = 2; i <= v; i++) {\n        result += minDist[i];\n    }\n    cout << result << endl;\n}",
+          "description": "C++实现Prim算法求解最小生成树问题"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n        boolean[] isInTree = new boolean[v + 1];\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n            isInTree[cur] = true;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java实现Prim算法求解最小生成树问题"
+        },
+        {
+          "language": "python",
+          "code": "def prim(v, e, edges):\n    import sys\n    import heapq\n\n    grid = [[10001] * (v + 1) for _ in range(v + 1)]\n    for edge in edges:\n        x, y, k = edge\n        grid[x][y] = k\n        grid[y][x] = k\n\n    minDist = [10001] * (v + 1)\n    isInTree = [False] * (v + 1)\n\n    for i in range(1, v):\n        cur = -1\n        minVal = sys.maxsize\n        for j in range(1, v + 1):\n            if not isInTree[j] and minDist[j] < minVal:\n                minVal = minDist[j]\n                cur = j\n        isInTree[cur] = True\n        for j in range(1, v + 1):\n            if not isInTree[j] and grid[cur][j] < minDist[j]:\n                minDist[j] = grid[cur][j]\n\n    result = sum(minDist[2:v+1])\n    return result\n\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    v = int(data[0])\n    e = int(data[1])\n    edges = []\n    index = 2\n    for _ in range(e):\n        x = int(data[index])\n        y = int(data[index + 1])\n        k = int(data[index + 2])\n        edges.append((x, y, k))\n        index += 3\n\n    result = prim(v, e, edges)\n    print(result)",
+          "description": "Python实现Prim算法求解最小生成树问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "7",
+      "text": "1、prim三部曲，第一步：选距离生成树最近节点",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n    for (int i = 1; i < v; i++) {\n        int cur = -1;\n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n            }\n        }\n    }\n    int result = 0;\n    for (int i = 2; i <= v; i++) {\n        result += minDist[i];\n    }\n    cout << result << endl;\n}",
+          "description": "使用C++实现的Prim算法求解最小生成树"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n        boolean[] isInTree = new boolean[v + 1];\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n            isInTree[cur] = true;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "使用Java实现的Prim算法求解最小生成树"
+        },
+        {
+          "language": "python",
+          "code": "def prim(v, e, edges):\n    import sys\n    import heapq\n    grid = [[10001] * (v + 1) for _ in range(v + 1)]\n    for edge in edges:\n        x, y, k = edge\n        grid[x][y] = k\n        grid[y][x] = k\n    minDist = [10001] * (v + 1)\n    isInTree = [False] * (v + 1)\n    for i in range(1, v):\n        cur = -1\n        minVal = sys.maxsize\n        for j in range(1, v + 1):\n            if not isInTree[j] and minDist[j] < minVal:\n                minVal = minDist[j]\n                cur = j\n        isInTree[cur] = True\n        for j in range(1, v + 1):\n            if not isInTree[j] and grid[cur][j] < minDist[j]:\n                minDist[j] = grid[cur][j]\n    result = sum(minDist[2:v+1])\n    return result\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    v = int(data[0])\n    e = int(data[1])\n    edges = []\n    index = 2\n    for _ in range(e):\n        x = int(data[index])\n        y = int(data[index + 1])\n        k = int(data[index + 2])\n        edges.append((x, y, k))\n        index += 3\n    result = prim(v, e, edges)\n    print(result)",
+          "description": "使用Python实现的Prim算法求解最小生成树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "最后",
+      "text": "最后我们就生成了一个最小生成树，绿色的边将所有节点链接到一起，并且保证权值是最小的，因为我们在更新minDist数组的时候，都是选距离最小生成树最近的点加入到树中。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n    for (int i = 1; i < v; i++) {\n        int cur = -1;\n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n            }\n        }\n    }\n    int result = 0;\n    for (int i = 2; i <= v; i++) {\n        result += minDist[i];\n    }\n    cout << result << endl;\n}",
+          "description": "C++实现的Prim算法求最小生成树"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n        boolean[] isInTree = new boolean[v + 1];\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n            isInTree[cur] = true;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java实现的Prim算法求最小生成树"
+        },
+        {
+          "language": "python",
+          "code": "def prim(v, e, edges):\n    import sys\n    import heapq\n    grid = [[10001] * (v + 1) for _ in range(v + 1)]\n    for edge in edges:\n        x, y, k = edge\n        grid[x][y] = k\n        grid[y][x] = k\n    minDist = [10001] * (v + 1)\n    isInTree = [False] * (v + 1)\n    for i in range(1, v):\n        cur = -1\n        minVal = sys.maxsize\n        for j in range(1, v + 1):\n            if not isInTree[j] and minDist[j] < minVal:\n                minVal = minDist[j]\n                cur = j\n        isInTree[cur] = True\n        for j in range(1, v + 1):\n            if not isInTree[j] and grid[cur][j] < minDist[j]:\n                minDist[j] = grid[cur][j]\n    result = sum(minDist[2:v+1])\n    return result\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    v = int(data[0])\n    e = int(data[1])\n    edges = []\n    index = 2\n    for _ in range(e):\n        x = int(data[index])\n        y = int(data[index + 1])\n        k = int(data[index + 2])\n        edges.append((x, y, k))\n        index += 3\n    result = prim(v, e, edges)\n    print(result)",
+          "description": "Python实现的Prim算法求最小生成树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include<iostream>",
+      "text": "#include<vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n    for (int i = 1; i < v; i++) {\n        int cur = -1;\n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n            }\n        }\n    }\n    int result = 0;\n    for (int i = 2; i <= v; i++) {\n        result += minDist[i];\n    }\n    cout << result << endl;\n}",
+          "description": "使用Prim算法求解最小生成树的C++实现。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n        boolean[] isInTree = new boolean[v + 1];\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n            isInTree[cur] = true;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "使用Prim算法求解最小生成树的Java实现。"
+        },
+        {
+          "language": "python",
+          "code": "v, e = list(map(int, input().strip().split()))\ngraph = [[10001] * (v+1) for _ in range(v+1)]\nfor _ in range(e):\n    x, y, w = list(map(int, input().strip().split()))\n    graph[x][y] = w\n    graph[y][x] = w\nvisited = [False] * (v + 1)\nminDist = [10001] * (v + 1)\nfor _ in range(1, v + 1):\n    min_val = 10002\n    cur = -1\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] < min_val:\n            cur = j\n            min_val = minDist[j]\n    visited[cur] = True\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] > graph[cur][j]:\n            minDist[j] = graph[cur][j]\nans = 0\nfor i in range(2, v + 1):\n    ans += minDist[i]\nprint(ans)",
+          "description": "使用Prim算法求解最小生成树的Python实现。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include<vector>",
+      "text": "#include <climits>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n    for (int i = 1; i < v; i++) {\n        int cur = -1;\n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n            }\n        }\n    }\n    int result = 0;\n    for (int i = 2; i <= v; i++) {\n        result += minDist[i];\n    }\n    cout << result << endl;\n}",
+          "description": "C++实现的Prim算法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n        boolean[] isInTree = new boolean[v + 1];\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n            isInTree[cur] = true;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java实现的Prim算法"
+        },
+        {
+          "language": "python",
+          "code": "def prim(v, e, edges):\n    import sys\n    import heapq\n    grid = [[10001] * (v + 1) for _ in range(v + 1)]\n    for edge in edges:\n        x, y, k = edge\n        grid[x][y] = k\n        grid[y][x] = k\n    minDist = [10001] * (v + 1)\n    isInTree = [False] * (v + 1)\n    for i in range(1, v):\n        cur = -1\n        minVal = sys.maxsize\n        for j in range(1, v + 1):\n            if not isInTree[j] and minDist[j] < minVal:\n                minVal = minDist[j]\n                cur = j\n        isInTree[cur] = True\n        for j in range(1, v + 1):\n            if not isInTree[j] and grid[cur][j] < minDist[j]:\n                minDist[j] = grid[cur][j]\n    result = sum(minDist[2:v+1])\n    return result\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    v = int(data[0])\n    e = int(data[1])\n    edges = []\n    index = 2\n    for _ in range(e):\n        x = int(data[index])\n        y = int(data[index + 1])\n        k = int(data[index + 2])\n        edges.append((x, y, k))\n        index += 3\n    result = prim(v, e, edges)\n    print(result)",
+          "description": "Python实现的Prim算法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <climits>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<vector>\n#include <climits>\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n    for (int i = 1; i < v; i++) {\n        int cur = -1;\n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n            }\n        }\n    }\n    int result = 0;\n    for (int i = 2; i <= v; i++) {\n        result += minDist[i];\n    }\n    cout << result << endl;\n}",
+          "description": "C++实现的Prim算法求解最小生成树问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n        boolean[] isInTree = new boolean[v + 1];\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n            isInTree[cur] = true;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java实现的Prim算法求解最小生成树问题。"
+        },
+        {
+          "language": "python",
+          "code": "v, e = list(map(int, input().strip().split()))\ngraph = [[10001] * (v+1) for _ in range(v+1)]\nfor _ in range(e):\n    x, y, w = list(map(int, input().strip().split()))\n    graph[x][y] = w\n    graph[y][x] = w\nvisited = [False] * (v + 1)\nminDist = [10001] * (v + 1)\nfor _ in range(1, v + 1):\n    min_val = 10002\n    cur = -1\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] < min_val:\n            cur = j\n            min_val = minDist[j]\n    visited[cur] = True\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] > graph[cur][j]:\n            minDist[j] = graph[cur][j]\nans = 0\nfor i in range(2, v + 1):\n    ans += minDist[i]\nprint(ans)",
+          "description": "Python实现的Prim算法求解最小生成树问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "拓展",
+      "text": "上面讲解的是记录了最小生成树所有边的权值，如果让打印出来最小生成树的每条边呢？或者说要把这个最小生成树画出来呢？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n    for (int i = 1; i < v; i++) {\n        int cur = -1;\n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n            }\n        }\n    }\n    int result = 0;\n    for (int i = 2; i <= v; i++) {\n        result += minDist[i];\n    }\n    cout << result << endl;\n}",
+          "description": "C++ Prim算法实现，求解最小生成树的总权重。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n    vector<int> parent(v + 1, -1);\n    for (int i = 1; i < v; i++) {\n        int cur = -1;\n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n                parent[j] = cur;\n            }\n        }\n    }\n    for (int i = 1; i <= v; i++) {\n        cout << i << \"->\" << parent[i] << endl;\n    }\n}",
+          "description": "C++ Prim算法实现，同时输出最小生成树中每条边的信息。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n        boolean[] isInTree = new boolean[v + 1];\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n            isInTree[cur] = true;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java Prim算法实现，求解最小生成树的总权重。"
+        },
+        {
+          "language": "python",
+          "code": "v, e = list(map(int, input().strip().split()))\ngraph = [[10001] * (v+1) for _ in range(v+1)]\nfor _ in range(e):\n    x, y, w = list(map(int, input().strip().split()))\n    graph[x][y] = w\n    graph[y][x] = w\nvisited = [False] * (v + 1)\nminDist = [10001] * (v + 1)\nfor _ in range(1, v + 1):\n    min_val = 10002\n    cur = -1\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] < min_val:\n            cur = j\n            min_val = minDist[j]\n    visited[cur] = True\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] > graph[cur][j]:\n            minDist[j] = graph[cur][j]\nans = 0\nfor i in range(2, v + 1):\n    ans += minDist[i]\nprint(ans)",
+          "description": "Python Prim算法实现，求解最小生成树的总权重。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include<iostream>",
+      "text": "#include<vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n    for (int i = 1; i < v; i++) {\n        int cur = -1;\n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n            }\n        }\n    }\n    int result = 0;\n    for (int i = 2; i <= v; i++) {\n        result += minDist[i];\n    }\n    cout << result << endl;\n}",
+          "description": "C++实现的Prim算法求最小生成树"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n        boolean[] isInTree = new boolean[v + 1];\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n            isInTree[cur] = true;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java实现的Prim算法求最小生成树"
+        },
+        {
+          "language": "python",
+          "code": "v, e = list(map(int, input().strip().split()))\ngraph = [[10001] * (v+1) for _ in range(v+1)]\nfor _ in range(e):\n    x, y, w = list(map(int, input().strip().split()))\n    graph[x][y] = w\n    graph[y][x] = w\nvisited = [False] * (v + 1)\nminDist = [10001] * (v + 1)\nfor _ in range(1, v + 1):\n    min_val = 10002\n    cur = -1\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] < min_val:\n            cur = j\n            min_val = minDist[j]\n    visited[cur] = True\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] > graph[cur][j]:\n            minDist[j] = graph[cur][j]\nans = 0\nfor i in range(2, v + 1):\n    ans += minDist[i]\nprint(ans)",
+          "description": "Python实现的Prim算法求最小生成树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include<vector>",
+      "text": "#include <climits>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n    for (int i = 1; i < v; i++) {\n        int cur = -1; \n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) { \n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n            }\n        }\n    }\n    int result = 0;\n    for (int i = 2; i <= v; i++) { \n        result += minDist[i];\n    }\n    cout << result << endl;\n}",
+          "description": "C++实现的Prim算法求解最小生成树问题"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n\n        boolean[] isInTree = new boolean[v + 1];\n\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n\n            isInTree[cur] = true;\n\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java实现的Prim算法求解最小生成树问题"
+        },
+        {
+          "language": "python",
+          "code": "def prim(v, e, edges):\n    import sys\n    import heapq\n\n    grid = [[10001] * (v + 1) for _ in range(v + 1)]\n\n    for edge in edges:\n        x, y, k = edge\n        grid[x][y] = k\n        grid[y][x] = k\n\n    minDist = [10001] * (v + 1)\n    isInTree = [False] * (v + 1)\n\n    for i in range(1, v):\n        cur = -1\n        minVal = sys.maxsize\n\n        for j in range(1, v + 1):\n            if not isInTree[j] and minDist[j] < minVal:\n                minVal = minDist[j]\n                cur = j\n\n        isInTree[cur] = True\n\n        for j in range(1, v + 1):\n            if not isInTree[j] and grid[cur][j] < minDist[j]:\n                minDist[j] = grid[cur][j]\n\n    result = sum(minDist[2:v+1])\n    return result\n\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    v = int(data[0])\n    e = int(data[1])\n    edges = []\n    index = 2\n    for _ in range(e):\n        x = int(data[index])\n        y = int(data[index + 1])\n        k = int(data[index + 2])\n        edges.append((x, y, k))\n        index += 3\n    result = prim(v, e, edges)\n    print(result)",
+          "description": "Python实现的Prim算法求解最小生成树问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <climits>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n    for (int i = 1; i < v; i++) {\n        int cur = -1;\n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n            }\n        }\n    }\n    int result = 0;\n    for (int i = 2; i <= v; i++) {\n        result += minDist[i];\n    }\n    cout << result << endl;\n}",
+          "description": "C++实现的Prim算法求最小生成树"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n        boolean[] isInTree = new boolean[v + 1];\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n            isInTree[cur] = true;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java实现的Prim算法求最小生成树"
+        },
+        {
+          "language": "python",
+          "code": "v, e = list(map(int, input().strip().split()))\ngraph = [[10001] * (v+1) for _ in range(v+1)]\nfor _ in range(e):\n    x, y, w = list(map(int, input().strip().split()))\n    graph[x][y] = w\n    graph[y][x] = w\nvisited = [False] * (v + 1)\nminDist = [10001] * (v + 1)\nfor _ in range(1, v + 1):\n    min_val = 10002\n    cur = -1\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] < min_val:\n            cur = j\n            min_val = minDist[j]\n    visited[cur] = True\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] > graph[cur][j]:\n            minDist[j] = graph[cur][j]\nans = 0\nfor i in range(2, v + 1):\n    ans += minDist[i]\nprint(ans)",
+          "description": "Python实现的Prim算法求最小生成树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "此时我就把prim算法讲解完毕了，我们再来回顾一下。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n    for (int i = 1; i < v; i++) {\n        int cur = -1;\n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n            }\n        }\n    }\n    int result = 0;\n    for (int i = 2; i <= v; i++) {\n        result += minDist[i];\n    }\n    cout << result << endl;\n}",
+          "description": "C++实现的Prim算法，用于计算最小生成树的总权值。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n        boolean[] isInTree = new boolean[v + 1];\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n            isInTree[cur] = true;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java实现的Prim算法，用于计算最小生成树的总权值。"
+        },
+        {
+          "language": "python",
+          "code": "v, e = list(map(int, input().strip().split()))\ngraph = [[10001] * (v+1) for _ in range(v+1)]\nfor _ in range(e):\n    x, y, w = list(map(int, input().strip().split()))\n    graph[x][y] = w\n    graph[y][x] = w\nvisited = [False] * (v + 1)\nminDist = [10001] * (v + 1)\nfor _ in range(1, v + 1):\n    min_val = 10002\n    cur = -1\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] < min_val:\n            cur = j\n            min_val = minDist[j]\n    visited[cur] = True\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] > graph[cur][j]:\n            minDist[j] = graph[cur][j]\nans = 0\nfor i in range(2, v + 1):\n    ans += minDist[i]\nprint(ans)",
+          "description": "Python实现的Prim算法，用于计算最小生成树的总权值。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "import java.util.*; public class Main { public static void main(String[] args) { Scanner scanner = new Scanner(System.in); int v = scanner.nextInt(); int e = scanner.nextInt(); int[][] grid = new int[v + 1][v + 1]; for (int i = 0; i <= v; i++) { Arrays.fill(grid[i], 10001); } for (int i = 0; i < e; i++) { int x = scanner.nextInt(); int y = scanner.nextInt(); int k = scanner.nextInt(); grid[x][y] = k; grid[y][x] = k; } int[] minDist = new int[v + 1]; Arrays.fill(minDist, 10001); boolean[] isInTree = new boolean[v + 1]; for (int i = 1; i < v; i++) { int cur = -1; int minVal = Integer.MAX_VALUE; for (int j = 1; j <= v; j++) { if (!isInTree[j] && minDist[j] < minVal) { minVal = minDist[j]; cur = j; } } isInTree[cur] = true; for (int j = 1; j <= v; j++) { if (!isInTree[j] && grid[cur][j] < minDist[j]) { minDist[j] = grid[cur][j]; } } } int result = 0; for (int i = 2; i <= v; i++) { result += minDist[i]; } System.out.println(result); scanner.close(); } }",
+          "description": "Java实现的Prim算法"
+        },
+        {
+          "language": "python",
+          "code": "def prim(v, e, edges): import sys import heapq grid = [[10001] * (v + 1) for _ in range(v + 1)] for edge in edges: x, y, k = edge grid[x][y] = k grid[y][x] = k minDist = [10001] * (v + 1) isInTree = [False] * (v + 1) for i in range(1, v): cur = -1 minVal = sys.maxsize for j in range(1, v + 1): if not isInTree[j] and minDist[j] < minVal: minVal = minDist[j] cur = j isInTree[cur] = True for j in range(1, v + 1): if not isInTree[j] and grid[cur][j] < minDist[j]: minDist[j] = grid[cur][j] result = sum(minDist[2:v+1]) return result if __name__ == \"__main__\": import sys input = sys.stdin.read data = input().split() v = int(data[0]) e = int(data[1]) edges = [] index = 2 for _ in range(e): x = int(data[index]) y = int(data[index + 1]) k = int(data[index + 2]) edges.append((x, y, k)) index += 3 result = prim(v, e, edges) print(result)",
+          "description": "Python实现的Prim算法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "import java.util.*;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n\n        boolean[] isInTree = new boolean[v + 1];\n\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n\n            isInTree[cur] = true;\n\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java实现的Prim算法求最小生成树"
+        },
+        {
+          "language": "python",
+          "code": "def prim(v, e, edges):\n    import sys\n    import heapq\n\n    grid = [[10001] * (v + 1) for _ in range(v + 1)]\n\n    for edge in edges:\n        x, y, k = edge\n        grid[x][y] = k\n        grid[y][x] = k\n\n    minDist = [10001] * (v + 1)\n\n    isInTree = [False] * (v + 1)\n\n    for i in range(1, v):\n        cur = -1\n        minVal = sys.maxsize\n\n        for j in range(1, v + 1):\n            if not isInTree[j] and minDist[j] < minVal:\n                minVal = minDist[j]\n                cur = j\n\n        isInTree[cur] = True\n\n        for j in range(1, v + 1):\n            if not isInTree[j] and grid[cur][j] < minDist[j]:\n                minDist[j] = grid[cur][j]\n\n    result = sum(minDist[2:v+1])\n    return result\n\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    \n    v = int(data[0])\n    e = int(data[1])\n    \n    edges = []\n    index = 2\n    for _ in range(e):\n        x = int(data[index])\n        y = int(data[index + 1])\n        k = int(data[index + 2])\n        edges.append((x, y, k))\n        index += 3\n\n    result = prim(v, e, edges)\n    print(result)",
+          "description": "Python实现的Prim算法求最小生成树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "# 接收输入",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n    for (int i = 1; i < v; i++) {\n        int cur = -1;\n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n            }\n        }\n    }\n    int result = 0;\n    for (int i = 2; i <= v; i++) {\n        result += minDist[i];\n    }\n    cout << result << endl;\n}",
+          "description": "C++实现的Prim算法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n\n        boolean[] isInTree = new boolean[v + 1];\n\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n\n            isInTree[cur] = true;\n\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+          "description": "Java实现的Prim算法"
+        },
+        {
+          "language": "python",
+          "code": "v, e = list(map(int, input().strip().split()))\ngraph = [[10001] * (v+1) for _ in range(v+1)]\nfor _ in range(e):\n    x, y, w = list(map(int, input().strip().split()))\n    graph[x][y] = w\n    graph[y][x] = w\n\nvisited = [False] * (v + 1)\nminDist = [10001] * (v + 1)\n\nfor _ in range(1, v + 1):\n    min_val = 10002\n    cur = -1\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] < min_val:\n            cur = j\n            min_val = minDist[j]\n    visited[cur] = True\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] > graph[cur][j]:\n            minDist[j] = graph[cur][j]\n\nans = 0\nfor i in range(2, v + 1):\n    ans += minDist[i]\nprint(ans)",
+          "description": "Python实现的Prim算法"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n    for (int i = 1; i < v; i++) {\n        int cur = -1;\n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n            }\n        }\n    }\n    int result = 0;\n    for (int i = 2; i <= v; i++) {\n        result += minDist[i];\n    }\n    cout << result << endl;\n}",
+      "description": "使用C++实现Prim算法解决最小生成树问题"
+    },
+    {
+      "language": "java",
+      "code": "import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n        boolean[] isInTree = new boolean[v + 1];\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n            isInTree[cur] = true;\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}",
+      "description": "使用Java实现Prim算法解决最小生成树问题"
+    },
+    {
+      "language": "python",
+      "code": "v, e = list(map(int, input().strip().split()))\ngraph = [[10001] * (v+1) for _ in range(v+1)]\nfor _ in range(e):\n    x, y, w = list(map(int, input().strip().split()))\n    graph[x][y] = w\n    graph[y][x] = w\nvisited = [False] * (v + 1)\nminDist = [10001] * (v + 1)\nfor _ in range(1, v + 1):\n    min_val = 10002\n    cur = -1\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] < min_val:\n            cur = j\n            min_val = minDist[j]\n    visited[cur] = True\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] > graph[cur][j]:\n            minDist[j] = graph[cur][j]\nans = 0\nfor i in range(2, v + 1):\n    ans += minDist[i]\nprint(ans)",
+      "description": "使用Python实现Prim算法解决最小生成树问题"
+    }
+  ],
+  "common_mistakes": [
+    "不正确地初始化minDist数组，可能导致算法无法正常工作。",
+    "在更新minDist数组时忽略了一些可能更近的路径，导致最终结果不是最优解。",
+    "当有多个节点同时具有最小距离时，处理不当可能会引起程序逻辑错误或性能问题。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20231206164306.png",
+      "description": "这张图片展示了一个加权无向图，节点编号从1到7，边上的数字表示权重，适用于最短路径或最小生成树等图算法的分析。",
+      "context": "该图为一个无向有权图的例子，用于说明如何应用prim算法寻找最小生成树的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20231215105603.png",
+      "description": "这张图片展示了一个加权无向图及其对应的最短路径算法初始化状态，minDist数组用于记录各节点到起点的最小距离。",
+      "context": "此图展示了初始状态下minDist数组的设置情况，以及节点1被选为开始构造最小生成树的第一个节点的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20231222102048.png",
+      "description": "这张图片展示了使用Dijkstra算法在加权图中寻找最短路径的过程，包括节点间的连接、权重以及距离数组的更新状态。",
+      "context": "该图展示了在Prim算法执行过程中，更新非生成树节点到当前最小生成树（此时仅包含节点1）的距离后，各个节点距离值的变化情况。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20231222102431.png",
+      "description": "这张图片展示了一个图的最小生成树问题，使用了Dijkstra算法来找到从节点1到其他节点的最短路径，并记录了每个节点的最小距离和相关链接。",
+      "context": "该图片展示了在Prim算法执行过程中，更新非生成树节点到当前最小生成树的距离后的状态。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20231222102457.png",
+      "description": "这张图片展示了一个图的最短路径问题，使用了Dijkstra算法，通过节点间的距离和优先队列来找到从起点到其他节点的最短路径。",
+      "context": "该图片展示了在Prim算法执行过程中，当节点3加入到最小生成树后，更新非生成树中的节点到当前最小生成树距离的情况。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20231217213516.png",
+      "description": "这张图片展示了一个数组 `minDist` 的状态，其中存储了从某个起点到各点的最短距离，体现了图论中最短路径算法（如 Dijkstra 算法）的解题过程。",
+      "context": "该图片展示了Prim算法中根据minDist数组选择距离当前最小生成树最近的节点的过程，帮助理解非生成树节点与生成树之间的最短距离以及如何更新这些距离。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20231222102618.png",
+      "description": "这张图片展示了一个图的最短路径问题，使用Dijkstra算法进行求解，图中节点间的边权和`minDist`数组记录了从起点到各节点的最短距离。",
+      "context": "该图展示了在Prim算法执行过程中，更新非生成树节点到当前最小生成树（包括节点1、2、3、4）的距离后的minDist数组状态。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20231222102646.png",
+      "description": "这张图片展示了使用Dijkstra算法在加权图中寻找最短路径的过程，包括节点间的连接、权重以及距离数组的更新。",
+      "context": "该图展示了在Prim算法执行过程中，当节点5被加入到最小生成树后，非生成树中的节点到当前生成树的距离更新情况。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20231222102732.png",
+      "description": "这张图片展示了一个图的最小生成树问题，使用了Prim算法，通过逐步选择最小权重边来构建最小生成树，并记录了节点间的连接和距离数组。",
+      "context": "这张图片展示了在Prim算法执行过程中，当节点6被加入生成树后，更新非生成树中各节点到当前生成树的最小距离(minDist)的状态。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20231222102820.png",
+      "description": "该图展示了一个使用最小生成树算法（如Prim算法）构建的过程，通过选择权重最小的边逐步连接节点，最终形成一棵包含所有节点的树。",
+      "context": "此图展示了在Prim算法执行过程中，节点7被加入到最小生成树后的状态，所有节点通过绿色边连接，形成最终的最小生成树结构。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20231229115714.png",
+      "description": "这张图片展示了一个加权无向图，节点间通过不同权重的边连接，适用于最短路径或最小生成树等图算法分析。",
+      "context": "该图片展示了通过Prim算法生成的最小生成树，其中绿色边表示最终选中的边，与文本中给出的输出结果相匹配。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20231206164306.png",
+      "description": "GIF展示了Prim算法构建最小生成树的过程，逐步选择距离当前生成树最近的节点并加入，直至所有节点被连接。",
+      "context": "该GIF动画展示了如何通过Prim算法逐步选择边来构建最小生成树的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20231215105603.png",
+      "description": "该GIF动画展示了Prim算法执行过程中，从选择初始节点开始，逐步将最近节点加入到最小生成树，并更新其他节点到当前生成树距离的动态过程。",
+      "context": "该GIF动画展示了从初始化状态到选择第一个节点加入最小生成树的过程，直观地解释了Prim算法的初始步骤。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20231222102048.png",
+      "description": "GIF展示了Prim算法构建最小生成树过程中节点选择与距离更新的步骤。",
+      "context": "GIF动画展示了在Prim算法执行过程中，选择初始节点后如何更新非生成树节点到当前最小生成树的距离。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20231222102431.png",
+      "description": "GIF展示了Prim算法构建最小生成树过程中节点的逐步加入及距离更新的过程。",
+      "context": "该GIF动画展示了在Prim算法执行过程中，如何更新非生成树节点到当前最小生成树的距离。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20231222102457.png",
+      "description": "GIF展示了Prim算法执行过程中，逐步选择最近节点加入最小生成树并更新非生成树节点到生成树距离的过程。",
+      "context": "此GIF动画展示了在Prim算法执行过程中，当新节点加入到最小生成树后，如何更新其余非树中节点到当前生成树的最短距离的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20231217213516.png",
+      "description": "GIF展示了Prim算法中节点4被选为距离当前最小生成树最近的节点并加入到生成树的过程。",
+      "context": "该GIF动画展示了在Prim算法执行过程中，如何根据minDist数组选择下一个加入最小生成树的节点，并更新相关节点到生成树的距离。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20231222102618.png",
+      "description": "GIF展示了Prim算法执行过程中，节点逐步加入最小生成树以及minDist数组更新的过程。",
+      "context": "该GIF展示了在Prim算法执行过程中，如何更新非生成树节点到当前最小生成树的距离，并选择最近的节点加入生成树的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20231222102646.png",
+      "description": "GIF展示了Prim算法构建最小生成树的过程，包括选择最近节点加入生成树及更新非生成树节点到生成树的距离。",
+      "context": "该GIF动画展示了在Prim算法执行过程中，如何选择距离当前最小生成树最近的节点加入，并更新剩余节点到生成树的距离。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20231222102732.png",
+      "description": "GIF展示了Prim算法构建最小生成树的过程中，节点逐步加入生成树并更新非生成树节点到生成树的最短距离。",
+      "context": "此GIF动画展示了Prim算法执行过程中，如何选择最近的非生成树节点（此处为节点6）加入当前生成树，并更新剩余节点到生成树的距离。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20231222102820.png",
+      "description": "该GIF动画展示了Prim算法构建最小生成树的过程，逐步将最近的节点加入到生成树中，并更新非生成树节点到生成树的距离。",
+      "context": "此GIF动画展示了节点7如何根据最短距离原则加入到现有最小生成树的过程，最终形成完整的最小生成树结构。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20231229115714.png",
+      "description": "GIF展示了Prim算法生成最小生成树的过程，逐步添加边直到所有节点都被包含。",
+      "context": "GIF动画展示了Prim算法生成最小生成树的过程，与文本中描述的步骤相对应，帮助直观理解节点如何被逐步加入到生成树中。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\最小生成树\\寻宝_prim.txt",
+  "extracted_at": "2025-07-22T01:14:10.159596",
+  "raw_content": "寻宝_prim\n\n卡码网：53. 寻宝(https://kamacoder.com/problempage.php?pid=1053)\n\n题目描述：\n\n在世界的某个区域，有一些分散的神秘岛屿，每个岛屿上都有一种珍稀的资源或者宝藏。国王打算在这些岛屿上建公路，方便运输。\n\n不同岛屿之间，路途距离不同，国王希望你可以规划建公路的方案，如何可以以最短的总公路距离将所有岛屿联通起来。\n\n给定一张地图，其中包括了所有的岛屿，以及它们之间的距离。以最小化公路建设长度，确保可以链接到所有岛屿。\n\n输入描述：\n\n第一行包含两个整数V和E，V代表顶点数，E代表边数。顶点编号是从1到V。例如：V=2，一个有两个顶点，分别是1和2。\n\n接下来共有E行，每行三个整数v1，v2和val，v1和v2为边的起点和终点，val代表边的权值。\n\n输出描述：\n\n输出联通所有岛屿的最小路径总距离\n\n输入示例：\n\n7 11\n1 2 1\n1 3 1\n1 5 2\n2 6 1\n2 4 2\n2 3 2\n3 4 1\n4 5 1\n5 6 2\n5 7 1\n6 7 1\n输出示例：\n\n6\n\n本篇我们先讲解prim算法。\n\n最小生成树是所有节点的最小连通子图，即：以最小的成本（边的权值）将图中所有节点链接到一起。\n\n图中有n个节点，那么一定可以用n-1条边将所有节点连接到一起。\n\n那么如何选择这n-1条边就是最小生成树算法的任务所在。\n\n例如本题示例中的无向有权图为：\n\nhttps://file1.kamacoder.com/i/algo/20231206164306.png\n\n那么在这个图中，如何选取n-1条边使得图中所有节点连接到一起，并且边的权值和最小呢？\n\n（图中为n为7，即7个节点，那么只需要n-1即6条边就可以讲所有顶点连接到一起）\n\nprim算法是从节点的角度采用贪心的策略每次寻找距离最小生成树最近的节点并加入到最小生成树中。\n\nprim算法核心就是三步，我称为prim三部曲，大家一定要熟悉这三步，代码相对会好些很多：\n\n第一步，选距离生成树最近节点\n第二步，最近节点加入生成树\n第三步，更新非生成树节点到生成树的距离（即更新minDist数组）\n现在录友们会对这三步很陌生，不知道这是干啥的，没关系，下面将会画图举例来带大家把这prim三部曲理解到位。\n\n在prim算法中，有一个数组特别重要，这里我起名为：minDist。\n\n刚刚我有讲过“每次寻找距离最小生成树最近的节点并加入到最小生成树中”，那么如何寻找距离最小生成树最近的节点呢？\n\n这就用到了minDist数组，它用来作什么呢？\n\nminDist数组用来记录每一个节点距离最小生成树的最近距离。理解这一点非常重要，这也是prim算法最核心要点所在，很多录友看不懂prim算法的代码，都是因为没有理解透这个数组的含义。\n\n接下来，我们来通过一步一步画图，来带大家巩固prim三部曲以及minDist数组的作用。\n\n（示例中节点编号是从1开始，所以为了让大家看的不晕，minDist数组下标我也从1开始计数，下标0就不使用了，这样下标和节点标号就可以对应上了，避免大家搞混）\n\n#1 初始状态\nminDist数组里的数值初始化为最大数，因为本题节点距离不会超过10000，所以初始化最大数为10001就可以。\n\n相信这里录友就要问了，为什么这么做？\n\n现在还没有最小生成树，默认每个节点距离最小生成树是最大的，这样后面我们在比较的时候，发现更近的距离，才能更新到minDist数组上。\n\n如图：\n\nhttps://file1.kamacoder.com/i/algo/20231215105603.png\n\n开始构造最小生成树\n\n#2\n1、prim三部曲，第一步：选距离生成树最近节点\n\n选择距离最小生成树最近的节点，加入到最小生成树，刚开始还没有最小生成树，所以随便选一个节点加入就好（因为每一个节点一定会在最小生成树里，所以随便选一个就好），那我们选择节点1（符合遍历数组的习惯，第一个遍历的也是节点1）\n\n2、prim三部曲，第二步：最近节点加入生成树\n\n此时节点1已经算最小生成树的节点。\n\n3、prim三部曲，第三步：更新非生成树节点到生成树的距离（即更新minDist数组）\n\n接下来，我们要更新所有节点距离最小生成树的距离，如图：\n\nhttps://file1.kamacoder.com/i/algo/20231222102048.png\n\n注意下标0，我们就不管它了，下标1与节点1对应，这样可以避免大家把节点搞混。\n\n此时所有非生成树的节点距离最小生成树（节点1）的距离都已经跟新了。\n\n节点2与节点1的距离为1，比原先的距离值10001小，所以更新minDist[2]。\n节点3和节点1的距离为1，比原先的距离值10001小，所以更新minDist[3]。\n节点5和节点1的距离为2，比原先的距离值10001小，所以更新minDist[5]。\n注意图中我标记了minDist数组里更新的权值，是哪两个节点之间的权值，例如minDist[2]=1，这个1是节点1与节点2之间的连线，清楚这一点对最后我们记录最小生成树的权值总和很重要。\n\n（我在后面依然会不断重复prim三部曲，可能基础好的录友会感觉有点啰嗦，但也是让大家感觉这三部曲求解的过程）\n\n#3\n1、prim三部曲，第一步：选距离生成树最近节点\n\n选取一个距离最小生成树（节点1）最近的非生成树里的节点，节点2，3，5距离最小生成树（节点1）最近，选节点2（其实选节点3或者节点2都可以，距离一样的）加入最小生成树。\n\n2、prim三部曲，第二步：最近节点加入生成树\n\n此时节点1和节点2，已经算最小生成树的节点。\n\n3、prim三部曲，第三步：更新非生成树节点到生成树的距离（即更新minDist数组）\n\n接下来，我们要更新节点距离最小生成树的距离，如图：\n\nhttps://file1.kamacoder.com/i/algo/20231222102431.png\n\n此时所有非生成树的节点距离最小生成树（节点1、节点2）的距离都已经跟新了。\n\n节点3和节点2的距离为2，和原先的距离值1小，所以不用更新。\n节点4和节点2的距离为2，比原先的距离值10001小，所以更新minDist[4]。\n节点5和节点2的距离为10001（不连接），所以不用更新。\n节点6和节点2的距离为1，比原先的距离值10001小，所以更新minDist[6]。\n#4\n1、prim三部曲，第一步：选距离生成树最近节点\n\n选择一个距离最小生成树（节点1、节点2）最近的非生成树里的节点，节点3，6距离最小生成树（节点1、节点2）最近，选节点3（选节点6也可以，距离一样）加入最小生成树。\n\n2、prim三部曲，第二步：最近节点加入生成树\n\n此时节点1、节点2、节点3算是最小生成树的节点。\n\n3、prim三部曲，第三步：更新非生成树节点到生成树的距离（即更新minDist数组）\n\n接下来更新节点距离最小生成树的距离，如图：\n\nhttps://file1.kamacoder.com/i/algo/20231222102457.png\n\n所有非生成树的节点距离最小生成树（节点1、节点2、节点3）的距离都已经跟新了。\n\n节点4和节点3的距离为1，和原先的距离值2小，所以更新minDist[4]为1。\n上面为什么我们只比较节点4和节点3的距离呢？\n\n因为节点3加入最小生成树后，非生成树节点只有节点4和节点3是链接的，所以需要重新更新一下节点4距离最小生成树的距离，其他节点距离最小生成树的距离都不变。\n\n#5\n1、prim三部曲，第一步：选距离生成树最近节点\n\n继续选择一个距离最小生成树（节点1、节点2、节点3）最近的非生成树里的节点，为了巩固大家对minDist数组的理解，这里我再啰嗦一遍：\n\nhttps://file1.kamacoder.com/i/algo/20231217213516.png\n\nminDist数组是记录了所有非生成树节点距离生成树的最小距离，所以从数组里我们能看出来，非生成树节点4和节点6距离生成树最近。\n\n任选一个加入生成树，我们选节点4（选节点6也行）。\n\n注意，我们根据minDist数组，选取距离生成树最近的节点加入生成树，那么minDist数组里记录的其实也是最小生成树的边的权值（我在图中把权值对应的是哪两个节点也标记出来了）。\n\n如果大家不理解，可以跟着我们下面的讲解，看minDist数组的变化，minDist数组里记录的权值对应的哪条边。\n\n理解这一点很重要，因为最后我们要求最小生成树里所有边的权值和。\n\n2、prim三部曲，第二步：最近节点加入生成树\n\n此时节点1、节点2、节点3、节点4算是最小生成树的节点。\n\n3、prim三部曲，第三步：更新非生成树节点到生成树的距离（即更新minDist数组）\n\n接下来更新节点距离最小生成树的距离，如图：\n\nhttps://file1.kamacoder.com/i/algo/20231222102618.png\n\nminDist数组已经更新了所有非生成树的节点距离最小生成树（节点1、节点2、节点3、节点4）的距离。\n\n节点5和节点4的距离为1，和原先的距离值2小，所以更新minDist[5]为1。\n#6\n1、prim三部曲，第一步：选距离生成树最近节点\n\n继续选距离最小生成树（节点1、节点2、节点3、节点4）最近的非生成树里的节点，只有节点5和节点6。\n\n选节点5（选节点6也可以）加入生成树。\n\n2、prim三部曲，第二步：最近节点加入生成树\n\n节点1、节点2、节点3、节点4、节点5算是最小生成树的节点。\n\n3、prim三部曲，第三步：更新非生成树节点到生成树的距离（即更新minDist数组）\n\n接下来更新节点距离最小生成树的距离，如图：\n\nhttps://file1.kamacoder.com/i/algo/20231222102646.png\n\nminDist数组已经更新了所有非生成树的节点距离最小生成树（节点1、节点2、节点3、节点4、节点5）的距离。\n\n节点6和节点5距离为2，比原先的距离值1大，所以不更新\n节点7和节点5距离为1，比原先的距离值10001小，更新minDist[7]\n#7\n1、prim三部曲，第一步：选距离生成树最近节点\n\n继续选距离最小生成树（节点1、节点2、节点3、节点4、节点5）最近的非生成树里的节点，只有节点6和节点7。\n\n2、prim三部曲，第二步：最近节点加入生成树\n\n选节点6（选节点7也行，距离一样的）加入生成树。\n\n3、prim三部曲，第三步：更新非生成树节点到生成树的距离（即更新minDist数组）\n\n节点1、节点2、节点3、节点4、节点5、节点6算是最小生成树的节点，接下来更新节点距离最小生成树的距离，如图：\n\nhttps://file1.kamacoder.com/i/algo/20231222102732.png\n\n这里就不在重复描述了，大家类推，最后，节点7加入生成树，如图：\n\nhttps://file1.kamacoder.com/i/algo/20231222102820.png\n\n#最后\n最后我们就生成了一个最小生成树，绿色的边将所有节点链接到一起，并且保证权值是最小的，因为我们在更新minDist数组的时候，都是选距离最小生成树最近的点加入到树中。\n\n讲解上面的模拟过程的时候，我已经强调多次minDist数组是记录了所有非生成树节点距离生成树的最小距离。\n\n最后，minDist数组也就是记录的是最小生成树所有边的权值。\n\n我在图中，特别把每条边的权值对应的是哪两个节点标记出来（例如minDist[7]=1，对应的是节点5和节点7之间的边，而不是节点6和节点7），为了就是让大家清楚，minDist里的每一个值对应的是哪条边。\n\n那么我们要求最小生成树里边的权值总和就是把最后的minDist数组累加一起。\n\n以下代码，我对prim三部曲，做了重点注释，大家根据这三步，就可以透彻理解prim。\n\n#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    // 填一个默认最大值，题目描述val最大为10000\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        // 因为是双向图，所以两个方向都要填上\n        grid[x][y] = k;\n        grid[y][x] = k;\n\n    }\n    // 所有节点到最小生成树的最小距离\n    vector<int> minDist(v + 1, 10001);\n\n    // 这个节点是否在树里\n    vector<bool> isInTree(v + 1, false);\n\n    // 我们只需要循环 n-1次，建立 n - 1条边，就可以把n个节点的图连在一起\n    for (int i = 1; i < v; i++) {\n\n        // 1、prim三部曲，第一步：选距离生成树最近节点\n        int cur = -1; // 选中哪个节点 加入最小生成树\n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) { // 1 - v，顶点编号，这里下标从1开始\n            //  选取最小生成树节点的条件：\n            //  （1）不在最小生成树里\n            //  （2）距离最小生成树最近的节点\n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n        // 2、prim三部曲，第二步：最近节点（cur）加入生成树\n        isInTree[cur] = true;\n\n        // 3、prim三部曲，第三步：更新非生成树节点到生成树的距离（即更新minDist数组）\n        // cur节点加入之后， 最小生成树加入了新的节点，那么所有节点到 最小生成树的距离（即minDist数组）需要更新一下\n        // 由于cur节点是新加入到最小生成树，那么只需要关心与 cur 相连的 非生成树节点 的距离 是否比 原来 非生成树节点到生成树节点的距离更小了呢\n        for (int j = 1; j <= v; j++) {\n            // 更新的条件：\n            // （1）节点是 非生成树里的节点\n            // （2）与cur相连的某节点的权值 比 该某节点距离最小生成树的距离小\n            // 很多录友看到自己 就想不明白什么意思，其实就是 cur 是新加入 最小生成树的节点，那么 所有非生成树的节点距离生成树节点的最近距离 由于 cur的新加入，需要更新一下数据了\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n            }\n        }\n    }\n    // 统计结果\n    int result = 0;\n    for (int i = 2; i <= v; i++) { // 不计第一个顶点，因为统计的是边的权值，v个节点有 v-1条边\n        result += minDist[i];\n    }\n    cout << result << endl;\n\n}\n\n时间复杂度为O(n^2)，其中n为节点数量。\n\n#拓展\n上面讲解的是记录了最小生成树所有边的权值，如果让打印出来最小生成树的每条边呢？或者说要把这个最小生成树画出来呢？\n\n此时我们就需要把最小生成树里每一条边记录下来。\n\n此时有两个问题：\n\n1、用什么结构来记录\n2、如何记录\n如果记录边，其实就是记录两个节点就可以，两个节点连成一条边。\n\n如何记录两个节点呢？\n\n我们使用一维数组就可以记录。parent[节点编号] = 节点编号，这样就把一条边记录下来了。（当然如果节点编号非常大，可以考虑使用map）\n\n使用一维数组记录是有向边，不过我们这里不需要记录方向，所以只关注两条边是连接的就行。\n\nparent数组初始化代码：\n\nvector<int> parent(v + 1, -1);\n接下来就是第二个问题，如何记录？\n\n我们再来回顾一下prim三部曲，\n\n第一步，选距离生成树最近节点\n第二步，最近节点加入生成树\n第三步，更新非生成树节点到生成树的距离（即更新minDist数组）\n大家先思考一下，我们是在第几步，可以记录最小生成树的边呢？\n\n在本面上半篇我们讲解过：“我们根据minDist数组，选组距离生成树最近的节点加入生成树，那么minDist数组里记录的其实也是最小生成树的边的权值。”\n\n既然minDist数组记录了最小生成树的边，是不是就是在更新minDist数组的时候，去更新parent数组来记录一下对应的边呢。\n\n所以在prim三部曲中的第三步，更新parent数组，代码如下：\n\nfor (int j = 1; j <= v; j++) {\n    if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n        minDist[j] = grid[cur][j];\n        parent[j] = cur; // 记录最小生成树的边 （注意数组指向的顺序很重要）\n    }\n}\n代码中注释中，我强调了数组指向的顺序很重要。因为不少录友在这里会写成这样： parent[cur] = j 。\n\n这里估计大家会疑惑了，parent[节点编号A] = 节点编号B，就表示A和B相连，我们这里就不用在意方向，代码中为什么只能 parent[j] = cur 而不能 parent[cur] = j 这么写呢？\n\n如果写成 parent[cur] = j，在for循环中，有多个j满足要求，那么 parent[cur] 就会被反复覆盖，因为cur是一个固定值。\n\n举个例子，cur=1，在for循环中，可能就j=2，j=3，j=4都符合条件，那么本来应该记录节点1与节点2、节点3、节点4相连的。\n\n如果 parent[cur] = j 这么写，最后更新的逻辑是 parent[1] = 2, parent[1] = 3， parent[1] = 4，最后只能记录节点1与节点4相连，其他相连情况都被覆盖了。\n\n如果这么写 parent[j] = cur，那就是 parent[2] = 1, parent[3] = 1， parent[4] = 1 ，这样才能完整表示出节点1与其他节点都是链接的，才没有被覆盖。\n\n主要问题也是我们使用了一维数组来记录。\n\n如果是二维数组，来记录两个点链接，例如 parent[节点编号A][节点编号B] = 1 ，parent[节点编号B][节点编号A] = 1，来表示节点A与节点B相连，那就没有上面说的这个注意事项了，当然这么做的话，就是多开辟的内存空间。\n\n以下是输出最小生成树边的代码，不算最后输出，就额外添加了两行代码，我都注释标记了：\n\n#include<iostream>\n#include<vector>\n#include <climits>\n\nusing namespace std;\nint main() {\n    int v, e;\n    int x, y, k;\n    cin >> v >> e;\n    vector<vector<int>> grid(v + 1, vector<int>(v + 1, 10001));\n    while (e--) {\n        cin >> x >> y >> k;\n        grid[x][y] = k;\n        grid[y][x] = k;\n    }\n\n    vector<int> minDist(v + 1, 10001);\n    vector<bool> isInTree(v + 1, false);\n\n    //加上初始化\n    vector<int> parent(v + 1, -1);\n\n    for (int i = 1; i < v; i++) {\n        int cur = -1;\n        int minVal = INT_MAX;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] &&  minDist[j] < minVal) {\n                minVal = minDist[j];\n                cur = j;\n            }\n        }\n\n        isInTree[cur] = true;\n        for (int j = 1; j <= v; j++) {\n            if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                minDist[j] = grid[cur][j];\n\n                parent[j] = cur; // 记录边\n            }\n        }\n    }\n    // 输出 最小生成树边的链接情况\n    for (int i = 1; i <= v; i++) {\n        cout << i << \"->\" << parent[i] << endl;\n    }\n}\n\n按照本题示例，代码输入如下：\n\n1->-1\n2->1\n3->1\n4->3\n5->4\n6->2\n7->5 \n注意，这里是无向图，我在输出上添加了箭头仅仅是为了方便大家看出是边的意思。\n\n大家可以和我们本题最后生成的最小生成树的图去对比一下边的链接情况：\n\nhttps://file1.kamacoder.com/i/algo/20231229115714.png\n\n绿色的边是最小生成树，和我们的输出完全一致。\n\n#总结\n此时我就把prim算法讲解完毕了，我们再来回顾一下。\n\n关于prim算法，我自创了三部曲，来帮助大家理解：\n\n第一步，选距离生成树最近节点\n第二步，最近节点加入生成树\n第三步，更新非生成树节点到生成树的距离（即更新minDist数组）\n大家只要理解这三部曲，prim算法至少是可以写出一个框架出来，然后在慢慢补充细节，这样不至于自己在写prim的时候两眼一抹黑完全凭感觉去写。 这也为什么很多录友感觉prim算法比较难，而且每次学会来，隔一段时间又不会写了，主要是没有一个纲领。\n\n理解这三部曲之后，更重要的就是理解minDist数组。\n\nminDist数组是prim算法的灵魂，它帮助prim算法完成最重要的一步，就是如何找到距离最小生成树最近的点。\n\n再来帮大家回顾minDist数组的含义：记录每一个节点距离最小生成树的最近距离。\n\n理解minDist数组，至少大家看prim算法的代码不会懵。\n\n也正是因为minDist数组的作用，我们根据minDist数组，选取距离生成树最近的节点加入生成树，那么minDist数组里记录的其实也是最小生成树的边的权值。\n\n所以我们求最小生成树的权值和就是计算后的minDist数组数值总和。\n\n最后我们拓展了如何获得最小生成树的每一条边，其实添加的代码很简单，主要是理解为什么使用parent数组来记录边以及在哪里更新parent数组。\n\n同时，因为使用一维数组，数组的下标和数组如何赋值很重要，不要搞反，导致结果被覆盖。\n\n好了，以上为总结，录友们学习愉快。\n\n#其他语言版本\n#Java\nimport java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n\n        // 初始化邻接矩阵，所有值初始化为一个大值，表示无穷大\n        int[][] grid = new int[v + 1][v + 1];\n        for (int i = 0; i <= v; i++) {\n            Arrays.fill(grid[i], 10001);\n        }\n\n        // 读取边的信息并填充邻接矩阵\n        for (int i = 0; i < e; i++) {\n            int x = scanner.nextInt();\n            int y = scanner.nextInt();\n            int k = scanner.nextInt();\n            grid[x][y] = k;\n            grid[y][x] = k;\n        }\n\n        // 所有节点到最小生成树的最小距离\n        int[] minDist = new int[v + 1];\n        Arrays.fill(minDist, 10001);\n\n        // 记录节点是否在树里\n        boolean[] isInTree = new boolean[v + 1];\n\n        // Prim算法主循环\n        for (int i = 1; i < v; i++) {\n            int cur = -1;\n            int minVal = Integer.MAX_VALUE;\n\n            // 选择距离生成树最近的节点\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && minDist[j] < minVal) {\n                    minVal = minDist[j];\n                    cur = j;\n                }\n            }\n\n            // 将最近的节点加入生成树\n            isInTree[cur] = true;\n\n            // 更新非生成树节点到生成树的距离\n            for (int j = 1; j <= v; j++) {\n                if (!isInTree[j] && grid[cur][j] < minDist[j]) {\n                    minDist[j] = grid[cur][j];\n                }\n            }\n        }\n\n        // 统计结果\n        int result = 0;\n        for (int i = 2; i <= v; i++) {\n            result += minDist[i];\n        }\n        System.out.println(result);\n        scanner.close();\n    }\n}\n\n#Python\n# 接收输入\nv, e = list(map(int, input().strip().split()))\n# 按照常规的邻接矩阵存储图信息，不可达的初始化为10001\ngraph = [[10001] * (v+1) for _ in range(v+1)]\nfor _ in range(e):\n    x, y, w = list(map(int, input().strip().split()))\n    graph[x][y] = w\n    graph[y][x] = w\n\n# 定义加入生成树的标记数组和未加入生成树的最近距离\nvisited = [False] * (v + 1)\nminDist = [10001] * (v + 1)\n\n# 循环 n - 1 次，建立 n - 1 条边\n# 从节点视角来看：每次选中一个节点加入树，更新剩余的节点到树的最短距离，\n# 这一步其实蕴含了确定下一条选取的边，计入总路程 ans 的计算\nfor _ in range(1, v + 1):\n    min_val = 10002\n    cur = -1\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] < min_val:\n            cur = j\n            min_val = minDist[j]\n    visited[cur] = True\n    for j in range(1, v + 1):\n        if visited[j] == False and minDist[j] > graph[cur][j]:\n            minDist[j] = graph[cur][j]\n\nans = 0\nfor i in range(2, v + 1):\n    ans += minDist[i]\nprint(ans)\ndef prim(v, e, edges):\n    import sys\n    import heapq\n\n    # 初始化邻接矩阵，所有值初始化为一个大值，表示无穷大\n    grid = [[10001] * (v + 1) for _ in range(v + 1)]\n\n    # 读取边的信息并填充邻接矩阵\n    for edge in edges:\n        x, y, k = edge\n        grid[x][y] = k\n        grid[y][x] = k\n\n    # 所有节点到最小生成树的最小距离\n    minDist = [10001] * (v + 1)\n\n    # 记录节点是否在树里\n    isInTree = [False] * (v + 1)\n\n    # Prim算法主循环\n    for i in range(1, v):\n        cur = -1\n        minVal = sys.maxsize\n\n        # 选择距离生成树最近的节点\n        for j in range(1, v + 1):\n            if not isInTree[j] and minDist[j] < minVal:\n                minVal = minDist[j]\n                cur = j\n\n        # 将最近的节点加入生成树\n        isInTree[cur] = True\n\n        # 更新非生成树节点到生成树的距离\n        for j in range(1, v + 1):\n            if not isInTree[j] and grid[cur][j] < minDist[j]:\n                minDist[j] = grid[cur][j]\n\n    # 统计结果\n    result = sum(minDist[2:v+1])\n    return result\n\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    \n    v = int(data[0])\n    e = int(data[1])\n    \n    edges = []\n    index = 2\n    for _ in range(e):\n        x = int(data[index])\n        y = int(data[index + 1])\n        k = int(data[index + 2])\n        edges.append((x, y, k))\n        index += 3\n\n    result = prim(v, e, edges)\n    print(result)"
+}

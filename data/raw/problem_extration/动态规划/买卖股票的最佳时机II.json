@@ -1,0 +1,250 @@
+{
+  "id": "AP_0b3b2fad",
+  "title": "买卖股票的最佳时机II",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/",
+  "description": "一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。\n\n设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。\n\n注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "动态规划",
+    "贪心"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "状态转移",
+    "滚动数组优化"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过动态规划解决股票买卖问题。定义dp[i][0]表示第i天持有股票所得现金，dp[i][1]表示第i天不持有股票所得最多现金。递推公式分别考虑了两种状态：当天是否持有股票，并且基于前一天的状态进行更新。",
+  "key_insights": [
+    {
+      "content": "与只能单次买卖相比，本题允许多次买卖同一只股票（但不能同时参与多笔交易），因此在买入时需要考虑之前可能已经获得的利润。"
+    },
+    {
+      "content": "dp[i][0]和dp[i][1]的计算均基于前一天的状态，体现了动态规划中子问题最优解的思想。"
+    },
+    {
+      "content": "使用滚动数组可以将空间复杂度从O(n)优化到O(1)，因为每次状态更新只依赖于前一个状态。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "本题我们在讲解贪心专题的时候就已经讲解过了贪心算法：买卖股票的最佳时机II (https://programmercarl.com/0122.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BAII.html)，只不过没有深入讲解动态规划的解法，那么这次我们再好好分析一下动规的解法。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int len = prices.size();vector<vector<int>> dp(len, vector<int>(2, 0));dp[0][0] -= prices[0];dp[0][1] = 0;for (int i = 1; i < len; i++) {dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]);}return dp[len - 1][1];}};",
+          "description": "使用动态规划解决买卖股票的最佳时机问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int len = prices.size();vector<vector<int>> dp(2, vector<int>(2));dp[0][0] -= prices[0];dp[0][1] = 0;for (int i = 1; i < len; i++) {dp[i % 2][0] = max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]);dp[i % 2][1] = max(dp[(i - 1) % 2][1], prices[i] + dp[(i - 1) % 2][0]);}return dp[(len - 1) % 2][1];}};",
+          "description": "使用滚动数组优化空间的动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int n = prices.length;int[][] dp = new int[n][2];dp[0][0] = 0;dp[0][1] = -prices[0];for (int i = 1; i < n; ++i) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] - prices[i]);}return dp[n - 1][0];}}",
+          "description": "Java实现，使用二维数组存储状态"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int dp[][] = new int [2][2];dp[0][0] = - prices[0];dp[0][1] = 0;for(int i = 1; i < prices.length; i++){dp[i % 2][0] = Math.max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]);dp[i % 2][1] = Math.max(dp[(i - 1) % 2][1], dp[(i - 1) % 2][0] + prices[i]);}return dp[(prices.length - 1) % 2][1];}}",
+          "description": "Java实现，使用滚动数组优化空间"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int[] dp = new int[2];dp[0] = -prices[0];dp[1] = 0;for(int i = 1; i <= prices.length; i++){dp[0] = Math.max(dp[0], dp[1] - prices[i-1]);dp[1] = Math.max(dp[1], dp[0] + prices[i-1]);}return dp[1];}}",
+          "description": "进一步优化空间复杂度到O(1)，使用一维数组"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: length = len(prices) dp = [[0] * 2 for _ in range(length)] dp[0][0] = -prices[0] dp[0][1] = 0 for i in range(1, length): dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i]) return dp[-1][1]",
+          "description": "Python实现，基于动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: length = len(prices) dp = [[0] * 2 for _ in range(2)] dp[0][0] = -prices[0] dp[0][1] = 0 for i in range(1, length): dp[i % 2][0] = max(dp[(i-1) % 2][0], dp[(i-1) % 2][1] - prices[i]) dp[i % 2][1] = max(dp[(i-1) % 2][1], dp[(i-1) % 2][0] + prices[i]) return dp[(length-1) % 2][1]",
+          "description": "Python实现，使用滚动数组优化"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "public int maxProfit(int[] prices) {int n = prices.length;int[][] dp = new int[n][2];dp[0][0] = 0;dp[0][1] = -prices[0];for (int i = 1; i < n; ++i) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] - prices[i]);}return dp[n - 1][0];}",
+          "description": "使用二维数组存储状态的动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "public int maxProfit(int[] prices) {int dp[][] = new int [2][2];dp[0][0] = - prices[0];dp[0][1] = 0;for(int i = 1; i < prices.length; i++){dp[i % 2][0] = Math.max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]);dp[i % 2][1] = Math.max(dp[(i - 1) % 2][1], dp[(i - 1) % 2][0] + prices[i]);}return dp[(prices.length - 1) % 2][1];}",
+          "description": "使用滚动数组优化空间的动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "public int maxProfit(int[] prices) {int[] dp = new int[2];dp[0] = -prices[0];dp[1] = 0;for(int i = 1; i <= prices.length; i++){dp[0] = Math.max(dp[0], dp[1] - prices[i-1]);dp[1] = Math.max(dp[1], dp[0] + prices[i-1]);}return dp[1];}",
+          "description": "进一步优化空间，仅使用一维数组的动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "def maxProfit(self, prices: List[int]) -> int: length = len(prices) dp = [[0] * 2 for _ in range(length)] dp[0][0] = -prices[0] dp[0][1] = 0 for i in range(1, length): dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i]) return dp[-1][1]",
+          "description": "Python版本使用二维数组存储状态的动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "def maxProfit(self, prices: List[int]) -> int: length = len(prices) dp = [[0] * 2 for _ in range(2)] dp[0][0] = -prices[0] dp[0][1] = 0 for i in range(1, length): dp[i % 2][0] = max(dp[(i-1) % 2][0], dp[(i-1) % 2][1] - prices[i]) dp[i % 2][1] = max(dp[(i-1) % 2][1], dp[(i-1) % 2][0] + prices[i]) return dp[(length-1) % 2][1]",
+          "description": "Python版本使用滚动数组优化空间的动态规划解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "// 动态规划",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int len = prices.size();vector<vector<int>> dp(len, vector<int>(2, 0));dp[0][0] -= prices[0];dp[0][1] = 0;for (int i = 1; i < len; i++) {dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]);}return dp[len - 1][1];}};",
+          "description": "使用动态规划解决买卖股票的最佳时机问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int len = prices.size();vector<vector<int>> dp(2, vector<int>(2));dp[0][0] -= prices[0];dp[0][1] = 0;for (int i = 1; i < len; i++) {dp[i % 2][0] = max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]);dp[i % 2][1] = max(dp[(i - 1) % 2][1], prices[i] + dp[(i - 1) % 2][0]);}return dp[(len - 1) % 2][1];}};",
+          "description": "使用滚动数组优化的空间复杂度为O(1)的动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int n = prices.length;int[][] dp = new int[n][2];dp[0][0] = 0;dp[0][1] = -prices[0];for (int i = 1; i < n; ++i) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] - prices[i]);}return dp[n - 1][0];}}",
+          "description": "Java版，采用二维数组存储状态来解决问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int dp[][] = new int [2][2];dp[0][0] = - prices[0];dp[0][1] = 0;for(int i = 1; i < prices.length; i++){dp[i % 2][0] = Math.max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]);dp[i % 2][1] = Math.max(dp[(i - 1) % 2][1], dp[(i - 1) % 2][0] + prices[i]);}return dp[(prices.length - 1) % 2][1];}}",
+          "description": "Java版，使用滚动数组（2*2大小）来优化空间复杂度"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int[] dp = new int[2];dp[0] = -prices[0];dp[1] = 0;for(int i = 1; i <= prices.length; i++){dp[0] = Math.max(dp[0], dp[1] - prices[i-1]);dp[1] = Math.max(dp[1], dp[0] + prices[i-1]);}return dp[1];}}",
+          "description": "进一步优化空间复杂度至O(1)，仅使用一维数组"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: length = len(prices) dp = [[0] * 2 for _ in range(length)] dp[0][0] = -prices[0] dp[0][1] = 0 for i in range(1, length): dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i]) return dp[-1][1]",
+          "description": "Python版本，通过二维列表实现动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: length = len(prices) dp = [[0] * 2 for _ in range(2)] dp[0][0] = -prices[0] dp[0][1] = 0 for i in range(1, length): dp[i % 2][0] = max(dp[(i-1) % 2][0], dp[(i-1) % 2][1] - prices[i]) dp[i % 2][1] = max(dp[(i-1) % 2][1], dp[(i-1) % 2][0] + prices[i]) return dp[(length-1) % 2][1]",
+          "description": "Python版本，利用滚动数组减少空间占用"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "版本一：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int len = prices.size();vector<vector<int>> dp(len, vector<int>(2, 0));dp[0][0] -= prices[0];dp[0][1] = 0;for (int i = 1; i < len; i++) {dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]);}return dp[len - 1][1];}};",
+          "description": "C++版本的动态规划解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices) {int len = prices.size();vector<vector<int>> dp(2, vector<int>(2));dp[0][0] -= prices[0];dp[0][1] = 0;for (int i = 1; i < len; i++) {dp[i % 2][0] = max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]);dp[i % 2][1] = max(dp[(i - 1) % 2][1], prices[i] + dp[(i - 1) % 2][0]);}return dp[(len - 1) % 2][1];}};",
+          "description": "C++版本使用滚动数组的动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int n = prices.length;int[][] dp = new int[n][2];dp[0][0] = 0;dp[0][1] = -prices[0];for (int i = 1; i < n; ++i) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] - prices[i]);}return dp[n - 1][0];}}",
+          "description": "Java版本的动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int dp[][] = new int [2][2];dp[0][0] = - prices[0];dp[0][1] = 0;for(int i = 1; i < prices.length; i++){dp[i % 2][0] = Math.max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]);dp[i % 2][1] = Math.max(dp[(i - 1) % 2][1], dp[(i - 1) % 2][0] + prices[i]);}return dp[(prices.length - 1) % 2][1];}}",
+          "description": "Java版本使用滚动数组的动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices) {int[] dp = new int[2];dp[0] = -prices[0];dp[1] = 0;for(int i = 1; i <= prices.length; i++){dp[0] = Math.max(dp[0], dp[1] - prices[i-1]);dp[1] = Math.max(dp[1], dp[0] + prices[i-1]);}return dp[1];}}",
+          "description": "Java版本进一步优化空间使用的动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: length = len(prices) dp = [[0] * 2 for _ in range(length)] dp[0][0] = -prices[0] dp[0][1] = 0 for i in range(1, length): dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i]) return dp[-1][1]",
+          "description": "Python版本的动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: length = len(prices) dp = [[0] * 2 for _ in range(2)] dp[0][0] = -prices[0] dp[0][1] = 0 for i in range(1, length): dp[i % 2][0] = max(dp[(i-1) % 2][0], dp[(i-1) % 2][1] - prices[i]) dp[i % 2][1] = max(dp[(i-1) % 2][1], dp[(i-1) % 2][0] + prices[i]) return dp[(length-1) % 2][1]",
+          "description": "Python版本使用滚动数组的动态规划解法"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int maxProfit(vector<int>& prices) {int len = prices.size(); vector<vector<int>> dp(len, vector<int>(2, 0)); dp[0][0] -= prices[0]; dp[0][1] = 0; for (int i = 1; i < len; i++) {dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]); dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]);} return dp[len - 1][1];}};",
+      "description": "C++实现，使用二维数组存储状态"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int maxProfit(vector<int>& prices) {int len = prices.size(); vector<vector<int>> dp(2, vector<int>(2)); dp[0][0] -= prices[0]; dp[0][1] = 0; for (int i = 1; i < len; i++) {dp[i % 2][0] = max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]); dp[i % 2][1] = max(dp[(i - 1) % 2][1], prices[i] + dp[(i - 1) % 2][0]);} return dp[(len - 1) % 2][1];}};",
+      "description": "C++实现，使用滚动数组优化空间复杂度"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int maxProfit(int[] prices) {int n = prices.length; int[][] dp = new int[n][2]; dp[0][0] = 0; dp[0][1] = -prices[0]; for (int i = 1; i < n; ++i) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]); dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] - prices[i]);} return dp[n - 1][0];}}",
+      "description": "Java实现，使用二维数组存储状态"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int maxProfit(int[] prices) {int dp[][] = new int [2][2]; dp[0][0] = - prices[0]; dp[0][1] = 0; for(int i = 1; i < prices.length; i++){dp[i % 2][0] = Math.max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]); dp[i % 2][1] = Math.max(dp[(i - 1) % 2][1], dp[(i - 1) % 2][0] + prices[i]);} return dp[(prices.length - 1) % 2][1];}}",
+      "description": "Java实现，使用2*2数组进行滚动更新"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int maxProfit(int[] prices) {int[] dp = new int[2]; dp[0] = -prices[0]; dp[1] = 0; for(int i = 1; i <= prices.length; i++){dp[0] = Math.max(dp[0], dp[1] - prices[i-1]); dp[1] = Math.max(dp[1], dp[0] + prices[i-1]);} return dp[1];}}",
+      "description": "Java实现，进一步优化空间至一维数组"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: length = len(prices) dp = [[0] * 2 for _ in range(length)] dp[0][0] = -prices[0] dp[0][1] = 0 for i in range(1, length): dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i]) return dp[-1][1]",
+      "description": "Python实现，使用二维列表存储状态"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def maxProfit(self, prices: List[int]) -> int: length = len(prices) dp = [[0] * 2 for _ in range(2)] dp[0][0] = -prices[0] dp[0][1] = 0 for i in range(1, length): dp[i % 2][0] = max(dp[(i-1) % 2][0], dp[(i-1) % 2][1] - prices[i]) dp[i % 2][1] = max(dp[(i-1) % 2][1], dp[(i-1) % 2][0] + prices[i]) return dp[(length-1) % 2][1]",
+      "description": "Python实现，使用滚动数组优化空间复杂度"
+    }
+  ],
+  "common_mistakes": [
+    "忽略股票不可同时买入卖出的限制条件。",
+    "未正确处理第一天的初始状态设置。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\动态规划\\买卖股票的最佳时机II.txt",
+  "extracted_at": "2025-07-20T15:43:09.220662",
+  "raw_content": "买卖股票的最佳时机II\n力扣题目链接(https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/)\n\n给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。\n\n设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。\n\n注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。\n\n示例 1:\n\n输入: [7,1,5,3,6,4]\n\n输出: 7\n解释: 在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4。随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6-3 = 3 。\n\n示例 2:\n\n输入: [1,2,3,4,5]\n\n输出: 4\n解释: 在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。注意你不能在第 1 天和第 2 天接连购买股票，之后再将它们卖出。因为这样属于同时参与了多笔交易，你必须在再次购买前出售掉之前的股票。\n\n示例 3:\n\n输入: [7,6,4,3,1]\n\n输出: 0\n解释: 在这种情况下, 没有交易完成, 所以最大利润为 0。\n\n提示：\n\n1 <= prices.length <= 3 * 10 ^ 4\n0 <= prices[i] <= 10 ^ 4\n\n\n#思路\n本题我们在讲解贪心专题的时候就已经讲解过了贪心算法：买卖股票的最佳时机II (https://programmercarl.com/0122.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BAII.html)，只不过没有深入讲解动态规划的解法，那么这次我们再好好分析一下动规的解法。\n\n本题和121. 买卖股票的最佳时机 (https://programmercarl.com/0121.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BA.html)的唯一区别是本题股票可以买卖多次了（注意只有一只股票，所以再次购买前要出售掉之前的股票）\n\n在动规五部曲中，这个区别主要是体现在递推公式上，其他都和121. 买卖股票的最佳时机 (https://programmercarl.com/0121.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BA.html)一样一样的。\n\n所以我们重点讲一讲递推公式。\n\n这里重申一下dp数组的含义：\n\ndp[i][0] 表示第i天持有股票所得现金。\ndp[i][1] 表示第i天不持有股票所得最多现金\n如果第i天持有股票即dp[i][0]， 那么可以由两个状态推出来\n\n第i-1天就持有股票，那么就保持现状，所得现金就是昨天持有股票的所得现金 即：dp[i - 1][0]\n第i天买入股票，所得现金就是昨天不持有股票的所得现金减去 今天的股票价格 即：dp[i - 1][1] - prices[i]\n注意这里和121. 买卖股票的最佳时机 (https://programmercarl.com/0121.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BA.html)唯一不同的地方，就是推导dp[i][0]的时候，第i天买入股票的情况。\n\n在121. 买卖股票的最佳时机 (https://programmercarl.com/0121.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BA.html)中，因为股票全程只能买卖一次，所以如果买入股票，那么第i天持有股票即dp[i][0]一定就是 -prices[i]。\n\n而本题，因为一只股票可以买卖多次，所以当第i天买入股票的时候，所持有的现金可能有之前买卖过的利润。\n\n那么第i天持有股票即dp[i][0]，如果是第i天买入股票，所得现金就是昨天不持有股票的所得现金 减去 今天的股票价格 即：dp[i - 1][1] - prices[i]。\n\n再来看看如果第i天不持有股票即dp[i][1]的情况， 依然可以由两个状态推出来\n\n第i-1天就不持有股票，那么就保持现状，所得现金就是昨天不持有股票的所得现金 即：dp[i - 1][1]\n第i天卖出股票，所得现金就是按照今天股票价格卖出后所得现金即：prices[i] + dp[i - 1][0]\n注意这里和121. 买卖股票的最佳时机 (https://programmercarl.com/0121.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BA.html)就是一样的逻辑，卖出股票收获利润（可能是负值）天经地义！\n\n代码如下：（注意代码中的注释，标记了和121.买卖股票的最佳时机唯一不同的地方）\n\nclass Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        int len = prices.size();\n        vector<vector<int>> dp(len, vector<int>(2, 0));\n        dp[0][0] -= prices[0];\n        dp[0][1] = 0;\n        for (int i = 1; i < len; i++) {\n            dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]); // 注意这里是和121. 买卖股票的最佳时机唯一不同的地方。\n            dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]);\n        }\n        return dp[len - 1][1];\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(n)\n大家可以本题和121. 买卖股票的最佳时机 (https://programmercarl.com/0121.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BA.html)的代码几乎一样，唯一的区别在：\n\ndp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);\n这正是因为本题的股票可以买卖多次！ 所以买入股票的时候，可能会有之前买卖的利润即：dp[i - 1][1]，所以dp[i - 1][1] - prices[i]。\n\n想到到这一点，对这两道题理解的就比较深刻了。\n\n这里我依然给出滚动数组的版本，C++代码如下：\n\n// 版本二\nclass Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        int len = prices.size();\n        vector<vector<int>> dp(2, vector<int>(2)); // 注意这里只开辟了一个2 * 2大小的二维数组\n        dp[0][0] -= prices[0];\n        dp[0][1] = 0;\n        for (int i = 1; i < len; i++) {\n            dp[i % 2][0] = max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]);\n            dp[i % 2][1] = max(dp[(i - 1) % 2][1], prices[i] + dp[(i - 1) % 2][0]);\n        }\n        return dp[(len - 1) % 2][1];\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(1)\n#其他语言版本\n#Java：\n// 动态规划\nclass Solution \n    // 实现1：二维数组存储\n    // 可以将每天持有与否的情况分别用 dp[i][0] 和 dp[i][1] 来进行存储\n    // 时间复杂度：O(n)，空间复杂度：O(n)\n    public int maxProfit(int[] prices) {\n        int n = prices.length;\n        int[][] dp = new int[n][2];     // 创建二维数组存储状态\n        dp[0][0] = 0;                   // 初始状态\n        dp[0][1] = -prices[0];\n        for (int i = 1; i < n; ++i) {\n            dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);    // 第 i 天，没有股票\n            dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] - prices[i]);    // 第 i 天，持有股票\n        }\n        return dp[n - 1][0];    // 卖出股票收益高于持有股票收益，因此取[0]\n    }\n}\n//DP using 2*2 Array (下方還有使用一維滾動數組的更優化版本)\nclass Solution {\n    public int maxProfit(int[] prices) {\n        int dp[][] = new int [2][2];\n        //dp[i][0]: holding the stock\n        //dp[i][1]: not holding the stock\n        dp[0][0] = - prices[0];\n        dp[0][1] = 0;\n\n        for(int i = 1; i < prices.length; i++){\n            dp[i % 2][0] = Math.max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]);\n            dp[i % 2][1] = Math.max(dp[(i - 1) % 2][1], dp[(i - 1) % 2][0] + prices[i]);\n        }\n        return dp[(prices.length - 1) % 2][1];\n    }\n}\n// 优化空间\nclass Solution {\n    public int maxProfit(int[] prices) {\n        int[] dp = new int[2];\n        // 0表示持有，1表示卖出\n        dp[0] = -prices[0];\n        dp[1] = 0;\n        for(int i = 1; i <= prices.length; i++){\n            // 前一天持有; 既然不限制交易次数，那么再次买股票时，要加上之前的收益\n            dp[0] = Math.max(dp[0], dp[1] - prices[i-1]);\n            // 前一天卖出; 或当天卖出，当天卖出，得先持有\n            dp[1] = Math.max(dp[1], dp[0] + prices[i-1]);\n        }\n        return dp[1];\n    }\n}\n#Python：\n版本一：\n\nclass Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        length = len(prices)\n        dp = [[0] * 2 for _ in range(length)]\n        dp[0][0] = -prices[0]\n        dp[0][1] = 0\n        for i in range(1, length):\n            dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) #注意这里是和121. 买卖股票的最佳时机唯一不同的地方\n            dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i])\n        return dp[-1][1]\n版本二：\n\nclass Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        length = len(prices)\n        dp = [[0] * 2 for _ in range(2)] #注意这里只开辟了一个2 * 2大小的二维数组\n        dp[0][0] = -prices[0]\n        dp[0][1] = 0\n        for i in range(1, length):\n            dp[i % 2][0] = max(dp[(i-1) % 2][0], dp[(i-1) % 2][1] - prices[i])\n            dp[i % 2][1] = max(dp[(i-1) % 2][1], dp[(i-1) % 2][0] + prices[i])\n        return dp[(length-1) % 2][1]"
+}

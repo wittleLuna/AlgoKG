@@ -1,0 +1,53 @@
+{
+  "id": "SA408",
+  "name": "二分查找",
+  "alias": [
+    "折半搜索",
+    "对数搜索"
+  ],
+  "type": "specific_algorithm",
+  "description": "二分查找是一种在有序数组中查找某一元素的算法。它通过每次考察数组当前部分的中间元素来缩小查找范围，从而高效地找到目标元素。",
+  "key_concepts": [
+    "时间复杂度",
+    "空间复杂度",
+    "迭代",
+    "递归"
+  ],
+  "applications": [
+    "有序数组查找",
+    "最大值最小化问题"
+  ],
+  "created_at": "2025-07-19T12:55:52Z",
+  "updated_at": "2025-07-19T12:55:52Z",
+  "source_files": [
+    "二分_wiki.txt"
+  ],
+  "spacy_entities": {
+    "COMPLEXITY": [
+      "O(1)",
+      "O(log n)"
+    ],
+    "SPECIFIC_ALGORITHM": [
+      "二分查找",
+      "二分搜索",
+      "binary search"
+    ],
+    "DATA_STRUCTURE": [
+      "数组"
+    ],
+    "CORE_CONCEPT": [
+      "迭代",
+      "递归",
+      "空间复杂度",
+      "时间复杂度"
+    ],
+    "PROBLEM_TYPE": [
+      "有序数组查找问题",
+      "最大值最小化问题"
+    ],
+    "ALGORITHM_PARADIGM": [
+      "迭代",
+      "递归"
+    ]
+  }
+}

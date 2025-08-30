@@ -1,0 +1,170 @@
+{
+  "id": "AP_c8f15dae",
+  "title": "用栈实现队列",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/implement-queue-using-stacks/",
+  "description": "使用栈实现队列的下列操作：\n\npush(x) -- 将一个元素放入队列的尾部。\npop() -- 从队列首部移除元素。\npeek() -- 返回队列首部的元素。\nempty() -- 返回队列是否为空。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "模拟"
+  ],
+  "data_structure_tags": [
+    "栈",
+    "队列"
+  ],
+  "technique_tags": [
+    "双栈法"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过使用两个栈（一个输入栈stIn和一个输出栈stOut）来模拟队列的行为。当执行push操作时直接将元素添加到输入栈中；进行pop或peek操作时，如果输出栈为空，则需先将输入栈中的所有元素转移到输出栈中，从而实现后进先出到先进先出的转换。",
+  "key_insights": [
+    {
+      "content": "利用两个栈的特点，一个用于存储新加入的数据（stIn），另一个用于处理需要弹出的数据（stOut）。这样可以有效模拟队列的FIFO（先进先出）特性。"
+    },
+    {
+      "content": "只有在输出栈为空且需要执行pop或peek操作时，才将输入栈中的所有元素一次性转移到输出栈中。这确保了每次操作的时间复杂度为O(1)。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "拓展",
+      "text": "可以看出peek()的实现，直接复用了pop()， 要不然，对stOut判空的逻辑又要重写一遍。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class MyQueue {public: stack<int> stIn; stack<int> stOut; /** Initialize your data structure here. */ MyQueue() {} /** Push element x to the back of queue. */ void push(int x) {stIn.push(x);} /** Removes the element from in front of queue and returns that element. */ int pop() {if (stOut.empty()) {while(!stIn.empty()) {stOut.push(stIn.top()); stIn.pop();}} int result = stOut.top(); stOut.pop(); return result;} /** Get the front element. */ int peek() {int res = this->pop(); stOut.push(res); return res;} /** Returns whether the queue is empty. */ bool empty() {return stIn.empty() && stOut.empty();}};",
+          "description": "使用C++实现队列"
+        },
+        {
+          "language": "java",
+          "code": "class MyQueue {Stack<Integer> stackIn; Stack<Integer> stackOut; public MyQueue() {stackIn = new Stack<>(); stackOut = new Stack<>();} public void push(int x) {stackIn.push(x);} public int pop() {dumpstackIn(); return stackOut.pop();} public int peek() {dumpstackIn(); return stackOut.peek();} public boolean empty() {return stackIn.isEmpty() && stackOut.isEmpty();} private void dumpstackIn(){if (!stackOut.isEmpty()) return; while (!stackIn.isEmpty()){stackOut.push(stackIn.pop());}}}",
+          "description": "使用Java实现队列"
+        },
+        {
+          "language": "python",
+          "code": "class MyQueue: def __init__(self): self.stack_in = [] self.stack_out = [] def push(self, x: int) -> None: self.stack_in.append(x) def pop(self) -> int: if self.empty(): return None if self.stack_out: return self.stack_out.pop() else: for i in range(len(self.stack_in)): self.stack_out.append(self.stack_in.pop()) return self.stack_out.pop() def peek(self) -> int: ans = self.pop() self.stack_out.append(ans) return ans def empty(self) -> bool: return not (self.stack_in or self.stack_out)",
+          "description": "使用Python实现队列"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class MyQueue { public: stack<int> stIn; stack<int> stOut; /** Initialize your data structure here. */ MyQueue() {} /** Push element x to the back of queue. */ void push(int x) { stIn.push(x); } /** Removes the element from in front of queue and returns that element. */ int pop() { if (stOut.empty()) { while(!stIn.empty()) { stOut.push(stIn.top()); stIn.pop(); } } int result = stOut.top(); stOut.pop(); return result; } /** Get the front element. */ int peek() { int res = this->pop(); stOut.push(res); return res; } /** Returns whether the queue is empty. */ bool empty() { return stIn.empty() && stOut.empty(); }};",
+          "description": "C++实现使用栈模拟队列"
+        },
+        {
+          "language": "java",
+          "code": "class MyQueue { Stack<Integer> stackIn; Stack<Integer> stackOut; /** Initialize your data structure here. */ public MyQueue() { stackIn = new Stack<>(); stackOut = new Stack<>(); } /** Push element x to the back of queue. */ public void push(int x) { stackIn.push(x); } /** Removes the element from in front of queue and returns that element. */ public int pop() { dumpstackIn(); return stackOut.pop(); } /** Get the front element. */ public int peek() { dumpstackIn(); return stackOut.peek(); } /** Returns whether the queue is empty. */ public boolean empty() { return stackIn.isEmpty() && stackOut.isEmpty(); } private void dumpstackIn(){ if (!stackOut.isEmpty()) return; while (!stackIn.isEmpty()){ stackOut.push(stackIn.pop()); } }}",
+          "description": "Java实现使用栈模拟队列"
+        },
+        {
+          "language": "python",
+          "code": "class MyQueue: def __init__(self): self.stack_in = [] self.stack_out = [] def push(self, x: int) -> None: self.stack_in.append(x) def pop(self) -> int: if self.empty(): return None if self.stack_out: return self.stack_out.pop() else: for i in range(len(self.stack_in)): self.stack_out.append(self.stack_in.pop()) return self.stack_out.pop() def peek(self) -> int: ans = self.pop() self.stack_out.append(ans) return ans def empty(self) -> bool: return not (self.stack_in or self.stack_out)",
+          "description": "Python实现使用栈模拟队列"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "class MyQueue {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class MyQueue {public: stack<int> stIn; stack<int> stOut; /** Initialize your data structure here. */ MyQueue() {} /** Push element x to the back of queue. */ void push(int x) {stIn.push(x);} /** Removes the element from in front of queue and returns that element. */ int pop() {if (stOut.empty()) {while(!stIn.empty()) {stOut.push(stIn.top()); stIn.pop();}} int result = stOut.top(); stOut.pop(); return result;} /** Get the front element. */ int peek() {int res = this->pop(); stOut.push(res); return res;} /** Returns whether the queue is empty. */ bool empty() {return stIn.empty() && stOut.empty();}};",
+          "description": "使用C++实现队列，利用两个栈来模拟队列的行为。"
+        },
+        {
+          "language": "java",
+          "code": "class MyQueue {Stack<Integer> stackIn; Stack<Integer> stackOut; public MyQueue() {stackIn = new Stack<>(); stackOut = new Stack<>();} public void push(int x) {stackIn.push(x);} public int pop() {dumpstackIn(); return stackOut.pop();} public int peek() {dumpstackIn(); return stackOut.peek();} public boolean empty() {return stackIn.isEmpty() && stackOut.isEmpty();} private void dumpstackIn(){if (!stackOut.isEmpty()) return; while (!stackIn.isEmpty()){stackOut.push(stackIn.pop());}}}",
+          "description": "使用Java实现队列，通过两个栈来模拟队列功能。"
+        },
+        {
+          "language": "python",
+          "code": "class MyQueue: def __init__(self): self.stack_in = [] self.stack_out = [] def push(self, x: int) -> None: self.stack_in.append(x) def pop(self) -> int: if self.empty(): return None if self.stack_out: return self.stack_out.pop() else: for i in range(len(self.stack_in)): self.stack_out.append(self.stack_in.pop()) return self.stack_out.pop() def peek(self) -> int: ans = self.pop() self.stack_out.append(ans) return ans def empty(self) -> bool: return not (self.stack_in or self.stack_out)",
+          "description": "使用Python实现队列，采用列表作为栈的替代品来模拟队列操作。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "class MyQueue:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class MyQueue {public: stack<int> stIn; stack<int> stOut; /** Initialize your data structure here. */ MyQueue() {} /** Push element x to the back of queue. */ void push(int x) {stIn.push(x);} /** Removes the element from in front of queue and returns that element. */ int pop() {if (stOut.empty()) {while(!stIn.empty()) {stOut.push(stIn.top()); stIn.pop();}} int result = stOut.top(); stOut.pop(); return result;} /** Get the front element. */ int peek() {int res = this->pop(); stOut.push(res); return res;} /** Returns whether the queue is empty. */ bool empty() {return stIn.empty() && stOut.empty();}};",
+          "description": "C++实现的使用栈模拟队列"
+        },
+        {
+          "language": "java",
+          "code": "class MyQueue {Stack<Integer> stackIn; Stack<Integer> stackOut; public MyQueue() {stackIn = new Stack<>(); stackOut = new Stack<>();} public void push(int x) {stackIn.push(x);} public int pop() {dumpstackIn(); return stackOut.pop();} public int peek() {dumpstackIn(); return stackOut.peek();} public boolean empty() {return stackIn.isEmpty() && stackOut.isEmpty();} private void dumpstackIn(){if (!stackOut.isEmpty()) return; while (!stackIn.isEmpty()){stackOut.push(stackIn.pop());}}}",
+          "description": "Java实现的使用栈模拟队列"
+        },
+        {
+          "language": "python",
+          "code": "class MyQueue: def __init__(self): self.stack_in = [] self.stack_out = [] def push(self, x: int) -> None: self.stack_in.append(x) def pop(self) -> int: if self.empty(): return None if self.stack_out: return self.stack_out.pop() else: for i in range(len(self.stack_in)): self.stack_out.append(self.stack_in.pop()) return self.stack_out.pop() def peek(self) -> int: ans = self.pop() self.stack_out.append(ans) return ans def empty(self) -> bool: return not (self.stack_in or self.stack_out)",
+          "description": "Python实现的使用栈模拟队列"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": null,
+    "space_complexity": "O(n)",
+    "explanation": "实际上一个循环n会被使用n次，最后还是O(1)。"
+  },
+  "code_solutions": [
+    {
+      "language": "C++",
+      "code": "class MyQueue {public: stack<int> stIn; stack<int> stOut; /** Initialize your data structure here. */ MyQueue() {} /** Push element x to the back of queue. */ void push(int x) {stIn.push(x);} /** Removes the element from in front of queue and returns that element. */ int pop() {if (stOut.empty()) {while(!stIn.empty()) {stOut.push(stIn.top()); stIn.pop();}} int result = stOut.top(); stOut.pop(); return result;} /** Get the front element. */ int peek() {int res = this->pop(); stOut.push(res); return res;} /** Returns whether the queue is empty. */ bool empty() {return stIn.empty() && stOut.empty();}};",
+      "description": "使用两个栈实现队列的功能"
+    },
+    {
+      "language": "Java",
+      "code": "class MyQueue {Stack<Integer> stackIn; Stack<Integer> stackOut; public MyQueue() {stackIn = new Stack<>(); stackOut = new Stack<>();} public void push(int x) {stackIn.push(x);} public int pop() {dumpstackIn(); return stackOut.pop();} public int peek() {dumpstackIn(); return stackOut.peek();} public boolean empty() {return stackIn.isEmpty() && stackOut.isEmpty();} private void dumpstackIn(){if (!stackOut.isEmpty()) return; while (!stackIn.isEmpty()){stackOut.push(stackIn.pop());}}}",
+      "description": "使用两个栈实现队列的功能"
+    },
+    {
+      "language": "Python",
+      "code": "class MyQueue: def __init__(self): self.stack_in = [] self.stack_out = [] def push(self, x: int) -> None: self.stack_in.append(x) def pop(self) -> int: if self.empty(): return None if self.stack_out: return self.stack_out.pop() else: for i in range(len(self.stack_in)): self.stack_out.append(self.stack_in.pop()) return self.stack_out.pop() def peek(self) -> int: ans = self.pop() self.stack_out.append(ans) return ans def empty(self) -> bool: return not (self.stack_in or self.stack_out)",
+      "description": "使用两个列表作为栈来实现队列的功能"
+    }
+  ],
+  "common_mistakes": [
+    "在pop或peek前未检查输出栈是否为空就直接操作。",
+    "重复地从输入栈向输出栈转移数据而非仅在必要时进行。",
+    "忽视了对空状态的正确判断，即同时检查两栈是否都为空才能确定整个结构为空。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/232.%E7%94%A8%E6%A0%88%E5%AE%9E%E7%8E%B0%E9%98%9F%E5%88%97%E7%89%88%E6%9C%AC2.gif",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/232.%E7%94%A8%E6%A0%88%E5%AE%9E%E7%8E%B0%E9%98%9F%E5%88%97%E7%89%88%E6%9C%AC2.gif",
+      "context": "该图片展示了如何使用两个栈（一个作为输入栈，另一个作为输出栈）来模拟队列的操作过程，包括push、pop以及判断队列是否为空的方法。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/232.%E7%94%A8%E6%A0%88%E5%AE%9E%E7%8E%B0%E9%98%9F%E5%88%97%E7%89%88%E6%9C%AC2.gif",
+      "description": "GIF展示了如何使用两个栈（一个输入栈和一个输出栈）来模拟队列的操作过程，包括push、pop以及判断队列是否为空。",
+      "context": "该GIF动画展示了如何使用两个栈（一个作为输入栈，另一个作为输出栈）来模拟队列的入队、出队操作以及判断队列是否为空的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\栈与队列\\用栈实现队列.txt",
+  "extracted_at": "2025-07-22T13:57:48.798188",
+  "raw_content": "用栈实现队列\n力扣题目链接(https://leetcode.cn/problems/implement-queue-using-stacks/)\n\n使用栈实现队列的下列操作：\n\npush(x) -- 将一个元素放入队列的尾部。\npop() -- 从队列首部移除元素。\npeek() -- 返回队列首部的元素。\nempty() -- 返回队列是否为空。\n\n示例:\n\nMyQueue queue = new MyQueue();\nqueue.push(1);\nqueue.push(2);\nqueue.peek();  // 返回 1\nqueue.pop();   // 返回 1\nqueue.empty(); // 返回 false\n说明:\n\n你只能使用标准的栈操作 -- 也就是只有 push to top, peek/pop from top, size, 和 is empty 操作是合法的。\n你所使用的语言也许不支持栈。你可以使用 list 或者 deque（双端队列）来模拟一个栈，只要是标准的栈操作即可。\n假设所有操作都是有效的 （例如，一个空的队列不会调用 pop 或者 peek 操作）。\n\n\n思路\n这是一道模拟题，不涉及到具体算法，考察的就是对栈和队列的掌握程度。\n\n使用栈来模拟队列的行为，如果仅仅用一个栈，是一定不行的，所以需要两个栈一个输入栈，一个输出栈，这里要注意输入栈和输出栈的关系。\n\n下面动画模拟以下队列的执行过程：\n\n执行语句：\nqueue.push(1);\nqueue.push(2);\nqueue.pop(); 注意此时的输出栈的操作\nqueue.push(3);\nqueue.push(4);\nqueue.pop();\nqueue.pop();注意此时的输出栈的操作\nqueue.pop();\nqueue.empty();\n\nhttps://file1.kamacoder.com/i/algo/232.%E7%94%A8%E6%A0%88%E5%AE%9E%E7%8E%B0%E9%98%9F%E5%88%97%E7%89%88%E6%9C%AC2.gif\n\n在push数据的时候，只要数据放进输入栈就好，但在pop的时候，操作就复杂一些，输出栈如果为空，就把进栈数据全部导入进来（注意是全部导入），再从出栈弹出数据，如果输出栈不为空，则直接从出栈弹出数据就可以了。\n\n最后如何判断队列为空呢？如果进栈和出栈都为空的话，说明模拟的队列为空了。\n\n在代码实现的时候，会发现pop() 和 peek()两个函数功能类似，代码实现上也是类似的，可以思考一下如何把代码抽象一下。\n\nC++代码如下：\n\nclass MyQueue {\npublic:\n    stack<int> stIn;\n    stack<int> stOut;\n    /** Initialize your data structure here. */\n    MyQueue() {\n\n    }\n    /** Push element x to the back of queue. */\n    void push(int x) {\n        stIn.push(x);\n    }\n\n    /** Removes the element from in front of queue and returns that element. */\n    int pop() {\n        // 只有当stOut为空的时候，再从stIn里导入数据（导入stIn全部数据）\n        if (stOut.empty()) {\n            // 从stIn导入数据直到stIn为空\n            while(!stIn.empty()) {\n                stOut.push(stIn.top());\n                stIn.pop();\n            }\n        }\n        int result = stOut.top();\n        stOut.pop();\n        return result;\n    }\n\n    /** Get the front element. */\n    int peek() {\n        int res = this->pop(); // 直接使用已有的pop函数\n        stOut.push(res); // 因为pop函数弹出了元素res，所以再添加回去\n        return res;\n    }\n\n    /** Returns whether the queue is empty. */\n    bool empty() {\n        return stIn.empty() && stOut.empty();\n    }\n};\n\n时间复杂度: 都为O(1)。pop和peek看起来像O(n)，实际上一个循环n会被使用n次，最后还是O(1)。\n空间复杂度: O(n)\n#拓展\n可以看出peek()的实现，直接复用了pop()， 要不然，对stOut判空的逻辑又要重写一遍。\n\n再多说一些代码开发上的习惯问题，在工业级别代码开发中，最忌讳的就是 实现一个类似的函数，直接把代码粘过来改一改就完事了。\n\n这样的项目代码会越来越乱，一定要懂得复用，功能相近的函数要抽象出来，不要大量的复制粘贴，很容易出问题！（踩过坑的人自然懂）\n\n工作中如果发现某一个功能自己要经常用，同事们可能也会用到，自己就花点时间把这个功能抽象成一个好用的函数或者工具类，不仅自己方便，也方便了同事们。\n\n同事们就会逐渐认可你的工作态度和工作能力，自己的口碑都是这么一点一点积累起来的！在同事圈里口碑起来了之后，你就发现自己走上了一个正循环，以后的升职加薪才少不了你！\n\n#其他语言版本\n#Java：\nclass MyQueue {\n\n    Stack<Integer> stackIn;\n    Stack<Integer> stackOut;\n\n    /** Initialize your data structure here. */\n    public MyQueue() {\n        stackIn = new Stack<>(); // 负责进栈\n        stackOut = new Stack<>(); // 负责出栈\n    }\n    \n    /** Push element x to the back of queue. */\n    public void push(int x) {\n        stackIn.push(x);\n    }\n    \n    /** Removes the element from in front of queue and returns that element. */\n    public int pop() {    \n        dumpstackIn();\n        return stackOut.pop();\n    }\n    \n    /** Get the front element. */\n    public int peek() {\n        dumpstackIn();\n        return stackOut.peek();\n    }\n    \n    /** Returns whether the queue is empty. */\n    public boolean empty() {\n        return stackIn.isEmpty() && stackOut.isEmpty();\n    }\n\n    // 如果stackOut为空，那么将stackIn中的元素全部放到stackOut中\n    private void dumpstackIn(){\n        if (!stackOut.isEmpty()) return; \n        while (!stackIn.isEmpty()){\n                stackOut.push(stackIn.pop());\n        }\n    }\n}\n\n#Python：\nclass MyQueue:\n\n    def __init__(self):\n        \"\"\"\n        in主要负责push，out主要负责pop\n        \"\"\"\n        self.stack_in = []\n        self.stack_out = []\n\n\n    def push(self, x: int) -> None:\n        \"\"\"\n        有新元素进来，就往in里面push\n        \"\"\"\n        self.stack_in.append(x)\n\n\n    def pop(self) -> int:\n        \"\"\"\n        Removes the element from in front of queue and returns that element.\n        \"\"\"\n        if self.empty():\n            return None\n        \n        if self.stack_out:\n            return self.stack_out.pop()\n        else:\n            for i in range(len(self.stack_in)):\n                self.stack_out.append(self.stack_in.pop())\n            return self.stack_out.pop()\n\n\n    def peek(self) -> int:\n        \"\"\"\n        Get the front element.\n        \"\"\"\n        ans = self.pop()\n        self.stack_out.append(ans)\n        return ans\n\n\n    def empty(self) -> bool:\n        \"\"\"\n        只要in或者out有元素，说明队列不为空\n        \"\"\"\n        return not (self.stack_in or self.stack_out)"
+}

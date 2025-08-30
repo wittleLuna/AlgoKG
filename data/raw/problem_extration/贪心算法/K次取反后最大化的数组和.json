@@ -1,0 +1,183 @@
+{
+  "id": "AP_0baced74",
+  "title": "K次取反后最大化的数组和",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/maximize-sum-of-array-after-k-negations/",
+  "description": "一个整数数组 A，我们只能用以下方法修改该数组：我们选择某个索引 i 并将 A[i] 替换为 -A[i]，然后总共重复这个过程 K 次。（我们可以多次选择同一个索引 i。）\n\n以这种方式修改数组后，返回数组可能的最大和。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "贪心算法"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "排序",
+    "迭代"
+  ],
+  "difficulty": null,
+  "solution_approach": "首先将数组按绝对值从大到小排序，接着遍历数组，遇到负数就转换为正数同时减少K的值。如果在所有负数被处理后K仍大于0，则对最小的元素进行反转以消耗剩余的K。最后计算数组总和。",
+  "key_insights": [
+    {
+      "content": "优先处理绝对值较大的负数可以使每次操作的效果最大化"
+    },
+    {
+      "content": "当所有的负数都已转为正数且仍有剩余操作次数时，选择翻转绝对值最小的元素来最大化最终数组和"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "本题思路其实比较好想了，如何可以让数组和最大呢？",
+      "resources": [],
+      "code_snippets": [],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "贪心的题目如果简单起来，会让人简单到开始怀疑：本来不就应该这么做么？这也算是算法？我认为这不是贪心？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {static bool cmp(int a, int b) {return abs(a) > abs(b);}public: int largestSumAfterKNegations(vector<int>& A, int K) {sort(A.begin(), A.end(), cmp); for (int i = 0; i < A.size(); i++) {if (A[i] < 0 && K > 0) {A[i] *= -1;K--;} } if (K % 2 == 1) A[A.size() - 1] *= -1; int result = 0;for (int a : A) result += a; return result;}};",
+          "description": "C++代码实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestSumAfterKNegations(int[] nums, int K) {nums = IntStream.of(nums).boxed().sorted((o1, o2) -> Math.abs(o2) - Math.abs(o1)).mapToInt(Integer::intValue).toArray();int len = nums.length;for (int i = 0; i < len; i++) {if (nums[i] < 0 && K > 0) {nums[i] = -nums[i];K--;}}if (K % 2 == 1) nums[len - 1] = -nums[len - 1];return Arrays.stream(nums).sum();}}",
+          "description": "Java代码实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestSumAfterKNegations(int[] nums, int k) {if (nums.length == 1) return nums[0];Arrays.sort(nums);for (int i = 0; i < nums.length && k > 0; i++) {if (nums[i] < 0) {nums[i] = -nums[i];k--;}}if (k % 2 == 1) {Arrays.sort(nums);nums[0] = -nums[0];}int sum = 0;for (int num : nums) {sum += num;}return sum;}}",
+          "description": "Java版本二实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestSumAfterKNegations(self, A: List[int], K: int) -> int: A.sort(key=lambda x: abs(x), reverse=True) for i in range(len(A)): if A[i] < 0 and K > 0: A[i] *= -1 K -= 1 if K % 2 == 1: A[-1] *= -1 result = sum(A) return result",
+          "description": "Python代码实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {static bool cmp(int a, int b) {return abs(a) > abs(b);}public: int largestSumAfterKNegations(vector<int>& A, int K) {sort(A.begin(), A.end(), cmp); for (int i = 0; i < A.size(); i++) {if (A[i] < 0 && K > 0) {A[i] *= -1;K--;} } if (K % 2 == 1) A[A.size() - 1] *= -1; int result = 0;for (int a : A) result += a; return result;}};",
+          "description": "C++实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestSumAfterKNegations(int[] nums, int K) {nums = IntStream.of(nums).boxed().sorted((o1, o2) -> Math.abs(o2) - Math.abs(o1)).mapToInt(Integer::intValue).toArray();int len = nums.length;for (int i = 0; i < len; i++) {if (nums[i] < 0 && K > 0) {nums[i] = -nums[i];K--;}}if (K % 2 == 1) nums[len - 1] = -nums[len - 1];return Arrays.stream(nums).sum();}}",
+          "description": "Java实现版本一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestSumAfterKNegations(int[] nums, int k) {if (nums.length == 1) return nums[0];Arrays.sort(nums);for (int i = 0; i < nums.length && k > 0; i++) {if (nums[i] < 0) {nums[i] = -nums[i];k--;}}if (k % 2 == 1) {Arrays.sort(nums);nums[0] = -nums[0];}int sum = 0;for (int num : nums) {sum += num;}return sum;}}",
+          "description": "Java实现版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestSumAfterKNegations(self, A: List[int], K: int) -> int: A.sort(key=lambda x: abs(x), reverse=True) for i in range(len(A)): if A[i] < 0 and K > 0: A[i] *= -1 K -= 1 if K % 2 == 1: A[-1] *= -1 result = sum(A) return result",
+          "description": "Python实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {static bool cmp(int a, int b) {return abs(a) > abs(b);}public: int largestSumAfterKNegations(vector<int>& A, int K) {sort(A.begin(), A.end(), cmp); for (int i = 0; i < A.size(); i++) {if (A[i] < 0 && K > 0) {A[i] *= -1; K--;} } if (K % 2 == 1) A[A.size() - 1] *= -1; int result = 0; for (int a : A) result += a; return result;}}",
+          "description": "C++实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestSumAfterKNegations(int[] nums, int K) {nums = IntStream.of(nums).boxed().sorted((o1, o2) -> Math.abs(o2) - Math.abs(o1)).mapToInt(Integer::intValue).toArray(); int len = nums.length;for (int i = 0; i < len; i++) {if (nums[i] < 0 && K > 0) {nums[i] = -nums[i]; K--;} }if (K % 2 == 1) nums[len - 1] = -nums[len - 1];return Arrays.stream(nums).sum();}}",
+          "description": "Java实现版本一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestSumAfterKNegations(int[] nums, int k) {if (nums.length == 1) return nums[0];Arrays.sort(nums);for (int i = 0; i < nums.length && k > 0; i++) {if (nums[i] < 0) {nums[i] = -nums[i]; k--;}}if (k % 2 == 1) {Arrays.sort(nums);nums[0] = -nums[0];}int sum = 0;for (int num : nums) {sum += num;}return sum;}}",
+          "description": "Java实现版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestSumAfterKNegations(self, A: List[int], K: int) -> int: A.sort(key=lambda x: abs(x), reverse=True) for i in range(len(A)): if A[i] < 0 and K > 0: A[i] *= -1 K -= 1 if K % 2 == 1: A[-1] *= -1 result = sum(A) return result",
+          "description": "Python实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "贪心",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {static bool cmp(int a, int b) {return abs(a) > abs(b);}public: int largestSumAfterKNegations(vector<int>& A, int K) {sort(A.begin(), A.end(), cmp); for (int i = 0; i < A.size(); i++) {if (A[i] < 0 && K > 0) {A[i] *= -1;K--;} } if (K % 2 == 1) A[A.size() - 1] *= -1; int result = 0;for (int a : A) result += a; return result;}};",
+          "description": "C++实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestSumAfterKNegations(int[] nums, int K) {nums = IntStream.of(nums).boxed().sorted((o1, o2) -> Math.abs(o2) - Math.abs(o1)).mapToInt(Integer::intValue).toArray(); int len = nums.length;for (int i = 0; i < len; i++) {if (nums[i] < 0 && K > 0) {nums[i] = -nums[i];K--;} } if (K % 2 == 1) nums[len - 1] = -nums[len - 1];return Arrays.stream(nums).sum();}}",
+          "description": "Java实现，版本一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int largestSumAfterKNegations(int[] nums, int k) {if (nums.length == 1) return nums[0];Arrays.sort(nums); for (int i = 0; i < nums.length && k > 0; i++) {if (nums[i] < 0) {nums[i] = -nums[i];k--;}} if (k % 2 == 1) {Arrays.sort(nums);nums[0] = -nums[0];} int sum = 0;for (int num : nums) {sum += num;} return sum;}}",
+          "description": "Java实现，版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def largestSumAfterKNegations(self, A: List[int], K: int) -> int: A.sort(key=lambda x: abs(x), reverse=True) for i in range(len(A)): if A[i] < 0 and K > 0: A[i] *= -1 K -= 1 if K % 2 == 1: A[-1] *= -1 result = sum(A) return result",
+          "description": "Python实现"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(nlogn)",
+    "space_complexity": "O(1)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {static bool cmp(int a, int b) {return abs(a) > abs(b);}public: int largestSumAfterKNegations(vector<int>& A, int K) {sort(A.begin(), A.end(), cmp); for (int i = 0; i < A.size(); i++) {if (A[i] < 0 && K > 0) {A[i] *= -1;K--;} } if (K % 2 == 1) A[A.size() - 1] *= -1; int result = 0;for (int a : A) result += a; return result;}};",
+      "description": "C++版本的解决方案，首先根据绝对值大小降序排序数组，然后遍历数组将负数变为正数直到K次用完。如果最后K还有剩余且为奇数，则反转最后一个元素。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int largestSumAfterKNegations(int[] nums, int K) {nums = IntStream.of(nums).boxed().sorted((o1, o2) -> Math.abs(o2) - Math.abs(o1)).mapToInt(Integer::intValue).toArray();int len = nums.length;for (int i = 0; i < len; i++) {if (nums[i] < 0 && K > 0) {nums[i] = -nums[i];K--;}}if (K % 2 == 1) nums[len - 1] = -nums[len - 1];return Arrays.stream(nums).sum();}}",
+      "description": "Java版本的解决方案，通过流操作对数组按照绝对值降序排序后，遍历数组并尝试将所有负数转为正数。如果K仍有余且为奇数，则再次反转最后一个元素以最大化和。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def largestSumAfterKNegations(self, A: List[int], K: int) -> int: A.sort(key=lambda x: abs(x), reverse=True) for i in range(len(A)): if A[i] < 0 and K > 0: A[i] *= -1 K -= 1 if K % 2 == 1: A[-1] *= -1 result = sum(A) return result",
+      "description": "Python版本的解决方案，通过对数组进行绝对值降序排序来处理问题，接着尝试将尽可能多的负数转换成正数直至K次机会用完。若K最终为奇数，则翻转最小绝对值的元素。"
+    }
+  ],
+  "common_mistakes": [
+    "忽略绝对值排序的重要性，直接按原始值排序可能会导致局部最优解而非全局最优。",
+    "在处理完所有负数后没有正确处理剩余的操作次数，可能导致不必要的损失或错误计算。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\贪心算法\\K次取反后最大化的数组和.txt",
+  "extracted_at": "2025-07-22T14:30:56.045651",
+  "raw_content": "K次取反后最大化的数组和\n力扣题目链接(https://leetcode.cn/problems/maximize-sum-of-array-after-k-negations/)\n\n给定一个整数数组 A，我们只能用以下方法修改该数组：我们选择某个索引 i 并将 A[i] 替换为 -A[i]，然后总共重复这个过程 K 次。（我们可以多次选择同一个索引 i。）\n\n以这种方式修改数组后，返回数组可能的最大和。\n\n示例 1：\n\n输入：A = [4,2,3], K = 1\n输出：5\n解释：选择索引 (1) ，然后 A 变为 [4,-2,3]。\n示例 2：\n\n输入：A = [3,-1,0,2], K = 3\n输出：6\n解释：选择索引 (1, 2, 2) ，然后 A 变为 [3,1,0,2]。\n示例 3：\n\n输入：A = [2,-3,-1,5,-4], K = 2\n输出：13\n解释：选择索引 (1, 4) ，然后 A 变为 [2,3,-1,5,4]。\n提示：\n\n1 <= A.length <= 10000\n1 <= K <= 10000\n-100 <= A[i] <= 100\n\n\n#思路\n本题思路其实比较好想了，如何可以让数组和最大呢？\n\n贪心的思路，局部最优：让绝对值大的负数变为正数，当前数值达到最大，整体最优：整个数组和达到最大。\n\n局部最优可以推出全局最优。\n\n那么如果将负数都转变为正数了，K依然大于0，此时的问题是一个有序正整数序列，如何转变K次正负，让 数组和 达到最大。\n\n那么又是一个贪心：局部最优：只找数值最小的正整数进行反转，当前数值和可以达到最大（例如正整数数组{5, 3, 1}，反转1 得到-1 比 反转5得到的-5 大多了），全局最优：整个 数组和 达到最大。\n\n虽然这道题目大家做的时候，可能都不会去想什么贪心算法，一鼓作气，就AC了。\n\n我这里其实是为了给大家展现出来 经常被大家忽略的贪心思路，这么一道简单题，就用了两次贪心！\n\n那么本题的解题步骤为：\n\n第一步：将数组按照绝对值大小从大到小排序，注意要按照绝对值的大小\n第二步：从前向后遍历，遇到负数将其变为正数，同时K--\n第三步：如果K还大于0，那么反复转变数值最小的元素，将K用完\n第四步：求和\n对应C++代码如下：\n\nclass Solution {\nstatic bool cmp(int a, int b) {\n    return abs(a) > abs(b);\n}\npublic:\n    int largestSumAfterKNegations(vector<int>& A, int K) {\n        sort(A.begin(), A.end(), cmp);       // 第一步\n        for (int i = 0; i < A.size(); i++) { // 第二步\n            if (A[i] < 0 && K > 0) {\n                A[i] *= -1;\n                K--;\n            }\n        }\n        if (K % 2 == 1) A[A.size() - 1] *= -1; // 第三步\n        int result = 0;\n        for (int a : A) result += a;        // 第四步\n        return result;\n    }\n};\n时间复杂度: O(nlogn)\n空间复杂度: O(1)\n#总结\n贪心的题目如果简单起来，会让人简单到开始怀疑：本来不就应该这么做么？这也算是算法？我认为这不是贪心？\n\n本题其实很简单，不会贪心算法的同学都可以做出来，但是我还是全程用贪心的思路来讲解。\n\n因为贪心的思考方式一定要有！\n\n如果没有贪心的思考方式（局部最优，全局最优），很容易陷入贪心简单题凭感觉做，贪心难题直接不会做，其实这样就锻炼不了贪心的思考方式了。\n\n所以明知道是贪心简单题，也要靠贪心的思考方式来解题，这样对培养解题感觉很有帮助。\n\n#其他语言版本\n#Java\nclass Solution {\n    public int largestSumAfterKNegations(int[] nums, int K) {\n    \t// 将数组按照绝对值大小从大到小排序，注意要按照绝对值的大小\n\tnums = IntStream.of(nums)\n\t\t     .boxed()\n\t\t     .sorted((o1, o2) -> Math.abs(o2) - Math.abs(o1))\n\t\t     .mapToInt(Integer::intValue).toArray();\n\tint len = nums.length;\t    \n\tfor (int i = 0; i < len; i++) {\n\t    //从前向后遍历，遇到负数将其变为正数，同时K--\n\t    if (nums[i] < 0 && K > 0) {\n\t    \tnums[i] = -nums[i];\n\t    \tK--;\n\t    }\n\t}\n\t// 如果K还大于0，那么反复转变数值最小的元素，将K用完\n\n\tif (K % 2 == 1) nums[len - 1] = -nums[len - 1];\n\treturn Arrays.stream(nums).sum();\n\n    }\n}\n\n// 版本二：排序数组并贪心地尽可能将负数翻转为正数，再根据剩余的k值调整最小元素的符号，从而最大化数组的总和。\nclass Solution {\n    public int largestSumAfterKNegations(int[] nums, int k) {\n        if (nums.length == 1) return nums[0];\n\n        // 排序：先把负数处理了\n        Arrays.sort(nums); \n\n        for (int i = 0; i < nums.length && k > 0; i++) { // 贪心点, 通过负转正, 消耗尽可能多的k\n            if (nums[i] < 0) {\n                nums[i] = -nums[i];\n                k--;\n            }\n        }\n\n        // 退出循环, k > 0 || k < 0 (k消耗完了不用讨论)\n        if (k % 2 == 1) { // k > 0 && k is odd：对于负数：负-正-负-正\n            Arrays.sort(nums); // 再次排序得到剩余的负数，或者最小的正数\n            nums[0] = -nums[0];\n        }\n        // k > 0 && k is even，flip数字不会产生影响: 对于负数: 负-正-负；对于正数：正-负-正 \n\n        int sum = 0;\n        for (int num : nums) { // 计算最大和\n            sum += num;\n        }\n        return sum;\n    }\n}\n#Python\n贪心\n\nclass Solution:\n    def largestSumAfterKNegations(self, A: List[int], K: int) -> int:\n        A.sort(key=lambda x: abs(x), reverse=True)  # 第一步：按照绝对值降序排序数组A\n\n        for i in range(len(A)):  # 第二步：执行K次取反操作\n            if A[i] < 0 and K > 0:\n                A[i] *= -1\n                K -= 1\n\n        if K % 2 == 1:  # 第三步：如果K还有剩余次数，将绝对值最小的元素取反\n            A[-1] *= -1\n\n        result = sum(A)  # 第四步：计算数组A的元素和\n        return result"
+}

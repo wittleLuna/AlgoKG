@@ -1,0 +1,459 @@
+{
+  "id": "AP_9c1c887f",
+  "title": "Bellman_ford 队列优化算法（又名SPFA）",
+  "alternative_titles": [],
+  "platform": "kamacoder",
+  "url": "https://kamacoder.com/problempage.php?pid=1152",
+  "description": "找出从城市 1 到城市 n 的所有可能路径中，综合政府补贴后的最低运输成本。\n\n如果最低运输成本是一个负数，它表示在遵循最优路径的情况下，运输过程中反而能够实现盈利。\n\n城市 1 到城市 n 之间可能会出现没有路径的情况，同时保证道路网络中不存在任何负权回路。\n\n负权回路是指一系列道路的总权值为负，这样的回路使得通过反复经过回路中的道路，理论上可以无限地减少总成本或无限地增加总收益。\n\n输入描述\n\n第一行包含两个正整数，第一个正整数 n 表示该国一共有 n 个城市，第二个整数 m 表示这些城市中共有 m 条道路。\n\n接下来为 m 行，每行包括三个整数，s、t 和 v，表示 s 号城市运输货物到达 t 号城市，道路权值为 v（单向图）。\n\n输出描述\n\n如果能够从城市 1 到连通到城市 n， 请输出一个整数，表示运输成本。如果该整数是负数，则表示实现了盈利。如果从城市 1 没有路径可达城市 n，请输出 \"unconnected\"。\n\n输入",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "图论",
+    "最短路径"
+  ],
+  "data_structure_tags": [
+    "队列",
+    "邻接表"
+  ],
+  "technique_tags": [
+    "松弛操作",
+    "动态规划思想"
+  ],
+  "difficulty": null,
+  "solution_approach": "采用Bellman_ford算法的队列优化版本（SPFA算法）来寻找从起点到终点的最短路径。通过使用队列记录需要进行松弛操作的节点，仅对这些节点连接的边执行松弛操作，从而减少不必要的计算。",
+  "key_insights": [
+    {
+      "content": "利用队列记录每次被更新过的节点，并且只对这些节点出发到达的边进行松弛操作，避免了传统Bellman-Ford算法中重复处理未更新节点的问题，显著提高了效率。"
+    },
+    {
+      "content": "使用邻接表而非邻接矩阵来存储图的信息，便于快速找到一个给定顶点的所有邻接顶点及其权重，这对实现高效的松弛过程至关重要。"
+    },
+    {
+      "content": "该方法能够有效处理负权边，但题目保证没有负权回路，因此不会出现死循环的情况。"
+    },
+    {
+      "content": "即使在稠密图的情况下，算法仍然能通过减少无用的松弛操作提升性能，但在极端情况下时间复杂度接近于O(N * E)。"
+    },
+    {
+      "content": "每个节点最多会被松弛n-1次，这确保了即使存在正权环也不会陷入无限循环。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "背景",
+      "text": "本题我们来系统讲解 Bellman_ford 队列优化算法 ，也叫SPFA算法（Shortest Path Faster Algorithm）。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <list>\n#include <climits>\nusing namespace std;\n\nstruct Edge { \n    int to;  \n    int val; \n\n    Edge(int t, int w): to(t), val(w) {}  \n};\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<list<Edge>> grid(n + 1); \n\n    vector<bool> isInQueue(n + 1); \n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1].push_back(Edge(p2, val));\n    }\n    int start = 1;  \n    int end = n;    \n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n\n    queue<int> que;\n    que.push(start); \n\n    while (!que.empty()) {\n\n        int node = que.front(); que.pop();\n        isInQueue[node] = false; \n        for (Edge edge : grid[node]) {\n            int from = node;\n            int to = edge.to;\n            int value = edge.val;\n            if (minDist[to] > minDist[from] + value) { \n                minDist[to] = minDist[from] + value; \n                if (isInQueue[to] == false) { \n                    que.push(to);\n                    isInQueue[to] = true;\n                }\n            }\n        }\n\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; \n    else cout << minDist[end] << endl; \n}",
+          "description": "C++实现的SPFA算法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<List<Edge>> graph = new ArrayList<>();\n\n        for (int i = 0; i <= n; i++) {\n            graph.add(new ArrayList<>());\n        }\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            graph.get(from).add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        Queue<Integer> queue = new LinkedList<>();\n        queue.offer(1);\n\n        boolean[] isInQueue = new boolean[n + 1];\n\n        while (!queue.isEmpty()) {\n            int curNode = queue.poll();\n            isInQueue[curNode] = false; \n            for (Edge edge : graph.get(curNode)) {\n                if (minDist[edge.to] > minDist[edge.from] + edge.val) { \n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                    if (!isInQueue[edge.to]) { \n                        queue.offer(edge.to);\n                        isInQueue[edge.to] = true;\n                    }\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java实现的SPFA算法"
+        },
+        {
+          "language": "python",
+          "code": "import collections\ndef main():\n    n, m = map(int, input().strip().split())\n    edges = [[] for _ in range(n + 1)]\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges[src].append([dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0\n    que = collections.deque([1])\n    visited = [False] * (n + 1)\n    visited[1] = True\n    \n    while que:\n        cur = que.popleft()\n        visited[cur] = False\n        for dest, weight in edges[cur]:\n            if minDist[cur] != float(\"inf\") and minDist[cur] + weight < minDist[dest]:\n                minDist[dest] = minDist[cur] + weight\n                if visited[dest] == False:\n                    que.append(dest)\n                    visited[dest] = True\n    \n    if minDist[-1] == float(\"inf\"):\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python实现的SPFA算法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "模拟过程",
+      "text": "接下来来举例这个队列是如何工作的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <list>\n#include <climits>\nusing namespace std;\n\nstruct Edge { \n    int to;  \n    int val; \n\n    Edge(int t, int w): to(t), val(w) {}  \n};\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<list<Edge>> grid(n + 1); \n\n    vector<bool> isInQueue(n + 1); \n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1].push_back(Edge(p2, val));\n    }\n    int start = 1;  \n    int end = n;    \n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n\n    queue<int> que;\n    que.push(start); \n\n    while (!que.empty()) {\n\n        int node = que.front(); que.pop();\n        isInQueue[node] = false; \n        for (Edge edge : grid[node]) {\n            int from = node;\n            int to = edge.to;\n            int value = edge.val;\n            if (minDist[to] > minDist[from] + value) { \n                minDist[to] = minDist[from] + value; \n                if (isInQueue[to] == false) { \n                    que.push(to);\n                    isInQueue[to] = true;\n                }\n            }\n        }\n\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; \n    else cout << minDist[end] << endl; \n}",
+          "description": "使用C++实现的SPFA算法求解从城市1到城市n的最小运输成本"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<List<Edge>> graph = new ArrayList<>();\n\n        for (int i = 0; i <= n; i++) {\n            graph.add(new ArrayList<>());\n        }\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            graph.get(from).add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        Queue<Integer> queue = new LinkedList<>();\n        queue.offer(1);\n\n        boolean[] isInQueue = new boolean[n + 1];\n\n        while (!queue.isEmpty()) {\n            int curNode = queue.poll();\n            isInQueue[curNode] = false; \n            for (Edge edge : graph.get(curNode)) {\n                if (minDist[edge.to] > minDist[edge.from] + edge.val) { \n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                    if (!isInQueue[edge.to]) { \n                        queue.offer(edge.to);\n                        isInQueue[edge.to] = true;\n                    }\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "使用Java实现的SPFA算法求解从城市1到城市n的最小运输成本"
+        },
+        {
+          "language": "python",
+          "code": "import collections\ndef main():\n    n, m = map(int, input().strip().split())\n    edges = [[] for _ in range(n + 1)]\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges[src].append([dest, weight])\n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0\n    que = collections.deque([1])\n    visited = [False] * (n + 1)\n    visited[1] = True\n    while que:\n        cur = que.popleft()\n        visited[cur] = False\n        for dest, weight in edges[cur]:\n            if minDist[cur] != float(\"inf\") and minDist[cur] + weight < minDist[dest]:\n                minDist[dest] = minDist[cur] + weight\n                if visited[dest] == False:\n                    que.append(dest)\n                    visited[dest] = True\n    if minDist[-1] == float(\"inf\"):\n        return \"unconnected\"\n    return minDist[-1]\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "使用Python实现的SPFA算法求解从城市1到城市n的最小运输成本"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <list>\n#include <climits>\nusing namespace std;\n\nstruct Edge { \n    int to;  \n    int val; \n\n    Edge(int t, int w): to(t), val(w) {}  \n};\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<list<Edge>> grid(n + 1); \n\n    vector<bool> isInQueue(n + 1); \n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1].push_back(Edge(p2, val));\n    }\n    int start = 1;  \n    int end = n;    \n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n\n    queue<int> que;\n    que.push(start); \n\n    while (!que.empty()) {\n\n        int node = que.front(); que.pop();\n        isInQueue[node] = false; \n        for (Edge edge : grid[node]) {\n            int from = node;\n            int to = edge.to;\n            int value = edge.val;\n            if (minDist[to] > minDist[from] + value) { \n                minDist[to] = minDist[from] + value; \n                if (isInQueue[to] == false) { \n                    que.push(to);\n                    isInQueue[to] = true;\n                }\n            }\n        }\n\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; \n    else cout << minDist[end] << endl; \n}",
+          "description": "C++实现的SPFA算法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<List<Edge>> graph = new ArrayList<>();\n\n        for (int i = 0; i <= n; i++) {\n            graph.add(new ArrayList<>());\n        }\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            graph.get(from).add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        Queue<Integer> queue = new LinkedList<>();\n        queue.offer(1);\n\n        boolean[] isInQueue = new boolean[n + 1];\n\n        while (!queue.isEmpty()) {\n            int curNode = queue.poll();\n            isInQueue[curNode] = false; \n            for (Edge edge : graph.get(curNode)) {\n                if (minDist[edge.to] > minDist[edge.from] + edge.val) { \n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                    if (!isInQueue[edge.to]) { \n                        queue.offer(edge.to);\n                        isInQueue[edge.to] = true;\n                    }\n                }\n            }\n        }\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java实现的SPFA算法"
+        },
+        {
+          "language": "python",
+          "code": "import collections\ndef main():\n    n, m = map(int, input().strip().split())\n    edges = [[] for _ in range(n + 1)]\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges[src].append([dest, weight])\n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0\n    que = collections.deque([1])\n    visited = [False] * (n + 1)\n    visited[1] = True\n    while que:\n        cur = que.popleft()\n        visited[cur] = False\n        for dest, weight in edges[cur]:\n            if minDist[cur] != float(\"inf\") and minDist[cur] + weight < minDist[dest]:\n                minDist[dest] = minDist[cur] + weight\n                if visited[dest] == False:\n                    que.append(dest)\n                    visited[dest] = True\n    if minDist[-1] == float(\"inf\"):\n        return \"unconnected\"\n    return minDist[-1]\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python实现的SPFA算法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "#include <queue>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <list>\n#include <climits>\nusing namespace std;\n\nstruct Edge {\n    int to;  \n    int val; \n\n    Edge(int t, int w): to(t), val(w) {}\n};\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<list<Edge>> grid(n + 1); \n\n    vector<bool> isInQueue(n + 1);\n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1].push_back(Edge(p2, val));\n    }\n    int start = 1;  \n    int end = n;    \n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n\n    queue<int> que;\n    que.push(start); \n\n    while (!que.empty()) {\n\n        int node = que.front(); que.pop();\n        isInQueue[node] = false;\n        for (Edge edge : grid[node]) {\n            int from = node;\n            int to = edge.to;\n            int value = edge.val;\n            if (minDist[to] > minDist[from] + value) {\n                minDist[to] = minDist[from] + value; \n                if (isInQueue[to] == false) {\n                    que.push(to);\n                    isInQueue[to] = true;\n                }\n            }\n        }\n\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl;\n    else cout << minDist[end] << endl;\n}",
+          "description": "C++实现的SPFA算法，用于求解从城市1到城市n的最低运输成本。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<List<Edge>> graph = new ArrayList<>();\n\n        for (int i = 0; i <= n; i++) {\n            graph.add(new ArrayList<>());\n        }\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            graph.get(from).add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        Queue<Integer> queue = new LinkedList<>();\n        queue.offer(1);\n\n        boolean[] isInQueue = new boolean[n + 1];\n\n        while (!queue.isEmpty()) {\n            int curNode = queue.poll();\n            isInQueue[curNode] = false;\n            for (Edge edge : graph.get(curNode)) {\n                if (minDist[edge.to] > minDist[edge.from] + edge.val) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                    if (!isInQueue[edge.to]) {\n                        queue.offer(edge.to);\n                        isInQueue[edge.to] = true;\n                    }\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java实现的SPFA算法，功能同上。"
+        },
+        {
+          "language": "python",
+          "code": "import collections\ndef main():\n    n, m = map(int, input().strip().split())\n    edges = [[] for _ in range(n + 1)]\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges[src].append([dest, weight])\n\n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0\n    que = collections.deque([1])\n    visited = [False] * (n + 1)\n    visited[1] = True\n\n    while que:\n        cur = que.popleft()\n        visited[cur] = False\n        for dest, weight in edges[cur]:\n            if minDist[cur] != float(\"inf\") and minDist[cur] + weight < minDist[dest]:\n                minDist[dest] = minDist[cur] + weight\n                if visited[dest] == False:\n                    que.append(dest)\n                    visited[dest] = True\n\n    if minDist[-1] == float(\"inf\"):\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python版本的SPFA算法实现，用于解决相同问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <queue>",
+      "text": "#include <list>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <list>\n#include <climits>\nusing namespace std;\n\nstruct Edge { \n    int to;  \n    int val; \n\n    Edge(int t, int w): to(t), val(w) {}  \n};\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<list<Edge>> grid(n + 1); \n\n    vector<bool> isInQueue(n + 1); \n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1].push_back(Edge(p2, val));\n    }\n    int start = 1;  \n    int end = n;    \n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n\n    queue<int> que;\n    que.push(start); \n\n    while (!que.empty()) {\n\n        int node = que.front(); que.pop();\n        isInQueue[node] = false; \n        for (Edge edge : grid[node]) {\n            int from = node;\n            int to = edge.to;\n            int value = edge.val;\n            if (minDist[to] > minDist[from] + value) { \n                minDist[to] = minDist[from] + value; \n                if (isInQueue[to] == false) { \n                    que.push(to);\n                    isInQueue[to] = true;\n                }\n            }\n        }\n\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; \n    else cout << minDist[end] << endl; \n}",
+          "description": "C++实现的SPFA算法，用于计算从起点到终点的最短路径。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<List<Edge>> graph = new ArrayList<>();\n\n        for (int i = 0; i <= n; i++) {\n            graph.add(new ArrayList<>());\n        }\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            graph.get(from).add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        Queue<Integer> queue = new LinkedList<>();\n        queue.offer(1);\n\n        boolean[] isInQueue = new boolean[n + 1];\n\n        while (!queue.isEmpty()) {\n            int curNode = queue.poll();\n            isInQueue[curNode] = false; \n            for (Edge edge : graph.get(curNode)) {\n                if (minDist[edge.to] > minDist[edge.from] + edge.val) { \n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                    if (!isInQueue[edge.to]) { \n                        queue.offer(edge.to);\n                        isInQueue[edge.to] = true;\n                    }\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java实现的SPFA算法，同样用于求解从起点至终点的最短路径问题。"
+        },
+        {
+          "language": "python",
+          "code": "import collections\ndef main():\n    n, m = map(int, input().strip().split())\n    edges = [[] for _ in range(n + 1)]\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges[src].append([dest, weight])\n\n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0\n    que = collections.deque([1])\n    visited = [False] * (n + 1)\n    visited[1] = True\n\n    while que:\n        cur = que.popleft()\n        visited[cur] = False\n        for dest, weight in edges[cur]:\n            if minDist[cur] != float(\"inf\") and minDist[cur] + weight < minDist[dest]:\n                minDist[dest] = minDist[cur] + weight\n                if visited[dest] == False:\n                    que.append(dest)\n                    visited[dest] = True\n\n    if minDist[-1] == float(\"inf\"):\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python版本的SPFA算法实现，目标是找到从起始城市到目的城市的最小运输成本。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <list>",
+      "text": "#include <climits>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <list>\n#include <climits>\nusing namespace std;\n\nstruct Edge { \n    int to;  \n    int val; \n\n    Edge(int t, int w): to(t), val(w) {}  \n};\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<list<Edge>> grid(n + 1); \n\n    vector<bool> isInQueue(n + 1);\n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1].push_back(Edge(p2, val));\n    }\n    int start = 1;  \n    int end = n;    \n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n\n    queue<int> que;\n    que.push(start); \n\n    while (!que.empty()) {\n\n        int node = que.front(); que.pop();\n        isInQueue[node] = false;\n        for (Edge edge : grid[node]) {\n            int from = node;\n            int to = edge.to;\n            int value = edge.val;\n            if (minDist[to] > minDist[from] + value) {\n                minDist[to] = minDist[from] + value; \n                if (isInQueue[to] == false) {\n                    que.push(to);\n                    isInQueue[to] = true;\n                }\n            }\n        }\n\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; \n    else cout << minDist[end] << endl; \n}",
+          "description": "C++实现的SPFA算法求解最短路径问题"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<List<Edge>> graph = new ArrayList<>();\n\n        for (int i = 0; i <= n; i++) {\n            graph.add(new ArrayList<>());\n        }\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            graph.get(from).add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        Queue<Integer> queue = new LinkedList<>();\n        queue.offer(1);\n\n        boolean[] isInQueue = new boolean[n + 1];\n\n        while (!queue.isEmpty()) {\n            int curNode = queue.poll();\n            isInQueue[curNode] = false;\n            for (Edge edge : graph.get(curNode)) {\n                if (minDist[edge.to] > minDist[edge.from] + edge.val) {\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                    if (!isInQueue[edge.to]) {\n                        queue.offer(edge.to);\n                        isInQueue[edge.to] = true;\n                    }\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java实现的SPFA算法求解最短路径问题"
+        },
+        {
+          "language": "python",
+          "code": "import collections\n\ndef main():\n    n, m = map(int, input().strip().split())\n    edges = [[] for _ in range(n + 1)]\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges[src].append([dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0\n    que = collections.deque([1])\n    visited = [False] * (n + 1)\n    visited[1] = True\n    \n    while que:\n        cur = que.popleft()\n        visited[cur] = False\n        for dest, weight in edges[cur]:\n            if minDist[cur] != float(\"inf\") and minDist[cur] + weight < minDist[dest]:\n                minDist[dest] = minDist[cur] + weight\n                if visited[dest] == False:\n                    que.append(dest)\n                    visited[dest] = True\n    \n    if minDist[-1] == float(\"inf\"):\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python实现的SPFA算法求解最短路径问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <climits>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "using namespace std;\\n#include <iostream>\\n#include <vector>\\n#include <queue>\\n#include <list>\\n#include <climits>\\nstruct Edge { int to; int val; Edge(int t, int w): to(t), val(w) {} };\\nint main() { int n, m, p1, p2, val; cin >> n >> m; vector<list<Edge>> grid(n + 1); vector<bool> isInQueue(n + 1); for(int i = 0; i < m; i++){ cin >> p1 >> p2 >> val; grid[p1].push_back(Edge(p2, val)); } int start = 1; int end = n; vector<int> minDist(n + 1 , INT_MAX); minDist[start] = 0; queue<int> que; que.push(start); while (!que.empty()) { int node = que.front(); que.pop(); isInQueue[node] = false; for (Edge edge : grid[node]) { int from = node; int to = edge.to; int value = edge.val; if (minDist[to] > minDist[from] + value) { minDist[to] = minDist[from] + value; if (isInQueue[to] == false) { que.push(to); isInQueue[to] = true; } } } } if (minDist[end] == INT_MAX) cout << \\\"unconnected\\\" << endl; else cout << minDist[end] << endl; }",
+          "description": "C++实现的SPFA算法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\\npublic class Main { static class Edge { int from; int to; int val; public Edge(int from, int to, int val) { this.from = from; this.to = to; this.val = val; } } public static void main(String[] args) { Scanner sc = new Scanner(System.in); int n = sc.nextInt(); int m = sc.nextInt(); List<List<Edge>> graph = new ArrayList<>(); for (int i = 0; i <= n; i++) { graph.add(new ArrayList<>()); } for (int i = 0; i < m; i++) { int from = sc.nextInt(); int to = sc.nextInt(); int val = sc.nextInt(); graph.get(from).add(new Edge(from, to, val)); } int[] minDist = new int[n + 1]; Arrays.fill(minDist, Integer.MAX_VALUE); minDist[1] = 0; Queue<Integer> queue = new LinkedList<>(); queue.offer(1); boolean[] isInQueue = new boolean[n + 1]; while (!queue.isEmpty()) { int curNode = queue.poll(); isInQueue[curNode] = false; for (Edge edge : graph.get(curNode)) { if (minDist[edge.to] > minDist[edge.from] + edge.val) { minDist[edge.to] = minDist[edge.from] + edge.val; if (!isInQueue[edge.to]) { queue.offer(edge.to); isInQueue[edge.to] = true; } } } } if (minDist[n] == Integer.MAX_VALUE) { System.out.println(\\\"unconnected\\\"); } else { System.out.println(minDist[n]); } } }",
+          "description": "Java实现的SPFA算法"
+        },
+        {
+          "language": "python",
+          "code": "import collections\\ndef main(): n, m = map(int, input().strip().split()) edges = [[] for _ in range(n + 1)] for _ in range(m): src, dest, weight = map(int, input().strip().split()) edges[src].append([dest, weight]) minDist = [float(\\\"inf\\\") * (n + 1)] minDist[1] = 0 que = collections.deque([1]) visited = [False] * (n + 1) visited[1] = True while que: cur = que.popleft() visited[cur] = False for dest, weight in edges[cur]: if minDist[cur] != float(\\\"inf\\\") and minDist[cur] + weight < minDist[dest]: minDist[dest] = minDist[cur] + weight if visited[dest] == False: que.append(dest) visited[dest] = True if minDist[-1] == float(\\\"inf\\\"): return \\\"unconnected\\\" return minDist[-1]\\nif __name__ == \\\"__main__\\\": print(main())",
+          "description": "Python实现的SPFA算法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "效率分析",
+      "text": "队列优化版Bellman_ford 的时间复杂度 并不稳定，效率高低依赖于图的结构。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <list>\n#include <climits>\nusing namespace std;\n\nstruct Edge { \n    int to;  \n    int val; \n\n    Edge(int t, int w): to(t), val(w) {}  \n};\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<list<Edge>> grid(n + 1); \n\n    vector<bool> isInQueue(n + 1); \n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1].push_back(Edge(p2, val));\n    }\n    int start = 1;  \n    int end = n;    \n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n\n    queue<int> que;\n    que.push(start); \n\n    while (!que.empty()) {\n\n        int node = que.front(); que.pop();\n        isInQueue[node] = false; \n        for (Edge edge : grid[node]) {\n            int from = node;\n            int to = edge.to;\n            int value = edge.val;\n            if (minDist[to] > minDist[from] + value) { \n                minDist[to] = minDist[from] + value; \n                if (isInQueue[to] == false) { \n                    que.push(to);\n                    isInQueue[to] = true;\n                }\n            }\n        }\n\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; \n    else cout << minDist[end] << endl; \n}",
+          "description": "C++实现的SPFA算法，用于求解从起点到终点的最短路径问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<List<Edge>> graph = new ArrayList<>();\n\n        for (int i = 0; i <= n; i++) {\n            graph.add(new ArrayList<>());\n        }\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            graph.get(from).add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        Queue<Integer> queue = new LinkedList<>();\n        queue.offer(1);\n\n        boolean[] isInQueue = new boolean[n + 1];\n\n        while (!queue.isEmpty()) {\n            int curNode = queue.poll();\n            isInQueue[curNode] = false; \n            for (Edge edge : graph.get(curNode)) {\n                if (minDist[edge.to] > minDist[edge.from] + edge.val) { \n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                    if (!isInQueue[edge.to]) { \n                        queue.offer(edge.to);\n                        isInQueue[edge.to] = true;\n                    }\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java实现的SPFA算法，用于求解从起点到终点的最短路径问题。"
+        },
+        {
+          "language": "python",
+          "code": "import collections\ndef main():\n    n, m = map(int, input().strip().split())\n    edges = [[] for _ in range(n + 1)]\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges[src].append([dest, weight])\n\n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0\n    que = collections.deque([1])\n    visited = [False] * (n + 1)\n    visited[1] = True\n\n    while que:\n        cur = que.popleft()\n        visited[cur] = False\n        for dest, weight in edges[cur]:\n            if minDist[cur] != float(\"inf\") and minDist[cur] + weight < minDist[dest]:\n                minDist[dest] = minDist[cur] + weight\n                if visited[dest] == False:\n                    que.append(dest)\n                    visited[dest] = True\n\n    if minDist[-1] == float(\"inf\"):\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python实现的SPFA算法，用于求解从起点到终点的最短路径问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "拓展",
+      "text": "这里可能有录友疑惑，while (!que.empty()) 队里里 会不会造成死循环？ 例如 图中有环，这样一直有元素加入到队列里？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <list>\n#include <climits>\nusing namespace std;\n\nstruct Edge { //邻接表\n    int to;  // 链接的节点\n    int val; // 边的权重\n\n    Edge(int t, int w): to(t), val(w) {}  // 构造函数\n};\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<list<Edge>> grid(n + 1); \n\n    vector<bool> isInQueue(n + 1); // 加入优化，已经在队里里的元素不用重复添加\n\n    // 将所有边保存起来\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        // p1 指向 p2，权值为 val\n        grid[p1].push_back(Edge(p2, val));\n    }\n    int start = 1;  // 起点\n    int end = n;    // 终点\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n\n    queue<int> que;\n    que.push(start); \n\n    while (!que.empty()) {\n\n        int node = que.front(); que.pop();\n        isInQueue[node] = false; // 从队列里取出的时候，要取消标记，我们只保证已经在队列里的元素不用重复加入\n        for (Edge edge : grid[node]) {\n            int from = node;\n            int to = edge.to;\n            int value = edge.val;\n            if (minDist[to] > minDist[from] + value) { // 开始松弛\n                minDist[to] = minDist[from] + value; \n                if (isInQueue[to] == false) { // 已经在队列里的元素不用重复添加\n                    que.push(to);\n                    isInQueue[to] = true;\n                }\n            }\n        }\n\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; // 不能到达终点\n    else cout << minDist[end] << endl; // 到达终点最短路径\n}",
+          "description": "C++实现的SPFA算法求解城市间货物运输问题"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n\n    // Define an inner class Edge\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        // Input processing\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<List<Edge>> graph = new ArrayList<>();\n\n        for (int i = 0; i <= n; i++) {\n            graph.add(new ArrayList<>());\n        }\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            graph.get(from).add(new Edge(from, to, val));\n        }\n\n        // Declare the minDist array to record the minimum distance form current node to the original node\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        // Declare a queue to store the updated nodes instead of traversing all nodes each loop for more efficiency\n        Queue<Integer> queue = new LinkedList<>();\n        queue.offer(1);\n\n        // Declare a boolean array to record if the current node is in the queue to optimise the processing\n        boolean[] isInQueue = new boolean[n + 1];\n\n        while (!queue.isEmpty()) {\n            int curNode = queue.poll();\n            isInQueue[curNode] = false; // Represents the current node is not in the queue after being polled\n            for (Edge edge : graph.get(curNode)) {\n                if (minDist[edge.to] > minDist[edge.from] + edge.val) { // Start relaxing the edge\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                    if (!isInQueue[edge.to]) { // Don't add the node if it's already in the queue\n                        queue.offer(edge.to);\n                        isInQueue[edge.to] = true;\n                    }\n                }\n            }\n        }\n\n        // Outcome printing\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java实现的SPFA算法求解城市间货物运输问题"
+        },
+        {
+          "language": "python",
+          "code": "import collections\ndef main():\n    n, m = map(int, input().strip().split())\n    edges = [[] for _ in range(n + 1)]\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges[src].append([dest, weight])\n\n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0\n    que = collections.deque([1])\n    visited = [False] * (n + 1)\n    visited[1] = True\n\n    while que:\n        cur = que.popleft()\n        visited[cur] = False\n        for dest, weight in edges[cur]:\n            if minDist[cur] != float(\"inf\") and minDist[cur] + weight < minDist[dest]:\n                minDist[dest] = minDist[cur] + weight\n                if visited[dest] == False:\n                    que.append(dest)\n                    visited[dest] = True\n\n    if minDist[-1] == float(\"inf\"):\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python实现的SPFA算法求解城市间货物运输问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "import java.util.*;public class Main {static class Edge {int from;int to;int val;public Edge(int from, int to, int val) {this.from = from;this.to = to;this.val = val;}}public static void main(String[] args) {Scanner sc = new Scanner(System.in);int n = sc.nextInt();int m = sc.nextInt();List<List<Edge>> graph = new ArrayList<>();for (int i = 0; i <= n; i++) {graph.add(new ArrayList<>());}for (int i = 0; i < m; i++) {int from = sc.nextInt();int to = sc.nextInt();int val = sc.nextInt();graph.get(from).add(new Edge(from, to, val));}int[] minDist = new int[n + 1];Arrays.fill(minDist, Integer.MAX_VALUE);minDist[1] = 0;Queue<Integer> queue = new LinkedList<>();queue.offer(1);boolean[] isInQueue = new boolean[n + 1];while (!queue.isEmpty()) {int curNode = queue.poll();isInQueue[curNode] = false;for (Edge edge : graph.get(curNode)) {if (minDist[edge.to] > minDist[edge.from] + edge.val) {minDist[edge.to] = minDist[edge.from] + edge.val;if (!isInQueue[edge.to]) {queue.offer(edge.to);isInQueue[edge.to] = true;}}}}if (minDist[n] == Integer.MAX_VALUE) {System.out.println(\"unconnected\");} else {System.out.println(minDist[n]);}}}",
+          "description": "使用队列优化的Bellman-Ford算法（SPFA）来解决城市间货物运输问题。"
+        },
+        {
+          "language": "python",
+          "code": "import collections;def main():n, m = map(int, input().strip().split());edges = [[] for _ in range(n + 1)];for _ in range(m):src, dest, weight = map(int, input().strip().split());edges[src].append([dest, weight]);minDist = [float(\"inf\")] * (n + 1);minDist[1] = 0;que = collections.deque([1]);visited = [False] * (n + 1);visited[1] = True;while que:cur = que.popleft();visited[cur] = False;for dest, weight in edges[cur]:if minDist[cur] != float(\"inf\") and minDist[cur] + weight < minDist[dest]:minDist[dest] = minDist[cur] + weight;if visited[dest] == False:que.append(dest);visited[dest] = True;if minDist[-1] == float(\"inf\"):return \"unconnected\";return minDist[-1];if __name__ == \"__main__\":print(main());",
+          "description": "使用队列优化的Bellman-Ford算法（SPFA）以Python实现，用于求解从起始城市到目标城市的最低运输成本。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "import java.util.*;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "import java.util.*;public class Main {static class Edge {int from;int to;int val;public Edge(int from, int to, int val) {this.from = from;this.to = to;this.val = val;}}public static void main(String[] args) {Scanner sc = new Scanner(System.in);int n = sc.nextInt();int m = sc.nextInt();List<List<Edge>> graph = new ArrayList<>();for (int i = 0; i <= n; i++) {graph.add(new ArrayList<>());}for (int i = 0; i < m; i++) {int from = sc.nextInt();int to = sc.nextInt();int val = sc.nextInt();graph.get(from).add(new Edge(from, to, val));}int[] minDist = new int[n + 1];Arrays.fill(minDist, Integer.MAX_VALUE);minDist[1] = 0;Queue<Integer> queue = new LinkedList<>();queue.offer(1);boolean[] isInQueue = new boolean[n + 1];while (!queue.isEmpty()) {int curNode = queue.poll();isInQueue[curNode] = false;for (Edge edge : graph.get(curNode)) {if (minDist[edge.to] > minDist[edge.from] + edge.val) {minDist[edge.to] = minDist[edge.from] + edge.val;if (!isInQueue[edge.to]) {queue.offer(edge.to);isInQueue[edge.to] = true;}}}}if (minDist[n] == Integer.MAX_VALUE) {System.out.println(\"unconnected\");} else {System.out.println(minDist[n]);}}}",
+          "description": "使用队列优化的Bellman-Ford算法（SPFA）求解从起点到终点的最短路径。"
+        },
+        {
+          "language": "python",
+          "code": "import collections;def main():n, m = map(int, input().strip().split());edges = [[] for _ in range(n + 1)];for _ in range(m):src, dest, weight = map(int, input().strip().split());edges[src].append([dest, weight]);minDist = [float(\"inf\")] * (n + 1);minDist[1] = 0;que = collections.deque([1]);visited = [False] * (n + 1);visited[1] = True;while que:cur = que.popleft();visited[cur] = False;for dest, weight in edges[cur]:if minDist[cur] != float(\"inf\") and minDist[cur] + weight < minDist[dest]:minDist[dest] = minDist[cur] + weight;if visited[dest] == False:que.append(dest);visited[dest] = True;if minDist[-1] == float(\"inf\"):return \"unconnected\";return minDist[-1];if __name__ == \"__main__\":print(main());",
+          "description": "使用队列优化的Bellman-Ford算法（SPFA）求解从起点到终点的最短路径。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "import collections",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <list>\n#include <climits>\nusing namespace std;\n\nstruct Edge { \n    int to;  \n    int val; \n\n    Edge(int t, int w): to(t), val(w) {}  \n};\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<list<Edge>> grid(n + 1); \n\n    vector<bool> isInQueue(n + 1); \n\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        grid[p1].push_back(Edge(p2, val));\n    }\n    int start = 1;  \n    int end = n;    \n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n\n    queue<int> que;\n    que.push(start); \n\n    while (!que.empty()) {\n\n        int node = que.front(); que.pop();\n        isInQueue[node] = false; \n        for (Edge edge : grid[node]) {\n            int from = node;\n            int to = edge.to;\n            int value = edge.val;\n            if (minDist[to] > minDist[from] + value) { \n                minDist[to] = minDist[from] + value; \n                if (isInQueue[to] == false) { \n                    que.push(to);\n                    isInQueue[to] = true;\n                }\n            }\n        }\n\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; \n    else cout << minDist[end] << endl; \n}",
+          "description": "C++实现的SPFA算法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\npublic class Main {\n\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<List<Edge>> graph = new ArrayList<>();\n\n        for (int i = 0; i <= n; i++) {\n            graph.add(new ArrayList<>());\n        }\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            graph.get(from).add(new Edge(from, to, val));\n        }\n\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        Queue<Integer> queue = new LinkedList<>();\n        queue.offer(1);\n\n        boolean[] isInQueue = new boolean[n + 1];\n\n        while (!queue.isEmpty()) {\n            int curNode = queue.poll();\n            isInQueue[curNode] = false; \n            for (Edge edge : graph.get(curNode)) {\n                if (minDist[edge.to] > minDist[edge.from] + edge.val) { \n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                    if (!isInQueue[edge.to]) { \n                        queue.offer(edge.to);\n                        isInQueue[edge.to] = true;\n                    }\n                }\n            }\n        }\n\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+          "description": "Java实现的SPFA算法"
+        },
+        {
+          "language": "python",
+          "code": "import collections\ndef main():\n    n, m = map(int, input().strip().split())\n    edges = [[] for _ in range(n + 1)]\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges[src].append([dest, weight])\n\n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0\n    que = collections.deque([1])\n    visited = [False] * (n + 1)\n    visited[1] = True\n\n    while que:\n        cur = que.popleft()\n        visited[cur] = False\n        for dest, weight in edges[cur]:\n            if minDist[cur] != float(\"inf\") and minDist[cur] + weight < minDist[dest]:\n                minDist[dest] = minDist[cur] + weight\n                if visited[dest] == False:\n                    que.append(dest)\n                    visited[dest] = True\n\n    if minDist[-1] == float(\"inf\"):\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())",
+          "description": "Python实现的SPFA算法"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "#include <iostream>\n#include <vector>\n#include <queue>\n#include <list>\n#include <climits>\nusing namespace std;\n\nstruct Edge { //邻接表\n    int to;  // 链接的节点\n    int val; // 边的权重\n\n    Edge(int t, int w): to(t), val(w) {}  // 构造函数\n};\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<list<Edge>> grid(n + 1); \n\n    vector<bool> isInQueue(n + 1); // 加入优化，已经在队里里的元素不用重复添加\n\n    // 将所有边保存起来\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        // p1 指向 p2，权值为 val\n        grid[p1].push_back(Edge(p2, val));\n    }\n    int start = 1;  // 起点\n    int end = n;    // 终点\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n\n    queue<int> que;\n    que.push(start); \n\n    while (!que.empty()) {\n\n        int node = que.front(); que.pop();\n        isInQueue[node] = false; // 从队列里取出的时候，要取消标记，我们只保证已经在队列里的元素不用重复加入\n        for (Edge edge : grid[node]) {\n            int from = node;\n            int to = edge.to;\n            int value = edge.val;\n            if (minDist[to] > minDist[from] + value) { // 开始松弛\n                minDist[to] = minDist[from] + value; \n                if (isInQueue[to] == false) { // 已经在队列里的元素不用重复添加\n                    que.push(to);\n                    isInQueue[to] = true;\n                }\n            }\n        }\n\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; // 不能到达终点\n    else cout << minDist[end] << endl; // 到达终点最短路径\n}",
+      "description": "使用C++实现SPFA算法解决城市间货物运输问题"
+    },
+    {
+      "language": "java",
+      "code": "import java.util.*;\n\npublic class Main {\n\n    // Define an inner class Edge\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        // Input processing\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<List<Edge>> graph = new ArrayList<>();\n\n        for (int i = 0; i <= n; i++) {\n            graph.add(new ArrayList<>());\n        }\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            graph.get(from).add(new Edge(from, to, val));\n        }\n\n        // Declare the minDist array to record the minimum distance form current node to the original node\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        // Declare a queue to store the updated nodes instead of traversing all nodes each loop for more efficiency\n        Queue<Integer> queue = new LinkedList<>();\n        queue.offer(1);\n\n        // Declare a boolean array to record if the current node is in the queue to optimise the processing\n        boolean[] isInQueue = new boolean[n + 1];\n\n        while (!queue.isEmpty()) {\n            int curNode = queue.poll();\n            isInQueue[curNode] = false; // Represents the current node is not in the queue after being polled\n            for (Edge edge : graph.get(curNode)) {\n                if (minDist[edge.to] > minDist[edge.from] + edge.val) { // Start relaxing the edge\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                    if (!isInQueue[edge.to]) { // Don't add the node if it's already in the queue\n                        queue.offer(edge.to);\n                        isInQueue[edge.to] = true;\n                    }\n                }\n            }\n        }\n\n        // Outcome printing\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}",
+      "description": "使用Java实现SPFA算法解决城市间货物运输问题"
+    },
+    {
+      "language": "python",
+      "code": "import collections\ndef main():\n    n, m = map(int, input().strip().split())\n    edges = [[] for _ in range(n + 1)]\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges[src].append([dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0\n    que = collections.deque([1])\n    visited = [False] * (n + 1)\n    visited[1] = True\n    \n    while que:\n        cur = que.popleft()\n        visited[cur] = False\n        for dest, weight in edges[cur]:\n            if minDist[cur] != float(\"inf\") and minDist[cur] + weight < minDist[dest]:\n                minDist[dest] = minDist[cur] + weight\n                if visited[dest] == False:\n                    que.append(dest)\n                    visited[dest] = True\n    \n    if minDist[-1] == float(\"inf\"):\n        return \"unconnected\"\n    return minDist[-1]\nif __name__ == \"__main__\":\n    print(main())",
+      "description": "使用Python实现SPFA算法解决城市间货物运输问题"
+    }
+  ],
+  "common_mistakes": [
+    "忘记初始化minDist数组和visited数组可能导致错误的结果。",
+    "不正确地处理负权值边可能会导致逻辑错误或无限循环。",
+    "没有考虑到当某个节点被重复加入队列时可能导致的冗余运算。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240328104119.png",
+      "description": "这张图片展示了一个带权有向图及其对应的最短路径算法（如Dijkstra算法）的初始状态，其中节点1为起点，minDist数组记录了从起点到各节点的当前最短距离。",
+      "context": "这张图片展示了在Bellman-Ford算法中，对所有边进行松弛操作时，哪些边的松弛是真正有效的，哪些则是无效的，帮助理解算法中存在的一些无用功。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240411115555.png",
+      "description": "这张图片展示了一个使用Dijkstra算法进行最短路径计算的过程，图中包含了节点、边权值、距离数组（minDist）和队列的状态。",
+      "context": "该图片展示了从节点1出发，通过边（节点1 -> 节点2）和边（节点1 -> 节点3）进行松弛操作的过程，以及更新minDist数组中相应节点最短距离的情形。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240411115544.png",
+      "description": "这张图片展示了使用Dijkstra算法进行最短路径计算的过程，包括节点间的边权、当前最短距离数组（minDist）和队列状态。",
+      "context": "该图片展示了在算法执行过程中，节点2和节点3被加入队列的状态。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240412110348.png",
+      "description": "这张图片展示了使用Dijkstra算法在带权图中寻找最短路径的过程，包括节点间的权重、距离数组`minDist`的更新以及队列中的当前节点状态。",
+      "context": "这张图片展示了在更新节点4和节点5的最短距离后，将这两个节点加入队列的状态。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240412110420.png",
+      "description": "这张图片展示了使用Bellman-Ford算法进行最短路径计算的过程，包括节点间的边权、距离数组`minDist`的更新状态以及当前队列中的节点。",
+      "context": "这张图片展示了从队列中移除节点3的过程，由于没有以节点3为起点的边，因此无需进行额外操作。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240412110445.png",
+      "description": "这张图片展示了使用Dijkstra算法或Bellman-Ford算法在加权图中寻找最短路径的过程，包括节点间的边权重、距离数组（minDist）和队列状态。",
+      "context": "展示了从队列中取出节点5后，更新与之相连的节点3和节点6的距离，并将这些节点加入队列的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240729161116.png",
+      "description": "这张图片展示了使用Bellman-Ford算法解决最短路径问题的过程，包括图的结构、距离数组（minDist）和队列状态。",
+      "context": "该图展示了在算法执行过程中，节点3被加入队列而节点6由于已存在于队列中未被重复添加的情形。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240411115424.png",
+      "description": "这张图片展示了一个使用Bellman-Ford算法解决最短路径问题的过程，包含图的节点、边权值以及距离数组的更新状态。",
+      "context": "该图片展示了从队列中取出节点6和节点3的过程，以及基于队列优化的Bellman-Ford算法在处理无可用边时的操作步骤。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240416104138.png",
+      "description": "这张图片展示了一个包含四个节点（1、2、3、4）的有向图，每个节点之间都有双向连接，体现了图论中的完全图结构。",
+      "context": "该图展示了当图中每个节点都与其他所有节点相连时，每个节点的入度情况，用于解释为何在这样的完全图结构下，每个节点会有n-1条指向它的边。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240412111849.png",
+      "description": "这张图片展示了一个包含负权回路的有向图，其中节点1、2和3形成一个权重为-1的循环路径，这在最短路径算法（如Bellman-Ford算法）中可能导致无限优化的问题。",
+      "context": "该图示例展示了正权回路的情况，帮助说明在有环但无负权回路的条件下，算法如何通过所有边的松弛操作最终终止。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240328104119.png",
+      "description": "GIF展示了基于队列优化的Bellman-Ford算法执行过程，特别强调了有效松弛操作及其对图中节点间最短路径更新的影响。",
+      "context": "该GIF动画展示了在Bellman-Ford算法执行过程中，尽管对所有边进行了松弛操作，但仅有部分操作是真正有效的，即那些基于已计算节点的边才起到了更新最短路径的作用。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240411115555.png",
+      "description": "GIF展示了从起点开始，通过不断松弛操作更新最短路径，并将更新过的节点加入队列的过程。",
+      "context": "此GIF动画展示了从队列中取出节点1后，对其连接边进行松弛操作的过程，更新了起点至各节点的最短距离。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240411115544.png",
+      "description": "GIF展示了从队列中取出节点并更新相连节点最短路径的过程。",
+      "context": "GIF动画展示了从节点1开始，通过更新与之相连节点的最短路径估计值，并将这些节点加入队列的过程，随后展示了从队列中取出节点2后，进一步更新其连接节点（节点4和节点5）的最短路径估计值的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240412110348.png",
+      "description": "GIF展示了从队列中取出节点并更新其相邻节点最短路径的过程。",
+      "context": "该GIF动画展示了在算法执行过程中，当更新了节点4和节点5的最短路径估计值后，将这两个节点加入到待处理队列中的情景。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240412110420.png",
+      "description": "GIF展示了从队列中移除节点3的过程，由于没有以节点3为起点的边，因此仅执行了移除操作。",
+      "context": "该GIF展示了从队列中移除节点3的过程，由于没有以节点3为起点的边，因此仅执行了节点3的出队操作而未进行其他更新。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240412110445.png",
+      "description": "GIF展示了从队列中取出节点并更新其连接节点最短路径的过程。",
+      "context": "GIF动画展示了从队列中取出节点并更新相连节点最短路径的过程，具体包括更新节点6和节点3的最小距离值。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240729161116.png",
+      "description": "GIF展示了基于队列优化的Bellman-Ford算法执行过程中，节点距离更新及队列操作的具体步骤。",
+      "context": "GIF动画展示了在图算法执行过程中，如何通过更新最短路径值并将节点加入队列来优化搜索过程，同时避免重复添加已存在于队列中的节点。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240411115424.png",
+      "description": "GIF展示了基于队列优化的Bellman-Ford算法执行过程中节点的处理与队列更新情况。",
+      "context": "该GIF动画展示了从队列中取出节点并检查其连接边的过程，以说明基于队列优化的Bellman-Ford算法如何减少无用的松弛操作。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240416104138.png",
+      "description": "GIF展示了在一个完全连通的双向图中，每个节点与其他所有节点相连的情况，用以说明队列优化版Bellman-Ford算法在极端稠密图中的执行过程。",
+      "context": "该GIF动画展示了在一个每个节点都与其他所有节点相连的完全图中，每个节点如何因为有n-1条指向它的边而被重复加入队列的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240412111849.png",
+      "description": "GIF展示了在稠密图中使用SPFA算法进行最短路径计算的过程，特别强调了正权回路情况下算法的终止机制。",
+      "context": "GIF动画展示了在正权回路存在的情况下，即使图中有环，SPFA算法也能通过不断松弛边来找到最短路径直至收敛的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\最短路\\城市间货物运输1_SPFA.txt",
+  "extracted_at": "2025-07-22T12:07:45.028690",
+  "raw_content": "Bellman_ford 队列优化算法（又名SPFA）\n卡码网：94. 城市间货物运输 I(https://kamacoder.com/problempage.php?pid=1152)\n\n题目描述\n\n某国为促进城市间经济交流，决定对货物运输提供补贴。共有 n 个编号为 1 到 n 的城市，通过道路网络连接，网络中的道路仅允许从某个城市单向通行到另一个城市，不能反向通行。\n\n网络中的道路都有各自的运输成本和政府补贴，道路的权值计算方式为：运输成本 - 政府补贴。\n\n权值为正表示扣除了政府补贴后运输货物仍需支付的费用；权值为负则表示政府的补贴超过了支出的运输成本，实际表现为运输过程中还能赚取一定的收益。\n\n请找出从城市 1 到城市 n 的所有可能路径中，综合政府补贴后的最低运输成本。\n\n如果最低运输成本是一个负数，它表示在遵循最优路径的情况下，运输过程中反而能够实现盈利。\n\n城市 1 到城市 n 之间可能会出现没有路径的情况，同时保证道路网络中不存在任何负权回路。\n\n负权回路是指一系列道路的总权值为负，这样的回路使得通过反复经过回路中的道路，理论上可以无限地减少总成本或无限地增加总收益。\n\n输入描述\n\n第一行包含两个正整数，第一个正整数 n 表示该国一共有 n 个城市，第二个整数 m 表示这些城市中共有 m 条道路。\n\n接下来为 m 行，每行包括三个整数，s、t 和 v，表示 s 号城市运输货物到达 t 号城市，道路权值为 v（单向图）。\n\n输出描述\n\n如果能够从城市 1 到连通到城市 n， 请输出一个整数，表示运输成本。如果该整数是负数，则表示实现了盈利。如果从城市 1 没有路径可达城市 n，请输出 \"unconnected\"。\n\n输入示例：\n\n6 7\n5 6 -2\n1 2 1\n5 3 1\n2 5 2\n2 4 -3\n4 6 4\n1 3 5\n#背景\n本题我们来系统讲解 Bellman_ford 队列优化算法 ，也叫SPFA算法（Shortest Path Faster Algorithm）。\n\nSPFA的称呼来自 1994年西南交通大学段凡丁的论文，其实Bellman_ford 提出后不久 （20世纪50年代末期） 就有队列优化的版本，国际上不承认这个算法是是国内提出的。 所以国际上一般称呼 该算法为 Bellman_ford 队列优化算法（Queue improved Bellman-Ford）\n\n大家知道以上来历，知道 SPFA 和 Bellman_ford 队列优化算法 指的都是一个算法就好。\n\n如果大家还不够了解 Bellman_ford 算法，强烈建议按照《代码随想录》的顺序学习，否则可能看不懂下面的讲解。\n\n大家可以发现 Bellman_ford 算法每次松弛 都是对所有边进行松弛。\n\n但真正有效的松弛，是基于已经计算过的节点在做的松弛。\n\n给大家举一个例子：\n\nhttps://file1.kamacoder.com/i/algo/20240328104119.png\n\n本图中，对所有边进行松弛，真正有效的松弛，只有松弛 边（节点1->节点2） 和 边（节点1->节点3） 。\n\n而松弛 边（节点4->节点6） ，边（节点5->节点3）等等 都是无效的操作，因为 节点4 和 节点 5 都是没有被计算过的节点。\n\n所以 Bellman_ford 算法 每次都是对所有边进行松弛，其实是多做了一些无用功。\n\n只需要对 上一次松弛的时候更新过的节点作为出发节点所连接的边 进行松弛就够了。\n\n基于以上思路，如何记录 上次松弛的时候更新过的节点呢？\n\n用队列来记录。（其实用栈也行，对元素顺序没有要求）\n\n#模拟过程\n接下来来举例这个队列是如何工作的。\n\n以示例给出的所有边为例：\n\n5 6 -2\n1 2 1\n5 3 1\n2 5 2\n2 4 -3\n4 6 4\n1 3 5\n我们依然使用minDist数组来表达 起点到各个节点的最短距离，例如minDist[3] = 5 表示起点到达节点3 的最小距离为5\n\n初始化，起点为节点1， 起点到起点的最短距离为0，所以minDist[1] 为 0。 将节点1 加入队列 （下次松弛从节点1开始）\n\nhttps://file1.kamacoder.com/i/algo/20240411115555.png\n\n从队列里取出节点1，松弛节点1 作为出发点连接的边（节点1 -> 节点2）和边（节点1 -> 节点3）\n\n边：节点1 -> 节点2，权值为1 ，minDist[2] > minDist[1] + 1 ，更新 minDist[2] = minDist[1] + 1 = 0 + 1 = 1 。\n\n边：节点1 -> 节点3，权值为5 ，minDist[3] > minDist[1] + 5，更新 minDist[3] = minDist[1] + 5 = 0 + 5 = 5。\n\n将节点2、节点3 加入队列，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240411115544.png\n\n从队列里取出节点2，松弛节点2 作为出发点连接的边（节点2 -> 节点4）和边（节点2 -> 节点5）\n\n边：节点2 -> 节点4，权值为1 ，minDist[4] > minDist[2] + (-3) ，更新 minDist[4] = minDist[2] + (-3) = 1 + (-3) = -2 。\n\n边：节点2 -> 节点5，权值为2 ，minDist[5] > minDist[2] + 2 ，更新 minDist[5] = minDist[2] + 2 = 1 + 2 = 3 。\n\n将节点4，节点5 加入队列，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240412110348.png\n\n从队列里出去节点3，松弛节点3 作为出发点连接的边。\n\n因为没有从节点3作为出发点的边，所以这里就从队列里取出节点3就好，不用做其他操作，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240412110420.png\n\n从队列中取出节点4，松弛节点4作为出发点连接的边（节点4 -> 节点6）\n\n边：节点4 -> 节点6，权值为4 ，minDist[6] > minDist[4] + 4，更新 minDist[6] = minDist[4] + 4 = -2 + 4 = 2 。\n\n将节点6加入队列\n\n如图：\n\nhttps://file1.kamacoder.com/i/algo/20240412110445.png\n\n从队列中取出节点5，松弛节点5作为出发点连接的边（节点5 -> 节点3），边（节点5 -> 节点6）\n\n边：节点5 -> 节点3，权值为1 ，minDist[3] > minDist[5] + 1 ，更新 minDist[3] = minDist[5] + 1 = 3 + 1 = 4\n\n边：节点5 -> 节点6，权值为-2 ，minDist[6] > minDist[5] + (-2) ，更新 minDist[6] = minDist[5] + (-2) = 3 - 2 = 1\n\n如图，将节点3加入队列，因为节点6已经在队列里，所以不用重复添加\n\nhttps://file1.kamacoder.com/i/algo/20240729161116.png\n\n所以我们在加入队列的过程可以有一个优化，用visited数组记录已经在队列里的元素，已经在队列的元素不用重复加入\n\n从队列中取出节点6，松弛节点6 作为出发点连接的边。\n\n节点6作为终点，没有可以出发的边。\n\n同理从队列中取出节点3，也没有可以出发的边\n\n所以直接从队列中取出，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240411115424.png\n\n这样我们就完成了基于队列优化的bellman_ford的算法模拟过程。\n\n大家可以发现 基于队列优化的算法，要比bellman_ford 算法 减少很多无用的松弛情况，特别是对于边数众多的大图 优化效果明显。\n\n了解了大体流程，我们再看代码应该怎么写。\n\n在上面模拟过程中，我们每次都要知道 一个节点作为出发点连接了哪些节点。\n\n如果想方便知道这些数据，就需要使用邻接表来存储这个图，如果对于邻接表不了解的话，可以看 kama0047.参会dijkstra堆(https://programmercarl.com/kamacoder/0047.%E5%8F%82%E4%BC%9Adijkstra%E5%A0%86.html) 中 图的存储 部分。\n\n整体代码如下：\n\n#include <iostream>\n#include <vector>\n#include <queue>\n#include <list>\n#include <climits>\nusing namespace std;\n\nstruct Edge { //邻接表\n    int to;  // 链接的节点\n    int val; // 边的权重\n\n    Edge(int t, int w): to(t), val(w) {}  // 构造函数\n};\n\n\nint main() {\n    int n, m, p1, p2, val;\n    cin >> n >> m;\n\n    vector<list<Edge>> grid(n + 1); \n\n    vector<bool> isInQueue(n + 1); // 加入优化，已经在队里里的元素不用重复添加\n\n    // 将所有边保存起来\n    for(int i = 0; i < m; i++){\n        cin >> p1 >> p2 >> val;\n        // p1 指向 p2，权值为 val\n        grid[p1].push_back(Edge(p2, val));\n    }\n    int start = 1;  // 起点\n    int end = n;    // 终点\n\n    vector<int> minDist(n + 1 , INT_MAX);\n    minDist[start] = 0;\n\n    queue<int> que;\n    que.push(start); \n\n    while (!que.empty()) {\n\n        int node = que.front(); que.pop();\n        isInQueue[node] = false; // 从队列里取出的时候，要取消标记，我们只保证已经在队列里的元素不用重复加入\n        for (Edge edge : grid[node]) {\n            int from = node;\n            int to = edge.to;\n            int value = edge.val;\n            if (minDist[to] > minDist[from] + value) { // 开始松弛\n                minDist[to] = minDist[from] + value; \n                if (isInQueue[to] == false) { // 已经在队列里的元素不用重复添加\n                    que.push(to);\n                    isInQueue[to] = true;\n                }\n            }\n        }\n\n    }\n    if (minDist[end] == INT_MAX) cout << \"unconnected\" << endl; // 不能到达终点\n    else cout << minDist[end] << endl; // 到达终点最短路径\n}\n\n#效率分析\n队列优化版Bellman_ford 的时间复杂度 并不稳定，效率高低依赖于图的结构。\n\n例如 如果是一个双向图，且每一个节点和所有其他节点都相连的话，那么该算法的时间复杂度就接近于 Bellman_ford 的 O(N * E) N 为节点数量，E为边的数量。\n\n在这种图中，每一个节点都会重复加入队列 n - 1次，因为 这种图中 每个节点 都有 n-1 条指向该节点的边，每条边指向该节点，就需要加入一次队列。（如果这里看不懂，可以在重温一下代码逻辑）\n\n至于为什么 双向图且每一个节点和所有其他节点都相连的话，每个节点 都有 n-1 条指向该节点的边， 我再来举个例子，如图：\n\nhttps://file1.kamacoder.com/i/algo/20240416104138.png\n\n图中 每个节点都与其他所有节点相连，节点数n 为 4，每个节点都有3条指向该节点的边，即入度为3。\n\nn为其他数值的时候，也是一样的。\n\n当然这种图是比较极端的情况，也是最稠密的图。\n\n所以如果图越稠密，则 SPFA的效率越接近与 Bellman_ford。\n\n反之，图越稀疏，SPFA的效率就越高。\n\n一般来说，SPFA 的时间复杂度为 O(K * N) K 为不定值，因为 节点需要计入几次队列取决于 图的稠密度。\n\n如果图是一条线形图且单向的话，每个节点的入度为1，那么只需要加入一次队列，这样时间复杂度就是 O(N)。\n\n所以 SPFA 在最坏的情况下是 O(N * E)，但 一般情况下 时间复杂度为 O(K * N)。\n\n尽管如此，以上分析都是 理论上的时间复杂度分析。\n\n并没有计算 出队列 和 入队列的时间消耗。 因为这个在不同语言上 时间消耗也是不一定的。\n\n以C++为例，以下两段代码理论上，时间复杂度都是 O(n) ：\n\nfor (long long i = 0; i < n; i++) {\n    k++;\n}\n\nfor (long long i = 0; i < n; i++) {\n    que.push(i);\n    que.front();\n    que.pop();\n}\n\n在 MacBook Pro (13-inch, M1, 2020) 机器上分别测试这两段代码的时间消耗情况：\n\nn = 10^4，第一段代码的时间消耗：1ms，第二段代码的时间消耗： 4 ms\nn = 10^5，第一段代码的时间消耗：1ms，第二段代码的时间消耗： 13 ms\nn = 10^6，第一段代码的时间消耗：4ms，第二段代码的时间消耗： 59 ms\nn = 10^7，第一段代码的时间消耗: 24ms，第二段代码的时间消耗： 463 ms\nn = 10^8，第一段代码的时间消耗: 135ms，第二段代码的时间消耗： 4268 ms\n在这里就可以看出 出队列和入队列 其实也是十分耗时的。\n\nSPFA（队列优化版Bellman_ford） 在理论上 时间复杂度更胜一筹，但实际上，也要看图的稠密程度，如果 图很大且非常稠密的情况下，虽然 SPFA的时间复杂度接近Bellman_ford，但实际时间消耗 可能是 SPFA耗时更多。\n\n针对这种情况，我在后面题目讲解中，会特别加入稠密图的测试用例来给大家讲解。\n\n#拓展\n这里可能有录友疑惑，while (!que.empty()) 队里里 会不会造成死循环？ 例如 图中有环，这样一直有元素加入到队列里？\n\n其实有环的情况，要看它是 正权回路 还是 负权回路。\n\n题目描述中，已经说了，本题没有 负权回路 。\n\n如图：\n\nhttps://file1.kamacoder.com/i/algo/20240412111849.png\n\n正权回路 就是有环，但环的总权值为正数。\n\n在有环且只有正权回路的情况下，即使元素重复加入队列，最后，也会因为 所有边都松弛后，节点数值（minDist数组）不在发生变化了 而终止。\n\n（而且有重复元素加入队列是正常的，多条路径到达同一个节点，节点必要要选择一个最短的路径，而这个节点就会重复加入队列进行判断，选一个最短的）\n\n在0094.城市间货物运输I （https://programmercarl.com/kamacoder/0094.%E5%9F%8E%E5%B8%82%E9%97%B4%E8%B4%A7%E7%89%A9%E8%BF%90%E8%BE%93I.html）中我们讲过对所有边 最多松弛 n -1 次，就一定可以求出所有起点到所有节点的最小距离即 minDist数组。\n\n即使再松弛n次以上， 所有起点到所有节点的最小距离（minDist数组） 不会再变了。 （这里如果不理解，建议认真看0094.城市间货物运输I（https://programmercarl.com/kamacoder/0094.%E5%9F%8E%E5%B8%82%E9%97%B4%E8%B4%A7%E7%89%A9%E8%BF%90%E8%BE%93I.html）讲解）\n\n所以本题我们使用队列优化，有元素重复加入队列，也会因为最后 minDist数组 不会在发生变化而终止。\n\n节点再加入队列，需要有松弛的行为， 而 每个节点已经都计算出来 起点到该节点的最短路径，那么就不会有 执行这个判断条件if (minDist[to] > minDist[from] + value)，从而不会有新的节点加入到队列。\n\n但如果本题有 负权回路，那情况就不一样了，我在下一题目讲解中，会重点讲解 负权回路 带来的变化。\n\n#其他语言版本\n#Java\nimport java.util.*;\n\npublic class Main {\n\n    // Define an inner class Edge\n    static class Edge {\n        int from;\n        int to;\n        int val;\n        public Edge(int from, int to, int val) {\n            this.from = from;\n            this.to = to;\n            this.val = val;\n        }\n    }\n\n    public static void main(String[] args) {\n        // Input processing\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        List<List<Edge>> graph = new ArrayList<>();\n\n        for (int i = 0; i <= n; i++) {\n            graph.add(new ArrayList<>());\n        }\n\n        for (int i = 0; i < m; i++) {\n            int from = sc.nextInt();\n            int to = sc.nextInt();\n            int val = sc.nextInt();\n            graph.get(from).add(new Edge(from, to, val));\n        }\n\n        // Declare the minDist array to record the minimum distance form current node to the original node\n        int[] minDist = new int[n + 1];\n        Arrays.fill(minDist, Integer.MAX_VALUE);\n        minDist[1] = 0;\n\n        // Declare a queue to store the updated nodes instead of traversing all nodes each loop for more efficiency\n        Queue<Integer> queue = new LinkedList<>();\n        queue.offer(1);\n\n        // Declare a boolean array to record if the current node is in the queue to optimise the processing\n        boolean[] isInQueue = new boolean[n + 1];\n\n        while (!queue.isEmpty()) {\n            int curNode = queue.poll();\n            isInQueue[curNode] = false; // Represents the current node is not in the queue after being polled\n            for (Edge edge : graph.get(curNode)) {\n                if (minDist[edge.to] > minDist[edge.from] + edge.val) { // Start relaxing the edge\n                    minDist[edge.to] = minDist[edge.from] + edge.val;\n                    if (!isInQueue[edge.to]) { // Don't add the node if it's already in the queue\n                        queue.offer(edge.to);\n                        isInQueue[edge.to] = true;\n                    }\n                }\n            }\n        }\n        \n        // Outcome printing\n        if (minDist[n] == Integer.MAX_VALUE) {\n            System.out.println(\"unconnected\");\n        } else {\n            System.out.println(minDist[n]);\n        }\n    }\n}\n\n#Python\nimport collections\n\ndef main():\n    n, m = map(int, input().strip().split())\n    edges = [[] for _ in range(n + 1)]\n    for _ in range(m):\n        src, dest, weight = map(int, input().strip().split())\n        edges[src].append([dest, weight])\n    \n    minDist = [float(\"inf\")] * (n + 1)\n    minDist[1] = 0\n    que = collections.deque([1])\n    visited = [False] * (n + 1)\n    visited[1] = True\n    \n    while que:\n        cur = que.popleft()\n        visited[cur] = False\n        for dest, weight in edges[cur]:\n            if minDist[cur] != float(\"inf\") and minDist[cur] + weight < minDist[dest]:\n                minDist[dest] = minDist[cur] + weight\n                if visited[dest] == False:\n                    que.append(dest)\n                    visited[dest] = True\n    \n    if minDist[-1] == float(\"inf\"):\n        return \"unconnected\"\n    return minDist[-1]\n\nif __name__ == \"__main__\":\n    print(main())"
+}

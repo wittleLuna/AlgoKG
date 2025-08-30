@@ -1,0 +1,774 @@
+{
+  "id": "AP_efaba822",
+  "title": "所有可达路径",
+  "alternative_titles": [],
+  "platform": "kamacoder",
+  "url": "https://kamacoder.com/problempage.php?pid=1170",
+  "description": "一个有 n 个节点的有向无环图，节点编号从 1 到 n。请编写一个程序，找出并返回所有从节点 1 到节点 n 的路径。每条路径应以节点编号的列表形式表示。\n\n【输入描述】\n\n第一行包含两个整数 N，M，表示图中拥有 N 个节点，M 条边\n\n后续 M 行，每行包含两个整数 s 和 t，表示图中的 s 节点与 t 节点中有一条路径\n\n【输出描述】\n\n输出所有的可达路径，路径中所有节点的后面跟一个空格，每条路径独占一行，存在多条路径，路径输出的顺序可任意。\n\n如果不存在任何一条路径，则输出 -1。\n\n注意输出的序列中，最后一个节点后面没有空格！ 例如正确的答案是 1 3 5,而不是 1 3 5， 5后面没有空格！\n\n【输入",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "Depth-First Search",
+    "Graph Traversal"
+  ],
+  "data_structure_tags": [
+    "Adjacency Matrix",
+    "Adjacency List"
+  ],
+  "technique_tags": [
+    "Recursion",
+    "Backtracking"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用深度优先搜索（DFS）算法遍历有向无环图，从节点1开始到节点n结束，寻找所有可能的路径。整个过程包括构建图的数据结构（邻接矩阵或邻接表）、定义递归函数来执行DFS、以及处理和存储路径。",
+  "key_insights": [
+    {
+      "content": "明确递归函数参数与功能、确定终止条件、处理当前节点并探索其邻居节点。"
+    },
+    {
+      "content": "针对本题，既可以选择邻接矩阵也可以选择邻接表作为图的表示形式。两种方式各有优劣：邻接矩阵直观但空间复杂度高；邻接表节省空间但构造稍复杂。"
+    },
+    {
+      "content": "在每次递归调用后需撤销本次添加的节点以保证路径正确性，即回溯步骤是不可或缺的。这确保了程序能够尝试所有潜在路径而不被任何单一路径所限制。"
+    },
+    {
+      "content": "注意输出格式要求，每条路径最后一个节点后面不能有空格。"
+    },
+    {
+      "content": "理解图的存储方式对于解决此类问题至关重要，邻接矩阵和邻接表都是有效的解决方案。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "插曲",
+      "text": "本题和力扣 797.所有可能的路径 (https://leetcode.cn/problems/all-paths-from-source-to-target/description/)是一样的，录友了解深度优先搜索之后，这道题目就是模板题，是送分题。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n    if (x == n) { result.push_back(path); return; }\n    for (int i = 1; i <= n; i++) {\n        if (graph[x][i] == 1) {\n            path.push_back(i);\n            dfs(graph, i, n);\n            path.pop_back();\n        }\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n    while (m--) {\n        cin >> s >> t;\n        graph[s][t] = 1;\n    }\n    path.push_back(1);\n    dfs(graph, 1, n);\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1] << endl;\n    }\n}",
+          "description": "邻接矩阵实现的C++代码"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<list<int>>& graph, int x, int n) {\n    if (x == n) { result.push_back(path); return; }\n    for (int i : graph[x]) {\n        path.push_back(i);\n        dfs(graph, i, n);\n        path.pop_back();\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    path.push_back(1);\n    dfs(graph, 1, n);\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1] << endl;\n    }\n}",
+          "description": "邻接表实现的C++代码"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>();\n    static List<Integer> path = new ArrayList<>();\n    public static void dfs(int[][] graph, int x, int n) {\n        if (x == n) { result.add(new ArrayList<>(path)); return; }\n        for (int i = 1; i <= n; i++) {\n            if (graph[x][i] == 1) {\n                path.add(i);\n                dfs(graph, i, n);\n                path.remove(path.size() - 1);\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] graph = new int[n + 1][n + 1];\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph[s][t] = 1;\n        }\n        path.add(1);\n        dfs(graph, 1, n);\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "邻接矩阵实现的Java代码"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>();\n    static List<Integer> path = new ArrayList<>();\n    public static void dfs(List<LinkedList<Integer>> graph, int x, int n) {\n        if (x == n) { result.add(new ArrayList<>(path)); return; }\n        for (int i : graph.get(x)) {\n            path.add(i);\n            dfs(graph, i, n);\n            path.remove(path.size() - 1);\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        List<LinkedList<Integer>> graph = new ArrayList<>(n + 1);\n        for (int i = 0; i <= n; i++) {\n            graph.add(new LinkedList<>());\n        }\n        while (m-- > 0) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph.get(s).add(t);\n        }\n        path.add(1);\n        dfs(graph, 1, n);\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "邻接表实现的Java代码"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, x, n, path, result):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in range(1, n + 1):\n        if graph[x][i] == 1:\n            path.append(i)\n            dfs(graph, i, n, path, result)\n            path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = [[0] * (n + 1) for _ in range(n + 1)]\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s][t] = 1\n    result = []\n    dfs(graph, 1, n, [1], result)\n    if not result:\n        print(-1)\n    else:\n        for path in result:\n            print(' '.join(map(str, path)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "邻接矩阵实现的Python代码"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict\nresult = [] # 收集符合条件的路径\npath = [] # 1节点到终点的路径\ndef dfs(graph, x, n):\n    if x == n: # 找到符合条件的一条路径\n        result.append(path.copy())\n        return\n    for i in graph[x]: # 找到 x指向的节点\n        path.append(i) # 遍历到的节点加入到路径中来\n        dfs(graph, i, n) # 进入下一层递归\n        path.pop() # 回溯，撤销本节点\ndef main():\n    n, m = map(int, input().split())\n    graph = defaultdict(list) # 邻接表\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s].append(t)\n    path.append(1) # 无论什么路径已经是从1节点出发\n    dfs(graph, 1, n) # 开始遍历\n    # 输出结果\n    if not result:\n        print(-1)\n    for pa in result:\n        print(' '.join(map(str, pa)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "邻接表实现的Python代码"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "图的存储",
+      "text": "在图论理论基础篇 https://programmercarl.com/kamacoder/%E5%9B%BE%E8%AE%BA%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html 中我们讲到了 两种 图的存储方式：邻接表 和 邻接矩阵。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n        if (graph[x][i] == 1) { // 找到 x链接的节点\n            path.push_back(i); // 遍历到的节点加入到路径中来\n            dfs(graph, i, n); // 进入下一层递归\n            path.pop_back(); // 回溯，撤销本节点\n        }\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n    while (m--) {\n        cin >> s >> t;\n        graph[s][t] = 1;\n    }\n    path.push_back(1); // 无论什么路径已经是从0节点出发\n    dfs(graph, 1, n); // 开始遍历\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "C++邻接矩阵实现所有可达路径"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<list<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i : graph[x]) { // 找到 x指向的节点\n        path.push_back(i); // 遍历到的节点加入到路径中来\n        dfs(graph, i, n); // 进入下一层递归\n        path.pop_back(); // 回溯，撤销本节点\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1); // 邻接表\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    path.push_back(1); // 无论什么路径已经是从0节点出发\n    dfs(graph, 1, n); // 开始遍历\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "C++邻接表实现所有可达路径"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\nstatic List<List<Integer>> result = new ArrayList<>(); // 收集符合条件的路径\nstatic List<Integer> path = new ArrayList<>(); // 1节点到终点的路径\npublic static void dfs(int[][] graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.add(new ArrayList<>(path));\n        return;\n    }\n    for (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n        if (graph[x][i] == 1) { // 找到 x链接的节点\n            path.add(i); // 遍历到的节点加入到路径中来\n            dfs(graph, i, n); // 进入下一层递归\n            path.remove(path.size() - 1); // 回溯，撤销本节点\n        }\n    }\n}\npublic static void main(String[] args) {\n    Scanner scanner = new Scanner(System.in);\n    int n = scanner.nextInt();\n    int m = scanner.nextInt();\n    int[][] graph = new int[n + 1][n + 1];\n    for (int i = 0; i < m; i++) {\n        int s = scanner.nextInt();\n        int t = scanner.nextInt();\n        graph[s][t] = 1;\n    }\n    path.add(1); // 无论什么路径已经是从1节点出发\ndfs(graph, 1, n); // 开始遍历\nif (result.isEmpty()) System.out.println(-1);\nfor (List<Integer> pa : result) {\n    for (int i = 0; i < pa.size() - 1; i++) {\n        System.out.print(pa.get(i) + \" \");\n    }\n    System.out.println(pa.get(pa.size() - 1));\n}\n}\n}",
+          "description": "Java邻接矩阵实现所有可达路径"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\nstatic List<List<Integer>> result = new ArrayList<>(); // 收集符合条件的路径\nstatic List<Integer> path = new ArrayList<>(); // 1节点到终点的路径\npublic static void dfs(List<LinkedList<Integer>> graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.add(new ArrayList<>(path));\n        return;\n    }\n    for (int i : graph.get(x)) { // 找到 x指向的节点\n        path.add(i); // 遍历到的节点加入到路径中来\n        dfs(graph, i, n); // 进入下一层递归\n        path.remove(path.size() - 1); // 回溯，撤销本节点\n    }\n}\npublic static void main(String[] args) {\n    Scanner scanner = new Scanner(System.in);\n    int n = scanner.nextInt();\n    int m = scanner.nextInt();\n    List<LinkedList<Integer>> graph = new ArrayList<>(n + 1);\n    for (int i = 0; i <= n; i++) {\n        graph.add(new LinkedList<>());\n    }\n    while (m-- > 0) {\n        int s = scanner.nextInt();\n        int t = scanner.nextInt();\n        graph.get(s).add(t);\n    }\n    path.add(1); // 无论什么路径已经是从1节点出发\ndfs(graph, 1, n); // 开始遍历\nif (result.isEmpty()) System.out.println(-1);\nfor (List<Integer> pa : result) {\n    for (int i = 0; i < pa.size() - 1; i++) {\n        System.out.print(pa.get(i) + \" \");\n    }\n    System.out.println(pa.get(pa.size() - 1));\n}\n}\n}",
+          "description": "Java邻接表实现所有可达路径"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, x, n, path, result):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in range(1, n + 1):\n        if graph[x][i] == 1:\n            path.append(i)\n            dfs(graph, i, n, path, result)\n            path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = [[0] * (n + 1) for _ in range(n + 1)]\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s][t] = 1\n    result = []\n    dfs(graph, 1, n, [1], result)\n    if not result:\n        print(-1)\n    else:\n        for path in result:\n            print(' '.join(map(str, path)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接矩阵实现所有可达路径"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict\nresult = []  # 收集符合条件的路径\npath = []  # 1节点到终点的路径\ndef dfs(graph, x, n):\n    if x == n:  # 找到符合条件的一条路径\n        result.append(path.copy())\n        return\n    for i in graph[x]:  # 找到 x指向的节点\n        path.append(i)  # 遍历到的节点加入到路径中来\n        dfs(graph, i, n)  # 进入下一层递归\n        path.pop()  # 回溯，撤销本节点\ndef main():\n    n, m = map(int, input().split())\n    graph = defaultdict(list)  # 邻接表\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s].append(t)\n    path.append(1)  # 无论什么路径已经是从1节点出发\ndfs(graph, 1, n)  # 开始遍历\nif not result:\n    print(-1)\nfor pa in result:\n    print(' '.join(map(str, pa)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接表实现所有可达路径"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "邻接矩阵",
+      "text": "邻接矩阵 使用 二维数组来表示图结构。 邻接矩阵是从节点的角度来表示图，有多少节点就申请多大的二维数组。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n    if (x == n) { \n        result.push_back(path);\n        return;\n    }\n    for (int i = 1; i <= n; i++) { \n        if (graph[x][i] == 1) { \n            path.push_back(i); \n            dfs(graph, i, n); \n            path.pop_back(); \n        }\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n    while (m--) {\n        cin >> s >> t;\n        graph[s][t] = 1;\n    }\n    path.push_back(1);\n    dfs(graph, 1, n);\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<list<int>>& graph, int x, int n) {\n    if (x == n) { \n        result.push_back(path);\n        return;\n    }\n    for (int i : graph[x]) { \n        path.push_back(i); \n        dfs(graph, i, n); \n        path.pop_back(); \n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    path.push_back(1);\n    dfs(graph, 1, n);\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>();\n    static List<Integer> path = new ArrayList<>();\n    public static void dfs(int[][] graph, int x, int n) {\n        if (x == n) { \n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = 1; i <= n; i++) { \n            if (graph[x][i] == 1) { \n                path.add(i); \n                dfs(graph, i, n); \n                path.remove(path.size() - 1); \n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] graph = new int[n + 1][n + 1];\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph[s][t] = 1;\n        }\n        path.add(1);\n        dfs(graph, 1, n);\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>();\n    static List<Integer> path = new ArrayList<>();\n    public static void dfs(List<LinkedList<Integer>> graph, int x, int n) {\n        if (x == n) { \n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i : graph.get(x)) { \n            path.add(i); \n            dfs(graph, i, n); \n            path.remove(path.size() - 1); \n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        List<LinkedList<Integer>> graph = new ArrayList<>(n + 1);\n        for (int i = 0; i <= n; i++) {\n            graph.add(new LinkedList<>());\n        }\n        while (m-- > 0) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph.get(s).add(t);\n        }\n        path.add(1);\n        dfs(graph, 1, n);\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, x, n, path, result):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in range(1, n + 1):\n        if graph[x][i] == 1:\n            path.append(i)\n            dfs(graph, i, n, path, result)\n            path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = [[0] * (n + 1) for _ in range(n + 1)]\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s][t] = 1\n    result = []\n    dfs(graph, 1, n, [1], result)\n    if not result:\n        print(-1)\n    else:\n        for path in result:\n            print(' '.join(map(str, path)))\nif __name__ == \"__main__\":\n    main()",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict\nresult = []\npath = []\ndef dfs(graph, x, n):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in graph[x]:\n        path.append(i)\n        dfs(graph, i, n)\n        path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = defaultdict(list)\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s].append(t)\n    path.append(1)\n    dfs(graph, 1, n)\n    if not result:\n        print(-1)\n    for pa in result:\n        print(' '.join(map(str, pa)))\nif __name__ == \"__main__\":\n    main()",
+          "description": null
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "邻接表",
+      "text": "邻接表 使用 数组 + 链表的方式来表示。 邻接表是从边的数量来表示图，有多少边 才会申请对应大小的链表。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n    if (x == n) { \n        result.push_back(path);\n        return;\n    }\n    for (int i = 1; i <= n; i++) { \n        if (graph[x][i] == 1) { \n            path.push_back(i); \n            dfs(graph, i, n); \n            path.pop_back(); \n        }\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n    while (m--) {\n        cin >> s >> t;\n        graph[s][t] = 1;\n    }\n    path.push_back(1); \n    dfs(graph, 1, n); \n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "邻接矩阵方式实现图的存储和深度优先搜索"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<list<int>>& graph, int x, int n) {\n    if (x == n) { \n        result.push_back(path);\n        return;\n    }\n    for (int i : graph[x]) { \n        path.push_back(i); \n        dfs(graph, i, n); \n        path.pop_back(); \n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1); \n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    path.push_back(1); \n    dfs(graph, 1, n); \n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "邻接表方式实现图的存储和深度优先搜索"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); \n    static List<Integer> path = new ArrayList<>(); \n    public static void dfs(int[][] graph, int x, int n) {\n        if (x == n) { \n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = 1; i <= n; i++) { \n            if (graph[x][i] == 1) { \n                path.add(i); \n                dfs(graph, i, n); \n                path.remove(path.size() - 1); \n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] graph = new int[n + 1][n + 1];\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph[s][t] = 1;\n        }\n        path.add(1); \n        dfs(graph, 1, n); \n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "Java邻接矩阵方式实现图的存储和深度优先搜索"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); \n    static List<Integer> path = new ArrayList<>(); \n    public static void dfs(List<LinkedList<Integer>> graph, int x, int n) {\n        if (x == n) { \n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i : graph.get(x)) { \n            path.add(i); \n            dfs(graph, i, n); \n            path.remove(path.size() - 1); \n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        List<LinkedList<Integer>> graph = new ArrayList<>(n + 1);\n        for (int i = 0; i <= n; i++) {\n            graph.add(new LinkedList<>());\n        }\n        while (m-- > 0) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph.get(s).add(t);\n        }\n        path.add(1); \n        dfs(graph, 1, n); \n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "Java邻接表方式实现图的存储和深度优先搜索"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, x, n, path, result):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in range(1, n + 1):\n        if graph[x][i] == 1:\n            path.append(i)\n            dfs(graph, i, n, path, result)\n            path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = [[0] * (n + 1) for _ in range(n + 1)]\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s][t] = 1\n    result = []\n    dfs(graph, 1, n, [1], result)\n    if not result:\n        print(-1)\n    else:\n        for path in result:\n            print(' '.join(map(str, path)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接矩阵方式实现图的存储和深度优先搜索"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict\nresult = []  # 收集符合条件的路径\npath = []  # 1节点到终点的路径\ndef dfs(graph, x, n):\n    if x == n:  # 找到符合条件的一条路径\n        result.append(path.copy())\n        return\n    for i in graph[x]:  # 找到 x指向的节点\n        path.append(i)  # 遍历到的节点加入到路径中来\n        dfs(graph, i, n)  # 进入下一层递归\n        path.pop()  # 回溯，撤销本节点\ndef main():\n    n, m = map(int, input().split())\n    graph = defaultdict(list)  # 邻接表\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s].append(t)\n    path.append(1)  # 无论什么路径已经是从1节点出发\n    dfs(graph, 1, n)  # 开始遍历\n    if not result:\n        print(-1)\n    for pa in result:\n        print(' '.join(map(str, pa)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接表方式实现图的存储和深度优先搜索"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "深度优先搜索",
+      "text": "本题是深度优先搜索的基础题目，关于深搜我在图论深搜理论基础 已经有详细的讲解，图文并茂。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n        if (graph[x][i] == 1) { // 找到 x链接的节点\n            path.push_back(i); // 遍历到的节点加入到路径中来\n            dfs(graph, i, n); // 进入下一层递归\n            path.pop_back(); // 回溯，撤销本节点\n        }\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n    while (m--) {\n        cin >> s >> t;\n        graph[s][t] = 1;\n    }\n    path.push_back(1); // 无论什么路径已经是从0节点出发\n    dfs(graph, 1, n); // 开始遍历\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "使用邻接矩阵的C++实现"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<list<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i : graph[x]) { // 找到 x指向的节点\n        path.push_back(i); // 遍历到的节点加入到路径中来\n        dfs(graph, i, n); // 进入下一层递归\n        path.pop_back(); // 回溯，撤销本节点\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1); // 邻接表\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    path.push_back(1); // 无论什么路径已经是从0节点出发\n    dfs(graph, 1, n); // 开始遍历\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "使用邻接表的C++实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\nstatic List<List<Integer>> result = new ArrayList<>();\nstatic List<Integer> path = new ArrayList<>();\npublic static void dfs(int[][] graph, int x, int n) {\n    if (x == n) {\n        result.add(new ArrayList<>(path));\n        return;\n    }\n    for (int i = 1; i <= n; i++) {\n        if (graph[x][i] == 1) {\n            path.add(i);\n            dfs(graph, i, n);\n            path.remove(path.size() - 1);\n        }\n    }\n}\npublic static void main(String[] args) {\n    Scanner scanner = new Scanner(System.in);\n    int n = scanner.nextInt();\n    int m = scanner.nextInt();\n    int[][] graph = new int[n + 1][n + 1];\n    for (int i = 0; i < m; i++) {\n        int s = scanner.nextInt();\n        int t = scanner.nextInt();\n        graph[s][t] = 1;\n    }\n    path.add(1);\n    dfs(graph, 1, n);\n    if (result.isEmpty()) System.out.println(-1);\n    for (List<Integer> pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            System.out.print(pa.get(i) + \" \");\n        }\n        System.out.println(pa.get(pa.size() - 1));\n    }\n}}",
+          "description": "使用邻接矩阵的Java实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\nstatic List<List<Integer>> result = new ArrayList<>();\nstatic List<Integer> path = new ArrayList<>();\npublic static void dfs(List<LinkedList<Integer>> graph, int x, int n) {\n    if (x == n) {\n        result.add(new ArrayList<>(path));\n        return;\n    }\n    for (int i : graph.get(x)) {\n        path.add(i);\n        dfs(graph, i, n);\n        path.remove(path.size() - 1);\n    }\n}\npublic static void main(String[] args) {\n    Scanner scanner = new Scanner(System.in);\n    int n = scanner.nextInt();\n    int m = scanner.nextInt();\n    List<LinkedList<Integer>> graph = new ArrayList<>(n + 1);\n    for (int i = 0; i <= n; i++) {\n        graph.add(new LinkedList<>());\n    }\n    while (m-- > 0) {\n        int s = scanner.nextInt();\n        int t = scanner.nextInt();\n        graph.get(s).add(t);\n    }\n    path.add(1);\n    dfs(graph, 1, n);\n    if (result.isEmpty()) System.out.println(-1);\n    for (List<Integer> pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            System.out.print(pa.get(i) + \" \");\n        }\n        System.out.println(pa.get(pa.size() - 1));\n    }\n}}",
+          "description": "使用邻接表的Java实现"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, x, n, path, result):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in range(1, n + 1):\n        if graph[x][i] == 1:\n            path.append(i)\n            dfs(graph, i, n, path, result)\n            path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = [[0] * (n + 1) for _ in range(n + 1)]\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s][t] = 1\n    result = []\n    dfs(graph, 1, n, [1], result)\n    if not result:\n        print(-1)\n    else:\n        for path in result:\n            print(' '.join(map(str, path)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "使用邻接矩阵的Python实现"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict\nresult = []\npath = []\ndef dfs(graph, x, n):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in graph[x]:\n        path.append(i)\n        dfs(graph, i, n)\n        path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = defaultdict(list)\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s].append(t)\n    path.append(1)\n    dfs(graph, 1, n)\n    if not result:\n        print(-1)\n    for pa in result:\n        print(' '.join(map(str, pa)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "使用邻接表的Python实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "打印结果",
+      "text": "ACM格式大家在输出结果的时候，要关注看看格式问题，特别是字符串，有的题目说的是每个元素后面都有空格，有的题目说的是 每个元素间有空格，最后一个元素没有空格。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n    if (x == n) { \n        result.push_back(path);\n        return;\n    }\n    for (int i = 1; i <= n; i++) { \n        if (graph[x][i] == 1) { \n            path.push_back(i); \n            dfs(graph, i, n); \n            path.pop_back(); \n        }\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n    while (m--) {\n        cin >> s >> t;\n        graph[s][t] = 1;\n    }\n    path.push_back(1);\n    dfs(graph, 1, n);\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "C++邻接矩阵写法"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<list<int>>& graph, int x, int n) {\n    if (x == n) { \n        result.push_back(path);\n        return;\n    }\n    for (int i : graph[x]) { \n        path.push_back(i); \n        dfs(graph, i, n); \n        path.pop_back(); \n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1); \n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    path.push_back(1);\n    dfs(graph, 1, n);\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "C++邻接表写法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>();\n    static List<Integer> path = new ArrayList<>();\n    public static void dfs(int[][] graph, int x, int n) {\n        if (x == n) {\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = 1; i <= n; i++) {\n            if (graph[x][i] == 1) {\n                path.add(i); \n                dfs(graph, i, n);\n                path.remove(path.size() - 1);\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] graph = new int[n + 1][n + 1];\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph[s][t] = 1;\n        }\n        path.add(1);\n        dfs(graph, 1, n);\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "Java邻接矩阵写法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>();\n    static List<Integer> path = new ArrayList<>();\n    public static void dfs(List<LinkedList<Integer>> graph, int x, int n) {\n        if (x == n) {\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i : graph.get(x)) {\n            path.add(i); \n            dfs(graph, i, n);\n            path.remove(path.size() - 1);\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        List<LinkedList<Integer>> graph = new ArrayList<>(n + 1);\n        for (int i = 0; i <= n; i++) {\n            graph.add(new LinkedList<>());\n        }\n        while (m-- > 0) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph.get(s).add(t);\n        }\n        path.add(1);\n        dfs(graph, 1, n);\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "Java邻接表写法"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, x, n, path, result):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in range(1, n + 1):\n        if graph[x][i] == 1:\n            path.append(i)\n            dfs(graph, i, n, path, result)\n            path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = [[0] * (n + 1) for _ in range(n + 1)]\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s][t] = 1\n    result = []\n    dfs(graph, 1, n, [1], result)\n    if not result:\n        print(-1)\n    else:\n        for path in result:\n            print(' '.join(map(str, path)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接矩阵写法"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict\nresult = []\npath = []\ndef dfs(graph, x, n):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in graph[x]:\n        path.append(i)\n        dfs(graph, i, n)\n        path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = defaultdict(list)\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s].append(t)\n    path.append(1)\n    dfs(graph, 1, n)\n    if not result:\n        print(-1)\n    for pa in result:\n        print(' '.join(map(str, pa)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接表写法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "本题代码",
+      "text": "#邻接矩阵写法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n        if (graph[x][i] == 1) { // 找到 x链接的节点\n            path.push_back(i); // 遍历到的节点加入到路径中来\n            dfs(graph, i, n); // 进入下一层递归\n            path.pop_back(); // 回溯，撤销本节点\n        }\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n    while (m--) {\n        cin >> s >> t;\n        graph[s][t] = 1;\n    }\n    path.push_back(1); // 无论什么路径已经是从0节点出发\n    dfs(graph, 1, n); // 开始遍历\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "邻接矩阵写法"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<list<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i : graph[x]) { // 找到 x指向的节点\n        path.push_back(i); // 遍历到的节点加入到路径中来\n        dfs(graph, i, n); // 进入下一层递归\n        path.pop_back(); // 回溯，撤销本节点\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1); // 邻接表\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    path.push_back(1); // 无论什么路径已经是从0节点出发\n    dfs(graph, 1, n); // 开始遍历\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "邻接表写法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); // 收集符合条件的路径\n    static List<Integer> path = new ArrayList<>(); // 1节点到终点的路径\n    public static void dfs(int[][] graph, int x, int n) {\n        if (x == n) { // 找到符合条件的一条路径\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n            if (graph[x][i] == 1) { // 找到 x链接的节点\n                path.add(i); // 遍历到的节点加入到路径中来\n                dfs(graph, i, n); // 进入下一层递归\n                path.remove(path.size() - 1); // 回溯，撤销本节点\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] graph = new int[n + 1][n + 1];\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph[s][t] = 1;\n        }\n        path.add(1); // 无论什么路径已经是从1节点出发\n        dfs(graph, 1, n); // 开始遍历\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "邻接矩阵写法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); // 收集符合条件的路径\n    static List<Integer> path = new ArrayList<>(); // 1节点到终点的路径\n    public static void dfs(List<LinkedList<Integer>> graph, int x, int n) {\n        if (x == n) { // 找到符合条件的一条路径\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i : graph.get(x)) { // 找到 x指向的节点\n            path.add(i); // 遍历到的节点加入到路径中来\n            dfs(graph, i, n); // 进入下一层递归\n            path.remove(path.size() - 1); // 回溯，撤销本节点\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        List<LinkedList<Integer>> graph = new ArrayList<>(n + 1);\n        for (int i = 0; i <= n; i++) {\n            graph.add(new LinkedList<>());\n        }\n        while (m-- > 0) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph.get(s).add(t);\n        }\n        path.add(1); // 无论什么路径已经是从1节点出发\n        dfs(graph, 1, n); // 开始遍历\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "邻接表写法"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, x, n, path, result):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in range(1, n + 1):\n        if graph[x][i] == 1:\n            path.append(i)\n            dfs(graph, i, n, path, result)\n            path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = [[0] * (n + 1) for _ in range(n + 1)]\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s][t] = 1\n    result = []\n    dfs(graph, 1, n, [1], result)\n    if not result:\n        print(-1)\n    else:\n        for path in result:\n            print(' '.join(map(str, path)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "邻接矩阵写法"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict\nresult = []  # 收集符合条件的路径\npath = []  # 1节点到终点的路径\ndef dfs(graph, x, n):\n    if x == n:  # 找到符合条件的一条路径\n        result.append(path.copy())\n        return\n    for i in graph[x]:  # 找到 x指向的节点\n        path.append(i)  # 遍历到的节点加入到路径中来\n        dfs(graph, i, n)  # 进入下一层递归\n        path.pop()  # 回溯，撤销本节点\ndef main():\n    n, m = map(int, input().split())\n    graph = defaultdict(list)  # 邻接表\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s].append(t)\n    path.append(1)  # 无论什么路径已经是从1节点出发\n    dfs(graph, 1, n)  # 开始遍历\n    if not result:\n        print(-1)\n    for pa in result:\n        print(' '.join(map(str, pa)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "邻接表写法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "邻接矩阵写法",
+      "text": "#include <iostream>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n    if (x == n) { \n        result.push_back(path);\n        return;\n    }\n    for (int i = 1; i <= n; i++) { \n        if (graph[x][i] == 1) { \n            path.push_back(i); \n            dfs(graph, i, n); \n            path.pop_back(); \n        }\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n    while (m--) {\n        cin >> s >> t;\n        graph[s][t] = 1;\n    }\n    path.push_back(1); \n    dfs(graph, 1, n); \n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "C++邻接矩阵实现从节点1到节点n的所有路径查找"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<list<int>>& graph, int x, int n) {\n    if (x == n) { \n        result.push_back(path);\n        return;\n    }\n    for (int i : graph[x]) { \n        path.push_back(i); \n        dfs(graph, i, n); \n        path.pop_back(); \n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1); \n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    path.push_back(1); \n    dfs(graph, 1, n); \n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "C++邻接表实现从节点1到节点n的所有路径查找"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>();\n    static List<Integer> path = new ArrayList<>();\n    public static void dfs(int[][] graph, int x, int n) {\n        if (x == n) {\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = 1; i <= n; i++) {\n            if (graph[x][i] == 1) {\n                path.add(i);\n                dfs(graph, i, n);\n                path.remove(path.size() - 1);\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] graph = new int[n + 1][n + 1];\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph[s][t] = 1;\n        }\n        path.add(1);\n        dfs(graph, 1, n);\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "Java邻接矩阵实现从节点1到节点n的所有路径查找"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>();\n    static List<Integer> path = new ArrayList<>();\n    public static void dfs(List<LinkedList<Integer>> graph, int x, int n) {\n        if (x == n) {\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i : graph.get(x)) {\n            path.add(i);\n            dfs(graph, i, n);\n            path.remove(path.size() - 1);\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        List<LinkedList<Integer>> graph = new ArrayList<>(n + 1);\n        for (int i = 0; i <= n; i++) {\n            graph.add(new LinkedList<>());\n        }\n        while (m-- > 0) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph.get(s).add(t);\n        }\n        path.add(1);\n        dfs(graph, 1, n);\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "Java邻接表实现从节点1到节点n的所有路径查找"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, x, n, path, result):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in range(1, n + 1):\n        if graph[x][i] == 1:\n            path.append(i)\n            dfs(graph, i, n, path, result)\n            path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = [[0] * (n + 1) for _ in range(n + 1)]\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s][t] = 1\n    result = []\n    dfs(graph, 1, n, [1], result)\n    if not result:\n        print(-1)\n    else:\n        for path in result:\n            print(' '.join(map(str, path)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接矩阵实现从节点1到节点n的所有路径查找"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict\nresult = [] # 收集符合条件的路径\npath = [] # 1节点到终点的路径\ndef dfs(graph, x, n):\n    if x == n: # 找到符合条件的一条路径\n        result.append(path.copy())\n        return\n    for i in graph[x]: # 找到 x指向的节点\n        path.append(i) # 遍历到的节点加入到路径中来\n        dfs(graph, i, n) # 进入下一层递归\n        path.pop() # 回溯，撤销本节点\ndef main():\n    n, m = map(int, input().split())\n    graph = defaultdict(list) # 邻接表\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s].append(t)\n    path.append(1) # 无论什么路径已经是从1节点出发\n    dfs(graph, 1, n) # 开始遍历\n    if not result:\n        print(-1)\n    for pa in result:\n        print(' '.join(map(str, pa)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接表实现从节点1到节点n的所有路径查找"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n    if (x == n) { \n        result.push_back(path);\n        return;\n    }\n    for (int i = 1; i <= n; i++) { \n        if (graph[x][i] == 1) { \n            path.push_back(i); \n            dfs(graph, i, n); \n            path.pop_back(); \n        }\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n    while (m--) {\n        cin >> s >> t;\n        graph[s][t] = 1;\n    }\n    path.push_back(1);\n    dfs(graph, 1, n);\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }",
+          "description": "邻接矩阵写法"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<list<int>>& graph, int x, int n) {\n    if (x == n) { \n        result.push_back(path);\n        return;\n    }\n    for (int i : graph[x]) { \n        path.push_back(i); \n        dfs(graph, i, n); \n        path.pop_back(); \n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1);\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    path.push_back(1);\n    dfs(graph, 1, n);\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }",
+          "description": "邻接表写法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); \n    static List<Integer> path = new ArrayList<>(); \n    public static void dfs(int[][] graph, int x, int n) {\n        if (x == n) { \n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = 1; i <= n; i++) { \n            if (graph[x][i] == 1) { \n                path.add(i); \n                dfs(graph, i, n); \n                path.remove(path.size() - 1); \n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] graph = new int[n + 1][n + 1];\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph[s][t] = 1;\n        }\n        path.add(1);\n        dfs(graph, 1, n);\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "Java邻接矩阵写法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); \n    static List<Integer> path = new ArrayList<>(); \n    public static void dfs(List<LinkedList<Integer>> graph, int x, int n) {\n        if (x == n) { \n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i : graph.get(x)) { \n            path.add(i); \n            dfs(graph, i, n); \n            path.remove(path.size() - 1); \n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        List<LinkedList<Integer>> graph = new ArrayList<>(n + 1);\n        for (int i = 0; i <= n; i++) {\n            graph.add(new LinkedList<>());\n        }\n        while (m-- > 0) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph.get(s).add(t);\n        }\n        path.add(1);\n        dfs(graph, 1, n);\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "Java邻接表写法"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, x, n, path, result):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in range(1, n + 1):\n        if graph[x][i] == 1:\n            path.append(i)\n            dfs(graph, i, n, path, result)\n            path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = [[0] * (n + 1) for _ in range(n + 1)]\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s][t] = 1\n    result = []\n    dfs(graph, 1, n, [1], result)\n    if not result:\n        print(-1)\n    else:\n        for path in result:\n            print(' '.join(map(str, path)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接矩阵写法"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict\nresult = []  # 收集符合条件的路径\npath = []  # 1节点到终点的路径\ndef dfs(graph, x, n):\n    if x == n:  # 找到符合条件的一条路径\n        result.append(path.copy())\n        return\n    for i in graph[x]:  # 找到 x指向的节点\n        path.append(i)  # 遍历到的节点加入到路径中来\n        dfs(graph, i, n)  # 进入下一层递归\n        path.pop()  # 回溯，撤销本节点\ndef main():\n    n, m = map(int, input().split())\n    graph = defaultdict(list)  # 邻接表\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s].append(t)\n    path.append(1)  # 无论什么路径已经是从1节点出发\n    dfs(graph, 1, n)  # 开始遍历\n    if not result:\n        print(-1)\n    for pa in result:\n        print(' '.join(map(str, pa)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接表写法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n        if (graph[x][i] == 1) { // 找到 x链接的节点\n            path.push_back(i); // 遍历到的节点加入到路径中来\n            dfs(graph, i, n); // 进入下一层递归\n            path.pop_back(); // 回溯，撤销本节点\n        }\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n    while (m--) {\n        cin >> s >> t;\n        graph[s][t] = 1;\n    }\n    path.push_back(1); // 无论什么路径已经是从0节点出发\n    dfs(graph, 1, n); // 开始遍历\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "C++邻接矩阵写法"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<list<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i : graph[x]) { // 找到 x指向的节点\n        path.push_back(i); // 遍历到的节点加入到路径中来\n        dfs(graph, i, n); // 进入下一层递归\n        path.pop_back(); // 回溯，撤销本节点\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1); // 邻接表\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    path.push_back(1); // 无论什么路径已经是从0节点出发\n    dfs(graph, 1, n); // 开始遍历\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "C++邻接表写法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); // 收集符合条件的路径\n    static List<Integer> path = new ArrayList<>(); // 1节点到终点的路径\n    public static void dfs(int[][] graph, int x, int n) {\n        if (x == n) { // 找到符合条件的一条路径\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n            if (graph[x][i] == 1) { // 找到 x链接的节点\n                path.add(i); // 遍历到的节点加入到路径中来\n                dfs(graph, i, n); // 进入下一层递归\n                path.remove(path.size() - 1); // 回溯，撤销本节点\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] graph = new int[n + 1][n + 1];\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph[s][t] = 1;\n        }\n        path.add(1); // 无论什么路径已经是从1节点出发\n        dfs(graph, 1, n); // 开始遍历\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "Java邻接矩阵写法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); // 收集符合条件的路径\n    static List<Integer> path = new ArrayList<>(); // 1节点到终点的路径\n    public static void dfs(List<LinkedList<Integer>> graph, int x, int n) {\n        if (x == n) { // 找到符合条件的一条路径\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i : graph.get(x)) { // 找到 x指向的节点\n            path.add(i); // 遍历到的节点加入到路径中来\n            dfs(graph, i, n); // 进入下一层递归\n            path.remove(path.size() - 1); // 回溯，撤销本节点\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        List<LinkedList<Integer>> graph = new ArrayList<>(n + 1);\n        for (int i = 0; i <= n; i++) {\n            graph.add(new LinkedList<>());\n        }\n        while (m-- > 0) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph.get(s).add(t);\n        }\n        path.add(1); // 无论什么路径已经是从1节点出发\n        dfs(graph, 1, n); // 开始遍历\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "Java邻接表写法"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, x, n, path, result):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in range(1, n + 1):\n        if graph[x][i] == 1:\n            path.append(i)\n            dfs(graph, i, n, path, result)\n            path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = [[0] * (n + 1) for _ in range(n + 1)]\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s][t] = 1\n    result = []\n    dfs(graph, 1, n, [1], result)\n    if not result:\n        print(-1)\n    else:\n        for path in result:\n            print(' '.join(map(str, path)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接矩阵写法"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict\nresult = []  # 收集符合条件的路径\npath = []  # 1节点到终点的路径\ndef dfs(graph, x, n):\n    if x == n:  # 找到符合条件的一条路径\n        result.append(path.copy())\n        return\n    for i in graph[x]:  # 找到 x指向的节点\n        path.append(i)  # 遍历到的节点加入到路径中来\n        dfs(graph, i, n)  # 进入下一层递归\n        path.pop()  # 回溯，撤销本节点\ndef main():\n    n, m = map(int, input().split())\n    graph = defaultdict(list)  # 邻接表\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s].append(t)\n    path.append(1)  # 无论什么路径已经是从1节点出发\n    dfs(graph, 1, n)  # 开始遍历\n    if not result:\n        print(-1)\n    for pa in result:\n        print(' '.join(map(str, pa)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接表写法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "邻接表写法",
+      "text": "#include <iostream>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n        if (graph[x][i] == 1) { // 找到 x链接的节点\n            path.push_back(i); // 遍历到的节点加入到路径中来\n            dfs(graph, i, n); // 进入下一层递归\n            path.pop_back(); // 回溯，撤销本节点\n        }\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n    while (m--) {\n        cin >> s >> t;\n        graph[s][t] = 1;\n    }\n    path.push_back(1); // 无论什么路径已经是从0节点出发\n    dfs(graph, 1, n); // 开始遍历\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "C++邻接矩阵实现"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<list<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i : graph[x]) { // 找到 x指向的节点\n        path.push_back(i); // 遍历到的节点加入到路径中来\n        dfs(graph, i, n); // 进入下一层递归\n        path.pop_back(); // 回溯，撤销本节点\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1); // 邻接表\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    path.push_back(1); // 无论什么路径已经是从0节点出发\n    dfs(graph, 1, n); // 开始遍历\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "C++邻接表实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); // 收集符合条件的路径\n    static List<Integer> path = new ArrayList<>(); // 1节点到终点的路径\n    public static void dfs(int[][] graph, int x, int n) {\n        if (x == n) { // 找到符合条件的一条路径\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n            if (graph[x][i] == 1) { // 找到 x链接的节点\n                path.add(i); // 遍历到的节点加入到路径中来\n                dfs(graph, i, n); // 进入下一层递归\n                path.remove(path.size() - 1); // 回溯，撤销本节点\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] graph = new int[n + 1][n + 1];\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph[s][t] = 1;\n        }\n        path.add(1); // 无论什么路径已经是从1节点出发\n        dfs(graph, 1, n); // 开始遍历\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "Java邻接矩阵实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); // 收集符合条件的路径\n    static List<Integer> path = new ArrayList<>(); // 1节点到终点的路径\n    public static void dfs(List<LinkedList<Integer>> graph, int x, int n) {\n        if (x == n) { // 找到符合条件的一条路径\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i : graph.get(x)) { // 找到 x指向的节点\n            path.add(i); // 遍历到的节点加入到路径中来\n            dfs(graph, i, n); // 进入下一层递归\n            path.remove(path.size() - 1); // 回溯，撤销本节点\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        List<LinkedList<Integer>> graph = new ArrayList<>(n + 1);\n        for (int i = 0; i <= n; i++) {\n            graph.add(new LinkedList<>());\n        }\n        while (m-- > 0) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph.get(s).add(t);\n        }\n        path.add(1); // 无论什么路径已经是从1节点出发\n        dfs(graph, 1, n); // 开始遍历\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "Java邻接表实现"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, x, n, path, result):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in range(1, n + 1):\n        if graph[x][i] == 1:\n            path.append(i)\n            dfs(graph, i, n, path, result)\n            path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = [[0] * (n + 1) for _ in range(n + 1)]\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s][t] = 1\n    result = []\n    dfs(graph, 1, n, [1], result)\n    if not result:\n        print(-1)\n    else:\n        for path in result:\n            print(' '.join(map(str, path)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接矩阵实现"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict\nresult = []  # 收集符合条件的路径\npath = []  # 1节点到终点的路径\ndef dfs(graph, x, n):\n    if x == n:  # 找到符合条件的一条路径\n        result.append(path.copy())\n        return\n    for i in graph[x]:  # 找到 x指向的节点\n        path.append(i)  # 遍历到的节点加入到路径中来\n        dfs(graph, i, n)  # 进入下一层递归\n        path.pop()  # 回溯，撤销本节点\ndef main():\n    n, m = map(int, input().split())\n    graph = defaultdict(list)  # 邻接表\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s].append(t)\n    path.append(1)  # 无论什么路径已经是从1节点出发\n    dfs(graph, 1, n)  # 开始遍历\n    if not result:\n        print(-1)\n    for pa in result:\n        print(' '.join(map(str, pa)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接表实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n        if (graph[x][i] == 1) { // 找到 x链接的节点\n            path.push_back(i); // 遍历到的节点加入到路径中来\n            dfs(graph, i, n); // 进入下一层递归\n            path.pop_back(); // 回溯，撤销本节点\n        }\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n    while (m--) {\n        cin >> s >> t;\n        graph[s][t] = 1;\n    }\n    path.push_back(1); // 无论什么路径已经是从0节点出发\ndfs(graph, 1, n); // 开始遍历\nif (result.size() == 0) cout << -1 << endl;\nfor (const vector<int> &pa : result) {\n    for (int i = 0; i < pa.size() - 1; i++) {\n        cout << pa[i] << \" \";\n    }\ncout << pa[pa.size() - 1]  << endl;}}",
+          "description": "使用邻接矩阵实现的C++代码"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<list<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i : graph[x]) { // 找到 x指向的节点\n        path.push_back(i); // 遍历到的节点加入到路径中来\ndfs(graph, i, n); // 进入下一层递归\npath.pop_back(); // 回溯，撤销本节点\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1); // 邻接表\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    path.push_back(1); // 无论什么路径已经是从0节点出发\ndfs(graph, 1, n); // 开始遍历\nif (result.size() == 0) cout << -1 << endl;\nfor (const vector<int> &pa : result) {\n    for (int i = 0; i < pa.size() - 1; i++) {\n        cout << pa[i] << \" \";\n    }\ncout << pa[pa.size() - 1]  << endl;}}",
+          "description": "使用邻接表实现的C++代码"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); // 收集符合条件的路径\n    static List<Integer> path = new ArrayList<>(); // 1节点到终点的路径\n    public static void dfs(int[][] graph, int x, int n) {\n        if (x == n) { // 找到符合条件的一条路径\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n            if (graph[x][i] == 1) { // 找到 x链接的节点\n                path.add(i); // 遍历到的节点加入到路径中来\ndfs(graph, i, n); // 进入下一层递归\npath.remove(path.size() - 1); // 回溯，撤销本节点\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] graph = new int[n + 1][n + 1];\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph[s][t] = 1;\n        }\n        path.add(1); // 无论什么路径已经是从1节点出发\ndfs(graph, 1, n); // 开始遍历\nif (result.isEmpty()) System.out.println(-1);\nfor (List<Integer> pa : result) {\n    for (int i = 0; i < pa.size() - 1; i++) {\n        System.out.print(pa.get(i) + \" \");\n    }\n    System.out.println(pa.get(pa.size() - 1));\n    }\n}",
+          "description": "使用邻接矩阵实现的Java代码"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); // 收集符合条件的路径\n    static List<Integer> path = new ArrayList<>(); // 1节点到终点的路径\n    public static void dfs(List<LinkedList<Integer>> graph, int x, int n) {\n        if (x == n) { // 找到符合条件的一条路径\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i : graph.get(x)) { // 找到 x指向的节点\n            path.add(i); // 遍历到的节点加入到路径中来\ndfs(graph, i, n); // 进入下一层递归\npath.remove(path.size() - 1); // 回溯，撤销本节点\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        List<LinkedList<Integer>> graph = new ArrayList<>(n + 1);\n        for (int i = 0; i <= n; i++) {\n            graph.add(new LinkedList<>());\n        }\n        while (m-- > 0) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph.get(s).add(t);\n        }\n        path.add(1); // 无论什么路径已经是从1节点出发\ndfs(graph, 1, n); // 开始遍历\nif (result.isEmpty()) System.out.println(-1);\nfor (List<Integer> pa : result) {\n    for (int i = 0; i < pa.size() - 1; i++) {\n        System.out.print(pa.get(i) + \" \");\n    }\n    System.out.println(pa.get(pa.size() - 1));\n    }\n}",
+          "description": "使用邻接表实现的Java代码"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, x, n, path, result):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in range(1, n + 1):\n        if graph[x][i] == 1:\n            path.append(i)\n            dfs(graph, i, n, path, result)\n            path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = [[0] * (n + 1) for _ in range(n + 1)]\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s][t] = 1\n    result = []\n    dfs(graph, 1, n, [1], result)\n    if not result:\n        print(-1)\n    else:\n        for path in result:\n            print(' '.join(map(str, path)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "使用邻接矩阵实现的Python代码"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict\nresult = []  # 收集符合条件的路径\npath = []  # 1节点到终点的路径\ndef dfs(graph, x, n):\n    if x == n:  # 找到符合条件的一条路径\n        result.append(path.copy())\n        return\n    for i in graph[x]:  # 找到 x指向的节点\n        path.append(i)  # 遍历到的节点加入到路径中来\ndfs(graph, i, n)  # 进入下一层递归\npath.pop()  # 回溯，撤销本节点\ndef main():\n    n, m = map(int, input().split())\n    graph = defaultdict(list)  # 邻接表\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s].append(t)\n    path.append(1)  # 无论什么路径已经是从1节点出发\ndfs(graph, 1, n)  # 开始遍历\nif not result:\n    print(-1)\nfor pa in result:\n    print(' '.join(map(str, pa)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "使用邻接表实现的Python代码"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n    if (x == n) { \n        result.push_back(path);\n        return;\n    }\n    for (int i = 1; i <= n; i++) { \n        if (graph[x][i] == 1) { \n            path.push_back(i); \n            dfs(graph, i, n); \n            path.pop_back(); \n        }\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n    while (m--) {\n        cin >> s >> t;\n        graph[s][t] = 1;\n    }\n    path.push_back(1);\n    dfs(graph, 1, n);\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<list<int>>& graph, int x, int n) {\n    if (x == n) { \n        result.push_back(path);\n        return;\n    }\n    for (int i : graph[x]) { \n        path.push_back(i); \n        dfs(graph, i, n); \n        path.pop_back(); \n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1); \n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    path.push_back(1);\n    dfs(graph, 1, n);\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\nstatic List<List<Integer>> result = new ArrayList<>(); \nstatic List<Integer> path = new ArrayList<>(); \npublic static void dfs(int[][] graph, int x, int n) {\n    if (x == n) { \n        result.add(new ArrayList<>(path));\n        return;\n    }\n    for (int i = 1; i <= n; i++) { \n        if (graph[x][i] == 1) { \n            path.add(i); \n            dfs(graph, i, n); \n            path.remove(path.size() - 1); \n        }\n    }\n}\npublic static void main(String[] args) {\n    Scanner scanner = new Scanner(System.in);\n    int n = scanner.nextInt();\n    int m = scanner.nextInt();\n    int[][] graph = new int[n + 1][n + 1];\n    for (int i = 0; i < m; i++) {\n        int s = scanner.nextInt();\n        int t = scanner.nextInt();\n        graph[s][t] = 1;\n    }\n    path.add(1);\n    dfs(graph, 1, n);\n    if (result.isEmpty()) System.out.println(-1);\n    for (List<Integer> pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            System.out.print(pa.get(i) + \" \");\n        }\n        System.out.println(pa.get(pa.size() - 1));\n    }\n}\n}",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\nstatic List<List<Integer>> result = new ArrayList<>(); \nstatic List<Integer> path = new ArrayList<>(); \npublic static void dfs(List<LinkedList<Integer>> graph, int x, int n) {\n    if (x == n) { \n        result.add(new ArrayList<>(path));\n        return;\n    }\n    for (int i : graph.get(x)) { \n        path.add(i); \n        dfs(graph, i, n); \n        path.remove(path.size() - 1); \n    }\n}\npublic static void main(String[] args) {\n    Scanner scanner = new Scanner(System.in);\n    int n = scanner.nextInt();\n    int m = scanner.nextInt();\n    List<LinkedList<Integer>> graph = new ArrayList<>(n + 1);\n    for (int i = 0; i <= n; i++) {\n        graph.add(new LinkedList<>());\n    }\n    while (m-- > 0) {\n        int s = scanner.nextInt();\n        int t = scanner.nextInt();\n        graph.get(s).add(t);\n    }\n    path.add(1);\n    dfs(graph, 1, n);\n    if (result.isEmpty()) System.out.println(-1);\n    for (List<Integer> pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            System.out.print(pa.get(i) + \" \");\n        }\n        System.out.println(pa.get(pa.size() - 1));\n    }\n}\n}",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, x, n, path, result):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in range(1, n + 1):\n        if graph[x][i] == 1:\n            path.append(i)\n            dfs(graph, i, n, path, result)\n            path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = [[0] * (n + 1) for _ in range(n + 1)]\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s][t] = 1\n    result = []\n    dfs(graph, 1, n, [1], result)\n    if not result:\n        print(-1)\n    else:\n        for path in result:\n            print(' '.join(map(str, path)))\nif __name__ == \"__main__\":\n    main()",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict\nresult = [] \npath = [] \ndef dfs(graph, x, n):\n    if x == n: \n        result.append(path.copy())\n        return\n    for i in graph[x]: \n        path.append(i) \n        dfs(graph, i, n) \n        path.pop() \ndef main():\n    n, m = map(int, input().split())\n    graph = defaultdict(list) \n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s].append(t)\n    path.append(1) \n    dfs(graph, 1, n) \n    if not result:\n        print(-1)\n    for pa in result:\n        print(' '.join(map(str, pa)))\nif __name__ == \"__main__\":\n    main()",
+          "description": null
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <list>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i = 1; i <= n; i++) { \n        if (graph[x][i] == 1) { \n            path.push_back(i); \n            dfs(graph, i, n); \n            path.pop_back(); \n        }\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n    while (m--) {\n        cin >> s >> t;\n        graph[s][t] = 1;\n    }\n    path.push_back(1); \n    dfs(graph, 1, n); \n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "邻接矩阵写法"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<list<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i : graph[x]) { \n        path.push_back(i); \n        dfs(graph, i, n); \n        path.pop_back(); \n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1); \n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    path.push_back(1); \n    dfs(graph, 1, n); \n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "邻接表写法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); \n    static List<Integer> path = new ArrayList<>(); \n    public static void dfs(int[][] graph, int x, int n) {\n        if (x == n) { \n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = 1; i <= n; i++) { \n            if (graph[x][i] == 1) { \n                path.add(i); \n                dfs(graph, i, n); \n                path.remove(path.size() - 1); \n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] graph = new int[n + 1][n + 1];\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph[s][t] = 1;\n        }\n        path.add(1); \n        dfs(graph, 1, n); \n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "Java邻接矩阵写法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); \n    static List<Integer> path = new ArrayList<>(); \n    public static void dfs(List<LinkedList<Integer>> graph, int x, int n) {\n        if (x == n) { \n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i : graph.get(x)) { \n            path.add(i); \n            dfs(graph, i, n); \n            path.remove(path.size() - 1); \n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        List<LinkedList<Integer>> graph = new ArrayList<>(n + 1);\n        for (int i = 0; i <= n; i++) {\n            graph.add(new LinkedList<>());\n        }\n        while (m-- > 0) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph.get(s).add(t);\n        }\n        path.add(1); \n        dfs(graph, 1, n); \n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "Java邻接表写法"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, x, n, path, result):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in range(1, n + 1):\n        if graph[x][i] == 1:\n            path.append(i)\n            dfs(graph, i, n, path, result)\n            path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = [[0] * (n + 1) for _ in range(n + 1)]\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s][t] = 1\n    result = []\n    dfs(graph, 1, n, [1], result)\n    if not result:\n        print(-1)\n    else:\n        for path in result:\n            print(' '.join(map(str, path)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接矩阵写法"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict\nresult = [] # 收集符合条件的路径\npath = [] # 1节点到终点的路径\ndef dfs(graph, x, n):\n    if x == n: # 找到符合条件的一条路径\n        result.append(path.copy())\n        return\n    for i in graph[x]: # 找到 x指向的节点\n        path.append(i) # 遍历到的节点加入到路径中来\n        dfs(graph, i, n) # 进入下一层递归\n        path.pop() # 回溯，撤销本节点\ndef main():\n    n, m = map(int, input().split())\n    graph = defaultdict(list) # 邻接表\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s].append(t)\n    path.append(1) # 无论什么路径已经是从1节点出发\ndfs(graph, 1, n) # 开始遍历\n# 输出结果\nif not result:\n    print(-1)\nfor pa in result:\n    print(' '.join(map(str, pa)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接表写法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "本题是一道简单的深搜题目，也可以说是模板题，和 力扣797. 所有可能的路径 (https://leetcode.cn/problems/all-paths-from-source-to-target/description/)思路是一样一样的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n        if (graph[x][i] == 1) { // 找到 x链接的节点\n            path.push_back(i); // 遍历到的节点加入到路径中来\n            dfs(graph, i, n); // 进入下一层递归\n            path.pop_back(); // 回溯，撤销本节点\n        }\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n    while (m--) {\n        cin >> s >> t;\n        graph[s][t] = 1;\n    }\n    path.push_back(1); // 无论什么路径已经是从0节点出发\n    dfs(graph, 1, n); // 开始遍历\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "使用邻接矩阵实现从节点1到节点n的所有路径搜索。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<list<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i : graph[x]) { // 找到 x指向的节点\n        path.push_back(i); // 遍历到的节点加入到路径中来\n        dfs(graph, i, n); // 进入下一层递归\n        path.pop_back(); // 回溯，撤销本节点\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1); // 邻接表\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    path.push_back(1); // 无论什么路径已经是从0节点出发\n    dfs(graph, 1, n); // 开始遍历\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "使用邻接表实现从节点1到节点n的所有路径搜索。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\nstatic List<List<Integer>> result = new ArrayList<>();\nstatic List<Integer> path = new ArrayList<>();\npublic static void dfs(int[][] graph, int x, int n) {\n    if (x == n) {\n        result.add(new ArrayList<>(path));\n        return;\n    }\n    for (int i = 1; i <= n; i++) {\n        if (graph[x][i] == 1) {\n            path.add(i);\n            dfs(graph, i, n);\n            path.remove(path.size() - 1);\n        }\n    }\n}\npublic static void main(String[] args) {\n    Scanner scanner = new Scanner(System.in);\n    int n = scanner.nextInt();\n    int m = scanner.nextInt();\n    int[][] graph = new int[n + 1][n + 1];\n    for (int i = 0; i < m; i++) {\n        int s = scanner.nextInt();\n        int t = scanner.nextInt();\n        graph[s][t] = 1;\n    }\n    path.add(1);\n    dfs(graph, 1, n);\n    if (result.isEmpty()) System.out.println(-1);\n    for (List<Integer> pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            System.out.print(pa.get(i) + \" \");\n        }\n        System.out.println(pa.get(pa.size() - 1));\n    }\n}}",
+          "description": "Java版本，使用邻接矩阵实现从节点1到节点n的所有路径搜索。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\nstatic List<List<Integer>> result = new ArrayList<>();\nstatic List<Integer> path = new ArrayList<>();\npublic static void dfs(List<LinkedList<Integer>> graph, int x, int n) {\n    if (x == n) {\n        result.add(new ArrayList<>(path));\n        return;\n    }\n    for (int i : graph.get(x)) {\n        path.add(i);\n        dfs(graph, i, n);\n        path.remove(path.size() - 1);\n    }\n}\npublic static void main(String[] args) {\n    Scanner scanner = new Scanner(System.in);\n    int n = scanner.nextInt();\n    int m = scanner.nextInt();\n    List<LinkedList<Integer>> graph = new ArrayList<>(n + 1);\n    for (int i = 0; i <= n; i++) {\n        graph.add(new LinkedList<>());\n    }\n    while (m-- > 0) {\n        int s = scanner.nextInt();\n        int t = scanner.nextInt();\n        graph.get(s).add(t);\n    }\n    path.add(1);\n    dfs(graph, 1, n);\n    if (result.isEmpty()) System.out.println(-1);\n    for (List<Integer> pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            System.out.print(pa.get(i) + \" \");\n        }\n        System.out.println(pa.get(pa.size() - 1));\n    }\n}}",
+          "description": "Java版本，使用邻接表实现从节点1到节点n的所有路径搜索。"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, x, n, path, result):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in range(1, n + 1):\n        if graph[x][i] == 1:\n            path.append(i)\n            dfs(graph, i, n, path, result)\n            path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = [[0] * (n + 1) for _ in range(n + 1)]\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s][t] = 1\n    result = []\n    dfs(graph, 1, n, [1], result)\n    if not result:\n        print(-1)\n    else:\n        for path in result:\n            print(' '.join(map(str, path)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本，使用邻接矩阵实现从节点1到节点n的所有路径搜索。"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict\nresult = []\npath = []\ndef dfs(graph, x, n):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in graph[x]:\n        path.append(i)\n        dfs(graph, i, n)\n        path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = defaultdict(list)\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s].append(t)\n    path.append(1)\n    dfs(graph, 1, n)\n    if not result:\n        print(-1)\n    for pa in result:\n        print(' '.join(map(str, pa)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本，使用邻接表实现从节点1到节点n的所有路径搜索。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;import java.util.List;import java.util.Scanner;public class Main {static List<List<Integer>> result = new ArrayList<>(); static List<Integer> path = new ArrayList<>(); public static void dfs(int[][] graph, int x, int n) {if (x == n) {result.add(new ArrayList<>(path)); return;} for (int i = 1; i <= n; i++) {if (graph[x][i] == 1) {path.add(i); dfs(graph, i, n); path.remove(path.size() - 1);}}} public static void main(String[] args) {Scanner scanner = new Scanner(System.in); int n = scanner.nextInt(); int m = scanner.nextInt(); int[][] graph = new int[n + 1][n + 1]; for (int i = 0; i < m; i++) {int s = scanner.nextInt(); int t = scanner.nextInt(); graph[s][t] = 1;} path.add(1); dfs(graph, 1, n); if (result.isEmpty()) System.out.println(-1); for (List<Integer> pa : result) {for (int i = 0; i < pa.size() - 1; i++) {System.out.print(pa.get(i) + \" \");} System.out.println(pa.get(pa.size() - 1));}}}",
+          "description": "Java邻接矩阵实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;import java.util.LinkedList;import java.util.List;import java.util.Scanner;public class Main {static List<List<Integer>> result = new ArrayList<>(); static List<Integer> path = new ArrayList<>(); public static void dfs(List<LinkedList<Integer>> graph, int x, int n) {if (x == n) {result.add(new ArrayList<>(path)); return;} for (int i : graph.get(x)) {path.add(i); dfs(graph, i, n); path.remove(path.size() - 1);}} public static void main(String[] args) {Scanner scanner = new Scanner(System.in); int n = scanner.nextInt(); int m = scanner.nextInt(); List<LinkedList<Integer>> graph = new ArrayList<>(n + 1); for (int i = 0; i <= n; i++) {graph.add(new LinkedList<>());} while (m-- > 0) {int s = scanner.nextInt(); int t = scanner.nextInt(); graph.get(s).add(t);} path.add(1); dfs(graph, 1, n); if (result.isEmpty()) System.out.println(-1); for (List<Integer> pa : result) {for (int i = 0; i < pa.size() - 1; i++) {System.out.print(pa.get(i) + \" \");} System.out.println(pa.get(pa.size() - 1));}}}",
+          "description": "Java邻接表实现"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, x, n, path, result):if x == n:result.append(path.copy())returnfor i in range(1, n + 1):if graph[x][i] == 1:path.append(i)dfs(graph, i, n, path, result)path.pop()def main():n, m = map(int, input().split())graph = [[0] * (n + 1) for _ in range(n + 1)]for _ in range(m):s, t = map(int, input().split())graph[s][t] = 1result = []dfs(graph, 1, n, [1], result)if not result:print(-1)else:for path in result:print(' '.join(map(str, path)))if __name__ == \"__main__\":main()",
+          "description": "Python邻接矩阵实现"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdictresult = [] # 收集符合条件的路径path = [] # 1节点到终点的路径def dfs(graph, x, n):if x == n: # 找到符合条件的一条路径result.append(path.copy())returnfor i in graph[x]: # 找到 x指向的节点path.append(i) # 遍历到的节点加入到路径中来dfs(graph, i, n) # 进入下一层递归path.pop() # 回溯，撤销本节点def main():n, m = map(int, input().split())graph = defaultdict(list) # 邻接表for _ in range(m):s, t = map(int, input().split())graph[s].append(t)path.append(1) # 无论什么路径已经是从1节点出发dfs(graph, 1, n) # 开始遍历# 输出结果if not result:print(-1)for pa in result:print(' '.join(map(str, pa)))if __name__ == \"__main__\":main()",
+          "description": "Python邻接表实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "邻接矩阵写法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n        if (graph[x][i] == 1) { // 找到 x链接的节点\n            path.push_back(i); // 遍历到的节点加入到路径中来\n            dfs(graph, i, n); // 进入下一层递归\n            path.pop_back(); // 回溯，撤销本节点\n        }\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n    while (m--) {\n        cin >> s >> t;\n        graph[s][t] = 1;\n    }\n    path.push_back(1); // 无论什么路径已经是从0节点出发\n    dfs(graph, 1, n); // 开始遍历\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "C++邻接矩阵实现寻找所有从起点到终点的路径"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<list<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i : graph[x]) { // 找到 x指向的节点\n        path.push_back(i); // 遍历到的节点加入到路径中来\n        dfs(graph, i, n); // 进入下一层递归\n        path.pop_back(); // 回溯，撤销本节点\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1); // 邻接表\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    path.push_back(1); // 无论什么路径已经是从0节点出发\n    dfs(graph, 1, n); // 开始遍历\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "C++邻接表实现寻找所有从起点到终点的路径"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); // 收集符合条件的路径\n    static List<Integer> path = new ArrayList<>(); // 1节点到终点的路径\n    public static void dfs(int[][] graph, int x, int n) {\n        if (x == n) { // 找到符合条件的一条路径\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n            if (graph[x][i] == 1) { // 找到 x链接的节点\n                path.add(i); // 遍历到的节点加入到路径中来\n                dfs(graph, i, n); // 进入下一层递归\n                path.remove(path.size() - 1); // 回溯，撤销本节点\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] graph = new int[n + 1][n + 1];\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph[s][t] = 1;\n        }\n        path.add(1); // 无论什么路径已经是从1节点出发\n        dfs(graph, 1, n); // 开始遍历\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "Java邻接矩阵实现寻找所有从起点到终点的路径"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); // 收集符合条件的路径\n    static List<Integer> path = new ArrayList<>(); // 1节点到终点的路径\n    public static void dfs(List<LinkedList<Integer>> graph, int x, int n) {\n        if (x == n) { // 找到符合条件的一条路径\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i : graph.get(x)) { // 找到 x指向的节点\n            path.add(i); // 遍历到的节点加入到路径中来\n            dfs(graph, i, n); // 进入下一层递归\n            path.remove(path.size() - 1); // 回溯，撤销本节点\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        List<LinkedList<Integer>> graph = new ArrayList<>(n + 1);\n        for (int i = 0; i <= n; i++) {\n            graph.add(new LinkedList<>());\n        }\n        while (m-- > 0) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph.get(s).add(t);\n        }\n        path.add(1); // 无论什么路径已经是从1节点出发\n        dfs(graph, 1, n); // 开始遍历\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "Java邻接表实现寻找所有从起点到终点的路径"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, x, n, path, result):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in range(1, n + 1):\n        if graph[x][i] == 1:\n            path.append(i)\n            dfs(graph, i, n, path, result)\n            path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = [[0] * (n + 1) for _ in range(n + 1)]\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s][t] = 1\n    result = []\n    dfs(graph, 1, n, [1], result)\n    if not result:\n        print(-1)\n    else:\n        for path in result:\n            print(' '.join(map(str, path)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接矩阵实现寻找所有从起点到终点的路径"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict\nresult = []  # 收集符合条件的路径\npath = []  # 1节点到终点的路径\ndef dfs(graph, x, n):\n    if x == n:  # 找到符合条件的一条路径\n        result.append(path.copy())\n        return\n    for i in graph[x]:  # 找到 x指向的节点\n        path.append(i)  # 遍历到的节点加入到路径中来\n        dfs(graph, i, n)  # 进入下一层递归\n        path.pop()  # 回溯，撤销本节点\ndef main():\n    n, m = map(int, input().split())\n    graph = defaultdict(list)  # 邻接表\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s].append(t)\n    path.append(1)  # 无论什么路径已经是从1节点出发\n    dfs(graph, 1, n)  # 开始遍历\n    if not result:\n        print(-1)\n    for pa in result:\n        print(' '.join(map(str, pa)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接表实现寻找所有从起点到终点的路径"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "邻接矩阵写法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n    if (x == n) { \n        result.push_back(path);\n        return;\n    }\n    for (int i = 1; i <= n; i++) { \n        if (graph[x][i] == 1) { \n            path.push_back(i); \n            dfs(graph, i, n); \n            path.pop_back(); \n        }\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n    while (m--) {\n        cin >> s >> t;\n        graph[s][t] = 1;\n    }\n    path.push_back(1); \n    dfs(graph, 1, n); \n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "C++邻接矩阵写法"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<list<int>>& graph, int x, int n) {\n    if (x == n) { \n        result.push_back(path);\n        return;\n    }\n    for (int i : graph[x]) { \n        path.push_back(i); \n        dfs(graph, i, n); \n        path.pop_back(); \n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1); \n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    path.push_back(1); \n    dfs(graph, 1, n); \n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+          "description": "C++邻接表写法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); \n    static List<Integer> path = new ArrayList<>(); \n    public static void dfs(int[][] graph, int x, int n) {\n        if (x == n) { \n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = 1; i <= n; i++) { \n            if (graph[x][i] == 1) { \n                path.add(i); \n                dfs(graph, i, n); \n                path.remove(path.size() - 1); \n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] graph = new int[n + 1][n + 1];\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph[s][t] = 1;\n        }\n        path.add(1); \n        dfs(graph, 1, n); \n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "Java邻接矩阵写法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); \n    static List<Integer> path = new ArrayList<>(); \n    public static void dfs(List<LinkedList<Integer>> graph, int x, int n) {\n        if (x == n) { \n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i : graph.get(x)) { \n            path.add(i); \n            dfs(graph, i, n); \n            path.remove(path.size() - 1); \n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        List<LinkedList<Integer>> graph = new ArrayList<>(n + 1);\n        for (int i = 0; i <= n; i++) {\n            graph.add(new LinkedList<>());\n        }\n        while (m-- > 0) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph.get(s).add(t);\n        }\n        path.add(1); \n        dfs(graph, 1, n); \n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+          "description": "Java邻接表写法"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(graph, x, n, path, result):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in range(1, n + 1):\n        if graph[x][i] == 1:\n            path.append(i)\n            dfs(graph, i, n, path, result)\n            path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = [[0] * (n + 1) for _ in range(n + 1)]\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s][t] = 1\n    result = []\n    dfs(graph, 1, n, [1], result)\n    if not result:\n        print(-1)\n    else:\n        for path in result:\n            print(' '.join(map(str, path)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接矩阵写法"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict\nresult = []  # 收集符合条件的路径\npath = []  # 1节点到终点的路径\ndef dfs(graph, x, n):\n    if x == n:  # 找到符合条件的一条路径\n        result.append(path.copy())\n        return\n    for i in graph[x]:  # 找到 x指向的节点\n        path.append(i)  # 遍历到的节点加入到路径中来\n        dfs(graph, i, n)  # 进入下一层递归\n        path.pop()  # 回溯，撤销本节点\ndef main():\n    n, m = map(int, input().split())\n    graph = defaultdict(list)  # 邻接表\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s].append(t)\n    path.append(1)  # 无论什么路径已经是从1节点出发\n    dfs(graph, 1, n)  # 开始遍历\n    if not result:\n        print(-1)\n    for pa in result:\n        print(' '.join(map(str, pa)))\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python邻接表写法"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n        if (graph[x][i] == 1) { // 找到 x链接的节点\n            path.push_back(i); // 遍历到的节点加入到路径中来\n            dfs(graph, i, n); // 进入下一层递归\n            path.pop_back(); // 回溯，撤销本节点\n        }\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n    while (m--) {\n        cin >> s >> t;\n        graph[s][t] = 1;\n    }\n    path.push_back(1); // 无论什么路径已经是从0节点出发\n    dfs(graph, 1, n); // 开始遍历\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+      "description": "邻接矩阵写法"
+    },
+    {
+      "language": "cpp",
+      "code": "#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\nvoid dfs (const vector<list<int>>& graph, int x, int n) {\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i : graph[x]) { // 找到 x指向的节点\n        path.push_back(i); // 遍历到的节点加入到路径中来\n        dfs(graph, i, n); // 进入下一层递归\n        path.pop_back(); // 回溯，撤销本节点\n    }\n}\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n    vector<list<int>> graph(n + 1); // 邻接表\n    while (m--) {\n        cin >> s >> t;\n        graph[s].push_back(t);\n    }\n    path.push_back(1); // 无论什么路径已经是从0节点出发\n    dfs(graph, 1, n); // 开始遍历\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}",
+      "description": "邻接表写法"
+    },
+    {
+      "language": "java",
+      "code": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); // 收集符合条件的路径\n    static List<Integer> path = new ArrayList<>(); // 1节点到终点的路径\n    public static void dfs(int[][] graph, int x, int n) {\n        if (x == n) { // 找到符合条件的一条路径\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n            if (graph[x][i] == 1) { // 找到 x链接的节点\n                path.add(i); // 遍历到的节点加入到路径中来\n                dfs(graph, i, n); // 进入下一层递归\n                path.remove(path.size() - 1); // 回溯，撤销本节点\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] graph = new int[n + 1][n + 1];\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph[s][t] = 1;\n        }\n        path.add(1); // 无论什么路径已经是从1节点出发\n        dfs(graph, 1, n); // 开始遍历\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+      "description": "邻接矩阵写法"
+    },
+    {
+      "language": "java",
+      "code": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Scanner;\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); // 收集符合条件的路径\n    static List<Integer> path = new ArrayList<>(); // 1节点到终点的路径\n    public static void dfs(List<LinkedList<Integer>> graph, int x, int n) {\n        if (x == n) { // 找到符合条件的一条路径\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i : graph.get(x)) { // 找到 x指向的节点\n            path.add(i); // 遍历到的节点加入到路径中来\n            dfs(graph, i, n); // 进入下一层递归\n            path.remove(path.size() - 1); // 回溯，撤销本节点\n        }\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        List<LinkedList<Integer>> graph = new ArrayList<>(n + 1);\n        for (int i = 0; i <= n; i++) {\n            graph.add(new LinkedList<>());\n        }\n        while (m-- > 0) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            graph.get(s).add(t);\n        }\n        path.add(1); // 无论什么路径已经是从1节点出发\n        dfs(graph, 1, n); // 开始遍历\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}",
+      "description": "邻接表写法"
+    },
+    {
+      "language": "python",
+      "code": "def dfs(graph, x, n, path, result):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in range(1, n + 1):\n        if graph[x][i] == 1:\n            path.append(i)\n            dfs(graph, i, n, path, result)\n            path.pop()\ndef main():\n    n, m = map(int, input().split())\n    graph = [[0] * (n + 1) for _ in range(n + 1)]\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s][t] = 1\n    result = []\n    dfs(graph, 1, n, [1], result)\n    if not result:\n        print(-1)\n    else:\n        for path in result:\n            print(' '.join(map(str, path)))\nif __name__ == \"__main__\":\n    main()",
+      "description": "邻接矩阵写法"
+    },
+    {
+      "language": "python",
+      "code": "from collections import defaultdict\nresult = []  # 收集符合条件的路径\npath = []  # 1节点到终点的路径\ndef dfs(graph, x, n):\n    if x == n:  # 找到符合条件的一条路径\n        result.append(path.copy())\n        return\n    for i in graph[x]:  # 找到 x指向的节点\n        path.append(i)  # 遍历到的节点加入到路径中来\n        dfs(graph, i, n)  # 进入下一层递归\n        path.pop()  # 回溯，撤销本节点\ndef main():\n    n, m = map(int, input().split())\n    graph = defaultdict(list)  # 邻接表\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s].append(t)\n    path.append(1)  # 无论什么路径已经是从1节点出发\n    dfs(graph, 1, n)  # 开始遍历\n    if not result:\n        print(-1)\n    for pa in result:\n        print(' '.join(map(str, pa)))\nif __name__ == \"__main__\":\n    main()",
+      "description": "邻接表写法"
+    }
+  ],
+  "common_mistakes": [
+    "忽视输出格式要求，如最后一个数字后面不应有空格。",
+    "未充分理解图的存储方式导致错误地创建或访问图结构。",
+    "未能正确实现回溯逻辑，造成路径记录错误。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240223103713.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20240223103713.png",
+      "context": "该图片展示了通过邻接表方式表示的图结构，具体说明了节点之间的指向关系。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240223103713.png",
+      "description": "GIF展示了使用邻接表构造图的过程，通过逐步添加边来连接各个节点。",
+      "context": "该GIF动画展示了如何根据给定的边关系构建邻接表的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\图论\\所有可达路径.txt",
+  "extracted_at": "2025-07-21T17:39:02.484658",
+  "raw_content": "所有可达路径\n卡码网题目链接（ACM模式）(https://kamacoder.com/problempage.php?pid=1170)\n\n【题目描述】\n\n给定一个有 n 个节点的有向无环图，节点编号从 1 到 n。请编写一个程序，找出并返回所有从节点 1 到节点 n 的路径。每条路径应以节点编号的列表形式表示。\n\n【输入描述】\n\n第一行包含两个整数 N，M，表示图中拥有 N 个节点，M 条边\n\n后续 M 行，每行包含两个整数 s 和 t，表示图中的 s 节点与 t 节点中有一条路径\n\n【输出描述】\n\n输出所有的可达路径，路径中所有节点的后面跟一个空格，每条路径独占一行，存在多条路径，路径输出的顺序可任意。\n\n如果不存在任何一条路径，则输出 -1。\n\n注意输出的序列中，最后一个节点后面没有空格！ 例如正确的答案是 1 3 5,而不是 1 3 5， 5后面没有空格！\n\n【输入示例】\n\n5 5\n1 3\n3 5\n1 2\n2 4\n4 5\n【输出示例】\n\n1 3 5\n1 2 4 5  \n提示信息\n\n\n\n用例解释：\n\n有五个节点，其中的从 1 到达 5 的路径有两个，分别是 1 -> 3 -> 5 和 1 -> 2 -> 4 -> 5。\n\n因为拥有多条路径，所以输出结果为：\n\n1 3 5\n1 2 4 5\n或\n\n1 2 4 5\n1 3 5\n都算正确。\n\n数据范围：\n\n图中不存在自环\n图中不存在平行边\n1 <= N <= 100\n1 <= M <= 500\n\n\n#插曲\n本题和力扣 797.所有可能的路径 (https://leetcode.cn/problems/all-paths-from-source-to-target/description/)是一样的，录友了解深度优先搜索之后，这道题目就是模板题，是送分题。\n\n力扣是核心代码模式，把图的存储方式给大家定义好了，只需要写出深搜的核心代码就可以。\n\n如果笔试的时候出一道原题 （笔试都是ACM模式，部分面试也是ACM模式），不少熟练刷力扣的录友都难住了，因为不知道图应该怎么存，也不知道自己存的图如何去遍历。\n\n所以这也是为什么我要让大家练习 ACM模式，也是我为什么 在代码随想录图论讲解中，不惜自己亲自出题，让大家统一练习ACM模式。\n\n这道题目是深度优先搜索，比较好的入门题。\n\n如果对深度优先搜索还不够了解，可以先看这里：深度优先搜索的理论基础(https://programmercarl.com/%E5%9B%BE%E8%AE%BA%E6%B7%B1%E6%90%9C%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html)\n\n我依然总结了深搜三部曲，如果按照代码随想录刷题的录友，应该刷过 二叉树的递归三部曲，回溯三部曲。\n\n大家可能有疑惑，深搜 和 二叉树和回溯算法 有什么区别呢？ 什么时候用深搜 什么时候用回溯？\n\n我在讲解二叉树理论基础 (https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html)的时候，提到过，二叉树的前中后序遍历其实就是深搜在二叉树这种数据结构上的应用。\n\n那么回溯算法呢，其实 回溯算法就是 深搜，只不过针对某一搜索场景 我们给他一个更细分的定义，叫做回溯算法。\n\n那有的录友可能说：那我以后称回溯算法为深搜，是不是没毛病？\n\n理论上来说，没毛病，但 就像是 二叉树 你不叫它二叉树，叫它数据结构，有问题不？ 也没问题对吧。\n\n建议是 有细分的场景，还是称其细分场景的名称。 所以回溯算法可以独立出来，但回溯确实就是深搜。\n\n#图的存储\n在图论理论基础篇 https://programmercarl.com/kamacoder/%E5%9B%BE%E8%AE%BA%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html 中我们讲到了 两种 图的存储方式：邻接表 和 邻接矩阵。\n\n本题我们将带大家分别实现这两个图的存储方式。\n\n#邻接矩阵\n邻接矩阵 使用 二维数组来表示图结构。 邻接矩阵是从节点的角度来表示图，有多少节点就申请多大的二维数组。\n\n本题我们会有n 个节点，因为节点标号是从1开始的，为了节点标号和下标对齐，我们申请 n + 1 * n + 1 这么大的二维数组。\n\nvector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n输入m个边，构造方式如下：\n\nwhile (m--) {\n    cin >> s >> t;\n    // 使用邻接矩阵 ，1 表示 节点s 指向 节点t\n    graph[s][t] = 1;\n}\n#邻接表\n邻接表 使用 数组 + 链表的方式来表示。 邻接表是从边的数量来表示图，有多少边 才会申请对应大小的链表。\n\n邻接表的构造相对邻接矩阵难理解一些。\n\n我在 图论理论基础篇 https://programmercarl.com/kamacoder/%E5%9B%BE%E8%AE%BA%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html 举了一个例子：\n\nhttps://file1.kamacoder.com/i/algo/20240223103713.png\n\n这里表达的图是：\n\n节点1 指向 节点3 和 节点5\n节点2 指向 节点4、节点3、节点5\n节点3 指向 节点4\n节点4指向节点1\n我们需要构造一个数组，数组里的元素是一个链表。\n\nC++写法：\n\n// 节点编号从1到n，所以申请 n+1 这么大的数组\nvector<list<int>> graph(n + 1); // 邻接表，list为C++里的链表\n输入m个边，构造方式如下：\n\nwhile (m--) {\n    cin >> s >> t;\n    // 使用邻接表 ，表示 s -> t 是相连的\n    graph[s].push_back(t);\n}\n本题我们使用邻接表 或者 邻接矩阵都可以，因为后台数据并没有对图的大小以及稠密度做很大的区分。\n\n以下我们使用邻接矩阵的方式来讲解，文末我也会给出 使用邻接表的整体代码。\n\n注意邻接表 和 邻接矩阵的写法都要掌握！\n\n#深度优先搜索\n本题是深度优先搜索的基础题目，关于深搜我在图论深搜理论基础 已经有详细的讲解，图文并茂。\n\n关于本题我会直接使用深搜三部曲来分析，如果对深搜不够了解，建议先看 图论深搜理论基础。\n\n深搜三部曲来分析题目：\n\n确认递归函数，参数\n首先我们dfs函数一定要存一个图，用来遍历的，需要存一个目前我们遍历的节点，定义为x。\n\n还需要存一个n，表示终点，我们遍历的时候，用来判断当 x==n 时候 标明找到了终点。\n\n（其实在递归函数的参数 不容易一开始就确定了，一般是在写函数体的时候发现缺什么，参加就补什么）\n\n至于 单一路径 和 路径集合 可以放在全局变量，那么代码是这样的：\n\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 0节点到终点的路径\n// x：目前遍历的节点\n// graph：存当前的图\n// n：终点\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n确认终止条件\n什么时候我们就找到一条路径了？\n\n当目前遍历的节点 为 最后一个节点 n 的时候 就找到了一条 从出发点到终止点的路径。\n\n// 当前遍历的节点x 到达节点n \nif (x == n) { // 找到符合条件的一条路径\n    result.push_back(path);\n    return;\n}\n处理目前搜索节点出发的路径\n接下来是走 当前遍历节点x的下一个节点。\n\n首先是要找到 x节点指向了哪些节点呢？ 遍历方式是这样的：\n\nfor (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n    if (graph[x][i] == 1) { // 找到 x指向的节点，就是节点i\n    }\n}\n接下来就是将 选中的x所指向的节点，加入到 单一路径来。\n\npath.push_back(i); // 遍历到的节点加入到路径中来\n\n进入下一层递归\n\ndfs(graph, i, n); // 进入下一层递归\n最后就是回溯的过程，撤销本次添加节点的操作。\n\n为什么要有回溯，我在图论深搜理论基础 也有详细的讲解。\n\n该过程整体代码：\n\nfor (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n    if (graph[x][i] == 1) { // 找到 x链接的节点\n        path.push_back(i); // 遍历到的节点加入到路径中来\n        dfs(graph, i, n); // 进入下一层递归\n        path.pop_back(); // 回溯，撤销本节点\n    }\n}\n#打印结果\nACM格式大家在输出结果的时候，要关注看看格式问题，特别是字符串，有的题目说的是每个元素后面都有空格，有的题目说的是 每个元素间有空格，最后一个元素没有空格。\n\n有的题目呢，压根没说，那只能提交去试一试了。\n\n很多录友在提交题目的时候发现结果一样，为什么提交就是不对呢。\n\n例如示例输出是：\n\n1 3 5 而不是 1 3 5\n\n即 5 的后面没有空格！\n\n这是我们在输出的时候需要注意的点。\n\n有录友可能会想，ACM格式就是麻烦，有空格没有空格有什么影响，结果对了不就行了？\n\nACM模式相对于核心代码模式（力扣） 更考验大家对代码的掌控能力。 例如工程代码里，输入输出都是要自己控制的。这也是为什么大公司笔试，都是ACM模式。\n\n以上代码中，结果都存在了 result数组里（二维数组，每一行是一个结果），最后将其打印出来。（重点看注释）\n\n// 输出结果\nif (result.size() == 0) cout << -1 << endl;\nfor (const vector<int> &pa : result) {\n    for (int i = 0; i < pa.size() - 1; i++) { // 这里指打印到倒数第二个\n        cout << pa[i] << \" \";\n    }\n    cout << pa[pa.size() - 1]  << endl; // 这里再打印倒数第一个，控制最后一个元素后面没有空格\n}\n#本题代码\n#邻接矩阵写法\n#include <iostream>\n#include <vector>\nusing namespace std;\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\n\nvoid dfs (const vector<vector<int>>& graph, int x, int n) {\n    // 当前遍历的节点x 到达节点n \n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n        if (graph[x][i] == 1) { // 找到 x链接的节点\n            path.push_back(i); // 遍历到的节点加入到路径中来\n            dfs(graph, i, n); // 进入下一层递归\n            path.pop_back(); // 回溯，撤销本节点\n        }\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    // 节点编号从1到n，所以申请 n+1 这么大的数组\n    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0));\n\n    while (m--) {\n        cin >> s >> t;\n        // 使用邻接矩阵 表示无线图，1 表示 s 与 t 是相连的\n        graph[s][t] = 1;\n    }\n\n    path.push_back(1); // 无论什么路径已经是从0节点出发\n    dfs(graph, 1, n); // 开始遍历\n\n    // 输出结果\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}\n\n#邻接表写法\n#include <iostream>\n#include <vector>\n#include <list>\nusing namespace std;\n\nvector<vector<int>> result; // 收集符合条件的路径\nvector<int> path; // 1节点到终点的路径\n\nvoid dfs (const vector<list<int>>& graph, int x, int n) {\n\n    if (x == n) { // 找到符合条件的一条路径\n        result.push_back(path);\n        return;\n    }\n    for (int i : graph[x]) { // 找到 x指向的节点\n        path.push_back(i); // 遍历到的节点加入到路径中来\n        dfs(graph, i, n); // 进入下一层递归\n        path.pop_back(); // 回溯，撤销本节点\n    }\n}\n\nint main() {\n    int n, m, s, t;\n    cin >> n >> m;\n\n    // 节点编号从1到n，所以申请 n+1 这么大的数组\n    vector<list<int>> graph(n + 1); // 邻接表\n    while (m--) {\n        cin >> s >> t;\n        // 使用邻接表 ，表示 s -> t 是相连的\n        graph[s].push_back(t);\n\n    }\n\n    path.push_back(1); // 无论什么路径已经是从0节点出发\n    dfs(graph, 1, n); // 开始遍历\n\n    // 输出结果\n    if (result.size() == 0) cout << -1 << endl;\n    for (const vector<int> &pa : result) {\n        for (int i = 0; i < pa.size() - 1; i++) {\n            cout << pa[i] << \" \";\n        }\n        cout << pa[pa.size() - 1]  << endl;\n    }\n}\n\n#总结\n本题是一道简单的深搜题目，也可以说是模板题，和 力扣797. 所有可能的路径 (https://leetcode.cn/problems/all-paths-from-source-to-target/description/)思路是一样一样的。\n\n很多录友做力扣的时候，轻松就把代码写出来了， 但做面试笔试的时候，遇到这样的题就写不出来了。\n\n在力扣上刷题不用考虑图的存储方式，也不用考虑输出的格式。\n\n而这些都是 ACM 模式题目的知识点（图的存储方式）和细节（输出的格式）\n\n所以我才会特别制作ACM题目，同样也重点去讲解图的存储和遍历方式，来帮大家去练习。\n\n对于这种有向图路径问题，最合适使用深搜，当然本题也可以使用广搜，但广搜相对来说就麻烦了一些，需要记录一下路径。\n\n而深搜和广搜都适合解决颜色类的问题，例如岛屿系列，其实都是 遍历+标记，所以使用哪种遍历都是可以的。\n\n至于广搜理论基础，我们在下一篇在好好讲解，敬请期待！\n\n#其他语言版本\n#Java\n邻接矩阵写法\n\nimport java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); // 收集符合条件的路径\n    static List<Integer> path = new ArrayList<>(); // 1节点到终点的路径\n\n    public static void dfs(int[][] graph, int x, int n) {\n        // 当前遍历的节点x 到达节点n\n        if (x == n) { // 找到符合条件的一条路径\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i = 1; i <= n; i++) { // 遍历节点x链接的所有节点\n            if (graph[x][i] == 1) { // 找到 x链接的节点\n                path.add(i); // 遍历到的节点加入到路径中来\n                dfs(graph, i, n); // 进入下一层递归\n                path.remove(path.size() - 1); // 回溯，撤销本节点\n            }\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n\n        // 节点编号从1到n，所以申请 n+1 这么大的数组\n        int[][] graph = new int[n + 1][n + 1];\n\n        for (int i = 0; i < m; i++) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            // 使用邻接矩阵表示无向图，1 表示 s 与 t 是相连的\n            graph[s][t] = 1;\n        }\n\n        path.add(1); // 无论什么路径已经是从1节点出发\n        dfs(graph, 1, n); // 开始遍历\n\n        // 输出结果\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}\n邻接表写法\n\nimport java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    static List<List<Integer>> result = new ArrayList<>(); // 收集符合条件的路径\n    static List<Integer> path = new ArrayList<>(); // 1节点到终点的路径\n\n    public static void dfs(List<LinkedList<Integer>> graph, int x, int n) {\n        if (x == n) { // 找到符合条件的一条路径\n            result.add(new ArrayList<>(path));\n            return;\n        }\n        for (int i : graph.get(x)) { // 找到 x指向的节点\n            path.add(i); // 遍历到的节点加入到路径中来\n            dfs(graph, i, n); // 进入下一层递归\n            path.remove(path.size() - 1); // 回溯，撤销本节点\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n\n        // 节点编号从1到n，所以申请 n+1 这么大的数组\n        List<LinkedList<Integer>> graph = new ArrayList<>(n + 1);\n        for (int i = 0; i <= n; i++) {\n            graph.add(new LinkedList<>());\n        }\n\n        while (m-- > 0) {\n            int s = scanner.nextInt();\n            int t = scanner.nextInt();\n            // 使用邻接表表示 s -> t 是相连的\n            graph.get(s).add(t);\n        }\n\n        path.add(1); // 无论什么路径已经是从1节点出发\n        dfs(graph, 1, n); // 开始遍历\n\n        // 输出结果\n        if (result.isEmpty()) System.out.println(-1);\n        for (List<Integer> pa : result) {\n            for (int i = 0; i < pa.size() - 1; i++) {\n                System.out.print(pa.get(i) + \" \");\n            }\n            System.out.println(pa.get(pa.size() - 1));\n        }\n    }\n}\n#Python\n邻接矩阵写法\n\ndef dfs(graph, x, n, path, result):\n    if x == n:\n        result.append(path.copy())\n        return\n    for i in range(1, n + 1):\n        if graph[x][i] == 1:\n            path.append(i)\n            dfs(graph, i, n, path, result)\n            path.pop()\n\ndef main():\n    n, m = map(int, input().split())\n    graph = [[0] * (n + 1) for _ in range(n + 1)]\n\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s][t] = 1\n\n    result = []\n    dfs(graph, 1, n, [1], result)\n\n    if not result:\n        print(-1)\n    else:\n        for path in result:\n            print(' '.join(map(str, path)))\n\nif __name__ == \"__main__\":\n    main()\n邻接表写法\n\nfrom collections import defaultdict\n\nresult = []  # 收集符合条件的路径\npath = []  # 1节点到终点的路径\n\ndef dfs(graph, x, n):\n    if x == n:  # 找到符合条件的一条路径\n        result.append(path.copy())\n        return\n    for i in graph[x]:  # 找到 x指向的节点\n        path.append(i)  # 遍历到的节点加入到路径中来\n        dfs(graph, i, n)  # 进入下一层递归\n        path.pop()  # 回溯，撤销本节点\n\ndef main():\n    n, m = map(int, input().split())\n\n    graph = defaultdict(list)  # 邻接表\n    for _ in range(m):\n        s, t = map(int, input().split())\n        graph[s].append(t)\n\n    path.append(1)  # 无论什么路径已经是从1节点出发\n    dfs(graph, 1, n)  # 开始遍历\n\n    # 输出结果\n    if not result:\n        print(-1)\n    for pa in result:\n        print(' '.join(map(str, pa)))\n\nif __name__ == \"__main__\":\n    main()"
+}

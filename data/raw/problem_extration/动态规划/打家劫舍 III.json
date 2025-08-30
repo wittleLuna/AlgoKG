@@ -1,0 +1,520 @@
+{
+  "id": "AP_ecce18ac",
+  "title": "打家劫舍 III",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/house-robber-iii/",
+  "description": "在上次打劫完一条街道之后和一圈房屋后，小偷又发现了一个新的可行窃的地区。这个地区只有一个入口，我们称之为“根”。 除了“根”之外，每栋房子有且只有一个“父“房子与之相连。一番侦察之后，聪明的小偷意识到“这个地方的所有房屋的排列类似于一棵二叉树”。 如果两个直接相连的房子在同一天晚上被打劫，房屋将自动报警。\n\n计算在不触动警报的情况下，小偷一晚能够盗取的最高金额。\n\nhttps://file1.kamacoder.com/i/algo/20210223173849619.png",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "动态规划",
+    "树形DP"
+  ],
+  "data_structure_tags": [
+    "二叉树",
+    "哈希表(用于记忆化)"
+  ],
+  "technique_tags": [
+    "递归",
+    "记忆化搜索",
+    "状态转移"
+  ],
+  "difficulty": null,
+  "solution_approach": "采用后序遍历（深度优先搜索）方法来解决这个问题。通过递归函数计算每个节点选择偷或者不偷时的最大收益，并且使用记忆化技术或动态规划来避免重复计算，从而提高效率。",
+  "key_insights": [
+    {
+      "content": "后序遍历使得我们可以先知道子节点的状态后再决定当前节点的状态，这是解决此问题的关键，因为需要基于子节点的状态来做决策。"
+    },
+    {
+      "content": "对于具有大量重叠子问题的问题，使用记忆化递归或动态规划能够极大地减少不必要的计算，提升算法效率。本例中，通过保存已经访问过的节点的最佳结果来避免重复计算。"
+    },
+    {
+      "content": "每个节点都有两种状态：偷与不偷。通过递归地考虑这两种状态并结合左右子树的结果，可以有效地解决问题。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目和 198.打家劫舍 (https://programmercarl.com/0198.%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D.html)，213.打家劫舍II (https://programmercarl.com/0213.%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8DII.html)也是如出一辙，只不过这个换成了树。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(TreeNode* root) { if (root == NULL) return 0; if (root->left == NULL && root->right == NULL) return root->val; // 偷父节点 int val1 = root->val; if (root->left) val1 += rob(root->left->left) + rob(root->left->right); if (root->right) val1 += rob(root->right->left) + rob(root->right->right); // 不偷父节点 int val2 = rob(root->left) + rob(root->right); return max(val1, val2); } };",
+          "description": "暴力递归"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: unordered_map<TreeNode* , int> umap; // 记录计算过的结果 int rob(TreeNode* root) { if (root == NULL) return 0; if (root->left == NULL && root->right == NULL) return root->val; if (umap[root]) return umap[root]; // 如果umap里已经有记录则直接返回 // 偷父节点 int val1 = root->val; if (root->left) val1 += rob(root->left->left) + rob(root->left->right); if (root->right) val1 += rob(root->right->left) + rob(root->right->right); // 不偷父节点 int val2 = rob(root->left) + rob(root->right); umap[root] = max(val1, val2); // umap记录一下结果 return max(val1, val2); } };",
+          "description": "记忆化递推"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(TreeNode* root) { vector<int> result = robTree(root); return max(result[0], result[1]); } vector<int> robTree(TreeNode* cur) { if (cur == NULL) return vector<int>{0, 0}; vector<int> left = robTree(cur->left); vector<int> right = robTree(cur->right); // 偷cur，那么就不能偷左右节点。 int val1 = cur->val + left[0] + right[0]; // 不偷cur，那么可以偷也可以不偷左右节点，则取较大的情况 int val2 = max(left[0], left[1]) + max(right[0], right[1]); return {val2, val1}; } };",
+          "description": "动态规划"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int rob(TreeNode root) { if (root == null) return 0; int money = root.val; if (root.left != null) { money += rob(root.left.left) + rob(root.left.right); } if (root.right != null) { money += rob(root.right.left) + rob(root.right.right); } return Math.max(money, rob(root.left) + rob(root.right)); } public int rob1(TreeNode root) { Map<TreeNode, Integer> memo = new HashMap<>(); return robAction(root, memo); } int robAction(TreeNode root, Map<TreeNode, Integer> memo) { if (root == null) return 0; if (memo.containsKey(root)) return memo.get(root); int money = root.val; if (root.left != null) { money += robAction(root.left.left, memo) + robAction(root.left.right, memo); } if (root.right != null) { money += robAction(root.right.left, memo) + robAction(root.right.right, memo); } int res = Math.max(money, robAction(root.left, memo) + robAction(root.right, memo)); memo.put(root, res); return res; } public int rob3(TreeNode root) { int[] res = robAction1(root); return Math.max(res[0], res[1]); } int[] robAction1(TreeNode root) { int res[] = new int[2]; if (root == null) return res; int[] left = robAction1(root.left); int[] right = robAction1(root.right); res[0] = Math.max(left[0], left[1]) + Math.max(right[0], right[1]); res[1] = root.val + left[0] + right[0]; return res; } }",
+          "description": "Java版本的三种方法：暴力递归、记忆化递归和动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, root: TreeNode) -> int: if root is None: return 0 if root.left is None and root.right is None: return root.val # 偷父节点 val1 = root.val if root.left: val1 += self.rob(root.left.left) + self.rob(root.left.right) if root.right: val1 += self.rob(root.right.left) + self.rob(root.right.right) # 不偷父节点 val2 = self.rob(root.left) + self.rob(root.right) return max(val1, val2)",
+          "description": "Python暴力递归"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: memory = {} def rob(self, root: TreeNode) -> int: if root is None: return 0 if root.left is None and root.right is None: return root.val if self.memory.get(root) is not None: return self.memory[root] # 偷父节点 val1 = root.val if root.left: val1 += self.rob(root.left.left) + self.rob(root.left.right) if root.right: val1 += self.rob(root.right.left) + self.rob(root.right.right) # 不偷父节点 val2 = self.rob(root.left) + self.rob(root.right) self.memory[root] = max(val1, val2) return max(val1, val2)",
+          "description": "Python记忆化递归"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, root: Optional[TreeNode]) -> int: dp = self.traversal(root) return max(dp) def traversal(self, node): if not node: return (0, 0) left = self.traversal(node.left) right = self.traversal(node.right) # 不偷当前节点, 偷子节点 val_0 = max(left[0], left[1]) + max(right[0], right[1]) # 偷当前节点, 不偷子节点 val_1 = node.val + left[0] + right[0] return (val_0, val_1)",
+          "description": "Python动态规划"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "暴力递归",
+      "text": "代码如下：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(TreeNode* root) {if (root == NULL) return 0;if (root->left == NULL && root->right == NULL) return root->val;int val1 = root->val;if (root->left) val1 += rob(root->left->left) + rob(root->left->right);if (root->right) val1 += rob(root->right->left) + rob(root->right->right);int val2 = rob(root->left) + rob(root->right);return max(val1, val2);}};",
+          "description": "暴力递归"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: unordered_map<TreeNode* , int> umap;int rob(TreeNode* root) {if (root == NULL) return 0;if (root->left == NULL && root->right == NULL) return root->val;if (umap[root]) return umap[root];int val1 = root->val;if (root->left) val1 += rob(root->left->left) + rob(root->left->right);if (root->right) val1 += rob(root->right->left) + rob(root->right->right);int val2 = rob(root->left) + rob(root->right);umap[root] = max(val1, val2);return max(val1, val2);}};",
+          "description": "记忆化递推"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(TreeNode* root) {vector<int> result = robTree(root);return max(result[0], result[1]);}vector<int> robTree(TreeNode* cur) {if (cur == NULL) return vector<int>{0, 0};vector<int> left = robTree(cur->left);vector<int> right = robTree(cur->right);int val1 = cur->val + left[0] + right[0];int val2 = max(left[0], left[1]) + max(right[0], right[1]);return {val2, val1};}};",
+          "description": "动态规划"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int rob(TreeNode root) {if (root == null)return 0;int money = root.val;if (root.left != null) {money += rob(root.left.left) + rob(root.left.right);}if (root.right != null) {money += rob(root.right.left) + rob(root.right.right);}return Math.max(money, rob(root.left) + rob(root.right));}}",
+          "description": "暴力递归"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int rob1(TreeNode root) {Map<TreeNode, Integer> memo = new HashMap<>();return robAction(root, memo);}int robAction(TreeNode root, Map<TreeNode, Integer> memo) {if (root == null)return 0;if (memo.containsKey(root))return memo.get(root);int money = root.val;if (root.left != null) {money += robAction(root.left.left, memo) + robAction(root.left.right, memo);}if (root.right != null) {money += robAction(root.right.left, memo) + robAction(root.right.right, memo);}int res = Math.max(money, robAction(root.left, memo) + robAction(root.right, memo));memo.put(root, res);return res;}}",
+          "description": "记忆化递推"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int rob3(TreeNode root) {int[] res = robAction1(root);return Math.max(res[0], res[1]);}int[] robAction1(TreeNode root) {int res[] = new int[2];if (root == null)return res;int[] left = robAction1(root.left);int[] right = robAction1(root.right);res[0] = Math.max(left[0], left[1]) + Math.max(right[0], right[1]);res[1] = root.val + left[0] + right[0];return res;}}",
+          "description": "动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, root: TreeNode) -> int: if root is None: return 0 if root.left is None and root.right  is None: return root.val val1 = root.val if root.left: val1 += self.rob(root.left.left) + self.rob(root.left.right) if root.right: val1 += self.rob(root.right.left) + self.rob(root.right.right) val2 = self.rob(root.left) + self.rob(root.right) return max(val1, val2)",
+          "description": "暴力递归"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: memory = {} def rob(self, root: TreeNode) -> int: if root is None: return 0 if root.left is None and root.right  is None: return root.val if self.memory.get(root) is not None: return self.memory[root] val1 = root.val if root.left: val1 += self.rob(root.left.left) + self.rob(root.left.right) if root.right: val1 += self.rob(root.right.left) + self.rob(root.right.right) val2 = self.rob(root.left) + self.rob(root.right) self.memory[root] = max(val1, val2) return max(val1, val2)",
+          "description": "记忆化递推"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, root: Optional[TreeNode]) -> int: dp = self.traversal(root) return max(dp) def traversal(self, node): if not node: return (0, 0) left = self.traversal(node.left) right = self.traversal(node.right) val_0 = max(left[0], left[1]) + max(right[0], right[1]) val_1 = node.val + left[0] + right[0] return (val_0, val_1)",
+          "description": "动态规划"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "记忆化递推",
+      "text": "所以可以使用一个map把计算过的结果保存一下，这样如果计算过孙子了，那么计算孩子的时候可以复用孙子节点的结果。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(TreeNode* root) {if (root == NULL) return 0;if (root->left == NULL && root->right == NULL) return root->val;int val1 = root->val;if (root->left) val1 += rob(root->left->left) + rob(root->left->right);if (root->right) val1 += rob(root->right->left) + rob(root->right->right);int val2 = rob(root->left) + rob(root->right);return max(val1, val2);}};",
+          "description": "暴力递归解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: unordered_map<TreeNode*, int> umap; int rob(TreeNode* root) {if (root == NULL) return 0;if (root->left == NULL && root->right == NULL) return root->val;if (umap[root]) return umap[root];int val1 = root->val;if (root->left) val1 += rob(root->left->left) + rob(root->left->right);if (root->right) val1 += rob(root->right->left) + rob(root->right->right);int val2 = rob(root->left) + rob(root->right);umap[root] = max(val1, val2);return max(val1, val2);}};",
+          "description": "记忆化递归解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(TreeNode* root) {vector<int> result = robTree(root);return max(result[0], result[1]);}vector<int> robTree(TreeNode* cur) {if (cur == NULL) return vector<int>{0, 0};vector<int> left = robTree(cur->left);vector<int> right = robTree(cur->right);int val1 = cur->val + left[0] + right[0];int val2 = max(left[0], left[1]) + max(right[0], right[1]);return {val2, val1};}};",
+          "description": "动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "public int rob(TreeNode root) {if (root == null)return 0;int money = root.val;if (root.left != null)money += rob(root.left.left) + rob(root.left.right);if (root.right != null)money += rob(root.right.left) + rob(root.right.right);return Math.max(money, rob(root.left) + rob(root.right));}",
+          "description": "Java版本暴力递归解法"
+        },
+        {
+          "language": "java",
+          "code": "public int rob1(TreeNode root) {Map<TreeNode, Integer> memo = new HashMap<>();return robAction(root, memo);}int robAction(TreeNode root, Map<TreeNode, Integer> memo) {if (root == null)return 0;if (memo.containsKey(root))return memo.get(root);int money = root.val;if (root.left != null)money += robAction(root.left.left, memo) + robAction(root.left.right, memo);if (root.right != null)money += robAction(root.right.left, memo) + robAction(root.right.right, memo);int res = Math.max(money, robAction(root.left, memo) + robAction(root.right, memo));memo.put(root, res);return res;}",
+          "description": "Java版本记忆化递归解法"
+        },
+        {
+          "language": "java",
+          "code": "public int rob3(TreeNode root) {int[] res = robAction1(root);return Math.max(res[0], res[1]);}int[] robAction1(TreeNode root) {int res[] = new int[2];if (root == null)return res;int[] left = robAction1(root.left);int[] right = robAction1(root.right);res[0] = Math.max(left[0], left[1]) + Math.max(right[0], right[1]);res[1] = root.val + left[0] + right[0];return res;}",
+          "description": "Java版本动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def rob(self, root: TreeNode) -> int:if root is None:return 0if root.left is None and root.right  is None:return root.valval1 = root.valif root.left:val1 += self.rob(root.left.left) + self.rob(root.left.right)if root.right:val1 += self.rob(root.right.left) + self.rob(root.right.right)val2 = self.rob(root.left) + self.rob(root.right)return max(val1, val2)",
+          "description": "Python版本暴力递归解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:memory = {}def rob(self, root: TreeNode) -> int:if root is None:return 0if root.left is None and root.right  is None:return root.valif self.memory.get(root) is not None:return self.memory[root]val1 = root.valif root.left:val1 += self.rob(root.left.left) + self.rob(root.left.right)if root.right:val1 += self.rob(root.right.left) + self.rob(root.right.right)val2 = self.rob(root.left) + self.rob(root.right)self.memory[root] = max(val1, val2)return max(val1, val2)",
+          "description": "Python版本记忆化递归解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def rob(self, root: Optional[TreeNode]) -> int:dp = self.traversal(root)return max(dp)def traversal(self, node):if not node:return (0, 0)left = self.traversal(node.left)right = self.traversal(node.right)val_0 = max(left[0], left[1]) + max(right[0], right[1])val_1 = node.val + left[0] + right[0]return (val_0, val_1)",
+          "description": "Python版本动态规划解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "动态规划",
+      "text": "在上面两种方法，其实对一个节点 偷与不偷得到的最大金钱都没有做记录，而是需要实时计算。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(TreeNode* root) {if (root == NULL) return 0;if (root->left == NULL && root->right == NULL) return root->val;int val1 = root->val;if (root->left) val1 += rob(root->left->left) + rob(root->left->right);if (root->right) val1 += rob(root->right->left) + rob(root->right->right);int val2 = rob(root->left) + rob(root->right);return max(val1, val2);}};",
+          "description": "暴力递归解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: unordered_map<TreeNode*, int> umap;int rob(TreeNode* root) {if (root == NULL) return 0;if (root->left == NULL && root->right == NULL) return root->val;if (umap[root]) return umap[root];int val1 = root->val;if (root->left) val1 += rob(root->left->left) + rob(root->left->right);if (root->right) val1 += rob(root->right->left) + rob(root->right->right);int val2 = rob(root->left) + rob(root->right);umap[root] = max(val1, val2);return max(val1, val2);}};",
+          "description": "记忆化递归解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(TreeNode* root) {vector<int> result = robTree(root);return max(result[0], result[1]);}vector<int> robTree(TreeNode* cur) {if (cur == NULL) return vector<int>{0, 0};vector<int> left = robTree(cur->left);vector<int> right = robTree(cur->right);int val1 = cur->val + left[0] + right[0];int val2 = max(left[0], left[1]) + max(right[0], right[1]);return {val2, val1};}};",
+          "description": "动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int rob(TreeNode root) {if (root == null)return 0;int money = root.val;if (root.left != null) {money += rob(root.left.left) + rob(root.left.right);}if (root.right != null) {money += rob(root.right.left) + rob(root.right.right);}return Math.max(money, rob(root.left) + rob(root.right));}}",
+          "description": "Java版本暴力递归解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int rob1(TreeNode root) {Map<TreeNode, Integer> memo = new HashMap<>();return robAction(root, memo);}int robAction(TreeNode root, Map<TreeNode, Integer> memo) {if (root == null)return 0;if (memo.containsKey(root))return memo.get(root);int money = root.val;if (root.left != null) {money += robAction(root.left.left, memo) + robAction(root.left.right, memo);}if (root.right != null) {money += robAction(root.right.left, memo) + robAction(root.right.right, memo);}int res = Math.max(money, robAction(root.left, memo) + robAction(root.right, memo));memo.put(root, res);return res;}}",
+          "description": "Java版本记忆化递归解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int rob3(TreeNode root) {int[] res = robAction1(root);return Math.max(res[0], res[1]);}int[] robAction1(TreeNode root) {int res[] = new int[2];if (root == null)return res;int[] left = robAction1(root.left);int[] right = robAction1(root.right);res[0] = Math.max(left[0], left[1]) + Math.max(right[0], right[1]);res[1] = root.val + left[0] + right[0];return res;}}",
+          "description": "Java版本动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, root: TreeNode) -> int: if root is None: return 0 if root.left is None and root.right is None: return root.val val1 = root.val if root.left: val1 += self.rob(root.left.left) + self.rob(root.left.right) if root.right: val1 += self.rob(root.right.left) + self.rob(root.right.right) val2 = self.rob(root.left) + self.rob(root.right) return max(val1, val2)",
+          "description": "Python版本暴力递归解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: memory = {} def rob(self, root: TreeNode) -> int: if root is None: return 0 if root.left is None and root.right is None: return root.val if self.memory.get(root) is not None: return self.memory[root] val1 = root.val if root.left: val1 += self.rob(root.left.left) + self.rob(root.left.right) if root.right: val1 += self.rob(root.right.left) + self.rob(root.right.right) val2 = self.rob(root.left) + self.rob(root.right) self.memory[root] = max(val1, val2) return max(val1, val2)",
+          "description": "Python版本记忆化递归解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, root: Optional[TreeNode]) -> int: dp = self.traversal(root) return max(dp)def traversal(self, node): if not node: return (0, 0) left = self.traversal(node.left) right = self.traversal(node.right) val_0 = max(left[0], left[1]) + max(right[0], right[1]) val_1 = node.val + left[0] + right[0] return (val_0, val_1)",
+          "description": "Python版本动态规划解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "这道题是树形DP的入门题目，通过这道题目大家应该也了解了，所谓树形DP就是在树上进行递归公式的推导。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(TreeNode* root) { if (root == NULL) return 0; if (root->left == NULL && root->right == NULL) return root->val; // 偷父节点 int val1 = root->val; if (root->left) val1 += rob(root->left->left) + rob(root->left->right); if (root->right) val1 += rob(root->right->left) + rob(root->right->right); // 不偷父节点 int val2 = rob(root->left) + rob(root->right); return max(val1, val2); } };",
+          "description": "暴力递归"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: unordered_map<TreeNode*, int> umap; int rob(TreeNode* root) { if (root == NULL) return 0; if (root->left == NULL && root->right == NULL) return root->val; if (umap[root]) return umap[root]; // 如果umap里已经有记录则直接返回 // 偷父节点 int val1 = root->val; if (root->left) val1 += rob(root->left->left) + rob(root->left->right); if (root->right) val1 += rob(root->right->left) + rob(root->right->right); // 不偷父节点 int val2 = rob(root->left) + rob(root->right); umap[root] = max(val1, val2); return max(val1, val2); } };",
+          "description": "记忆化递推"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(TreeNode* root) { vector<int> result = robTree(root); return max(result[0], result[1]); } vector<int> robTree(TreeNode* cur) { if (cur == NULL) return vector<int>{0, 0}; vector<int> left = robTree(cur->left); vector<int> right = robTree(cur->right); int val1 = cur->val + left[0] + right[0]; int val2 = max(left[0], left[1]) + max(right[0], right[1]); return {val2, val1}; } };",
+          "description": "动态规划"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int rob(TreeNode root) { if (root == null) return 0; int money = root.val; if (root.left != null) { money += rob(root.left.left) + rob(root.left.right); } if (root.right != null) { money += rob(root.right.left) + rob(root.right.right); } return Math.max(money, rob(root.left) + rob(root.right)); } }",
+          "description": "暴力递归"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int rob1(TreeNode root) { Map<TreeNode, Integer> memo = new HashMap<>(); return robAction(root, memo); } int robAction(TreeNode root, Map<TreeNode, Integer> memo) { if (root == null) return 0; if (memo.containsKey(root)) return memo.get(root); int money = root.val; if (root.left != null) { money += robAction(root.left.left, memo) + robAction(root.left.right, memo); } if (root.right != null) { money += robAction(root.right.left, memo) + robAction(root.right.right, memo); } int res = Math.max(money, robAction(root.left, memo) + robAction(root.right, memo)); memo.put(root, res); return res; } }",
+          "description": "记忆化递归"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int rob3(TreeNode root) { int[] res = robAction1(root); return Math.max(res[0], res[1]); } int[] robAction1(TreeNode root) { int res[] = new int[2]; if (root == null) return res; int[] left = robAction1(root.left); int[] right = robAction1(root.right); res[0] = Math.max(left[0], left[1]) + Math.max(right[0], right[1]); res[1] = root.val + left[0] + right[0]; return res; } }",
+          "description": "动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, root: TreeNode) -> int: if root is None: return 0 if root.left is None and root.right is None: return root.val # 偷父节点 val1 = root.val if root.left: val1 += self.rob(root.left.left) + self.rob(root.left.right) if root.right: val1 += self.rob(root.right.left) + self.rob(root.right.right) # 不偷父节点 val2 = self.rob(root.left) + self.rob(root.right) return max(val1, val2)",
+          "description": "暴力递归"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: memory = {} def rob(self, root: TreeNode) -> int: if root is None: return 0 if root.left is None and root.right is None: return root.val if self.memory.get(root) is not None: return self.memory[root] # 偷父节点 val1 = root.val if root.left: val1 += self.rob(root.left.left) + self.rob(root.left.right) if root.right: val1 += self.rob(root.right.left) + self.rob(root.right.right) # 不偷父节点 val2 = self.rob(root.left) + self.rob(root.right) self.memory[root] = max(val1, val2) return max(val1, val2)",
+          "description": "记忆化递归"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, root: Optional[TreeNode]) -> int: dp = self.traversal(root) return max(dp) def traversal(self, node): if not node: return (0, 0) left = self.traversal(node.left) right = self.traversal(node.right) # 不偷当前节点, 偷子节点 val_0 = max(left[0], left[1]) + max(right[0], right[1]) # 偷当前节点, 不偷子节点 val_1 = node.val + left[0] + right[0] return (val_0, val_1)",
+          "description": "动态规划"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(TreeNode* root) { if (root == NULL) return 0; if (root->left == NULL && root->right == NULL) return root->val; int val1 = root->val; if (root->left) val1 += rob(root->left->left) + rob(root->left->right); if (root->right) val1 += rob(root->right->left) + rob(root->right->right); int val2 = rob(root->left) + rob(root->right); return max(val1, val2); }};",
+          "description": "暴力递归解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: unordered_map<TreeNode*, int> umap; int rob(TreeNode* root) { if (root == NULL) return 0; if (root->left == NULL && root->right == NULL) return root->val; if (umap[root]) return umap[root]; int val1 = root->val; if (root->left) val1 += rob(root->left->left) + rob(root->left->right); if (root->right) val1 += rob(root->right->left) + rob(root->right->right); int val2 = rob(root->left) + rob(root->right); umap[root] = max(val1, val2); return max(val1, val2);}};",
+          "description": "记忆化递归解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(TreeNode* root) { vector<int> result = robTree(root); return max(result[0], result[1]);} vector<int> robTree(TreeNode* cur) { if (cur == NULL) return vector<int>{0, 0}; vector<int> left = robTree(cur->left); vector<int> right = robTree(cur->right); int val1 = cur->val + left[0] + right[0]; int val2 = max(left[0], left[1]) + max(right[0], right[1]); return {val2, val1};}};",
+          "description": "动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int rob(TreeNode root) { if (root == null) return 0; int money = root.val; if (root.left != null) { money += rob(root.left.left) + rob(root.left.right); } if (root.right != null) { money += rob(root.right.left) + rob(root.right.right); } return Math.max(money, rob(root.left) + rob(root.right)); }}",
+          "description": "暴力递归解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int rob1(TreeNode root) { Map<TreeNode, Integer> memo = new HashMap<>(); return robAction(root, memo); } int robAction(TreeNode root, Map<TreeNode, Integer> memo) { if (root == null) return 0; if (memo.containsKey(root)) return memo.get(root); int money = root.val; if (root.left != null) { money += robAction(root.left.left, memo) + robAction(root.left.right, memo); } if (root.right != null) { money += robAction(root.right.left, memo) + robAction(root.right.right, memo); } int res = Math.max(money, robAction(root.left, memo) + robAction(root.right, memo)); memo.put(root, res); return res; }}",
+          "description": "记忆化递归解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int rob3(TreeNode root) { int[] res = robAction1(root); return Math.max(res[0], res[1]); } int[] robAction1(TreeNode root) { int res[] = new int[2]; if (root == null) return res; int[] left = robAction1(root.left); int[] right = robAction1(root.right); res[0] = Math.max(left[0], left[1]) + Math.max(right[0], right[1]); res[1] = root.val + left[0] + right[0]; return res; }}",
+          "description": "动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, root: TreeNode) -> int: if root is None: return 0 if root.left is None and root.right is None: return root.val val1 = root.val if root.left: val1 += self.rob(root.left.left) + self.rob(root.left.right) if root.right: val1 += self.rob(root.right.left) + self.rob(root.right.right) val2 = self.rob(root.left) + self.rob(root.right) return max(val1, val2)",
+          "description": "暴力递归解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: memory = {} def rob(self, root: TreeNode) -> int: if root is None: return 0 if root.left is None and root.right is None: return root.val if self.memory.get(root) is not None: return self.memory[root] val1 = root.val if root.left: val1 += self.rob(root.left.left) + self.rob(root.left.right) if root.right: val1 += self.rob(root.right.left) + self.rob(root.right.right) val2 = self.rob(root.left) + self.rob(root.right) self.memory[root] = max(val1, val2) return max(val1, val2)",
+          "description": "记忆化递归解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, root: Optional[TreeNode]) -> int: dp = self.traversal(root) return max(dp) def traversal(self, node): if not node: return (0, 0) left = self.traversal(node.left) right = self.traversal(node.right) val_0 = max(left[0], left[1]) + max(right[0], right[1]) val_1 = node.val + left[0] + right[0] return (val_0, val_1)",
+          "description": "动态规划解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(TreeNode* root) { if (root == NULL) return 0; if (root->left == NULL && root->right == NULL) return root->val; // 偷父节点 int val1 = root->val; if (root->left) val1 += rob(root->left->left) + rob(root->left->right); if (root->right) val1 += rob(root->right->left) + rob(root->right->right); // 不偷父节点 int val2 = rob(root->left) + rob(root->right); return max(val1, val2); }};",
+          "description": "暴力递归解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: unordered_map<TreeNode*, int> umap; int rob(TreeNode* root) { if (root == NULL) return 0; if (root->left == NULL && root->right == NULL) return root->val; if (umap[root]) return umap[root]; int val1 = root->val; if (root->left) val1 += rob(root->left->left) + rob(root->left->right); if (root->right) val1 += rob(root->right->left) + rob(root->right->right); int val2 = rob(root->left) + rob(root->right); umap[root] = max(val1, val2); return max(val1, val2); }};",
+          "description": "记忆化递归解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(TreeNode* root) { vector<int> result = robTree(root); return max(result[0], result[1]); } vector<int> robTree(TreeNode* cur) { if (cur == NULL) return vector<int>{0, 0}; vector<int> left = robTree(cur->left); vector<int> right = robTree(cur->right); int val1 = cur->val + left[0] + right[0]; int val2 = max(left[0], left[1]) + max(right[0], right[1]); return {val2, val1}; }};",
+          "description": "动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int rob(TreeNode root) { if (root == null) return 0; int money = root.val; if (root.left != null) { money += rob(root.left.left) + rob(root.left.right); } if (root.right != null) { money += rob(root.right.left) + rob(root.right.right); } return Math.max(money, rob(root.left) + rob(root.right)); } public int rob1(TreeNode root) { Map<TreeNode, Integer> memo = new HashMap<>(); return robAction(root, memo); } int robAction(TreeNode root, Map<TreeNode, Integer> memo) { if (root == null) return 0; if (memo.containsKey(root)) return memo.get(root); int money = root.val; if (root.left != null) { money += robAction(root.left.left, memo) + robAction(root.left.right, memo); } if (root.right != null) { money += robAction(root.right.left, memo) + robAction(root.right.right, memo); } int res = Math.max(money, robAction(root.left, memo) + robAction(root.right, memo)); memo.put(root, res); return res; } public int rob3(TreeNode root) { int[] res = robAction1(root); return Math.max(res[0], res[1]); } int[] robAction1(TreeNode root) { int res[] = new int[2]; if (root == null) return res; int[] left = robAction1(root.left); int[] right = robAction1(root.right); res[0] = Math.max(left[0], left[1]) + Math.max(right[0], right[1]); res[1] = root.val + left[0] + right[0]; return res; }}",
+          "description": "Java实现，包括暴力递归、记忆化递归和动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class TreeNode: def __init__(self, val=0, left=None, right=None): self.val = val self.left = left self.right = right class Solution: def rob(self, root: TreeNode) -> int: if root is None: return 0 if root.left is None and root.right is None: return root.val val1 = root.val if root.left: val1 += self.rob(root.left.left) + self.rob(root.left.right) if root.right: val1 += self.rob(root.right.left) + self.rob(root.right.right) val2 = self.rob(root.left) + self.rob(root.right) return max(val1, val2) memory = {} def rob(self, root: TreeNode) -> int: if root is None: return 0 if root.left is None and root.right is None: return root.val if self.memory.get(root) is not None: return self.memory[root] val1 = root.val if root.left: val1 += self.rob(root.left.left) + self.rob(root.left.right) if root.right: val1 += self.rob(root.right.left) + self.rob(root.right.right) val2 = self.rob(root.left) + self.rob(root.right) self.memory[root] = max(val1, val2) return max(val1, val2) def rob(self, root: Optional[TreeNode]) -> int: dp = self.traversal(root) return max(dp) def traversal(self, node): if not node: return (0, 0) left = self.traversal(node.left) right = self.traversal(node.right) val_0 = max(left[0], left[1]) + max(right[0], right[1]) val_1 = node.val + left[0] + right[0] return (val_0, val_1)",
+          "description": "Python实现，包括暴力递归、记忆化递归和动态规划"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "暴力递归",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(TreeNode* root) { if (root == NULL) return 0; if (root->left == NULL && root->right == NULL) return root->val; int val1 = root->val; if (root->left) val1 += rob(root->left->left) + rob(root->left->right); if (root->right) val1 += rob(root->right->left) + rob(root->right->right); int val2 = rob(root->left) + rob(root->right); return max(val1, val2); }};",
+          "description": "暴力递归方法解决打家劫舍III问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: unordered_map<TreeNode*, int> umap; int rob(TreeNode* root) { if (root == NULL) return 0; if (root->left == NULL && root->right == NULL) return root->val; if (umap[root]) return umap[root]; int val1 = root->val; if (root->left) val1 += rob(root->left->left) + rob(root->left->right); if (root->right) val1 += rob(root->right->left) + rob(root->right->right); int val2 = rob(root->left) + rob(root->right); umap[root] = max(val1, val2); return max(val1, val2); }};",
+          "description": "使用记忆化递归方法解决打家劫舍III问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(TreeNode* root) { vector<int> result = robTree(root); return max(result[0], result[1]); } vector<int> robTree(TreeNode* cur) { if (cur == NULL) return vector<int>{0, 0}; vector<int> left = robTree(cur->left); vector<int> right = robTree(cur->right); int val1 = cur->val + left[0] + right[0]; int val2 = max(left[0], left[1]) + max(right[0], right[1]); return {val2, val1}; }};",
+          "description": "使用动态规划方法解决打家劫舍III问题"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution { public int rob(TreeNode root) { if (root == null) return 0; int money = root.val; if (root.left != null) { money += rob(root.left.left) + rob(root.left.right); } if (root.right != null) { money += rob(root.right.left) + rob(root.right.right); } return Math.max(money, rob(root.left) + rob(root.right)); }}",
+          "description": "Java版本暴力递归方法解决打家劫舍III问题"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution { Map<TreeNode, Integer> memo = new HashMap<>(); public int rob(TreeNode root) { if (root == null) return 0; if (memo.containsKey(root)) return memo.get(root); int money = root.val; if (root.left != null) { money += rob(root.left.left) + rob(root.left.right); } if (root.right != null) { money += rob(root.right.left) + rob(root.right.right); } int res = Math.max(money, rob(root.left) + rob(root.right)); memo.put(root, res); return res; }}",
+          "description": "Java版本记忆化递归方法解决打家劫舍III问题"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution { public int rob(TreeNode root) { int[] res = robAction1(root); return Math.max(res[0], res[1]); } int[] robAction1(TreeNode root) { int res[] = new int[2]; if (root == null) return res; int[] left = robAction1(root.left); int[] right = robAction1(root.right); res[0] = Math.max(left[0], left[1]) + Math.max(right[0], right[1]); res[1] = root.val + left[0] + right[0]; return res; }}",
+          "description": "Java版本动态规划方法解决打家劫舍III问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, root: TreeNode) -> int: if root is None: return 0 if root.left is None and root.right is None: return root.val val1 = root.val if root.left: val1 += self.rob(root.left.left) + self.rob(root.left.right) if root.right: val1 += self.rob(root.right.left) + self.rob(root.right.right) val2 = self.rob(root.left) + self.rob(root.right) return max(val1, val2)",
+          "description": "Python版本暴力递归方法解决打家劫舍III问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: memory = {} def rob(self, root: TreeNode) -> int: if root is None: return 0 if root.left is None and root.right is None: return root.val if self.memory.get(root) is not None: return self.memory[root] val1 = root.val if root.left: val1 += self.rob(root.left.left) + self.rob(root.left.right) if root.right: val1 += self.rob(root.right.left) + self.rob(root.right.right) val2 = self.rob(root.left) + self.rob(root.right) self.memory[root] = max(val1, val2) return max(val1, val2)",
+          "description": "Python版本记忆化递归方法解决打家劫舍III问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, root: Optional[TreeNode]) -> int: dp = self.traversal(root) return max(dp) def traversal(self, node): if not node: return (0, 0) left = self.traversal(node.left) right = self.traversal(node.right) val_0 = max(left[0], left[1]) + max(right[0], right[1]) val_1 = node.val + left[0] + right[0] return (val_0, val_1)",
+          "description": "Python版本动态规划方法解决打家劫舍III问题"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(log n)",
+    "explanation": "这个时间复杂度不太标准，也不容易准确化，例如越往下的节点重复计算次数就越多"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int rob(TreeNode* root) {if (root == NULL) return 0;if (root->left == NULL && root->right == NULL) return root->val;int val1 = root->val;if (root->left) val1 += rob(root->left->left) + rob(root->left->right);if (root->right) val1 += rob(root->right->left) + rob(root->right->right);int val2 = rob(root->left) + rob(root->right);return max(val1, val2);}};",
+      "description": "暴力递归"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: unordered_map<TreeNode*, int> umap;int rob(TreeNode* root) {if (root == NULL) return 0;if (root->left == NULL && root->right == NULL) return root->val;if (umap[root]) return umap[root];int val1 = root->val;if (root->left) val1 += rob(root->left->left) + rob(root->left->right);if (root->right) val1 += rob(root->right->left) + rob(root->right->right);int val2 = rob(root->left) + rob(root->right);umap[root] = max(val1, val2);return max(val1, val2);}};",
+      "description": "记忆化递推"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int rob(TreeNode* root) {vector<int> result = robTree(root);return max(result[0], result[1]);}vector<int> robTree(TreeNode* cur) {if (cur == NULL) return vector<int>{0, 0};vector<int> left = robTree(cur->left);vector<int> right = robTree(cur->right);int val1 = cur->val + left[0] + right[0];int val2 = max(left[0], left[1]) + max(right[0], right[1]);return {val2, val1};}};",
+      "description": "动态规划"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int rob(TreeNode root) {if (root == null)return 0;int money = root.val;if (root.left != null) {money += rob(root.left.left) + rob(root.left.right);}if (root.right != null) {money += rob(root.right.left) + rob(root.right.right);}return Math.max(money, rob(root.left) + rob(root.right));}}",
+      "description": "暴力递归"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int rob1(TreeNode root) {Map<TreeNode, Integer> memo = new HashMap<>();return robAction(root, memo);}int robAction(TreeNode root, Map<TreeNode, Integer> memo) {if (root == null)return 0;if (memo.containsKey(root))return memo.get(root);int money = root.val;if (root.left != null) {money += robAction(root.left.left, memo) + robAction(root.left.right, memo);}if (root.right != null) {money += robAction(root.right.left, memo) + robAction(root.right.right, memo);}int res = Math.max(money, robAction(root.left, memo) + robAction(root.right, memo));memo.put(root, res);return res;}}",
+      "description": "记忆化递推"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int rob3(TreeNode root) {int[] res = robAction1(root);return Math.max(res[0], res[1]);}int[] robAction1(TreeNode root) {int res[] = new int[2];if (root == null)return res;int[] left = robAction1(root.left);int[] right = robAction1(root.right);res[0] = Math.max(left[0], left[1]) + Math.max(right[0], right[1]);res[1] = root.val + left[0] + right[0];return res;}}",
+      "description": "动态规划"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def rob(self, root: TreeNode) -> int: if root is None: return 0 if root.left is None and root.right  is None: return root.val val1 = root.val if root.left: val1 += self.rob(root.left.left) + self.rob(root.left.right) if root.right: val1 += self.rob(root.right.left) + self.rob(root.right.right) val2 = self.rob(root.left) + self.rob(root.right) return max(val1, val2)",
+      "description": "暴力递归"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: memory = {}def rob(self, root: TreeNode) -> int: if root is None: return 0 if root.left is None and root.right  is None: return root.val if self.memory.get(root) is not None: return self.memory[root] val1 = root.val if root.left: val1 += self.rob(root.left.left) + self.rob(root.left.right) if root.right: val1 += self.rob(root.right.left) + self.rob(root.right.right) val2 = self.rob(root.left) + self.rob(root.right) self.memory[root] = max(val1, val2) return max(val1, val2)",
+      "description": "记忆化递推"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def rob(self, root: Optional[TreeNode]) -> int: dp = self.traversal(root) return max(dp)def traversal(self, node): if not node: return (0, 0) left = self.traversal(node.left) right = self.traversal(node.right) val_0 = max(left[0], left[1]) + max(right[0], right[1]) val_1 = node.val + left[0] + right[0] return (val_0, val_1)",
+      "description": "动态规划"
+    }
+  ],
+  "common_mistakes": [
+    "未能正确理解何时应该使用哪种遍历方式。",
+    "没有注意到直接相连的房子不能同时被偷这一约束条件。",
+    "忽视了利用已知信息减少重复工作的重要性，导致算法效率低下。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210223173849619.png",
+      "description": "该图片展示了两道关于二叉树的“房屋偷盗”问题，要求计算在不触发警报的情况下能够偷取的最高金额，涉及深度优先搜索（DFS）或动态规划算法来解决。",
+      "context": "该图片展示了一个类似二叉树结构的房屋排列示例，用于说明小偷如何在不触动警报的情况下选择最佳行窃路径。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230203110031.png",
+      "description": "这张图片展示了一个二叉树的后序遍历过程，每个节点标注了“不偷当前节点得到的金钱”和“偷当前节点得到的金钱”的值，体现了动态规划在树结构中的应用。",
+      "context": "该图片展示了以示例1为例，使用后序遍历方式推导出的dp数组状态，用于解释如何计算偷取二叉树节点值的最大金额。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210223173849619.png",
+      "description": "GIF展示了通过后序遍历二叉树来解决打家劫舍问题的递归调用过程。",
+      "context": "该GIF动画展示了如何在类似二叉树结构的房屋布局中，通过选择性地“打劫”某些房屋来最大化收益，同时避免触发相邻房屋间的警报机制。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230203110031.png",
+      "description": "GIF展示了通过后序遍历计算二叉树上每个节点偷与不偷两种情况下最大收益的过程。",
+      "context": "GIF动画展示了使用后序遍历方式推导dp数组状态的过程，帮助理解如何计算偷取二叉树节点最大金额的动态规划方法。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\动态规划\\打家劫舍 III.txt",
+  "extracted_at": "2025-07-20T17:50:57.928430",
+  "raw_content": "打家劫舍 III\n力扣题目链接(https://leetcode.cn/problems/house-robber-iii/)\n\n在上次打劫完一条街道之后和一圈房屋后，小偷又发现了一个新的可行窃的地区。这个地区只有一个入口，我们称之为“根”。 除了“根”之外，每栋房子有且只有一个“父“房子与之相连。一番侦察之后，聪明的小偷意识到“这个地方的所有房屋的排列类似于一棵二叉树”。 如果两个直接相连的房子在同一天晚上被打劫，房屋将自动报警。\n\n计算在不触动警报的情况下，小偷一晚能够盗取的最高金额。\n\nhttps://file1.kamacoder.com/i/algo/20210223173849619.png\n\n\n\n#思路\n这道题目和 198.打家劫舍 (https://programmercarl.com/0198.%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D.html)，213.打家劫舍II (https://programmercarl.com/0213.%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8DII.html)也是如出一辙，只不过这个换成了树。\n\n如果对树的遍历不够熟悉的话，那本题就有难度了。\n\n对于树的话，首先就要想到遍历方式，前中后序（深度优先搜索）还是层序遍历（广度优先搜索）。\n\n本题一定是要后序遍历，因为通过递归函数的返回值来做下一步计算。\n\n与198.打家劫舍，213.打家劫舍II一样，关键是要讨论当前节点抢还是不抢。\n\n如果抢了当前节点，两个孩子就不能动，如果没抢当前节点，就可以考虑抢左右孩子（注意这里说的是“考虑”）\n\n#暴力递归\n代码如下：\n\nclass Solution {\npublic:\n    int rob(TreeNode* root) {\n        if (root == NULL) return 0;\n        if (root->left == NULL && root->right == NULL) return root->val;\n        // 偷父节点\n        int val1 = root->val;\n        if (root->left) val1 += rob(root->left->left) + rob(root->left->right); // 跳过root->left，相当于不考虑左孩子了\n        if (root->right) val1 += rob(root->right->left) + rob(root->right->right); // 跳过root->right，相当于不考虑右孩子了\n        // 不偷父节点\n        int val2 = rob(root->left) + rob(root->right); // 考虑root的左右孩子\n        return max(val1, val2);\n    }\n};\n时间复杂度：O(n^2)，这个时间复杂度不太标准，也不容易准确化，例如越往下的节点重复计算次数就越多\n空间复杂度：O(log n)，算上递推系统栈的空间\n当然以上代码超时了，这个递归的过程中其实是有重复计算了。\n\n我们计算了root的四个孙子（左右孩子的孩子）为头结点的子树的情况，又计算了root的左右孩子为头结点的子树的情况，计算左右孩子的时候其实又把孙子计算了一遍。\n\n#记忆化递推\n所以可以使用一个map把计算过的结果保存一下，这样如果计算过孙子了，那么计算孩子的时候可以复用孙子节点的结果。\n\n代码如下：\n\nclass Solution {\npublic:\n    unordered_map<TreeNode* , int> umap; // 记录计算过的结果\n    int rob(TreeNode* root) {\n        if (root == NULL) return 0;\n        if (root->left == NULL && root->right == NULL) return root->val;\n        if (umap[root]) return umap[root]; // 如果umap里已经有记录则直接返回\n        // 偷父节点\n        int val1 = root->val;\n        if (root->left) val1 += rob(root->left->left) + rob(root->left->right); // 跳过root->left\n        if (root->right) val1 += rob(root->right->left) + rob(root->right->right); // 跳过root->right\n        // 不偷父节点\n        int val2 = rob(root->left) + rob(root->right); // 考虑root的左右孩子\n        umap[root] = max(val1, val2); // umap记录一下结果\n        return max(val1, val2);\n    }\n};\n\n时间复杂度：O(n)\n空间复杂度：O(log n)，算上递推系统栈的空间\n#动态规划\n在上面两种方法，其实对一个节点 偷与不偷得到的最大金钱都没有做记录，而是需要实时计算。\n\n而动态规划其实就是使用状态转移容器来记录状态的变化，这里可以使用一个长度为2的数组，记录当前节点偷与不偷所得到的的最大金钱。\n\n这道题目算是树形dp的入门题目，因为是在树上进行状态转移，我们在讲解二叉树的时候说过递归三部曲，那么下面我以递归三部曲为框架，其中融合动规五部曲的内容来进行讲解。\n\n确定递归函数的参数和返回值\n这里我们要求一个节点 偷与不偷的两个状态所得到的金钱，那么返回值就是一个长度为2的数组。\n\n参数为当前节点，代码如下：\n\nvector<int> robTree(TreeNode* cur) {\n其实这里的返回数组就是dp数组。\n\n所以dp数组（dp table）以及下标的含义：下标为0记录不偷该节点所得到的的最大金钱，下标为1记录偷该节点所得到的的最大金钱。\n\n所以本题dp数组就是一个长度为2的数组！\n\n那么有同学可能疑惑，长度为2的数组怎么标记树中每个节点的状态呢？\n\n别忘了在递归的过程中，系统栈会保存每一层递归的参数。\n\n如果还不理解的话，就接着往下看，看到代码就理解了哈。\n\n确定终止条件\n在遍历的过程中，如果遇到空节点的话，很明显，无论偷还是不偷都是0，所以就返回\n\nif (cur == NULL) return vector<int>{0, 0};\n这也相当于dp数组的初始化\n\n确定遍历顺序\n首先明确的是使用后序遍历。 因为要通过递归函数的返回值来做下一步计算。\n\n通过递归左节点，得到左节点偷与不偷的金钱。\n\n通过递归右节点，得到右节点偷与不偷的金钱。\n\n代码如下：\n\n// 下标0：不偷，下标1：偷\nvector<int> left = robTree(cur->left); // 左\nvector<int> right = robTree(cur->right); // 右\n// 中\n\n确定单层递归的逻辑\n如果是偷当前节点，那么左右孩子就不能偷，val1 = cur->val + left[0] + right[0]; （如果对下标含义不理解就再回顾一下dp数组的含义）\n\n如果不偷当前节点，那么左右孩子就可以偷，至于到底偷不偷一定是选一个最大的，所以：val2 = max(left[0], left[1]) + max(right[0], right[1]);\n\n最后当前节点的状态就是{val2, val1}; 即：{不偷当前节点得到的最大金钱，偷当前节点得到的最大金钱}\n\n代码如下：\n\nvector<int> left = robTree(cur->left); // 左\nvector<int> right = robTree(cur->right); // 右\n\n// 偷cur\nint val1 = cur->val + left[0] + right[0];\n// 不偷cur\nint val2 = max(left[0], left[1]) + max(right[0], right[1]);\nreturn {val2, val1};\n举例推导dp数组\n以示例1为例，dp数组状态如下：（注意用后序遍历的方式推导）\n\nhttps://file1.kamacoder.com/i/algo/20230203110031.png\n\n最后头结点就是 取下标0 和 下标1的最大值就是偷得的最大金钱。\n\n递归三部曲与动规五部曲分析完毕，C++代码如下：\n\nclass Solution {\npublic:\n    int rob(TreeNode* root) {\n        vector<int> result = robTree(root);\n        return max(result[0], result[1]);\n    }\n    // 长度为2的数组，0：不偷，1：偷\n    vector<int> robTree(TreeNode* cur) {\n        if (cur == NULL) return vector<int>{0, 0};\n        vector<int> left = robTree(cur->left);\n        vector<int> right = robTree(cur->right);\n        // 偷cur，那么就不能偷左右节点。\n        int val1 = cur->val + left[0] + right[0];\n        // 不偷cur，那么可以偷也可以不偷左右节点，则取较大的情况\n        int val2 = max(left[0], left[1]) + max(right[0], right[1]);\n        return {val2, val1};\n    }\n};\n时间复杂度：O(n)，每个节点只遍历了一次\n空间复杂度：O(log n)，算上递推系统栈的空间\n#总结\n这道题是树形DP的入门题目，通过这道题目大家应该也了解了，所谓树形DP就是在树上进行递归公式的推导。\n\n所以树形DP也没有那么神秘！\n\n只不过平时我们习惯了在一维数组或者二维数组上推导公式，一下子换成了树，就需要对树的遍历方式足够了解！\n\n大家还记不记得我在讲解贪心专题的时候，讲到这道题目：贪心算法：我要监控二叉树！ (opens new window)，这也是贪心算法在树上的应用。那我也可以把这个算法起一个名字，叫做树形贪心。\n\n“树形贪心”词汇从此诞生，来自「代码随想录」\n\n#其他语言版本\n#Java\nclass Solution {\n    // 1.递归去偷，超时\n    public int rob(TreeNode root) {\n        if (root == null)\n            return 0;\n        int money = root.val;\n        if (root.left != null) {\n            money += rob(root.left.left) + rob(root.left.right);\n        }\n        if (root.right != null) {\n            money += rob(root.right.left) + rob(root.right.right);\n        }\n        return Math.max(money, rob(root.left) + rob(root.right));\n    }\n\n    // 2.递归去偷，记录状态\n    // 执行用时：3 ms , 在所有 Java 提交中击败了 56.24% 的用户\n    public int rob1(TreeNode root) {\n        Map<TreeNode, Integer> memo = new HashMap<>();\n        return robAction(root, memo);\n    }\n\n    int robAction(TreeNode root, Map<TreeNode, Integer> memo) {\n        if (root == null)\n            return 0;\n        if (memo.containsKey(root))\n            return memo.get(root);\n        int money = root.val;\n        if (root.left != null) {\n            money += robAction(root.left.left, memo) + robAction(root.left.right, memo);\n        }\n        if (root.right != null) {\n            money += robAction(root.right.left, memo) + robAction(root.right.right, memo);\n        }\n        int res = Math.max(money, robAction(root.left, memo) + robAction(root.right, memo));\n        memo.put(root, res);\n        return res;\n    }\n\n    // 3.状态标记递归\n    // 执行用时：0 ms , 在所有 Java 提交中击败了 100% 的用户\n    // 不偷：Max(左孩子不偷，左孩子偷) + Max(右孩子不偷，右孩子偷)\n    // root[0] = Math.max(rob(root.left)[0], rob(root.left)[1]) +\n    // Math.max(rob(root.right)[0], rob(root.right)[1])\n    // 偷：左孩子不偷+ 右孩子不偷 + 当前节点偷\n    // root[1] = rob(root.left)[0] + rob(root.right)[0] + root.val;\n    public int rob3(TreeNode root) {\n        int[] res = robAction1(root);\n        return Math.max(res[0], res[1]);\n    }\n\n    int[] robAction1(TreeNode root) {\n        int res[] = new int[2];\n        if (root == null)\n            return res;\n\n        int[] left = robAction1(root.left);\n        int[] right = robAction1(root.right);\n\n        res[0] = Math.max(left[0], left[1]) + Math.max(right[0], right[1]);\n        res[1] = root.val + left[0] + right[0];\n        return res;\n    }\n}\n#Python\n暴力递归\n\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def rob(self, root: TreeNode) -> int:\n        if root is None:\n            return 0\n        if root.left is None and root.right  is None:\n            return root.val\n        # 偷父节点\n        val1 = root.val\n        if root.left:\n            val1 += self.rob(root.left.left) + self.rob(root.left.right)\n        if root.right:\n            val1 += self.rob(root.right.left) + self.rob(root.right.right)\n        # 不偷父节点\n        val2 = self.rob(root.left) + self.rob(root.right)\n        return max(val1, val2)\n记忆化递归\n\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    memory = {}\n    def rob(self, root: TreeNode) -> int:\n        if root is None:\n            return 0\n        if root.left is None and root.right  is None:\n            return root.val\n        if self.memory.get(root) is not None:\n            return self.memory[root]\n        # 偷父节点\n        val1 = root.val\n        if root.left:\n            val1 += self.rob(root.left.left) + self.rob(root.left.right)\n        if root.right:\n            val1 += self.rob(root.right.left) + self.rob(root.right.right)\n        # 不偷父节点\n        val2 = self.rob(root.left) + self.rob(root.right)\n        self.memory[root] = max(val1, val2)\n        return max(val1, val2)\n动态规划\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def rob(self, root: Optional[TreeNode]) -> int:\n        # dp数组（dp table）以及下标的含义：\n        # 1. 下标为 0 记录 **不偷该节点** 所得到的的最大金钱\n        # 2. 下标为 1 记录 **偷该节点** 所得到的的最大金钱\n        dp = self.traversal(root)\n        return max(dp)\n\n    # 要用后序遍历, 因为要通过递归函数的返回值来做下一步计算\n    def traversal(self, node):\n        \n        # 递归终止条件，就是遇到了空节点，那肯定是不偷的\n        if not node:\n            return (0, 0)\n\n        left = self.traversal(node.left)\n        right = self.traversal(node.right)\n\n        # 不偷当前节点, 偷子节点\n        val_0 = max(left[0], left[1]) + max(right[0], right[1])\n\n        # 偷当前节点, 不偷子节点\n        val_1 = node.val + left[0] + right[0]\n\n        return (val_0, val_1)"
+}

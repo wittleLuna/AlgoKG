@@ -1,0 +1,115 @@
+填充每个节点的下一个右侧节点指针
+力扣题目链接(https://leetcode.cn/problems/populating-next-right-pointers-in-each-node/)
+
+给定一个完美二叉树，其所有叶子节点都在同一层，每个父节点都有两个子节点。二叉树定义如下：
+
+struct Node {
+  int val;
+  Node *left;
+  Node *right;
+  Node *next;
+}
+填充它的每个 next 指针，让这个指针指向其下一个右侧节点。如果找不到下一个右侧节点，则将 next 指针设置为 NULL。
+
+初始状态下，所有 next 指针都被设置为 NULL。
+
+https://file1.kamacoder.com/i/algo/20210203152044855.jpg
+
+#思路
+本题依然是层序遍历，只不过在单层遍历的时候记录一下本层的头部节点，然后在遍历的时候让前一个节点指向本节点就可以了
+
+C++代码：
+
+class Solution {
+public:
+    Node* connect(Node* root) {
+        queue<Node*> que;
+        if (root != NULL) que.push(root);
+        while (!que.empty()) {
+            int size = que.size();
+            // vector<int> vec;
+            Node* nodePre;
+            Node* node;
+            for (int i = 0; i < size; i++) {
+                if (i == 0) {
+                    nodePre = que.front(); // 取出一层的头结点
+                    que.pop();
+                    node = nodePre;
+                } else {
+                    node = que.front();
+                    que.pop();
+                    nodePre->next = node; // 本层前一个节点next指向本节点
+                    nodePre = nodePre->next;
+                }
+                if (node->left) que.push(node->left);
+                if (node->right) que.push(node->right);
+            }
+            nodePre->next = NULL; // 本层最后一个节点指向NULL
+        }
+        return root;
+
+    }
+};
+#其他语言版本
+#Java：
+class Solution {
+    public Node connect(Node root) {
+	Queue<Node> tmpQueue = new LinkedList<Node>();
+	if (root != null) tmpQueue.add(root);
+
+	while (tmpQueue.size() != 0){
+	    int size = tmpQueue.size();
+
+            Node cur = tmpQueue.poll();
+            if (cur.left != null) tmpQueue.add(cur.left);
+            if (cur.right != null) tmpQueue.add(cur.right);
+
+	    for (int index = 1; index < size; index++){
+		Node next = tmpQueue.poll();
+		if (next.left != null) tmpQueue.add(next.left);
+		if (next.right != null) tmpQueue.add(next.right);
+
+                cur.next = next;
+                cur = next;
+	    }
+	}
+
+        return root;
+    }
+}
+#Python：
+"""
+# Definition for a Node.
+class Node:
+    def __init__(self, val: int = 0, left: 'Node' = None, right: 'Node' = None, next: 'Node' = None):
+        self.val = val
+        self.left = left
+        self.right = right
+        self.next = next
+"""
+class Solution:
+    def connect(self, root: 'Node') -> 'Node':
+        if not root:
+            return root
+        
+        queue = collections.deque([root])
+        
+        while queue:
+            level_size = len(queue)
+            prev = None
+            
+            for i in range(level_size):
+                node = queue.popleft()
+                
+                if prev:
+                    prev.next = node
+                
+                prev = node
+                
+                if node.left:
+                    queue.append(node.left)
+                
+                if node.right:
+                    queue.append(node.right)
+        
+        return root

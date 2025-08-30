@@ -1,0 +1,110 @@
+填充每个节点的下一个右侧节点指针II
+力扣题目链接(https://leetcode.cn/problems/populating-next-right-pointers-in-each-node-ii/)
+
+#思路
+这道题目说是二叉树，但116题目说是完整二叉树，其实没有任何差别，一样的代码一样的逻辑一样的味道
+
+C++代码：
+
+class Solution {
+public:
+    Node* connect(Node* root) {
+        queue<Node*> que;
+        if (root != NULL) que.push(root);
+        while (!que.empty()) {
+            int size = que.size();
+            vector<int> vec;
+            Node* nodePre;
+            Node* node;
+            for (int i = 0; i < size; i++) {
+                if (i == 0) {
+                    nodePre = que.front(); // 取出一层的头结点
+                    que.pop();
+                    node = nodePre;
+                } else {
+                    node = que.front();
+                    que.pop();
+                    nodePre->next = node; // 本层前一个节点next指向本节点
+                    nodePre = nodePre->next;
+                }
+                if (node->left) que.push(node->left);
+                if (node->right) que.push(node->right);
+            }
+            nodePre->next = NULL; // 本层最后一个节点指向NULL
+        }
+        return root;
+    }
+};
+#其他语言版本
+#Java：
+// 二叉树之层次遍历
+class Solution {
+    public Node connect(Node root) {
+        Queue<Node> queue = new LinkedList<>();
+        if (root != null) {
+            queue.add(root);
+        }
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            Node node = null;
+            Node nodePre = null;
+
+            for (int i = 0; i < size; i++) {
+                if (i == 0) {
+                    nodePre = queue.poll(); // 取出本层头一个节点
+                    node = nodePre;
+                } else {
+                    node = queue.poll();
+                    nodePre.next = node; // 本层前一个节点 next 指向当前节点
+                    nodePre = nodePre.next;
+                }
+                if (node.left != null) {
+                    queue.add(node.left);
+                }
+                if (node.right != null) {
+                    queue.add(node.right);
+                }
+            }
+            nodePre.next = null; // 本层最后一个节点 next 指向 null
+        }
+        return root;
+    }
+}
+#Python：
+# 层序遍历解法
+"""
+# Definition for a Node.
+class Node:
+    def __init__(self, val: int = 0, left: 'Node' = None, right: 'Node' = None, next: 'Node' = None):
+        self.val = val
+        self.left = left
+        self.right = right
+        self.next = next
+"""
+
+class Solution:
+    def connect(self, root: 'Node') -> 'Node':
+        if not root:
+            return root
+        
+        queue = collections.deque([root])
+        
+        while queue:
+            level_size = len(queue)
+            prev = None
+            
+            for i in range(level_size):
+                node = queue.popleft()
+                
+                if prev:
+                    prev.next = node
+                
+                prev = node
+                
+                if node.left:
+                    queue.append(node.left)
+                
+                if node.right:
+                    queue.append(node.right)
+        
+        return root

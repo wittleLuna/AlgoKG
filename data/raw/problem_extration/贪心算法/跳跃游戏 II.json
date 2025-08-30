@@ -1,0 +1,455 @@
+{
+  "id": "AP_d45cccd3",
+  "title": "跳跃游戏 II",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/jump-game-ii/",
+  "description": "一个非负整数数组，你最初位于数组的第一个位置。\n\n数组中的每个元素代表你在该位置可以跳跃的最大长度。\n\n你的目标是使用最少的跳跃次数到达数组的最后一个位置。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "贪心"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "动态规划思想",
+    "贪心策略"
+  ],
+  "difficulty": null,
+  "solution_approach": "采用贪心算法，通过追踪当前能够达到的最大覆盖范围来逐步增加跳跃步数。关键在于每次当移动下标达到当前最大覆盖范围时，如果还未到达数组末尾，则必须增加一步以扩展覆盖范围，直到覆盖整个数组长度。",
+  "key_insights": [
+    {
+      "content": "局部上选择尽可能远的跳跃距离可以间接地帮助我们以最少的步数完成整个跳跃游戏。"
+    },
+    {
+      "content": "通过维护当前步数能覆盖的最远距离和下一步可能覆盖的最远距离，可以确保在每一步中都做出最佳决策。"
+    },
+    {
+      "content": "将移动下标限制在数组倒数第二个位置之前，可以简化对终点特殊情况的处理，从而避免不必要的步数增加。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "本题相对于55.跳跃游戏 (https://programmercarl.com/0055.%E8%B7%B3%E8%B7%83%E6%B8%B8%E6%88%8F.html)还是难了不少。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int jump(vector<int>& nums) {if (nums.size() == 1) return 0;int curDistance = 0;int ans = 0;int nextDistance = 0;for (int i = 0; i < nums.size(); i++) {nextDistance = max(nums[i] + i, nextDistance);if (i == curDistance) {ans++;curDistance = nextDistance;if (nextDistance >= nums.size() - 1) break;}}return ans;}};",
+          "description": "版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int jump(vector<int>& nums) {int curDistance = 0;int ans = 0;int nextDistance = 0;for (int i = 0; i < nums.size() - 1; i++) {nextDistance = max(nums[i] + i, nextDistance);if (i == curDistance) {curDistance = nextDistance;ans++;}}return ans;}};",
+          "description": "版本二"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int jump(int[] nums) {if (nums == null || nums.length == 0 || nums.length == 1) {return 0;}int count=0;int curDistance = 0;int maxDistance = 0;for (int i = 0; i < nums.length; i++) {maxDistance = Math.max(maxDistance,i+nums[i]);if (maxDistance>=nums.length-1){count++;break;}if (i==curDistance){curDistance = maxDistance;count++;}}return count;}}",
+          "description": "版本一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int jump(int[] nums) {int result = 0;int end = 0;int temp = 0;for (int i = 0; i <= end && end < nums.length - 1; ++i) {temp = Math.max(temp, i + nums[i]);if (i == end) {end = temp;result++;}}return result;}}",
+          "description": "版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums): if len(nums) == 1: return 0 cur_distance = 0 ans = 0 next_distance = 0 for i in range(len(nums)): next_distance = max(nums[i] + i, next_distance) if i == cur_distance: ans += 1 cur_distance = next_distance if next_distance >= len(nums) - 1: break return ans",
+          "description": "贪心（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums): cur_distance = 0 ans = 0 next_distance = 0 for i in range(len(nums) - 1): next_distance = max(nums[i] + i, next_distance) if i == cur_distance: cur_distance = next_distance ans += 1 return ans",
+          "description": "贪心（版本二）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums) -> int: if len(nums)==1: return 0 i = 0 count = 0 cover = 0 while i <= cover: for i in range(i, cover+1): cover = max(nums[i]+i, cover) if cover >= len(nums)-1: return count+1 count += 1 return count+1",
+          "description": "贪心（版本三） 类似‘55-跳跃游戏’写法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums: List[int]) -> int: result = [10**4+1] * len(nums) result[0] = 0 for i in range(len(nums)): for j in range(nums[i] + 1): if i + j < len(nums): result[i + j] = min(result[i + j], result[i] + 1) return result[-1]",
+          "description": "动态规划"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "方法一",
+      "text": "从图中可以看出来，就是移动下标达到了当前覆盖的最远距离下标时，步数就要加一，来增加覆盖距离。最后的步数就是最少步数。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int jump(vector<int>& nums) {if (nums.size() == 1) return 0;int curDistance = 0;    // 当前覆盖最远距离下标int ans = 0;            // 记录走的最大步数int nextDistance = 0;   // 下一步覆盖最远距离下标for (int i = 0; i < nums.size(); i++) {nextDistance = max(nums[i] + i, nextDistance);  // 更新下一步覆盖最远距离下标if (i == curDistance) {                         // 遇到当前覆盖最远距离下标ans++;                                  // 需要走下一步curDistance = nextDistance;             // 更新当前覆盖最远距离下标（相当于加油了）if (nextDistance >= nums.size() - 1) break;  // 当前覆盖最远距到达集合终点，不用做ans++操作了，直接结束}}return ans;}};",
+          "description": "C++版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int jump(vector<int>& nums) {int curDistance = 0;    // 当前覆盖的最远距离下标int ans = 0;            // 记录走的最大步数int nextDistance = 0;   // 下一步覆盖的最远距离下标for (int i = 0; i < nums.size() - 1; i++) {nextDistance = max(nums[i] + i, nextDistance); // 更新下一步覆盖的最远距离下标if (i == curDistance) {                 // 遇到当前覆盖的最远距离下标curDistance = nextDistance;         // 更新当前覆盖的最远距离下标ans++;}}return ans;}};",
+          "description": "C++版本二"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int jump(int[] nums) {if (nums == null || nums.length == 0 || nums.length == 1) {return 0;}int count=0;int curDistance = 0;int maxDistance = 0;for (int i = 0; i < nums.length; i++) {maxDistance = Math.max(maxDistance,i+nums[i]);if (maxDistance>=nums.length-1){count++;break;}if (i==curDistance){curDistance = maxDistance;count++;}}return count;}}",
+          "description": "Java版本一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int jump(int[] nums) {int result = 0;int end = 0;int temp = 0;for (int i = 0; i <= end && end < nums.length - 1; ++i) {temp = Math.max(temp, i + nums[i]);if (i == end) {end = temp;result++;}}return result;}}",
+          "description": "Java版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums): if len(nums) == 1: return 0 cur_distance = 0  # 当前覆盖最远距离下标 ans = 0  # 记录走的最大步数 next_distance = 0  # 下一步覆盖最远距离下标 for i in range(len(nums)): next_distance = max(nums[i] + i, next_distance)  # 更新下一步覆盖最远距离下标 if i == cur_distance:  # 遇到当前覆盖最远距离下标 ans += 1  # 需要走下一步 cur_distance = next_distance  # 更新当前覆盖最远距离下标（相当于加油了） if next_distance >= len(nums) - 1:  # 当前覆盖最远距离达到数组末尾，不用再做ans++操作，直接结束 break return ans",
+          "description": "Python版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums): cur_distance = 0  # 当前覆盖的最远距离下标 ans = 0  # 记录走的最大步数 next_distance = 0  # 下一步覆盖的最远距离下标 for i in range(len(nums) - 1):  # 注意这里是小于len(nums) - 1，这是关键所在 next_distance = max(nums[i] + i, next_distance)  # 更新下一步覆盖的最远距离下标 if i == cur_distance:  # 遇到当前覆盖的最远距离下标 cur_distance = next_distance  # 更新当前覆盖的最远距离下标 ans += 1 return ans",
+          "description": "Python版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums) -> int: if len(nums)==1:  # 如果数组只有一个元素，不需要跳跃，步数为0 return 0 i = 0  # 当前位置 count = 0  # 步数计数器 cover = 0  # 当前能够覆盖的最远距离 while i <= cover:  # 当前位置小于等于当前能够覆盖的最远距离时循环 for i in range(i, cover+1):  # 遍历从当前位置到当前能够覆盖的最远距离之间的所有位置 cover = max(nums[i]+i, cover)  # 更新当前能够覆盖的最远距离 if cover >= len(nums)-1:  # 如果当前能够覆盖的最远距离达到或超过数组的最后一个位置，直接返回步数+1 return count+1 count += 1  # 每一轮遍历结束后，步数+1",
+          "description": "Python版本三"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums: List[int]) -> int: result = [10**4+1] * len(nums)  # 初始化结果数组，初始值为一个较大的数 result[0] = 0  # 起始位置的步数为0 for i in range(len(nums)):  # 遍历数组 for j in range(nums[i] + 1):  # 在当前位置能够跳跃的范围内遍历 if i + j < len(nums):  # 确保下一跳的位置不超过数组范围 result[i + j] = min(result[i + j], result[i] + 1)  # 更新到达下一跳位置的最少步数 return result[-1]  # 返回到达最后一个位置的最少步数",
+          "description": "Python动态规划"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "方法二",
+      "text": "依然是贪心，思路和方法一差不多，代码可以简洁一些。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int jump(vector<int>& nums) {if (nums.size() == 1) return 0;int curDistance = 0;    // 当前覆盖最远距离下标int ans = 0;            // 记录走的最大步数int nextDistance = 0;   // 下一步覆盖最远距离下标for (int i = 0; i < nums.size(); i++) {nextDistance = max(nums[i] + i, nextDistance);  // 更新下一步覆盖最远距离下标if (i == curDistance) {                         // 遇到当前覆盖最远距离下标ans++;                                  // 需要走下一步curDistance = nextDistance;             // 更新当前覆盖最远距离下标（相当于加油了）if (nextDistance >= nums.size() - 1) break;  // 当前覆盖最远距到达集合终点，不用做ans++操作了，直接结束}}return ans;}};",
+          "description": "C++版本一的跳跃游戏II解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int jump(vector<int>& nums) {int curDistance = 0;    // 当前覆盖的最远距离下标int ans = 0;            // 记录走的最大步数int nextDistance = 0;   // 下一步覆盖的最远距离下标for (int i = 0; i < nums.size() - 1; i++) {nextDistance = max(nums[i] + i, nextDistance); // 更新下一步覆盖的最远距离下标if (i == curDistance) {                 // 遇到当前覆盖的最远距离下标curDistance = nextDistance;         // 更新当前覆盖的最远距离下标ans++;}}return ans;}};",
+          "description": "C++版本二的跳跃游戏II解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int jump(int[] nums) {if (nums == null || nums.length == 0 || nums.length == 1) {return 0;}int count=0;int curDistance = 0;int maxDistance = 0;for (int i = 0; i < nums.length; i++) {maxDistance = Math.max(maxDistance,i+nums[i]);if (maxDistance>=nums.length-1){count++;break;}if (i==curDistance){curDistance = maxDistance;count++;}}return count;}}",
+          "description": "Java版本一的跳跃游戏II解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int jump(int[] nums) {int result = 0;int end = 0;int temp = 0;for (int i = 0; i <= end && end < nums.length - 1; ++i) {temp = Math.max(temp, i + nums[i]);if (i == end) {end = temp;result++;}}return result;}}",
+          "description": "Java版本二的跳跃游戏II解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def jump(self, nums):if len(nums) == 1:return 0cur_distance = 0  # 当前覆盖最远距离下标ans = 0  # 记录走的最大步数next_distance = 0  # 下一步覆盖最远距离下标for i in range(len(nums)):next_distance = max(nums[i] + i, next_distance)  # 更新下一步覆盖最远距离下标if i == cur_distance:  # 遇到当前覆盖最远距离下标ans += 1  # 需要走下一步cur_distance = next_distance  # 更新当前覆盖最远距离下标（相当于加油了）if next_distance >= len(nums) - 1:  # 当前覆盖最远距离达到数组末尾，不用再做ans++操作，直接结束breakreturn ans",
+          "description": "Python版本一的跳跃游戏II解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def jump(self, nums):cur_distance = 0  # 当前覆盖的最远距离下标ans = 0  # 记录走的最大步数next_distance = 0  # 下一步覆盖的最远距离下标for i in range(len(nums) - 1):  # 注意这里是小于len(nums) - 1，这是关键所在next_distance = max(nums[i] + i, next_distance)  # 更新下一步覆盖的最远距离下标if i == cur_distance:  # 遇到当前覆盖的最远距离下标cur_distance = next_distance  # 更新当前覆盖的最远距离下标ans += 1return ans",
+          "description": "Python版本二的跳跃游戏II解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "相信大家可以发现，这道题目相当于55.跳跃游戏 (https://programmercarl.com/0055.%E8%B7%B3%E8%B7%83%E6%B8%B8%E6%88%8F.html)难了不止一点。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int jump(vector<int>& nums) {if (nums.size() == 1) return 0;int curDistance = 0;int ans = 0;int nextDistance = 0;for (int i = 0; i < nums.size(); i++) {nextDistance = max(nums[i] + i, nextDistance);if (i == curDistance) {ans++;curDistance = nextDistance;if (nextDistance >= nums.size() - 1) break;}}return ans;}};",
+          "description": "C++版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int jump(vector<int>& nums) {int curDistance = 0;int ans = 0;int nextDistance = 0;for (int i = 0; i < nums.size() - 1; i++) {nextDistance = max(nums[i] + i, nextDistance);if (i == curDistance) {curDistance = nextDistance;ans++;}}return ans;}};",
+          "description": "C++版本二"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int jump(int[] nums) {if (nums == null || nums.length == 0 || nums.length == 1) {return 0;}int count=0;int curDistance = 0;int maxDistance = 0;for (int i = 0; i < nums.length; i++) {maxDistance = Math.max(maxDistance,i+nums[i]);if (maxDistance>=nums.length-1){count++;break;}if (i==curDistance){curDistance = maxDistance;count++;}}return count;}}",
+          "description": "Java版本一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int jump(int[] nums) {int result = 0;int end = 0;int temp = 0;for (int i = 0; i <= end && end < nums.length - 1; ++i) {temp = Math.max(temp, i + nums[i]);if (i == end) {end = temp;result++;}}return result;}}",
+          "description": "Java版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums): if len(nums) == 1: return 0 cur_distance = 0 ans = 0 next_distance = 0 for i in range(len(nums)): next_distance = max(nums[i] + i, next_distance) if i == cur_distance: ans += 1 cur_distance = next_distance if next_distance >= len(nums) - 1: break return ans",
+          "description": "Python版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums): cur_distance = 0 ans = 0 next_distance = 0 for i in range(len(nums) - 1): next_distance = max(nums[i] + i, next_distance) if i == cur_distance: cur_distance = next_distance ans += 1 return ans",
+          "description": "Python版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums) -> int: if len(nums)==1: return 0 i = 0 count = 0 cover = 0 while i <= cover: for i in range(i, cover+1): cover = max(nums[i]+i, cover) if cover >= len(nums)-1: return count+1 count += 1 return count+1",
+          "description": "Python版本三"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums: List[int]) -> int: result = [10**4+1] * len(nums) result[0] = 0 for i in range(len(nums)): for j in range(nums[i] + 1): if i + j < len(nums): result[i + j] = min(result[i + j], result[i] + 1) return result[-1]",
+          "description": "Python动态规划"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int jump(vector<int>& nums) {if (nums.size() == 1) return 0;int curDistance = 0;    // 当前覆盖最远距离下标int ans = 0;            // 记录走的最大步数int nextDistance = 0;   // 下一步覆盖最远距离下标for (int i = 0; i < nums.size(); i++) {nextDistance = max(nums[i] + i, nextDistance);  // 更新下一步覆盖最远距离下标if (i == curDistance) {                         // 遇到当前覆盖最远距离下标ans++;                                  // 需要走下一步curDistance = nextDistance;             // 更新当前覆盖最远距离下标（相当于加油了）if (nextDistance >= nums.size() - 1) break;  // 当前覆盖最远距到达集合终点，不用做ans++操作了，直接结束}}return ans;}};",
+          "description": "版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int jump(vector<int>& nums) {int curDistance = 0;    // 当前覆盖的最远距离下标int ans = 0;            // 记录走的最大步数int nextDistance = 0;   // 下一步覆盖的最远距离下标for (int i = 0; i < nums.size() - 1; i++) {nextDistance = max(nums[i] + i, nextDistance); // 更新下一步覆盖的最远距离下标if (i == curDistance) {                 // 遇到当前覆盖的最远距离下标curDistance = nextDistance;         // 更新当前覆盖的最远距离下标ans++;}}return ans;}};",
+          "description": "版本二"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int jump(int[] nums) {if (nums == null || nums.length == 0 || nums.length == 1) {return 0;}int count=0;int curDistance = 0;int maxDistance = 0;for (int i = 0; i < nums.length; i++) {maxDistance = Math.max(maxDistance,i+nums[i]);if (maxDistance>=nums.length-1){count++;break;}if (i==curDistance){curDistance = maxDistance;count++;}}return count;}}",
+          "description": "版本一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int jump(int[] nums) {int result = 0;int end = 0;int temp = 0;for (int i = 0; i <= end && end < nums.length - 1; ++i) {temp = Math.max(temp, i + nums[i]);if (i == end) {end = temp;result++;}}return result;}}",
+          "description": "版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums): if len(nums) == 1: return 0 cur_distance = 0  # 当前覆盖最远距离下标 ans = 0  # 记录走的最大步数 next_distance = 0  # 下一步覆盖最远距离下标 for i in range(len(nums)): next_distance = max(nums[i] + i, next_distance)  # 更新下一步覆盖最远距离下标 if i == cur_distance:  # 遇到当前覆盖最远距离下标 ans += 1  # 需要走下一步 cur_distance = next_distance  # 更新当前覆盖最远距离下标（相当于加油了） if next_distance >= len(nums) - 1:  # 当前覆盖最远距离达到数组末尾，不用再做ans++操作，直接结束 break return ans",
+          "description": "贪心（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums): cur_distance = 0  # 当前覆盖的最远距离下标 ans = 0  # 记录走的最大步数 next_distance = 0  # 下一步覆盖的最远距离下标 for i in range(len(nums) - 1):  # 注意这里是小于len(nums) - 1，这是关键所在 next_distance = max(nums[i] + i, next_distance)  # 更新下一步覆盖的最远距离下标 if i == cur_distance:  # 遇到当前覆盖的最远距离下标 cur_distance = next_distance  # 更新当前覆盖的最远距离下标 ans += 1 return ans",
+          "description": "贪心（版本二）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums) -> int: if len(nums)==1:  # 如果数组只有一个元素，不需要跳跃，步数为0 return 0 i = 0  # 当前位置 count = 0  # 步数计数器 cover = 0  # 当前能够覆盖的最远距离 while i <= cover:  # 当前位置小于等于当前能够覆盖的最远距离时循环 for i in range(i, cover+1):  # 遍历从当前位置到当前能够覆盖的最远距离之间的所有位置 cover = max(nums[i]+i, cover)  # 更新当前能够覆盖的最远距离 if cover >= len(nums)-1:  # 如果当前能够覆盖的最远距离达到或超过数组的最后一个位置，直接返回步数+1 return count+1 count += 1  # 每一轮遍历结束后，步数+1",
+          "description": "贪心（版本三）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums: List[int]) -> int: result = [10**4+1] * len(nums)  # 初始化结果数组，初始值为一个较大的数 result[0] = 0  # 起始位置的步数为0 for i in range(len(nums)):  # 遍历数组 for j in range(nums[i] + 1):  # 在当前位置能够跳跃的范围内遍历 if i + j < len(nums):  # 确保下一跳的位置不超过数组范围 result[i + j] = min(result[i + j], result[i] + 1)  # 更新到达下一跳位置的最少步数 return result[-1]  # 返回到达最后一个位置的最少步数",
+          "description": "动态规划"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "// 版本一",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int jump(vector<int>& nums) {if (nums.size() == 1) return 0;int curDistance = 0;int ans = 0;int nextDistance = 0;for (int i = 0; i < nums.size(); i++) {nextDistance = max(nums[i] + i, nextDistance);if (i == curDistance) {ans++;curDistance = nextDistance;if (nextDistance >= nums.size() - 1) break;}}return ans;}};",
+          "description": "版本一：C++实现，通过贪心算法求解最少跳跃次数。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int jump(vector<int>& nums) {int curDistance = 0;int ans = 0;int nextDistance = 0;for (int i = 0; i < nums.size() - 1; i++) {nextDistance = max(nums[i] + i, nextDistance);if (i == curDistance) {curDistance = nextDistance;ans++;}}return ans;}};",
+          "description": "版本二：C++实现，简化版的贪心算法求解最少跳跃次数。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int jump(int[] nums) {if (nums == null || nums.length == 0 || nums.length == 1) {return 0;}int count=0;int curDistance = 0;int maxDistance = 0;for (int i = 0; i < nums.length; i++) {maxDistance = Math.max(maxDistance,i+nums[i]);if (maxDistance>=nums.length-1){count++;break;}if (i==curDistance){curDistance = maxDistance;count++;}}return count;}}",
+          "description": "版本一：Java实现，使用贪心算法来计算最小跳跃次数。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int jump(int[] nums) {int result = 0;int end = 0;int temp = 0;for (int i = 0; i <= end && end < nums.length - 1; ++i) {temp = Math.max(temp, i + nums[i]);if (i == end) {end = temp;result++;}}return result;}}",
+          "description": "版本二：Java实现，简化了逻辑判断条件的贪心算法求解最少跳跃次数。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums): if len(nums) == 1: return 0 cur_distance = 0 ans = 0 next_distance = 0 for i in range(len(nums)): next_distance = max(nums[i] + i, next_distance) if i == cur_distance: ans += 1 cur_distance = next_distance if next_distance >= len(nums) - 1: break return ans",
+          "description": "版本一：Python实现，利用贪心策略寻找最少跳跃步数。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums): cur_distance = 0 ans = 0 next_distance = 0 for i in range(len(nums) - 1): next_distance = max(nums[i] + i, next_distance) if i == cur_distance: cur_distance = next_distance ans += 1 return ans",
+          "description": "版本二：Python实现，更简洁地实现了贪心算法以找到最少跳跃次数。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums) -> int: if len(nums)==1: return 0 i = 0 count = 0 cover = 0 while i <= cover: for i in range(i, cover+1): cover = max(nums[i]+i, cover) if cover >= len(nums)-1: return count+1 count += 1 return count+1",
+          "description": "版本三：Python实现，一种类似跳跃游戏I的写法，用于解决跳跃游戏II问题。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums: List[int]) -> int: result = [10**4+1] * len(nums) result[0] = 0 for i in range(len(nums)): for j in range(nums[i] + 1): if i + j < len(nums): result[i + j] = min(result[i + j], result[i] + 1) return result[-1]",
+          "description": "动态规划方法：Python实现，使用DP表来追踪到达每个位置所需的最小跳跃次数。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "贪心（版本一）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int jump(vector<int>& nums) {if (nums.size() == 1) return 0;int curDistance = 0;    // 当前覆盖最远距离下标int ans = 0;            // 记录走的最大步数int nextDistance = 0;   // 下一步覆盖最远距离下标for (int i = 0; i < nums.size(); i++) {nextDistance = max(nums[i] + i, nextDistance);  // 更新下一步覆盖最远距离下标if (i == curDistance) {                         // 遇到当前覆盖最远距离下标ans++;                                  // 需要走下一步curDistance = nextDistance;             // 更新当前覆盖最远距离下标（相当于加油了）if (nextDistance >= nums.size() - 1) break;  // 当前覆盖最远距到达集合终点，不用做ans++操作了，直接结束}}return ans;}};",
+          "description": "C++版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int jump(vector<int>& nums) {int curDistance = 0;    // 当前覆盖的最远距离下标int ans = 0;            // 记录走的最大步数int nextDistance = 0;   // 下一步覆盖的最远距离下标for (int i = 0; i < nums.size() - 1; i++) {nextDistance = max(nums[i] + i, nextDistance); // 更新下一步覆盖的最远距离下标if (i == curDistance) {                 // 遇到当前覆盖的最远距离下标curDistance = nextDistance;         // 更新当前覆盖的最远距离下标ans++;}}return ans;}};",
+          "description": "C++版本二"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int jump(int[] nums) {if (nums == null || nums.length == 0 || nums.length == 1) {return 0;}int count=0;int curDistance = 0;int maxDistance = 0;for (int i = 0; i < nums.length; i++) {maxDistance = Math.max(maxDistance,i+nums[i]);if (maxDistance>=nums.length-1){count++;break;}if (i==curDistance){curDistance = maxDistance;count++;}}return count;}}",
+          "description": "Java版本一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int jump(int[] nums) {int result = 0;int end = 0;int temp = 0;for (int i = 0; i <= end && end < nums.length - 1; ++i) {temp = Math.max(temp, i + nums[i]);if (i == end) {end = temp;result++;}}return result;}}",
+          "description": "Java版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums): if len(nums) == 1: return 0 cur_distance = 0  # 当前覆盖最远距离下标 ans = 0  # 记录走的最大步数 next_distance = 0  # 下一步覆盖最远距离下标 for i in range(len(nums)): next_distance = max(nums[i] + i, next_distance)  # 更新下一步覆盖最远距离下标 if i == cur_distance:  # 遇到当前覆盖最远距离下标 ans += 1  # 需要走下一步 cur_distance = next_distance  # 更新当前覆盖最远距离下标（相当于加油了） if next_distance >= len(nums) - 1:  # 当前覆盖最远距离达到数组末尾，不用再做ans++操作，直接结束 break return ans",
+          "description": "Python版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums): cur_distance = 0  # 当前覆盖的最远距离下标 ans = 0  # 记录走的最大步数 next_distance = 0  # 下一步覆盖的最远距离下标 for i in range(len(nums) - 1):  # 注意这里是小于len(nums) - 1，这是关键所在 next_distance = max(nums[i] + i, next_distance)  # 更新下一步覆盖的最远距离下标 if i == cur_distance:  # 遇到当前覆盖的最远距离下标 cur_distance = next_distance  # 更新当前覆盖的最远距离下标 ans += 1 return ans",
+          "description": "Python版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums) -> int: if len(nums)==1:  # 如果数组只有一个元素，不需要跳跃，步数为0 return 0 i = 0  # 当前位置 count = 0  # 步数计数器 cover = 0  # 当前能够覆盖的最远距离 while i <= cover:  # 当前位置小于等于当前能够覆盖的最远距离时循环 for i in range(i, cover+1):  # 遍历从当前位置到当前能够覆盖的最远距离之间的所有位置 cover = max(nums[i]+i, cover)  # 更新当前能够覆盖的最远距离 if cover >= len(nums)-1:  # 如果当前能够覆盖的最远距离达到或超过数组的最后一个位置，直接返回步数+1 return count+1 count += 1  # 每一轮遍历结束后，步数+1",
+          "description": "Python版本三"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def jump(self, nums: List[int]) -> int: result = [10**4+1] * len(nums)  # 初始化结果数组，初始值为一个较大的数 result[0] = 0  # 起始位置的步数为0 for i in range(len(nums)):  # 遍历数组 for j in range(nums[i] + 1):  # 在当前位置能够跳跃的范围内遍历 if i + j < len(nums):  # 确保下一跳的位置不超过数组范围 result[i + j] = min(result[i + j], result[i] + 1)  # 更新到达下一跳位置的最少步数 return result[-1]  # 返回到达最后一个位置的最少步数",
+          "description": "Python动态规划"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int jump(vector<int>& nums) {if (nums.size() == 1) return 0;int curDistance = 0;int ans = 0;int nextDistance = 0;for (int i = 0; i < nums.size(); i++) {nextDistance = max(nums[i] + i, nextDistance);if (i == curDistance) {ans++;curDistance = nextDistance;if (nextDistance >= nums.size() - 1) break;}}return ans;}};",
+      "description": "版本一"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int jump(vector<int>& nums) {int curDistance = 0;int ans = 0;int nextDistance = 0;for (int i = 0; i < nums.size() - 1; i++) {nextDistance = max(nums[i] + i, nextDistance);if (i == curDistance) {curDistance = nextDistance;ans++;}}return ans;}};",
+      "description": "版本二"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int jump(int[] nums) {if (nums == null || nums.length == 0 || nums.length == 1) {return 0;}int count=0;int curDistance = 0;int maxDistance = 0;for (int i = 0; i < nums.length; i++) {maxDistance = Math.max(maxDistance,i+nums[i]);if (maxDistance>=nums.length-1){count++;break;}if (i==curDistance){curDistance = maxDistance;count++;}}return count;}}",
+      "description": "版本一"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int jump(int[] nums) {int result = 0;int end = 0;int temp = 0;for (int i = 0; i <= end && end < nums.length - 1; ++i) {temp = Math.max(temp, i + nums[i]);if (i == end) {end = temp;result++;}}return result;}}",
+      "description": "版本二"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def jump(self, nums): if len(nums) == 1: return 0 cur_distance = 0 ans = 0 next_distance = 0 for i in range(len(nums)): next_distance = max(nums[i] + i, next_distance) if i == cur_distance: ans += 1 cur_distance = next_distance if next_distance >= len(nums) - 1: break return ans",
+      "description": "贪心（版本一）"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def jump(self, nums): cur_distance = 0 ans = 0 next_distance = 0 for i in range(len(nums) - 1): next_distance = max(nums[i] + i, next_distance) if i == cur_distance: cur_distance = next_distance ans += 1 return ans",
+      "description": "贪心（版本二）"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def jump(self, nums) -> int: if len(nums)==1: return 0 i = 0 count = 0 cover = 0 while i <= cover: for i in range(i, cover+1): cover = max(nums[i]+i, cover) if cover >= len(nums)-1: return count+1 count += 1 return count+1",
+      "description": "贪心（版本三） 类似‘55-跳跃游戏’写法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def jump(self, nums: List[int]) -> int: result = [10**4+1] * len(nums) result[0] = 0 for i in range(len(nums)): for j in range(nums[i] + 1): if i + j < len(nums): result[i + j] = min(result[i + j], result[i] + 1) return result[-1]",
+      "description": "动态规划"
+    }
+  ],
+  "common_mistakes": [
+    "忽视了对特殊情况的处理，如当移动到当前覆盖范围边界时是否需要增加跳跃次数。",
+    "未考虑到即使当前步骤不能直接跳到最后一个位置，也可能通过后续几步实现目标。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201201232309103.png",
+      "description": "这张图片展示了跳跃游戏算法的解题过程，通过逐步扩展覆盖范围来判断是否能到达数组终点。",
+      "context": "该图展示了通过逐步增加跳跃覆盖范围来达到终点的过程，其中红色区域表示在给定步数内可以到达的所有位置。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201201232445286.png",
+      "description": "这张图片展示了跳跃游戏算法的解题过程，通过逐步覆盖范围来确定最少跳跃次数。",
+      "context": "该图片展示了当移动下标指向倒数第二个位置且等于当前覆盖最大距离下标时，需要再走一步才能到达终点的情况。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201201232338693.png",
+      "description": "这张图片展示了跳跃游戏算法的解题过程，通过逐步分析数组中每个元素可覆盖的范围来确定最小跳跃次数。",
+      "context": "该图展示了当移动下标不等于当前覆盖最大距离下标时的情况，表明此时可以直接达到终点而无需额外步数。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201201232309103.png",
+      "description": "GIF展示了通过逐步增加覆盖范围来达到终点的过程，每一步都尽可能地扩展最远可达距离，直到覆盖到目标位置。",
+      "context": "该GIF动画展示了如何通过逐步增加覆盖范围来达到终点，形象地说明了算法中每一步覆盖范围的变化以及步数的计算方式。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201201232445286.png",
+      "description": "GIF展示了在数组上通过贪心算法逐步跳跃到达终点的过程，特别强调了当移动下标指向倒数第二个元素时增加步数的情况。",
+      "context": "该GIF展示了当移动下标位于倒数第二个位置且等于当前覆盖的最大距离时，通过增加一步跳跃到达终点的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201201232338693.png",
+      "description": "GIF展示了在数组中移动指针以寻找跳跃游戏最少步数的过程，特别强调了当移动下标达到倒数第二个元素时的决策逻辑。",
+      "context": "该GIF展示了当移动下标不等于当前覆盖最大距离下标时，可以直接达到终点的情况。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\贪心算法\\跳跃游戏 II.txt",
+  "extracted_at": "2025-07-22T17:17:25.047567",
+  "raw_content": "跳跃游戏 II\n力扣题目链接(https://leetcode.cn/problems/jump-game-ii/)\n\n给定一个非负整数数组，你最初位于数组的第一个位置。\n\n数组中的每个元素代表你在该位置可以跳跃的最大长度。\n\n你的目标是使用最少的跳跃次数到达数组的最后一个位置。\n\n示例:\n\n输入: [2,3,1,1,4]\n输出: 2\n解释: 跳到最后一个位置的最小跳跃数是 2。从下标为 0 跳到下标为 1 的位置，跳  1  步，然后跳  3  步到达数组的最后一个位置。\n说明: 假设你总是可以到达数组的最后一个位置。\n\n\n\n#思路\n本题相对于55.跳跃游戏 (https://programmercarl.com/0055.%E8%B7%B3%E8%B7%83%E6%B8%B8%E6%88%8F.html)还是难了不少。\n\n但思路是相似的，还是要看最大覆盖范围。\n\n本题要计算最少步数，那么就要想清楚什么时候步数才一定要加一呢？\n\n贪心的思路，局部最优：当前可移动距离尽可能多走，如果还没到终点，步数再加一。整体最优：一步尽可能多走，从而达到最少步数。\n\n思路虽然是这样，但在写代码的时候还不能真的能跳多远就跳多远，那样就不知道下一步最远能跳到哪里了。\n\n所以真正解题的时候，要从覆盖范围出发，不管怎么跳，覆盖范围内一定是可以跳到的，以最小的步数增加覆盖范围，覆盖范围一旦覆盖了终点，得到的就是最少步数！\n\n这里需要统计两个覆盖范围，当前这一步的最大覆盖和下一步最大覆盖。\n\n如果移动下标达到了当前这一步的最大覆盖最远距离了，还没有到终点的话，那么就必须再走一步来增加覆盖范围，直到覆盖范围覆盖了终点。\n\n如图：\n\nhttps://file1.kamacoder.com/i/algo/20201201232309103.png\n\n图中覆盖范围的意义在于，只要红色的区域，最多两步一定可以到！（不用管具体怎么跳，反正一定可以跳到）\n\n#方法一\n从图中可以看出来，就是移动下标达到了当前覆盖的最远距离下标时，步数就要加一，来增加覆盖距离。最后的步数就是最少步数。\n\n这里还是有个特殊情况需要考虑，当移动下标达到了当前覆盖的最远距离下标时\n\n如果当前覆盖最远距离下标不是是集合终点，步数就加一，还需要继续走。\n如果当前覆盖最远距离下标就是是集合终点，步数不用加一，因为不能再往后走了。\nC++代码如下：（详细注释）\n\n// 版本一\nclass Solution {\npublic:\n    int jump(vector<int>& nums) {\n        if (nums.size() == 1) return 0;\n        int curDistance = 0;    // 当前覆盖最远距离下标\n        int ans = 0;            // 记录走的最大步数\n        int nextDistance = 0;   // 下一步覆盖最远距离下标\n        for (int i = 0; i < nums.size(); i++) {\n            nextDistance = max(nums[i] + i, nextDistance);  // 更新下一步覆盖最远距离下标\n            if (i == curDistance) {                         // 遇到当前覆盖最远距离下标\n                ans++;                                  // 需要走下一步\n                curDistance = nextDistance;             // 更新当前覆盖最远距离下标（相当于加油了）\n                if (nextDistance >= nums.size() - 1) break;  // 当前覆盖最远距到达集合终点，不用做ans++操作了，直接结束\n            }\n        }\n        return ans;\n    }\n};\n时间复杂度: O(n)\n空间复杂度: O(1)\n#方法二\n依然是贪心，思路和方法一差不多，代码可以简洁一些。\n\n针对于方法一的特殊情况，可以统一处理，即：移动下标只要遇到当前覆盖最远距离的下标，直接步数加一，不考虑是不是终点的情况。\n\n想要达到这样的效果，只要让移动下标，最大只能移动到 nums.size - 2 的地方就可以了。\n\n因为当移动下标指向 nums.size - 2 时：\n\n如果移动下标等于当前覆盖最大距离下标， 需要再走一步（即 ans++），因为最后一步一定是可以到的终点。（题目假设总是可以到达数组的最后一个位置），如图： https://file1.kamacoder.com/i/algo/20201201232445286.png\n\n如果移动下标不等于当前覆盖最大距离下标，说明当前覆盖最远距离就可以直接达到终点了，不需要再走一步。如图：\n\nhttps://file1.kamacoder.com/i/algo/20201201232338693.png\n代码如下：\n\n// 版本二\nclass Solution {\npublic:\n    int jump(vector<int>& nums) {\n        int curDistance = 0;    // 当前覆盖的最远距离下标\n        int ans = 0;            // 记录走的最大步数\n        int nextDistance = 0;   // 下一步覆盖的最远距离下标\n        for (int i = 0; i < nums.size() - 1; i++) { // 注意这里是小于nums.size() - 1，这是关键所在\n            nextDistance = max(nums[i] + i, nextDistance); // 更新下一步覆盖的最远距离下标\n            if (i == curDistance) {                 // 遇到当前覆盖的最远距离下标\n                curDistance = nextDistance;         // 更新当前覆盖的最远距离下标\n                ans++;\n            }\n        }\n        return ans;\n    }\n};\n时间复杂度: O(n)\n空间复杂度: O(1)\n可以看出版本二的代码相对于版本一简化了不少！\n\n其精髓在于控制移动下标 i 只移动到 nums.size() - 2 的位置，所以移动下标只要遇到当前覆盖最远距离的下标，直接步数加一，不用考虑别的了。\n\n#总结\n相信大家可以发现，这道题目相当于55.跳跃游戏 (https://programmercarl.com/0055.%E8%B7%B3%E8%B7%83%E6%B8%B8%E6%88%8F.html)难了不止一点。\n\n但代码又十分简单，贪心就是这么巧妙。\n\n理解本题的关键在于：以最小的步数增加最大的覆盖范围，直到覆盖范围覆盖了终点，这个范围内最少步数一定可以跳到，不用管具体是怎么跳的，不纠结于一步究竟跳一个单位还是两个单位。\n\n#其他语言版本\n#Java\n// 版本一\nclass Solution {\n    public int jump(int[] nums) {\n        if (nums == null || nums.length == 0 || nums.length == 1) {\n            return 0;\n        }\n        //记录跳跃的次数\n        int count=0;\n        //当前的覆盖最大区域\n        int curDistance = 0;\n        //最大的覆盖区域\n        int maxDistance = 0;\n        for (int i = 0; i < nums.length; i++) {\n            //在可覆盖区域内更新最大的覆盖区域\n            maxDistance = Math.max(maxDistance,i+nums[i]);\n            //说明当前一步，再跳一步就到达了末尾\n            if (maxDistance>=nums.length-1){\n                count++;\n                break;\n            }\n            //走到当前覆盖的最大区域时，更新下一步可达的最大区域\n            if (i==curDistance){\n                curDistance = maxDistance;\n                count++;\n            }\n        }\n        return count;\n    }\n}\n// 版本二\nclass Solution {\n    public int jump(int[] nums) {\n        int result = 0;\n        // 当前覆盖的最远距离下标\n        int end = 0;\n        // 下一步覆盖的最远距离下标\n        int temp = 0;\n        for (int i = 0; i <= end && end < nums.length - 1; ++i) {\n            temp = Math.max(temp, i + nums[i]);\n            // 可达位置的改变次数就是跳跃次数\n            if (i == end) {\n                end = temp;\n                result++;\n            }\n        }\n        return result;\n    }\n}\n#Python\n贪心（版本一）\n\nclass Solution:\n    def jump(self, nums):\n        if len(nums) == 1:\n            return 0\n        \n        cur_distance = 0  # 当前覆盖最远距离下标\n        ans = 0  # 记录走的最大步数\n        next_distance = 0  # 下一步覆盖最远距离下标\n        \n        for i in range(len(nums)):\n            next_distance = max(nums[i] + i, next_distance)  # 更新下一步覆盖最远距离下标\n            if i == cur_distance:  # 遇到当前覆盖最远距离下标\n                ans += 1  # 需要走下一步\n                cur_distance = next_distance  # 更新当前覆盖最远距离下标（相当于加油了）\n                if next_distance >= len(nums) - 1:  # 当前覆盖最远距离达到数组末尾，不用再做ans++操作，直接结束\n                    break\n        \n        return ans\n\n贪心（版本二）\n\nclass Solution:\n    def jump(self, nums):\n        cur_distance = 0  # 当前覆盖的最远距离下标\n        ans = 0  # 记录走的最大步数\n        next_distance = 0  # 下一步覆盖的最远距离下标\n        \n        for i in range(len(nums) - 1):  # 注意这里是小于len(nums) - 1，这是关键所在\n            next_distance = max(nums[i] + i, next_distance)  # 更新下一步覆盖的最远距离下标\n            if i == cur_distance:  # 遇到当前覆盖的最远距离下标\n                cur_distance = next_distance  # 更新当前覆盖的最远距离下标\n                ans += 1\n        \n        return ans\n\n贪心（版本三） 类似‘55-跳跃游戏’写法\n\nclass Solution:\n    def jump(self, nums) -> int:\n        if len(nums)==1:  # 如果数组只有一个元素，不需要跳跃，步数为0\n            return 0\n        \n        i = 0  # 当前位置\n        count = 0  # 步数计数器\n        cover = 0  # 当前能够覆盖的最远距离\n        \n        while i <= cover:  # 当前位置小于等于当前能够覆盖的最远距离时循环\n            for i in range(i, cover+1):  # 遍历从当前位置到当前能够覆盖的最远距离之间的所有位置\n                cover = max(nums[i]+i, cover)  # 更新当前能够覆盖的最远距离\n                if cover >= len(nums)-1:  # 如果当前能够覆盖的最远距离达到或超过数组的最后一个位置，直接返回步数+1\n                    return count+1\n            count += 1  # 每一轮遍历结束后，步数+1\n\n        \n动态规划\n\nclass Solution:\n    def jump(self, nums: List[int]) -> int:\n        result = [10**4+1] * len(nums)  # 初始化结果数组，初始值为一个较大的数\n        result[0] = 0  # 起始位置的步数为0\n\n        for i in range(len(nums)):  # 遍历数组\n            for j in range(nums[i] + 1):  # 在当前位置能够跳跃的范围内遍历\n                if i + j < len(nums):  # 确保下一跳的位置不超过数组范围\n                    result[i + j] = min(result[i + j], result[i] + 1)  # 更新到达下一跳位置的最少步数\n\n        return result[-1]  # 返回到达最后一个位置的最少步数"
+}

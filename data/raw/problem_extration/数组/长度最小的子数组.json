@@ -1,0 +1,275 @@
+{
+  "id": "AP_6dade94c",
+  "title": "长度最小的子数组",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/minimum-size-subarray-sum/",
+  "description": "一个含有 n 个正整数的数组和一个正整数 s ，找出该数组中满足其和 ≥ s 的长度最小的 连续 子数组，并返回其长度。如果不存在符合条件的子数组，返回 0。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "滑动窗口",
+    "双指针"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "迭代",
+    "区间查找"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用滑动窗口技术寻找数组中满足和至少为s的最短连续子数组。通过动态调整窗口的起始与结束位置，能够在O(n)时间内完成搜索。",
+  "key_insights": [
+    {
+      "content": "滑动窗口允许我们通过一个for循环来同时探索所有可能的起始位置及其对应的最优终止位置，从而避免了暴力解法中的双重循环，大大提高了效率。"
+    },
+    {
+      "content": "当窗口内的元素总和达到或超过给定值s时，通过逐渐移动窗口左侧边界（即起始位置），尝试找到更小长度的有效子数组。这一步骤体现了算法在保持正确性的同时追求最优化。"
+    },
+    {
+      "content": "每个元素至多被访问两次（一次加入窗口，一次移出窗口），因此时间复杂度为O(n)。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "#暴力解法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minSubArrayLen(int s, vector<int>& nums) {int result = INT32_MAX; int sum = 0; int subLength = 0; for (int i = 0; i < nums.size(); i++) {sum = 0; for (int j = i; j < nums.size(); j++) {sum += nums[j]; if (sum >= s) {subLength = j - i + 1; result = result < subLength ? result : subLength;break;}}}return result == INT32_MAX ? 0 : result;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minSubArrayLen(int s, vector<int>& nums) {int result = INT32_MAX; int sum = 0; int i = 0; int subLength = 0; for (int j = 0; j < nums.size(); j++) {sum += nums[j]; while (sum >= s) {subLength = (j - i + 1); result = result < subLength ? result : subLength;sum -= nums[i++];}}return result == INT32_MAX ? 0 : result;}};",
+          "description": "滑动窗口解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int minSubArrayLen(int s, int[] nums) {int left = 0;int sum = 0;int result = Integer.MAX_VALUE;for (int right = 0; right < nums.length; right++) {sum += nums[right];while (sum >= s) {result = Math.min(result, right - left + 1);sum -= nums[left++];}}return result == Integer.MAX_VALUE ? 0 : result;}}",
+          "description": "Java滑动窗口实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def minSubArrayLen(self, s: int, nums: List[int]) -> int: l = len(nums) left = 0 right = 0 min_len = float('inf') cur_sum = 0 while right < l: cur_sum += nums[right] while cur_sum >= s: min_len = min(min_len, right - left + 1) cur_sum -= nums[left] left += 1 right += 1 return min_len if min_len != float('inf') else 0",
+          "description": "Python滑动窗口实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def minSubArrayLen(self, s: int, nums: List[int]) -> int: l = len(nums) min_len = float('inf') for i in range(l): cur_sum = 0 for j in range(i, l): cur_sum += nums[j] if cur_sum >= s: min_len = min(min_len, j - i + 1) break return min_len if min_len != float('inf') else 0",
+          "description": "Python暴力解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "暴力解法",
+      "text": "这道题目暴力解法当然是 两个for循环，然后不断的寻找符合条件的子序列，时间复杂度很明显是O(n^2)。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minSubArrayLen(int s, vector<int>& nums) { int result = INT32_MAX; int sum = 0; int subLength = 0; for (int i = 0; i < nums.size(); i++) { sum = 0; for (int j = i; j < nums.size(); j++) { sum += nums[j]; if (sum >= s) { subLength = j - i + 1; result = result < subLength ? result : subLength; break; } } } return result == INT32_MAX ? 0 : result; }};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minSubArrayLen(int s, vector<int>& nums) { int result = INT32_MAX; int sum = 0; int i = 0; int subLength = 0; for (int j = 0; j < nums.size(); j++) { sum += nums[j]; while (sum >= s) { subLength = (j - i + 1); result = result < subLength ? result : subLength; sum -= nums[i++]; } } return result == INT32_MAX ? 0 : result; }};",
+          "description": "滑动窗口解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int minSubArrayLen(int s, int[] nums) { int left = 0; int sum = 0; int result = Integer.MAX_VALUE; for (int right = 0; right < nums.length; right++) { sum += nums[right]; while (sum >= s) { result = Math.min(result, right - left + 1); sum -= nums[left++]; } } return result == Integer.MAX_VALUE ? 0 : result; }}",
+          "description": "Java滑动窗口实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def minSubArrayLen(self, s: int, nums: List[int]) -> int: l = len(nums) left = 0 right = 0 min_len = float('inf') cur_sum = 0 while right < l: cur_sum += nums[right] while cur_sum >= s: min_len = min(min_len, right - left + 1) cur_sum -= nums[left] left += 1 right += 1 return min_len if min_len != float('inf') else 0",
+          "description": "Python滑动窗口实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def minSubArrayLen(self, s: int, nums: List[int]) -> int: l = len(nums) min_len = float('inf') for i in range(l): cur_sum = 0 for j in range(i, l): cur_sum += nums[j] if cur_sum >= s: min_len = min(min_len, j - i + 1) break return min_len if min_len != float('inf') else 0",
+          "description": "Python暴力解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "滑动窗口",
+      "text": "接下来就开始介绍数组操作中另一个重要的方法：滑动窗口。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minSubArrayLen(int s, vector<int>& nums) {int result = INT32_MAX; int sum = 0; int i = 0; int subLength = 0; for (int j = 0; j < nums.size(); j++) {sum += nums[j]; while (sum >= s) {subLength = (j - i + 1); result = result < subLength ? result : subLength; sum -= nums[i++];}} return result == INT32_MAX ? 0 : result;}};",
+          "description": "C++实现的滑动窗口法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int minSubArrayLen(int s, int[] nums) {int left = 0; int sum = 0; int result = Integer.MAX_VALUE; for (int right = 0; right < nums.length; right++) {sum += nums[right]; while (sum >= s) {result = Math.min(result, right - left + 1); sum -= nums[left++];}} return result == Integer.MAX_VALUE ? 0 : result;}}",
+          "description": "Java实现的滑动窗口法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def minSubArrayLen(self, s: int, nums: List[int]) -> int: l = len(nums) left = 0 right = 0 min_len = float('inf') cur_sum = 0 while right < l: cur_sum += nums[right] while cur_sum >= s: min_len = min(min_len, right - left + 1) cur_sum -= nums[left] left += 1 right += 1 return min_len if min_len != float('inf') else 0",
+          "description": "Python实现的滑动窗口法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def minSubArrayLen(self, s: int, nums: List[int]) -> int: l = len(nums) min_len = float('inf') for i in range(l): cur_sum = 0 for j in range(i, l): cur_sum += nums[j] if cur_sum >= s: min_len = min(min_len, j - i + 1) break return min_len if min_len != float('inf') else 0",
+          "description": "Python实现的暴力解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "相关题目推荐",
+      "text": "904.水果成篮(opens new window)",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minSubArrayLen(int s, vector<int>& nums) { int result = INT32_MAX; int sum = 0; int i = 0; int subLength = 0; for (int j = 0; j < nums.size(); j++) {sum += nums[j]; while (sum >= s) {subLength = (j - i + 1); result = result < subLength ? result : subLength; sum -= nums[i++];}} return result == INT32_MAX ? 0 : result;}};",
+          "description": "使用滑动窗口方法解决长度最小的子数组问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int minSubArrayLen(int s, int[] nums) {int left = 0; int sum = 0; int result = Integer.MAX_VALUE; for (int right = 0; right < nums.length; right++) {sum += nums[right]; while (sum >= s) {result = Math.min(result, right - left + 1); sum -= nums[left++];}} return result == Integer.MAX_VALUE ? 0 : result;}}",
+          "description": "Java实现的滑动窗口算法来找到和大于等于s的最小子数组长度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def minSubArrayLen(self, s: int, nums: List[int]) -> int: l = len(nums) left = 0 right = 0 min_len = float('inf') cur_sum = 0 while right < l: cur_sum += nums[right] while cur_sum >= s: min_len = min(min_len, right - left + 1) cur_sum -= nums[left] left += 1 right += 1 return min_len if min_len != float('inf') else 0",
+          "description": "Python版本，采用滑动窗口技术寻找满足条件的最短连续子数组"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minSubArrayLen(int s, vector<int>& nums) { int result = INT32_MAX; int sum = 0; int subLength = 0; for (int i = 0; i < nums.size(); i++) { sum = 0; for (int j = i; j < nums.size(); j++) { sum += nums[j]; if (sum >= s) { subLength = j - i + 1; result = result < subLength ? result : subLength; break; } } } return result == INT32_MAX ? 0 : result; }};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minSubArrayLen(int s, vector<int>& nums) { int result = INT32_MAX; int sum = 0; int i = 0; int subLength = 0; for (int j = 0; j < nums.size(); j++) { sum += nums[j]; while (sum >= s) { subLength = (j - i + 1); result = result < subLength ? result : subLength; sum -= nums[i++]; } } return result == INT32_MAX ? 0 : result; }};",
+          "description": "滑动窗口解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int minSubArrayLen(int s, int[] nums) { int left = 0; int sum = 0; int result = Integer.MAX_VALUE; for (int right = 0; right < nums.length; right++) { sum += nums[right]; while (sum >= s) { result = Math.min(result, right - left + 1); sum -= nums[left++]; } } return result == Integer.MAX_VALUE ? 0 : result; }}",
+          "description": "滑动窗口解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def minSubArrayLen(self, s: int, nums: List[int]) -> int: l = len(nums) left = 0 right = 0 min_len = float('inf') cur_sum = 0 while right < l: cur_sum += nums[right] while cur_sum >= s: min_len = min(min_len, right - left + 1) cur_sum -= nums[left] left += 1 right += 1 return min_len if min_len != float('inf') else 0",
+          "description": "滑动窗口解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def minSubArrayLen(self, s: int, nums: List[int]) -> int: l = len(nums) min_len = float('inf') for i in range(l): cur_sum = 0 for j in range(i, l): cur_sum += nums[j] if cur_sum >= s: min_len = min(min_len, j - i + 1) break return min_len if min_len != float('inf') else 0",
+          "description": "暴力解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minSubArrayLen(int s, vector<int>& nums) {int result = INT32_MAX; int sum = 0; int i = 0; int subLength = 0; for (int j = 0; j < nums.size(); j++) {sum += nums[j];while (sum >= s) {subLength = (j - i + 1);result = result < subLength ? result : subLength;sum -= nums[i++];}}return result == INT32_MAX ? 0 : result;}};",
+          "description": "使用滑动窗口方法解决长度最小的子数组问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int minSubArrayLen(int s, int[] nums) {int left = 0;int sum = 0;int result = Integer.MAX_VALUE;for (int right = 0; right < nums.length; right++) {sum += nums[right];while (sum >= s) {result = Math.min(result, right - left + 1);sum -= nums[left++];}}return result == Integer.MAX_VALUE ? 0 : result;}}",
+          "description": "Java实现滑动窗口方法解决长度最小的子数组问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def minSubArrayLen(self, s: int, nums: List[int]) -> int: l = len(nums) left = 0 right = 0 min_len = float('inf') cur_sum = 0 while right < l: cur_sum += nums[right] while cur_sum >= s: min_len = min(min_len, right - left + 1) cur_sum -= nums[left] left += 1 right += 1 return min_len if min_len != float('inf') else 0",
+          "description": "Python实现滑动窗口方法解决长度最小的子数组问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "（版本一）滑动窗口法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int minSubArrayLen(int s, vector<int>& nums) { int result = INT32_MAX; int sum = 0; int i = 0; int subLength = 0; for (int j = 0; j < nums.size(); j++) { sum += nums[j]; while (sum >= s) { subLength = (j - i + 1); result = result < subLength ? result : subLength; sum -= nums[i++]; } } return result == INT32_MAX ? 0 : result; }};",
+          "description": "C++实现的滑动窗口法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int minSubArrayLen(int s, int[] nums) { int left = 0; int sum = 0; int result = Integer.MAX_VALUE; for (int right = 0; right < nums.length; right++) { sum += nums[right]; while (sum >= s) { result = Math.min(result, right - left + 1); sum -= nums[left++]; } } return result == Integer.MAX_VALUE ? 0 : result; }}",
+          "description": "Java实现的滑动窗口法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def minSubArrayLen(self, s: int, nums: List[int]) -> int: l = len(nums) left = 0 right = 0 min_len = float('inf') cur_sum = 0 while right < l: cur_sum += nums[right] while cur_sum >= s: min_len = min(min_len, right - left + 1) cur_sum -= nums[left] left += 1 right += 1 return min_len if min_len != float('inf') else 0",
+          "description": "Python实现的滑动窗口法"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(1)",
+    "explanation": "vector<int>& nums) {"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int minSubArrayLen(int s, vector<int>& nums) {int result = INT32_MAX; int sum = 0; int subLength = 0; for (int i = 0; i < nums.size(); i++) {sum = 0; for (int j = i; j < nums.size(); j++) {sum += nums[j]; if (sum >= s) {subLength = j - i + 1; result = result < subLength ? result : subLength; break;}}} return result == INT32_MAX ? 0 : result;}};",
+      "description": "暴力解法，使用两层循环寻找满足条件的最短子数组。"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int minSubArrayLen(int s, vector<int>& nums) {int result = INT32_MAX; int sum = 0; int i = 0; int subLength = 0; for (int j = 0; j < nums.size(); j++) {sum += nums[j]; while (sum >= s) {subLength = (j - i + 1); result = result < subLength ? result : subLength; sum -= nums[i++];}} return result == INT32_MAX ? 0 : result;}};",
+      "description": "滑动窗口方法实现，通过调节窗口大小来找到最小长度的子数组。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int minSubArrayLen(int s, int[] nums) {int left = 0; int sum = 0; int result = Integer.MAX_VALUE; for (int right = 0; right < nums.length; right++) {sum += nums[right]; while (sum >= s) {result = Math.min(result, right - left + 1); sum -= nums[left++];}} return result == Integer.MAX_VALUE ? 0 : result;}}",
+      "description": "Java版本的滑动窗口实现，逻辑与C++相似。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def minSubArrayLen(self, s: int, nums: List[int]) -> int: l = len(nums) left = 0 right = 0 min_len = float('inf') cur_sum = 0 while right < l: cur_sum += nums[right] while cur_sum >= s: min_len = min(min_len, right - left + 1) cur_sum -= nums[left] left += 1 right += 1 return min_len if min_len != float('inf') else 0",
+      "description": "Python版本的滑动窗口实现，用于查找符合条件的最小子数组长度。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def minSubArrayLen(self, s: int, nums: List[int]) -> int: l = len(nums) min_len = float('inf') for i in range(l): cur_sum = 0 for j in range(i, l): cur_sum += nums[j] if cur_sum >= s: min_len = min(min_len, j - i + 1) break return min_len if min_len != float('inf') else 0",
+      "description": "Python版本的暴力解法，通过双重循环检查每个可能的子数组。"
+    }
+  ],
+  "common_mistakes": [
+    "误认为嵌套循环无法优化至线性时间复杂度。",
+    "未初始化结果变量导致可能出现逻辑错误。",
+    "对滑动窗口的理解不足，可能导致实现过程中出现遗漏情况处理。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\数组\\长度最小的子数组.txt",
+  "extracted_at": "2025-07-21T23:10:26.612317",
+  "raw_content": "长度最小的子数组\n力扣题目链接(https://leetcode.cn/problems/minimum-size-subarray-sum/)\n\n给定一个含有 n 个正整数的数组和一个正整数 s ，找出该数组中满足其和 ≥ s 的长度最小的 连续 子数组，并返回其长度。如果不存在符合条件的子数组，返回 0。\n\n示例：\n\n输入：s = 7, nums = [2,3,1,2,4,3]\n输出：2\n解释：子数组 [4,3] 是该条件下的长度最小的子数组。\n提示：\n\n1 <= target <= 10^9\n1 <= nums.length <= 10^5\n1 <= nums[i] <= 10^5\n\n\n#思路\n#暴力解法\n这道题目暴力解法当然是 两个for循环，然后不断的寻找符合条件的子序列，时间复杂度很明显是O(n^2)。\n\n代码如下：\n\nclass Solution {\npublic:\n    int minSubArrayLen(int s, vector<int>& nums) {\n        int result = INT32_MAX; // 最终的结果\n        int sum = 0; // 子序列的数值之和\n        int subLength = 0; // 子序列的长度\n        for (int i = 0; i < nums.size(); i++) { // 设置子序列起点为i\n            sum = 0;\n            for (int j = i; j < nums.size(); j++) { // 设置子序列终止位置为j\n                sum += nums[j];\n                if (sum >= s) { // 一旦发现子序列和超过了s，更新result\n                    subLength = j - i + 1; // 取子序列的长度\n                    result = result < subLength ? result : subLength;\n                    break; // 因为我们是找符合条件最短的子序列，所以一旦符合条件就break\n                }\n            }\n        }\n        // 如果result没有被赋值的话，就返回0，说明没有符合条件的子序列\n        return result == INT32_MAX ? 0 : result;\n    }\n};\n时间复杂度：O(n^2)\n空间复杂度：O(1)\n后面力扣更新了数据，暴力解法已经超时了。\n\n#滑动窗口\n接下来就开始介绍数组操作中另一个重要的方法：滑动窗口。\n\n所谓滑动窗口，就是不断的调节子序列的起始位置和终止位置，从而得出我们要想的结果。\n\n在暴力解法中，是一个for循环滑动窗口的起始位置，一个for循环为滑动窗口的终止位置，用两个for循环 完成了一个不断搜索区间的过程。\n\n那么滑动窗口如何用一个for循环来完成这个操作呢。\n\n首先要思考 如果用一个for循环，那么应该表示 滑动窗口的起始位置，还是终止位置。\n\n如果只用一个for循环来表示 滑动窗口的起始位置，那么如何遍历剩下的终止位置？\n\n此时难免再次陷入 暴力解法的怪圈。\n\n所以 只用一个for循环，那么这个循环的索引，一定是表示 滑动窗口的终止位置。\n\n那么问题来了， 滑动窗口的起始位置如何移动呢？\n\n这里还是以题目中的示例来举例，s=7， 数组是 2，3，1，2，4，3，来看一下查找的过程：\n\n209.长度最小的子数组\n\n最后找到 4，3 是最短距离。\n\n其实从动画中可以发现滑动窗口也可以理解为双指针法的一种！只不过这种解法更像是一个窗口的移动，所以叫做滑动窗口更适合一些。\n\n在本题中实现滑动窗口，主要确定如下三点：\n\n窗口内是什么？\n如何移动窗口的起始位置？\n如何移动窗口的结束位置？\n窗口就是 满足其和 ≥ s 的长度最小的 连续 子数组。\n\n窗口的起始位置如何移动：如果当前窗口的值大于等于s了，窗口就要向前移动了（也就是该缩小了）。\n\n窗口的结束位置如何移动：窗口的结束位置就是遍历数组的指针，也就是for循环里的索引。\n\n解题的关键在于 窗口的起始位置如何移动，如图所示：\n\nleetcode_209\n\n可以发现滑动窗口的精妙之处在于根据当前子序列和大小的情况，不断调节子序列的起始位置。从而将O(n^2)暴力解法降为O(n)。\n\nC++代码如下：\n\nclass Solution {\npublic:\n    int minSubArrayLen(int s, vector<int>& nums) {\n        int result = INT32_MAX;\n        int sum = 0; // 滑动窗口数值之和\n        int i = 0; // 滑动窗口起始位置\n        int subLength = 0; // 滑动窗口的长度\n        for (int j = 0; j < nums.size(); j++) {\n            sum += nums[j];\n            // 注意这里使用while，每次更新 i（起始位置），并不断比较子序列是否符合条件\n            while (sum >= s) {\n                subLength = (j - i + 1); // 取子序列的长度\n                result = result < subLength ? result : subLength;\n                sum -= nums[i++]; // 这里体现出滑动窗口的精髓之处，不断变更i（子序列的起始位置）\n            }\n        }\n        // 如果result没有被赋值的话，就返回0，说明没有符合条件的子序列\n        return result == INT32_MAX ? 0 : result;\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(1)\n一些录友会疑惑为什么时间复杂度是O(n)。\n\n不要以为for里放一个while就以为是O(n^2)啊， 主要是看每一个元素被操作的次数，每个元素在滑动窗后进来操作一次，出去操作一次，每个元素都是被操作两次，所以时间复杂度是 2 × n 也就是O(n)。\n\n#相关题目推荐\n904.水果成篮(opens new window)\n76.最小覆盖子串(opens new window)\n#其他语言版本\n#Java：\nclass Solution {\n\n    // 滑动窗口\n    public int minSubArrayLen(int s, int[] nums) {\n        int left = 0;\n        int sum = 0;\n        int result = Integer.MAX_VALUE;\n        for (int right = 0; right < nums.length; right++) {\n            sum += nums[right];\n            while (sum >= s) {\n                result = Math.min(result, right - left + 1);\n                sum -= nums[left++];\n            }\n        }\n        return result == Integer.MAX_VALUE ? 0 : result;\n    }\n}\n#Python：\n（版本一）滑动窗口法\nclass Solution:\n    def minSubArrayLen(self, s: int, nums: List[int]) -> int:\n        l = len(nums)\n        left = 0\n        right = 0\n        min_len = float('inf')\n        cur_sum = 0 #当前的累加值\n        \n        while right < l:\n            cur_sum += nums[right]\n            \n            while cur_sum >= s: # 当前累加值大于目标值\n                min_len = min(min_len, right - left + 1)\n                cur_sum -= nums[left]\n                left += 1\n            \n            right += 1\n        \n        return min_len if min_len != float('inf') else 0\n（版本二）暴力法\nclass Solution:\n    def minSubArrayLen(self, s: int, nums: List[int]) -> int:\n        l = len(nums)\n        min_len = float('inf')\n        \n        for i in range(l):\n            cur_sum = 0\n            for j in range(i, l):\n                cur_sum += nums[j]\n                if cur_sum >= s:\n                    min_len = min(min_len, j - i + 1)\n                    break\n        \n        return min_len if min_len != float('inf') else 0\n#Go："
+}

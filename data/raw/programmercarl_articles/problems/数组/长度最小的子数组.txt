@@ -1,0 +1,179 @@
+长度最小的子数组
+力扣题目链接(https://leetcode.cn/problems/minimum-size-subarray-sum/)
+
+给定一个含有 n 个正整数的数组和一个正整数 s ，找出该数组中满足其和 ≥ s 的长度最小的 连续 子数组，并返回其长度。如果不存在符合条件的子数组，返回 0。
+
+示例：
+
+输入：s = 7, nums = [2,3,1,2,4,3]
+输出：2
+解释：子数组 [4,3] 是该条件下的长度最小的子数组。
+提示：
+
+1 <= target <= 10^9
+1 <= nums.length <= 10^5
+1 <= nums[i] <= 10^5
+
+
+#思路
+#暴力解法
+这道题目暴力解法当然是 两个for循环，然后不断的寻找符合条件的子序列，时间复杂度很明显是O(n^2)。
+
+代码如下：
+
+class Solution {
+public:
+    int minSubArrayLen(int s, vector<int>& nums) {
+        int result = INT32_MAX; // 最终的结果
+        int sum = 0; // 子序列的数值之和
+        int subLength = 0; // 子序列的长度
+        for (int i = 0; i < nums.size(); i++) { // 设置子序列起点为i
+            sum = 0;
+            for (int j = i; j < nums.size(); j++) { // 设置子序列终止位置为j
+                sum += nums[j];
+                if (sum >= s) { // 一旦发现子序列和超过了s，更新result
+                    subLength = j - i + 1; // 取子序列的长度
+                    result = result < subLength ? result : subLength;
+                    break; // 因为我们是找符合条件最短的子序列，所以一旦符合条件就break
+                }
+            }
+        }
+        // 如果result没有被赋值的话，就返回0，说明没有符合条件的子序列
+        return result == INT32_MAX ? 0 : result;
+    }
+};
+时间复杂度：O(n^2)
+空间复杂度：O(1)
+后面力扣更新了数据，暴力解法已经超时了。
+
+#滑动窗口
+接下来就开始介绍数组操作中另一个重要的方法：滑动窗口。
+
+所谓滑动窗口，就是不断的调节子序列的起始位置和终止位置，从而得出我们要想的结果。
+
+在暴力解法中，是一个for循环滑动窗口的起始位置，一个for循环为滑动窗口的终止位置，用两个for循环 完成了一个不断搜索区间的过程。
+
+那么滑动窗口如何用一个for循环来完成这个操作呢。
+
+首先要思考 如果用一个for循环，那么应该表示 滑动窗口的起始位置，还是终止位置。
+
+如果只用一个for循环来表示 滑动窗口的起始位置，那么如何遍历剩下的终止位置？
+
+此时难免再次陷入 暴力解法的怪圈。
+
+所以 只用一个for循环，那么这个循环的索引，一定是表示 滑动窗口的终止位置。
+
+那么问题来了， 滑动窗口的起始位置如何移动呢？
+
+这里还是以题目中的示例来举例，s=7， 数组是 2，3，1，2，4，3，来看一下查找的过程：
+
+209.长度最小的子数组
+
+最后找到 4，3 是最短距离。
+
+其实从动画中可以发现滑动窗口也可以理解为双指针法的一种！只不过这种解法更像是一个窗口的移动，所以叫做滑动窗口更适合一些。
+
+在本题中实现滑动窗口，主要确定如下三点：
+
+窗口内是什么？
+如何移动窗口的起始位置？
+如何移动窗口的结束位置？
+窗口就是 满足其和 ≥ s 的长度最小的 连续 子数组。
+
+窗口的起始位置如何移动：如果当前窗口的值大于等于s了，窗口就要向前移动了（也就是该缩小了）。
+
+窗口的结束位置如何移动：窗口的结束位置就是遍历数组的指针，也就是for循环里的索引。
+
+解题的关键在于 窗口的起始位置如何移动，如图所示：
+
+leetcode_209
+
+可以发现滑动窗口的精妙之处在于根据当前子序列和大小的情况，不断调节子序列的起始位置。从而将O(n^2)暴力解法降为O(n)。
+
+C++代码如下：
+
+class Solution {
+public:
+    int minSubArrayLen(int s, vector<int>& nums) {
+        int result = INT32_MAX;
+        int sum = 0; // 滑动窗口数值之和
+        int i = 0; // 滑动窗口起始位置
+        int subLength = 0; // 滑动窗口的长度
+        for (int j = 0; j < nums.size(); j++) {
+            sum += nums[j];
+            // 注意这里使用while，每次更新 i（起始位置），并不断比较子序列是否符合条件
+            while (sum >= s) {
+                subLength = (j - i + 1); // 取子序列的长度
+                result = result < subLength ? result : subLength;
+                sum -= nums[i++]; // 这里体现出滑动窗口的精髓之处，不断变更i（子序列的起始位置）
+            }
+        }
+        // 如果result没有被赋值的话，就返回0，说明没有符合条件的子序列
+        return result == INT32_MAX ? 0 : result;
+    }
+};
+时间复杂度：O(n)
+空间复杂度：O(1)
+一些录友会疑惑为什么时间复杂度是O(n)。
+
+不要以为for里放一个while就以为是O(n^2)啊， 主要是看每一个元素被操作的次数，每个元素在滑动窗后进来操作一次，出去操作一次，每个元素都是被操作两次，所以时间复杂度是 2 × n 也就是O(n)。
+
+#相关题目推荐
+904.水果成篮(opens new window)
+76.最小覆盖子串(opens new window)
+#其他语言版本
+#Java：
+class Solution {
+
+    // 滑动窗口
+    public int minSubArrayLen(int s, int[] nums) {
+        int left = 0;
+        int sum = 0;
+        int result = Integer.MAX_VALUE;
+        for (int right = 0; right < nums.length; right++) {
+            sum += nums[right];
+            while (sum >= s) {
+                result = Math.min(result, right - left + 1);
+                sum -= nums[left++];
+            }
+        }
+        return result == Integer.MAX_VALUE ? 0 : result;
+    }
+}
+#Python：
+（版本一）滑动窗口法
+class Solution:
+    def minSubArrayLen(self, s: int, nums: List[int]) -> int:
+        l = len(nums)
+        left = 0
+        right = 0
+        min_len = float('inf')
+        cur_sum = 0 #当前的累加值
+        
+        while right < l:
+            cur_sum += nums[right]
+            
+            while cur_sum >= s: # 当前累加值大于目标值
+                min_len = min(min_len, right - left + 1)
+                cur_sum -= nums[left]
+                left += 1
+            
+            right += 1
+        
+        return min_len if min_len != float('inf') else 0
+（版本二）暴力法
+class Solution:
+    def minSubArrayLen(self, s: int, nums: List[int]) -> int:
+        l = len(nums)
+        min_len = float('inf')
+        
+        for i in range(l):
+            cur_sum = 0
+            for j in range(i, l):
+                cur_sum += nums[j]
+                if cur_sum >= s:
+                    min_len = min(min_len, j - i + 1)
+                    break
+        
+        return min_len if min_len != float('inf') else 0
+#Go：

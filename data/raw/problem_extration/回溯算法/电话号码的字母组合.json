@@ -1,0 +1,296 @@
+{
+  "id": "AP_bf70dcf2",
+  "title": "电话号码的字母组合",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/letter-combinations-of-a-phone-number/",
+  "description": "一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。\n\n给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。\n\nhttps://file1.kamacoder.com/i/algo/2020102916424043.png",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "回溯",
+    "深度优先搜索"
+  ],
+  "data_structure_tags": [
+    "字符串",
+    "数组"
+  ],
+  "technique_tags": [
+    "映射关系",
+    "递归"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过回溯法来解决电话号码对应的字母组合问题。首先定义一个映射数组将数字与字母对应起来，然后利用回溯算法遍历所有可能的组合路径，并收集这些组合。",
+  "key_insights": [
+    {
+      "content": "直接使用多重for循环难以适应不同长度的输入，而回溯法则可以灵活处理任意长度的数字字符串，从而生成所有可能的字母组合。"
+    },
+    {
+      "content": "每个数字代表的一组字符作为一层节点，通过递归逐层深入直到达到叶子节点（即完成了一次组合），以此方式枚举出所有的组合情况。"
+    },
+    {
+      "content": "需要特别注意的是对于空输入或者包含非2-9数字的异常情况的处理。"
+    },
+    {
+      "content": "在回溯过程中，每一步都选择当前数字所对应的字符集中的一个字符进行尝试，然后进入下一层递归，直至构建出完整的组合串。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "从示例上来说，输入\"23\"，最直接的想法就是两层for循环遍历了吧，正好把组合的情况都输出了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "const string letterMap[10] = {\n    \"\", // 0\n    \"\", // 1\n    \"abc\", // 2\n    \"def\", // 3\n    \"ghi\", // 4\n    \"jkl\", // 5\n    \"mno\", // 6\n    \"pqrs\", // 7\n    \"tuv\", // 8\n    \"wxyz\", // 9\n};",
+          "description": "定义数字到字母的映射"
+        },
+        {
+          "language": "cpp",
+          "code": "vector<string> result;\nstring s;\nvoid backtracking(const string& digits, int index) {\n    if (index == digits.size()) {\n        result.push_back(s);\n        return;\n    }\n    int digit = digits[index] - '0';\n    string letters = letterMap[digit];\n    for (int i = 0; i < letters.size(); i++) {\n        s.push_back(letters[i]);\n        backtracking(digits, index + 1);\n        s.pop_back();\n    }\n}",
+          "description": "回溯函数实现"
+        },
+        {
+          "language": "cpp",
+          "code": "vector<string> letterCombinations(string digits) {\n    s.clear();\n    result.clear();\n    if (digits.size() == 0) {\n        return result;\n    }\n    backtracking(digits, 0);\n    return result;\n}",
+          "description": "主函数，调用回溯函数"
+        },
+        {
+          "language": "java",
+          "code": "List<String> list = new ArrayList<>();\npublic List<String> letterCombinations(String digits) {\n    if (digits == null || digits.length() == 0) {\n        return list;\n    }\n    String[] numString = {\"\", \"\", \"abc\", \"def\", \"ghi\", \"jkl\", \"mno\", \"pqrs\", \"tuv\", \"wxyz\"};\n    backTracking(digits, numString, 0);\n    return list;\n}\nStringBuilder temp = new StringBuilder();\npublic void backTracking(String digits, String[] numString, int num) {\n    if (num == digits.length()) {\n        list.add(temp.toString());\n        return;\n    }\n    String str = numString[digits.charAt(num) - '0'];\n    for (int i = 0; i < str.length(); i++) {\n        temp.append(str.charAt(i));\n        backTracking(digits, numString, num + 1);\n        temp.deleteCharAt(temp.length() - 1);\n    }\n}",
+          "description": "Java版本的解决方案"
+        },
+        {
+          "language": "python",
+          "code": "self.letterMap = [\n    \"\",     # 0\n    \"\",     # 1\n    \"abc\",  # 2\n    \"def\",  # 3\n    \"ghi\",  # 4\n    \"jkl\",  # 5\n    \"mno\",  # 6\n    \"pqrs\", # 7\n    \"tuv\",  # 8\n    \"wxyz\"  # 9\n]\nself.result = []\nself.s = \"\"\ndef backtracking(self, digits, index):\n    if index == len(digits):\n        self.result.append(self.s)\n        return\n    digit = int(digits[index])\n    letters = self.letterMap[digit]\n    for i in range(len(letters)):\n        self.s += letters[i]\n        self.backtracking(digits, index + 1)\n        self.s = self.s[:-1]\ndef letterCombinations(self, digits):\n    if len(digits) == 0:\n        return self.result\n    self.backtracking(digits, 0)\n    return self.result",
+          "description": "Python版本的回溯方法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "数字和字母如何映射",
+      "text": "可以使用map或者定义一个二维数组，例如：string letterMap[10]，来做映射，我这里定义一个二维数组，代码如下：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "const string letterMap[10] = {\n    \"\", // 0\n    \"\", // 1\n    \"abc\", // 2\n    \"def\", // 3\n    \"ghi\", // 4\n    \"jkl\", // 5\n    \"mno\", // 6\n    \"pqrs\", // 7\n    \"tuv\", // 8\n    \"wxyz\", // 9\n};",
+          "description": "定义一个二维数组来映射数字到字母"
+        },
+        {
+          "language": "cpp",
+          "code": "void backtracking(const string& digits, int index) {\n    if (index == digits.size()) {\n        result.push_back(s);\n        return;\n    }\n    int digit = digits[index] - '0';\n    string letters = letterMap[digit];\n    for (int i = 0; i < letters.size(); i++) {\n        s.push_back(letters[i]);\n        backtracking(digits, index + 1);\n        s.pop_back();\n    }\n}",
+          "description": "回溯函数实现，用于生成所有可能的字母组合"
+        },
+        {
+          "language": "cpp",
+          "code": "vector<string> letterCombinations(string digits) {\n    s.clear();\n    result.clear();\n    if (digits.size() == 0) {\n        return result;\n    }\n    backtracking(digits, 0);\n    return result;\n}",
+          "description": "主函数，调用回溯函数并返回结果"
+        },
+        {
+          "language": "java",
+          "code": "public List<String> letterCombinations(String digits) {\n    if (digits == null || digits.length() == 0) {\n        return list;\n    }\n    String[] numString = {\"\", \"\", \"abc\", \"def\", \"ghi\", \"jkl\", \"mno\", \"pqrs\", \"tuv\", \"wxyz\"};\n    backTracking(digits, numString, 0);\n    return list;\n}",
+          "description": "Java版本的主函数，初始化数据结构和调用回溯函数"
+        },
+        {
+          "language": "java",
+          "code": "public void backTracking(String digits, String[] numString, int num) {\n    if (num == digits.length()) {\n        list.add(temp.toString());\n        return;\n    }\n    String str = numString[digits.charAt(num) - '0'];\n    for (int i = 0; i < str.length(); i++) {\n        temp.append(str.charAt(i));\n        backTracking(digits, numString, num + 1);\n        temp.deleteCharAt(temp.length() - 1);\n    }\n}",
+          "description": "Java版本的回溯函数"
+        },
+        {
+          "language": "python",
+          "code": "def __init__(self):\n    self.letterMap = [\n        \"\", # 0\n        \"\", # 1\n        \"abc\", # 2\n        \"def\", # 3\n        \"ghi\", # 4\n        \"jkl\", # 5\n        \"mno\", # 6\n        \"pqrs\", # 7\n        \"tuv\", # 8\n        \"wxyz\" # 9\n    ]\n    self.result = []\n    self.s = \"\"",
+          "description": "Python版本的初始化方法，设置字母映射"
+        },
+        {
+          "language": "python",
+          "code": "def backtracking(self, digits, index):\n    if index == len(digits):\n        self.result.append(self.s)\n        return\n    digit = int(digits[index])\n    letters = self.letterMap[digit]\n    for i in range(len(letters)):\n        self.s += letters[i]\n        self.backtracking(digits, index + 1)\n        self.s = self.s[:-1]",
+          "description": "Python版本的回溯函数"
+        },
+        {
+          "language": "python",
+          "code": "def letterCombinations(self, digits):\n    if len(digits) == 0:\n        return self.result\n    self.backtracking(digits, 0)\n    return self.result",
+          "description": "Python版本的主函数，处理输入并调用回溯"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "回溯法来解决n个for循环的问题",
+      "text": "对于回溯法还不了解的同学看这篇：关于回溯算法，你该了解这些！(https://programmercarl.com/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html)",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "const string letterMap[10] = {\n    \"\", // 0\n    \"\", // 1\n    \"abc\", // 2\n    \"def\", // 3\n    \"ghi\", // 4\n    \"jkl\", // 5\n    \"mno\", // 6\n    \"pqrs\", // 7\n    \"tuv\", // 8\n    \"wxyz\", // 9\n};\nvector<string> result;\nstring s;\nvoid backtracking(const string& digits, int index) {\n    if (index == digits.size()) {\n        result.push_back(s);\n        return;\n    }\n    int digit = digits[index] - '0';\n    string letters = letterMap[digit];\n    for (int i = 0; i < letters.size(); i++) {\n        s.push_back(letters[i]);\n        backtracking(digits, index + 1);\n        s.pop_back();\n    }\n}\nvector<string> letterCombinations(string digits) {\n    s.clear();\n    result.clear();\n    if (digits.size() == 0) {\n        return result;\n    }\n    backtracking(digits, 0);\n    return result;\n}",
+          "description": "使用回溯法生成电话号码的所有字母组合"
+        },
+        {
+          "language": "java",
+          "code": "List<String> list = new ArrayList<>();\npublic List<String> letterCombinations(String digits) {\n    if (digits == null || digits.length() == 0) {\n        return list;\n    }\n    String[] numString = {\"\", \"\", \"abc\", \"def\", \"ghi\", \"jkl\", \"mno\", \"pqrs\", \"tuv\", \"wxyz\"};\n    backTracking(digits, numString, 0);\n    return list;\n}\nStringBuilder temp = new StringBuilder();\npublic void backTracking(String digits, String[] numString, int num) {\n    if (num == digits.length()) {\n        list.add(temp.toString());\n        return;\n    }\n    String str = numString[digits.charAt(num) - '0'];\n    for (int i = 0; i < str.length(); i++) {\n        temp.append(str.charAt(i));\n        backTracking(digits, numString, num + 1);\n        temp.deleteCharAt(temp.length() - 1);\n    }\n}",
+          "description": "Java版本的回溯法实现电话号码到字母组合的转换"
+        },
+        {
+          "language": "python",
+          "code": "self.letterMap = [\n    \"\", # 0\n    \"\", # 1\n    \"abc\", # 2\n    \"def\", # 3\n    \"ghi\", # 4\n    \"jkl\", # 5\n    \"mno\", # 6\n    \"pqrs\", # 7\n    \"tuv\", # 8\n    \"wxyz\" # 9\n]\nself.result = []\nself.s = \"\"\ndef backtracking(self, digits, index):\n    if index == len(digits):\n        self.result.append(self.s)\n        return\n    digit = int(digits[index])\n    letters = self.letterMap[digit]\n    for i in range(len(letters)):\n        self.s += letters[i]\n        self.backtracking(digits, index + 1)\n        self.s = self.s[:-1]\ndef letterCombinations(self, digits):\n    if len(digits) == 0:\n        return self.result\n    self.backtracking(digits, 0)\n    return self.result",
+          "description": "Python版本的回溯法实现电话号码到字母组合的转换"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "本篇将题目的三个要点一一列出，并重点强调了和前面讲解过的77. 组合 (https://programmercarl.com/0077.%E7%BB%84%E5%90%88.html)和216.组合总和III (https://programmercarl.com/0216.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8CIII.html)的区别，本题是多个集合求组合，所以在回溯的搜索过程中，都有一些细节需要注意的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "const string letterMap[10] = {\n    \"\", // 0\n    \"\", // 1\n    \"abc\", // 2\n    \"def\", // 3\n    \"ghi\", // 4\n    \"jkl\", // 5\n    \"mno\", // 6\n    \"pqrs\", // 7\n    \"tuv\", // 8\n    \"wxyz\", // 9\n};",
+          "description": "定义数字到字母的映射"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    const string letterMap[10] = {\n        \"\", // 0\n        \"\", // 1\n        \"abc\", // 2\n        \"def\", // 3\n        \"ghi\", // 4\n        \"jkl\", // 5\n        \"mno\", // 6\n        \"pqrs\", // 7\n        \"tuv\", // 8\n        \"wxyz\", // 9\n    };\npublic:\n    vector<string> result;\n    string s;\n    void backtracking(const string& digits, int index) {\n        if (index == digits.size()) {\n            result.push_back(s);\n            return;\n        }\n        int digit = digits[index] - '0';\n        string letters = letterMap[digit];\n        for (int i = 0; i < letters.size(); i++) {\n            s.push_back(letters[i]);\n            backtracking(digits, index + 1);\n            s.pop_back();\n        }\n    }\n    vector<string> letterCombinations(string digits) {\n        s.clear();\n        result.clear();\n        if (digits.size() == 0) {\n            return result;\n        }\n        backtracking(digits, 0);\n        return result;\n    }\n};",
+          "description": "C++版本一：回溯法解决电话号码的字母组合问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    const string letterMap[10] = {\n        \"\", // 0\n        \"\", // 1\n        \"abc\", // 2\n        \"def\", // 3\n        \"ghi\", // 4\n        \"jkl\", // 5\n        \"mno\", // 6\n        \"pqrs\", // 7\n        \"tuv\", // 8\n        \"wxyz\", // 9\n    };\npublic:\n    vector<string> result;\n    void getCombinations(const string& digits, int index, const string& s) {\n        if (index == digits.size()) {\n            result.push_back(s);\n            return;\n        }\n        int digit = digits[index] - '0';\n        string letters = letterMap[digit];\n        for (int i = 0; i < letters.size(); i++) {\n            getCombinations(digits, index + 1, s + letters[i]);\n        }\n    }\n    vector<string> letterCombinations(string digits) {\n        result.clear();\n        if (digits.size() == 0) {\n            return result;\n        }\n        getCombinations(digits, 0, \"\");\n        return result;\n    }\n};",
+          "description": "C++版本二：另一种回溯实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<String> list = new ArrayList<>();\n    public List<String> letterCombinations(String digits) {\n        if (digits == null || digits.length() == 0) {\n            return list;\n        }\n        String[] numString = {\"\", \"\", \"abc\", \"def\", \"ghi\", \"jkl\", \"mno\", \"pqrs\", \"tuv\", \"wxyz\"};\n        backTracking(digits, numString, 0);\n        return list;\n    }\n    StringBuilder temp = new StringBuilder();\n    public void backTracking(String digits, String[] numString, int num) {\n        if (num == digits.length()) {\n            list.add(temp.toString());\n            return;\n        }\n        String str = numString[digits.charAt(num) - '0'];\n        for (int i = 0; i < str.length(); i++) {\n            temp.append(str.charAt(i));\n            backTracking(digits, numString, num + 1);\n            temp.deleteCharAt(temp.length() - 1);\n        }\n    }\n}",
+          "description": "Java版本：使用StringBuilder处理字符串拼接，进行回溯搜索"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.letterMap = [\n            \"\", # 0\n            \"\", # 1\n            \"abc\", # 2\n            \"def\", # 3\n            \"ghi\", # 4\n            \"jkl\", # 5\n            \"mno\", # 6\n            \"pqrs\", # 7\n            \"tuv\", # 8\n            \"wxyz\" # 9\n        ]\n        self.result = []\n        self.s = \"\"\n    \n    def backtracking(self, digits, index):\n        if index == len(digits):\n            self.result.append(self.s)\n            return\n        digit = int(digits[index])\n        letters = self.letterMap[digit]\n        for i in range(len(letters)):\n            self.s += letters[i]\n            self.backtracking(digits, index + 1)\n            self.s = self.s[:-1]\n    \n    def letterCombinations(self, digits):\n        if len(digits) == 0:\n            return self.result\n        self.backtracking(digits, 0)\n        return self.result",
+          "description": "Python版本：初始化字母映射，并通过递归调用实现回溯算法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution { List<String> list = new ArrayList<>(); public List<String> letterCombinations(String digits) { if (digits == null || digits.length() == 0) { return list; } String[] numString = {\"\", \"\", \"abc\", \"def\", \"ghi\", \"jkl\", \"mno\", \"pqrs\", \"tuv\", \"wxyz\"}; backTracking(digits, numString, 0); return list; } StringBuilder temp = new StringBuilder(); public void backTracking(String digits, String[] numString, int num) { if (num == digits.length()) { list.add(temp.toString()); return; } String str = numString[digits.charAt(num) - '0']; for (int i = 0; i < str.length(); i++) { temp.append(str.charAt(i)); backTracking(digits, numString, num + 1); temp.deleteCharAt(temp.length() - 1); } } }",
+          "description": "Java实现电话号码的字母组合问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.letterMap = [\"\", \"\", \"abc\", \"def\", \"ghi\", \"jkl\", \"mno\", \"pqrs\", \"tuv\", \"wxyz\"] self.result = [] self.s = \"\" def backtracking(self, digits, index): if index == len(digits): self.result.append(self.s) return digit = int(digits[index]) letters = self.letterMap[digit] for i in range(len(letters)): self.s += letters[i] self.backtracking(digits, index + 1) self.s = self.s[:-1] def letterCombinations(self, digits): if len(digits) == 0: return self.result self.backtracking(digits, 0) return self.result",
+          "description": "Python实现电话号码的字母组合问题，使用回溯法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.letterMap = [\"\", \"\", \"abc\", \"def\", \"ghi\", \"jkl\", \"mno\", \"pqrs\", \"tuv\", \"wxyz\"] self.result = [] def getCombinations(self, digits, index, s): if index == len(digits): self.result.append(s) return digit = int(digits[index]) letters = self.letterMap[digit] for letter in letters: self.getCombinations(digits, index + 1, s + letter) def letterCombinations(self, digits): if len(digits) == 0: return self.result self.getCombinations(digits, 0, \"\") return self.result",
+          "description": "Python简化版实现电话号码的字母组合问题，使用回溯法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.letterMap = [\"\", \"\", \"abc\", \"def\", \"ghi\", \"jkl\", \"mno\", \"pqrs\", \"tuv\", \"wxyz\"] def getCombinations(self, digits, index, s, result): if index == len(digits): result.append(s) return digit = int(digits[index]) letters = self.letterMap[digit] for letter in letters: self.getCombinations(digits, index + 1, s + letter, result) def letterCombinations(self, digits): result = [] if len(digits) == 0: return result self.getCombinations(digits, 0, \"\", result) return result",
+          "description": "Python另一简化版实现电话号码的字母组合问题，使用回溯法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    const string letterMap[10] = {\n        \"\", // 0\n        \"\", // 1\n        \"abc\", // 2\n        \"def\", // 3\n        \"ghi\", // 4\n        \"jkl\", // 5\n        \"mno\", // 6\n        \"pqrs\", // 7\n        \"tuv\", // 8\n        \"wxyz\", // 9\n    };\npublic:\n    vector<string> result;\n    string s;\n    void backtracking(const string& digits, int index) {\n        if (index == digits.size()) {\n            result.push_back(s);\n            return;\n        }\n        int digit = digits[index] - '0';\n        string letters = letterMap[digit];\n        for (int i = 0; i < letters.size(); i++) {\n            s.push_back(letters[i]);\n            backtracking(digits, index + 1);\n            s.pop_back();\n        }\n    }\n    vector<string> letterCombinations(string digits) {\n        s.clear();\n        result.clear();\n        if (digits.size() == 0) {\n            return result;\n        }\n        backtracking(digits, 0);\n        return result;\n    }\n};",
+          "description": "C++版本的电话号码字母组合解决方案"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.ArrayList;\nimport java.util.List;\nclass Solution {\n    List<String> list = new ArrayList<>();\n    public List<String> letterCombinations(String digits) {\n        if (digits == null || digits.length() == 0) {\n            return list;\n        }\n        String[] numString = {\"\", \"\", \"abc\", \"def\", \"ghi\", \"jkl\", \"mno\", \"pqrs\", \"tuv\", \"wxyz\"};\n        StringBuilder temp = new StringBuilder();\n        backTracking(digits, numString, 0, temp);\n        return list;\n    }\n    public void backTracking(String digits, String[] numString, int num, StringBuilder temp) {\n        if (num == digits.length()) {\n            list.add(temp.toString());\n            return;\n        }\n        String str = numString[digits.charAt(num) - '0'];\n        for (int i = 0; i < str.length(); i++) {\n            temp.append(str.charAt(i));\n            backTracking(digits, numString, num + 1, temp);\n            temp.deleteCharAt(temp.length() - 1);\n        }\n    }\n}",
+          "description": "Java版本的电话号码字母组合解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.letterMap = [\n            \"\", # 0\n            \"\", # 1\n            \"abc\", # 2\n            \"def\", # 3\n            \"ghi\", # 4\n            \"jkl\", # 5\n            \"mno\", # 6\n            \"pqrs\", # 7\n            \"tuv\", # 8\n            \"wxyz\" # 9\n        ]\n        self.result = []\n    \n    def backtracking(self, digits, index, s):\n        if index == len(digits):\n            self.result.append(s)\n            return\n        digit = int(digits[index])\n        letters = self.letterMap[digit]\n        for letter in letters:\n            self.backtracking(digits, index + 1, s + letter)\n    \n    def letterCombinations(self, digits):\n        if len(digits) == 0:\n            return self.result\n        self.backtracking(digits, 0, \"\")\n        return self.result",
+          "description": "Python版本的电话号码字母组合解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "回溯",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    const string letterMap[10] = {\n        \"\", // 0\n        \"\", // 1\n        \"abc\", // 2\n        \"def\", // 3\n        \"ghi\", // 4\n        \"jkl\", // 5\n        \"mno\", // 6\n        \"pqrs\", // 7\n        \"tuv\", // 8\n        \"wxyz\", // 9\n    };\npublic:\n    vector<string> result;\n    string s;\n    void backtracking(const string& digits, int index) {\n        if (index == digits.size()) {\n            result.push_back(s);\n            return;\n        }\n        int digit = digits[index] - '0';\n        string letters = letterMap[digit];\n        for (int i = 0; i < letters.size(); i++) {\n            s.push_back(letters[i]);\n            backtracking(digits, index + 1);\n            s.pop_back();\n        }\n    }\n    vector<string> letterCombinations(string digits) {\n        s.clear();\n        result.clear();\n        if (digits.size() == 0) {\n            return result;\n        }\n        backtracking(digits, 0);\n        return result;\n    }\n};",
+          "description": "C++版本的电话号码字母组合解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<String> list = new ArrayList<>();\n    public List<String> letterCombinations(String digits) {\n        if (digits == null || digits.length() == 0) {\n            return list;\n        }\n        String[] numString = {\"\", \"\", \"abc\", \"def\", \"ghi\", \"jkl\", \"mno\", \"pqrs\", \"tuv\", \"wxyz\"};\n        backTracking(digits, numString, 0);\n        return list;\n    }\n    StringBuilder temp = new StringBuilder();\n    public void backTracking(String digits, String[] numString, int num) {\n        if (num == digits.length()) {\n            list.add(temp.toString());\n            return;\n        }\n        String str = numString[digits.charAt(num) - '0'];\n        for (int i = 0; i < str.length(); i++) {\n            temp.append(str.charAt(i));\n            backTracking(digits, numString, num + 1);\n            temp.deleteCharAt(temp.length() - 1);\n        }\n    }\n}",
+          "description": "Java版本的电话号码字母组合解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.letterMap = [\n            \"\",     # 0\n            \"\",     # 1\n            \"abc\",  # 2\n            \"def\",  # 3\n            \"ghi\",  # 4\n            \"jkl\",  # 5\n            \"mno\",  # 6\n            \"pqrs\", # 7\n            \"tuv\",  # 8\n            \"wxyz\"  # 9\n        ]\n        self.result = []\n        self.s = \"\"\n    \n    def backtracking(self, digits, index):\n        if index == len(digits):\n            self.result.append(self.s)\n            return\n        digit = int(digits[index])\n        letters = self.letterMap[digit]\n        for i in range(len(letters)):\n            self.s += letters[i]\n            self.backtracking(digits, index + 1)\n            self.s = self.s[:-1]\n    \n    def letterCombinations(self, digits):\n        if len(digits) == 0:\n            return self.result\n        self.backtracking(digits, 0)\n        return self.result",
+          "description": "Python版本的电话号码字母组合解决方案"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(3^m * 4^n)",
+    "space_complexity": "O(3^m * 4^n)",
+    "explanation": "其中 m 是对应三个字母的数字个数，n 是对应四个字母的数字个数"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "const string letterMap[10] = {\n    \"\", // 0\n    \"\", // 1\n    \"abc\", // 2\n    \"def\", // 3\n    \"ghi\", // 4\n    \"jkl\", // 5\n    \"mno\", // 6\n    \"pqrs\", // 7\n    \"tuv\", // 8\n    \"wxyz\", // 9\n};\nclass Solution {\nprivate:\n    vector<string> result;\n    string s;\n    void backtracking(const string& digits, int index) {\n        if (index == digits.size()) {\n            result.push_back(s);\n            return;\n        }\n        int digit = digits[index] - '0';\n        string letters = letterMap[digit];\n        for (int i = 0; i < letters.size(); i++) {\n            s.push_back(letters[i]);\n            backtracking(digits, index + 1);\n            s.pop_back();\n        }\n    }\npublic:\n    vector<string> letterCombinations(string digits) {\n        s.clear();\n        result.clear();\n        if (digits.size() == 0) {\n            return result;\n        }\n        backtracking(digits, 0);\n        return result;\n    }\n};",
+      "description": "C++版本的电话号码字母组合解决方案"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {\n    List<String> list = new ArrayList<>();\n    public List<String> letterCombinations(String digits) {\n        if (digits == null || digits.length() == 0) {\n            return list;\n        }\n        String[] numString = {\"\", \"\", \"abc\", \"def\", \"ghi\", \"jkl\", \"mno\", \"pqrs\", \"tuv\", \"wxyz\"};\n        backTracking(digits, numString, 0);\n        return list;\n    }\n    StringBuilder temp = new StringBuilder();\n    public void backTracking(String digits, String[] numString, int num) {\n        if (num == digits.length()) {\n            list.add(temp.toString());\n            return;\n        }\n        String str = numString[digits.charAt(num) - '0'];\n        for (int i = 0; i < str.length(); i++) {\n            temp.append(str.charAt(i));\n            backTracking(digits, numString, num + 1);\n            temp.deleteCharAt(temp.length() - 1);\n        }\n    }\n}",
+      "description": "Java版本的电话号码字母组合解决方案"
+    },
+    {
+      "language": "python",
+      "code": "class Solution:\n    def __init__(self):\n        self.letterMap = [\n            \"\",     # 0\n            \"\",     # 1\n            \"abc\",  # 2\n            \"def\",  # 3\n            \"ghi\",  # 4\n            \"jkl\",  # 5\n            \"mno\",  # 6\n            \"pqrs\", # 7\n            \"tuv\",  # 8\n            \"wxyz\"  # 9\n        ]\n        self.result = []\n        self.s = \"\"\n    \n    def backtracking(self, digits, index):\n        if index == len(digits):\n            self.result.append(self.s)\n            return\n        digit = int(digits[index])\n        letters = self.letterMap[digit]\n        for i in range(len(letters)):\n            self.s += letters[i]\n            self.backtracking(digits, index + 1)\n            self.s = self.s[:-1]\n    \n    def letterCombinations(self, digits):\n        if len(digits) == 0:\n            return self.result\n        self.backtracking(digits, 0)\n        return self.result",
+      "description": "Python版本的电话号码字母组合解决方案"
+    }
+  ],
+  "common_mistakes": [
+    "忽略对输入为空的情况进行特殊处理",
+    "未考虑到某些按键如1、*或#没有对应的字母集"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/2020102916424043.png",
+      "description": "这张图片展示了一个标准的电话键盘布局，可用于算法中的字符映射和字符串处理问题。",
+      "context": "该图片展示了数字到字母的映射关系，对应于电话按键布局，用于解决给定问题中的字母组合生成。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/2020102916424043.png",
+      "description": "GIF展示了根据电话号码生成字母组合的过程，通过递归调用逐步构建所有可能的字符串。",
+      "context": "GIF动画展示了电话号码数字与字母的映射关系，帮助理解如何从给定的数字字符串生成所有可能的字母组合。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\回溯算法\\电话号码的字母组合.txt",
+  "extracted_at": "2025-07-21T11:32:11.250588",
+  "raw_content": "电话号码的字母组合\n力扣题目链接(https://leetcode.cn/problems/letter-combinations-of-a-phone-number/)\n\n给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。\n\n给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。\n\nhttps://file1.kamacoder.com/i/algo/2020102916424043.png\n\n示例:\n\n输入：\"23\"\n输出：[\"ad\", \"ae\", \"af\", \"bd\", \"be\", \"bf\", \"cd\", \"ce\", \"cf\"].\n说明：尽管上面的答案是按字典序排列的，但是你可以任意选择答案输出的顺序。\n\n\n#思路\n从示例上来说，输入\"23\"，最直接的想法就是两层for循环遍历了吧，正好把组合的情况都输出了。\n\n如果输入\"233\"呢，那么就三层for循环，如果\"2333\"呢，就四层for循环.......\n\n大家应该感觉出和77.组合 (https://programmercarl.com/0077.%E7%BB%84%E5%90%88.html)遇到的一样的问题，就是这for循环的层数如何写出来，此时又是回溯法登场的时候了。\n\n理解本题后，要解决如下三个问题：\n\n数字和字母如何映射\n两个字母就两个for循环，三个字符我就三个for循环，以此类推，然后发现代码根本写不出来\n输入1 * #按键等等异常情况\n#数字和字母如何映射\n可以使用map或者定义一个二维数组，例如：string letterMap[10]，来做映射，我这里定义一个二维数组，代码如下：\n\nconst string letterMap[10] = {\n    \"\", // 0\n    \"\", // 1\n    \"abc\", // 2\n    \"def\", // 3\n    \"ghi\", // 4\n    \"jkl\", // 5\n    \"mno\", // 6\n    \"pqrs\", // 7\n    \"tuv\", // 8\n    \"wxyz\", // 9\n};\n#回溯法来解决n个for循环的问题\n对于回溯法还不了解的同学看这篇：关于回溯算法，你该了解这些！(https://programmercarl.com/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html)\n\n例如：输入：\"23\"，抽象为树形结构，如图所示：\n\n17. 电话号码的字母组合\n\n图中可以看出遍历的深度，就是输入\"23\"的长度，而叶子节点就是我们要收集的结果，输出[\"ad\", \"ae\", \"af\", \"bd\", \"be\", \"bf\", \"cd\", \"ce\", \"cf\"]。\n\n回溯三部曲：\n\n确定回溯函数参数\n首先需要一个字符串s来收集叶子节点的结果，然后用一个字符串数组result保存起来，这两个变量我依然定义为全局。\n\n再来看参数，参数指定是有题目中给的string digits，然后还要有一个参数就是int型的index。\n\n注意这个index可不是 77.组合 (https://programmercarl.com/0077.%E7%BB%84%E5%90%88.html)和216.组合总和III (https://programmercarl.com/0216.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8CIII.html)中的startIndex了。\n\n这个index是记录遍历第几个数字了，就是用来遍历digits的（题目中给出数字字符串），同时index也表示树的深度。\n\n代码如下：\n\nvector<string> result;\nstring s;\nvoid backtracking(const string& digits, int index)\n确定终止条件\n例如输入用例\"23\"，两个数字，那么根节点往下递归两层就可以了，叶子节点就是要收集的结果集。\n\n那么终止条件就是如果index 等于 输入的数字个数（digits.size）了（本来index就是用来遍历digits的）。\n\n然后收集结果，结束本层递归。\n\n代码如下：\n\nif (index == digits.size()) {\n    result.push_back(s);\n    return;\n}\n确定单层遍历逻辑\n首先要取index指向的数字，并找到对应的字符集（手机键盘的字符集）。\n\n然后for循环来处理这个字符集，代码如下：\n\nint digit = digits[index] - '0';        // 将index指向的数字转为int\nstring letters = letterMap[digit];      // 取数字对应的字符集\nfor (int i = 0; i < letters.size(); i++) {\n    s.push_back(letters[i]);            // 处理\n    backtracking(digits, index + 1);    // 递归，注意index+1，一下层要处理下一个数字了\n    s.pop_back();                       // 回溯\n}\n注意这里for循环，可不像是在回溯算法：求组合问题！ (https://programmercarl.com/0077.%E7%BB%84%E5%90%88.html)和回溯算法：求组合总和！ (https://programmercarl.com/0216.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8CIII.html)中从startIndex开始遍历的。\n\n因为本题每一个数字代表的是不同集合，也就是求不同集合之间的组合，而77. 组合 (https://programmercarl.com/0077.%E7%BB%84%E5%90%88.html)和216.组合总和III (https://programmercarl.com/0216.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8CIII.html)都是求同一个集合中的组合！\n\n注意：输入1 * #按键等等异常情况\n\n代码中最好考虑这些异常情况，但题目的测试数据中应该没有异常情况的数据，所以我就没有加了。\n\n但是要知道会有这些异常，如果是现场面试中，一定要考虑到！\n\n关键地方都讲完了，按照关于回溯算法，你该了解这些！ (https://programmercarl.com/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html)中的回溯法模板，不难写出如下C++代码：\n\n// 版本一\nclass Solution {\nprivate:\n    const string letterMap[10] = {\n        \"\", // 0\n        \"\", // 1\n        \"abc\", // 2\n        \"def\", // 3\n        \"ghi\", // 4\n        \"jkl\", // 5\n        \"mno\", // 6\n        \"pqrs\", // 7\n        \"tuv\", // 8\n        \"wxyz\", // 9\n    };\npublic:\n    vector<string> result;\n    string s;\n    void backtracking(const string& digits, int index) {\n        if (index == digits.size()) {\n            result.push_back(s);\n            return;\n        }\n        int digit = digits[index] - '0';        // 将index指向的数字转为int\n        string letters = letterMap[digit];      // 取数字对应的字符集\n        for (int i = 0; i < letters.size(); i++) {\n            s.push_back(letters[i]);            // 处理\n            backtracking(digits, index + 1);    // 递归，注意index+1，一下层要处理下一个数字了\n            s.pop_back();                       // 回溯\n        }\n    }\n    vector<string> letterCombinations(string digits) {\n        s.clear();\n        result.clear();\n        if (digits.size() == 0) {\n            return result;\n        }\n        backtracking(digits, 0);\n        return result;\n    }\n};\n时间复杂度: O(3^m * 4^n)，其中 m 是对应三个字母的数字个数，n 是对应四个字母的数字个数\n空间复杂度: O(3^m * 4^n)\n一些写法，是把回溯的过程放在递归函数里了，例如如下代码，我可以写成这样：（注意注释中不一样的地方）\n\n// 版本二\nclass Solution {\nprivate:\n        const string letterMap[10] = {\n            \"\", // 0\n            \"\", // 1\n            \"abc\", // 2\n            \"def\", // 3\n            \"ghi\", // 4\n            \"jkl\", // 5\n            \"mno\", // 6\n            \"pqrs\", // 7\n            \"tuv\", // 8\n            \"wxyz\", // 9\n        };\npublic:\n    vector<string> result;\n    void getCombinations(const string& digits, int index, const string& s) { // 注意参数的不同\n        if (index == digits.size()) {\n            result.push_back(s);\n            return;\n        }\n        int digit = digits[index] - '0';\n        string letters = letterMap[digit];\n        for (int i = 0; i < letters.size(); i++) {\n            getCombinations(digits, index + 1, s + letters[i]);  // 注意这里的不同\n        }\n    }\n    vector<string> letterCombinations(string digits) {\n        result.clear();\n        if (digits.size() == 0) {\n            return result;\n        }\n        getCombinations(digits, 0, \"\");\n        return result;\n\n    }\n};\n我不建议把回溯藏在递归的参数里这种写法，很不直观，我在二叉树：以为使用了递归，其实还隐藏着回溯 (https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B8%AD%E9%80%92%E5%BD%92%E5%B8%A6%E7%9D%80%E5%9B%9E%E6%BA%AF.html)这篇文章中也深度分析了，回溯隐藏在了哪里。\n\n所以大家可以按照版本一来写就可以了。\n\n#总结\n本篇将题目的三个要点一一列出，并重点强调了和前面讲解过的77. 组合 (https://programmercarl.com/0077.%E7%BB%84%E5%90%88.html)和216.组合总和III (https://programmercarl.com/0216.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8CIII.html)的区别，本题是多个集合求组合，所以在回溯的搜索过程中，都有一些细节需要注意的。\n\n其实本题不算难，但也处处是细节，大家还要自己亲自动手写一写。\n\n#其他语言版本\n#Java\nclass Solution {\n\n    //设置全局列表存储最后的结果\n    List<String> list = new ArrayList<>();\n\n    public List<String> letterCombinations(String digits) {\n        if (digits == null || digits.length() == 0) {\n            return list;\n        }\n        //初始对应所有的数字，为了直接对应2-9，新增了两个无效的字符串\"\"\n        String[] numString = {\"\", \"\", \"abc\", \"def\", \"ghi\", \"jkl\", \"mno\", \"pqrs\", \"tuv\", \"wxyz\"};\n        //迭代处理\n        backTracking(digits, numString, 0);\n        return list;\n\n    }\n\n    //每次迭代获取一个字符串，所以会涉及大量的字符串拼接，所以这里选择更为高效的 StringBuilder\n    StringBuilder temp = new StringBuilder();\n\n    //比如digits如果为\"23\",num 为0，则str表示2对应的 abc\n    public void backTracking(String digits, String[] numString, int num) {\n        //遍历全部一次记录一次得到的字符串\n        if (num == digits.length()) {\n            list.add(temp.toString());\n            return;\n        }\n        //str 表示当前num对应的字符串\n        String str = numString[digits.charAt(num) - '0'];\n        for (int i = 0; i < str.length(); i++) {\n            temp.append(str.charAt(i));\n            //递归，处理下一层\n            backTracking(digits, numString, num + 1);\n            //剔除末尾的继续尝试\n            temp.deleteCharAt(temp.length() - 1);\n        }\n    }\n}\n#Python\n回溯\n\nclass Solution:\n    def __init__(self):\n        self.letterMap = [\n            \"\",     # 0\n            \"\",     # 1\n            \"abc\",  # 2\n            \"def\",  # 3\n            \"ghi\",  # 4\n            \"jkl\",  # 5\n            \"mno\",  # 6\n            \"pqrs\", # 7\n            \"tuv\",  # 8\n            \"wxyz\"  # 9\n        ]\n        self.result = []\n        self.s = \"\"\n    \n    def backtracking(self, digits, index):\n        if index == len(digits):\n            self.result.append(self.s)\n            return\n        digit = int(digits[index])    # 将索引处的数字转换为整数\n        letters = self.letterMap[digit]    # 获取对应的字符集\n        for i in range(len(letters)):\n            self.s += letters[i]    # 处理字符\n            self.backtracking(digits, index + 1)    # 递归调用，注意索引加1，处理下一个数字\n            self.s = self.s[:-1]    # 回溯，删除最后添加的字符\n    \n    def letterCombinations(self, digits):\n        if len(digits) == 0:\n            return self.result\n        self.backtracking(digits, 0)\n        return self.result\n\n回溯精简（版本一）\n\nclass Solution:\n    def __init__(self):\n        self.letterMap = [\n            \"\",     # 0\n            \"\",     # 1\n            \"abc\",  # 2\n            \"def\",  # 3\n            \"ghi\",  # 4\n            \"jkl\",  # 5\n            \"mno\",  # 6\n            \"pqrs\", # 7\n            \"tuv\",  # 8\n            \"wxyz\"  # 9\n        ]\n        self.result = []\n    \n    def getCombinations(self, digits, index, s):\n        if index == len(digits):\n            self.result.append(s)\n            return\n        digit = int(digits[index])\n        letters = self.letterMap[digit]\n        for letter in letters:\n            self.getCombinations(digits, index + 1, s + letter)\n    \n    def letterCombinations(self, digits):\n        if len(digits) == 0:\n            return self.result\n        self.getCombinations(digits, 0, \"\")\n        return self.result\n\n回溯精简（版本二）\n\nclass Solution:\n    def __init__(self):\n        self.letterMap = [\n            \"\",     # 0\n            \"\",     # 1\n            \"abc\",  # 2\n            \"def\",  # 3\n            \"ghi\",  # 4\n            \"jkl\",  # 5\n            \"mno\",  # 6\n            \"pqrs\", # 7\n            \"tuv\",  # 8\n            \"wxyz\"  # 9\n        ]\n    \n    def getCombinations(self, digits, index, s, result):\n        if index == len(digits):\n            result.append(s)\n            return\n        digit = int(digits[index])\n        letters = self.letterMap[digit]\n        for letter in letters:\n            self.getCombinations(digits, index + 1, s + letter, result)\n    \n    def letterCombinations(self, digits):\n        result = []\n        if len(digits) == 0:\n            return result\n        self.getCombinations(digits, 0, \"\", result)\n        return result\n\n\n回溯优化使用列表\n\nclass Solution:\n    def __init__(self):\n        self.letterMap = [\n            \"\",     # 0\n            \"\",     # 1\n            \"abc\",  # 2\n            \"def\",  # 3\n            \"ghi\",  # 4\n            \"jkl\",  # 5\n            \"mno\",  # 6\n            \"pqrs\", # 7\n            \"tuv\",  # 8\n            \"wxyz\"  # 9\n        ]\n    \n    def getCombinations(self, digits, index, path, result):\n        if index == len(digits):\n            result.append(''.join(path))\n            return\n        digit = int(digits[index])\n        letters = self.letterMap[digit]\n        for letter in letters:\n            path.append(letter)\n            self.getCombinations(digits, index + 1, path, result)\n            path.pop()\n    \n    def letterCombinations(self, digits):\n        result = []\n        if len(digits) == 0:\n            return result\n        self.getCombinations(digits, 0, [], result)\n        return result"
+}

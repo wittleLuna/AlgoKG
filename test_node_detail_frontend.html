@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>节点详情测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success { background-color: #f0f9ff; border-color: #1890ff; }
+        .error { background-color: #fff2f0; border-color: #ff4d4f; }
+        .warning { background-color: #fffbe6; border-color: #faad14; }
+        button {
+            background-color: #1890ff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #40a9ff;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            max-height: 300px;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 节点详情API测试</h1>
+    
+    <div class="test-section">
+        <h2>测试说明</h2>
+        <p>这个页面用于测试节点详情API是否正确返回丰富的数据。</p>
+        <p><strong>确保后端服务运行在 http://localhost:8000</strong></p>
+    </div>
+
+    <div class="test-section">
+        <h2>测试节点详情API</h2>
+        <button onclick="testNodeDetail('neo4j_不同的子序列', 'Problem')">测试: 不同的子序列</button>
+        <button onclick="testNodeDetail('neo4j_动态规划', 'Algorithm')">测试: 动态规划算法</button>
+        <button onclick="testNodeDetail('neo4j_数组', 'DataStructure')">测试: 数组数据结构</button>
+        
+        <div id="apiResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>前端数据处理测试</h2>
+        <button onclick="testDataProcessing()">测试数据处理逻辑</button>
+        
+        <div id="processingResult" class="result"></div>
+    </div>
+
+    <script>
+        async function testNodeDetail(nodeId, nodeType) {
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.innerHTML = '<p>🔄 正在测试...</p>';
+            
+            try {
+                const url = `/api/v1/graph/unified/node/${encodeURIComponent(nodeId)}/details?node_type=${nodeType}`;
+                console.log('请求URL:', url);
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                // 分析数据结构
+                const analysis = {
+                    hasBasicInfo: !!data.basic_info,
+                    hasAlgorithms: !!data.algorithms,
+                    algorithmsCount: data.algorithms?.length || 0,
+                    hasDataStructures: !!data.data_structures,
+                    dataStructuresCount: data.data_structures?.length || 0,
+                    hasTechniques: !!data.techniques,
+                    techniquesCount: data.techniques?.length || 0,
+                    hasComplexity: !!data.complexity,
+                    hasSolutions: !!data.solutions,
+                    solutionsCount: data.solutions?.length || 0,
+                    hasRelatedProblems: !!data.related_problems,
+                    relatedProblemsCount: data.related_problems?.length || 0,
+                    totalFields: Object.keys(data).length
+                };
+                
+                let resultHtml = `
+                    <div class="success">
+                        <h3>✅ API测试成功</h3>
+                        <p><strong>节点:</strong> ${nodeId} (${nodeType})</p>
+                        <p><strong>标题:</strong> ${data.basic_info?.title || 'N/A'}</p>
+                        <p><strong>数据分析:</strong></p>
+                        <ul>
+                            <li>总字段数: ${analysis.totalFields}</li>
+                            <li>算法数量: ${analysis.algorithmsCount}</li>
+                            <li>数据结构数量: ${analysis.dataStructuresCount}</li>
+                            <li>技巧数量: ${analysis.techniquesCount}</li>
+                            <li>解决方案数量: ${analysis.solutionsCount}</li>
+                            <li>相关题目数量: ${analysis.relatedProblemsCount}</li>
+                        </ul>
+                `;
+                
+                if (analysis.algorithmsCount > 0) {
+                    resultHtml += `<p><strong>前3个算法:</strong></p><ul>`;
+                    data.algorithms.slice(0, 3).forEach(alg => {
+                        resultHtml += `<li>${alg.name} - ${alg.description || 'N/A'}</li>`;
+                    });
+                    resultHtml += `</ul>`;
+                }
+                
+                resultHtml += `
+                        <details>
+                            <summary>查看完整响应数据</summary>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </details>
+                    </div>
+                `;
+                
+                resultDiv.innerHTML = resultHtml;
+                
+            } catch (error) {
+                console.error('测试失败:', error);
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h3>❌ API测试失败</h3>
+                        <p><strong>错误:</strong> ${error.message}</p>
+                        <p><strong>节点:</strong> ${nodeId} (${nodeType})</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function testDataProcessing() {
+            const resultDiv = document.getElementById('processingResult');
+            
+            // 模拟API返回的数据
+            const mockData = {
+                basic_info: {
+                    title: "不同的子序列",
+                    type: "Problem",
+                    description: "测试描述",
+                    difficulty: null,
+                    platform: "leetcode",
+                    category: "动态规划",
+                    url: "https://leetcode.cn/problems/distinct-subsequences/"
+                },
+                algorithms: [
+                    { name: "动态规划", description: "通过子问题最优解构建全局最优解", category: "优化算法" },
+                    { name: "双指针", description: "使用两个指针优化数组操作", category: "数组技巧" }
+                ],
+                data_structures: [
+                    { name: "数组", description: "线性数据结构", category: "基础结构" }
+                ],
+                techniques: [
+                    { name: "状态转移", description: "动态规划的核心技巧" }
+                ],
+                complexity: {
+                    time: "O(m*n)",
+                    space: "O(m*n)"
+                },
+                solutions: [
+                    { approach: "动态规划", description: "使用二维DP数组", time_complexity: "O(m*n)", space_complexity: "O(m*n)" }
+                ],
+                related_problems: [
+                    { title: "最长公共子序列", difficulty: "中等", similarity_score: 0.8 }
+                ]
+            };
+            
+            // 测试条件判断逻辑
+            const tests = [
+                {
+                    name: "基本信息存在",
+                    condition: !!mockData.basic_info,
+                    expected: true
+                },
+                {
+                    name: "算法数组存在且非空",
+                    condition: mockData.algorithms && Array.isArray(mockData.algorithms) && mockData.algorithms.length > 0,
+                    expected: true
+                },
+                {
+                    name: "数据结构数组存在且非空", 
+                    condition: mockData.data_structures && Array.isArray(mockData.data_structures) && mockData.data_structures.length > 0,
+                    expected: true
+                },
+                {
+                    name: "难度字段处理",
+                    condition: mockData.basic_info.difficulty && mockData.basic_info.difficulty !== null,
+                    expected: false
+                },
+                {
+                    name: "复杂度对象存在",
+                    condition: mockData.complexity && typeof mockData.complexity === 'object',
+                    expected: true
+                }
+            ];
+            
+            let resultHtml = `
+                <div class="success">
+                    <h3>🧪 前端数据处理测试</h3>
+                    <p><strong>测试结果:</strong></p>
+                    <ul>
+            `;
+            
+            tests.forEach(test => {
+                const passed = test.condition === test.expected;
+                const icon = passed ? '✅' : '❌';
+                resultHtml += `<li>${icon} ${test.name}: ${test.condition} (期望: ${test.expected})</li>`;
+            });
+            
+            resultHtml += `
+                    </ul>
+                    <p><strong>模拟数据字段:</strong> ${Object.keys(mockData).join(', ')}</p>
+                    <details>
+                        <summary>查看模拟数据</summary>
+                        <pre>${JSON.stringify(mockData, null, 2)}</pre>
+                    </details>
+                </div>
+            `;
+            
+            resultDiv.innerHTML = resultHtml;
+        }
+        
+        // 页面加载时的提示
+        window.onload = function() {
+            console.log('🔧 节点详情测试页面已加载');
+            console.log('请确保后端服务运行在 http://localhost:8000');
+        };
+    </script>
+</body>
+</html>

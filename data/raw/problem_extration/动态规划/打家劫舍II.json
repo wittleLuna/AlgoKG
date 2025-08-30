@@ -1,0 +1,256 @@
+{
+  "id": "AP_9e566a98",
+  "title": "打家劫舍II",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/house-robber-ii/",
+  "description": "一个代表每个房屋存放金额的非负整数数组，计算你 在不触动警报装置的情况下 ，能够偷窃到的最高金额。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "动态规划"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "分而治之",
+    "优化子问题"
+  ],
+  "difficulty": null,
+  "solution_approach": "将问题分为两种情况处理：不包含最后一个房屋的情况（情况二）和不包含第一个房屋的情况（情况三）。分别计算这两种情况下可以偷窃到的最大金额，并取两者中的最大值作为最终答案。每种情况下的计算方法与打家劫舍I类似。",
+  "key_insights": [
+    {
+      "content": "由于房屋围成一圈，直接应用打家劫舍I的方法会导致首尾相连的问题。本题的关键在于通过排除首或尾元素来避免环状约束。"
+    },
+    {
+      "content": "对于非环形部分，可以直接使用打家劫舍I中的动态规划解决方案，这简化了问题解决过程。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目和198.打家劫舍 (https://programmercarl.com/0198.%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D.html)是差不多的，唯一区别就是成环了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(vector<int>& nums) {if (nums.size() == 0) return 0;if (nums.size() == 1) return nums[0];int result1 = robRange(nums, 0, nums.size() - 2);int result2 = robRange(nums, 1, nums.size() - 1);return max(result1, result2);}int robRange(vector<int>& nums, int start, int end) {if (end == start) return nums[start];vector<int> dp(nums.size());dp[start] = nums[start];dp[start + 1] = max(nums[start], nums[start + 1]);for (int i = start + 2; i <= end; i++) {dp[i] = max(dp[i - 2] + nums[i], dp[i - 1]);}return dp[end];}};",
+          "description": "C++实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int rob(int[] nums) {if (nums == null || nums.length == 0)return 0;int len = nums.length;if (len == 1)return nums[0];return Math.max(robAction(nums, 0, len - 1), robAction(nums, 1, len));}int robAction(int[] nums, int start, int end) {int x = 0, y = 0, z = 0;for (int i = start; i < end; i++) {y = z;z = Math.max(y, x + nums[i]);x = y;}return z;}}",
+          "description": "Java实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, nums: List[int]) -> int: if len(nums) == 0: return 0 if len(nums) == 1: return nums[0] result1 = self.robRange(nums, 0, len(nums) - 2) result2 = self.robRange(nums, 1, len(nums) - 1) return max(result1, result2) def robRange(self, nums: List[int], start: int, end: int) -> int: if end == start: return nums[start] prev_max = nums[start] curr_max = max(nums[start], nums[start + 1]) for i in range(start + 2, end + 1): temp = curr_max curr_max = max(prev_max + nums[i], curr_max) prev_max = temp return curr_max",
+          "description": "Python实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, nums: List[int]) -> int: if len(nums) < 3: return max(nums) result1 = self.robRange(nums[:-1]) result2 = self.robRange(nums[1:]) return max(result1, result2) def robRange(self, nums): dp = [[0, 0] for _ in range(len(nums))] dp[0][1] = nums[0] for i in range(1, len(nums)): dp[i][0] = max(dp[i - 1]) dp[i][1] = dp[i - 1][0] + nums[i] return max(dp[-1])",
+          "description": "Python二维DP实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, nums: List[int]) -> int: if not nums: return 0 if len(nums) == 1: return nums[0] prev_max = 0 curr_max = 0 for num in nums[1:]: temp = curr_max curr_max = max(prev_max + num, curr_max) prev_max = temp result1 = curr_max prev_max = 0 curr_max = 0 for num in nums[:-1]: temp = curr_max curr_max = max(prev_max + num, curr_max) prev_max = temp result2 = curr_max return max(result1, result2)",
+          "description": "Python优化版实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "成环之后还是难了一些的， 不少题解没有把“考虑房间”和“偷房间”说清楚。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(vector<int>& nums) {if (nums.size() == 0) return 0;if (nums.size() == 1) return nums[0];int result1 = robRange(nums, 0, nums.size() - 2); // 情况二int result2 = robRange(nums, 1, nums.size() - 1); // 情况三return max(result1, result2);} int robRange(vector<int>& nums, int start, int end) {if (end == start) return nums[start];vector<int> dp(nums.size());dp[start] = nums[start];dp[start + 1] = max(nums[start], nums[start + 1]);for (int i = start + 2; i <= end; i++) {dp[i] = max(dp[i - 2] + nums[i], dp[i - 1]);}return dp[end];}};",
+          "description": "C++实现的打家劫舍II解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int rob(int[] nums) {if (nums == null || nums.length == 0)return 0;int len = nums.length;if (len == 1)return nums[0];return Math.max(robAction(nums, 0, len - 1), robAction(nums, 1, len));} int robAction(int[] nums, int start, int end) {int x = 0, y = 0, z = 0;for (int i = start; i < end; i++) {y = z;z = Math.max(y, x + nums[i]);x = y;}return z;}}",
+          "description": "Java实现的打家劫舍II解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, nums: List[int]) -> int: if len(nums) == 0: return 0 if len(nums) == 1: return nums[0] result1 = self.robRange(nums, 0, len(nums) - 2)  # 情况二 result2 = self.robRange(nums, 1, len(nums) - 1)  # 情况三 return max(result1, result2) def robRange(self, nums: List[int], start: int, end: int) -> int: if end == start: return nums[start] prev_max = nums[start] curr_max = max(nums[start], nums[start + 1]) for i in range(start + 2, end + 1): temp = curr_max curr_max = max(prev_max + nums[i], curr_max) prev_max = temp return curr_max",
+          "description": "Python实现的打家劫舍II解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, nums: List[int]) -> int: if len(nums) < 3: return max(nums) result1 = self.robRange(nums[:-1]) result2 = self.robRange(nums[1:]) return max(result1, result2) def robRange(self, nums): dp = [[0, 0] for _ in range(len(nums))] dp[0][1] = nums[0] for i in range(1, len(nums)): dp[i][0] = max(dp[i - 1]) dp[i][1] = dp[i - 1][0] + nums[i] return max(dp[-1])",
+          "description": "Python使用二维DP实现的打家劫舍II解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, nums: List[int]) -> int: if not nums: return 0 if len(nums) == 1: return nums[0] prev_max = 0 curr_max = 0 for num in nums[1:]: temp = curr_max curr_max = max(prev_max + num, curr_max) prev_max = temp result1 = curr_max prev_max = 0 curr_max = 0 for num in nums[:-1]: temp = curr_max curr_max = max(prev_max + num, curr_max) prev_max = temp result2 = curr_max return max(result1, result2)",
+          "description": "Python优化版实现的打家劫舍II解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(vector<int>& nums) {if (nums.size() == 0) return 0;if (nums.size() == 1) return nums[0];int result1 = robRange(nums, 0, nums.size() - 2);int result2 = robRange(nums, 1, nums.size() - 1);return max(result1, result2);}int robRange(vector<int>& nums, int start, int end) {if (end == start) return nums[start];vector<int> dp(nums.size());dp[start] = nums[start];dp[start + 1] = max(nums[start], nums[start + 1]);for (int i = start + 2; i <= end; i++) {dp[i] = max(dp[i - 2] + nums[i], dp[i - 1]);}return dp[end];}};",
+          "description": "C++实现的打家劫舍II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int rob(int[] nums) {if (nums == null || nums.length == 0)return 0;int len = nums.length;if (len == 1)return nums[0];return Math.max(robAction(nums, 0, len - 1), robAction(nums, 1, len));}int robAction(int[] nums, int start, int end) {int x = 0, y = 0, z = 0;for (int i = start; i < end; i++) {y = z;z = Math.max(y, x + nums[i]);x = y;}return z;}}",
+          "description": "Java实现的打家劫舍II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, nums: List[int]) -> int: if len(nums) == 0: return 0 if len(nums) == 1: return nums[0] result1 = self.robRange(nums, 0, len(nums) - 2) result2 = self.robRange(nums, 1, len(nums) - 1) return max(result1, result2) def robRange(self, nums: List[int], start: int, end: int) -> int: if end == start: return nums[start] prev_max = nums[start] curr_max = max(nums[start], nums[start + 1]) for i in range(start + 2, end + 1): temp = curr_max curr_max = max(prev_max + nums[i], curr_max) prev_max = temp return curr_max",
+          "description": "Python实现的打家劫舍II，使用动态规划"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(vector<int>& nums) { if (nums.size() == 0) return 0; if (nums.size() == 1) return nums[0]; int result1 = robRange(nums, 0, nums.size() - 2); int result2 = robRange(nums, 1, nums.size() - 1); return max(result1, result2);}int robRange(vector<int>& nums, int start, int end) { if (end == start) return nums[start]; vector<int> dp(nums.size()); dp[start] = nums[start]; dp[start + 1] = max(nums[start], nums[start + 1]); for (int i = start + 2; i <= end; i++) { dp[i] = max(dp[i - 2] + nums[i], dp[i - 1]); } return dp[end];}};",
+          "description": "C++实现的打家劫舍II问题解决方法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int rob(int[] nums) { if (nums == null || nums.length == 0) return 0; int len = nums.length; if (len == 1) return nums[0]; return Math.max(robAction(nums, 0, len - 1), robAction(nums, 1, len));} int robAction(int[] nums, int start, int end) { int x = 0, y = 0, z = 0; for (int i = start; i < end; i++) { y = z; z = Math.max(y, x + nums[i]); x = y; } return z; }}",
+          "description": "Java实现的打家劫舍II问题解决方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, nums: List[int]) -> int: if len(nums) == 0: return 0 if len(nums) == 1: return nums[0] result1 = self.robRange(nums, 0, len(nums) - 2) result2 = self.robRange(nums, 1, len(nums) - 1) return max(result1, result2)def robRange(self, nums: List[int], start: int, end: int) -> int: if end == start: return nums[start] prev_max = nums[start] curr_max = max(nums[start], nums[start + 1]) for i in range(start + 2, end + 1): temp = curr_max curr_max = max(prev_max + nums[i], curr_max) prev_max = temp return curr_max",
+          "description": "Python实现的打家劫舍II问题解决方法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "class Solution:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int rob(vector<int>& nums) {if (nums.size() == 0) return 0;if (nums.size() == 1) return nums[0];int result1 = robRange(nums, 0, nums.size() - 2);int result2 = robRange(nums, 1, nums.size() - 1);return max(result1, result2);} int robRange(vector<int>& nums, int start, int end) {if (end == start) return nums[start];vector<int> dp(nums.size());dp[start] = nums[start];dp[start + 1] = max(nums[start], nums[start + 1]);for (int i = start + 2; i <= end; i++) {dp[i] = max(dp[i - 2] + nums[i], dp[i - 1]);}return dp[end];}};",
+          "description": "C++实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int rob(int[] nums) {if (nums == null || nums.length == 0)return 0;int len = nums.length;if (len == 1)return nums[0];return Math.max(robAction(nums, 0, len - 1), robAction(nums, 1, len));} int robAction(int[] nums, int start, int end) {int x = 0, y = 0, z = 0;for (int i = start; i < end; i++) {y = z;z = Math.max(y, x + nums[i]);x = y;}return z;}}",
+          "description": "Java实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, nums: List[int]) -> int: if len(nums) == 0: return 0 if len(nums) == 1: return nums[0] result1 = self.robRange(nums, 0, len(nums) - 2) result2 = self.robRange(nums, 1, len(nums) - 1) return max(result1, result2) def robRange(self, nums: List[int], start: int, end: int) -> int: if end == start: return nums[start] prev_max = nums[start] curr_max = max(nums[start], nums[start + 1]) for i in range(start + 2, end + 1): temp = curr_max curr_max = max(prev_max + nums[i], curr_max) prev_max = temp return curr_max",
+          "description": "Python实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, nums: List[int]) -> int: if len(nums) < 3: return max(nums) result1 = self.robRange(nums[:-1]) result2 = self.robRange(nums[1:]) return max(result1, result2) def robRange(self, nums): dp = [[0, 0] for _ in range(len(nums))] dp[0][1] = nums[0] for i in range(1, len(nums)): dp[i][0] = max(dp[i - 1]) dp[i][1] = dp[i - 1][0] + nums[i] return max(dp[-1])",
+          "description": "Python 二维DP实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def rob(self, nums: List[int]) -> int: if not nums: return 0 if len(nums) == 1: return nums[0] prev_max = 0 curr_max = 0 for num in nums[1:]: temp = curr_max curr_max = max(prev_max + num, curr_max) prev_max = temp result1 = curr_max prev_max = 0 curr_max = 0 for num in nums[:-1]: temp = curr_max curr_max = max(prev_max + num, curr_max) prev_max = temp result2 = curr_max return max(result1, result2)",
+          "description": "Python优化版实现"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int rob(vector<int>& nums) {if (nums.size() == 0) return 0;if (nums.size() == 1) return nums[0];int result1 = robRange(nums, 0, nums.size() - 2); // 情况二int result2 = robRange(nums, 1, nums.size() - 1); // 情况三return max(result1, result2);}int robRange(vector<int>& nums, int start, int end) {if (end == start) return nums[start];vector<int> dp(nums.size());dp[start] = nums[start];dp[start + 1] = max(nums[start], nums[start + 1]);for (int i = start + 2; i <= end; i++) {dp[i] = max(dp[i - 2] + nums[i], dp[i - 1]);}return dp[end];}};",
+      "description": "C++实现的打家劫舍II解决方案"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int rob(int[] nums) {if (nums == null || nums.length == 0)return 0;int len = nums.length;if (len == 1)return nums[0];return Math.max(robAction(nums, 0, len - 1), robAction(nums, 1, len));}int robAction(int[] nums, int start, int end) {int x = 0, y = 0, z = 0;for (int i = start; i < end; i++) {y = z;z = Math.max(y, x + nums[i]);x = y;}return z;}}",
+      "description": "Java实现的打家劫舍II解决方案"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def rob(self, nums: List[int]) -> int: if len(nums) == 0: return 0 if len(nums) == 1: return nums[0] result1 = self.robRange(nums, 0, len(nums) - 2) # 情况二 result2 = self.robRange(nums, 1, len(nums) - 1) # 情况三 return max(result1, result2)# 198.打家劫舍的逻辑 def robRange(self, nums: List[int], start: int, end: int) -> int: if end == start: return nums[start] prev_max = nums[start] curr_max = max(nums[start], nums[start + 1]) for i in range(start + 2, end + 1): temp = curr_max curr_max = max(prev_max + nums[i], curr_max) prev_max = temp return curr_max",
+      "description": "Python实现的打家劫舍II解决方案（第一版）"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def rob(self, nums: List[int]) -> int: if len(nums) < 3: return max(nums)# 情况二：不抢劫第一个房屋 result1 = self.robRange(nums[:-1])# 情况三：不抢劫最后一个房屋 result2 = self.robRange(nums[1:])return max(result1, result2)def robRange(self, nums): dp = [[0, 0] for _ in range(len(nums))] dp[0][1] = nums[0] for i in range(1, len(nums)): dp[i][0] = max(dp[i - 1]) dp[i][1] = dp[i - 1][0] + nums[i] return max(dp[-1])",
+      "description": "Python实现的打家劫舍II解决方案（二维DP版本）"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def rob(self, nums: List[int]) -> int: if not nums: # 如果没有房屋，返回0 return 0 if len(nums) == 1: # 如果只有一个房屋，返回该房屋的金额 return nums[0]# 情况二：不抢劫第一个房屋 prev_max = 0 # 上一个房屋的最大金额 curr_max = 0 # 当前房屋的最大金额 for num in nums[1:]: temp = curr_max # 临时变量保存当前房屋的最大金额 curr_max = max(prev_max + num, curr_max) # 更新当前房屋的最大金额 prev_max = temp # 更新上一个房屋的最大金额 result1 = curr_max# 情况三：不抢劫最后一个房屋 prev_max = 0 # 上一个房屋的最大金额 curr_max = 0 # 当前房屋的最大金额 for num in nums[:-1]: temp = curr_max # 临时变量保存当前房屋的最大金额 curr_max = max(prev_max + num, curr_max) # 更新当前房屋的最大金额 prev_max = temp # 更新上一个房屋的最大金额 result2 = curr_max return max(result1, result2)",
+      "description": "Python实现的打家劫舍II解决方案（优化版）"
+    }
+  ],
+  "common_mistakes": [
+    "未正确理解'考虑'房间和'偷'房间的区别，导致逻辑混乱。",
+    "忽略了对输入边界条件的处理，如只有一个房屋时直接返回其价值。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210129160748643-20230310134000692.jpg",
+      "description": "这张图片展示了一个数组 `nums` 的部分元素（索引 1 到 3），强调了算法或数据结构中对特定区间元素的操作。",
+      "context": "这张图片展示了在不包含首尾元素的情况下，如何处理成环数组的问题。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210129160821374-20230310134003961.jpg",
+      "description": "这张图片展示了一个数组 `nums` 的部分元素（索引 0 到 3），强调了数据结构中数组的访问和操作，可能用于算法中的子数组处理或滑动窗口技术。",
+      "context": "该图片展示了数组成环时的情况二，即考虑包含首元素但不包含尾元素的情形。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210129160842491-20230310134008133.jpg",
+      "description": "这张图片展示了一个数组 `nums[i]` 的部分元素（从下标1到4），强调了算法或数据结构中对特定区间元素的关注。",
+      "context": "该图片展示了在考虑包含尾元素但不强制选择尾部元素的情况下，如何从数组中选取元素以达到最大值的示例。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210129160748643-20230310134000692.jpg",
+      "description": "GIF展示了在解决成环数组打家劫舍问题时，排除首尾元素情况下算法选择房屋进行偷窃的过程。",
+      "context": "该GIF动画展示了在解决成环数组问题时，不考虑首尾元素情况下的一种解题思路。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210129160821374-20230310134003961.jpg",
+      "description": "GIF展示了在考虑包含首元素但不包含尾元素的情况下，算法如何选择元素以达到最优解的过程。",
+      "context": "该GIF动画展示了数组成环情况下包含首元素但不包含尾元素的情形，帮助理解特定条件下的算法处理方式。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210129160842491-20230310134008133.jpg",
+      "description": "GIF展示了数组元素在考虑成环情况下选择最大和值的过程。",
+      "context": "该GIF动画展示了在考虑包含尾元素但不强制选择尾部元素的情况下，如何选取数组中的元素以获得最大值的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\动态规划\\打家劫舍II.txt",
+  "extracted_at": "2025-07-20T18:07:26.783150",
+  "raw_content": "打家劫舍II\n力扣题目链接(https://leetcode.cn/problems/house-robber-ii/)\n\n你是一个专业的小偷，计划偷窃沿街的房屋，每间房内都藏有一定的现金。这个地方所有的房屋都 围成一圈 ，这意味着第一个房屋和最后一个房屋是紧挨着的。同时，相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警 。\n\n给定一个代表每个房屋存放金额的非负整数数组，计算你 在不触动警报装置的情况下 ，能够偷窃到的最高金额。\n\n示例 1：\n\n输入：nums = [2,3,2]\n\n输出：3\n\n解释：你不能先偷窃 1 号房屋（金额 = 2），然后偷窃 3 号房屋（金额 = 2）, 因为他们是相邻的。\n\n示例 2：\n\n输入：nums = [1,2,3,1]\n\n输出：4\n\n解释：你可以先偷窃 1 号房屋（金额 = 1），然后偷窃 3 号房屋（金额 = 3）。偷窃到的最高金额 = 1 + 3 = 4 。\n\n示例 3：\n\n输入：nums = [0]\n\n输出：0\n\n提示：\n\n1 <= nums.length <= 100\n0 <= nums[i] <= 1000\n\n\n#思路\n这道题目和198.打家劫舍 (https://programmercarl.com/0198.%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D.html)是差不多的，唯一区别就是成环了。\n\n对于一个数组，成环的话主要有如下三种情况：\n\n情况一：考虑不包含首尾元素\nhttps://file1.kamacoder.com/i/algo/20210129160748643-20230310134000692.jpg\n\n情况二：考虑包含首元素，不包含尾元素\nhttps://file1.kamacoder.com/i/algo/20210129160821374-20230310134003961.jpg\n\n情况三：考虑包含尾元素，不包含首元素\nhttps://file1.kamacoder.com/i/algo/20210129160842491-20230310134008133.jpg\n\n注意我这里用的是\"考虑\"，例如情况三，虽然是考虑包含尾元素，但不一定要选尾部元素！ 对于情况三，取nums[1] 和 nums[3]就是最大的。\n\n而情况二 和 情况三 都包含了情况一了，所以只考虑情况二和情况三就可以了。\n\n分析到这里，本题其实比较简单了。 剩下的和198.打家劫舍 (opens new window)就是一样的了。\n\n代码如下：\n\n// 注意注释中的情况二情况三，以及把198.打家劫舍的代码抽离出来了\nclass Solution {\npublic:\n    int rob(vector<int>& nums) {\n        if (nums.size() == 0) return 0;\n        if (nums.size() == 1) return nums[0];\n        int result1 = robRange(nums, 0, nums.size() - 2); // 情况二\n        int result2 = robRange(nums, 1, nums.size() - 1); // 情况三\n        return max(result1, result2);\n    }\n    // 198.打家劫舍的逻辑\n    int robRange(vector<int>& nums, int start, int end) {\n        if (end == start) return nums[start];\n        vector<int> dp(nums.size());\n        dp[start] = nums[start];\n        dp[start + 1] = max(nums[start], nums[start + 1]);\n        for (int i = start + 2; i <= end; i++) {\n            dp[i] = max(dp[i - 2] + nums[i], dp[i - 1]);\n        }\n        return dp[end];\n    }\n};\n时间复杂度: O(n)\n空间复杂度: O(n)\n#总结\n成环之后还是难了一些的， 不少题解没有把“考虑房间”和“偷房间”说清楚。\n\n这就导致大家会有这样的困惑：情况三怎么就包含了情况一了呢？ 本文图中最后一间房不能偷啊，偷了一定不是最优结果。\n\n所以我在本文重点强调了情况一二三是“考虑”的范围，而具体房间偷与不偷交给递推公式去抉择。\n\n这样大家就不难理解情况二和情况三包含了情况一了。\n\n#其他语言版本\n#Java：\nclass Solution {\n    public int rob(int[] nums) {\n        if (nums == null || nums.length == 0)\n            return 0;\n        int len = nums.length;\n        if (len == 1)\n            return nums[0];\n        return Math.max(robAction(nums, 0, len - 1), robAction(nums, 1, len));\n    }\n\n    int robAction(int[] nums, int start, int end) {\n        int x = 0, y = 0, z = 0;\n        for (int i = start; i < end; i++) {\n            y = z;\n            z = Math.max(y, x + nums[i]);\n            x = y;\n        }\n        return z;\n    }\n}\n#Python：\nclass Solution:\n    def rob(self, nums: List[int]) -> int:\n        if len(nums) == 0:\n            return 0\n        if len(nums) == 1:\n            return nums[0]\n        \n        result1 = self.robRange(nums, 0, len(nums) - 2)  # 情况二\n        result2 = self.robRange(nums, 1, len(nums) - 1)  # 情况三\n        return max(result1, result2)\n    # 198.打家劫舍的逻辑\n    def robRange(self, nums: List[int], start: int, end: int) -> int:\n        if end == start:\n            return nums[start]\n        \n        prev_max = nums[start]\n        curr_max = max(nums[start], nums[start + 1])\n        \n        for i in range(start + 2, end + 1):\n            temp = curr_max\n            curr_max = max(prev_max + nums[i], curr_max)\n            prev_max = temp\n        \n        return curr_max\n\n2维DP\n\nclass Solution:\n    def rob(self, nums: List[int]) -> int:\n        if len(nums) < 3:\n            return max(nums)\n\n        # 情况二：不抢劫第一个房屋\n        result1 = self.robRange(nums[:-1])\n\n        # 情况三：不抢劫最后一个房屋\n        result2 = self.robRange(nums[1:])\n\n        return max(result1, result2)\n\n    def robRange(self, nums):\n        dp = [[0, 0] for _ in range(len(nums))]\n        dp[0][1] = nums[0]\n\n        for i in range(1, len(nums)):\n            dp[i][0] = max(dp[i - 1])\n            dp[i][1] = dp[i - 1][0] + nums[i]\n\n        return max(dp[-1])\n\n\n        \n优化版\n\nclass Solution:\n    def rob(self, nums: List[int]) -> int:\n        if not nums:  # 如果没有房屋，返回0\n            return 0\n\n        if len(nums) == 1:  # 如果只有一个房屋，返回该房屋的金额\n            return nums[0]\n\n        # 情况二：不抢劫第一个房屋\n        prev_max = 0  # 上一个房屋的最大金额\n        curr_max = 0  # 当前房屋的最大金额\n        for num in nums[1:]:\n            temp = curr_max  # 临时变量保存当前房屋的最大金额\n            curr_max = max(prev_max + num, curr_max)  # 更新当前房屋的最大金额\n            prev_max = temp  # 更新上一个房屋的最大金额\n        result1 = curr_max\n\n        # 情况三：不抢劫最后一个房屋\n        prev_max = 0  # 上一个房屋的最大金额\n        curr_max = 0  # 当前房屋的最大金额\n        for num in nums[:-1]:\n            temp = curr_max  # 临时变量保存当前房屋的最大金额\n            curr_max = max(prev_max + num, curr_max)  # 更新当前房屋的最大金额\n            prev_max = temp  # 更新上一个房屋的最大金额\n        result2 = curr_max\n\n        return max(result1, result2)"
+}

@@ -1,0 +1,499 @@
+{
+  "id": "AP_90c6d3a0",
+  "title": "二叉搜索树的最小绝对差",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/minimum-absolute-difference-in-bst/",
+  "description": "一棵所有节点为非负值的二叉搜索树，请你计算树中任意两节点的差的绝对值的最小值。",
+  "examples": [
+    {
+      "input": "见图",
+      "output": "见图",
+      "explanation": null,
+      "image": "https://file1.kamacoder.com/i/algo/20201014223400123.png"
+    }
+  ],
+  "constraints": [],
+  "algorithm_tags": [
+    "中序遍历",
+    "二叉搜索树"
+  ],
+  "data_structure_tags": [
+    "栈",
+    "二叉树"
+  ],
+  "technique_tags": [
+    "递归",
+    "迭代法"
+  ],
+  "difficulty": null,
+  "solution_approach": "利用二叉搜索树的有序特性，通过中序遍历（产生递增序列）找到相邻节点值之间的最小差值来解决问题。",
+  "key_insights": [
+    {
+      "content": "在二叉搜索树上求最值或差值问题时，可将其视为一个有序数组处理，简化了问题。"
+    },
+    {
+      "content": "无需将整个树转换成数组后再进行比较，而是在遍历过程中直接记录前一节点与当前节点的值，并即时更新最小差值。"
+    },
+    {
+      "content": "使用pre指针记录当前节点的前一个节点，便于计算两节点间的差值。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "题目中要求在二叉搜索树上任意两节点的差的绝对值的最小值。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private:vector<int> vec;void traversal(TreeNode* root) {if (root == NULL) return;traversal(root->left);vec.push_back(root->val); // 将二叉搜索树转换为有序数组traversal(root->right);}public:int getMinimumDifference(TreeNode* root) {vec.clear();traversal(root);if (vec.size() < 2) return 0;int result = INT_MAX;for (int i = 1; i < vec.size(); i++) { // 统计有序数组的最小差值result = min(result, vec[i] - vec[i-1]);}return result;}};",
+          "description": "使用中序遍历将二叉搜索树转化为有序数组，并计算最小绝对差"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private:int result = INT_MAX;TreeNode* pre = NULL;void traversal(TreeNode* cur) {if (cur == NULL) return;traversal(cur->left);   // 左if (pre != NULL){       // 中result = min(result, cur->val - pre->val);}pre = cur; // 记录前一个traversal(cur->right);  // 右}public:int getMinimumDifference(TreeNode* root) {traversal(root);return result;}};",
+          "description": "在递归中序遍历过程中直接计算最小绝对差"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public:int getMinimumDifference(TreeNode* root) {stack<TreeNode*> st;TreeNode* cur = root;TreeNode* pre = NULL;int result = INT_MAX;while (cur != NULL || !st.empty()) {if (cur != NULL) { // 指针来访问节点，访问到最底层st.push(cur); // 将访问的节点放进栈cur = cur->left;                // 左}else {cur = st.top();st.pop();if (pre != NULL) {              // 中result = min(result, cur->val - pre->val);}pre = cur;cur = cur->right;               // 右}}}return result;}};",
+          "description": "使用迭代法进行中序遍历并计算最小绝对差"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {TreeNode pre; // 记录上一个遍历的结点int result = Integer.MAX_VALUE;public int getMinimumDifference(TreeNode root) {if (root == null)return 0;traversal(root);return result;}public void traversal(TreeNode root) {if (root == null)return;// 左traversal(root.left);// 中if (pre != null) {result = Math.min(result, root.val - pre.val);}pre = root;// 右traversal(root.right);}}",
+          "description": "Java版本递归实现中序遍历计算最小绝对差"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int getMinimumDifference(TreeNode root) {Stack<TreeNode> stack = new Stack<>();TreeNode pre = null;int result = Integer.MAX_VALUE;if (root != null)stack.add(root);while (!stack.isEmpty()) {TreeNode curr = stack.peek();if (curr != null) {stack.pop();// 右if (curr.right != null)stack.add(curr.right);// 中（先用null标记）stack.add(curr);stack.add(null);// 左if (curr.left != null)stack.add(curr.left);} else {// 中（遇到null再处理）stack.pop();TreeNode temp = stack.pop();if (pre != null)result = Math.min(result, temp.val - pre.val);pre = temp;}}return result;}}",
+          "description": "Java统一迭代法中序遍历计算最小绝对差"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {TreeNode pre;Stack<TreeNode> stack;public int getMinimumDifference(TreeNode root) {if (root == null) return 0;stack = new Stack<>();TreeNode cur = root;int result = Integer.MAX_VALUE;while (cur != null || !stack.isEmpty()) {if (cur != null) {stack.push(cur); // 将访问的节点放进栈cur = cur.left; // 左}else {cur = stack.pop();if (pre != null) { // 中result = Math.min(result, cur.val - pre.val);}pre = cur;cur = cur.right; // 右}}return result;}}",
+          "description": "Java迭代法中序遍历计算最小绝对差"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def __init__(self):        self.vec = []    def traversal(self, root):        if root is None:            return        self.traversal(root.left)        self.vec.append(root.val)  # 将二叉搜索树转换为有序数组        self.traversal(root.right)    def getMinimumDifference(self, root):        self.vec = []        self.traversal(root)        if len(self.vec) < 2:            return 0        result = float('inf')        for i in range(1, len(self.vec)):            # 统计有序数组的最小差值            result = min(result, self.vec[i] - self.vec[i - 1])        return result",
+          "description": "Python递归法第一版本，利用中序遍历转换为有序数组后计算最小绝对差"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def __init__(self):        self.result = float('inf')        self.pre = None    def traversal(self, cur):        if cur is None:            return        self.traversal(cur.left)  # 左        if self.pre is not None:  # 中            self.result = min(self.result, cur.val - self.pre.val)        self.pre = cur  # 记录前一个        self.traversal(cur.right)  # 右    def getMinimumDifference(self, root):        self.traversal(root)        return self.result",
+          "description": "Python递归法第二版本，在递归中序遍历过程中直接计算最小绝对差"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def getMinimumDifference(self, root):        stack = []        cur = root        pre = None        result = float('inf')        while cur is not None or len(stack) > 0:            if cur is not None:                stack.append(cur)  # 将访问的节点放进栈                cur = cur.left  # 左            else:                cur = stack.pop()                if pre is not None:  # 中                    result = min(result, cur.val - pre.val)                pre = cur                cur = cur.right  # 右        return result",
+          "description": "Python迭代法中序遍历计算最小绝对差"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "递归",
+      "text": "那么二叉搜索树采用中序遍历，其实就是一个有序数组。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private:vector<int> vec;void traversal(TreeNode* root) {if (root == NULL) return;traversal(root->left);vec.push_back(root->val);traversal(root->right);}public:int getMinimumDifference(TreeNode* root) {vec.clear();traversal(root);if (vec.size() < 2) return 0;int result = INT_MAX;for (int i = 1; i < vec.size(); i++) {result = min(result, vec[i] - vec[i-1]);}return result;}};",
+          "description": "C++实现，将二叉搜索树转换为有序数组后计算最小差值"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private:int result = INT_MAX;TreeNode* pre = NULL;void traversal(TreeNode* cur) {if (cur == NULL) return;traversal(cur->left);if (pre != NULL){result = min(result, cur->val - pre->val);}pre = cur;traversal(cur->right);}public:int getMinimumDifference(TreeNode* root) {traversal(root);return result;}};",
+          "description": "C++实现，在中序遍历过程中直接计算最小差值"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public:int getMinimumDifference(TreeNode* root) {stack<TreeNode*> st;TreeNode* cur = root;TreeNode* pre = NULL;int result = INT_MAX;while (cur != NULL || !st.empty()) {if (cur != NULL) {st.push(cur);cur = cur->left;} else {cur = st.top();st.pop();if (pre != NULL) {result = min(result, cur->val - pre->val);}pre = cur;cur = cur->right;}}return result;}};",
+          "description": "C++实现，使用迭代方法进行中序遍历并计算最小差值"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {TreeNode pre;int result = Integer.MAX_VALUE;public int getMinimumDifference(TreeNode root) {if (root == null)return 0;traversal(root);return result;}public void traversal(TreeNode root) {if (root == null)return;traversal(root.left);if (pre != null) {result = Math.min(result, root.val - pre.val);}pre = root;traversal(root.right);}}",
+          "description": "Java实现，递归方法中序遍历并计算最小差值"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int getMinimumDifference(TreeNode root) {Stack<TreeNode> stack = new Stack<>();TreeNode pre = null;int result = Integer.MAX_VALUE;if (root != null)stack.add(root);while (!stack.isEmpty()) {TreeNode curr = stack.peek();if (curr != null) {stack.pop();if (curr.right != null)stack.add(curr.right);stack.add(curr);stack.add(null);if (curr.left != null)stack.add(curr.left);} else {stack.pop();TreeNode temp = stack.pop();if (pre != null)result = Math.min(result, temp.val - pre.val);pre = temp;}}return result;}}",
+          "description": "Java实现，统一迭代法中序遍历并计算最小差值"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {TreeNode pre;Stack<TreeNode> stack;public int getMinimumDifference(TreeNode root) {if (root == null) return 0;stack = new Stack<>();TreeNode cur = root;int result = Integer.MAX_VALUE;while (cur != null || !stack.isEmpty()) {if (cur != null) {stack.push(cur);cur = cur.left;}else {cur = stack.pop();if (pre != null) {result = Math.min(result, cur.val - pre.val);}pre = cur;cur = cur.right;}}return result;}}",
+          "description": "Java实现，迭代法中序遍历并计算最小差值"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def __init__(self):        self.vec = []    def traversal(self, root):        if root is None:            return        self.traversal(root.left)        self.vec.append(root.val)        self.traversal(root.right)    def getMinimumDifference(self, root):        self.vec = []        self.traversal(root)        if len(self.vec) < 2:            return 0        result = float('inf')        for i in range(1, len(self.vec)):            result = min(result, self.vec[i] - self.vec[i - 1])        return result",
+          "description": "Python实现，利用中序递增结合数组计算最小差值"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def __init__(self):        self.result = float('inf')        self.pre = None    def traversal(self, cur):        if cur is None:            return        self.traversal(cur.left)        if self.pre is not None:            self.result = min(self.result, cur.val - self.pre.val)        self.pre = cur        self.traversal(cur.right)    def getMinimumDifference(self, root):        self.traversal(root)        return self.result",
+          "description": "Python实现，利用中序递增直接在遍历过程中计算最小差值"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def getMinimumDifference(self, root):        stack = []        cur = root        pre = None        result = float('inf')        while cur is not None or len(stack) > 0:            if cur is not None:                stack.append(cur)                cur = cur.left            else:                cur = stack.pop()                if pre is not None:                    result = min(result, cur.val - pre.val)                pre = cur                cur = cur.right        return result",
+          "description": "Python实现，迭代法进行中序遍历并计算最小差值"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "迭代",
+      "text": "看过这两篇二叉树：听说递归能做的，栈也能做！ (https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E8%BF%AD%E4%BB%A3%E9%81%8D%E5%8E%86.html)，二叉树：前中后序迭代方式的写法就不能统一一下么？ (https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E7%BB%9F%E4%B8%80%E8%BF%AD%E4%BB%A3%E6%B3%95.html)文章之后，不难写出两种中序遍历的迭代法。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private:vector<int> vec;void traversal(TreeNode* root) {if (root == NULL) return;traversal(root->left);vec.push_back(root->val); // 将二叉搜索树转换为有序数组traversal(root->right);}public:int getMinimumDifference(TreeNode* root) {vec.clear();traversal(root);if (vec.size() < 2) return 0;int result = INT_MAX;for (int i = 1; i < vec.size(); i++) { // 统计有序数组的最小差值result = min(result, vec[i] - vec[i-1]);}return result;}};",
+          "description": "C++实现，将二叉搜索树转换为有序数组后求最小绝对差"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private:int result = INT_MAX;TreeNode* pre = NULL;void traversal(TreeNode* cur) {if (cur == NULL) return;traversal(cur->left);   // 左if (pre != NULL){       // 中result = min(result, cur->val - pre->val);}pre = cur; // 记录前一个traversal(cur->right);  // 右}public:int getMinimumDifference(TreeNode* root) {traversal(root);return result;}};",
+          "description": "C++实现，在中序遍历过程中直接计算最小绝对差"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public:int getMinimumDifference(TreeNode* root) {stack<TreeNode*> st;TreeNode* cur = root;TreeNode* pre = NULL;int result = INT_MAX;while (cur != NULL || !st.empty()) {if (cur != NULL) { // 指针来访问节点，访问到最底层st.push(cur); // 将访问的节点放进栈cur = cur->left;                // 左}else {cur = st.top();st.pop();if (pre != NULL) {              // 中result = min(result, cur->val - pre->val);}pre = cur;cur = cur->right;               // 右}}}return result;}};",
+          "description": "C++实现，使用迭代法进行中序遍历并计算最小绝对差"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {TreeNode pre; // 记录上一个遍历的结点int result = Integer.MAX_VALUE;public int getMinimumDifference(TreeNode root) {if (root == null)return 0;traversal(root);return result;}public void traversal(TreeNode root) {if (root == null)return;// 左traversal(root.left);// 中if (pre != null) {result = Math.min(result, root.val - pre.val);}pre = root;// 右traversal(root.right);}}",
+          "description": "Java实现，递归法在中序遍历过程中直接计算最小绝对差"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int getMinimumDifference(TreeNode root) {Stack<TreeNode> stack = new Stack<>();TreeNode pre = null;int result = Integer.MAX_VALUE;if (root != null)stack.add(root);while (!stack.isEmpty()) {TreeNode curr = stack.peek();if (curr != null) {stack.pop();// 右if (curr.right != null)stack.add(curr.right);// 中（先用null标记）stack.add(curr);stack.add(null);// 左if (curr.left != null)stack.add(curr.left);} else {stack.pop();TreeNode temp = stack.pop();if (pre != null)result = Math.min(result, temp.val - pre.val);pre = temp;}}return result;}}",
+          "description": "Java实现，统一迭代法进行中序遍历并计算最小绝对差"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {TreeNode pre;Stack<TreeNode> stack;public int getMinimumDifference(TreeNode root) {if (root == null) return 0;stack = new Stack<>();TreeNode cur = root;int result = Integer.MAX_VALUE;while (cur != null || !stack.isEmpty()) {if (cur != null) {stack.push(cur); // 将访问的节点放进栈cur = cur.left; // 左}else {cur = stack.pop();if (pre != null) { // 中result = Math.min(result, cur.val - pre.val);}pre = cur;cur = cur.right; // 右}}}return result;}}",
+          "description": "Java实现，迭代法进行中序遍历并计算最小绝对差"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def __init__(self):self.vec = []def traversal(self, root):if root is None:returnself.traversal(root.left)self.vec.append(root.val)  # 将二叉搜索树转换为有序数组self.traversal(root.right)def getMinimumDifference(self, root):self.vec = []self.traversal(root)if len(self.vec) < 2:return 0result = float('inf')for i in range(1, len(self.vec)):# 统计有序数组的最小差值result = min(result, self.vec[i] - self.vec[i - 1])return result",
+          "description": "Python实现，将二叉搜索树转换为有序数组后求最小绝对差"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def __init__(self):self.result = float('inf')self.pre = Nonedef traversal(self, cur):if cur is None:returnself.traversal(cur.left)  # 左if self.pre is not None:  # 中self.result = min(self.result, cur.val - self.pre.val)self.pre = cur  # 记录前一个self.traversal(cur.right)  # 右def getMinimumDifference(self, root):self.traversal(root)return self.result",
+          "description": "Python实现，在中序遍历过程中直接计算最小绝对差"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def getMinimumDifference(self, root):stack = []cur = rootpre = Noneresult = float('inf')while cur is not None or len(stack) > 0:if cur is not None:stack.append(cur)  # 将访问的节点放进栈cur = cur.left  # 左else:cur = stack.pop()if pre is not None:  # 中result = min(result, cur.val - pre.val)pre = curcur = cur.right  # 右return result",
+          "description": "Python实现，使用迭代法进行中序遍历并计算最小绝对差"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "遇到在二叉搜索树上求什么最值，求差值之类的，都要思考一下二叉搜索树可是有序的，要利用好这一特点。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private:vector<int> vec;void traversal(TreeNode* root) {if (root == NULL) return;traversal(root->left);vec.push_back(root->val); // 将二叉搜索树转换为有序数组traversal(root->right);}public:int getMinimumDifference(TreeNode* root) {vec.clear();traversal(root);if (vec.size() < 2) return 0;int result = INT_MAX;for (int i = 1; i < vec.size(); i++) { // 统计有序数组的最小差值result = min(result, vec[i] - vec[i-1]);}return result;}};",
+          "description": "C++实现，将二叉搜索树转为有序数组后求最小绝对差"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private:int result = INT_MAX;TreeNode* pre = NULL;void traversal(TreeNode* cur) {if (cur == NULL) return;traversal(cur->left);   // 左if (pre != NULL){       // 中result = min(result, cur->val - pre->val);}pre = cur; // 记录前一个traversal(cur->right);  // 右}public:int getMinimumDifference(TreeNode* root) {traversal(root);return result;}};",
+          "description": "C++实现，在递归遍历过程中直接计算最小绝对差"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public:int getMinimumDifference(TreeNode* root) {stack<TreeNode*> st;TreeNode* cur = root;TreeNode* pre = NULL;int result = INT_MAX;while (cur != NULL || !st.empty()) {if (cur != NULL) { // 指针来访问节点，访问到最底层st.push(cur); // 将访问的节点放进栈cur = cur->left;                // 左}else {cur = st.top();st.pop();if (pre != NULL) {              // 中result = min(result, cur->val - pre->val);}pre = cur;cur = cur->right;               // 右}}}return result;}};",
+          "description": "C++实现，使用迭代法进行中序遍历并计算最小绝对差"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {TreeNode pre; // 记录上一个遍历的结点int result = Integer.MAX_VALUE;public int getMinimumDifference(TreeNode root) {if (root == null)return 0;traversal(root);return result;}public void traversal(TreeNode root) {if (root == null)return;// 左traversal(root.left);// 中if (pre != null) {result = Math.min(result, root.val - pre.val);}pre = root;// 右traversal(root.right);}}",
+          "description": "Java实现，递归方法在遍历过程中记录最小绝对差"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int getMinimumDifference(TreeNode root) {Stack<TreeNode> stack = new Stack<>();TreeNode pre = null;int result = Integer.MAX_VALUE;if (root != null)stack.add(root);// 中序遍历（左中右），由于栈先入后出，反序（右中左）while (!stack.isEmpty()) {TreeNode curr = stack.peek();if (curr != null) {stack.pop();// 右if (curr.right != null)stack.add(curr.right);// 中（先用null标记）stack.add(curr);stack.add(null);// 左if (curr.left != null)stack.add(curr.left);} else { // 中（遇到null再处理）stack.pop();TreeNode temp = stack.pop();if (pre != null)result = Math.min(result, temp.val - pre.val);pre = temp;}}return result;}}",
+          "description": "Java实现，统一迭代法进行中序遍历并计算最小绝对差"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {TreeNode pre;Stack<TreeNode> stack;public int getMinimumDifference(TreeNode root) {if (root == null) return 0;stack = new Stack<>();TreeNode cur = root;int result = Integer.MAX_VALUE;while (cur != null || !stack.isEmpty()) {if (cur != null) {stack.push(cur); // 将访问的节点放进栈cur = cur.left; // 左}else {cur = stack.pop();if (pre != null) { // 中result = Math.min(result, cur.val - pre.val);}pre = cur;cur = cur.right; // 右}}return result;}}",
+          "description": "Java实现，迭代法进行中序遍历并计算最小绝对差"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def __init__(self):        self.vec = []    def traversal(self, root):        if root is None:            return        self.traversal(root.left)        self.vec.append(root.val)  # 将二叉搜索树转换为有序数组        self.traversal(root.right)    def getMinimumDifference(self, root):        self.vec = []        self.traversal(root)        if len(self.vec) < 2:            return 0        result = float('inf')        for i in range(1, len(self.vec)):            # 统计有序数组的最小差值            result = min(result, self.vec[i] - self.vec[i - 1])        return result",
+          "description": "Python实现，将二叉搜索树转为有序数组后求最小绝对差"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def __init__(self):        self.result = float('inf')        self.pre = None    def traversal(self, cur):        if cur is None:            return        self.traversal(cur.left)  # 左        if self.pre is not None:  # 中            self.result = min(self.result, cur.val - self.pre.val)        self.pre = cur  # 记录前一个        self.traversal(cur.right)  # 右    def getMinimumDifference(self, root):        self.traversal(root)        return self.result",
+          "description": "Python实现，在递归遍历过程中直接计算最小绝对差"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def getMinimumDifference(self, root):        stack = []        cur = root        pre = None        result = float('inf')        while cur is not None or len(stack) > 0:            if cur is not None:                stack.append(cur)  # 将访问的节点放进栈                cur = cur.left  # 左            else:                cur = stack.pop()                if pre is not None:  # 中                    result = min(result, cur.val - pre.val)                pre = cur                cur = cur.right  # 右        return result",
+          "description": "Python实现，使用迭代法进行中序遍历并计算最小绝对差"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private:vector<int> vec;void traversal(TreeNode* root) {if (root == NULL) return;traversal(root->left);vec.push_back(root->val); // 将二叉搜索树转换为有序数组traversal(root->right);}public:int getMinimumDifference(TreeNode* root) {vec.clear();traversal(root);if (vec.size() < 2) return 0;int result = INT_MAX;for (int i = 1; i < vec.size(); i++) { // 统计有序数组的最小差值result = min(result, vec[i] - vec[i-1]);}return result;}};",
+          "description": "使用C++实现，将二叉搜索树转换为有序数组后计算最小绝对差"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private:int result = INT_MAX;TreeNode* pre = NULL;void traversal(TreeNode* cur) {if (cur == NULL) return;traversal(cur->left);   // 左if (pre != NULL){       // 中result = min(result, cur->val - pre->val);}pre = cur; // 记录前一个traversal(cur->right);  // 右}public:int getMinimumDifference(TreeNode* root) {traversal(root);return result;}};",
+          "description": "使用C++实现，在中序遍历过程中直接计算最小绝对差"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public:int getMinimumDifference(TreeNode* root) {stack<TreeNode*> st;TreeNode* cur = root;TreeNode* pre = NULL;int result = INT_MAX;while (cur != NULL || !st.empty()) {if (cur != NULL) { // 指针来访问节点，访问到最底层st.push(cur); // 将访问的节点放进栈cur = cur->left;                // 左}else {cur = st.top();st.pop();if (pre != NULL) {              // 中result = min(result, cur->val - pre->val);}pre = cur;cur = cur->right;               // 右}}}return result;}};",
+          "description": "使用C++实现，迭代方式完成中序遍历并计算最小绝对差"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {TreeNode pre; // 记录上一个遍历的结点int result = Integer.MAX_VALUE;public int getMinimumDifference(TreeNode root) {if (root == null)return 0;traversal(root);return result;}public void traversal(TreeNode root) {if (root == null)return;// 左traversal(root.left);// 中if (pre != null) {result = Math.min(result, root.val - pre.val);}pre = root;// 右traversal(root.right);}}",
+          "description": "使用Java实现，递归方式在中序遍历过程中计算最小绝对差"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int getMinimumDifference(TreeNode root) {Stack<TreeNode> stack = new Stack<>();TreeNode pre = null;int result = Integer.MAX_VALUE;if (root != null)stack.add(root);while (!stack.isEmpty()) {TreeNode curr = stack.peek();if (curr != null) {stack.pop();// 右if (curr.right != null)stack.add(curr.right);// 中（先用null标记）stack.add(curr);stack.add(null);// 左if (curr.left != null)stack.add(curr.left);} else { // 中（遇到null再处理）stack.pop();TreeNode temp = stack.pop();if (pre != null)result = Math.min(result, temp.val - pre.val);pre = temp;}}return result;}}",
+          "description": "使用Java实现，统一迭代法进行中序遍历并计算最小绝对差"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {TreeNode pre;Stack<TreeNode> stack;public int getMinimumDifference(TreeNode root) {if (root == null) return 0;stack = new Stack<>();TreeNode cur = root;int result = Integer.MAX_VALUE;while (cur != null || !stack.isEmpty()) {if (cur != null) {stack.push(cur); // 将访问的节点放进栈cur = cur.left; // 左}else {cur = stack.pop();if (pre != null) { // 中result = Math.min(result, cur.val - pre.val);}pre = cur;cur = cur.right; // 右}}}return result;}}",
+          "description": "使用Java实现，迭代法完成中序遍历并计算最小绝对差"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def __init__(self):        self.vec = []    def traversal(self, root):        if root is None:            return        self.traversal(root.left)        self.vec.append(root.val)  # 将二叉搜索树转换为有序数组        self.traversal(root.right)    def getMinimumDifference(self, root):        self.vec = []        self.traversal(root)        if len(self.vec) < 2:            return 0        result = float('inf')        for i in range(1, len(self.vec)):            # 统计有序数组的最小差值            result = min(result, self.vec[i] - self.vec[i - 1])        return result",
+          "description": "使用Python实现，将二叉搜索树转换成列表后计算最小绝对差"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def __init__(self):        self.result = float('inf')        self.pre = None    def traversal(self, cur):        if cur is None:            return        self.traversal(cur.left)  # 左        if self.pre is not None:  # 中            self.result = min(self.result, cur.val - self.pre.val)        self.pre = cur  # 记录前一个        self.traversal(cur.right)  # 右    def getMinimumDifference(self, root):        self.traversal(root)        return self.result",
+          "description": "使用Python实现，在中序遍历过程中直接计算最小绝对差"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def getMinimumDifference(self, root):        stack = []        cur = root        pre = None        result = float('inf')        while cur is not None or len(stack) > 0:            if cur is not None:                stack.append(cur)  # 将访问的节点放进栈                cur = cur.left  # 左            else:                cur = stack.pop()                if pre is not None:  # 中                    result = min(result, cur.val - pre.val)                pre = cur                cur = cur.right  # 右        return result",
+          "description": "使用Python实现，通过迭代方法完成中序遍历并计算最小绝对差"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "递归",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private:vector<int> vec;void traversal(TreeNode* root) {if (root == NULL) return;traversal(root->left);vec.push_back(root->val);traversal(root->right);}public:int getMinimumDifference(TreeNode* root) {vec.clear();traversal(root);if (vec.size() < 2) return 0;int result = INT_MAX;for (int i = 1; i < vec.size(); i++) {result = min(result, vec[i] - vec[i-1]);}return result;}};",
+          "description": "使用中序遍历将二叉搜索树转换为有序数组，然后计算最小绝对差"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private:int result = INT_MAX;TreeNode* pre = NULL;void traversal(TreeNode* cur) {if (cur == NULL) return;traversal(cur->left);if (pre != NULL){result = min(result, cur->val - pre->val);}pre = cur;traversal(cur->right);}public:int getMinimumDifference(TreeNode* root) {traversal(root);return result;}};",
+          "description": "在中序遍历过程中直接计算最小绝对差，同时记录前一个节点"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public:int getMinimumDifference(TreeNode* root) {stack<TreeNode*> st;TreeNode* cur = root;TreeNode* pre = NULL;int result = INT_MAX;while (cur != NULL || !st.empty()) {if (cur != NULL) {st.push(cur);cur = cur->left;} else {cur = st.top();st.pop();if (pre != NULL) {result = min(result, cur->val - pre->val);}pre = cur;cur = cur->right;}}return result;}};",
+          "description": "利用栈实现的迭代法进行中序遍历以找到最小绝对差"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {TreeNode pre;int result = Integer.MAX_VALUE;public int getMinimumDifference(TreeNode root) {if (root == null)return 0;traversal(root);return result;}public void traversal(TreeNode root) {if (root == null)return;traversal(root.left);if (pre != null) {result = Math.min(result, root.val - pre.val);}pre = root;traversal(root.right);}}",
+          "description": "Java版本，在递归中序遍历时直接计算最小绝对差"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int getMinimumDifference(TreeNode root) {Stack<TreeNode> stack = new Stack<>();TreeNode pre = null;int result = Integer.MAX_VALUE;if (root != null)stack.add(root);while (!stack.isEmpty()) {TreeNode curr = stack.peek();if (curr != null) {stack.pop();if (curr.right != null)stack.add(curr.right);stack.add(curr);stack.add(null);if (curr.left != null)stack.add(curr.left);} else {stack.pop();TreeNode temp = stack.pop();if (pre != null)result = Math.min(result, temp.val - pre.val);pre = temp;}}return result;}}",
+          "description": "Java统一迭代法，通过栈实现中序遍历来查找最小绝对差"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {TreeNode pre;Stack<TreeNode> stack;public int getMinimumDifference(TreeNode root) {if (root == null) return 0;stack = new Stack<>();TreeNode cur = root;int result = Integer.MAX_VALUE;while (cur != null || !stack.isEmpty()) {if (cur != null) {stack.push(cur);cur = cur.left;}else {cur = stack.pop();if (pre != null) {result = Math.min(result, cur.val - pre.val);}pre = cur;cur = cur.right;}}return result;}}",
+          "description": "Java迭代法，使用栈辅助完成中序遍历来求解最小绝对差"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def __init__(self):        self.vec = []    def traversal(self, root):        if root is None:            return        self.traversal(root.left)        self.vec.append(root.val)        self.traversal(root.right)    def getMinimumDifference(self, root):        self.vec = []        self.traversal(root)        if len(self.vec) < 2:            return 0        result = float('inf')        for i in range(1, len(self.vec)):            result = min(result, self.vec[i] - self.vec[i - 1])        return result",
+          "description": "Python版本，先将二叉搜索树转为有序数组再求最小绝对差"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def __init__(self):        self.result = float('inf')        self.pre = None    def traversal(self, cur):        if cur is None:            return        self.traversal(cur.left)        if self.pre is not None:            self.result = min(self.result, cur.val - self.pre.val)        self.pre = cur        self.traversal(cur.right)    def getMinimumDifference(self, root):        self.traversal(root)        return self.result",
+          "description": "Python递归方法，在中序遍历过程中直接计算最小绝对差"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def getMinimumDifference(self, root):        stack = []        cur = root        pre = None        result = float('inf')        while cur is not None or len(stack) > 0:            if cur is not None:                stack.append(cur)                cur = cur.left            else:                cur = stack.pop()                if pre is not None:                    result = min(result, cur.val - pre.val)                pre = cur                cur = cur.right        return result",
+          "description": "Python迭代法，使用栈来辅助完成中序遍历以求得最小绝对差"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "递归法（版本一）利用中序递增，结合数组",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private:vector<int> vec;void traversal(TreeNode* root) {if (root == NULL) return;traversal(root->left);vec.push_back(root->val);traversal(root->right);}public:int getMinimumDifference(TreeNode* root) {vec.clear();traversal(root);if (vec.size() < 2) return 0;int result = INT_MAX;for (int i = 1; i < vec.size(); i++) {result = min(result, vec[i] - vec[i-1]);}return result;}};",
+          "description": "使用中序遍历将二叉搜索树转换为有序数组，然后计算最小差值。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private:int result = INT_MAX;TreeNode* pre = NULL;void traversal(TreeNode* cur) {if (cur == NULL) return;traversal(cur->left);if (pre != NULL){result = min(result, cur->val - pre->val);}pre = cur;traversal(cur->right);}public:int getMinimumDifference(TreeNode* root) {traversal(root);return result;}};",
+          "description": "在递归中序遍历过程中直接计算最小差值，通过记录前一个节点来实现。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public:int getMinimumDifference(TreeNode* root) {stack<TreeNode*> st;TreeNode* cur = root;TreeNode* pre = NULL;int result = INT_MAX;while (cur != NULL || !st.empty()) {if (cur != NULL) {st.push(cur);cur = cur->left;} else {cur = st.top();st.pop();if (pre != NULL) {result = min(result, cur->val - pre->val);}pre = cur;cur = cur->right;}}return result;}};",
+          "description": "迭代方式的中序遍历，同样利用了栈结构来辅助实现。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {TreeNode pre;int result = Integer.MAX_VALUE;public int getMinimumDifference(TreeNode root) {if (root == null)return 0;traversal(root);return result;}public void traversal(TreeNode root) {if (root == null)return;traversal(root.left);if (pre != null) {result = Math.min(result, root.val - pre.val);}pre = root;traversal(root.right);}}",
+          "description": "Java版本的递归方法，逻辑与C++版相同。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int getMinimumDifference(TreeNode root) {Stack<TreeNode> stack = new Stack<>();TreeNode pre = null;int result = Integer.MAX_VALUE;if (root != null)stack.add(root);while (!stack.isEmpty()) {TreeNode curr = stack.peek();if (curr != null) {stack.pop();if (curr.right != null)stack.add(curr.right);stack.add(curr);stack.add(null);if (curr.left != null)stack.add(curr.left);} else {stack.pop();TreeNode temp = stack.pop();if (pre != null)result = Math.min(result, temp.val - pre.val);pre = temp;}}return result;}}",
+          "description": "Java版本的统一迭代法，实现中序遍历。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {TreeNode pre;Stack<TreeNode> stack;public int getMinimumDifference(TreeNode root) {if (root == null) return 0;stack = new Stack<>();TreeNode cur = root;int result = Integer.MAX_VALUE;while (cur != null || !stack.isEmpty()) {if (cur != null) {stack.push(cur);cur = cur.left;}else {cur = stack.pop();if (pre != null) {result = Math.min(result, cur.val - pre.val);}pre = cur;cur = cur.right;}}return result;}}",
+          "description": "另一种Java版本的迭代方法，用于寻找二叉搜索树中的最小绝对差。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def __init__(self):        self.vec = []    def traversal(self, root):        if root is None:            return        self.traversal(root.left)        self.vec.append(root.val)        self.traversal(root.right)    def getMinimumDifference(self, root):        self.vec = []        self.traversal(root)        if len(self.vec) < 2:            return 0        result = float('inf')        for i in range(1, len(self.vec)):            result = min(result, self.vec[i] - self.vec[i - 1])        return result",
+          "description": "Python版本的递归解法，先将二叉搜索树转化为有序列表再求解。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def __init__(self):        self.result = float('inf')        self.pre = None    def traversal(self, cur):        if cur is None:            return        self.traversal(cur.left)        if self.pre is not None:            self.result = min(self.result, cur.val - self.pre.val)        self.pre = cur        self.traversal(cur.right)    def getMinimumDifference(self, root):        self.traversal(root)        return self.result",
+          "description": "Python版本的递归方法，直接在遍历过程中计算最小差值。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:    def getMinimumDifference(self, root):        stack = []        cur = root        pre = None        result = float('inf')        while cur is not None or len(stack) > 0:            if cur is not None:                stack.append(cur)                cur = cur.left            else:                cur = stack.pop()                if pre is not None:                    result = min(result, cur.val - pre.val)                pre = cur                cur = cur.right        return result",
+          "description": "Python版本的迭代方法，采用栈来进行中序遍历。"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {private:vector<int> vec;void traversal(TreeNode* root) {if (root == NULL) return;traversal(root->left);vec.push_back(root->val); // 将二叉搜索树转换为有序数组traversal(root->right);}public:int getMinimumDifference(TreeNode* root) {vec.clear();traversal(root);if (vec.size() < 2) return 0;int result = INT_MAX;for (int i = 1; i < vec.size(); i++) { // 统计有序数组的最小差值result = min(result, vec[i] - vec[i-1]);}return result;}};",
+      "description": "将二叉搜索树转化为有序数组，然后遍历数组求最小差值"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {private:int result = INT_MAX;TreeNode* pre = NULL;void traversal(TreeNode* cur) {if (cur == NULL) return;traversal(cur->left);   // 左if (pre != NULL){       // 中result = min(result, cur->val - pre->val);}pre = cur; // 记录前一个traversal(cur->right);  // 右}public:int getMinimumDifference(TreeNode* root) {traversal(root);return result;}};",
+      "description": "递归中序遍历直接计算最小差值"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public:int getMinimumDifference(TreeNode* root) {stack<TreeNode*> st;TreeNode* cur = root;TreeNode* pre = NULL;int result = INT_MAX;while (cur != NULL || !st.empty()) {if (cur != NULL) { // 指针来访问节点，访问到最底层st.push(cur); // 将访问的节点放进栈cur = cur->left;                // 左}else {cur = st.top();st.pop();if (pre != NULL) {              // 中result = min(result, cur->val - pre->val);}pre = cur;cur = cur->right;               // 右}}}return result;}};",
+      "description": "迭代法中序遍历直接计算最小差值"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {TreeNode pre; // 记录上一个遍历的结点int result = Integer.MAX_VALUE;public int getMinimumDifference(TreeNode root) {if (root == null)return 0;traversal(root);return result;}public void traversal(TreeNode root) {if (root == null)return;// 左traversal(root.left);// 中if (pre != null) {result = Math.min(result, root.val - pre.val);}pre = root;// 右traversal(root.right);}}",
+      "description": "Java递归实现中序遍历直接计算最小差值"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int getMinimumDifference(TreeNode root) {Stack<TreeNode> stack = new Stack<>();TreeNode pre = null;int result = Integer.MAX_VALUE;if (root != null)stack.add(root);while (!stack.isEmpty()) {TreeNode curr = stack.peek();if (curr != null) {stack.pop();if (curr.right != null)stack.add(curr.right);stack.add(curr);stack.add(null);if (curr.left != null)stack.add(curr.left);}else {stack.pop();TreeNode temp = stack.pop();if (pre != null)result = Math.min(result, temp.val - pre.val);pre = temp;}}return result;}}",
+      "description": "Java统一迭代法中序遍历直接计算最小差值"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {TreeNode pre;Stack<TreeNode> stack;public int getMinimumDifference(TreeNode root) {if (root == null) return 0;stack = new Stack<>();TreeNode cur = root;int result = Integer.MAX_VALUE;while (cur != null || !stack.isEmpty()) {if (cur != null) {stack.push(cur); // 将访问的节点放进栈cur = cur.left; // 左}else {cur = stack.pop();if (pre != null) { // 中result = Math.min(result, cur.val - pre.val);}pre = cur;cur = cur.right; // 右}}}return result;}}",
+      "description": "Java迭代法中序遍历直接计算最小差值"
+    },
+    {
+      "language": "python",
+      "code": "class Solution:    def __init__(self):        self.vec = []    def traversal(self, root):        if root is None:            return        self.traversal(root.left)        self.vec.append(root.val)  # 将二叉搜索树转换为有序数组        self.traversal(root.right)    def getMinimumDifference(self, root):        self.vec = []        self.traversal(root)        if len(self.vec) < 2:            return 0        result = float('inf')        for i in range(1, len(self.vec)):            # 统计有序数组的最小差值            result = min(result, self.vec[i] - self.vec[i - 1])        return result",
+      "description": "Python递归法版本一，利用中序遍历转换为有序数组后计算最小差值"
+    },
+    {
+      "language": "python",
+      "code": "class Solution:    def __init__(self):        self.result = float('inf')        self.pre = None    def traversal(self, cur):        if cur is None:            return        self.traversal(cur.left)  # 左        if self.pre is not None:  # 中            self.result = min(self.result, cur.val - self.pre.val)        self.pre = cur  # 记录前一个        self.traversal(cur.right)  # 右    def getMinimumDifference(self, root):        self.traversal(root)        return self.result",
+      "description": "Python递归法版本二，直接在中序遍历过程中计算最小差值"
+    },
+    {
+      "language": "python",
+      "code": "class Solution:    def getMinimumDifference(self, root):        stack = []        cur = root        pre = None        result = float('inf')        while cur is not None or len(stack) > 0:            if cur is not None:                stack.append(cur)  # 将访问的节点放进栈                cur = cur.left  # 左            else:                cur = stack.pop()                if pre is not None:  # 中                    result = min(result, cur.val - pre.val)                pre = cur                cur = cur.right  # 右        return result",
+      "description": "Python迭代法实现中序遍历直接计算最小差值"
+    }
+  ],
+  "common_mistakes": [
+    "忘记初始化变量如result和pre，可能导致逻辑错误。",
+    "不理解如何在递归中保持对前一个节点的引用。",
+    "忽略了二叉搜索树的性质，导致采用效率较低的方法解决。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201014223400123.png",
+      "description": "该图片描述了一个二叉树结构，要求找到树中任意两个节点值的最小绝对差，示例中最小绝对差为1。",
+      "context": "该图片示例展示了一棵二叉搜索树，用于说明如何计算树中任意两节点差的绝对值的最小值问题。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210204153247458.png",
+      "description": "这张图片展示了二叉树的中序遍历过程，通过箭头指示了遍历路径和节点访问顺序。",
+      "context": "该图展示了在二叉搜索树中序遍历过程中如何通过维护一个前驱节点来计算相邻节点间的最小差值。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201014223400123.png",
+      "description": "GIF展示了二叉搜索树中序遍历的过程，将节点值依次添加到有序数组中。",
+      "context": "GIF动画展示了如何通过中序遍历二叉搜索树来找到节点值之间的最小绝对差。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210204153247458.png",
+      "description": "GIF展示了二叉搜索树中序遍历过程中计算节点间最小差值的步骤。",
+      "context": "GIF动画展示了在二叉搜索树中通过中序遍历直接计算节点间最小差值的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\二叉搜索树的最小绝对差.txt",
+  "extracted_at": "2025-07-19T16:26:38.749441",
+  "raw_content": "二叉搜索树的最小绝对差\n力扣题目链接(https://leetcode.cn/problems/minimum-absolute-difference-in-bst/)\n\n给你一棵所有节点为非负值的二叉搜索树，请你计算树中任意两节点的差的绝对值的最小值。\n\n示例：\n\nhttps://file1.kamacoder.com/i/algo/20201014223400123.png\n\n提示：树中至少有 2 个节点。\n\n\n#思路\n题目中要求在二叉搜索树上任意两节点的差的绝对值的最小值。\n\n注意是二叉搜索树，二叉搜索树可是有序的。\n\n遇到在二叉搜索树上求什么最值啊，差值之类的，就把它想成在一个有序数组上求最值，求差值，这样就简单多了。\n\n#递归\n那么二叉搜索树采用中序遍历，其实就是一个有序数组。\n\n在一个有序数组上求两个数最小差值，这是不是就是一道送分题了。\n\n最直观的想法，就是把二叉搜索树转换成有序数组，然后遍历一遍数组，就统计出来最小差值了。\n\n代码如下：\n\nclass Solution {\nprivate:\nvector<int> vec;\nvoid traversal(TreeNode* root) {\n    if (root == NULL) return;\n    traversal(root->left);\n    vec.push_back(root->val); // 将二叉搜索树转换为有序数组\n    traversal(root->right);\n}\npublic:\n    int getMinimumDifference(TreeNode* root) {\n        vec.clear();\n        traversal(root);\n        if (vec.size() < 2) return 0;\n        int result = INT_MAX;\n        for (int i = 1; i < vec.size(); i++) { // 统计有序数组的最小差值\n            result = min(result, vec[i] - vec[i-1]);\n        }\n        return result;\n    }\n};\n以上代码是把二叉搜索树转化为有序数组了，其实在二叉搜素树中序遍历的过程中，我们就可以直接计算了。\n\n需要用一个pre节点记录一下cur节点的前一个节点。\n\n如图：\n\nhttps://file1.kamacoder.com/i/algo/20210204153247458.png\n\n一些同学不知道在递归中如何记录前一个节点的指针，其实实现起来是很简单的，大家只要看过一次，写过一次，就掌握了。\n\n代码如下：\n\nclass Solution {\nprivate:\nint result = INT_MAX;\nTreeNode* pre = NULL;\nvoid traversal(TreeNode* cur) {\n    if (cur == NULL) return;\n    traversal(cur->left);   // 左\n    if (pre != NULL){       // 中\n        result = min(result, cur->val - pre->val);\n    }\n    pre = cur; // 记录前一个\n    traversal(cur->right);  // 右\n}\npublic:\n    int getMinimumDifference(TreeNode* root) {\n        traversal(root);\n        return result;\n    }\n};\n是不是看上去也并不复杂！\n\n#迭代\n看过这两篇二叉树：听说递归能做的，栈也能做！ (https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E8%BF%AD%E4%BB%A3%E9%81%8D%E5%8E%86.html)，二叉树：前中后序迭代方式的写法就不能统一一下么？ (https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E7%BB%9F%E4%B8%80%E8%BF%AD%E4%BB%A3%E6%B3%95.html)文章之后，不难写出两种中序遍历的迭代法。\n\n下面我给出其中的一种中序遍历的迭代法，代码如下：\n\nclass Solution {\npublic:\n    int getMinimumDifference(TreeNode* root) {\n        stack<TreeNode*> st;\n        TreeNode* cur = root;\n        TreeNode* pre = NULL;\n        int result = INT_MAX;\n        while (cur != NULL || !st.empty()) {\n            if (cur != NULL) { // 指针来访问节点，访问到最底层\n                st.push(cur); // 将访问的节点放进栈\n                cur = cur->left;                // 左\n            } else {\n                cur = st.top();\n                st.pop();\n                if (pre != NULL) {              // 中\n                    result = min(result, cur->val - pre->val);\n                }\n                pre = cur;\n                cur = cur->right;               // 右\n            }\n        }\n        return result;\n    }\n};\n#总结\n遇到在二叉搜索树上求什么最值，求差值之类的，都要思考一下二叉搜索树可是有序的，要利用好这一特点。\n\n同时要学会在递归遍历的过程中如何记录前后两个指针，这也是一个小技巧，学会了还是很受用的。\n\n后面我将继续介绍一系列利用二叉搜索树特性的题目。\n\n#其他语言版本\n#Java\n递归\n\nclass Solution {\n    TreeNode pre; // 记录上一个遍历的结点\n    int result = Integer.MAX_VALUE;\n\n    public int getMinimumDifference(TreeNode root) {\n        if (root == null)\n            return 0;\n        traversal(root);\n        return result;\n    }\n\n    public void traversal(TreeNode root) {\n        if (root == null)\n            return;\n        // 左\n        traversal(root.left);\n        // 中\n        if (pre != null) {\n            result = Math.min(result, root.val - pre.val);\n        }\n        pre = root;\n        // 右\n        traversal(root.right);\n    }\n}\n統一迭代法-中序遍历\n\nclass Solution {\n    public int getMinimumDifference(TreeNode root) {\n        Stack<TreeNode> stack = new Stack<>();\n        TreeNode pre = null;\n        int result = Integer.MAX_VALUE;\n\n        if (root != null)\n            stack.add(root);\n\n        // 中序遍历（左中右），由于栈先入后出，反序（右中左）\n        while (!stack.isEmpty()) {\n            TreeNode curr = stack.peek();\n            if (curr != null) {\n                stack.pop();\n                // 右\n                if (curr.right != null)\n                    stack.add(curr.right);\n                // 中（先用null标记）\n                stack.add(curr);\n                stack.add(null);\n                // 左\n                if (curr.left != null)\n                    stack.add(curr.left);\n            } else { // 中（遇到null再处理）\n                stack.pop();\n                TreeNode temp = stack.pop();\n                if (pre != null)\n                    result = Math.min(result, temp.val - pre.val);\n                pre = temp;\n            }\n        }\n        return result;\n    }\n}\n迭代法-中序遍历\n\nclass Solution {\n    TreeNode pre;\n    Stack<TreeNode> stack;\n    public int getMinimumDifference(TreeNode root) {\n        if (root == null) return 0;\n        stack = new Stack<>();\n        TreeNode cur = root;\n        int result = Integer.MAX_VALUE;\n        while (cur != null || !stack.isEmpty()) {\n            if (cur != null) {\n                stack.push(cur); // 将访问的节点放进栈\n                cur = cur.left; // 左\n            }else {\n                cur = stack.pop(); \n                if (pre != null) { // 中\n                    result = Math.min(result, cur.val - pre.val);\n                }\n                pre = cur;\n                cur = cur.right; // 右\n            }\n        }\n        return result;\n    }\n}\n#Python\n递归法（版本一）利用中序递增，结合数组\n\nclass Solution:\n    def __init__(self):\n        self.vec = []\n\n    def traversal(self, root):\n        if root is None:\n            return\n        self.traversal(root.left)\n        self.vec.append(root.val)  # 将二叉搜索树转换为有序数组\n        self.traversal(root.right)\n\n    def getMinimumDifference(self, root):\n        self.vec = []\n        self.traversal(root)\n        if len(self.vec) < 2:\n            return 0\n        result = float('inf')\n        for i in range(1, len(self.vec)):\n            # 统计有序数组的最小差值\n            result = min(result, self.vec[i] - self.vec[i - 1])\n        return result\n\n递归法（版本二）利用中序递增，找到该树最小值\n\nclass Solution:\n    def __init__(self):\n        self.result = float('inf')\n        self.pre = None\n\n    def traversal(self, cur):\n        if cur is None:\n            return\n        self.traversal(cur.left)  # 左\n        if self.pre is not None:  # 中\n            self.result = min(self.result, cur.val - self.pre.val)\n        self.pre = cur  # 记录前一个\n        self.traversal(cur.right)  # 右\n\n    def getMinimumDifference(self, root):\n        self.traversal(root)\n        return self.result\n\n        \n迭代法\n\nclass Solution:\n    def getMinimumDifference(self, root):\n        stack = []\n        cur = root\n        pre = None\n        result = float('inf')\n\n        while cur is not None or len(stack) > 0:\n            if cur is not None:\n                stack.append(cur)  # 将访问的节点放进栈\n                cur = cur.left  # 左\n            else:\n                cur = stack.pop()\n                if pre is not None:  # 中\n                    result = min(result, cur.val - pre.val)\n                pre = cur\n                cur = cur.right  # 右\n\n        return result"
+}

@@ -1,0 +1,391 @@
+{
+  "id": "AP_9d9ab51a",
+  "title": "区间和",
+  "alternative_titles": [],
+  "platform": "kamacoder",
+  "url": "https://kamacoder.com/problempage.php?pid=1070",
+  "description": "一个整数数组 Array，请计算该数组在每个指定区间内元素的总和。\n\n输入描述\n\n第一行输入为整数数组 Array 的长度 n，接下来 n 行，每行一个整数，表示数组的元素。随后的输入为需要计算总和的区间，直至文件结束。\n\n输出描述\n\n输出每个指定区间内元素的总和。\n\n输入",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "前缀和",
+    "区间求和"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "预处理",
+    "空间换时间"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过构建前缀和数组来快速计算任意区间内的元素总和，从而避免了对每个查询都进行直接累加导致的时间复杂度增加。",
+  "key_insights": [
+    {
+      "content": "通过对数组进行一次遍历并构造前缀和数组，可以将每次查询的时间复杂度从O(n)降低到O(1)，显著提高了处理大量查询时的效率。"
+    },
+    {
+      "content": "对于给定的区间[a, b]，其元素之和可以通过p[b] - p[a-1]得到（注意当a=0时直接使用p[b]），这里p[i]表示从数组开始到索引i的所有元素之和。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "本题我们来讲解 数组 上常用的解题技巧：前缀和",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        cin >> vec[i];\n        presum += vec[i];\n        p[i] = presum;\n    }\n\n    while (cin >> a >> b) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        cout << sum << endl;\n    }\n}",
+          "description": "C++实现使用前缀和计算区间和"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        scanf(\"%d\", &vec[i]);\n        presum += vec[i];\n        p[i] = presum;\n    }\n\n    while (~scanf(\"%d%d\", &a, &b)) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        printf(\"%d\\n\", sum);\n    }\n}",
+          "description": "C++优化版，使用scanf和printf提高读写效率"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n\n        int n = scanner.nextInt();\n        int[] vec = new int[n];\n        int[] p = new int[n];\n\n        int presum = 0;\n        for (int i = 0; i < n; i++) {\n            vec[i] = scanner.nextInt();\n            presum += vec[i];\n            p[i] = presum;\n        }\n\n        while (scanner.hasNextInt()) {\n            int a = scanner.nextInt();\n            int b = scanner.nextInt();\n\n            int sum;\n            if (a == 0) {\n                sum = p[b];\n            } else {\n                sum = p[b] - p[a - 1];\n            }\n            System.out.println(sum);\n        }\n\n        scanner.close();\n    }\n}",
+          "description": "Java实现使用前缀和计算区间和"
+        },
+        {
+          "language": "python",
+          "code": "import sys\ninput = sys.stdin.read\ndef main():\n    data = input().split()\n    index = 0\n    n = int(data[index])\n    index += 1\n    vec = []\n    for i in range(n):\n        vec.append(int(data[index + i]))\n    index += n\n\n    p = [0] * n\n    presum = 0\n    for i in range(n):\n        presum += vec[i]\n        p[i] = presum\n\n    results = []\n    while index < len(data):\n        a = int(data[index])\n        b = int(data[index + 1])\n        index += 2\n\n        if a == 0:\n            sum_value = p[b]\n        else:\n            sum_value = p[b] - p[a - 1]\n\n        results.append(sum_value)\n\n    for result in results:\n        print(result)\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python实现使用前缀和计算区间和"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    for (int i = 0; i < n; i++) cin >> vec[i];\n    while (cin >> a >> b) {\n        int sum = 0;\n        for (int i = a; i <= b; i++) sum += vec[i];\n        cout << sum << endl;\n    }\n}",
+          "description": "原始暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        cin >> vec[i];\n        presum += vec[i];\n        p[i] = presum;\n    }\n\n    while (cin >> a >> b) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        cout << sum << endl;\n    }\n}",
+          "description": "使用前缀和优化"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        scanf(\"%d\", &vec[i]);\n        presum += vec[i];\n        p[i] = presum;\n    }\n\n    while (~scanf(\"%d%d\", &a, &b)) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        printf(\"%d\\n\", sum);\n    }\n}",
+          "description": "使用scanf/printf提高效率"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n\n        int n = scanner.nextInt();\n        int[] vec = new int[n];\n        int[] p = new int[n];\n\n        int presum = 0;\n        for (int i = 0; i < n; i++) {\n            vec[i] = scanner.nextInt();\n            presum += vec[i];\n            p[i] = presum;\n        }\n\n        while (scanner.hasNextInt()) {\n            int a = scanner.nextInt();\n            int b = scanner.nextInt();\n\n            int sum;\n            if (a == 0) {\n                sum = p[b];\n            } else {\n                sum = p[b] - p[a - 1];\n            }\n            System.out.println(sum);\n        }\n\n        scanner.close();\n    }\n}",
+          "description": "Java版本的前缀和解法"
+        },
+        {
+          "language": "python",
+          "code": "import sys\ninput = sys.stdin.read\ndef main():\n    data = input().split()\n    index = 0\n    n = int(data[index])\n    index += 1\n    vec = []\n    for i in range(n):\n        vec.append(int(data[index + i]))\n    index += n\n\n    p = [0] * n\n    presum = 0\n    for i in range(n):\n        presum += vec[i]\n        p[i] = presum\n\n    results = []\n    while index < len(data):\n        a = int(data[index])\n        b = int(data[index + 1])\n        index += 2\n\n        if a == 0:\n            sum_value = p[b]\n        else:\n            sum_value = p[b] - p[a - 1]\n\n        results.append(sum_value)\n\n    for result in results:\n        print(result)\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本的前缀和解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    for (int i = 0; i < n; i++) cin >> vec[i];\n    while (cin >> a >> b) {\n        int sum = 0;\n        for (int i = a; i <= b; i++) sum += vec[i];\n        cout << sum << endl;\n    }\n}",
+          "description": "初步暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n), p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        cin >> vec[i];\n        presum += vec[i];\n        p[i] = presum;\n    }\n    while (cin >> a >> b) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        cout << sum << endl;\n    }\n}",
+          "description": "使用前缀和的C++解法"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n), p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        scanf(\"%d\", &vec[i]);\n        presum += vec[i];\n        p[i] = presum;\n    }\n    while (~scanf(\"%d%d\", &a, &b)) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        printf(\"%d\\n\", sum);\n    }\n}",
+          "description": "优化输入输出的C++解法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int[] vec = new int[n];\n        int[] p = new int[n];\n        int presum = 0;\n        for (int i = 0; i < n; i++) {\n            vec[i] = scanner.nextInt();\n            presum += vec[i];\n            p[i] = presum;\n        }\n        while (scanner.hasNextInt()) {\n            int a = scanner.nextInt();\n            int b = scanner.nextInt();\n            int sum;\n            if (a == 0) {\n                sum = p[b];\n            } else {\n                sum = p[b] - p[a - 1];\n            }\n            System.out.println(sum);\n        }\n        scanner.close();\n    }\n}",
+          "description": "Java版本的前缀和解法"
+        },
+        {
+          "language": "python",
+          "code": "import sys\ninput = sys.stdin.read\ndef main():\n    data = input().split()\n    index = 0\n    n = int(data[index])\n    index += 1\n    vec = [int(data[index + i]) for i in range(n)]\n    index += n\n    p = [0] * n\n    presum = 0\n    for i in range(n):\n        presum += vec[i]\n        p[i] = presum\n    results = []\n    while index < len(data):\n        a = int(data[index])\n        b = int(data[index + 1])\n        index += 2\n        if a == 0:\n            sum_value = p[b]\n        else:\n            sum_value = p[b] - p[a - 1]\n        results.append(sum_value)\n    for result in results:\n        print(result)\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本的前缀和解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    for (int i = 0; i < n; i++) cin >> vec[i];\n    while (cin >> a >> b) {\n        int sum = 0;\n        // 累加区间 a 到 b 的和\n        for (int i = a; i <= b; i++) sum += vec[i];\n        cout << sum << endl;\n    }\n}",
+          "description": "原始暴力解法，直接累加指定区间的元素求和"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        cin >> vec[i];\n        presum += vec[i];\n        p[i] = presum;\n    }\n\n    while (cin >> a >> b) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        cout << sum << endl;\n    }\n}",
+          "description": "使用前缀和优化后的C++代码"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        scanf(\"%d\", &vec[i]);\n        presum += vec[i];\n        p[i] = presum;\n    }\n\n    while (~scanf(\"%d%d\", &a, &b)) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        printf(\"%d\\n\", sum);\n    }\n}",
+          "description": "使用scanf和printf优化输入输出的C++代码"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n\n        int n = scanner.nextInt();\n        int[] vec = new int[n];\n        int[] p = new int[n];\n\n        int presum = 0;\n        for (int i = 0; i < n; i++) {\n            vec[i] = scanner.nextInt();\n            presum += vec[i];\n            p[i] = presum;\n        }\n\n        while (scanner.hasNextInt()) {\n            int a = scanner.nextInt();\n            int b = scanner.nextInt();\n\n            int sum;\n            if (a == 0) {\n                sum = p[b];\n            } else {\n                sum = p[b] - p[a - 1];\n            }\n            System.out.println(sum);\n        }\n\n        scanner.close();\n    }\n}",
+          "description": "Java版本实现，利用前缀和计算区间和"
+        },
+        {
+          "language": "python",
+          "code": "import sys\ninput = sys.stdin.read\ndef main():\n    data = input().split()\n    index = 0\n    n = int(data[index])\n    index += 1\n    vec = []\n    for i in range(n):\n        vec.append(int(data[index + i]))\n    index += n\n\n    p = [0] * n\n    presum = 0\n    for i in range(n):\n        presum += vec[i]\n        p[i] = presum\n\n    results = []\n    while index < len(data):\n        a = int(data[index])\n        b = int(data[index + 1])\n        index += 2\n\n        if a == 0:\n            sum_value = p[b]\n        else:\n            sum_value = p[b] - p[a - 1]\n\n        results.append(sum_value)\n\n    for result in results:\n        print(result)\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本实现，读取所有输入后处理并使用前缀和计算"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    for (int i = 0; i < n; i++) cin >> vec[i];\n    while (cin >> a >> b) {\n        int sum = 0;\n        // 累加区间 a 到 b 的和\n        for (int i = a; i <= b; i++) sum += vec[i];\n        cout << sum << endl;\n    }\n}",
+          "description": "使用C++实现的暴力解法求区间和"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        cin >> vec[i];\n        presum += vec[i];\n        p[i] = presum;\n    }\n    while (cin >> a >> b) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        cout << sum << endl;\n    }\n}",
+          "description": "使用C++通过前缀和优化求区间和"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        scanf(\"%d\", &vec[i]);\n        presum += vec[i];\n        p[i] = presum;\n    }\n    while (~scanf(\"%d%d\", &a, &b)) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        printf(\"%d\\n\", sum);\n    }\n}",
+          "description": "使用C++通过前缀和与scanf/printf优化求区间和"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int[] vec = new int[n];\n        int[] p = new int[n];\n        int presum = 0;\n        for (int i = 0; i < n; i++) {\n            vec[i] = scanner.nextInt();\n            presum += vec[i];\n            p[i] = presum;\n        }\n        while (scanner.hasNextInt()) {\n            int a = scanner.nextInt();\n            int b = scanner.nextInt();\n            int sum;\n            if (a == 0) {\n                sum = p[b];\n            } else {\n                sum = p[b] - p[a - 1];\n            }\n            System.out.println(sum);\n        }\n        scanner.close();\n    }\n}",
+          "description": "使用Java通过前缀和优化求区间和"
+        },
+        {
+          "language": "python",
+          "code": "import sys\ninput = sys.stdin.read\ndef main():\n    data = input().split()\n    index = 0\n    n = int(data[index])\n    index += 1\n    vec = [int(data[index + i]) for i in range(n)]\n    index += n\n    p = [0] * n\n    presum = 0\n    for i in range(n):\n        presum += vec[i]\n        p[i] = presum\n    results = []\n    while index < len(data):\n        a = int(data[index])\n        b = int(data[index + 1])\n        index += 2\n        if a == 0:\n            sum_value = p[b]\n        else:\n            sum_value = p[b] - p[a - 1]\n        results.append(sum_value)\n    for result in results:\n        print(result)\nif __name__ == \"__main__\":\n    main()",
+          "description": "使用Python通过前缀和优化求区间和"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    for (int i = 0; i < n; i++) cin >> vec[i];\n    while (cin >> a >> b) {\n        int sum = 0;\n        // 累加区间 a 到 b 的和\n        for (int i = a; i <= b; i++) sum += vec[i];\n        cout << sum << endl;\n    }\n}",
+          "description": "C++暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        cin >> vec[i];\n        presum += vec[i];\n        p[i] = presum;\n    }\n    while (cin >> a >> b) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        cout << sum << endl;\n    }\n}",
+          "description": "C++前缀和方法"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        scanf(\"%d\", &vec[i]);\n        presum += vec[i];\n        p[i] = presum;\n    }\n    while (~scanf(\"%d%d\", &a, &b)) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        printf(\"%d\\n\", sum);\n    }\n}",
+          "description": "C++使用scanf/printf的前缀和方法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int[] vec = new int[n];\n        int[] p = new int[n];\n        int presum = 0;\n        for (int i = 0; i < n; i++) {\n            vec[i] = scanner.nextInt();\n            presum += vec[i];\n            p[i] = presum;\n        }\n        while (scanner.hasNextInt()) {\n            int a = scanner.nextInt();\n            int b = scanner.nextInt();\n            int sum;\n            if (a == 0) {\n                sum = p[b];\n            } else {\n                sum = p[b] - p[a - 1];\n            }\n            System.out.println(sum);\n        }\n        scanner.close();\n    }\n}",
+          "description": "Java实现的前缀和方法"
+        },
+        {
+          "language": "python",
+          "code": "import sys\ninput = sys.stdin.read\ndef main():\n    data = input().split()\n    index = 0\n    n = int(data[index])\n    index += 1\n    vec = []\n    for i in range(n):\n        vec.append(int(data[index + i]))\n    index += n\n    p = [0] * n\n    presum = 0\n    for i in range(n):\n        presum += vec[i]\n        p[i] = presum\n    results = []\n    while index < len(data):\n        a = int(data[index])\n        b = int(data[index + 1])\n        index += 2\n        if a == 0:\n            sum_value = p[b]\n        else:\n            sum_value = p[b] - p[a - 1]\n        results.append(sum_value)\n    for result in results:\n        print(result)\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python实现的前缀和方法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        cin >> vec[i];\n        presum += vec[i];\n        p[i] = presum;\n    }\n\n    while (cin >> a >> b) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        cout << sum << endl;\n    }\n}",
+          "description": "C++版本，使用前缀和计算区间和"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        scanf(\"%d\", &vec[i]);\n        presum += vec[i];\n        p[i] = presum;\n    }\n\n    while (~scanf(\"%d%d\", &a, &b)) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        printf(\"%d\\n\", sum);\n    }\n}",
+          "description": "C++优化版，使用scanf和printf提高I/O效率"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n\n        int n = scanner.nextInt();\n        int[] vec = new int[n];\n        int[] p = new int[n];\n\n        int presum = 0;\n        for (int i = 0; i < n; i++) {\n            vec[i] = scanner.nextInt();\n            presum += vec[i];\n            p[i] = presum;\n        }\n\n        while (scanner.hasNextInt()) {\n            int a = scanner.nextInt();\n            int b = scanner.nextInt();\n\n            int sum;\n            if (a == 0) {\n                sum = p[b];\n            } else {\n                sum = p[b] - p[a - 1];\n            }\n            System.out.println(sum);\n        }\n\n        scanner.close();\n    }\n}",
+          "description": "Java版本，使用前缀和计算区间和"
+        },
+        {
+          "language": "python",
+          "code": "import sys\ninput = sys.stdin.read\ndef main():\n    data = input().split()\n    index = 0\n    n = int(data[index])\n    index += 1\n    vec = []\n    for i in range(n):\n        vec.append(int(data[index + i]))\n    index += n\n\n    p = [0] * n\n    presum = 0\n    for i in range(n):\n        presum += vec[i]\n        p[i] = presum\n\n    results = []\n    while index < len(data):\n        a = int(data[index])\n        b = int(data[index + 1])\n        index += 2\n\n        if a == 0:\n            sum_value = p[b]\n        else:\n            sum_value = p[b] - p[a - 1]\n\n        results.append(sum_value)\n\n    for result in results:\n        print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本，使用前缀和计算区间和"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    for (int i = 0; i < n; i++) cin >> vec[i];\n    while (cin >> a >> b) {\n        int sum = 0;\n        for (int i = a; i <= b; i++) sum += vec[i];\n        cout << sum << endl;\n    }\n}",
+          "description": "使用暴力解法计算区间和"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        cin >> vec[i];\n        presum += vec[i];\n        p[i] = presum;\n    }\n\n    while (cin >> a >> b) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        cout << sum << endl;\n    }\n}",
+          "description": "使用前缀和优化后的C++代码"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        scanf(\"%d\", &vec[i]);\n        presum += vec[i];\n        p[i] = presum;\n    }\n\n    while (~scanf(\"%d%d\", &a, &b)) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        printf(\"%d\\n\", sum);\n    }\n}",
+          "description": "使用scanf和printf进一步优化性能的C++代码"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n\n        int n = scanner.nextInt();\n        int[] vec = new int[n];\n        int[] p = new int[n];\n\n        int presum = 0;\n        for (int i = 0; i < n; i++) {\n            vec[i] = scanner.nextInt();\n            presum += vec[i];\n            p[i] = presum;\n        }\n\n        while (scanner.hasNextInt()) {\n            int a = scanner.nextInt();\n            int b = scanner.nextInt();\n\n            int sum;\n            if (a == 0) {\n                sum = p[b];\n            } else {\n                sum = p[b] - p[a - 1];\n            }\n            System.out.println(sum);\n        }\n\n        scanner.close();\n    }\n}",
+          "description": "Java版本的前缀和解决方案"
+        },
+        {
+          "language": "python",
+          "code": "import sys\ninput = sys.stdin.read\ndef main():\n    data = input().split()\n    index = 0\n    n = int(data[index])\n    index += 1\n    vec = []\n    for i in range(n):\n        vec.append(int(data[index + i]))\n    index += n\n\n    p = [0] * n\n    presum = 0\n    for i in range(n):\n        presum += vec[i]\n        p[i] = presum\n\n    results = []\n    while index < len(data):\n        a = int(data[index])\n        b = int(data[index + 1])\n        index += 2\n\n        if a == 0:\n            sum_value = p[b]\n        else:\n            sum_value = p[b] - p[a - 1]\n\n        results.append(sum_value)\n\n    for result in results:\n        print(result)\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本的前缀和解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "import java.util.Scanner;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    for (int i = 0; i < n; i++) cin >> vec[i];\n    while (cin >> a >> b) {\n        int sum = 0;\n        // 累加区间 a 到 b 的和\n        for (int i = a; i <= b; i++) sum += vec[i];\n        cout << sum << endl;\n    }\n}",
+          "description": "C++暴力解法计算区间和"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        cin >> vec[i];\n        presum += vec[i];\n        p[i] = presum;\n    }\n\n    while (cin >> a >> b) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        cout << sum << endl;\n    }\n}",
+          "description": "C++前缀和方法计算区间和"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        scanf(\"%d\", &vec[i]);\n        presum += vec[i];\n        p[i] = presum;\n    }\n\n    while (~scanf(\"%d%d\", &a, &b)) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        printf(\"%d\\n\", sum);\n    }\n}",
+          "description": "使用scanf和printf优化C++读写性能的前缀和方法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n\n        int n = scanner.nextInt();\n        int[] vec = new int[n];\n        int[] p = new int[n];\n\n        int presum = 0;\n        for (int i = 0; i < n; i++) {\n            vec[i] = scanner.nextInt();\n            presum += vec[i];\n            p[i] = presum;\n        }\n\n        while (scanner.hasNextInt()) {\n            int a = scanner.nextInt();\n            int b = scanner.nextInt();\n\n            int sum;\n            if (a == 0) {\n                sum = p[b];\n            } else {\n                sum = p[b] - p[a - 1];\n            }\n            System.out.println(sum);\n        }\n\n        scanner.close();\n    }\n}",
+          "description": "Java版本的前缀和方法计算区间和"
+        },
+        {
+          "language": "python",
+          "code": "import sys\ninput = sys.stdin.read\ndef main():\n    data = input().split()\n    index = 0\n    n = int(data[index])\n    index += 1\n    vec = []\n    for i in range(n):\n        vec.append(int(data[index + i]))\n    index += n\n\n    p = [0] * n\n    presum = 0\n    for i in range(n):\n        presum += vec[i]\n        p[i] = presum\n\n    results = []\n    while index < len(data):\n        a = int(data[index])\n        b = int(data[index + 1])\n        index += 2\n\n        if a == 0:\n            sum_value = p[b]\n        else:\n            sum_value = p[b] - p[a - 1]\n\n        results.append(sum_value)\n\n    for result in results:\n        print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本的前缀和方法计算区间和"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "import sys",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    for (int i = 0; i < n; i++) cin >> vec[i];\n    while (cin >> a >> b) {\n        int sum = 0;\n        // 累加区间 a 到 b 的和\n        for (int i = a; i <= b; i++) sum += vec[i];\n        cout << sum << endl;\n    }\n}",
+          "description": "C++版本的暴力求解区间和"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        cin >> vec[i];\n        presum += vec[i];\n        p[i] = presum;\n    }\n\n    while (cin >> a >> b) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        cout << sum << endl;\n    }\n}",
+          "description": "C++版本使用前缀和优化求解区间和"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        scanf(\"%d\", &vec[i]);\n        presum += vec[i];\n        p[i] = presum;\n    }\n\n    while (~scanf(\"%d%d\", &a, &b)) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        printf(\"%d\\n\", sum);\n    }\n}",
+          "description": "C++版本，使用scanf/printf提高IO效率"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n\n        int n = scanner.nextInt();\n        int[] vec = new int[n];\n        int[] p = new int[n];\n\n        int presum = 0;\n        for (int i = 0; i < n; i++) {\n            vec[i] = scanner.nextInt();\n            presum += vec[i];\n            p[i] = presum;\n        }\n\n        while (scanner.hasNextInt()) {\n            int a = scanner.nextInt();\n            int b = scanner.nextInt();\n\n            int sum;\n            if (a == 0) {\n                sum = p[b];\n            } else {\n                sum = p[b] - p[a - 1];\n            }\n            System.out.println(sum);\n        }\n\n        scanner.close();\n    }\n}",
+          "description": "Java版本使用前缀和求解区间和"
+        },
+        {
+          "language": "python",
+          "code": "import sys\ninput = sys.stdin.read\ndef main():\n    data = input().split()\n    index = 0\n    n = int(data[index])\n    index += 1\n    vec = []\n    for i in range(n):\n        vec.append(int(data[index + i]))\n    index += n\n\n    p = [0] * n\n    presum = 0\n    for i in range(n):\n        presum += vec[i]\n        p[i] = presum\n\n    results = []\n    while index < len(data):\n        a = int(data[index])\n        b = int(data[index + 1])\n        index += 2\n\n        if a == 0:\n            sum_value = p[b]\n        else:\n            sum_value = p[b] - p[a - 1]\n\n        results.append(sum_value)\n\n    for result in results:\n        print(result)\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本使用前缀和求解区间和"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    for (int i = 0; i < n; i++) cin >> vec[i];\n    while (cin >> a >> b) {\n        int sum = 0;\n        // 累加区间 a 到 b 的和\n        for (int i = a; i <= b; i++) sum += vec[i];\n        cout << sum << endl;\n    }\n}",
+      "description": "使用暴力解法计算区间和"
+    },
+    {
+      "language": "cpp",
+      "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        cin >> vec[i];\n        presum += vec[i];\n        p[i] = presum;\n    }\n\n    while (cin >> a >> b) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        cout << sum << endl;\n    }\n}",
+      "description": "使用前缀和优化的C++代码"
+    },
+    {
+      "language": "cpp",
+      "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        scanf(\"%d\", &vec[i]);\n        presum += vec[i];\n        p[i] = presum;\n    }\n\n    while (~scanf(\"%d%d\", &a, &b)) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        printf(\"%d\\n\", sum);\n    }\n}",
+      "description": "使用前缀和且用scanf和printf优化IO操作的C++代码"
+    },
+    {
+      "language": "java",
+      "code": "import java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n\n        int n = scanner.nextInt();\n        int[] vec = new int[n];\n        int[] p = new int[n];\n\n        int presum = 0;\n        for (int i = 0; i < n; i++) {\n            vec[i] = scanner.nextInt();\n            presum += vec[i];\n            p[i] = presum;\n        }\n\n        while (scanner.hasNextInt()) {\n            int a = scanner.nextInt();\n            int b = scanner.nextInt();\n\n            int sum;\n            if (a == 0) {\n                sum = p[b];\n            } else {\n                sum = p[b] - p[a - 1];\n            }\n            System.out.println(sum);\n        }\n\n        scanner.close();\n    }\n}",
+      "description": "Java版本的前缀和解决方案"
+    },
+    {
+      "language": "python",
+      "code": "import sys\ninput = sys.stdin.read\ndef main():\n    data = input().split()\n    index = 0\n    n = int(data[index])\n    index += 1\n    vec = []\n    for i in range(n):\n        vec.append(int(data[index + i]))\n    index += n\n\n    p = [0] * n\n    presum = 0\n    for i in range(n):\n        presum += vec[i]\n        p[i] = presum\n\n    results = []\n    while index < len(data):\n        a = int(data[index])\n        b = int(data[index + 1])\n        index += 2\n\n        if a == 0:\n            sum_value = p[b]\n        else:\n            sum_value = p[b] - p[a - 1]\n\n        results.append(sum_value)\n\n    for result in results:\n        print(result)\nif __name__ == \"__main__\":\n    main()",
+      "description": "Python版本的前缀和解决方案"
+    }
+  ],
+  "common_mistakes": [
+    "在实现前缀和时错误地设置区间的边界条件，如误将p[b] - p[a]用于计算而忽略了a=0的情况。",
+    "没有考虑到大数据量下的I/O优化，比如使用scanf/printf代替cin/cout以减少运行时间。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\数组\\区间和.txt",
+  "extracted_at": "2025-07-21T21:59:04.347012",
+  "raw_content": "区间和\n\n\n题目链接(https://kamacoder.com/problempage.php?pid=1070)\n\n题目描述\n\n给定一个整数数组 Array，请计算该数组在每个指定区间内元素的总和。\n\n输入描述\n\n第一行输入为整数数组 Array 的长度 n，接下来 n 行，每行一个整数，表示数组的元素。随后的输入为需要计算总和的区间，直至文件结束。\n\n输出描述\n\n输出每个指定区间内元素的总和。\n\n输入示例\n\n5\n1\n2\n3\n4\n5\n0 1\n1 3\n输出示例\n\n3\n9\n数据范围：\n\n0 < n <= 100000\n\n#思路\n本题我们来讲解 数组 上常用的解题技巧：前缀和\n\n首先来看本题，我们最直观的想法是什么？\n\n那就是给一个区间，然后 把这个区间的和都累加一遍不就得了，是一道简单不能再简单的题目。\n\n代码如下：\n\n#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    for (int i = 0; i < n; i++) cin >> vec[i];\n    while (cin >> a >> b) {\n        int sum = 0;\n        // 累加区间 a 到 b 的和\n        for (int i = a; i <= b; i++) sum += vec[i];\n        cout << sum << endl;\n    }\n} \n代码一提交，发现超时了.....\n\n我在制作本题的时候，特别制作了大数据量查询，卡的就是这种暴力解法。\n\n来举一个极端的例子，如果我查询m次，每次查询的范围都是从0 到 n - 1\n\n那么该算法的时间复杂度是 O(n * m) m 是查询的次数\n\n如果查询次数非常大的话，这个时间复杂度也是非常大的。\n\n接下来我们来引入前缀和，看看前缀和如何解决这个问题。\n\n前缀和的思想是重复利用计算过的子数组之和，从而降低区间查询需要累加计算的次数。\n\n前缀和 在涉及计算区间和的问题时非常有用！\n\n前缀和的思路其实很简单，我给大家举个例子很容易就懂了。\n\n例如，我们要统计 vec[i] 这个数组上的区间和。\n\n我们先做累加，即 p[i] 表示 下标 0 到 i 的 vec[i] 累加 之和。\n\n如图：\n\n\n\n如果，我们想统计，在vec数组上 下标 2 到下标 5 之间的累加和，那是不是就用 p[5] - p[1] 就可以了。\n\n为什么呢？\n\np[1] = vec[0] + vec[1];\n\np[5] = vec[0] + vec[1] + vec[2] + vec[3] + vec[4] + vec[5];\n\np[5] - p[1] = vec[2] + vec[3] + vec[4] + vec[5];\n\n这不就是我们要求的 下标 2 到下标 5 之间的累加和吗。\n\n如图所示：\n\n\n\np[5] - p[1] 就是 红色部分的区间和。\n\n而 p 数组是我们之前就计算好的累加和，所以后面每次求区间和的之后 我们只需要 O(1) 的操作。\n\n特别注意： 在使用前缀和求解的时候，要特别注意 求解区间。\n\n如上图，如果我们要求 区间下标 [2, 5] 的区间和，那么应该是 p[5] - p[1]，而不是 p[5] - p[2]。\n\n很多录友在使用前缀和的时候，分不清前缀和的区间，建议画一画图，模拟一下 思路会更清晰。\n\n本题C++代码如下：\n\n#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        cin >> vec[i];\n        presum += vec[i];\n        p[i] = presum;\n    }\n\n    while (cin >> a >> b) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        cout << sum << endl;\n    }\n}\n\nC++ 代码 面对大量数据 读取 输出操作，最好用scanf 和 printf，耗时会小很多：\n\n#include <iostream>\n#include <vector>\nusing namespace std;\nint main() {\n    int n, a, b;\n    cin >> n;\n    vector<int> vec(n);\n    vector<int> p(n);\n    int presum = 0;\n    for (int i = 0; i < n; i++) {\n        scanf(\"%d\", &vec[i]);\n        presum += vec[i];\n        p[i] = presum;\n    }\n\n    while (~scanf(\"%d%d\", &a, &b)) {\n        int sum;\n        if (a == 0) sum = p[b];\n        else sum = p[b] - p[a - 1];\n        printf(\"%d\\n\", sum);\n    }\n}\n\n#其他语言版本\n#Java\n\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n\n        int n = scanner.nextInt();\n        int[] vec = new int[n];\n        int[] p = new int[n];\n\n        int presum = 0;\n        for (int i = 0; i < n; i++) {\n            vec[i] = scanner.nextInt();\n            presum += vec[i];\n            p[i] = presum;\n        }\n\n        while (scanner.hasNextInt()) {\n            int a = scanner.nextInt();\n            int b = scanner.nextInt();\n\n            int sum;\n            if (a == 0) {\n                sum = p[b];\n            } else {\n                sum = p[b] - p[a - 1];\n            }\n            System.out.println(sum);\n        }\n\n        scanner.close();\n    }\n}\n\n \n#Python\n\nimport sys\ninput = sys.stdin.read\n\ndef main():\n    data = input().split()\n    index = 0\n    n = int(data[index])\n    index += 1\n    vec = []\n    for i in range(n):\n        vec.append(int(data[index + i]))\n    index += n\n\n    p = [0] * n\n    presum = 0\n    for i in range(n):\n        presum += vec[i]\n        p[i] = presum\n\n    results = []\n    while index < len(data):\n        a = int(data[index])\n        b = int(data[index + 1])\n        index += 2\n\n        if a == 0:\n            sum_value = p[b]\n        else:\n            sum_value = p[b] - p[a - 1]\n\n        results.append(sum_value)\n\n    for result in results:\n        print(result)\n\nif __name__ == \"__main__\":\n    main()"
+}

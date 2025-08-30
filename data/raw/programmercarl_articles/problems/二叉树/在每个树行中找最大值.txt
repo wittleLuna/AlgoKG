@@ -1,0 +1,88 @@
+在每个树行中找最大值
+力扣题目链接(https://leetcode.cn/problems/find-largest-value-in-each-tree-row/)
+
+您需要在二叉树的每一行中找到最大的值。
+
+https://file1.kamacoder.com/i/algo/20210203151532153.png
+
+#思路
+层序遍历，取每一层的最大值
+
+C++代码：
+
+class Solution {
+public:
+    vector<int> largestValues(TreeNode* root) {
+        queue<TreeNode*> que;
+        if (root != NULL) que.push(root);
+        vector<int> result;
+        while (!que.empty()) {
+            int size = que.size();
+            int maxValue = INT_MIN; // 取每一层的最大值
+            for (int i = 0; i < size; i++) {
+                TreeNode* node = que.front();
+                que.pop();
+                maxValue = node->val > maxValue ? node->val : maxValue;
+                if (node->left) que.push(node->left);
+                if (node->right) que.push(node->right);
+            }
+            result.push_back(maxValue); // 把最大值放进数组
+        }
+        return result;
+    }
+};
+#其他语言版本
+#Python：
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def largestValues(self, root: TreeNode) -> List[int]:
+        if not root:
+            return []
+
+        result = []
+        queue = collections.deque([root])
+
+        while queue:
+            level_size = len(queue)
+            max_val = float('-inf')
+
+            for _ in range(level_size):
+                node = queue.popleft()
+                max_val = max(max_val, node.val)
+
+                if node.left:
+                    queue.append(node.left)
+
+                if node.right:
+                    queue.append(node.right)
+
+            result.append(max_val)
+
+        return result
+#Java：
+class Solution {
+    public List<Integer> largestValues(TreeNode root) {
+        if(root == null){
+            return Collections.emptyList();
+        }
+        List<Integer> result = new ArrayList();
+        Queue<TreeNode> queue = new LinkedList();
+        queue.offer(root);
+        while(!queue.isEmpty()){
+            int max = Integer.MIN_VALUE;
+            for(int i = queue.size(); i > 0; i--){
+               TreeNode node = queue.poll();
+               max = Math.max(max, node.val);
+               if(node.left != null) queue.offer(node.left);
+               if(node.right != null) queue.offer(node.right);
+            }
+            result.add(max);
+        }
+        return result;
+    }
+}

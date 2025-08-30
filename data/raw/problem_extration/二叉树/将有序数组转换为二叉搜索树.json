@@ -1,0 +1,451 @@
+{
+  "id": "AP_7ccc4f9d",
+  "title": "将有序数组转换为二叉搜索树",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/convert-sorted-array-to-binary-search-tree/",
+  "description": "将一个按照升序排列的有序数组，转换为一棵高度平衡二叉搜索树。\n\n本题中，一个高度平衡二叉树是指一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1。",
+  "examples": [
+    {
+      "input": "见图",
+      "output": "见图",
+      "explanation": null,
+      "image": "https://file1.kamacoder.com/i/algo/20201022164420763.png"
+    }
+  ],
+  "constraints": [],
+  "algorithm_tags": [
+    "分治法",
+    "递归"
+  ],
+  "data_structure_tags": [
+    "数组",
+    "二叉搜索树"
+  ],
+  "technique_tags": [
+    "循环不变量",
+    "边界条件处理"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过递归方法将有序数组转换为高度平衡的二叉搜索树。核心思想是选择数组中间元素作为当前节点，并对左右子数组递归执行相同操作来构建左右子树。",
+  "key_insights": [
+    {
+      "content": "题目强调要构造一个高度平衡的二叉搜索树是因为如果直接使用线性方式构造（例如仅向左或右添加节点），则无法保证树的高度平衡。"
+    },
+    {
+      "content": "对于长度为偶数的数组，可以选择中间两个元素中的任意一个作为根节点，这会导致不同的但都符合条件的平衡二叉搜索树。"
+    },
+    {
+      "content": "在递归过程中，通过定义区间 [left, right] 来避免重新定义新的子数组，从而提高效率。"
+    },
+    {
+      "content": "使用循环不变量确保在递归过程中区间的一致性和正确性。"
+    },
+    {
+      "content": "递归函数的返回值用于构建二叉树的节点，递归终止条件是当 left > right 时返回 nullptr。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "做这道题目之前大家可以了解一下这几道：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    TreeNode* traversal(vector<int>& nums, int left, int right) {\n        if (left > right) return nullptr;\n        int mid = left + ((right - left) / 2);\n        TreeNode* root = new TreeNode(nums[mid]);\n        root->left = traversal(nums, left, mid - 1);\n        root->right = traversal(nums, mid + 1, right);\n        return root;\n    }\npublic:\n    TreeNode* sortedArrayToBST(vector<int>& nums) {\n        TreeNode* root = traversal(nums, 0, nums.size() - 1);\n        return root;\n    }\n};",
+          "description": "C++实现，递归方法构建平衡二叉搜索树。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* sortedArrayToBST(vector<int>& nums) {\n        if (nums.size() == 0) return nullptr;\n\n        TreeNode* root = new TreeNode(0);   // 初始根节点\n        queue<TreeNode*> nodeQue;           // 放遍历的节点\n        queue<int> leftQue;                 // 保存左区间下标\n        queue<int> rightQue;                // 保存右区间下标\n        nodeQue.push(root);                 // 根节点入队列\n        leftQue.push(0);                    // 0为左区间下标初始位置\n        rightQue.push(nums.size() - 1);     // nums.size() - 1为右区间下标初始位置\n\n        while (!nodeQue.empty()) {\n            TreeNode* curNode = nodeQue.front();\n            nodeQue.pop();\n            int left = leftQue.front(); leftQue.pop();\n            int right = rightQue.front(); rightQue.pop();\n            int mid = left + ((right - left) / 2);\n\n            curNode->val = nums[mid];       // 将mid对应的元素给中间节点\n\n            if (left <= mid - 1) {          // 处理左区间\n                curNode->left = new TreeNode(0);\n                nodeQue.push(curNode->left);\n                leftQue.push(left);\n                rightQue.push(mid - 1);\n            }\n\n            if (right >= mid + 1) {         // 处理右区间\n                curNode->right = new TreeNode(0);\n                nodeQue.push(curNode->right);\n                leftQue.push(mid + 1);\n                rightQue.push(right);\n            }\n        }\n        return root;\n    }\n};",
+          "description": "C++实现，迭代方法构建平衡二叉搜索树。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode sortedArrayToBST(int[] nums) {\n        return sortedArrayToBST(nums, 0, nums.length);\n    }\n\n    public TreeNode sortedArrayToBST(int[] nums, int left, int right) {\n        if (left >= right) {\n            return null;\n        }\n        if (right - left == 1) {\n            return new TreeNode(nums[left]);\n        }\n        int mid = left + (right - left) / 2;\n        TreeNode root = new TreeNode(nums[mid]);\n        root.left = sortedArrayToBST(nums, left, mid);\n        root.right = sortedArrayToBST(nums, mid + 1, right);\n        return root;\n    }\n}",
+          "description": "Java实现，使用递归法（左闭右开）构建平衡二叉搜索树。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode sortedArrayToBST(int[] nums) {\n        TreeNode root = traversal(nums, 0, nums.length - 1);\n        return root;\n    }\n\n    private TreeNode traversal(int[] nums, int left, int right) {\n        if (left > right) return null;\n\n        int mid = left + ((right - left) >> 1);\n        TreeNode root = new TreeNode(nums[mid]);\n        root.left = traversal(nums, left, mid - 1);\n        root.right = traversal(nums, mid + 1, right);\n        return root;\n    }\n}",
+          "description": "Java实现，使用递归法（左闭右闭）构建平衡二叉搜索树。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode sortedArrayToBST(int[] nums) {\n        if (nums.length == 0) return null;\n\n        TreeNode root = new TreeNode(-1);\n        Queue<TreeNode> nodeQueue = new LinkedList<>();\n        Queue<Integer> leftQueue = new LinkedList<>();\n        Queue<Integer> rightQueue = new LinkedList<>();\n\n        nodeQueue.offer(root);\n        leftQueue.offer(0);\n        rightQueue.offer(nums.length - 1);\n\n        while (!nodeQueue.isEmpty()) {\n            TreeNode currNode = nodeQueue.poll();\n            int left = leftQueue.poll();\n            int right = rightQueue.poll();\n            int mid = left + ((right - left) >> 1);\n\n            currNode.val = nums[mid];\n\n            if (left <= mid - 1) {\n                currNode.left = new TreeNode(-1);\n                nodeQueue.offer(currNode.left);\n                leftQueue.offer(left);\n                rightQueue.offer(mid - 1);\n            }\n\n            if (right >= mid + 1) {\n                currNode.right = new TreeNode(-1);\n                nodeQueue.offer(currNode.right);\n                leftQueue.offer(mid + 1);\n                rightQueue.offer(right);\n            }\n        }\n        return root;\n    }\n}",
+          "description": "Java实现，使用迭代法（左闭右闭）构建平衡二叉搜索树。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def traversal(self, nums: List[int], left: int, right: int) -> TreeNode:\n        if left > right:\n            return None\n\n        mid = left + (right - left) // 2\n        root = TreeNode(nums[mid])\n        root.left = self.traversal(nums, left, mid - 1)\n        root.right = self.traversal(nums, mid + 1, right)\n        return root\n\n    def sortedArrayToBST(self, nums: List[int]) -> TreeNode:\n        root = self.traversal(nums, 0, len(nums) - 1)\n        return root",
+          "description": "Python实现，使用递归法构建平衡二叉搜索树。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:\n        if not nums:\n            return\n        mid = len(nums) // 2\n        root = TreeNode(nums[mid])\n        root.left = self.sortedArrayToBST(nums[:mid])\n        root.right = self.sortedArrayToBST(nums[mid + 1 :])\n        return root",
+          "description": "Python实现，简化版本的递归法构建平衡二叉搜索树。"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\n\nclass Solution:\n    def sortedArrayToBST(self, nums: List[int]) -> TreeNode:\n        if len(nums) == 0:\n            return None\n\n        root = TreeNode(0)  # 初始根节点\n        nodeQue = deque()   # 放遍历的节点\n        leftQue = deque()   # 保存左区间下标\n        rightQue = deque()  # 保存右区间下标\n\n        nodeQue.append(root)               # 根节点入队列\n        leftQue.append(0)                  # 0为左区间下标初始位置\n        rightQue.append(len(nums) - 1)     # len(nums) - 1为右区间下标初始位置\n\n        while nodeQue:\n            curNode = nodeQue.popleft()\n            left = leftQue.popleft()\n            right = rightQue.popleft()\n            mid = left + (right - left) // 2\n\n            curNode.val = nums[mid]  # 将mid对应的元素给中间节点\n\n            if left <= mid - 1:  # 处理左区间\n                curNode.left = TreeNode(0)\n                nodeQue.append(curNode.left)\n                leftQue.append(left)\n                rightQue.append(mid - 1)\n\n            if right >= mid + 1:  # 处理右区间\n                curNode.right = TreeNode(0)\n                nodeQue.append(curNode.right)\n                leftQue.append(mid + 1)\n                rightQue.append(right)\n\n        return root",
+          "description": "Python实现，使用迭代法构建平衡二叉搜索树。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "递归",
+      "text": "递归三部曲：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: TreeNode* traversal(vector<int>& nums, int left, int right) {if (left > right) return nullptr;int mid = left + ((right - left) / 2);TreeNode* root = new TreeNode(nums[mid]);root->left = traversal(nums, left, mid - 1);root->right = traversal(nums, mid + 1, right);return root;}public: TreeNode* sortedArrayToBST(vector<int>& nums) {TreeNode* root = traversal(nums, 0, nums.size() - 1);return root;}};",
+          "description": "递归方法实现将有序数组转换为二叉搜索树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* sortedArrayToBST(vector<int>& nums) {if (nums.size() == 0) return nullptr;TreeNode* root = new TreeNode(0);queue<TreeNode*> nodeQue;queue<int> leftQue;queue<int> rightQue;nodeQue.push(root);leftQue.push(0);rightQue.push(nums.size() - 1);while (!nodeQue.empty()) {TreeNode* curNode = nodeQue.front();nodeQue.pop();int left = leftQue.front(); leftQue.pop();int right = rightQue.front(); rightQue.pop();int mid = left + ((right - left) / 2);curNode->val = nums[mid];if (left <= mid - 1) {curNode->left = new TreeNode(0);nodeQue.push(curNode->left);leftQue.push(left);rightQue.push(mid - 1);}if (right >= mid + 1) {curNode->right = new TreeNode(0);nodeQue.push(curNode->right);leftQue.push(mid + 1);rightQue.push(right);}}return root;}};",
+          "description": "迭代方法实现将有序数组转换为二叉搜索树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode sortedArrayToBST(int[] nums) {return sortedArrayToBST(nums, 0, nums.length);}public TreeNode sortedArrayToBST(int[] nums, int left, int right) {if (left >= right) {return null;}if (right - left == 1) {return new TreeNode(nums[left]);}int mid = left + (right - left) / 2;TreeNode root = new TreeNode(nums[mid]);root.left = sortedArrayToBST(nums, left, mid);root.right = sortedArrayToBST(nums, mid + 1, right);return root;}}",
+          "description": "Java递归方法，左闭右开区间实现将有序数组转换为二叉搜索树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode sortedArrayToBST(int[] nums) {TreeNode root = traversal(nums, 0, nums.length - 1);return root;}private TreeNode traversal(int[] nums, int left, int right) {if (left > right) return null;int mid = left + ((right - left) >> 1);TreeNode root = new TreeNode(nums[mid]);root.left = traversal(nums, left, mid - 1);root.right = traversal(nums, mid + 1, right);return root;}}",
+          "description": "Java递归方法，左闭右闭区间实现将有序数组转换为二叉搜索树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode sortedArrayToBST(int[] nums) {if (nums.length == 0) return null;TreeNode root = new TreeNode(-1);Queue<TreeNode> nodeQueue = new LinkedList<>();Queue<Integer> leftQueue = new LinkedList<>();Queue<Integer> rightQueue = new LinkedList<>();nodeQueue.offer(root);leftQueue.offer(0);rightQueue.offer(nums.length - 1);while (!nodeQueue.isEmpty()) {TreeNode currNode = nodeQueue.poll();int left = leftQueue.poll();int right = rightQueue.poll();int mid = left + ((right - left) >> 1);currNode.val = nums[mid];if (left <= mid - 1) {currNode.left = new TreeNode(-1);nodeQueue.offer(currNode.left);leftQueue.offer(left);rightQueue.offer(mid - 1);}if (right >= mid + 1) {currNode.right = new TreeNode(-1);nodeQueue.offer(currNode.right);leftQueue.offer(mid + 1);rightQueue.offer(right);}}return root;}}",
+          "description": "Java迭代方法实现将有序数组转换为二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def traversal(self, nums: List[int], left: int, right: int) -> TreeNode: if left > right: return None mid = left + (right - left) // 2 root = TreeNode(nums[mid]) root.left = self.traversal(nums, left, mid - 1) root.right = self.traversal(nums, mid + 1, right) return root def sortedArrayToBST(self, nums: List[int]) -> TreeNode: root = self.traversal(nums, 0, len(nums) - 1) return root",
+          "description": "Python递归方法实现将有序数组转换为二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]: if not nums: return mid = len(nums) // 2 root = TreeNode(nums[mid]) root.left = self.sortedArrayToBST(nums[:mid]) root.right = self.sortedArrayToBST(nums[mid + 1 :]) return root",
+          "description": "Python精简递归方法实现将有序数组转换为二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque class Solution: def sortedArrayToBST(self, nums: List[int]) -> TreeNode: if len(nums) == 0: return None root = TreeNode(0) nodeQue = deque() leftQue = deque() rightQue = deque() nodeQue.append(root) leftQue.append(0) rightQue.append(len(nums) - 1) while nodeQue: curNode = nodeQue.popleft() left = leftQue.popleft() right = rightQue.popleft() mid = left + (right - left) // 2 curNode.val = nums[mid] if left <= mid - 1: curNode.left = TreeNode(0) nodeQue.append(curNode.left) leftQue.append(left) rightQue.append(mid - 1) if right >= mid + 1: curNode.right = TreeNode(0) nodeQue.append(curNode.right) leftQue.append(mid + 1) rightQue.append(right) return root",
+          "description": "Python迭代方法实现将有序数组转换为二叉搜索树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "迭代法",
+      "text": "迭代法可以通过三个队列来模拟，一个队列放遍历的节点，一个队列放左区间下标，一个队列放右区间下标。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    TreeNode* traversal(vector<int>& nums, int left, int right) {\n        if (left > right) return nullptr;\n        int mid = left + ((right - left) / 2);\n        TreeNode* root = new TreeNode(nums[mid]);\n        root->left = traversal(nums, left, mid - 1);\n        root->right = traversal(nums, mid + 1, right);\n        return root;\n    }\npublic:\n    TreeNode* sortedArrayToBST(vector<int>& nums) {\n        TreeNode* root = traversal(nums, 0, nums.size() - 1);\n        return root;\n    }\n};",
+          "description": "使用递归方法将有序数组转换为二叉搜索树。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* sortedArrayToBST(vector<int>& nums) {\n        if (nums.size() == 0) return nullptr;\n\n        TreeNode* root = new TreeNode(0);   // 初始根节点\n        queue<TreeNode*> nodeQue;           // 放遍历的节点\n        queue<int> leftQue;                 // 保存左区间下标\n        queue<int> rightQue;                // 保存右区间下标\n        nodeQue.push(root);                 // 根节点入队列\n        leftQue.push(0);                    // 0为左区间下标初始位置\n        rightQue.push(nums.size() - 1);     // nums.size() - 1为右区间下标初始位置\n\n        while (!nodeQue.empty()) {\n            TreeNode* curNode = nodeQue.front();\n            nodeQue.pop();\n            int left = leftQue.front(); leftQue.pop();\n            int right = rightQue.front(); rightQue.pop();\n            int mid = left + ((right - left) / 2);\n\n            curNode->val = nums[mid];       // 将mid对应的元素给中间节点\n\n            if (left <= mid - 1) {          // 处理左区间\n                curNode->left = new TreeNode(0);\n                nodeQue.push(curNode->left);\n                leftQue.push(left);\n                rightQue.push(mid - 1);\n            }\n\n            if (right >= mid + 1) {         // 处理右区间\n                curNode->right = new TreeNode(0);\n                nodeQue.push(curNode->right);\n                leftQue.push(mid + 1);\n                rightQue.push(right);\n            }\n        }\n        return root;\n    }\n};",
+          "description": "使用迭代法（通过三个队列）将有序数组转换为平衡二叉搜索树。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode sortedArrayToBST(int[] nums) {\n        return sortedArrayToBST(nums, 0, nums.length);\n    }\n\n    public TreeNode sortedArrayToBST(int[] nums, int left, int right) {\n        if (left >= right) {\n            return null;\n        }\n        if (right - left == 1) {\n            return new TreeNode(nums[left]);\n        }\n        int mid = left + (right - left) / 2;\n        TreeNode root = new TreeNode(nums[mid]);\n        root.left = sortedArrayToBST(nums, left, mid);\n        root.right = sortedArrayToBST(nums, mid + 1, right);\n        return root;\n    }\n}",
+          "description": "Java版递归实现，采用左闭右开区间构造平衡二叉搜索树。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode sortedArrayToBST(int[] nums) {\n        if (nums.length == 0) return null;\n\n        TreeNode root = new TreeNode(-1);\n        Queue<TreeNode> nodeQueue = new LinkedList<>();\n        Queue<Integer> leftQueue = new LinkedList<>();\n        Queue<Integer> rightQueue = new LinkedList<>();\n\n        nodeQueue.offer(root);\n        leftQueue.offer(0);\n        rightQueue.offer(nums.length - 1);\n\n        while (!nodeQueue.isEmpty()) {\n            TreeNode currNode = nodeQueue.poll();\n            int left = leftQueue.poll();\n            int right = rightQueue.poll();\n            int mid = left + ((right - left) >> 1);\n\n            currNode.val = nums[mid];\n\n            if (left <= mid - 1) {\n                currNode.left = new TreeNode(-1);\n                nodeQueue.offer(currNode.left);\n                leftQueue.offer(left);\n                rightQueue.offer(mid - 1);\n            }\n\n            if (right >= mid + 1) {\n                currNode.right = new TreeNode(-1);\n                nodeQueue.offer(currNode.right);\n                leftQueue.offer(mid + 1);\n                rightQueue.offer(right);\n            }\n        }\n        return root;\n    }\n}",
+          "description": "Java版迭代实现，通过队列模拟构建平衡二叉搜索树的过程。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def traversal(self, nums: List[int], left: int, right: int) -> TreeNode:\n        if left > right:\n            return None\n\n        mid = left + (right - left) // 2\n        root = TreeNode(nums[mid])\n        root.left = self.traversal(nums, left, mid - 1)\n        root.right = self.traversal(nums, mid + 1, right)\n        return root\n\n    def sortedArrayToBST(self, nums: List[int]) -> TreeNode:\n        root = self.traversal(nums, 0, len(nums) - 1)\n        return root",
+          "description": "Python版递归实现，从中间分割点开始递归构建平衡二叉搜索树。"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\n\nclass Solution:\n    def sortedArrayToBST(self, nums: List[int]) -> TreeNode:\n        if len(nums) == 0:\n            return None\n\n        root = TreeNode(0)  # 初始根节点\n        nodeQue = deque()   # 放遍历的节点\n        leftQue = deque()   # 保存左区间下标\n        rightQue = deque()  # 保存右区间下标\n\n        nodeQue.append(root)               # 根节点入队列\n        leftQue.append(0)                  # 0为左区间下标初始位置\n        rightQue.append(len(nums) - 1)     # len(nums) - 1为右区间下标初始位置\n\n        while nodeQue:\n            curNode = nodeQue.popleft()\n            left = leftQue.popleft()\n            right = rightQue.popleft()\n            mid = left + (right - left) // 2\n\n            curNode.val = nums[mid]  # 将mid对应的元素给中间节点\n\n            if left <= mid - 1:  # 处理左区间\n                curNode.left = TreeNode(0)\n                nodeQue.append(curNode.left)\n                leftQue.append(left)\n                rightQue.append(mid - 1)\n\n            if right >= mid + 1:  # 处理右区间\n                curNode.right = TreeNode(0)\n                nodeQue.append(curNode.right)\n                leftQue.append(mid + 1)\n                rightQue.append(right)\n\n        return root",
+          "description": "Python版迭代实现，使用双端队列来模拟构建平衡二叉搜索树的过程。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "在二叉树：构造二叉树登场！ (https://programmercarl.com/0106.%E4%BB%8E%E4%B8%AD%E5%BA%8F%E4%B8%8E%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91.html)和 二叉树：构造一棵最大的二叉树 (https://programmercarl.com/0654.%E6%9C%80%E5%A4%A7%E4%BA%8C%E5%8F%89%E6%A0%91.html)之后，我们顺理成章的应该构造一下二叉搜索树了，一不小心还是一棵平衡二叉搜索树。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    TreeNode* traversal(vector<int>& nums, int left, int right) {\n        if (left > right) return nullptr;\n        int mid = left + ((right - left) / 2);\n        TreeNode* root = new TreeNode(nums[mid]);\n        root->left = traversal(nums, left, mid - 1);\n        root->right = traversal(nums, mid + 1, right);\n        return root;\n    }\npublic:\n    TreeNode* sortedArrayToBST(vector<int>& nums) {\n        TreeNode* root = traversal(nums, 0, nums.size() - 1);\n        return root;\n    }\n};",
+          "description": "C++实现的递归方法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* sortedArrayToBST(vector<int>& nums) {\n        if (nums.size() == 0) return nullptr;\n\n        TreeNode* root = new TreeNode(0);   // 初始根节点\n        queue<TreeNode*> nodeQue;           // 放遍历的节点\n        queue<int> leftQue;                 // 保存左区间下标\n        queue<int> rightQue;                // 保存右区间下标\n        nodeQue.push(root);                 // 根节点入队列\n        leftQue.push(0);                    // 0为左区间下标初始位置\n        rightQue.push(nums.size() - 1);     // nums.size() - 1为右区间下标初始位置\n\n        while (!nodeQue.empty()) {\n            TreeNode* curNode = nodeQue.front();\n            nodeQue.pop();\n            int left = leftQue.front(); leftQue.pop();\n            int right = rightQue.front(); rightQue.pop();\n            int mid = left + ((right - left) / 2);\n\n            curNode->val = nums[mid];       // 将mid对应的元素给中间节点\n\n            if (left <= mid - 1) {          // 处理左区间\n                curNode->left = new TreeNode(0);\n                nodeQue.push(curNode->left);\n                leftQue.push(left);\n                rightQue.push(mid - 1);\n            }\n\n            if (right >= mid + 1) {         // 处理右区间\n                curNode->right = new TreeNode(0);\n                nodeQue.push(curNode->right);\n                leftQue.push(mid + 1);\n                rightQue.push(right);\n            }\n        }\n        return root;\n    }\n};",
+          "description": "C++实现的迭代方法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode sortedArrayToBST(int[] nums) {\n        return sortedArrayToBST(nums, 0, nums.length);\n    }\n\n    public TreeNode sortedArrayToBST(int[] nums, int left, int right) {\n        if (left >= right) {\n            return null;\n        }\n        if (right - left == 1) {\n            return new TreeNode(nums[left]);\n        }\n        int mid = left + (right - left) / 2;\n        TreeNode root = new TreeNode(nums[mid]);\n        root.left = sortedArrayToBST(nums, left, mid);\n        root.right = sortedArrayToBST(nums, mid + 1, right);\n        return root;\n    }\n}",
+          "description": "Java实现的递归方法（左闭右开）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode sortedArrayToBST(int[] nums) {\n        TreeNode root = traversal(nums, 0, nums.length - 1);\n        return root;\n    }\n\n    private TreeNode traversal(int[] nums, int left, int right) {\n        if (left > right) return null;\n\n        int mid = left + ((right - left) >> 1);\n        TreeNode root = new TreeNode(nums[mid]);\n        root.left = traversal(nums, left, mid - 1);\n        root.right = traversal(nums, mid + 1, right);\n        return root;\n    }\n}",
+          "description": "Java实现的递归方法（左闭右闭）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode sortedArrayToBST(int[] nums) {\n        if (nums.length == 0) return null;\n\n        TreeNode root = new TreeNode(-1);\n        Queue<TreeNode> nodeQueue = new LinkedList<>();\n        Queue<Integer> leftQueue = new LinkedList<>();\n        Queue<Integer> rightQueue = new LinkedList<>();\n\n        nodeQueue.offer(root);\n        leftQueue.offer(0);\n        rightQueue.offer(nums.length - 1);\n\n        while (!nodeQueue.isEmpty()) {\n            TreeNode currNode = nodeQueue.poll();\n            int left = leftQueue.poll();\n            int right = rightQueue.poll();\n            int mid = left + ((right - left) >> 1);\n\n            currNode.val = nums[mid];\n\n            if (left <= mid - 1) {\n                currNode.left = new TreeNode(-1);\n                nodeQueue.offer(currNode.left);\n                leftQueue.offer(left);\n                rightQueue.offer(mid - 1);\n            }\n\n            if (right >= mid + 1) {\n                currNode.right = new TreeNode(-1);\n                nodeQueue.offer(currNode.right);\n                leftQueue.offer(mid + 1);\n                rightQueue.offer(right);\n            }\n        }\n        return root;\n    }\n}",
+          "description": "Java实现的迭代方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def traversal(self, nums: List[int], left: int, right: int) -> TreeNode:\n        if left > right:\n            return None\n\n        mid = left + (right - left) // 2\n        root = TreeNode(nums[mid])\n        root.left = self.traversal(nums, left, mid - 1)\n        root.right = self.traversal(nums, mid + 1, right)\n        return root\n\n    def sortedArrayToBST(self, nums: List[int]) -> TreeNode:\n        root = self.traversal(nums, 0, len(nums) - 1)\n        return root",
+          "description": "Python实现的递归方法"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\n\nclass Solution:\n    def sortedArrayToBST(self, nums: List[int]) -> TreeNode:\n        if len(nums) == 0:\n            return None\n\n        root = TreeNode(0)  # 初始根节点\n        nodeQue = deque()   # 放遍历的节点\n        leftQue = deque()   # 保存左区间下标\n        rightQue = deque()  # 保存右区间下标\n\n        nodeQue.append(root)               # 根节点入队列\n        leftQue.append(0)                  # 0为左区间下标初始位置\n        rightQue.append(len(nums) - 1)     # len(nums) - 1为右区间下标初始位置\n\n        while nodeQue:\n            curNode = nodeQue.popleft()\n            left = leftQue.popleft()\n            right = rightQue.popleft()\n            mid = left + (right - left) // 2\n\n            curNode.val = nums[mid]  # 将mid对应的元素给中间节点\n\n            if left <= mid - 1:  # 处理左区间\n                curNode.left = TreeNode(0)\n                nodeQue.append(curNode.left)\n                leftQue.append(left)\n                rightQue.append(mid - 1)\n\n            if right >= mid + 1:  # 处理右区间\n                curNode.right = TreeNode(0)\n                nodeQue.append(curNode.right)\n                leftQue.append(mid + 1)\n                rightQue.append(right)\n\n        return root",
+          "description": "Python实现的迭代方法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode sortedArrayToBST(int[] nums) {\n        return sortedArrayToBST(nums, 0, nums.length);\n    }\n    public TreeNode sortedArrayToBST(int[] nums, int left, int right) {\n        if (left >= right) {\n            return null;\n        }\n        if (right - left == 1) {\n            return new TreeNode(nums[left]);\n        }\n        int mid = left + (right - left) / 2;\n        TreeNode root = new TreeNode(nums[mid]);\n        root.left = sortedArrayToBST(nums, left, mid);\n        root.right = sortedArrayToBST(nums, mid + 1, right);\n        return root;\n    }\n}",
+          "description": "递归实现，左闭右开区间"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode sortedArrayToBST(int[] nums) {\n        TreeNode root = traversal(nums, 0, nums.length - 1);\n        return root;\n    }\n    private TreeNode traversal(int[] nums, int left, int right) {\n        if (left > right) return null;\n        int mid = left + ((right - left) >> 1);\n        TreeNode root = new TreeNode(nums[mid]);\n        root.left = traversal(nums, left, mid - 1);\n        root.right = traversal(nums, mid + 1, right);\n        return root;\n    }\n}",
+          "description": "递归实现，左闭右闭区间"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode sortedArrayToBST(int[] nums) {\n        if (nums.length == 0) return null;\n        TreeNode root = new TreeNode(-1);\n        Queue<TreeNode> nodeQueue = new LinkedList<>();\n        Queue<Integer> leftQueue = new LinkedList<>();\n        Queue<Integer> rightQueue = new LinkedList<>();\n        nodeQueue.offer(root);\n        leftQueue.offer(0);\n        rightQueue.offer(nums.length - 1);\n        while (!nodeQueue.isEmpty()) {\n            TreeNode currNode = nodeQueue.poll();\n            int left = leftQueue.poll();\n            int right = rightQueue.poll();\n            int mid = left + ((right - left) >> 1);\n            currNode.val = nums[mid];\n            if (left <= mid - 1) {\n                currNode.left = new TreeNode(-1);\n                nodeQueue.offer(currNode.left);\n                leftQueue.offer(left);\n                rightQueue.offer(mid - 1);\n            }\n            if (right >= mid + 1) {\n                currNode.right = new TreeNode(-1);\n                nodeQueue.offer(currNode.right);\n                leftQueue.offer(mid + 1);\n                rightQueue.offer(right);\n            }\n        }\n        return root;\n    }\n}",
+          "description": "迭代实现，使用队列模拟构造过程"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def traversal(self, nums: List[int], left: int, right: int) -> TreeNode:\n        if left > right:\n            return None\n        mid = left + (right - left) // 2\n        root = TreeNode(nums[mid])\n        root.left = self.traversal(nums, left, mid - 1)\n        root.right = self.traversal(nums, mid + 1, right)\n        return root\n    def sortedArrayToBST(self, nums: List[int]) -> TreeNode:\n        root = self.traversal(nums, 0, len(nums) - 1)\n        return root",
+          "description": "Python递归法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:\n        if not nums:\n            return\n        mid = len(nums) // 2\n        root = TreeNode(nums[mid])\n        root.left = self.sortedArrayToBST(nums[:mid])\n        root.right = self.sortedArrayToBST(nums[mid + 1 :])\n        return root",
+          "description": "Python递归精简版"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\nclass Solution:\n    def sortedArrayToBST(self, nums: List[int]) -> TreeNode:\n        if len(nums) == 0:\n            return None\n        root = TreeNode(0)\n        nodeQue = deque()\n        leftQue = deque()\n        rightQue = deque()\n        nodeQue.append(root)\n        leftQue.append(0)\n        rightQue.append(len(nums) - 1)\n        while nodeQue:\n            curNode = nodeQue.popleft()\n            left = leftQue.popleft()\n            right = rightQue.popleft()\n            mid = left + (right - left) // 2\n            curNode.val = nums[mid]\n            if left <= mid - 1:\n                curNode.left = TreeNode(0)\n                nodeQue.append(curNode.left)\n                leftQue.append(left)\n                rightQue.append(mid - 1)\n            if right >= mid + 1:\n                curNode.right = TreeNode(0)\n                nodeQue.append(curNode.right)\n                leftQue.append(mid + 1)\n                rightQue.append(right)\n        return root",
+          "description": "Python迭代法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "递归: 左闭右开 [left,right)",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    TreeNode* traversal(vector<int>& nums, int left, int right) {\n        if (left > right) return nullptr;\n        int mid = left + ((right - left) / 2);\n        TreeNode* root = new TreeNode(nums[mid]);\n        root->left = traversal(nums, left, mid - 1);\n        root->right = traversal(nums, mid + 1, right);\n        return root;\n    }\npublic:\n    TreeNode* sortedArrayToBST(vector<int>& nums) {\n        TreeNode* root = traversal(nums, 0, nums.size() - 1);\n        return root;\n    }\n};",
+          "description": "使用递归方法将有序数组转换为平衡二叉搜索树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* sortedArrayToBST(vector<int>& nums) {\n        if (nums.size() == 0) return nullptr;\n\n        TreeNode* root = new TreeNode(0);   // 初始根节点\n        queue<TreeNode*> nodeQue;           // 放遍历的节点\n        queue<int> leftQue;                 // 保存左区间下标\n        queue<int> rightQue;                // 保存右区间下标\n        nodeQue.push(root);                 // 根节点入队列\n        leftQue.push(0);                    // 0为左区间下标初始位置\n        rightQue.push(nums.size() - 1);     // nums.size() - 1为右区间下标初始位置\n\n        while (!nodeQue.empty()) {\n            TreeNode* curNode = nodeQue.front();\n            nodeQue.pop();\n            int left = leftQue.front(); leftQue.pop();\n            int right = rightQue.front(); rightQue.pop();\n            int mid = left + ((right - left) / 2);\n\n            curNode->val = nums[mid];       // 将mid对应的元素给中间节点\n\n            if (left <= mid - 1) {          // 处理左区间\n                curNode->left = new TreeNode(0);\n                nodeQue.push(curNode->left);\n                leftQue.push(left);\n                rightQue.push(mid - 1);\n            }\n\n            if (right >= mid + 1) {         // 处理右区间\n                curNode->right = new TreeNode(0);\n                nodeQue.push(curNode->right);\n                leftQue.push(mid + 1);\n                rightQue.push(right);\n            }\n        }\n        return root;\n    }\n};",
+          "description": "使用迭代方法通过三个队列来模拟不断分割的过程，将有序数组转换为平衡二叉搜索树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode sortedArrayToBST(int[] nums) {\n        return sortedArrayToBST(nums, 0, nums.length);\n    }\n\n    public TreeNode sortedArrayToBST(int[] nums, int left, int right) {\n        if (left >= right) {\n            return null;\n        }\n        if (right - left == 1) {\n            return new TreeNode(nums[left]);\n        }\n        int mid = left + (right - left) / 2;\n        TreeNode root = new TreeNode(nums[mid]);\n        root.left = sortedArrayToBST(nums, left, mid);\n        root.right = sortedArrayToBST(nums, mid + 1, right);\n        return root;\n    }\n}",
+          "description": "Java实现：使用递归方法（左闭右开）将有序数组转换为平衡二叉搜索树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode sortedArrayToBST(int[] nums) {\n        TreeNode root = traversal(nums, 0, nums.length - 1);\n        return root;\n    }\n\n    private TreeNode traversal(int[] nums, int left, int right) {\n        if (left > right) return null;\n\n        int mid = left + ((right - left) >> 1);\n        TreeNode root = new TreeNode(nums[mid]);\n        root.left = traversal(nums, left, mid - 1);\n        root.right = traversal(nums, mid + 1, right);\n        return root;\n    }\n}",
+          "description": "Java实现：使用递归方法（左闭右闭）将有序数组转换为平衡二叉搜索树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode sortedArrayToBST(int[] nums) {\n        if (nums.length == 0) return null;\n\n        TreeNode root = new TreeNode(-1);\n        Queue<TreeNode> nodeQueue = new LinkedList<>();\n        Queue<Integer> leftQueue = new LinkedList<>();\n        Queue<Integer> rightQueue = new LinkedList<>();\n\n        nodeQueue.offer(root);\n        leftQueue.offer(0);\n        rightQueue.offer(nums.length - 1);\n\n        while (!nodeQueue.isEmpty()) {\n            TreeNode currNode = nodeQueue.poll();\n            int left = leftQueue.poll();\n            int right = rightQueue.poll();\n            int mid = left + ((right - left) >> 1);\n\n            currNode.val = nums[mid];\n\n            if (left <= mid - 1) {\n                currNode.left = new TreeNode(-1);\n                nodeQueue.offer(currNode.left);\n                leftQueue.offer(left);\n                rightQueue.offer(mid - 1);\n            }\n\n            if (right >= mid + 1) {\n                currNode.right = new TreeNode(-1);\n                nodeQueue.offer(currNode.right);\n                leftQueue.offer(mid + 1);\n                rightQueue.offer(right);\n            }\n        }\n        return root;\n    }\n}",
+          "description": "Java实现：使用迭代方法将有序数组转换为平衡二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def traversal(self, nums: List[int], left: int, right: int) -> TreeNode:\n        if left > right:\n            return None\n\n        mid = left + (right - left) // 2\n        root = TreeNode(nums[mid])\n        root.left = self.traversal(nums, left, mid - 1)\n        root.right = self.traversal(nums, mid + 1, right)\n        return root\n\n    def sortedArrayToBST(self, nums: List[int]) -> TreeNode:\n        root = self.traversal(nums, 0, len(nums) - 1)\n        return root",
+          "description": "Python实现：使用递归方法将有序数组转换为平衡二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:\n        if not nums:\n            return\n        mid = len(nums) // 2\n        root = TreeNode(nums[mid])\n        root.left = self.sortedArrayToBST(nums[:mid])\n        root.right = self.sortedArrayToBST(nums[mid + 1 :])\n        return root",
+          "description": "Python实现：使用递归方法（精简版）将有序数组转换为平衡二叉搜索树"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\n\nclass Solution:\n    def sortedArrayToBST(self, nums: List[int]) -> TreeNode:\n        if len(nums) == 0:\n            return None\n\n        root = TreeNode(0)  # 初始根节点\n        nodeQue = deque()   # 放遍历的节点\n        leftQue = deque()   # 保存左区间下标\n        rightQue = deque()  # 保存右区间下标\n\n        nodeQue.append(root)               # 根节点入队列\n        leftQue.append(0)                  # 0为左区间下标初始位置\n        rightQue.append(len(nums) - 1)     # len(nums) - 1为右区间下标初始位置\n\n        while nodeQue:\n            curNode = nodeQue.popleft()\n            left = leftQue.popleft()\n            right = rightQue.popleft()\n            mid = left + (right - left) // 2\n\n            curNode.val = nums[mid]  # 将mid对应的元素给中间节点\n\n            if left <= mid - 1:  # 处理左区间\n                curNode.left = TreeNode(0)\n                nodeQue.append(curNode.left)\n                leftQue.append(left)\n                rightQue.append(mid - 1)\n\n            if right >= mid + 1:  # 处理右区间\n                curNode.right = TreeNode(0)\n                nodeQue.append(curNode.right)\n                leftQue.append(mid + 1)\n                rightQue.append(right)\n\n        return root",
+          "description": "Python实现：使用迭代方法将有序数组转换为平衡二叉搜索树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "递归法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    TreeNode* traversal(vector<int>& nums, int left, int right) {\n        if (left > right) return nullptr;\n        int mid = left + ((right - left) / 2);\n        TreeNode* root = new TreeNode(nums[mid]);\n        root->left = traversal(nums, left, mid - 1);\n        root->right = traversal(nums, mid + 1, right);\n        return root;\n    }\npublic:\n    TreeNode* sortedArrayToBST(vector<int>& nums) {\n        TreeNode* root = traversal(nums, 0, nums.size() - 1);\n        return root;\n    }\n};",
+          "description": "C++实现的递归法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* sortedArrayToBST(vector<int>& nums) {\n        if (nums.size() == 0) return nullptr;\n\n        TreeNode* root = new TreeNode(0);   // 初始根节点\n        queue<TreeNode*> nodeQue;           // 放遍历的节点\n        queue<int> leftQue;                 // 保存左区间下标\n        queue<int> rightQue;                // 保存右区间下标\n        nodeQue.push(root);                 // 根节点入队列\n        leftQue.push(0);                    // 0为左区间下标初始位置\n        rightQue.push(nums.size() - 1);     // nums.size() - 1为右区间下标初始位置\n\n        while (!nodeQue.empty()) {\n            TreeNode* curNode = nodeQue.front();\n            nodeQue.pop();\n            int left = leftQue.front(); leftQue.pop();\n            int right = rightQue.front(); rightQue.pop();\n            int mid = left + ((right - left) / 2);\n\n            curNode->val = nums[mid];       // 将mid对应的元素给中间节点\n\n            if (left <= mid - 1) {          // 处理左区间\n                curNode->left = new TreeNode(0);\n                nodeQue.push(curNode->left);\n                leftQue.push(left);\n                rightQue.push(mid - 1);\n            }\n\n            if (right >= mid + 1) {         // 处理右区间\n                curNode->right = new TreeNode(0);\n                nodeQue.push(curNode->right);\n                leftQue.push(mid + 1);\n                rightQue.push(right);\n            }\n        }\n        return root;\n    }\n};",
+          "description": "C++实现的迭代法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode sortedArrayToBST(int[] nums) {\n        return sortedArrayToBST(nums, 0, nums.length);\n    }\n\n    public TreeNode sortedArrayToBST(int[] nums, int left, int right) {\n        if (left >= right) {\n            return null;\n        }\n        if (right - left == 1) {\n            return new TreeNode(nums[left]);\n        }\n        int mid = left + (right - left) / 2;\n        TreeNode root = new TreeNode(nums[mid]);\n        root.left = sortedArrayToBST(nums, left, mid);\n        root.right = sortedArrayToBST(nums, mid + 1, right);\n        return root;\n    }\n}",
+          "description": "Java实现的递归法（左闭右开）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode sortedArrayToBST(int[] nums) {\n        TreeNode root = traversal(nums, 0, nums.length - 1);\n        return root;\n    }\n\n    private TreeNode traversal(int[] nums, int left, int right) {\n        if (left > right) return null;\n\n        int mid = left + ((right - left) >> 1);\n        TreeNode root = new TreeNode(nums[mid]);\n        root.left = traversal(nums, left, mid - 1);\n        root.right = traversal(nums, mid + 1, right);\n        return root;\n    }\n}",
+          "description": "Java实现的递归法（左闭右闭）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode sortedArrayToBST(int[] nums) {\n        if (nums.length == 0) return null;\n\n        TreeNode root = new TreeNode(-1);\n        Queue<TreeNode> nodeQueue = new LinkedList<>();\n        Queue<Integer> leftQueue = new LinkedList<>();\n        Queue<Integer> rightQueue = new LinkedList<>();\n\n        nodeQueue.offer(root);\n        leftQueue.offer(0);\n        rightQueue.offer(nums.length - 1);\n\n        while (!nodeQueue.isEmpty()) {\n            TreeNode currNode = nodeQueue.poll();\n            int left = leftQueue.poll();\n            int right = rightQueue.poll();\n            int mid = left + ((right - left) >> 1);\n\n            currNode.val = nums[mid];\n\n            if (left <= mid - 1) {\n                currNode.left = new TreeNode(-1);\n                nodeQueue.offer(currNode.left);\n                leftQueue.offer(left);\n                rightQueue.offer(mid - 1);\n            }\n\n            if (right >= mid + 1) {\n                currNode.right = new TreeNode(-1);\n                nodeQueue.offer(currNode.right);\n                leftQueue.offer(mid + 1);\n                rightQueue.offer(right);\n            }\n        }\n        return root;\n    }\n}",
+          "description": "Java实现的迭代法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def traversal(self, nums: List[int], left: int, right: int) -> TreeNode:\n        if left > right:\n            return None\n\n        mid = left + (right - left) // 2\n        root = TreeNode(nums[mid])\n        root.left = self.traversal(nums, left, mid - 1)\n        root.right = self.traversal(nums, mid + 1, right)\n        return root\n\n    def sortedArrayToBST(self, nums: List[int]) -> TreeNode:\n        root = self.traversal(nums, 0, len(nums) - 1)\n        return root",
+          "description": "Python实现的递归法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:\n        if not nums:\n            return\n        mid = len(nums) // 2\n        root = TreeNode(nums[mid])\n        root.left = self.sortedArrayToBST(nums[:mid])\n        root.right = self.sortedArrayToBST(nums[mid + 1 :])\n        return root",
+          "description": "Python实现的简化递归法"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\n\nclass Solution:\n    def sortedArrayToBST(self, nums: List[int]) -> TreeNode:\n        if len(nums) == 0:\n            return None\n\n        root = TreeNode(0)  # 初始根节点\n        nodeQue = deque()   # 放遍历的节点\n        leftQue = deque()   # 保存左区间下标\n        rightQue = deque()  # 保存右区间下标\n\n        nodeQue.append(root)               # 根节点入队列\n        leftQue.append(0)                  # 0为左区间下标初始位置\n        rightQue.append(len(nums) - 1)     # len(nums) - 1为右区间下标初始位置\n\n        while nodeQue:\n            curNode = nodeQue.popleft()\n            left = leftQue.popleft()\n            right = rightQue.popleft()\n            mid = left + (right - left) // 2\n\n            curNode.val = nums[mid]  # 将mid对应的元素给中间节点\n\n            if left <= mid - 1:  # 处理左区间\n                curNode.left = TreeNode(0)\n                nodeQue.append(curNode.left)\n                leftQue.append(left)\n                rightQue.append(mid - 1)\n\n            if right >= mid + 1:  # 处理右区间\n                curNode.right = TreeNode(0)\n                nodeQue.append(curNode.right)\n                leftQue.append(mid + 1)\n                rightQue.append(right)\n\n        return root",
+          "description": "Python实现的迭代法"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {private: TreeNode* traversal(vector<int>& nums, int left, int right) {if (left > right) return nullptr;int mid = left + ((right - left) / 2);TreeNode* root = new TreeNode(nums[mid]);root->left = traversal(nums, left, mid - 1);root->right = traversal(nums, mid + 1, right);return root;}public: TreeNode* sortedArrayToBST(vector<int>& nums) {TreeNode* root = traversal(nums, 0, nums.size() - 1);return root;}};",
+      "description": "C++递归实现将有序数组转换为二叉搜索树"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: TreeNode* sortedArrayToBST(vector<int>& nums) {if (nums.size() == 0) return nullptr;TreeNode* root = new TreeNode(0);queue<TreeNode*> nodeQue;queue<int> leftQue;queue<int> rightQue;nodeQue.push(root);leftQue.push(0);rightQue.push(nums.size() - 1);while (!nodeQue.empty()) {TreeNode* curNode = nodeQue.front();nodeQue.pop();int left = leftQue.front(); leftQue.pop();int right = rightQue.front(); rightQue.pop();int mid = left + ((right - left) / 2);curNode->val = nums[mid];if (left <= mid - 1) {curNode->left = new TreeNode(0);nodeQue.push(curNode->left);leftQue.push(left);rightQue.push(mid - 1);}if (right >= mid + 1) {curNode->right = new TreeNode(0);nodeQue.push(curNode->right);leftQue.push(mid + 1);rightQue.push(right);}}return root;}};",
+      "description": "C++迭代实现将有序数组转换为二叉搜索树"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public TreeNode sortedArrayToBST(int[] nums) {return sortedArrayToBST(nums, 0, nums.length);}public TreeNode sortedArrayToBST(int[] nums, int left, int right) {if (left >= right) {return null;}if (right - left == 1) {return new TreeNode(nums[left]);}int mid = left + (right - left) / 2;TreeNode root = new TreeNode(nums[mid]);root.left = sortedArrayToBST(nums, left, mid);root.right = sortedArrayToBST(nums, mid + 1, right);return root;}}",
+      "description": "Java递归（左闭右开区间）实现将有序数组转换为二叉搜索树"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public TreeNode sortedArrayToBST(int[] nums) {TreeNode root = traversal(nums, 0, nums.length - 1);return root;}private TreeNode traversal(int[] nums, int left, int right) {if (left > right) return null;int mid = left + ((right - left) >> 1);TreeNode root = new TreeNode(nums[mid]);root.left = traversal(nums, left, mid - 1);root.right = traversal(nums, mid + 1, right);return root;}}",
+      "description": "Java递归（左闭右闭区间）实现将有序数组转换为二叉搜索树"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public TreeNode sortedArrayToBST(int[] nums) {if (nums.length == 0) return null;TreeNode root = new TreeNode(-1);Queue<TreeNode> nodeQueue = new LinkedList<>();Queue<Integer> leftQueue = new LinkedList<>();Queue<Integer> rightQueue = new LinkedList<>();nodeQueue.offer(root);leftQueue.offer(0);rightQueue.offer(nums.length - 1);while (!nodeQueue.isEmpty()) {TreeNode currNode = nodeQueue.poll();int left = leftQueue.poll();int right = rightQueue.poll();int mid = left + ((right - left) >> 1);currNode.val = nums[mid];if (left <= mid - 1) {currNode.left = new TreeNode(-1);nodeQueue.offer(currNode.left);leftQueue.offer(left);rightQueue.offer(mid - 1);}if (right >= mid + 1) {currNode.right = new TreeNode(-1);nodeQueue.offer(currNode.right);leftQueue.offer(mid + 1);rightQueue.offer(right);}}return root;}}",
+      "description": "Java迭代实现将有序数组转换为二叉搜索树"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def traversal(self, nums: List[int], left: int, right: int) -> TreeNode: if left > right: return None mid = left + (right - left) // 2 root = TreeNode(nums[mid]) root.left = self.traversal(nums, left, mid - 1) root.right = self.traversal(nums, mid + 1, right) return root def sortedArrayToBST(self, nums: List[int]) -> TreeNode: root = self.traversal(nums, 0, len(nums) - 1) return root",
+      "description": "Python递归实现将有序数组转换为二叉搜索树"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]: if not nums: return mid = len(nums) // 2 root = TreeNode(nums[mid]) root.left = self.sortedArrayToBST(nums[:mid]) root.right = self.sortedArrayToBST(nums[mid + 1 :]) return root",
+      "description": "Python精简递归实现将有序数组转换为二叉搜索树"
+    },
+    {
+      "language": "python",
+      "code": "from collections import deque class Solution: def sortedArrayToBST(self, nums: List[int]) -> TreeNode: if len(nums) == 0: return None root = TreeNode(0) nodeQue = deque() leftQue = deque() rightQue = deque() nodeQue.append(root) leftQue.append(0) rightQue.append(len(nums) - 1) while nodeQue: curNode = nodeQue.popleft() left = leftQue.popleft() right = rightQue.popleft() mid = left + (right - left) // 2 curNode.val = nums[mid] if left <= mid - 1: curNode.left = TreeNode(0) nodeQue.append(curNode.left) leftQue.append(left) rightQue.append(mid - 1) if right >= mid + 1: curNode.right = TreeNode(0) nodeQue.append(curNode.right) leftQue.append(mid + 1) rightQue.append(right) return root",
+      "description": "Python迭代实现将有序数组转换为二叉搜索树"
+    }
+  ],
+  "common_mistakes": [
+    "在计算中点时可能发生的整数溢出问题。推荐使用 mid = left + ((right - left) / 2); 来避免这个问题。",
+    "不正确地处理数组边界情况，比如当left > right时应返回nullptr。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201022164420763.png",
+      "description": "该图片展示了如何将有序数组 [-10, -3, 0, 5, 9] 转换为高度平衡的二叉搜索树，具体表示为 [0, -3, 9, -10, null, 5]。",
+      "context": "该图片展示了如何将一个升序排列的有序数组转换成一棵高度平衡的二叉搜索树的例子。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20220930173553.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20220930173553.png",
+      "context": "该图片展示了如何将一个有序数组[-10, -3, 0, 5, 9]构造成一棵非平衡的二叉搜索树，用以说明如果题目不强调构建平衡二叉搜索树，则可能失去其考察意义。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/108.将有序数组转换为二叉搜索树.png",
+      "description": "这张图片展示了两棵二叉树（树1和树2），每棵树的节点值不同，可用于比较或合并算法的示例。",
+      "context": "图片相关说明"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201022164420763.png",
+      "description": "GIF展示了将有序数组逐步转换为高度平衡二叉搜索树的过程。",
+      "context": "该GIF动画展示了如何将一个升序排列的有序数组转换为一棵高度平衡的二叉搜索树的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20220930173553.png",
+      "description": "GIF展示了如何将一个有序数组转换成非平衡的二叉搜索树的过程。",
+      "context": "该GIF动画展示了如何将一个有序数组[-10，-3，0，5，9]构造成一个线性的二叉搜索树，用以说明如果不强调构造平衡树的话，题目要求的意义将会大大降低。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/108.%E5%B0%86%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84%E8%BD%AC%E6%8D%A2%E4%B8%BA%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91.png",
+      "description": "GIF展示了如何通过递归方法将有序数组转换为平衡二叉搜索树的过程。",
+      "context": "该GIF展示了如何从一个有序数组构造出不同的平衡二叉搜索树，特别是当数组长度为偶数时，通过选择不同中间点作为根节点的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\将有序数组转换为二叉搜索树.txt",
+  "extracted_at": "2025-07-19T21:29:48.015781",
+  "raw_content": "将有序数组转换为二叉搜索树\n力扣题目链接(https://leetcode.cn/problems/convert-sorted-array-to-binary-search-tree/)\n\n将一个按照升序排列的有序数组，转换为一棵高度平衡二叉搜索树。\n\n本题中，一个高度平衡二叉树是指一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1。\n\n示例:\n\nhttps://file1.kamacoder.com/i/algo/20201022164420763.png\n\n\n#思路\n做这道题目之前大家可以了解一下这几道：\n\n106.从中序与后序遍历序列构造二叉树(https://programmercarl.com/0106.%E4%BB%8E%E4%B8%AD%E5%BA%8F%E4%B8%8E%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91.html)\n654.最大二叉树 (https://programmercarl.com/0654.%E6%9C%80%E5%A4%A7%E4%BA%8C%E5%8F%89%E6%A0%91.html)中其实已经讲过了，如果根据数组构造一棵二叉树。\n701.二叉搜索树中的插入操作(https://programmercarl.com/0701.%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E6%8F%92%E5%85%A5%E6%93%8D%E4%BD%9C.html)\n450.删除二叉搜索树中的节点(https://programmercarl.com/0450.%E5%88%A0%E9%99%A4%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B9.html)\n进入正题：\n\n题目中说要转换为一棵高度平衡二叉搜索树。为什么强调要平衡呢？\n\n因为只要给我们一个有序数组，如果不强调平衡，都可以以线性结构来构造二叉搜索树。\n\n例如 有序数组[-10，-3，0，5，9] 就可以构造成这样的二叉搜索树，如图。\n\nhttps://file1.kamacoder.com/i/algo/20220930173553.png\n\n上图中，是符合二叉搜索树的特性吧，如果要这么做的话，是不是本题意义就不大了，所以才强调是平衡二叉搜索树。\n\n其实数组构造二叉树，构成平衡树是自然而然的事情，因为大家默认都是从数组中间位置取值作为节点元素，一般不会随机取。所以想构成不平衡的二叉树是自找麻烦。\n\n在二叉树：构造二叉树登场！ (https://programmercarl.com/0106.%E4%BB%8E%E4%B8%AD%E5%BA%8F%E4%B8%8E%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91.html)和二叉树：构造一棵最大的二叉树 (https://programmercarl.com/0654.%E6%9C%80%E5%A4%A7%E4%BA%8C%E5%8F%89%E6%A0%91.html)中其实已经讲过了，如果根据数组构造一棵二叉树。\n\n本质就是寻找分割点，分割点作为当前节点，然后递归左区间和右区间。\n\n本题其实要比二叉树：构造二叉树登场！ (https://programmercarl.com/0106.%E4%BB%8E%E4%B8%AD%E5%BA%8F%E4%B8%8E%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91.html)和 二叉树：构造一棵最大的二叉树 (https://programmercarl.com/0654.%E6%9C%80%E5%A4%A7%E4%BA%8C%E5%8F%89%E6%A0%91.html)简单一些，因为有序数组构造二叉搜索树，寻找分割点就比较容易了。\n\n分割点就是数组中间位置的节点。\n\n那么为问题来了，如果数组长度为偶数，中间节点有两个，取哪一个？\n\n取哪一个都可以，只不过构成了不同的平衡二叉搜索树。\n\n例如：输入：[-10,-3,0,5,9]\n\n如下两棵树，都是这个数组的平衡二叉搜索树：\n\nhttps://file1.kamacoder.com/i/algo/108.%E5%B0%86%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84%E8%BD%AC%E6%8D%A2%E4%B8%BA%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91.png\n\n如果要分割的数组长度为偶数的时候，中间元素为两个，是取左边元素 就是树1，取右边元素就是树2。\n\n这也是题目中强调答案不是唯一的原因。 理解这一点，这道题目算是理解到位了。\n\n#递归\n递归三部曲：\n\n确定递归函数返回值及其参数\n删除二叉树节点，增加二叉树节点，都是用递归函数的返回值来完成，这样是比较方便的。\n\n相信大家如果仔细看了二叉树：搜索树中的插入操作 (https://programmercarl.com/0701.%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E6%8F%92%E5%85%A5%E6%93%8D%E4%BD%9C.html)和二叉树：搜索树中的删除操作 (https://programmercarl.com/0450.%E5%88%A0%E9%99%A4%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B9.html)，一定会对递归函数返回值的作用深有感触。\n\n那么本题要构造二叉树，依然用递归函数的返回值来构造中节点的左右孩子。\n\n再来看参数，首先是传入数组，然后就是左下标left和右下标right，我们在二叉树：构造二叉树登场！ (https://programmercarl.com/0106.%E4%BB%8E%E4%B8%AD%E5%BA%8F%E4%B8%8E%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91.html)中提过，在构造二叉树的时候尽量不要重新定义左右区间数组，而是用下标来操作原数组。\n\n所以代码如下：\n\n// 左闭右闭区间[left, right]\nTreeNode* traversal(vector<int>& nums, int left, int right)\n这里注意，我这里定义的是左闭右闭区间，在不断分割的过程中，也会坚持左闭右闭的区间，这又涉及到我们讲过的循环不变量。\n\n在二叉树：构造二叉树登场！ (https://programmercarl.com/0106.%E4%BB%8E%E4%B8%AD%E5%BA%8F%E4%B8%8E%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91.html)，35.搜索插入位置 (https://programmercarl.com/0035.%E6%90%9C%E7%B4%A2%E6%8F%92%E5%85%A5%E4%BD%8D%E7%BD%AE.html)和59.螺旋矩阵II (https://programmercarl.com/0059.%E8%9E%BA%E6%97%8B%E7%9F%A9%E9%98%B5II.html)都详细讲过循环不变量。\n\n确定递归终止条件\n这里定义的是左闭右闭的区间，所以当区间 left > right的时候，就是空节点了。\n\n代码如下：\n\nif (left > right) return nullptr;\n确定单层递归的逻辑\n首先取数组中间元素的位置，不难写出int mid = (left + right) / 2;，这么写其实有一个问题，就是数值越界，例如left和right都是最大int，这么操作就越界了，在二分法 (opens new window)中尤其需要注意！\n\n所以可以这么写：int mid = left + ((right - left) / 2);\n\n但本题leetcode的测试数据并不会越界，所以怎么写都可以。但需要有这个意识！\n\n取了中间位置，就开始以中间位置的元素构造节点，代码：TreeNode* root = new TreeNode(nums[mid]);。\n\n接着划分区间，root的左孩子接住下一层左区间的构造节点，右孩子接住下一层右区间构造的节点。\n\n最后返回root节点，单层递归整体代码如下：\n\nint mid = left + ((right - left) / 2);\nTreeNode* root = new TreeNode(nums[mid]);\nroot->left = traversal(nums, left, mid - 1);\nroot->right = traversal(nums, mid + 1, right);\nreturn root;\n这里int mid = left + ((right - left) / 2);的写法相当于是如果数组长度为偶数，中间位置有两个元素，取靠左边的。\n\n递归整体代码如下：\nclass Solution {\nprivate:\n    TreeNode* traversal(vector<int>& nums, int left, int right) {\n        if (left > right) return nullptr;\n        int mid = left + ((right - left) / 2);\n        TreeNode* root = new TreeNode(nums[mid]);\n        root->left = traversal(nums, left, mid - 1);\n        root->right = traversal(nums, mid + 1, right);\n        return root;\n    }\npublic:\n    TreeNode* sortedArrayToBST(vector<int>& nums) {\n        TreeNode* root = traversal(nums, 0, nums.size() - 1);\n        return root;\n    }\n};\n注意：在调用traversal的时候传入的left和right为什么是0和nums.size() - 1，因为定义的区间为左闭右闭。\n\n#迭代法\n迭代法可以通过三个队列来模拟，一个队列放遍历的节点，一个队列放左区间下标，一个队列放右区间下标。\n\n模拟的就是不断分割的过程，C++代码如下：（我已经详细注释）\n\nclass Solution {\npublic:\n    TreeNode* sortedArrayToBST(vector<int>& nums) {\n        if (nums.size() == 0) return nullptr;\n\n        TreeNode* root = new TreeNode(0);   // 初始根节点\n        queue<TreeNode*> nodeQue;           // 放遍历的节点\n        queue<int> leftQue;                 // 保存左区间下标\n        queue<int> rightQue;                // 保存右区间下标\n        nodeQue.push(root);                 // 根节点入队列\n        leftQue.push(0);                    // 0为左区间下标初始位置\n        rightQue.push(nums.size() - 1);     // nums.size() - 1为右区间下标初始位置\n\n        while (!nodeQue.empty()) {\n            TreeNode* curNode = nodeQue.front();\n            nodeQue.pop();\n            int left = leftQue.front(); leftQue.pop();\n            int right = rightQue.front(); rightQue.pop();\n            int mid = left + ((right - left) / 2);\n\n            curNode->val = nums[mid];       // 将mid对应的元素给中间节点\n\n            if (left <= mid - 1) {          // 处理左区间\n                curNode->left = new TreeNode(0);\n                nodeQue.push(curNode->left);\n                leftQue.push(left);\n                rightQue.push(mid - 1);\n            }\n\n            if (right >= mid + 1) {         // 处理右区间\n                curNode->right = new TreeNode(0);\n                nodeQue.push(curNode->right);\n                leftQue.push(mid + 1);\n                rightQue.push(right);\n            }\n        }\n        return root;\n    }\n};\n#总结\n在二叉树：构造二叉树登场！ (https://programmercarl.com/0106.%E4%BB%8E%E4%B8%AD%E5%BA%8F%E4%B8%8E%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91.html)和 二叉树：构造一棵最大的二叉树 (https://programmercarl.com/0654.%E6%9C%80%E5%A4%A7%E4%BA%8C%E5%8F%89%E6%A0%91.html)之后，我们顺理成章的应该构造一下二叉搜索树了，一不小心还是一棵平衡二叉搜索树。\n\n其实思路也是一样的，不断中间分割，然后递归处理左区间，右区间，也可以说是分治。\n\n此时相信大家应该对通过递归函数的返回值来增删二叉树很熟悉了，这也是常规操作。\n\n在定义区间的过程中我们又一次强调了循环不变量的重要性。\n\n最后依然给出迭代的方法，其实就是模拟取中间元素，然后不断分割去构造二叉树的过程。\n\n#其他语言版本\n#Java\n递归: 左闭右开 [left,right)\n\nclass Solution {\n    public TreeNode sortedArrayToBST(int[] nums) {\n        return sortedArrayToBST(nums, 0, nums.length);\n    }\n    \n    public TreeNode sortedArrayToBST(int[] nums, int left, int right) {\n        if (left >= right) {\n            return null;\n        }\n        if (right - left == 1) {\n            return new TreeNode(nums[left]);\n        }\n        int mid = left + (right - left) / 2;\n        TreeNode root = new TreeNode(nums[mid]);\n        root.left = sortedArrayToBST(nums, left, mid);\n        root.right = sortedArrayToBST(nums, mid + 1, right);\n        return root;\n    }\n}\n\n递归: 左闭右闭 [left,right]\n\nclass Solution {\n\tpublic TreeNode sortedArrayToBST(int[] nums) {\n\t\tTreeNode root = traversal(nums, 0, nums.length - 1);\n\t\treturn root;\n\t}\n\n\t// 左闭右闭区间[left, right]\n\tprivate TreeNode traversal(int[] nums, int left, int right) {\n\t\tif (left > right) return null;\n\n\t\tint mid = left + ((right - left) >> 1);\n\t\tTreeNode root = new TreeNode(nums[mid]);\n\t\troot.left = traversal(nums, left, mid - 1);\n\t\troot.right = traversal(nums, mid + 1, right);\n\t\treturn root;\n\t}\n}\n迭代: 左闭右闭 [left,right]\n\nclass Solution {\n\tpublic TreeNode sortedArrayToBST(int[] nums) {\n\t\tif (nums.length == 0) return null;\n\n\t\t//根节点初始化\n\t\tTreeNode root = new TreeNode(-1);\n\t\tQueue<TreeNode> nodeQueue = new LinkedList<>();\n\t\tQueue<Integer> leftQueue = new LinkedList<>();\n\t\tQueue<Integer> rightQueue = new LinkedList<>();\n\n\t\t// 根节点入队列\n\t\tnodeQueue.offer(root);\n\t\t// 0为左区间下标初始位置\n\t\tleftQueue.offer(0);\n\t\t// nums.size() - 1为右区间下标初始位置\n\t\trightQueue.offer(nums.length - 1);\n\n\t\twhile (!nodeQueue.isEmpty()) {\n\t\t\tTreeNode currNode = nodeQueue.poll();\n\t\t\tint left = leftQueue.poll();\n\t\t\tint right = rightQueue.poll();\n\t\t\tint mid = left + ((right - left) >> 1);\n\n\t\t\t// 将mid对应的元素给中间节点\n\t\t\tcurrNode.val = nums[mid];\n\n\t\t\t// 处理左区间\n\t\t\tif (left <= mid - 1) {\n\t\t\t\tcurrNode.left = new TreeNode(-1);\n\t\t\t\tnodeQueue.offer(currNode.left);\n\t\t\t\tleftQueue.offer(left);\n\t\t\t\trightQueue.offer(mid - 1);\n\t\t\t}\n\n\t\t\t// 处理右区间\n\t\t\tif (right >= mid + 1) {\n\t\t\t\tcurrNode.right = new TreeNode(-1);\n\t\t\t\tnodeQueue.offer(currNode.right);\n\t\t\t\tleftQueue.offer(mid + 1);\n\t\t\t\trightQueue.offer(right);\n\t\t\t}\n\t\t}\n\t\treturn root;\n\t}\n}\n#Python\n递归法\n\nclass Solution:\n    def traversal(self, nums: List[int], left: int, right: int) -> TreeNode:\n        if left > right:\n            return None\n        \n        mid = left + (right - left) // 2\n        root = TreeNode(nums[mid])\n        root.left = self.traversal(nums, left, mid - 1)\n        root.right = self.traversal(nums, mid + 1, right)\n        return root\n    \n    def sortedArrayToBST(self, nums: List[int]) -> TreeNode:\n        root = self.traversal(nums, 0, len(nums) - 1)\n        return root\n\n递归 精简(自身调用)\n\nclass Solution:\n    def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:\n        if not nums:\n            return\n        mid = len(nums) // 2\n        root = TreeNode(nums[mid])\n        root.left = self.sortedArrayToBST(nums[:mid])\n        root.right = self.sortedArrayToBST(nums[mid + 1 :])\n        return root\n迭代法\n\nfrom collections import deque\n\nclass Solution:\n    def sortedArrayToBST(self, nums: List[int]) -> TreeNode:\n        if len(nums) == 0:\n            return None\n        \n        root = TreeNode(0)  # 初始根节点\n        nodeQue = deque()   # 放遍历的节点\n        leftQue = deque()   # 保存左区间下标\n        rightQue = deque()  # 保存右区间下标\n        \n        nodeQue.append(root)               # 根节点入队列\n        leftQue.append(0)                  # 0为左区间下标初始位置\n        rightQue.append(len(nums) - 1)     # len(nums) - 1为右区间下标初始位置\n\n        while nodeQue:\n            curNode = nodeQue.popleft()\n            left = leftQue.popleft()\n            right = rightQue.popleft()\n            mid = left + (right - left) // 2\n\n            curNode.val = nums[mid]  # 将mid对应的元素给中间节点\n\n            if left <= mid - 1:  # 处理左区间\n                curNode.left = TreeNode(0)\n                nodeQue.append(curNode.left)\n                leftQue.append(left)\n                rightQue.append(mid - 1)\n\n            if right >= mid + 1:  # 处理右区间\n                curNode.right = TreeNode(0)\n                nodeQue.append(curNode.right)\n                leftQue.append(mid + 1)\n                rightQue.append(right)\n\n        return root"
+}

@@ -1,0 +1,200 @@
+{
+  "id": "AP_7449618b",
+  "title": "合并区间",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/merge-intervals/",
+  "description": "合并所有重叠的区间。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "排序",
+    "贪心"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "Lambda表达式（C++）",
+    "Comparator接口（Java）",
+    "双指针"
+  ],
+  "difficulty": null,
+  "solution_approach": "首先对区间按照左边界进行排序，然后遍历排序后的区间数组。如果当前区间的左边界小于等于结果集中最后一个区间的右边界，则说明存在重叠，需要合并这两个区间；否则直接将当前区间加入到结果集中。",
+  "key_insights": [
+    {
+      "content": "通过先对区间按左边界从小到大排序，可以确保在遍历时，只需关注相邻区间是否重叠，从而简化了问题。"
+    },
+    {
+      "content": "当发现两个区间重叠时，仅需更新结果集中的最后一个区间的右边界为两者右边界的较大值，因为结果集中的最后一个区间的左边界已经是当前最小值。"
+    },
+    {
+      "content": "使用双指针技术来跟踪当前处理的区间和结果集中的最后一个区间，从而高效地完成区间合并。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "本题的本质其实还是判断重叠区间问题。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> merge(vector<vector<int>>& intervals) {vector<vector<int>> result;if (intervals.size() == 0) return result;sort(intervals.begin(), intervals.end(), [](const vector<int>& a, const vector<int>& b){return a[0] < b[0];});result.push_back(intervals[0]);for (int i = 1; i < intervals.size(); i++) {if (result.back()[1] >= intervals[i][0]) {result.back()[1] = max(result.back()[1], intervals[i][1]);} else {result.push_back(intervals[i]);}}return result;}};",
+          "description": "C++实现的合并区间算法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[][] merge(int[][] intervals) {List<int[]> res = new LinkedList<>();Arrays.sort(intervals, (x, y) -> Integer.compare(x[0], y[0]));int start = intervals[0][0];int rightmostRightBound = intervals[0][1];for (int i = 1; i < intervals.length; i++) {if (intervals[i][0] > rightmostRightBound) {res.add(new int[]{start, rightmostRightBound});start = intervals[i][0];rightmostRightBound = intervals[i][1];} else {rightmostRightBound = Math.max(rightmostRightBound, intervals[i][1]);}}res.add(new int[]{start, rightmostRightBound});return res.toArray(new int[res.size()][]);}}",
+          "description": "Java实现的合并区间算法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[][] merge(int[][] intervals) {LinkedList<int[]> res = new LinkedList<>();Arrays.sort(intervals, (o1, o2) -> Integer.compare(o1[0], o2[0]));res.add(intervals[0]);for (int i = 1; i < intervals.length; i++) {if (intervals[i][0] <= res.getLast()[1]) {int start = res.getLast()[0];int end = Math.max(intervals[i][1], res.getLast()[1]);res.removeLast();res.add(new int[]{start, end});}else {res.add(intervals[i]);}}return res.toArray(new int[res.size()][]);}}",
+          "description": "另一种Java实现的合并区间算法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def merge(self, intervals): result = [] if len(intervals) == 0: return result intervals.sort(key=lambda x: x[0]) result.append(intervals[0]) for i in range(1, len(intervals)): if result[-1][1] >= intervals[i][0]: result[-1][1] = max(result[-1][1], intervals[i][1]) else: result.append(intervals[i]) return result",
+          "description": "Python实现的合并区间算法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> merge(vector<vector<int>>& intervals) {vector<vector<int>> result;if (intervals.size() == 0) return result;sort(intervals.begin(), intervals.end(), [](const vector<int>& a, const vector<int>& b){return a[0] < b[0];});result.push_back(intervals[0]);for (int i = 1; i < intervals.size(); i++) {if (result.back()[1] >= intervals[i][0]) {result.back()[1] = max(result.back()[1], intervals[i][1]);} else {result.push_back(intervals[i]);}}return result;}};",
+          "description": "C++实现合并区间功能"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[][] merge(int[][] intervals) {List<int[]> res = new LinkedList<>();Arrays.sort(intervals, (x, y) -> Integer.compare(x[0], y[0]));int start = intervals[0][0];int rightmostRightBound = intervals[0][1];for (int i = 1; i < intervals.length; i++) {if (intervals[i][0] > rightmostRightBound) {res.add(new int[]{start, rightmostRightBound});start = intervals[i][0];rightmostRightBound = intervals[i][1];} else {rightmostRightBound = Math.max(rightmostRightBound, intervals[i][1]);}}res.add(new int[]{start, rightmostRightBound});return res.toArray(new int[res.size()][]);}}",
+          "description": "Java实现合并区间功能版本1"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[][] merge(int[][] intervals) {LinkedList<int[]> res = new LinkedList<>();Arrays.sort(intervals, (o1, o2) -> Integer.compare(o1[0], o2[0]));res.add(intervals[0]);for (int i = 1; i < intervals.length; i++) {if (intervals[i][0] <= res.getLast()[1]) {int start = res.getLast()[0];int end = Math.max(intervals[i][1], res.getLast()[1]);res.removeLast();res.add(new int[]{start, end});} else {res.add(intervals[i]);}}return res.toArray(new int[res.size()][]);}}",
+          "description": "Java实现合并区间功能版本2"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def merge(self, intervals): result = [] if len(intervals) == 0: return result intervals.sort(key=lambda x: x[0]) result.append(intervals[0]) for i in range(1, len(intervals)): if result[-1][1] >= intervals[i][0]: result[-1][1] = max(result[-1][1], intervals[i][1]) else: result.append(intervals[i]) return result",
+          "description": "Python实现合并区间功能"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "/**",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> merge(vector<vector<int>>& intervals) {vector<vector<int>> result;if (intervals.size() == 0) return result;sort(intervals.begin(), intervals.end(), [](const vector<int>& a, const vector<int>& b){return a[0] < b[0];});result.push_back(intervals[0]);for (int i = 1; i < intervals.size(); i++) {if (result.back()[1] >= intervals[i][0]) {result.back()[1] = max(result.back()[1], intervals[i][1]);} else {result.push_back(intervals[i]);}}return result;}};",
+          "description": "C++实现的合并区间算法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[][] merge(int[][] intervals) {List<int[]> res = new LinkedList<>();Arrays.sort(intervals, (x, y) -> Integer.compare(x[0], y[0]));int start = intervals[0][0];int rightmostRightBound = intervals[0][1];for (int i = 1; i < intervals.length; i++) {if (intervals[i][0] > rightmostRightBound) {res.add(new int[]{start, rightmostRightBound});start = intervals[i][0];rightmostRightBound = intervals[i][1];} else {rightmostRightBound = Math.max(rightmostRightBound, intervals[i][1]);}}res.add(new int[]{start, rightmostRightBound});return res.toArray(new int[res.size()][]);}}",
+          "description": "Java实现的第一版本合并区间算法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[][] merge(int[][] intervals) {LinkedList<int[]> res = new LinkedList<>();Arrays.sort(intervals, (o1, o2) -> Integer.compare(o1[0], o2[0]));res.add(intervals[0]);for (int i = 1; i < intervals.length; i++) {if (intervals[i][0] <= res.getLast()[1]) {int start = res.getLast()[0];int end = Math.max(intervals[i][1], res.getLast()[1]);res.removeLast();res.add(new int[]{start, end});} else {res.add(intervals[i]);}}return res.toArray(new int[res.size()][]);}}",
+          "description": "Java实现的第二版本合并区间算法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def merge(self, intervals): result = [] if len(intervals) == 0: return result intervals.sort(key=lambda x: x[0]) result.append(intervals[0]) for i in range(1, len(intervals)): if result[-1][1] >= intervals[i][0]: result[-1][1] = max(result[-1][1], intervals[i][1]) else: result.append(intervals[i]) return result",
+          "description": "Python实现的合并区间算法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "class Solution:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> merge(vector<vector<int>>& intervals) {vector<vector<int>> result;if (intervals.size() == 0) return result;sort(intervals.begin(), intervals.end(), [](const vector<int>& a, const vector<int>& b){return a[0] < b[0];});result.push_back(intervals[0]);for (int i = 1; i < intervals.size(); i++) {if (result.back()[1] >= intervals[i][0]) {result.back()[1] = max(result.back()[1], intervals[i][1]);} else {result.push_back(intervals[i]);}}return result;}};",
+          "description": "C++实现合并区间"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[][] merge(int[][] intervals) {List<int[]> res = new LinkedList<>();Arrays.sort(intervals, (x, y) -> Integer.compare(x[0], y[0]));int start = intervals[0][0];int rightmostRightBound = intervals[0][1];for (int i = 1; i < intervals.length; i++) {if (intervals[i][0] > rightmostRightBound) {res.add(new int[]{start, rightmostRightBound});start = intervals[i][0];rightmostRightBound = intervals[i][1];} else {rightmostRightBound = Math.max(rightmostRightBound, intervals[i][1]);}}res.add(new int[]{start, rightmostRightBound});return res.toArray(new int[res.size()][]);}}",
+          "description": "Java实现合并区间版本1"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[][] merge(int[][] intervals) {LinkedList<int[]> res = new LinkedList<>();Arrays.sort(intervals, (o1, o2) -> Integer.compare(o1[0], o2[0]));res.add(intervals[0]);for (int i = 1; i < intervals.length; i++) {if (intervals[i][0] <= res.getLast()[1]) {int start = res.getLast()[0];int end = Math.max(intervals[i][1], res.getLast()[1]);res.removeLast();res.add(new int[]{start, end});}else {res.add(intervals[i]);}}return res.toArray(new int[res.size()][]);}}",
+          "description": "Java实现合并区间版本2"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def merge(self, intervals):result = []if len(intervals) == 0:return resultintervals.sort(key=lambda x: x[0])result.append(intervals[0])for i in range(1, len(intervals)):if result[-1][1] >= intervals[i][0]:result[-1][1] = max(result[-1][1], intervals[i][1])else:result.append(intervals[i])return result",
+          "description": "Python实现合并区间"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(nlogn)",
+    "space_complexity": "O(logn)",
+    "explanation": "排序需要的空间开销"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: vector<vector<int>> merge(vector<vector<int>>& intervals) {vector<vector<int>> result;if (intervals.size() == 0) return result;sort(intervals.begin(), intervals.end(), [](const vector<int>& a, const vector<int>& b){return a[0] < b[0];});result.push_back(intervals[0]);for (int i = 1; i < intervals.size(); i++) {if (result.back()[1] >= intervals[i][0]) {result.back()[1] = max(result.back()[1], intervals[i][1]);} else {result.push_back(intervals[i]);}}return result;}};",
+      "description": "C++实现合并区间功能"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int[][] merge(int[][] intervals) {List<int[]> res = new LinkedList<>();Arrays.sort(intervals, (x, y) -> Integer.compare(x[0], y[0]));int start = intervals[0][0];int rightmostRightBound = intervals[0][1];for (int i = 1; i < intervals.length; i++) {if (intervals[i][0] > rightmostRightBound) {res.add(new int[]{start, rightmostRightBound});start = intervals[i][0];rightmostRightBound = intervals[i][1];} else {rightmostRightBound = Math.max(rightmostRightBound, intervals[i][1]);}}res.add(new int[]{start, rightmostRightBound});return res.toArray(new int[res.size()][]);}}",
+      "description": "Java实现合并区间功能版本1"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int[][] merge(int[][] intervals) {LinkedList<int[]> res = new LinkedList<>();Arrays.sort(intervals, (o1, o2) -> Integer.compare(o1[0], o2[0]));res.add(intervals[0]);for (int i = 1; i < intervals.length; i++) {if (intervals[i][0] <= res.getLast()[1]) {int start = res.getLast()[0];int end = Math.max(intervals[i][1], res.getLast()[1]);res.removeLast();res.add(new int[]{start, end});}else {res.add(intervals[i]);}}return res.toArray(new int[res.size()][]);}}",
+      "description": "Java实现合并区间功能版本2"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def merge(self, intervals): result = [] if len(intervals) == 0: return result intervals.sort(key=lambda x: x[0]) result.append(intervals[0]) for i in range(1, len(intervals)): if result[-1][1] >= intervals[i][0]: result[-1][1] = max(result[-1][1], intervals[i][1]) else: result.append(intervals[i]) return result",
+      "description": "Python实现合并区间功能"
+    }
+  ],
+  "common_mistakes": [
+    "忽略输入为空的情况",
+    "没有正确处理区间的比较条件，即使用了不适当的逻辑来判断区间是否重叠",
+    "对于边界情况考虑不足，例如区间正好相接的情形"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201223200632791.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20201223200632791.png",
+      "context": "该图展示了按照区间左边界排序后的多个区间示例，用于直观理解如何通过比较相邻区间的左右边界来判断是否存在重叠。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201223200632791.png",
+      "description": "GIF展示了按照左边界排序后的区间判断重叠并进行合并的过程。",
+      "context": "GIF动画展示了按照左边界排序后的区间如何检查并处理重叠，以便更直观地理解合并区间的逻辑。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\贪心算法\\合并区间.txt",
+  "extracted_at": "2025-07-22T15:50:15.105455",
+  "raw_content": "合并区间\n力扣题目链接(https://leetcode.cn/problems/merge-intervals/)\n\n给出一个区间的集合，请合并所有重叠的区间。\n\n示例 1:\n\n输入: intervals = [[1,3],[2,6],[8,10],[15,18]]\n输出: [[1,6],[8,10],[15,18]]\n解释: 区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6].\n示例 2:\n\n输入: intervals = [[1,4],[4,5]]\n输出: [[1,5]]\n解释: 区间 [1,4] 和 [4,5] 可被视为重叠区间。\n注意：输入类型已于2019年4月15日更改。 请重置默认代码定义以获取新方法签名。\n\n\n#思路\n本题的本质其实还是判断重叠区间问题。\n\n大家如果认真做题的话，话发现和我们刚刚讲过的452. 用最少数量的箭引爆气球 (https://programmercarl.com/0452.%E7%94%A8%E6%9C%80%E5%B0%91%E6%95%B0%E9%87%8F%E7%9A%84%E7%AE%AD%E5%BC%95%E7%88%86%E6%B0%94%E7%90%83.html)和 435. 无重叠区间 (https://programmercarl.com/0435.%E6%97%A0%E9%87%8D%E5%8F%A0%E5%8C%BA%E9%97%B4.html)都是一个套路。\n\n这几道题都是判断区间重叠，区别就是判断区间重叠后的逻辑，本题是判断区间重贴后要进行区间合并。\n\n所以一样的套路，先排序，让所有的相邻区间尽可能的重叠在一起，按左边界，或者右边界排序都可以，处理逻辑稍有不同。\n\n按照左边界从小到大排序之后，如果 intervals[i][0] <= intervals[i - 1][1] 即intervals[i]的左边界 <= intervals[i - 1]的右边界，则一定有重叠。（本题相邻区间也算重贴，所以是<=）\n\n这么说有点抽象，看图：（注意图中区间都是按照左边界排序之后了）\n\nhttps://file1.kamacoder.com/i/algo/20201223200632791.png\n\n知道如何判断重复之后，剩下的就是合并了，如何去模拟合并区间呢？\n\n其实就是用合并区间后左边界和右边界，作为一个新的区间，加入到result数组里就可以了。如果没有合并就把原区间加入到result数组。\n\nC++代码如下：\n\nclass Solution {\npublic:\n    vector<vector<int>> merge(vector<vector<int>>& intervals) {\n        vector<vector<int>> result;\n        if (intervals.size() == 0) return result; // 区间集合为空直接返回\n        // 排序的参数使用了lambda表达式\n        sort(intervals.begin(), intervals.end(), [](const vector<int>& a, const vector<int>& b){return a[0] < b[0];});\n\n        // 第一个区间就可以放进结果集里，后面如果重叠，在result上直接合并\n        result.push_back(intervals[0]); \n\n        for (int i = 1; i < intervals.size(); i++) {\n            if (result.back()[1] >= intervals[i][0]) { // 发现重叠区间\n                // 合并区间，只更新右边界就好，因为result.back()的左边界一定是最小值，因为我们按照左边界排序的\n                result.back()[1] = max(result.back()[1], intervals[i][1]); \n            } else {\n                result.push_back(intervals[i]); // 区间不重叠 \n            }\n        }\n        return result;\n    }\n};\n时间复杂度: O(nlogn)\n空间复杂度: O(logn)，排序需要的空间开销\n#其他语言版本\n#Java\n\n/**\n时间复杂度 ： O(NlogN) 排序需要O(NlogN)\n空间复杂度 ： O(logN)  java 的内置排序是快速排序 需要 O(logN)空间\n\n*/\nclass Solution {\n    public int[][] merge(int[][] intervals) {\n        List<int[]> res = new LinkedList<>();\n        //按照左边界排序\n        Arrays.sort(intervals, (x, y) -> Integer.compare(x[0], y[0]));\n        //initial start 是最小左边界\n        int start = intervals[0][0];\n        int rightmostRightBound = intervals[0][1];\n        for (int i = 1; i < intervals.length; i++) {\n            //如果左边界大于最大右边界\n            if (intervals[i][0] > rightmostRightBound) {\n                //加入区间 并且更新start\n                res.add(new int[]{start, rightmostRightBound});\n                start = intervals[i][0];\n                rightmostRightBound = intervals[i][1];\n            } else {\n                //更新最大右边界\n                rightmostRightBound = Math.max(rightmostRightBound, intervals[i][1]);\n            }\n        }\n        res.add(new int[]{start, rightmostRightBound});\n        return res.toArray(new int[res.size()][]);\n    }\n}\n\n// 版本2\nclass Solution {\n    public int[][] merge(int[][] intervals) {\n        LinkedList<int[]> res = new LinkedList<>();\n        Arrays.sort(intervals, (o1, o2) -> Integer.compare(o1[0], o2[0]));\n        res.add(intervals[0]);\n        for (int i = 1; i < intervals.length; i++) {\n            if (intervals[i][0] <= res.getLast()[1]) {\n                int start = res.getLast()[0];\n                int end = Math.max(intervals[i][1], res.getLast()[1]);\n                res.removeLast();\n                res.add(new int[]{start, end});\n            }\n            else {\n                res.add(intervals[i]);\n            }         \n        }\n        return res.toArray(new int[res.size()][]);\n    }\n}\n#Python\nclass Solution:\n    def merge(self, intervals):\n        result = []\n        if len(intervals) == 0:\n            return result  # 区间集合为空直接返回\n\n        intervals.sort(key=lambda x: x[0])  # 按照区间的左边界进行排序\n\n        result.append(intervals[0])  # 第一个区间可以直接放入结果集中\n\n        for i in range(1, len(intervals)):\n            if result[-1][1] >= intervals[i][0]:  # 发现重叠区间\n                # 合并区间，只需要更新结果集最后一个区间的右边界，因为根据排序，左边界已经是最小的\n                result[-1][1] = max(result[-1][1], intervals[i][1])\n            else:\n                result.append(intervals[i])  # 区间不重叠\n\n        return result"
+}

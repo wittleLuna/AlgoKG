@@ -1,0 +1,402 @@
+{
+  "id": "AP_1c6e199b",
+  "title": "组合总和II",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/combination-sum-ii/",
+  "description": "一个数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。\n\ncandidates 中的每个数字在每个组合中只能使用一次。\n\n说明： 所有数字（包括目标数）都是正整数。解集不能包含重复的组合。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "回溯",
+    "递归"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "剪枝",
+    "去重"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用回溯算法生成所有可能的组合，并通过布尔数组或直接比较当前索引与前一个元素来去除重复组合。关键在于区分同一树层上和同一树枝上的元素是否被使用过，从而避免重复。",
+  "key_insights": [
+    {
+      "content": "为了有效去重，需要先对候选数组进行排序，使相同的元素相邻。"
+    },
+    {
+      "content": "去重时关注的是同一树层上的重复元素，而非同一树枝上的。如果在同一个树层遇到相同且未被使用的元素，则跳过该元素。"
+    },
+    {
+      "content": "通过剪枝可以进一步优化搜索过程，即当当前路径之和超过目标值时提前终止递归。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目和39.组合总和 (https://programmercarl.com/0039.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8C.html)如下区别：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(vector<int>& candidates, int target, int sum, int startIndex, vector<bool>& used) {\n        if (sum == target) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i < candidates.size() && sum + candidates[i] <= target; i++) {\n            if (i > 0 && candidates[i] == candidates[i - 1] && used[i - 1] == false) {\n                continue;\n            }\n            sum += candidates[i];\n            path.push_back(candidates[i]);\n            used[i] = true;\n            backtracking(candidates, target, sum, i + 1, used);\n            used[i] = false;\n            sum -= candidates[i];\n            path.pop_back();\n        }\n    }\n\npublic:\n    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {\n        vector<bool> used(candidates.size(), false);\n        path.clear();\n        result.clear();\n        sort(candidates.begin(), candidates.end());\n        backtracking(candidates, target, 0, 0, used);\n        return result;\n    }\n};",
+          "description": "使用used数组去重的C++实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(vector<int>& candidates, int target, int sum, int startIndex) {\n        if (sum == target) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i < candidates.size() && sum + candidates[i] <= target; i++) {\n            if (i > startIndex && candidates[i] == candidates[i - 1]) {\n                continue;\n            }\n            sum += candidates[i];\n            path.push_back(candidates[i]);\n            backtracking(candidates, target, sum, i + 1);\n            sum -= candidates[i];\n            path.pop_back();\n        }\n    }\n\npublic:\n    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {\n        path.clear();\n        result.clear();\n        sort(candidates.begin(), candidates.end());\n        backtracking(candidates, target, 0, 0);\n        return result;\n    }\n};",
+          "description": "不使用used数组去重的C++实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\nclass Solution {\n  LinkedList<Integer> path = new LinkedList<>();\n  List<List<Integer>> ans = new ArrayList<>();\n  boolean[] used;\n  int sum = 0;\n  public List<List<Integer>> combinationSum2(int[] candidates, int target) {\n    used = new boolean[candidates.length];\n    Arrays.fill(used, false);\n    Arrays.sort(candidates);\n    backTracking(candidates, target, 0);\n    return ans;\n  }\n  private void backTracking(int[] candidates, int target, int startIndex) {\n    if (sum == target) {\n      ans.add(new ArrayList<>(path));\n    }\n    for (int i = startIndex; i < candidates.length; i++) {\n      if (sum + candidates[i] > target) {\n        break;\n      }\n      if (i > 0 && candidates[i] == candidates[i - 1] && !used[i - 1]) {\n        continue;\n      }\n      used[i] = true;\n      sum += candidates[i];\n      path.add(candidates[i]);\n      backTracking(candidates, target, i + 1);\n      used[i] = false;\n      sum -= candidates[i];\n      path.removeLast();\n    }\n  }\n}",
+          "description": "使用标记数组的Java实现"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\nclass Solution {\n  List<List<Integer>> res = new ArrayList<>();\n  LinkedList<Integer> path = new LinkedList<>();\n  int sum = 0;\n  public List<List<Integer>> combinationSum2(int[] candidates, int target) {\n    Arrays.sort(candidates);\n    backTracking(candidates, target, 0);\n    return res;\n  }\n  private void backTracking(int[] candidates, int target, int start) {\n    if (sum == target) {\n      res.add(new ArrayList<>(path));\n      return;\n    }\n    for (int i = start; i < candidates.length && sum + candidates[i] <= target; i++) {\n      if (i > start && candidates[i] == candidates[i - 1]) {\n        continue;\n      }\n      sum += candidates[i];\n      path.add(candidates[i]);\n      backTracking(candidates, target, i + 1);\n      sum -= path.getLast();\n      path.removeLast();\n    }\n  }\n}",
+          "description": "不使用标记数组的Java实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def backtracking(self, candidates, target, total, startIndex, path, result):\n        if total == target:\n            result.append(path[:])\n            return\n        for i in range(startIndex, len(candidates)):\n            if i > startIndex and candidates[i] == candidates[i - 1]:\n                continue\n            if total + candidates[i] > target:\n                break\n            total += candidates[i]\n            path.append(candidates[i])\n            self.backtracking(candidates, target, total, i + 1, path, result)\n            total -= candidates[i]\n            path.pop()\n    def combinationSum2(self, candidates, target):\n        result = []\n        candidates.sort()\n        self.backtracking(candidates, target, 0, 0, [], result)\n        return result",
+          "description": "Python回溯法实现，无used数组"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def backtracking(self, candidates, target, total, startIndex, used, path, result):\n        if total == target:\n            result.append(path[:])\n            return\n        for i in range(startIndex, len(candidates)):\n            if i > startIndex and candidates[i] == candidates[i - 1] and not used[i - 1]:\n                continue\n            if total + candidates[i] > target:\n                break\n            total += candidates[i]\n            path.append(candidates[i])\n            used[i] = True\n            self.backtracking(candidates, target, total, i + 1, used, path, result)\n            used[i] = False\n            total -= candidates[i]\n            path.pop()\n    def combinationSum2(self, candidates, target):\n        used = [False] * len(candidates)\n        result = []\n        candidates.sort()\n        self.backtracking(candidates, target, 0, 0, used, [], result)\n        return result",
+          "description": "Python回溯法实现，使用used数组"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def combinationSum2(self, candidates, target):\n        candidates.sort()\n        results = []\n        self.combinationSumHelper(candidates, target, 0, [], results)\n        return results\n    def combinationSumHelper(self, candidates, target, index, path, results):\n        if target == 0:\n            results.append(path[:])\n            return\n        for i in range(index, len(candidates)):\n            if i > index and candidates[i] == candidates[i - 1]:\n                continue\n            if candidates[i] > target:\n                break\n            path.append(candidates[i])\n            self.combinationSumHelper(candidates, target - candidates[i], i + 1, path, results)\n            path.pop()",
+          "description": "Python优化后的回溯法实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "回溯三部曲",
+      "text": "递归函数参数",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "vector<vector<int>> result; // 存放组合集合 vector<int> path;           // 符合条件的组合 void backtracking(vector<int>& candidates, int target, int sum, int startIndex, vector<bool>& used) { if (sum == target) { result.push_back(path); return; } for (int i = startIndex; i < candidates.size() && sum + candidates[i] <= target; i++) { if (i > 0 && candidates[i] == candidates[i - 1] && used[i - 1] == false) { continue; } sum += candidates[i]; path.push_back(candidates[i]); used[i] = true; backtracking(candidates, target, sum, i + 1, used); used[i] = false; sum -= candidates[i]; path.pop_back(); } }",
+          "description": "C++实现，包含used数组去重逻辑"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution { private: vector<vector<int>> result; vector<int> path; void backtracking(vector<int>& candidates, int target, int sum, int startIndex) { if (sum == target) { result.push_back(path); return; } for (int i = startIndex; i < candidates.size() && sum + candidates[i] <= target; i++) { if (i > startIndex && candidates[i] == candidates[i - 1]) { continue; } sum += candidates[i]; path.push_back(candidates[i]); backtracking(candidates, target, sum, i + 1); sum -= candidates[i]; path.pop_back(); } } public: vector<vector<int>> combinationSum2(vector<int>& candidates, int target) { path.clear(); result.clear(); sort(candidates.begin(), candidates.end()); backtracking(candidates, target, 0, 0); return result; } };",
+          "description": "C++实现，不使用额外的used数组去重"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { LinkedList<Integer> path = new LinkedList<>(); List<List<Integer>> ans = new ArrayList<>(); boolean[] used; int sum = 0; public List<List<Integer>> combinationSum2(int[] candidates, int target) { used = new boolean[candidates.length]; Arrays.fill(used, false); Arrays.sort(candidates); backTracking(candidates, target, 0); return ans; } private void backTracking(int[] candidates, int target, int startIndex) { if (sum == target) { ans.add(new ArrayList<>(path)); } for (int i = startIndex; i < candidates.length; i++) { if (sum + candidates[i] > target) { break; } if (i > 0 && candidates[i] == candidates[i - 1] && !used[i - 1]) { continue; } used[i] = true; sum += candidates[i]; path.add(candidates[i]); backTracking(candidates, target, i + 1); used[i] = false; sum -= candidates[i]; path.removeLast(); } } }",
+          "description": "Java实现，使用标记数组去重"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { List<List<Integer>> res = new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); int sum = 0; public List<List<Integer>> combinationSum2(int[] candidates, int target) { Arrays.sort(candidates); backTracking(candidates, target, 0); return res; } private void backTracking(int[] candidates, int target, int start) { if (sum == target) { res.add(new ArrayList<>(path)); return; } for (int i = start; i < candidates.length && sum + candidates[i] <= target; i++) { if (i > start && candidates[i] == candidates[i - 1]) { continue; } sum += candidates[i]; path.add(candidates[i]); backTracking(candidates, target, i + 1); int temp = path.getLast(); sum -= temp; path.removeLast(); } } }",
+          "description": "Java实现，不使用额外的used数组去重"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def backtracking(self, candidates, target, total, startIndex, path, result): if total == target: result.append(path[:]) return for i in range(startIndex, len(candidates)): if i > startIndex and candidates[i] == candidates[i - 1]: continue if total + candidates[i] > target: break total += candidates[i] path.append(candidates[i]) self.backtracking(candidates, target, total, i + 1, path, result) total -= candidates[i] path.pop() def combinationSum2(self, candidates, target): result = [] candidates.sort() self.backtracking(candidates, target, 0, 0, [], result) return result",
+          "description": "Python实现，回溯算法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def backtracking(self, candidates, target, total, startIndex, used, path, result): if total == target: result.append(path[:]) return for i in range(startIndex, len(candidates)): if i > startIndex and candidates[i] == candidates[i - 1] and not used[i - 1]: continue if total + candidates[i] > target: break total += candidates[i] path.append(candidates[i]) used[i] = True self.backtracking(candidates, target, total, i + 1, used, path, result) used[i] = False total -= candidates[i] path.pop() def combinationSum2(self, candidates, target): used = [False] * len(candidates) result = [] candidates.sort() self.backtracking(candidates, target, 0, 0, used, [], result) return result",
+          "description": "Python实现，使用used数组去重"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "补充",
+      "text": "这里直接用startIndex来去重也是可以的， 就不用used数组了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(vector<int>& candidates, int target, int sum, int startIndex, vector<bool>& used) {\n        if (sum == target) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i < candidates.size() && sum + candidates[i] <= target; i++) {\n            if (i > 0 && candidates[i] == candidates[i - 1] && used[i - 1] == false) {\n                continue;\n            }\n            sum += candidates[i];\n            path.push_back(candidates[i]);\n            used[i] = true;\n            backtracking(candidates, target, sum, i + 1, used);\n            used[i] = false;\n            sum -= candidates[i];\n            path.pop_back();\n        }\n    }\n\npublic:\n    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {\n        vector<bool> used(candidates.size(), false);\n        path.clear();\n        result.clear();\n        sort(candidates.begin(), candidates.end());\n        backtracking(candidates, target, 0, 0, used);\n        return result;\n    }\n};",
+          "description": "C++解决方案，使用used数组去重"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(vector<int>& candidates, int target, int sum, int startIndex) {\n        if (sum == target) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i < candidates.size() && sum + candidates[i] <= target; i++) {\n            if (i > startIndex && candidates[i] == candidates[i - 1]) {\n                continue;\n            }\n            sum += candidates[i];\n            path.push_back(candidates[i]);\n            backtracking(candidates, target, sum, i + 1);\n            sum -= candidates[i];\n            path.pop_back();\n        }\n    }\n\npublic:\n    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {\n        path.clear();\n        result.clear();\n        sort(candidates.begin(), candidates.end());\n        backtracking(candidates, target, 0, 0);\n        return result;\n    }\n};",
+          "description": "C++解决方案，不使用used数组直接通过startIndex去重"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n  LinkedList<Integer> path = new LinkedList<>();\n  List<List<Integer>> ans = new ArrayList<>();\n  boolean[] used;\n  int sum = 0;\n\n  public List<List<Integer>> combinationSum2(int[] candidates, int target) {\n    used = new boolean[candidates.length];\n    Arrays.fill(used, false);\n    Arrays.sort(candidates);\n    backTracking(candidates, target, 0);\n    return ans;\n  }\n\n  private void backTracking(int[] candidates, int target, int startIndex) {\n    if (sum == target) {\n      ans.add(new ArrayList<>(path));\n    }\n    for (int i = startIndex; i < candidates.length; i++) {\n      if (sum + candidates[i] > target) {\n        break;\n      }\n      if (i > 0 && candidates[i] == candidates[i - 1] && !used[i - 1]) {\n        continue;\n      }\n      used[i] = true;\n      sum += candidates[i];\n      path.add(candidates[i]);\n      backTracking(candidates, target, i + 1);\n      used[i] = false;\n      sum -= candidates[i];\n      path.removeLast();\n    }\n  }\n}",
+          "description": "Java解决方案，使用标记数组去重"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n  List<List<Integer>> res = new ArrayList<>();\n  LinkedList<Integer> path = new LinkedList<>();\n  int sum = 0;\n\n  public List<List<Integer>> combinationSum2(int[] candidates, int target) {\n    Arrays.sort(candidates);\n    backTracking(candidates, target, 0);\n    return res;\n  }\n\n  private void backTracking(int[] candidates, int target, int start) {\n    if (sum == target) {\n      res.add(new ArrayList<>(path));\n      return;\n    }\n    for (int i = start; i < candidates.length && sum + candidates[i] <= target; i++) {\n      if (i > start && candidates[i] == candidates[i - 1]) {\n        continue;\n      }\n      sum += candidates[i];\n      path.add(candidates[i]);\n      backTracking(candidates, target, i + 1);\n      sum -= candidates[i];\n      path.removeLast();\n    }\n  }\n}",
+          "description": "Java解决方案，不使用标记数组直接通过startIndex去重"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def backtracking(self, candidates, target, total, startIndex, path, result):\n        if total == target:\n            result.append(path[:])\n            return\n\n        for i in range(startIndex, len(candidates)):\n            if i > startIndex and candidates[i] == candidates[i - 1]:\n                continue\n\n            if total + candidates[i] > target:\n                break\n\n            total += candidates[i]\n            path.append(candidates[i])\n            self.backtracking(candidates, target, total, i + 1, path, result)\n            total -= candidates[i]\n            path.pop()\n\n    def combinationSum2(self, candidates, target):\n        result = []\n        candidates.sort()\n        self.backtracking(candidates, target, 0, 0, [], result)\n        return result",
+          "description": "Python解决方案，不使用used数组直接通过startIndex去重"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def backtracking(self, candidates, target, total, startIndex, used, path, result):\n        if total == target:\n            result.append(path[:])\n            return\n\n        for i in range(startIndex, len(candidates)):\n            if i > startIndex and candidates[i] == candidates[i - 1] and not used[i - 1]:\n                continue\n\n            if total + candidates[i] > target:\n                break\n\n            total += candidates[i]\n            path.append(candidates[i])\n            used[i] = True\n            self.backtracking(candidates, target, total, i + 1, used, path, result)\n            used[i] = False\n            total -= candidates[i]\n            path.pop()\n\n    def combinationSum2(self, candidates, target):\n        used = [False] * len(candidates)\n        result = []\n        candidates.sort()\n        self.backtracking(candidates, target, 0, 0, used, [], result)\n        return result",
+          "description": "Python解决方案，使用used数组去重"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "本题同样是求组合总和，但就是因为其数组candidates有重复元素，而要求不能有重复的组合，所以相对于39.组合总和 (https://programmercarl.com/0039.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8C.html)难度提升了不少。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<int>> result; vector<int> path; void backtracking(vector<int>& candidates, int target, int sum, int startIndex, vector<bool>& used) { if (sum == target) { result.push_back(path); return; } for (int i = startIndex; i < candidates.size() && sum + candidates[i] <= target; i++) { if (i > 0 && candidates[i] == candidates[i - 1] && used[i - 1] == false) { continue; } sum += candidates[i]; path.push_back(candidates[i]); used[i] = true; backtracking(candidates, target, sum, i + 1, used); used[i] = false; sum -= candidates[i]; path.pop_back(); } } public: vector<vector<int>> combinationSum2(vector<int>& candidates, int target) { vector<bool> used(candidates.size(), false); path.clear(); result.clear(); sort(candidates.begin(), candidates.end()); backtracking(candidates, target, 0, 0, used); return result; }};",
+          "description": "C++实现的组合总和II，使用了used数组来标记是否在同一树层上重复使用元素。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<int>> result; vector<int> path; void backtracking(vector<int>& candidates, int target, int sum, int startIndex) { if (sum == target) { result.push_back(path); return; } for (int i = startIndex; i < candidates.size() && sum + candidates[i] <= target; i++) { if (i > startIndex && candidates[i] == candidates[i - 1]) { continue; } sum += candidates[i]; path.push_back(candidates[i]); backtracking(candidates, target, sum, i + 1); sum -= candidates[i]; path.pop_back(); } } public: vector<vector<int>> combinationSum2(vector<int>& candidates, int target) { path.clear(); result.clear(); sort(candidates.begin(), candidates.end()); backtracking(candidates, target, 0, 0); return result; }};",
+          "description": "C++实现的组合总和II，不使用额外的used数组而是通过控制startIndex来避免同一树层上的重复。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*; class Solution {LinkedList<Integer> path = new LinkedList<>(); List<List<Integer>> ans = new ArrayList<>(); boolean[] used; int sum = 0; public List<List<Integer>> combinationSum2(int[] candidates, int target) {used = new boolean[candidates.length]; Arrays.fill(used, false); Arrays.sort(candidates); backTracking(candidates, target, 0); return ans;} private void backTracking(int[] candidates, int target, int startIndex) {if (sum == target) {ans.add(new ArrayList<>(path));} for (int i = startIndex; i < candidates.length; i++) {if (sum + candidates[i] > target) {break;} if (i > 0 && candidates[i] == candidates[i - 1] && !used[i - 1]) {continue;} used[i] = true; sum += candidates[i]; path.add(candidates[i]); backTracking(candidates, target, i + 1); used[i] = false; sum -= candidates[i]; path.removeLast();}}}",
+          "description": "Java实现的组合总和II，采用标志数组used来辅助判断同层节点是否已经遍历。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*; class Solution {List<List<Integer>> res = new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); int sum = 0; public List<List<Integer>> combinationSum2(int[] candidates, int target) {Arrays.sort(candidates); backTracking(candidates, target, 0); return res;} private void backTracking(int[] candidates, int target, int start) {if (sum == target) {res.add(new ArrayList<>(path)); return;} for (int i = start; i < candidates.length && sum + candidates[i] <= target; i++) {if (i > start && candidates[i] == candidates[i - 1]) {continue;} sum += candidates[i]; path.add(candidates[i]); backTracking(candidates, target, i + 1); sum -= path.getLast(); path.removeLast();}}}",
+          "description": "Java实现的组合总和II，没有使用额外的used数组而是通过控制循环起点来避免重复组合。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def backtracking(self, candidates, target, total, startIndex, path, result): if total == target: result.append(path[:]) return for i in range(startIndex, len(candidates)): if i > startIndex and candidates[i] == candidates[i - 1]: continue if total + candidates[i] > target: break total += candidates[i] path.append(candidates[i]) self.backtracking(candidates, target, total, i + 1, path, result) total -= candidates[i] path.pop() def combinationSum2(self, candidates, target): result = [] candidates.sort() self.backtracking(candidates, target, 0, 0, [], result) return result",
+          "description": "Python实现的组合总和II，通过递归函数backtracking解决，不使用额外的used数组。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def backtracking(self, candidates, target, total, startIndex, used, path, result): if total == target: result.append(path[:]) return for i in range(startIndex, len(candidates)): if i > startIndex and candidates[i] == candidates[i - 1] and not used[i - 1]: continue if total + candidates[i] > target: break total += candidates[i] path.append(candidates[i]) used[i] = True self.backtracking(candidates, target, total, i + 1, used, path, result) used[i] = False total -= candidates[i] path.pop() def combinationSum2(self, candidates, target): used = [False] * len(candidates) result = [] candidates.sort() self.backtracking(candidates, target, 0, 0, used, [], result) return result",
+          "description": "Python实现的组合总和II，使用了used数组来帮助判断同层节点是否已经遍历。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution {\n  LinkedList<Integer> path = new LinkedList<>();\n  List<List<Integer>> ans = new ArrayList<>();\n  boolean[] used;\n  int sum = 0;\n\n  public List<List<Integer>> combinationSum2(int[] candidates, int target) {\n    used = new boolean[candidates.length];\n    Arrays.fill(used, false);\n    Arrays.sort(candidates);\n    backTracking(candidates, target, 0);\n    return ans;\n  }\n\n  private void backTracking(int[] candidates, int target, int startIndex) {\n    if (sum == target) {\n      ans.add(new ArrayList(path));\n    }\n    for (int i = startIndex; i < candidates.length; i++) {\n      if (sum + candidates[i] > target) {\n        break;\n      }\n      if (i > 0 && candidates[i] == candidates[i - 1] && !used[i - 1]) {\n        continue;\n      }\n      used[i] = true;\n      sum += candidates[i];\n      path.add(candidates[i]);\n      backTracking(candidates, target, i + 1);\n      used[i] = false;\n      sum -= candidates[i];\n      path.removeLast();\n    }\n  }\n}",
+          "description": "使用标记数组的Java实现，用于解决组合总和II问题。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n  List<List<Integer>> res = new ArrayList<>();\n  LinkedList<Integer> path = new LinkedList<>();\n  int sum = 0;\n\n  public List<List<Integer>> combinationSum2(int[] candidates, int target) {\n    Arrays.sort(candidates);\n    backTracking(candidates, target, 0);\n    return res;\n  }\n\n  private void backTracking(int[] candidates, int target, int start) {\n    if (sum == target) {\n      res.add(new ArrayList<>(path));\n      return;\n    }\n    for (int i = start; i < candidates.length && sum + candidates[i] <= target; i++) {\n      if (i > start && candidates[i] == candidates[i - 1]) {\n        continue;\n      }\n      sum += candidates[i];\n      path.add(candidates[i]);\n      backTracking(candidates, target, i + 1);\n      int temp = path.getLast();\n      sum -= temp;\n      path.removeLast();\n    }\n  }\n}",
+          "description": "不使用标记数组的Java实现，用于解决组合总和II问题。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n\n    def backtracking(self, candidates, target, total, startIndex, path, result):\n        if total == target:\n            result.append(path[:])\n            return\n\n        for i in range(startIndex, len(candidates)):\n            if i > startIndex and candidates[i] == candidates[i - 1]:\n                continue\n\n            if total + candidates[i] > target:\n                break\n\n            total += candidates[i]\n            path.append(candidates[i])\n            self.backtracking(candidates, target, total, i + 1, path, result)\n            total -= candidates[i]\n            path.pop()\n\n    def combinationSum2(self, candidates, target):\n        result = []\n        candidates.sort()\n        self.backtracking(candidates, target, 0, 0, [], result)\n        return result",
+          "description": "Python实现，通过回溯方法求解组合总和II问题。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n\n    def backtracking(self, candidates, target, total, startIndex, used, path, result):\n        if total == target:\n            result.append(path[:])\n            return\n\n        for i in range(startIndex, len(candidates)):\n            if i > startIndex and candidates[i] == candidates[i - 1] and not used[i - 1]:\n                continue\n\n            if total + candidates[i] > target:\n                break\n\n            total += candidates[i]\n            path.append(candidates[i])\n            used[i] = True\n            self.backtracking(candidates, target, total, i + 1, used, path, result)\n            used[i] = False\n            total -= candidates[i]\n            path.pop()\n\n    def combinationSum2(self, candidates, target):\n        used = [False] * len(candidates)\n        result = []\n        candidates.sort()\n        self.backtracking(candidates, target, 0, 0, used, [], result)\n        return result",
+          "description": "Python实现，使用used数组辅助去重，通过回溯方法求解组合总和II问题。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:\n        candidates.sort()\n        results = []\n        self.combinationSumHelper(candidates, target, 0, [], results)\n        return results\n\n    def combinationSumHelper(self, candidates, target, index, path, results):\n        if target == 0:\n            results.append(path[:])\n            return\n        for i in range(index, len(candidates)):\n            if i > index and candidates[i] == candidates[i - 1]:\n                continue  \n            if candidates[i] > target:\n                break  \n            path.append(candidates[i])\n            self.combinationSumHelper(candidates, target - candidates[i], i + 1, path, results)\n            path.pop()",
+          "description": "优化后的Python实现，通过递归回溯方法求解组合总和II问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "使用标记数组",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(vector<int>& candidates, int target, int sum, int startIndex, vector<bool>& used) {\n        if (sum == target) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i < candidates.size() && sum + candidates[i] <= target; i++) {\n            if (i > 0 && candidates[i] == candidates[i - 1] && used[i - 1] == false) {\n                continue;\n            }\n            sum += candidates[i];\n            path.push_back(candidates[i]);\n            used[i] = true;\n            backtracking(candidates, target, sum, i + 1, used);\n            used[i] = false;\n            sum -= candidates[i];\n            path.pop_back();\n        }\n    }\n\npublic:\n    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {\n        vector<bool> used(candidates.size(), false);\n        path.clear();\n        result.clear();\n        sort(candidates.begin(), candidates.end());\n        backtracking(candidates, target, 0, 0, used);\n        return result;\n    }\n};",
+          "description": "使用标记数组的C++解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(vector<int>& candidates, int target, int sum, int startIndex) {\n        if (sum == target) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i < candidates.size() && sum + candidates[i] <= target; i++) {\n            if (i > startIndex && candidates[i] == candidates[i - 1]) {\n                continue;\n            }\n            sum += candidates[i];\n            path.push_back(candidates[i]);\n            backtracking(candidates, target, sum, i + 1);\n            sum -= candidates[i];\n            path.pop_back();\n        }\n    }\n\npublic:\n    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {\n        path.clear();\n        result.clear();\n        sort(candidates.begin(), candidates.end());\n        backtracking(candidates, target, 0, 0);\n        return result;\n    }\n};",
+          "description": "不使用标记数组的C++解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n  LinkedList<Integer> path = new LinkedList<>();\n  List<List<Integer>> ans = new ArrayList<>();\n  boolean[] used;\n  int sum = 0;\n\n  public List<List<Integer>> combinationSum2(int[] candidates, int target) {\n    used = new boolean[candidates.length];\n    Arrays.fill(used, false);\n    Arrays.sort(candidates);\n    backTracking(candidates, target, 0);\n    return ans;\n  }\n\n  private void backTracking(int[] candidates, int target, int startIndex) {\n    if (sum == target) {\n      ans.add(new ArrayList<>(path));\n    }\n    for (int i = startIndex; i < candidates.length; i++) {\n      if (sum + candidates[i] > target) {\n        break;\n      }\n      if (i > 0 && candidates[i] == candidates[i - 1] && !used[i - 1]) {\n        continue;\n      }\n      used[i] = true;\n      sum += candidates[i];\n      path.add(candidates[i]);\n      backTracking(candidates, target, i + 1);\n      used[i] = false;\n      sum -= candidates[i];\n      path.removeLast();\n    }\n  }\n}",
+          "description": "使用标记数组的Java解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n  List<List<Integer>> res = new ArrayList<>();\n  LinkedList<Integer> path = new LinkedList<>();\n  int sum = 0;\n\n  public List<List<Integer>> combinationSum2(int[] candidates, int target) {\n    Arrays.sort(candidates);\n    backTracking(candidates, target, 0);\n    return res;\n  }\n\n  private void backTracking(int[] candidates, int target, int start) {\n    if (sum == target) {\n      res.add(new ArrayList<>(path));\n      return;\n    }\n    for (int i = start; i < candidates.length && sum + candidates[i] <= target; i++) {\n      if (i > start && candidates[i] == candidates[i - 1]) {\n        continue;\n      }\n      sum += candidates[i];\n      path.add(candidates[i]);\n      backTracking(candidates, target, i + 1);\n      sum -= candidates[i];\n      path.removeLast();\n    }\n  }\n}",
+          "description": "不使用标记数组的Java解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def backtracking(self, candidates, target, total, startIndex, path, result):\n        if total == target:\n            result.append(path[:])\n            return\n\n        for i in range(startIndex, len(candidates)):\n            if i > startIndex and candidates[i] == candidates[i - 1]:\n                continue\n\n            if total + candidates[i] > target:\n                break\n\n            total += candidates[i]\n            path.append(candidates[i])\n            self.backtracking(candidates, target, total, i + 1, path, result)\n            total -= candidates[i]\n            path.pop()\n\n    def combinationSum2(self, candidates, target):\n        result = []\n        candidates.sort()\n        self.backtracking(candidates, target, 0, 0, [], result)\n        return result",
+          "description": "Python回溯解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def backtracking(self, candidates, target, total, startIndex, used, path, result):\n        if total == target:\n            result.append(path[:])\n            return\n\n        for i in range(startIndex, len(candidates)):\n            if i > startIndex and candidates[i] == candidates[i - 1] and not used[i - 1]:\n                continue\n\n            if total + candidates[i] > target:\n                break\n\n            total += candidates[i]\n            path.append(candidates[i])\n            used[i] = True\n            self.backtracking(candidates, target, total, i + 1, used, path, result)\n            used[i] = False\n            total -= candidates[i]\n            path.pop()\n\n    def combinationSum2(self, candidates, target):\n        used = [False] * len(candidates)\n        result = []\n        candidates.sort()\n        self.backtracking(candidates, target, 0, 0, used, [], result)\n        return result",
+          "description": "Python回溯解法 使用used"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:\n        candidates.sort()\n        results = []\n        self.combinationSumHelper(candidates, target, 0, [], results)\n        return results\n\n    def combinationSumHelper(self, candidates, target, index, path, results):\n        if target == 0:\n            results.append(path[:])\n            return\n        for i in range(index, len(candidates)):\n            if i > index and candidates[i] == candidates[i - 1]:\n                continue  \n            if candidates[i] > target:\n                break  \n            path.append(candidates[i])\n            self.combinationSumHelper(candidates, target - candidates[i], i + 1, path, results)\n            path.pop()",
+          "description": "Python回溯优化解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "回溯",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(vector<int>& candidates, int target, int sum, int startIndex, vector<bool>& used) {\n        if (sum == target) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i < candidates.size() && sum + candidates[i] <= target; i++) {\n            if (i > 0 && candidates[i] == candidates[i - 1] && used[i - 1] == false) {\n                continue;\n            }\n            sum += candidates[i];\n            path.push_back(candidates[i]);\n            used[i] = true;\n            backtracking(candidates, target, sum, i + 1, used);\n            used[i] = false;\n            sum -= candidates[i];\n            path.pop_back();\n        }\n    }\n\npublic:\n    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {\n        vector<bool> used(candidates.size(), false);\n        path.clear();\n        result.clear();\n        sort(candidates.begin(), candidates.end());\n        backtracking(candidates, target, 0, 0, used);\n        return result;\n    }\n};",
+          "description": "C++版本使用标记数组去重的组合总和II"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(vector<int>& candidates, int target, int sum, int startIndex) {\n        if (sum == target) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i < candidates.size() && sum + candidates[i] <= target; i++) {\n            if (i > startIndex && candidates[i] == candidates[i - 1]) {\n                continue;\n            }\n            sum += candidates[i];\n            path.push_back(candidates[i]);\n            backtracking(candidates, target, sum, i + 1);\n            sum -= candidates[i];\n            path.pop_back();\n        }\n    }\n\npublic:\n    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {\n        path.clear();\n        result.clear();\n        sort(candidates.begin(), candidates.end());\n        backtracking(candidates, target, 0, 0);\n        return result;\n    }\n};",
+          "description": "C++版本不使用标记数组去重的组合总和II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n  LinkedList<Integer> path = new LinkedList<>();\n  List<List<Integer>> ans = new ArrayList<>();\n  boolean[] used;\n  int sum = 0;\n\n  public List<List<Integer>> combinationSum2(int[] candidates, int target) {\n    used = new boolean[candidates.length];\n    Arrays.fill(used, false);\n    Arrays.sort(candidates);\n    backTracking(candidates, target, 0);\n    return ans;\n  }\n\n  private void backTracking(int[] candidates, int target, int startIndex) {\n    if (sum == target) {\n      ans.add(new ArrayList<>(path));\n    }\n    for (int i = startIndex; i < candidates.length; i++) {\n      if (sum + candidates[i] > target) {\n        break;\n      }\n      if (i > 0 && candidates[i] == candidates[i - 1] && !used[i - 1]) {\n        continue;\n      }\n      used[i] = true;\n      sum += candidates[i];\n      path.add(candidates[i]);\n      backTracking(candidates, target, i + 1);\n      used[i] = false;\n      sum -= candidates[i];\n      path.removeLast();\n    }\n  }\n}",
+          "description": "Java版本使用标记数组去重的组合总和II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n  List<List<Integer>> res = new ArrayList<>();\n  LinkedList<Integer> path = new LinkedList<>();\n  int sum = 0;\n\n  public List<List<Integer>> combinationSum2(int[] candidates, int target) {\n    Arrays.sort(candidates);\n    backTracking(candidates, target, 0);\n    return res;\n  }\n\n  private void backTracking(int[] candidates, int target, int start) {\n    if (sum == target) {\n      res.add(new ArrayList<>(path));\n      return;\n    }\n    for (int i = start; i < candidates.length && sum + candidates[i] <= target; i++) {\n      if (i > start && candidates[i] == candidates[i - 1]) {\n        continue;\n      }\n      sum += candidates[i];\n      path.add(candidates[i]);\n      backTracking(candidates, target, i + 1);\n      sum -= path.getLast();\n      path.removeLast();\n    }\n  }\n}",
+          "description": "Java版本不使用标记数组去重的组合总和II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def backtracking(self, candidates, target, total, startIndex, path, result):\n        if total == target:\n            result.append(path[:])\n            return\n\n        for i in range(startIndex, len(candidates)):\n            if i > startIndex and candidates[i] == candidates[i - 1]:\n                continue\n\n            if total + candidates[i] > target:\n                break\n\n            total += candidates[i]\n            path.append(candidates[i])\n            self.backtracking(candidates, target, total, i + 1, path, result)\n            total -= candidates[i]\n            path.pop()\n\n    def combinationSum2(self, candidates, target):\n        result = []\n        candidates.sort()\n        self.backtracking(candidates, target, 0, 0, [], result)\n        return result",
+          "description": "Python版本不使用标记数组去重的组合总和II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def backtracking(self, candidates, target, total, startIndex, used, path, result):\n        if total == target:\n            result.append(path[:])\n            return\n\n        for i in range(startIndex, len(candidates)):\n            if i > startIndex and candidates[i] == candidates[i - 1] and not used[i - 1]:\n                continue\n\n            if total + candidates[i] > target:\n                break\n\n            total += candidates[i]\n            path.append(candidates[i])\n            used[i] = True\n            self.backtracking(candidates, target, total, i + 1, used, path, result)\n            used[i] = False\n            total -= candidates[i]\n            path.pop()\n\n    def combinationSum2(self, candidates, target):\n        used = [False] * len(candidates)\n        result = []\n        candidates.sort()\n        self.backtracking(candidates, target, 0, 0, used, [], result)\n        return result",
+          "description": "Python版本使用标记数组去重的组合总和II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def combinationSum2(self, candidates, target):\n        candidates.sort()\n        results = []\n        self.combinationSumHelper(candidates, target, 0, [], results)\n        return results\n\n    def combinationSumHelper(self, candidates, target, index, path, results):\n        if target == 0:\n            results.append(path[:])\n            return\n        for i in range(index, len(candidates)):\n            if i > index and candidates[i] == candidates[i - 1]:\n                continue\n            if candidates[i] > target:\n                break\n            path.append(candidates[i])\n            self.combinationSumHelper(candidates, target - candidates[i], i + 1, path, results)\n            path.pop()",
+          "description": "Python版本优化后的回溯算法实现组合总和II"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n * 2^n)",
+    "space_complexity": "O(n)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {private: vector<vector<int>> result; vector<int> path; void backtracking(vector<int>& candidates, int target, int sum, int startIndex, vector<bool>& used) { if (sum == target) { result.push_back(path); return; } for (int i = startIndex; i < candidates.size() && sum + candidates[i] <= target; i++) { if (i > 0 && candidates[i] == candidates[i - 1] && used[i - 1] == false) { continue; } sum += candidates[i]; path.push_back(candidates[i]); used[i] = true; backtracking(candidates, target, sum, i + 1, used); used[i] = false; sum -= candidates[i]; path.pop_back(); } } public: vector<vector<int>> combinationSum2(vector<int>& candidates, int target) { vector<bool> used(candidates.size(), false); path.clear(); result.clear(); sort(candidates.begin(), candidates.end()); backtracking(candidates, target, 0, 0, used); return result; } };",
+      "description": "使用used数组去重的C++实现"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {private: vector<vector<int>> result; vector<int> path; void backtracking(vector<int>& candidates, int target, int sum, int startIndex) { if (sum == target) { result.push_back(path); return; } for (int i = startIndex; i < candidates.size() && sum + candidates[i] <= target; i++) { if (i > startIndex && candidates[i] == candidates[i - 1]) { continue; } sum += candidates[i]; path.push_back(candidates[i]); backtracking(candidates, target, sum, i + 1); sum -= candidates[i]; path.pop_back(); } } public: vector<vector<int>> combinationSum2(vector<int>& candidates, int target) { path.clear(); result.clear(); sort(candidates.begin(), candidates.end()); backtracking(candidates, target, 0, 0); return result; } };",
+      "description": "不使用used数组去重的C++实现"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { LinkedList<Integer> path = new LinkedList<>(); List<List<Integer>> ans = new ArrayList<>(); boolean[] used; int sum = 0; public List<List<Integer>> combinationSum2(int[] candidates, int target) { used = new boolean[candidates.length]; Arrays.fill(used, false); Arrays.sort(candidates); backTracking(candidates, target, 0); return ans; } private void backTracking(int[] candidates, int target, int startIndex) { if (sum == target) { ans.add(new ArrayList(path)); } for (int i = startIndex; i < candidates.length; i++) { if (sum + candidates[i] > target) { break; } if (i > 0 && candidates[i] == candidates[i - 1] && !used[i - 1]) { continue; } used[i] = true; sum += candidates[i]; path.add(candidates[i]); backTracking(candidates, target, i + 1); used[i] = false; sum -= candidates[i]; path.removeLast(); } } }",
+      "description": "使用标记数组去重的Java实现"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { List<List<Integer>> res = new ArrayList<>(); LinkedList<Integer> path = new LinkedList<>(); int sum = 0; public List<List<Integer>> combinationSum2(int[] candidates, int target) { Arrays.sort(candidates); backTracking(candidates, target, 0); return res; } private void backTracking(int[] candidates, int target, int start) { if (sum == target) { res.add(new ArrayList<>(path)); return; } for (int i = start; i < candidates.length && sum + candidates[i] <= target; i++) { if (i > start && candidates[i] == candidates[i - 1]) { continue; } sum += candidates[i]; path.add(candidates[i]); backTracking(candidates, target, i + 1); int temp = path.getLast(); sum -= temp; path.removeLast(); } } }",
+      "description": "不使用标记数组去重的Java实现"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def backtracking(self, candidates, target, total, startIndex, path, result): if total == target: result.append(path[:]) return for i in range(startIndex, len(candidates)): if i > startIndex and candidates[i] == candidates[i - 1]: continue if total + candidates[i] > target: break total += candidates[i] path.append(candidates[i]) self.backtracking(candidates, target, total, i + 1, path, result) total -= candidates[i] path.pop() def combinationSum2(self, candidates, target): result = [] candidates.sort() self.backtracking(candidates, target, 0, 0, [], result) return result",
+      "description": "Python回溯实现"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def backtracking(self, candidates, target, total, startIndex, used, path, result): if total == target: result.append(path[:]) return for i in range(startIndex, len(candidates)): if i > startIndex and candidates[i] == candidates[i - 1] and not used[i - 1]: continue if total + candidates[i] > target: break total += candidates[i] path.append(candidates[i]) used[i] = True self.backtracking(candidates, target, total, i + 1, used, path, result) used[i] = False total -= candidates[i] path.pop() def combinationSum2(self, candidates, target): used = [False] * len(candidates) result = [] candidates.sort() self.backtracking(candidates, target, 0, 0, used, [], result) return result",
+      "description": "Python回溯使用used数组去重实现"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def combinationSum2(self, candidates, target): candidates.sort() results = [] self.combinationSumHelper(candidates, target, 0, [], results) return results def combinationSumHelper(self, candidates, target, index, path, results): if target == 0: results.append(path[:]) return for i in range(index, len(candidates)): if i > index and candidates[i] == candidates[i - 1]: continue if candidates[i] > target: break path.append(candidates[i]) self.combinationSumHelper(candidates, target - candidates[i], i + 1, path, results) path.pop()",
+      "description": "Python回溯优化实现"
+    }
+  ],
+  "common_mistakes": [
+    "不正确地理解了题目中关于‘每个数字在每个组合中只能使用一次’的要求，导致错误地排除了某些有效的解。",
+    "忽视了对输入数组进行预先排序这一步骤，导致无法有效去除重复组合。",
+    "尝试使用set或map等数据结构在最后阶段去除重复结果，这种方法虽然可行但效率较低，可能会导致超时。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230310000918.png",
+      "description": "这张图片展示了使用回溯算法解决组合总和问题的过程，通过递归和剪枝策略在树结构中寻找所有符合条件的组合。",
+      "context": "该图片展示了在解决组合总和问题时，通过树形结构表示的选择过程，并特别标注了用于去重的used数组状态。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230310000954.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20230310000954.png",
+      "context": "该图通过橘黄色标注展示了used数组的变化，帮助理解在candidates[i] == candidates[i - 1]的情况下，如何根据used[i - 1]的值判断元素是在同一树枝还是同一树层被使用过。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20221021163812.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20221021163812.png",
+      "context": "该图片展示了在回溯算法中，通过used数组的状态（true或false）来区分同一树层与树枝上的节点选择情况。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230310000918.png",
+      "description": "GIF展示了在解决组合总和问题时，通过树形结构选择元素并利用used数组进行树层去重的过程。",
+      "context": "GIF动画展示了在解决组合总和问题时，如何通过树形结构选择过程来避免同一树层上的重复元素。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230310000954.png",
+      "description": "GIF展示了在求解组合总和问题时，如何通过used数组来判断并避免同一树层上重复元素的使用过程。",
+      "context": "GIF动画展示了在回溯算法中，如何通过used数组的状态变化来判断同一树层上的元素是否已经被使用过。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20221021163812.png",
+      "description": "GIF展示了在回溯算法中，通过使用标志数组区分树枝和树层上元素的选择过程。",
+      "context": "该GIF动画展示了在回溯算法中，如何通过used数组的状态来区分同一树层与进入下一层递归的情况，帮助理解去重逻辑。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\回溯算法\\组合总和II.txt",
+  "extracted_at": "2025-07-21T12:14:58.106245",
+  "raw_content": "组合总和II\n力扣题目链接(https://leetcode.cn/problems/combination-sum-ii/)\n\n给定一个数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。\n\ncandidates 中的每个数字在每个组合中只能使用一次。\n\n说明： 所有数字（包括目标数）都是正整数。解集不能包含重复的组合。\n\n示例 1:\n输入: candidates = [10,1,2,7,6,1,5], target = 8,\n所求解集为:\n[\n  [1, 7],\n  [1, 2, 5],\n  [2, 6],\n  [1, 1, 6]\n]\n示例 2:\n输入: candidates = [2,5,2,1,2], target = 5,\n所求解集为:\n[\n  [1,2,2],\n  [5]\n]\n\n#思路\n这道题目和39.组合总和 (https://programmercarl.com/0039.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8C.html)如下区别：\n\n本题candidates 中的每个数字在每个组合中只能使用一次。\n本题数组candidates的元素是有重复的，而39.组合总和 (https://programmercarl.com/0039.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8C.html)是无重复元素的数组candidates\n最后本题和39.组合总和 (https://programmercarl.com/0039.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8C.html)要求一样，解集不能包含重复的组合。\n\n本题的难点在于区别2中：集合（数组candidates）有重复元素，但还不能有重复的组合。\n\n一些同学可能想了：我把所有组合求出来，再用set或者map去重，这么做很容易超时！\n\n所以要在搜索的过程中就去掉重复组合。\n\n很多同学在去重的问题上想不明白，其实很多题解也没有讲清楚，反正代码是能过的，感觉是那么回事，稀里糊涂的先把题目过了。\n\n这个去重为什么很难理解呢，所谓去重，其实就是使用过的元素不能重复选取。 这么一说好像很简单！\n\n都知道组合问题可以抽象为树形结构，那么“使用过”在这个树形结构上是有两个维度的，一个维度是同一树枝上使用过，一个维度是同一树层上使用过。没有理解这两个层面上的“使用过” 是造成大家没有彻底理解去重的根本原因。\n\n那么问题来了，我们是要同一树层上使用过，还是同一树枝上使用过呢？\n\n回看一下题目，元素在同一个组合内是可以重复的，怎么重复都没事，但两个组合不能相同。\n\n所以我们要去重的是同一树层上的“使用过”，同一树枝上的都是一个组合里的元素，不用去重。\n\n为了理解去重我们来举一个例子，candidates = [1, 1, 2], target = 3，（方便起见candidates已经排序了）\n\n强调一下，树层去重的话，需要对数组排序！\n\n选择过程树形结构如图所示：\n\nhttps://file1.kamacoder.com/i/algo/20230310000918.png\n\n可以看到图中，每个节点相对于 39.组合总和 (https://mp.weixin.qq.com/s/FLg8G6EjVcxBjwCbzpACPw)我多加了used数组，这个used数组下面会重点介绍。\n\n#回溯三部曲\n递归函数参数\n与39.组合总和 (https://programmercarl.com/0039.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8C.html)套路相同，此题还需要加一个bool型数组used，用来记录同一树枝上的元素是否使用过。\n\n这个集合去重的重任就是used来完成的。\n\n代码如下：\n\nvector<vector<int>> result; // 存放组合集合\nvector<int> path;           // 符合条件的组合\nvoid backtracking(vector<int>& candidates, int target, int sum, int startIndex, vector<bool>& used) {\n递归终止条件\n与39.组合总和 (opens new window)相同，终止条件为 sum > target 和 sum == target。\n\n代码如下：\n\nif (sum > target) { // 这个条件其实可以省略\n    return;\n}\nif (sum == target) {\n    result.push_back(path);\n    return;\n}\nsum > target 这个条件其实可以省略，因为在递归单层遍历的时候，会有剪枝的操作，下面会介绍到。\n\n单层搜索的逻辑\n这里与39.组合总和 (https://programmercarl.com/0039.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8C.html)最大的不同就是要去重了。\n\n前面我们提到：要去重的是“同一树层上的使用过”，如何判断同一树层上元素（相同的元素）是否使用过了呢。\n\n如果candidates[i] == candidates[i - 1] 并且 used[i - 1] == false，就说明：前一个树枝，使用了candidates[i - 1]，也就是说同一树层使用过candidates[i - 1]。\n\n此时for循环里就应该做continue的操作。\n\n这块比较抽象，如图：\n\nhttps://file1.kamacoder.com/i/algo/20230310000954.png\n\n我在图中将used的变化用橘黄色标注上，可以看出在candidates[i] == candidates[i - 1]相同的情况下：\n\nused[i - 1] == true，说明同一树枝candidates[i - 1]使用过\nused[i - 1] == false，说明同一树层candidates[i - 1]使用过\n可能有的录友想，为什么 used[i - 1] == false 就是同一树层呢，因为同一树层，used[i - 1] == false 才能表示，当前取的 candidates[i] 是从 candidates[i - 1] 回溯而来的。\n\n而 used[i - 1] == true，说明是进入下一层递归，去下一个数，所以是树枝上，如图所示：\n\nhttps://file1.kamacoder.com/i/algo/20221021163812.png\n\n这块去重的逻辑很抽象，网上搜的题解基本没有能讲清楚的，如果大家之前思考过这个问题或者刷过这道题目，看到这里一定会感觉通透了很多！\n\n那么单层搜索的逻辑代码如下：\n\nfor (int i = startIndex; i < candidates.size() && sum + candidates[i] <= target; i++) {\n    // used[i - 1] == true，说明同一树枝candidates[i - 1]使用过\n    // used[i - 1] == false，说明同一树层candidates[i - 1]使用过\n    // 要对同一树层使用过的元素进行跳过\n    if (i > 0 && candidates[i] == candidates[i - 1] && used[i - 1] == false) {\n        continue;\n    }\n    sum += candidates[i];\n    path.push_back(candidates[i]);\n    used[i] = true;\n    backtracking(candidates, target, sum, i + 1, used); // 和39.组合总和的区别1：这里是i+1，每个数字在每个组合中只能使用一次\n    used[i] = false;\n    sum -= candidates[i];\n    path.pop_back();\n}\n注意sum + candidates[i] <= target为剪枝操作，在39.组合总和 (opens new window)有讲解过！\n\n回溯三部曲分析完了，整体C++代码如下：\n\nclass Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(vector<int>& candidates, int target, int sum, int startIndex, vector<bool>& used) {\n        if (sum == target) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i < candidates.size() && sum + candidates[i] <= target; i++) {\n            // used[i - 1] == true，说明同一树枝candidates[i - 1]使用过\n            // used[i - 1] == false，说明同一树层candidates[i - 1]使用过\n            // 要对同一树层使用过的元素进行跳过\n            if (i > 0 && candidates[i] == candidates[i - 1] && used[i - 1] == false) {\n                continue;\n            }\n            sum += candidates[i];\n            path.push_back(candidates[i]);\n            used[i] = true;\n            backtracking(candidates, target, sum, i + 1, used); // 和39.组合总和的区别1，这里是i+1，每个数字在每个组合中只能使用一次\n            used[i] = false;\n            sum -= candidates[i];\n            path.pop_back();\n        }\n    }\n\npublic:\n    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {\n        vector<bool> used(candidates.size(), false);\n        path.clear();\n        result.clear();\n        // 首先把给candidates排序，让其相同的元素都挨在一起。\n        sort(candidates.begin(), candidates.end());\n        backtracking(candidates, target, 0, 0, used);\n        return result;\n    }\n};\n\n时间复杂度: O(n * 2^n)\n空间复杂度: O(n)\n#补充\n这里直接用startIndex来去重也是可以的， 就不用used数组了。\n\nclass Solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    void backtracking(vector<int>& candidates, int target, int sum, int startIndex) {\n        if (sum == target) {\n            result.push_back(path);\n            return;\n        }\n        for (int i = startIndex; i < candidates.size() && sum + candidates[i] <= target; i++) {\n            // 要对同一树层使用过的元素进行跳过\n            if (i > startIndex && candidates[i] == candidates[i - 1]) {\n                continue;\n            }\n            sum += candidates[i];\n            path.push_back(candidates[i]);\n            backtracking(candidates, target, sum, i + 1); // 和39.组合总和的区别1，这里是i+1，每个数字在每个组合中只能使用一次\n            sum -= candidates[i];\n            path.pop_back();\n        }\n    }\n\npublic:\n    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {\n        path.clear();\n        result.clear();\n        // 首先把给candidates排序，让其相同的元素都挨在一起。\n        sort(candidates.begin(), candidates.end());\n        backtracking(candidates, target, 0, 0);\n        return result;\n    }\n};\n\n#总结\n本题同样是求组合总和，但就是因为其数组candidates有重复元素，而要求不能有重复的组合，所以相对于39.组合总和 (https://programmercarl.com/0039.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8C.html)难度提升了不少。\n\n关键是去重的逻辑，代码很简单，网上一搜一大把，但几乎没有能把这块代码含义讲明白的，基本都是给出代码，然后说这就是去重了，究竟怎么个去重法也是模棱两可。\n\n所以Carl有必要把去重的这块彻彻底底的给大家讲清楚，就连“树层去重”和“树枝去重”都是我自创的词汇，希望对大家理解有帮助！\n\n#其他语言版本\n#Java\n使用标记数组\n\nclass Solution {\n  LinkedList<Integer> path = new LinkedList<>();\n  List<List<Integer>> ans = new ArrayList<>();\n  boolean[] used;\n  int sum = 0;\n\n  public List<List<Integer>> combinationSum2(int[] candidates, int target) {\n    used = new boolean[candidates.length];\n    // 加标志数组，用来辅助判断同层节点是否已经遍历\n    Arrays.fill(used, false);\n    // 为了将重复的数字都放到一起，所以先进行排序\n    Arrays.sort(candidates);\n    backTracking(candidates, target, 0);\n    return ans;\n  }\n\n  private void backTracking(int[] candidates, int target, int startIndex) {\n    if (sum == target) {\n      ans.add(new ArrayList(path));\n    }\n    for (int i = startIndex; i < candidates.length; i++) {\n      if (sum + candidates[i] > target) {\n        break;\n      }\n      // 出现重复节点，同层的第一个节点已经被访问过，所以直接跳过\n      if (i > 0 && candidates[i] == candidates[i - 1] && !used[i - 1]) {\n        continue;\n      }\n      used[i] = true;\n      sum += candidates[i];\n      path.add(candidates[i]);\n      // 每个节点仅能选择一次，所以从下一位开始\n      backTracking(candidates, target, i + 1);\n      used[i] = false;\n      sum -= candidates[i];\n      path.removeLast();\n    }\n  }\n}\n\n不使用标记数组\n\nclass Solution {\n  List<List<Integer>> res = new ArrayList<>();\n  LinkedList<Integer> path = new LinkedList<>();\n  int sum = 0;\n  \n  public List<List<Integer>> combinationSum2( int[] candidates, int target ) {\n    //为了将重复的数字都放到一起，所以先进行排序\n    Arrays.sort( candidates );\n    backTracking( candidates, target, 0 );\n    return res;\n  }\n  \n  private void backTracking( int[] candidates, int target, int start ) {\n    if ( sum == target ) {\n      res.add( new ArrayList<>( path ) );\n      return;\n    }\n    for ( int i = start; i < candidates.length && sum + candidates[i] <= target; i++ ) {\n      //正确剔除重复解的办法\n      //跳过同一树层使用过的元素\n      if ( i > start && candidates[i] == candidates[i - 1] ) {\n        continue;\n      }\n\n      sum += candidates[i];\n      path.add( candidates[i] );\n      // i+1 代表当前组内元素只选取一次\n      backTracking( candidates, target, i + 1 );\n\n      int temp = path.getLast();\n      sum -= temp;\n      path.removeLast();\n    }\n  }\n}\n#Python\n回溯\n\nclass Solution:\n\n\n    def backtracking(self, candidates, target, total, startIndex, path, result):\n        if total == target:\n            result.append(path[:])\n            return\n\n        for i in range(startIndex, len(candidates)):\n            if i > startIndex and candidates[i] == candidates[i - 1]:\n                continue\n\n            if total + candidates[i] > target:\n                break\n\n            total += candidates[i]\n            path.append(candidates[i])\n            self.backtracking(candidates, target, total, i + 1, path, result)\n            total -= candidates[i]\n            path.pop()\n\n    def combinationSum2(self, candidates, target):\n        result = []\n        candidates.sort()\n        self.backtracking(candidates, target, 0, 0, [], result)\n        return result\n\n回溯 使用used\n\nclass Solution:\n\n\n    def backtracking(self, candidates, target, total, startIndex, used, path, result):\n        if total == target:\n            result.append(path[:])\n            return\n\n        for i in range(startIndex, len(candidates)):\n            # 对于相同的数字，只选择第一个未被使用的数字，跳过其他相同数字\n            if i > startIndex and candidates[i] == candidates[i - 1] and not used[i - 1]:\n                continue\n\n            if total + candidates[i] > target:\n                break\n\n            total += candidates[i]\n            path.append(candidates[i])\n            used[i] = True\n            self.backtracking(candidates, target, total, i + 1, used, path, result)\n            used[i] = False\n            total -= candidates[i]\n            path.pop()\n\n    def combinationSum2(self, candidates, target):\n        used = [False] * len(candidates)\n        result = []\n        candidates.sort()\n        self.backtracking(candidates, target, 0, 0, used, [], result)\n        return result\n\n回溯优化\n\nclass Solution:\n    def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:\n        candidates.sort()\n        results = []\n        self.combinationSumHelper(candidates, target, 0, [], results)\n        return results\n\n    def combinationSumHelper(self, candidates, target, index, path, results):\n        if target == 0:\n            results.append(path[:])\n            return\n        for i in range(index, len(candidates)):\n            if i > index and candidates[i] == candidates[i - 1]:\n                continue  \n            if candidates[i] > target:\n                break  \n            path.append(candidates[i])\n            self.combinationSumHelper(candidates, target - candidates[i], i + 1, path, results)\n            path.pop()"
+}

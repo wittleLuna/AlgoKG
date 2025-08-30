@@ -1,0 +1,548 @@
+{
+  "id": "AP_320c14d3",
+  "title": "单词拆分",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/word-break/",
+  "description": "一个非空字符串 s 和一个包含非空单词的列表 wordDict，判定 s 是否可以被空格拆分为一个或多个在字典中出现的单词。\n\n说明：\n\n拆分时可以重复使用字典中的单词。\n\n你可以假设字典中没有重复的单词。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "Backtracking",
+    "Dynamic Programming"
+  ],
+  "data_structure_tags": [
+    "String",
+    "Set",
+    "Array"
+  ],
+  "technique_tags": [
+    "Memoization",
+    "Complete Knapsack Problem",
+    "Subsequence Matching"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过回溯法探索所有可能的分割方式来判断字符串s是否可被拆分为字典中的单词。为优化时间复杂度，采用记忆化递归来避免重复计算。另外，将问题转化为完全背包问题，使用动态规划方法进一步提高效率。",
+  "key_insights": [
+    {
+      "content": "直接应用回溯法会导致大量重复计算，特别是当处理较长字符串时。利用记忆化技术存储已解决子问题的结果，可以显著减少冗余计算，从而提升算法性能。"
+    },
+    {
+      "content": "将此问题视为一种完全背包问题（每个物品即字典中的单词，可重复选取），其中'背包容量'为目标字符串s。这种转换不仅使得采用动态规划成为可能，也更深刻地揭示了问题的本质。"
+    },
+    {
+      "content": "在动态规划解法中，遍历顺序很重要：为了确保正确的排列组合，需要先遍历背包大小再遍历物品列表。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "看到这道题目的时候，大家应该回想起我们之前讲解回溯法专题的时候，讲过的一道题目回溯算法：分割回文串 (https://programmercarl.com/0131.%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.html)，就是枚举字符串的所有分割情况。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    bool backtracking (const string& s, const unordered_set<string>& wordSet, int startIndex) {\n        if (startIndex >= s.size()) {\n            return true;\n        }\n        for (int i = startIndex; i < s.size(); i++) {\n            string word = s.substr(startIndex, i - startIndex + 1);\n            if (wordSet.find(word) != wordSet.end() && backtracking(s, wordSet, i + 1)) {\n                return true;\n            }\n        }\n        return false;\n    }\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> wordSet(wordDict.begin(), wordDict.end());\n        return backtracking(s, wordSet, 0);\n    }\n};",
+          "description": "使用回溯法解决单词拆分问题的C++实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    bool backtracking (const string& s,\n            const unordered_set<string>& wordSet,\n            vector<bool>& memory,\n            int startIndex) {\n        if (startIndex >= s.size()) {\n            return true;\n        }\n        if (!memory[startIndex]) return memory[startIndex];\n        for (int i = startIndex; i < s.size(); i++) {\n            string word = s.substr(startIndex, i - startIndex + 1);\n            if (wordSet.find(word) != wordSet.end() && backtracking(s, wordSet, memory, i + 1)) {\n                return true;\n            }\n        }\n        memory[startIndex] = false; \n        return false;\n    }\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> wordSet(wordDict.begin(), wordDict.end());\n        vector<bool> memory(s.size(), 1); \n        return backtracking(s, wordSet, memory, 0);\n    }\n};",
+          "description": "使用记忆化递归优化后的回溯法解决单词拆分问题的C++实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> wordSet(wordDict.begin(), wordDict.end());\n        vector<bool> dp(s.size() + 1, false);\n        dp[0] = true;\n        for (int i = 1; i <= s.size(); i++) {\n            for (int j = 0; j < i; j++) {\n                string word = s.substr(j, i - j);\n                if (wordSet.find(word) != wordSet.end() && dp[j]) {\n                    dp[i] = true;\n                }\n            }\n        }\n        return dp[s.size()];\n    }\n};",
+          "description": "使用动态规划解决单词拆分问题的C++实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean wordBreak(String s, List<String> wordDict) {\n        HashSet<String> set = new HashSet<>(wordDict);\n        boolean[] valid = new boolean[s.length() + 1];\n        valid[0] = true;\n\n        for (int i = 1; i <= s.length(); i++) {\n            for (int j = 0; j < i && !valid[i]; j++) {\n                if (set.contains(s.substring(j, i)) && valid[j]) {\n                    valid[i] = true;\n                }\n            }\n        }\n\n        return valid[s.length()];\n    }\n}",
+          "description": "使用动态规划解决单词拆分问题的Java实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean wordBreak(String s, List<String> wordDict) {\n        boolean[] dp = new boolean[s.length() + 1];\n        dp[0] = true;\n\n        for (int i = 1; i <= s.length(); i++) {\n            for (String word : wordDict) {\n                int len = word.length();\n                if (i >= len && dp[i - len] && word.equals(s.substring(i - len, i))) {\n                    dp[i] = true;\n                    break;\n                }\n            }\n        }\n\n        return dp[s.length()];\n    }\n}",
+          "description": "另一种思路的背包算法解决单词拆分问题的Java实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    private Set<String> set;\n    private int[] memo;\n    public boolean wordBreak(String s, List<String> wordDict) {\n        memo = new int[s.length()];\n        set = new HashSet<>(wordDict);\n        return backtracking(s, 0);\n    }\n\n    public boolean backtracking(String s, int startIndex) {\n        if (startIndex == s.length()) {\n            return true;\n        }\n        if (memo[startIndex] == -1) {\n            return false;\n        }\n\n        for (int i = startIndex; i < s.length(); i++) {\n            String sub = s.substring(startIndex, i + 1);\n            if (!set.contains(sub)) {\n                continue;               \n            }\n            boolean res = backtracking(s, i + 1);\n            if (res) return true;\n        }\n        memo[startIndex] = -1;\n        return false;\n    }\n}",
+          "description": "使用回溯法加记忆化解决单词拆分问题的Java实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def backtracking(self, s: str, wordSet: set[str], startIndex: int) -> bool:\n        if startIndex >= len(s):\n            return True\n\n        for i in range(startIndex, len(s)):\n            word = s[startIndex:i + 1]\n            if word in wordSet and self.backtracking(s, wordSet, i + 1):\n                return True\n\n        return False\n\n    def wordBreak(self, s: str, wordDict: List[str]) -> bool:\n        wordSet = set(wordDict)\n        return self.backtracking(s, wordSet, 0)",
+          "description": "使用回溯法解决单词拆分问题的Python实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def wordBreak(self, s: str, wordDict: List[str]) -> bool:\n        wordSet = set(wordDict)\n        n = len(s)\n        dp = [False] * (n + 1)\n        dp[0] = True\n\n        for i in range(1, n + 1):\n            for j in range(i):\n                if dp[j] and s[j:i] in wordSet:\n                    dp[i] = True\n                    break\n\n        return dp[n]",
+          "description": "使用动态规划（版本一）解决单词拆分问题的Python实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def wordBreak(self, s: str, wordDict: List[str]) -> bool:\n        dp = [False]*(len(s) + 1)\n        dp[0] = True\n        for j in range(1, len(s) + 1):\n            for word in wordDict:\n                if j >= len(word):\n                    dp[j] = dp[j] or (dp[j - len(word)] and word == s[j - len(word):j])\n        return dp[len(s)]",
+          "description": "使用动态规划（版本二）解决单词拆分问题的Python实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object):\n    def wordBreak(self, s, wordDict):\n        wordDict.sort(key=lambda x: len(x))\n        n = len(s)\n        dp = [False] * (n + 1)\n        dp[0] = True\n        for i in range(1, n + 1):\n            for word in wordDict:\n                if len(word) > i:\n                    break\n                dp[i] = dp[i] or (dp[i - len(word)] and s[i - len(word): i] == word)\n        return dp[-1]",
+          "description": "使用剪枝优化的动态规划解决单词拆分问题的Python实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "背包问题",
+      "text": "单词就是物品，字符串s就是背包，单词能否组成字符串s，就是问物品能不能把背包装满。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: bool backtracking (const string& s, const unordered_set<string>& wordSet, int startIndex) { if (startIndex >= s.size()) { return true; } for (int i = startIndex; i < s.size(); i++) { string word = s.substr(startIndex, i - startIndex + 1); if (wordSet.find(word) != wordSet.end() && backtracking(s, wordSet, i + 1)) { return true; } } return false; } public: bool wordBreak(string s, vector<string>& wordDict) { unordered_set<string> wordSet(wordDict.begin(), wordDict.end()); return backtracking(s, wordSet, 0); }};",
+          "description": "使用回溯法解决单词拆分问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: bool backtracking (const string& s, const unordered_set<string>& wordSet, vector<bool>& memory, int startIndex) { if (startIndex >= s.size()) { return true; } if (!memory[startIndex]) return memory[startIndex]; for (int i = startIndex; i < s.size(); i++) { string word = s.substr(startIndex, i - startIndex + 1); if (wordSet.find(word) != wordSet.end() && backtracking(s, wordSet, memory, i + 1)) { return true; } } memory[startIndex] = false; return false; } public: bool wordBreak(string s, vector<string>& wordDict) { unordered_set<string> wordSet(wordDict.begin(), wordDict.end()); vector<bool> memory(s.size(), 1); return backtracking(s, wordSet, memory, 0); }};",
+          "description": "使用记忆化递归解决单词拆分问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool wordBreak(string s, vector<string>& wordDict) { unordered_set<string> wordSet(wordDict.begin(), wordDict.end()); vector<bool> dp(s.size() + 1, false); dp[0] = true; for (int i = 1; i <= s.size(); i++) { for (int j = 0; j < i; j++) { string word = s.substr(j, i - j); if (wordSet.find(word) != wordSet.end() && dp[j]) { dp[i] = true; } } } return dp[s.size()]; }};",
+          "description": "使用动态规划解决单词拆分问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean wordBreak(String s, List<String> wordDict) { HashSet<String> set = new HashSet<>(wordDict); boolean[] valid = new boolean[s.length() + 1]; valid[0] = true; for (int i = 1; i <= s.length(); i++) { for (int j = 0; j < i && !valid[i]; j++) { if (set.contains(s.substring(j, i)) && valid[j]) { valid[i] = true; } } } return valid[s.length()]; }}",
+          "description": "Java版，使用动态规划解决单词拆分问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean wordBreak(String s, List<String> wordDict) { boolean[] dp = new boolean[s.length() + 1]; dp[0] = true; for (int i = 1; i <= s.length(); i++) { for (String word : wordDict) { int len = word.length(); if (i >= len && dp[i - len] && word.equals(s.substring(i - len, i))) { dp[i] = true; break; } } } return dp[s.length()]; }}",
+          "description": "Java版，另一种动态规划方法解决单词拆分问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { private Set<String> set; private int[] memo; public boolean wordBreak(String s, List<String> wordDict) { memo = new int[s.length()]; set = new HashSet<>(wordDict); return backtracking(s, 0); } public boolean backtracking(String s, int startIndex) { if (startIndex == s.length()) { return true; } if (memo[startIndex] == -1) { return false; } for (int i = startIndex; i < s.length(); i++) { String sub = s.substring(startIndex, i + 1); if (!set.contains(sub)) { continue; } boolean res = backtracking(s, i + 1); if (res) return true; } memo[startIndex] = -1; return false; }}",
+          "description": "Java版，使用回溯加记忆化搜索解决单词拆分问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def backtracking(self, s: str, wordSet: set[str], startIndex: int) -> bool: if startIndex >= len(s): return True for i in range(startIndex, len(s)): word = s[startIndex:i + 1] if word in wordSet and self.backtracking(s, wordSet, i + 1): return True return False def wordBreak(self, s: str, wordDict: List[str]) -> bool: wordSet = set(wordDict) return self.backtracking(s, wordSet, 0)",
+          "description": "Python版，使用回溯法解决单词拆分问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wordBreak(self, s: str, wordDict: List[str]) -> bool: wordSet = set(wordDict) n = len(s) dp = [False] * (n + 1) dp[0] = True for i in range(1, n + 1): for j in range(i): if dp[j] and s[j:i] in wordSet: dp[i] = True break return dp[n]",
+          "description": "Python版，使用动态规划（版本一）解决单词拆分问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wordBreak(self, s: str, wordDict: List[str]) -> bool: dp = [False]*(len(s) + 1) dp[0] = True for j in range(1, len(s) + 1): for word in wordDict: if j >= len(word): dp[j] = dp[j] or (dp[j - len(word)] and word == s[j - len(word):j]) return dp[len(s)]",
+          "description": "Python版，使用动态规划（版本二）解决单词拆分问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def wordBreak(self, s, wordDict): wordDict.sort(key=lambda x: len(x)) n = len(s) dp = [False] * (n + 1) dp[0] = True for i in range(1, n + 1): for word in wordDict: if len(word) > i: break dp[i] = dp[i] or (dp[i - len(word)] and s[i - len(word): i] == word) return dp[-1]",
+          "description": "Python版，使用动态规划并剪枝优化解决单词拆分问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "拓展",
+      "text": "关于遍历顺序，再给大家讲一下为什么 先遍历物品再遍历背包不行。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: bool backtracking (const string& s, const unordered_set<string>& wordSet, int startIndex) { if (startIndex >= s.size()) { return true; } for (int i = startIndex; i < s.size(); i++) { string word = s.substr(startIndex, i - startIndex + 1); if (wordSet.find(word) != wordSet.end() && backtracking(s, wordSet, i + 1)) { return true; } } return false; } public: bool wordBreak(string s, vector<string>& wordDict) { unordered_set<string> wordSet(wordDict.begin(), wordDict.end()); return backtracking(s, wordSet, 0); }};",
+          "description": "使用回溯法解决单词拆分问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: bool backtracking (const string& s, const unordered_set<string>& wordSet, vector<bool>& memory, int startIndex) { if (startIndex >= s.size()) { return true; } if (!memory[startIndex]) return memory[startIndex]; for (int i = startIndex; i < s.size(); i++) { string word = s.substr(startIndex, i - startIndex + 1); if (wordSet.find(word) != wordSet.end() && backtracking(s, wordSet, memory, i + 1)) { return true; } } memory[startIndex] = false; return false; } public: bool wordBreak(string s, vector<string>& wordDict) { unordered_set<string> wordSet(wordDict.begin(), wordDict.end()); vector<bool> memory(s.size(), 1); return backtracking(s, wordSet, memory, 0); }};",
+          "description": "使用记忆化递归解决单词拆分问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool wordBreak(string s, vector<string>& wordDict) { unordered_set<string> wordSet(wordDict.begin(), wordDict.end()); vector<bool> dp(s.size() + 1, false); dp[0] = true; for (int i = 1; i <= s.size(); i++) { for (int j = 0; j < i; j++) { string word = s.substr(j, i - j); if (wordSet.find(word) != wordSet.end() && dp[j]) { dp[i] = true; } } } return dp[s.size()]; }};",
+          "description": "使用动态规划解决单词拆分问题，先遍历背包再遍历物品"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool wordBreak(string s, vector<string>& wordDict) { unordered_set<string> wordSet(wordDict.begin(), wordDict.end()); vector<bool> dp(s.size() + 1, false); dp[0] = true; for (int j = 0; j < wordDict.size(); j++) { for (int i = wordDict[j].size(); i <= s.size(); i++) { string word = s.substr(i - wordDict[j].size(), wordDict[j].size()); if ( word == wordDict[j] && dp[i - wordDict[j].size()]) { dp[i] = true; } } } return dp[s.size()]; }};",
+          "description": "使用动态规划解决单词拆分问题，先遍历物品再遍历背包"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean wordBreak(String s, List<String> wordDict) { HashSet<String> set = new HashSet<>(wordDict); boolean[] valid = new boolean[s.length() + 1]; valid[0] = true; for (int i = 1; i <= s.length(); i++) { for (int j = 0; j < i && !valid[i]; j++) { if (set.contains(s.substring(j, i)) && valid[j]) { valid[i] = true; } } } return valid[s.length()]; }}",
+          "description": "Java实现的动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean wordBreak(String s, List<String> wordDict) { boolean[] dp = new boolean[s.length() + 1]; dp[0] = true; for (int i = 1; i <= s.length(); i++) { for (String word : wordDict) { int len = word.length(); if (i >= len && dp[i - len] && word.equals(s.substring(i - len, i))) { dp[i] = true; break; } } } return dp[s.length()]; }}",
+          "description": "Java实现的另一种动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { private Set<String> set; private int[] memo; public boolean wordBreak(String s, List<String> wordDict) { memo = new int[s.length()]; set = new HashSet<>(wordDict); return backtracking(s, 0); } public boolean backtracking(String s, int startIndex) { if (startIndex == s.length()) { return true; } if (memo[startIndex] == -1) { return false; } for (int i = startIndex; i < s.length(); i++) { String sub = s.substring(startIndex, i + 1); if (!set.contains(sub)) { continue; } boolean res = backtracking(s, i + 1); if (res) return true; } memo[startIndex] = -1; return false; }}",
+          "description": "Java实现的记忆化递归解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def backtracking(self, s: str, wordSet: set[str], startIndex: int) -> bool: if startIndex >= len(s): return True for i in range(startIndex, len(s)): word = s[startIndex:i + 1] if word in wordSet and self.backtracking(s, wordSet, i + 1): return True return False def wordBreak(self, s: str, wordDict: List[str]) -> bool: wordSet = set(wordDict) return self.backtracking(s, wordSet, 0)",
+          "description": "Python实现的回溯解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wordBreak(self, s: str, wordDict: List[str]) -> bool: wordSet = set(wordDict) n = len(s) dp = [False] * (n + 1) dp[0] = True for i in range(1, n + 1): for j in range(i): if dp[j] and s[j:i] in wordSet: dp[i] = True break return dp[n]",
+          "description": "Python实现的第一种动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wordBreak(self, s: str, wordDict: List[str]) -> bool: dp = [False]*(len(s) + 1) dp[0] = True for j in range(1, len(s) + 1): for word in wordDict: if j >= len(word): dp[j] = dp[j] or (dp[j - len(word)] and word == s[j - len(word):j]) return dp[len(s)]",
+          "description": "Python实现的第二种动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def wordBreak(self, s, wordDict): wordDict.sort(key=lambda x: len(x)) n = len(s) dp = [False] * (n + 1) dp[0] = True for i in range(1, n + 1): for word in wordDict: if len(word) > i: break dp[i] = dp[i] or (dp[i - len(word)] and s[i - len(word): i] == word) return dp[-1]",
+          "description": "Python实现的剪枝优化后的动态规划解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "本题和我们之前讲解回溯专题的回溯算法：分割回文串 (https://programmercarl.com/0131.%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.html)非常像，所以我也给出了对应的回溯解法。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: bool backtracking (const string& s, const unordered_set<string>& wordSet, int startIndex) { if (startIndex >= s.size()) { return true; } for (int i = startIndex; i < s.size(); i++) { string word = s.substr(startIndex, i - startIndex + 1); if (wordSet.find(word) != wordSet.end() && backtracking(s, wordSet, i + 1)) { return true; } } return false; } public: bool wordBreak(string s, vector<string>& wordDict) { unordered_set<string> wordSet(wordDict.begin(), wordDict.end()); return backtracking(s, wordSet, 0); }};",
+          "description": "使用回溯法判断字符串是否可以被拆分为字典中的单词。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: bool backtracking (const string& s, const unordered_set<string>& wordSet, vector<bool>& memory, int startIndex) { if (startIndex >= s.size()) { return true; } if (!memory[startIndex]) return memory[startIndex]; for (int i = startIndex; i < s.size(); i++) { string word = s.substr(startIndex, i - startIndex + 1); if (wordSet.find(word) != wordSet.end() && backtracking(s, wordSet, memory, i + 1)) { return true; } } memory[startIndex] = false; return false; } public: bool wordBreak(string s, vector<string>& wordDict) { unordered_set<string> wordSet(wordDict.begin(), wordDict.end()); vector<bool> memory(s.size(), 1); return backtracking(s, wordSet, memory, 0); }};",
+          "description": "使用记忆化递归优化的回溯算法来解决单词拆分问题。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool wordBreak(string s, vector<string>& wordDict) { unordered_set<string> wordSet(wordDict.begin(), wordDict.end()); vector<bool> dp(s.size() + 1, false); dp[0] = true; for (int i = 1; i <= s.size(); i++) { for (int j = 0; j < i; j++) { string word = s.substr(j, i - j); if (wordSet.find(word) != wordSet.end() && dp[j]) { dp[i] = true; } } } return dp[s.size()]; }};",
+          "description": "使用动态规划（背包问题）的方法来解决单词拆分问题。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean wordBreak(String s, List<String> wordDict) { HashSet<String> set = new HashSet<>(wordDict); boolean[] valid = new boolean[s.length() + 1]; valid[0] = true; for (int i = 1; i <= s.length(); i++) { for (int j = 0; j < i && !valid[i]; j++) { if (set.contains(s.substring(j, i)) && valid[j]) { valid[i] = true; } } } return valid[s.length()]; }}",
+          "description": "Java实现，利用哈希集合作为字典，并通过动态规划检查字符串是否可以被有效拆分。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean wordBreak(String s, List<String> wordDict) { boolean[] dp = new boolean[s.length() + 1]; dp[0] = true; for (int i = 1; i <= s.length(); i++) { for (String word : wordDict) { int len = word.length(); if (i >= len && dp[i - len] && word.equals(s.substring(i - len, i))) { dp[i] = true; break; } } } return dp[s.length()]; }}",
+          "description": "另一种基于Java的动态规划解法，遍历每个可能的结束位置和单词来更新dp数组。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { private Set<String> set; private int[] memo; public boolean wordBreak(String s, List<String> wordDict) { memo = new int[s.length()]; set = new HashSet<>(wordDict); return backtracking(s, 0); } public boolean backtracking(String s, int startIndex) { if (startIndex == s.length()) { return true; } if (memo[startIndex] == -1) { return false; } for (int i = startIndex; i < s.length(); i++) { String sub = s.substring(startIndex, i + 1); if (!set.contains(sub)) { continue; } boolean res = backtracking(s, i + 1); if (res) return true; } memo[startIndex] = -1; return false; }}",
+          "description": "Java版本的记忆化回溯方法，用于解决单词拆分问题。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def backtracking(self, s: str, wordSet: set[str], startIndex: int) -> bool: if startIndex >= len(s): return True for i in range(startIndex, len(s)): word = s[startIndex:i + 1] if word in wordSet and self.backtracking(s, wordSet, i + 1): return True return False def wordBreak(self, s: str, wordDict: List[str]) -> bool: wordSet = set(wordDict) return self.backtracking(s, wordSet, 0)",
+          "description": "Python实现的回溯算法，用于检查给定字符串能否被拆分成字典中出现的单词。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wordBreak(self, s: str, wordDict: List[str]) -> bool: wordSet = set(wordDict) n = len(s) dp = [False] * (n + 1) dp[0] = True for i in range(1, n + 1): for j in range(i): if dp[j] and s[j:i] in wordSet: dp[i] = True break return dp[n]",
+          "description": "Python版的动态规划解决方案，用于解决单词拆分问题。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wordBreak(self, s: str, wordDict: List[str]) -> bool: dp = [False]*(len(s) + 1) dp[0] = True for j in range(1, len(s) + 1): for word in wordDict: if j >= len(word): dp[j] = dp[j] or (dp[j - len(word)] and word == s[j - len(word):j]) return dp[len(s)]",
+          "description": "另一个Python实现的动态规划方法，以解决单词拆分问题。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def wordBreak(self, s, wordDict): wordDict.sort(key=lambda x: len(x)) n = len(s) dp = [False] * (n + 1) dp[0] = True for i in range(1, n + 1): for word in wordDict: if len(word) > i: break dp[i] = dp[i] or (dp[i - len(word)] and s[i - len(word): i] == word) return dp[-1]",
+          "description": "采用剪枝策略优化后的Python动态规划解法，用于解决单词拆分问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    bool backtracking (const string& s, const unordered_set<string>& wordSet, int startIndex) {\n        if (startIndex >= s.size()) {\n            return true;\n        }\n        for (int i = startIndex; i < s.size(); i++) {\n            string word = s.substr(startIndex, i - startIndex + 1);\n            if (wordSet.find(word) != wordSet.end() && backtracking(s, wordSet, i + 1)) {\n                return true;\n            }\n        }\n        return false;\n    }\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> wordSet(wordDict.begin(), wordDict.end());\n        return backtracking(s, wordSet, 0);\n    }\n};",
+          "description": "使用回溯法解决单词拆分问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    bool backtracking (const string& s,\n            const unordered_set<string>& wordSet,\n            vector<bool>& memory,\n            int startIndex) {\n        if (startIndex >= s.size()) {\n            return true;\n        }\n        if (!memory[startIndex]) return memory[startIndex];\n        for (int i = startIndex; i < s.size(); i++) {\n            string word = s.substr(startIndex, i - startIndex + 1);\n            if (wordSet.find(word) != wordSet.end() && backtracking(s, wordSet, memory, i + 1)) {\n                return true;\n            }\n        }\n        memory[startIndex] = false;\n        return false;\n    }\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> wordSet(wordDict.begin(), wordDict.end());\n        vector<bool> memory(s.size(), 1);\n        return backtracking(s, wordSet, memory, 0);\n    }\n};",
+          "description": "使用记忆化递归优化的回溯法解决单词拆分问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> wordSet(wordDict.begin(), wordDict.end());\n        vector<bool> dp(s.size() + 1, false);\n        dp[0] = true;\n        for (int i = 1; i <= s.size(); i++) {\n            for (int j = 0; j < i; j++) {\n                string word = s.substr(j, i - j);\n                if (wordSet.find(word) != wordSet.end() && dp[j]) {\n                    dp[i] = true;\n                }\n            }\n        }\n        return dp[s.size()];\n    }\n};",
+          "description": "使用动态规划解决单词拆分问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean wordBreak(String s, List<String> wordDict) {\n        HashSet<String> set = new HashSet<>(wordDict);\n        boolean[] valid = new boolean[s.length() + 1];\n        valid[0] = true;\n\n        for (int i = 1; i <= s.length(); i++) {\n            for (int j = 0; j < i && !valid[i]; j++) {\n                if (set.contains(s.substring(j, i)) && valid[j]) {\n                    valid[i] = true;\n                }\n            }\n        }\n\n        return valid[s.length()];\n    }\n}",
+          "description": "Java版本的动态规划解决单词拆分问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean wordBreak(String s, List<String> wordDict) {\n        boolean[] dp = new boolean[s.length() + 1];\n        dp[0] = true;\n\n        for (int i = 1; i <= s.length(); i++) {\n            for (String word : wordDict) {\n                int len = word.length();\n                if (i >= len && dp[i - len] && word.equals(s.substring(i - len, i))) {\n                    dp[i] = true;\n                    break;\n                }\n            }\n        }\n\n        return dp[s.length()];\n    }\n}",
+          "description": "另一种思路的Java版本动态规划解决单词拆分问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    private Set<String> set;\n    private int[] memo;\n    public boolean wordBreak(String s, List<String> wordDict) {\n        memo = new int[s.length()];\n        set = new HashSet<>(wordDict);\n        return backtracking(s, 0);\n    }\n\n    public boolean backtracking(String s, int startIndex) {\n        if (startIndex == s.length()) {\n            return true;\n        }\n        if (memo[startIndex] == -1) {\n            return false;\n        }\n\n        for (int i = startIndex; i < s.length(); i++) {\n            String sub = s.substring(startIndex, i + 1);\n            if (!set.contains(sub)) {\n                continue;\n            }\n            boolean res = backtracking(s, i + 1);\n            if (res) return true;\n        }\n        memo[startIndex] = -1;\n        return false;\n    }\n}",
+          "description": "Java版本的回溯法+记忆化解决单词拆分问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def backtracking(self, s: str, wordSet: set[str], startIndex: int) -> bool:\n        if startIndex >= len(s):\n            return True\n        for i in range(startIndex, len(s)):\n            word = s[startIndex:i + 1]\n            if word in wordSet and self.backtracking(s, wordSet, i + 1):\n                return True\n        return False\n\n    def wordBreak(self, s: str, wordDict: List[str]) -> bool:\n        wordSet = set(wordDict)\n        return self.backtracking(s, wordSet, 0)",
+          "description": "Python版本的回溯法解决单词拆分问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def wordBreak(self, s: str, wordDict: List[str]) -> bool:\n        wordSet = set(wordDict)\n        n = len(s)\n        dp = [False] * (n + 1)\n        dp[0] = True\n        for i in range(1, n + 1):\n            for j in range(i):\n                if dp[j] and s[j:i] in wordSet:\n                    dp[i] = True\n                    break\n        return dp[n]",
+          "description": "Python版本的动态规划解决单词拆分问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def wordBreak(self, s: str, wordDict: List[str]) -> bool:\n        dp = [False]*(len(s) + 1)\n        dp[0] = True\n        for j in range(1, len(s) + 1):\n            for word in wordDict:\n                if j >= len(word):\n                    dp[j] = dp[j] or (dp[j - len(word)] and word == s[j - len(word):j])\n        return dp[len(s)]",
+          "description": "Python版本的另一种动态规划解决单词拆分问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object):\n    def wordBreak(self, s, wordDict):\n        wordDict.sort(key=lambda x: len(x))\n        n = len(s)\n        dp = [False] * (n + 1)\n        dp[0] = True\n        for i in range(1, n + 1):\n            for word in wordDict:\n                if len(word) > i:\n                    break\n                dp[i] = dp[i] or (dp[i - len(word)] and s[i - len(word): i] == word)\n        return dp[-1]",
+          "description": "Python版本的带有剪枝的动态规划解决单词拆分问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    bool backtracking (const string& s, const unordered_set<string>& wordSet, int startIndex) {\n        if (startIndex >= s.size()) {\n            return true;\n        }\n        for (int i = startIndex; i < s.size(); i++) {\n            string word = s.substr(startIndex, i - startIndex + 1);\n            if (wordSet.find(word) != wordSet.end() && backtracking(s, wordSet, i + 1)) {\n                return true;\n            }\n        }\n        return false;\n    }\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> wordSet(wordDict.begin(), wordDict.end());\n        return backtracking(s, wordSet, 0);\n    }\n};",
+          "description": "回溯法检查字符串是否可以被拆分为字典中的单词"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    bool backtracking (const string& s,\n            const unordered_set<string>& wordSet,\n            vector<bool>& memory,\n            int startIndex) {\n        if (startIndex >= s.size()) {\n            return true;\n        }\n        // 如果memory[startIndex]不是初始值了，直接使用memory[startIndex]的结果\n        if (!memory[startIndex]) return memory[startIndex];\n        for (int i = startIndex; i < s.size(); i++) {\n            string word = s.substr(startIndex, i - startIndex + 1);\n            if (wordSet.find(word) != wordSet.end() && backtracking(s, wordSet, memory, i + 1)) {\n                return true;\n            }\n        }\n        memory[startIndex] = false; // 记录以startIndex开始的子串是不可以被拆分的\n        return false;\n    }\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> wordSet(wordDict.begin(), wordDict.end());\n        vector<bool> memory(s.size(), 1); // -1 表示初始化状态\n        return backtracking(s, wordSet, memory, 0);\n    }\n};",
+          "description": "记忆化递归检查字符串是否可以被拆分为字典中的单词"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> wordSet(wordDict.begin(), wordDict.end());\n        vector<bool> dp(s.size() + 1, false);\n        dp[0] = true;\n        for (int i = 1; i <= s.size(); i++) {   // 遍历背包\n            for (int j = 0; j < i; j++) {       // 遍历物品\n                string word = s.substr(j, i - j); //substr(起始位置，截取的个数)\n                if (wordSet.find(word) != wordSet.end() && dp[j]) {\n                    dp[i] = true;\n                }\n            }\n        }\n        return dp[s.size()];\n    }\n};",
+          "description": "动态规划检查字符串是否可以被拆分为字典中的单词"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> wordSet(wordDict.begin(), wordDict.end());\n        vector<bool> dp(s.size() + 1, false);\n        dp[0] = true;\n        for (int j = 0; j < wordDict.size(); j++) { // 物品\n            for (int i = wordDict[j].size(); i <= s.size(); i++) { // 背包\n                string word = s.substr(i - wordDict[j].size(), wordDict[j].size());\n                if ( word == wordDict[j] && dp[i - wordDict[j].size()]) {\n                    dp[i] = true;\n                }\n            }\n        }\n        return dp[s.size()];\n    }\n};",
+          "description": "先遍历物品再遍历背包的动态规划方法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean wordBreak(String s, List<String> wordDict) {\n        HashSet<String> set = new HashSet<>(wordDict);\n        boolean[] valid = new boolean[s.length() + 1];\n        valid[0] = true;\n\n        for (int i = 1; i <= s.length(); i++) {\n            for (int j = 0; j < i && !valid[i]; j++) {\n                if (set.contains(s.substring(j, i)) && valid[j]) {\n                    valid[i] = true;\n                }\n            }\n        }\n\n        return valid[s.length()];\n    }\n}",
+          "description": "Java版本动态规划检查字符串是否可以被拆分为字典中的单词"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean wordBreak(String s, List<String> wordDict) {\n        boolean[] dp = new boolean[s.length() + 1];\n        dp[0] = true;\n\n        for (int i = 1; i <= s.length(); i++) {\n            for (String word : wordDict) {\n                int len = word.length();\n                if (i >= len && dp[i - len] && word.equals(s.substring(i - len, i))) {\n                    dp[i] = true;\n                    break;\n                }\n            }\n        }\n\n        return dp[s.length()];\n    }\n}",
+          "description": "另一种思路的Java版本背包算法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    private Set<String> set;\n    private int[] memo;\n    public boolean wordBreak(String s, List<String> wordDict) {\n        memo = new int[s.length()];\n        set = new HashSet<>(wordDict);\n        return backtracking(s, 0);\n    }\n\n    public boolean backtracking(String s, int startIndex) {\n        if (startIndex == s.length()) {\n            return true;\n        }\n        if (memo[startIndex] == -1) {\n            return false;\n        }\n\n        for (int i = startIndex; i < s.length(); i++) {\n            String sub = s.substring(startIndex, i + 1);\n            if (!set.contains(sub)) {\n                continue;                \n            }\n            boolean res = backtracking(s, i + 1);\n            if (res) return true;\n        }\n        memo[startIndex] = -1;\n        return false;\n    }\n}",
+          "description": "Java版本回溯法加记忆化"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def backtracking(self, s: str, wordSet: set[str], startIndex: int) -> bool:\n        if startIndex >= len(s):\n            return True\n        for i in range(startIndex, len(s)):\n            word = s[startIndex:i + 1]\n            if word in wordSet and self.backtracking(s, wordSet, i + 1):\n                return True\n        return False\n\n    def wordBreak(self, s: str, wordDict: List[str]) -> bool:\n        wordSet = set(wordDict)\n        return self.backtracking(s, wordSet, 0)",
+          "description": "Python版本回溯法检查字符串是否可以被拆分为字典中的单词"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def wordBreak(self, s: str, wordDict: List[str]) -> bool:\n        wordSet = set(wordDict)\n        n = len(s)\n        dp = [False] * (n + 1)\n        dp[0] = True\n        for i in range(1, n + 1):\n            for j in range(i):\n                if dp[j] and s[j:i] in wordSet:\n                    dp[i] = True\n                    break\n        return dp[n]",
+          "description": "Python版本动态规划（版本一）检查字符串是否可以被拆分为字典中的单词"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def wordBreak(self, s: str, wordDict: List[str]) -> bool:\n        dp = [False]*(len(s) + 1)\n        dp[0] = True\n        for j in range(1, len(s) + 1):\n            for word in wordDict:\n                if j >= len(word):\n                    dp[j] = dp[j] or (dp[j - len(word)] and word == s[j - len(word):j])\n        return dp[len(s)]",
+          "description": "Python版本动态规划（版本二）检查字符串是否可以被拆分为字典中的单词"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object):\n    def wordBreak(self, s, wordDict):\n        wordDict.sort(key=lambda x: len(x))\n        n = len(s)\n        dp = [False] * (n + 1)\n        dp[0] = True\n        for i in range(1, n + 1):\n            for word in wordDict:\n                if len(word) > i:\n                    break\n                dp[i] = dp[i] or (dp[i - len(word)] and s[i - len(word): i] == word)\n        return dp[-1]",
+          "description": "Python版本带有剪枝的动态规划方法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "回溯",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: bool backtracking (const string& s, const unordered_set<string>& wordSet, int startIndex) { if (startIndex >= s.size()) { return true; } for (int i = startIndex; i < s.size(); i++) { string word = s.substr(startIndex, i - startIndex + 1); if (wordSet.find(word) != wordSet.end() && backtracking(s, wordSet, i + 1)) { return true; } } return false; } public: bool wordBreak(string s, vector<string>& wordDict) { unordered_set<string> wordSet(wordDict.begin(), wordDict.end()); return backtracking(s, wordSet, 0); }};",
+          "description": "使用回溯法解决单词拆分问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: bool backtracking (const string& s, const unordered_set<string>& wordSet, vector<bool>& memory, int startIndex) { if (startIndex >= s.size()) { return true; } if (!memory[startIndex]) return memory[startIndex]; for (int i = startIndex; i < s.size(); i++) { string word = s.substr(startIndex, i - startIndex + 1); if (wordSet.find(word) != wordSet.end() && backtracking(s, wordSet, memory, i + 1)) { return true; } } memory[startIndex] = false; return false; } public: bool wordBreak(string s, vector<string>& wordDict) { unordered_set<string> wordSet(wordDict.begin(), wordDict.end()); vector<bool> memory(s.size(), 1); return backtracking(s, wordSet, memory, 0); }};",
+          "description": "使用记忆化递归优化的回溯法解决单词拆分问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool wordBreak(string s, vector<string>& wordDict) { unordered_set<string> wordSet(wordDict.begin(), wordDict.end()); vector<bool> dp(s.size() + 1, false); dp[0] = true; for (int i = 1; i <= s.size(); i++) { for (int j = 0; j < i; j++) { string word = s.substr(j, i - j); if (wordSet.find(word) != wordSet.end() && dp[j]) { dp[i] = true; } } } return dp[s.size()]; }};",
+          "description": "使用动态规划方法解决单词拆分问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean wordBreak(String s, List<String> wordDict) { HashSet<String> set = new HashSet<>(wordDict); boolean[] valid = new boolean[s.length() + 1]; valid[0] = true; for (int i = 1; i <= s.length(); i++) { for (int j = 0; j < i && !valid[i]; j++) { if (set.contains(s.substring(j, i)) && valid[j]) { valid[i] = true; } } } return valid[s.length()]; }};",
+          "description": "Java版，使用动态规划方法解决单词拆分问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean wordBreak(String s, List<String> wordDict) { boolean[] dp = new boolean[s.length() + 1]; dp[0] = true; for (int i = 1; i <= s.length(); i++) { for (String word : wordDict) { int len = word.length(); if (i >= len && dp[i - len] && word.equals(s.substring(i - len, i))) { dp[i] = true; break; } } } return dp[s.length()]; }};",
+          "description": "另一种思路的Java版动态规划方法解决单词拆分问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { private Set<String> set; private int[] memo; public boolean wordBreak(String s, List<String> wordDict) { memo = new int[s.length()]; set = new HashSet<>(wordDict); return backtracking(s, 0); } public boolean backtracking(String s, int startIndex) { if (startIndex == s.length()) { return true; } if (memo[startIndex] == -1) { return false; } for (int i = startIndex; i < s.length(); i++) { String sub = s.substring(startIndex, i + 1); if (!set.contains(sub)) { continue; } boolean res = backtracking(s, i + 1); if (res) return true; } memo[startIndex] = -1; return false; }};",
+          "description": "Java版，使用回溯法+记忆化解决单词拆分问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def backtracking(self, s: str, wordSet: set[str], startIndex: int) -> bool: if startIndex >= len(s): return True for i in range(startIndex, len(s)): word = s[startIndex:i + 1] if word in wordSet and self.backtracking(s, wordSet, i + 1): return True return False def wordBreak(self, s: str, wordDict: List[str]) -> bool: wordSet = set(wordDict) return self.backtracking(s, wordSet, 0)",
+          "description": "Python版，使用回溯法解决单词拆分问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wordBreak(self, s: str, wordDict: List[str]) -> bool: wordSet = set(wordDict) n = len(s) dp = [False] * (n + 1) dp[0] = True for i in range(1, n + 1): for j in range(i): if dp[j] and s[j:i] in wordSet: dp[i] = True break return dp[n]",
+          "description": "Python版，使用动态规划方法（版本一）解决单词拆分问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def wordBreak(self, s: str, wordDict: List[str]) -> bool: dp = [False]*(len(s) + 1) dp[0] = True for j in range(1, len(s) + 1): for word in wordDict: if j >= len(word): dp[j] = dp[j] or (dp[j - len(word)] and word == s[j - len(word):j]) return dp[len(s)]",
+          "description": "Python版，使用动态规划方法（版本二）解决单词拆分问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def wordBreak(self, s, wordDict): wordDict.sort(key=lambda x: len(x)) n = len(s) dp = [False] * (n + 1) dp[0] = True for i in range(1, n + 1): for word in wordDict: if len(word) > i: break dp[i] = dp[i] or (dp[i - len(word)] and s[i - len(word): i] == word) return dp[-1]",
+          "description": "Python版，使用带有剪枝优化的动态规划方法解决单词拆分问题"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(2^n)",
+    "space_complexity": "O(n)",
+    "explanation": "因为每一个单词都有两个状态，切割和不切割"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {private: bool backtracking (const string& s, const unordered_set<string>& wordSet, int startIndex) { if (startIndex >= s.size()) { return true; } for (int i = startIndex; i < s.size(); i++) { string word = s.substr(startIndex, i - startIndex + 1); if (wordSet.find(word) != wordSet.end() && backtracking(s, wordSet, i + 1)) { return true; } } return false; }public: bool wordBreak(string s, vector<string>& wordDict) { unordered_set<string> wordSet(wordDict.begin(), wordDict.end()); return backtracking(s, wordSet, 0); }};",
+      "description": "使用回溯法解决单词拆分问题的C++实现"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {private: bool backtracking (const string& s, const unordered_set<string>& wordSet, vector<bool>& memory, int startIndex) { if (startIndex >= s.size()) { return true; } if (!memory[startIndex]) return memory[startIndex]; for (int i = startIndex; i < s.size(); i++) { string word = s.substr(startIndex, i - startIndex + 1); if (wordSet.find(word) != wordSet.end() && backtracking(s, wordSet, memory, i + 1)) { return true; } } memory[startIndex] = false; return false; } public: bool wordBreak(string s, vector<string>& wordDict) { unordered_set<string> wordSet(wordDict.begin(), wordDict.end()); vector<bool> memory(s.size(), 1); return backtracking(s, wordSet, memory, 0); }};",
+      "description": "带有记忆化的回溯法解决单词拆分问题的C++实现"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: bool wordBreak(string s, vector<string>& wordDict) { unordered_set<string> wordSet(wordDict.begin(), wordDict.end()); vector<bool> dp(s.size() + 1, false); dp[0] = true; for (int i = 1; i <= s.size(); i++) { for (int j = 0; j < i; j++) { string word = s.substr(j, i - j); if (wordSet.find(word) != wordSet.end() && dp[j]) { dp[i] = true; } } } return dp[s.size()]; }};",
+      "description": "动态规划方法解决单词拆分问题的C++实现"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public boolean wordBreak(String s, List<String> wordDict) { HashSet<String> set = new HashSet<>(wordDict); boolean[] valid = new boolean[s.length() + 1]; valid[0] = true; for (int i = 1; i <= s.length(); i++) { for (int j = 0; j < i && !valid[i]; j++) { if (set.contains(s.substring(j, i)) && valid[j]) { valid[i] = true; } } } return valid[s.length()]; }};",
+      "description": "动态规划方法解决单词拆分问题的Java实现"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public boolean wordBreak(String s, List<String> wordDict) { boolean[] dp = new boolean[s.length() + 1]; dp[0] = true; for (int i = 1; i <= s.length(); i++) { for (String word : wordDict) { int len = word.length(); if (i >= len && dp[i - len] && word.equals(s.substring(i - len, i))) { dp[i] = true; break; } } } return dp[s.length()]; }};",
+      "description": "另一种动态规划方法解决单词拆分问题的Java实现"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {private Set<String> set; private int[] memo; public boolean wordBreak(String s, List<String> wordDict) { memo = new int[s.length()]; set = new HashSet<>(wordDict); return backtracking(s, 0); } public boolean backtracking(String s, int startIndex) { if (startIndex == s.length()) { return true; } if (memo[startIndex] == -1) { return false; } for (int i = startIndex; i < s.length(); i++) { String sub = s.substring(startIndex, i + 1); if (!set.contains(sub)) { continue; } boolean res = backtracking(s, i + 1); if (res) return true; } memo[startIndex] = -1; return false; }};",
+      "description": "回溯法与记忆化结合解决单词拆分问题的Java实现"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def backtracking(self, s: str, wordSet: set[str], startIndex: int) -> bool: if startIndex >= len(s): return True for i in range(startIndex, len(s)): word = s[startIndex:i + 1] if word in wordSet and self.backtracking(s, wordSet, i + 1): return True return False def wordBreak(self, s: str, wordDict: List[str]) -> bool: wordSet = set(wordDict) return self.backtracking(s, wordSet, 0)",
+      "description": "使用回溯法解决单词拆分问题的Python实现"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def wordBreak(self, s: str, wordDict: List[str]) -> bool: wordSet = set(wordDict) n = len(s) dp = [False] * (n + 1) dp[0] = True for i in range(1, n + 1): for j in range(i): if dp[j] and s[j:i] in wordSet: dp[i] = True break return dp[n]",
+      "description": "动态规划方法（版本一）解决单词拆分问题的Python实现"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def wordBreak(self, s: str, wordDict: List[str]) -> bool: dp = [False]*(len(s) + 1) dp[0] = True for j in range(1, len(s) + 1): for word in wordDict: if j >= len(word): dp[j] = dp[j] or (dp[j - len(word)] and word == s[j - len(word):j]) return dp[len(s)]",
+      "description": "动态规划方法（版本二）解决单词拆分问题的Python实现"
+    },
+    {
+      "language": "python",
+      "code": "class Solution(object): def wordBreak(self, s, wordDict): wordDict.sort(key=lambda x: len(x)) n = len(s) dp = [False] * (n + 1) dp[0] = True for i in range(1, n + 1): for word in wordDict: if len(word) > i: break dp[i] = dp[i] or (dp[i - len(word)] and s[i - len(word): i] == word) return dp[-1]",
+      "description": "优化后的动态规划方法（剪枝）解决单词拆分问题的Python实现"
+    }
+  ],
+  "common_mistakes": [
+    "忽视了回溯过程中存在的大量重复计算，导致超时。",
+    "初始化dp数组时没有正确设置初始值，特别是dp[0]应设为true以确保后续递推正确。",
+    "混淆了组合数与排列数的区别，在实现动态规划时选择了错误的遍历顺序。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210202162652727.jpg",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20210202162652727.jpg",
+      "context": "该图片展示了以输入 \"s = 'leetcode'\", wordDict = [\"leet\", \"code\"] 为例时，动态规划过程中dp数组的状态变化。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240809155103.png",
+      "description": "这张图片展示了字符串 \"applepenapple\" 的前缀函数（next数组）计算过程，用于KMP算法中的模式匹配。",
+      "context": "该图展示了给定字符串 \"applepenapple\" 和字典 [\"apple\", \"pen\"] 时，动态规划数组dp的状态变化过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210202162652727.jpg",
+      "description": "GIF展示了动态规划解决单词拆分问题时，dp数组状态随遍历过程逐步更新的情况。",
+      "context": "GIF动画展示了使用动态规划解决单词拆分问题时，状态dp[i]如何随输入字符串s及字典wordDict变化的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240809155103.png",
+      "description": "GIF展示了动态规划数组dp在处理字符串\"applepenapple\"与字典[\"apple\", \"pen\"]时的状态变化过程。",
+      "context": "该GIF动画展示了在给定字符串s=\"applepenapple\"和字典wordDict=[\"apple\", \"pen\"]的情况下，动态规划数组dp的状态变化过程，用以说明为何最终dp[s.size()]的值为0。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\动态规划\\单词拆分.txt",
+  "extracted_at": "2025-07-20T17:11:56.496624",
+  "raw_content": "单词拆分\n力扣题目链接(https://leetcode.cn/problems/word-break/)\n\n给定一个非空字符串 s 和一个包含非空单词的列表 wordDict，判定 s 是否可以被空格拆分为一个或多个在字典中出现的单词。\n\n说明：\n\n拆分时可以重复使用字典中的单词。\n\n你可以假设字典中没有重复的单词。\n\n示例 1：\n\n输入: s = \"leetcode\", wordDict = [\"leet\", \"code\"]\n输出: true\n解释: 返回 true 因为 \"leetcode\" 可以被拆分成 \"leet code\"。\n示例 2：\n\n输入: s = \"applepenapple\", wordDict = [\"apple\", \"pen\"]\n输出: true\n解释: 返回 true 因为 \"applepenapple\" 可以被拆分成 \"apple pen apple\"。\n注意你可以重复使用字典中的单词。\n示例 3：\n\n输入: s = \"catsandog\", wordDict = [\"cats\", \"dog\", \"sand\", \"and\", \"cat\"]\n输出: false\n\n\n#思路\n看到这道题目的时候，大家应该回想起我们之前讲解回溯法专题的时候，讲过的一道题目回溯算法：分割回文串 (https://programmercarl.com/0131.%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.html)，就是枚举字符串的所有分割情况。\n\n回溯算法：分割回文串 (https://programmercarl.com/0131.%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.html)：是枚举分割后的所有子串，判断是否回文。\n\n本道是枚举分割所有字符串，判断是否在字典里出现过。\n\n那么这里我也给出回溯法C++代码：\n\nclass Solution {\nprivate:\n    bool backtracking (const string& s, const unordered_set<string>& wordSet, int startIndex) {\n        if (startIndex >= s.size()) {\n            return true;\n        }\n        for (int i = startIndex; i < s.size(); i++) {\n            string word = s.substr(startIndex, i - startIndex + 1);\n            if (wordSet.find(word) != wordSet.end() && backtracking(s, wordSet, i + 1)) {\n                return true;\n            }\n        }\n        return false;\n    }\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> wordSet(wordDict.begin(), wordDict.end());\n        return backtracking(s, wordSet, 0);\n    }\n};\n时间复杂度：O(2^n)，因为每一个单词都有两个状态，切割和不切割\n空间复杂度：O(n)，算法递归系统调用栈的空间\n那么以上代码很明显要超时了，超时的数据如下：\n\n\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab\"\n[\"a\",\"aa\",\"aaa\",\"aaaa\",\"aaaaa\",\"aaaaaa\",\"aaaaaaa\",\"aaaaaaaa\",\"aaaaaaaaa\",\"aaaaaaaaaa\"]\n递归的过程中有很多重复计算，可以使用数组保存一下递归过程中计算的结果。\n\n这个叫做记忆化递归，这种方法我们之前已经提过很多次了。\n\n使用memory数组保存每次计算的以startIndex起始的计算结果，如果memory[startIndex]里已经被赋值了，直接用memory[startIndex]的结果。\n\nC++代码如下：\n\nclass Solution {\nprivate:\n    bool backtracking (const string& s,\n            const unordered_set<string>& wordSet,\n            vector<bool>& memory,\n            int startIndex) {\n        if (startIndex >= s.size()) {\n            return true;\n        }\n        // 如果memory[startIndex]不是初始值了，直接使用memory[startIndex]的结果\n        if (!memory[startIndex]) return memory[startIndex];\n        for (int i = startIndex; i < s.size(); i++) {\n            string word = s.substr(startIndex, i - startIndex + 1);\n            if (wordSet.find(word) != wordSet.end() && backtracking(s, wordSet, memory, i + 1)) {\n                return true;\n            }\n        }\n        memory[startIndex] = false; // 记录以startIndex开始的子串是不可以被拆分的\n        return false;\n    }\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> wordSet(wordDict.begin(), wordDict.end());\n        vector<bool> memory(s.size(), 1); // -1 表示初始化状态\n        return backtracking(s, wordSet, memory, 0);\n    }\n};\n这个时间复杂度其实也是：O(2^n)。只不过对于上面那个超时测试用例优化效果特别明显。\n\n这个代码就可以AC了，当然回溯算法不是本题的主菜，背包才是！\n\n#背包问题\n单词就是物品，字符串s就是背包，单词能否组成字符串s，就是问物品能不能把背包装满。\n\n拆分时可以重复使用字典中的单词，说明就是一个完全背包！\n\n动规五部曲分析如下：\n\n确定dp数组以及下标的含义\ndp[i] : 字符串长度为i的话，dp[i]为true，表示可以拆分为一个或多个在字典中出现的单词。\n\n确定递推公式\n如果确定dp[j] 是true，且 [j, i] 这个区间的子串出现在字典里，那么dp[i]一定是true。（j < i ）。\n\n所以递推公式是 if([j, i] 这个区间的子串出现在字典里 && dp[j]是true) 那么 dp[i] = true。\n\ndp数组如何初始化\n从递推公式中可以看出，dp[i] 的状态依靠 dp[j]是否为true，那么dp[0]就是递推的根基，dp[0]一定要为true，否则递推下去后面都都是false了。\n\n那么dp[0]有没有意义呢？\n\ndp[0]表示如果字符串为空的话，说明出现在字典里。\n\n但题目中说了“给定一个非空字符串 s” 所以测试数据中不会出现i为0的情况，那么dp[0]初始为true完全就是为了推导公式。\n\n下标非0的dp[i]初始化为false，只要没有被覆盖说明都是不可拆分为一个或多个在字典中出现的单词。\n\n确定遍历顺序\n题目中说是拆分为一个或多个在字典中出现的单词，所以这是完全背包。\n\n还要讨论两层for循环的前后顺序。\n\n如果求组合数就是外层for循环遍历物品，内层for遍历背包。\n\n如果求排列数就是外层for遍历背包，内层for循环遍历物品。\n\n我在这里做一个总结：\n\n求组合数：动态规划：518.零钱兑换II (https://programmercarl.com/0518.%E9%9B%B6%E9%92%B1%E5%85%91%E6%8D%A2II.html)求排列数：动态规划：377. 组合总和 Ⅳ (https://programmercarl.com/0377.%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8C.html)、动态规划：70. 爬楼梯进阶版（完全背包） (https://programmercarl.com/0070.%E7%88%AC%E6%A5%BC%E6%A2%AF%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85%E7%89%88%E6%9C%AC.html)求最小数：动态规划：322. 零钱兑换 (https://programmercarl.com/0322.%E9%9B%B6%E9%92%B1%E5%85%91%E6%8D%A2.html)、动态规划：279.完全平方数(https://programmercarl.com/0279.%E5%AE%8C%E5%85%A8%E5%B9%B3%E6%96%B9%E6%95%B0.html)\n\n而本题其实我们求的是排列数，为什么呢。 拿 s = \"applepenapple\", wordDict = [\"apple\", \"pen\"] 举例。\n\n\"apple\", \"pen\" 是物品，那么我们要求 物品的组合一定是 \"apple\" + \"pen\" + \"apple\" 才能组成 \"applepenapple\"。\n\n\"apple\" + \"apple\" + \"pen\" 或者 \"pen\" + \"apple\" + \"apple\" 是不可以的，那么我们就是强调物品之间顺序。\n\n所以说，本题一定是 先遍历 背包，再遍历物品。\n\n举例推导dp[i]\n以输入: s = \"leetcode\", wordDict = [\"leet\", \"code\"]为例，dp状态如图：\n\nhttps://file1.kamacoder.com/i/algo/20210202162652727.jpg\n\ndp[s.size()]就是最终结果。\n\n动规五部曲分析完毕，C++代码如下：\n\nclass Solution {\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> wordSet(wordDict.begin(), wordDict.end());\n        vector<bool> dp(s.size() + 1, false);\n        dp[0] = true;\n        for (int i = 1; i <= s.size(); i++) {   // 遍历背包\n            for (int j = 0; j < i; j++) {       // 遍历物品\n                string word = s.substr(j, i - j); //substr(起始位置，截取的个数)\n                if (wordSet.find(word) != wordSet.end() && dp[j]) {\n                    dp[i] = true;\n                }\n            }\n        }\n        return dp[s.size()];\n    }\n};\n时间复杂度：O(n^3)，因为substr返回子串的副本是O(n)的复杂度（这里的n是substring的长度）\n空间复杂度：O(n)\n#拓展\n关于遍历顺序，再给大家讲一下为什么 先遍历物品再遍历背包不行。\n\n这里可以给出先遍历物品再遍历背包的代码：\n\nclass Solution {\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        unordered_set<string> wordSet(wordDict.begin(), wordDict.end());\n        vector<bool> dp(s.size() + 1, false);\n        dp[0] = true;\n        for (int j = 0; j < wordDict.size(); j++) { // 物品\n            for (int i = wordDict[j].size(); i <= s.size(); i++) { // 背包\n                string word = s.substr(i - wordDict[j].size(), wordDict[j].size());\n                // cout << word << endl;\n                if ( word == wordDict[j] && dp[i - wordDict[j].size()]) {\n                    dp[i] = true;\n                }\n                // for (int k = 0; k <= s.size(); k++) cout << dp[k] << \" \"; //这里打印 dp数组的情况 \n                // cout << endl;\n            }\n        }\n        return dp[s.size()];\n\n    }\n};\n使用用例：s = \"applepenapple\", wordDict = [\"apple\", \"pen\"]，对应的dp数组状态如下：\n\nhttps://file1.kamacoder.com/i/algo/20240809155103.png\n\n最后dp[s.size()] = 0 即 dp[13] = 0 ，而不是1，因为先用 \"apple\" 去遍历的时候，dp[8]并没有被赋值为1 （还没用\"pen\"），所以 dp[13]也不能变成1。\n\n除非是先用 \"apple\" 遍历一遍，再用 \"pen\" 遍历，此时 dp[8]已经是1，最后再用 \"apple\" 去遍历，dp[13]才能是1。\n\n如果大家对这里不理解，建议可以把我上面给的代码，拿去力扣上跑一跑，把dp数组打印出来，对着递推公式一步一步去看，思路就清晰了。\n\n#总结\n本题和我们之前讲解回溯专题的回溯算法：分割回文串 (https://programmercarl.com/0131.%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.html)非常像，所以我也给出了对应的回溯解法。\n\n稍加分析，便可知道本题是完全背包，是求能否组成背包，而且这里要求物品是要有顺序的。\n\n#其他语言版本\n#Java：\nclass Solution {\n    public boolean wordBreak(String s, List<String> wordDict) {\n        HashSet<String> set = new HashSet<>(wordDict);\n        boolean[] valid = new boolean[s.length() + 1];\n        valid[0] = true;\n\n        for (int i = 1; i <= s.length(); i++) {\n            for (int j = 0; j < i && !valid[i]; j++) {\n                if (set.contains(s.substring(j, i)) && valid[j]) {\n                    valid[i] = true;\n                }\n            }\n        }\n\n        return valid[s.length()];\n    }\n}\n\n// 另一种思路的背包算法\nclass Solution {\n    public boolean wordBreak(String s, List<String> wordDict) {\n        boolean[] dp = new boolean[s.length() + 1];\n        dp[0] = true;\n\n        for (int i = 1; i <= s.length(); i++) {\n            for (String word : wordDict) {\n                int len = word.length();\n                if (i >= len && dp[i - len] && word.equals(s.substring(i - len, i))) {\n                    dp[i] = true;\n                    break;\n                }\n            }\n        }\n\n        return dp[s.length()];\n    }\n}\n\n// 回溯法+记忆化\nclass Solution {\n    private Set<String> set;\n    private int[] memo;\n    public boolean wordBreak(String s, List<String> wordDict) {\n        memo = new int[s.length()];\n        set = new HashSet<>(wordDict);\n        return backtracking(s, 0);\n    }\n\n    public boolean backtracking(String s, int startIndex) {\n        // System.out.println(startIndex);\n        if (startIndex == s.length()) {\n            return true;\n        }\n        if (memo[startIndex] == -1) {\n            return false;\n        }\n\n        for (int i = startIndex; i < s.length(); i++) {\n            String sub = s.substring(startIndex, i + 1);\n\t    // 拆分出来的单词无法匹配\n            if (!set.contains(sub)) {\n                continue;                \n            }\n            boolean res = backtracking(s, i + 1);\n            if (res) return true;\n        }\n        // 这里是关键，找遍了startIndex~s.length()也没能完全匹配，标记从startIndex开始不能找到\n        memo[startIndex] = -1;\n        return false;\n    }\n}\n#Python：\n回溯\n\nclass Solution:\n    def backtracking(self, s: str, wordSet: set[str], startIndex: int) -> bool:\n        # 边界情况：已经遍历到字符串末尾，返回True\n        if startIndex >= len(s):\n            return True\n\n        # 遍历所有可能的拆分位置\n        for i in range(startIndex, len(s)):\n            word = s[startIndex:i + 1]  # 截取子串\n            if word in wordSet and self.backtracking(s, wordSet, i + 1):\n                # 如果截取的子串在字典中，并且后续部分也可以被拆分成单词，返回True\n                return True\n\n        # 无法进行有效拆分，返回False\n        return False\n\n    def wordBreak(self, s: str, wordDict: List[str]) -> bool:\n        wordSet = set(wordDict)  # 转换为哈希集合，提高查找效率\n        return self.backtracking(s, wordSet, 0)\n\nDP（版本一）\n\nclass Solution:\n    def wordBreak(self, s: str, wordDict: List[str]) -> bool:\n        wordSet = set(wordDict)\n        n = len(s)\n        dp = [False] * (n + 1)  # dp[i] 表示字符串的前 i 个字符是否可以被拆分成单词\n        dp[0] = True  # 初始状态，空字符串可以被拆分成单词\n\n        for i in range(1, n + 1): # 遍历背包\n            for j in range(i): # 遍历单词\n                if dp[j] and s[j:i] in wordSet:\n                    dp[i] = True  # 如果 s[0:j] 可以被拆分成单词，并且 s[j:i] 在单词集合中存在，则 s[0:i] 可以被拆分成单词\n                    break\n\n        return dp[n]\n\n\nDP（版本二）\n\nclass Solution:\n    def wordBreak(self, s: str, wordDict: List[str]) -> bool:\n        dp = [False]*(len(s) + 1)\n        dp[0] = True\n        # 遍历背包\n        for j in range(1, len(s) + 1):\n            # 遍历单词\n            for word in wordDict:\n                if j >= len(word):\n                    dp[j] = dp[j] or (dp[j - len(word)] and word == s[j - len(word):j])\n        return dp[len(s)]\nDP（剪枝）\n\nclass Solution(object):\n    def wordBreak(self, s, wordDict):\n\n        # 先对单词按长度排序\n        wordDict.sort(key=lambda x: len(x))\n        n = len(s)\n        dp = [False] * (n + 1)\n        dp[0] = True\n        # 遍历背包\n        for i in range(1, n + 1):\n            # 遍历单词\n            for word in wordDict:\n                # 简单的 “剪枝”\n                if len(word) > i:\n                    break\n                dp[i] = dp[i] or (dp[i - len(word)] and s[i - len(word): i] == word)\n        return dp[-1]"
+}

@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { sqrt } from \"../math.js\";\nexport default {\n  draw(context, size) {\n    const w = sqrt(size);\n    const x = -w / 2;\n    context.rect(x, x, w, w);\n  }\n};","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}

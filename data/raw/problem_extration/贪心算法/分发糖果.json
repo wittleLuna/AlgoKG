@@ -1,0 +1,216 @@
+{
+  "id": "AP_9f360781",
+  "title": "分发糖果",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/candy/",
+  "description": "老师想给孩子们分发糖果，有 N 个孩子站成了一条直线，老师会根据每个孩子的表现，预先给他们评分。\n\n你需要按照以下要求，帮助老师给这些孩子分发糖果：\n\n每个孩子至少分配到 1 个糖果。\n相邻的孩子中，评分高的孩子必须获得更多的糖果。\n那么这样下来，老师至少需要准备多少颗糖果呢？",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "贪心"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "双指针",
+    "遍历"
+  ],
+  "difficulty": null,
+  "solution_approach": "采用贪心算法分两步处理：首先从左到右遍历确保右边评分高的孩子比左边多至少一个糖果；然后从右向左遍历确保左边评分高的孩子比右边多至少一个糖果。通过两次遍历保证了所有条件的同时满足。",
+  "key_insights": [
+    {
+      "content": "通过确保每一个局部情况（相邻两位孩子之间的糖果分配）满足要求，可以推导出整个数组的糖果分配也满足题目要求。"
+    },
+    {
+      "content": "先从左至右考虑右侧评分高于左侧的情况，再从右至左检查左侧评分高于右侧的情形。这样的顺序确保了在第二次遍历时可以利用第一次遍历的结果来做出正确的调整。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目一定是要确定一边之后，再确定另一边，例如比较每一个孩子的左边，然后再比较右边，如果两边一起考虑一定会顾此失彼。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int candy(vector<int>& ratings) {\n        vector<int> candyVec(ratings.size(), 1);\n        // 从前向后\n        for (int i = 1; i < ratings.size(); i++) {\n            if (ratings[i] > ratings[i - 1]) candyVec[i] = candyVec[i - 1] + 1;\n        }\n        // 从后向前\n        for (int i = ratings.size() - 2; i >= 0; i--) {\n            if (ratings[i] > ratings[i + 1] ) {\n                candyVec[i] = max(candyVec[i], candyVec[i + 1] + 1);\n            }\n        }\n        // 统计结果\n        int result = 0;\n        for (int i = 0; i < candyVec.size(); i++) result += candyVec[i];\n        return result;\n    }\n};",
+          "description": "C++实现的解法，根据孩子的评分分发糖果。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int candy(int[] ratings) {\n        int len = ratings.length;\n        int[] candyVec = new int[len];\n        candyVec[0] = 1;\n        for (int i = 1; i < len; i++) {\n            candyVec[i] = (ratings[i] > ratings[i - 1]) ? candyVec[i - 1] + 1 : 1;\n        }\n\n        for (int i = len - 2; i >= 0; i--) {\n            if (ratings[i] > ratings[i + 1]) {\n                candyVec[i] = Math.max(candyVec[i], candyVec[i + 1] + 1);\n            }\n        }\n\n        int ans = 0;\n        for (int num : candyVec) {\n            ans += num;\n        }\n        return ans;\n    }\n}",
+          "description": "Java实现的解法，根据孩子的评分分发糖果。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def candy(self, ratings: List[int]) -> int:\n        n = len(ratings)\n        candies = [1] * n\n        \n        # Forward pass: handle cases where right rating is higher than left\n        for i in range(1, n):\n            if ratings[i] > ratings[i - 1]:\n                candies[i] = candies[i - 1] + 1\n        \n        # Backward pass: handle cases where left rating is higher than right\n        for i in range(n - 2, -1, -1):\n            if ratings[i] > ratings[i + 1]:\n                candies[i] = max(candies[i], candies[i + 1] + 1)\n        \n        return sum(candies)",
+          "description": "Python实现的解法，根据孩子的评分分发糖果。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "这在leetcode上是一道困难的题目，其难点就在于贪心的策略，如果在考虑局部的时候想两边兼顾，就会顾此失彼。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int candy(vector<int>& ratings) { vector<int> candyVec(ratings.size(), 1); for (int i = 1; i < ratings.size(); i++) { if (ratings[i] > ratings[i - 1]) candyVec[i] = candyVec[i - 1] + 1; } for (int i = ratings.size() - 2; i >= 0; i--) { if (ratings[i] > ratings[i + 1] ) { candyVec[i] = max(candyVec[i], candyVec[i + 1] + 1); } } int result = 0; for (int i = 0; i < candyVec.size(); i++) result += candyVec[i]; return result; }};",
+          "description": "C++实现的解决方案，使用贪心算法为孩子们分配糖果。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int candy(int[] ratings) { int len = ratings.length; int[] candyVec = new int[len]; candyVec[0] = 1; for (int i = 1; i < len; i++) { candyVec[i] = (ratings[i] > ratings[i - 1]) ? candyVec[i - 1] + 1 : 1; } for (int i = len - 2; i >= 0; i--) { if (ratings[i] > ratings[i + 1]) { candyVec[i] = Math.max(candyVec[i], candyVec[i + 1] + 1); } } int ans = 0; for (int num : candyVec) { ans += num; } return ans; }}",
+          "description": "Java实现的解决方案，同样采用贪心策略来解决分发糖果问题。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def candy(self, ratings: List[int]) -> int: n = len(ratings) candies = [1] * n for i in range(1, n): if ratings[i] > ratings[i - 1]: candies[i] = candies[i - 1] + 1 for i in range(n - 2, -1, -1): if ratings[i] > ratings[i + 1]: candies[i] = max(candies[i], candies[i + 1] + 1) return sum(candies)",
+          "description": "Python实现的解法，利用贪心算法保证评分高的孩子比评分低的孩子获得更多糖果。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int candy(vector<int>& ratings) { vector<int> candyVec(ratings.size(), 1); for (int i = 1; i < ratings.size(); i++) { if (ratings[i] > ratings[i - 1]) candyVec[i] = candyVec[i - 1] + 1; } for (int i = ratings.size() - 2; i >= 0; i--) { if (ratings[i] > ratings[i + 1] ) { candyVec[i] = max(candyVec[i], candyVec[i + 1] + 1); } } int result = 0; for (int i = 0; i < candyVec.size(); i++) result += candyVec[i]; return result; }};",
+          "description": "C++实现的糖果分发算法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int candy(int[] ratings) { int len = ratings.length; int[] candyVec = new int[len]; candyVec[0] = 1; for (int i = 1; i < len; i++) { candyVec[i] = (ratings[i] > ratings[i - 1]) ? candyVec[i - 1] + 1 : 1; } for (int i = len - 2; i >= 0; i--) { if (ratings[i] > ratings[i + 1]) { candyVec[i] = Math.max(candyVec[i], candyVec[i + 1] + 1); } } int ans = 0; for (int num : candyVec) { ans += num; } return ans; }}",
+          "description": "Java实现的糖果分发算法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def candy(self, ratings: List[int]) -> int: n = len(ratings) candies = [1] * n for i in range(1, n): if ratings[i] > ratings[i - 1]: candies[i] = candies[i - 1] + 1 for i in range(n - 2, -1, -1): if ratings[i] > ratings[i + 1]: candies[i] = max(candies[i], candies[i + 1] + 1) return sum(candies)",
+          "description": "Python实现的糖果分发算法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int candy(vector<int>& ratings) { vector<int> candyVec(ratings.size(), 1); for (int i = 1; i < ratings.size(); i++) { if (ratings[i] > ratings[i - 1]) candyVec[i] = candyVec[i - 1] + 1; } for (int i = ratings.size() - 2; i >= 0; i--) { if (ratings[i] > ratings[i + 1] ) { candyVec[i] = max(candyVec[i], candyVec[i + 1] + 1); } } int result = 0; for (int i = 0; i < candyVec.size(); i++) result += candyVec[i]; return result; }};",
+          "description": "C++实现的糖果分发问题解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int candy(int[] ratings) { int len = ratings.length; int[] candyVec = new int[len]; candyVec[0] = 1; for (int i = 1; i < len; i++) { candyVec[i] = (ratings[i] > ratings[i - 1]) ? candyVec[i - 1] + 1 : 1; } for (int i = len - 2; i >= 0; i--) { if (ratings[i] > ratings[i + 1]) { candyVec[i] = Math.max(candyVec[i], candyVec[i + 1] + 1); } } int ans = 0; for (int num : candyVec) { ans += num; } return ans; }}",
+          "description": "Java实现的糖果分发问题解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def candy(self, ratings: List[int]) -> int: n = len(ratings) candies = [1] * n for i in range(1, n): if ratings[i] > ratings[i - 1]: candies[i] = candies[i - 1] + 1 for i in range(n - 2, -1, -1): if ratings[i] > ratings[i + 1]: candies[i] = max(candies[i], candies[i + 1] + 1) return sum(candies)",
+          "description": "Python实现的糖果分发问题解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "class Solution:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int candy(vector<int>& ratings) { vector<int> candyVec(ratings.size(), 1); for (int i = 1; i < ratings.size(); i++) { if (ratings[i] > ratings[i - 1]) candyVec[i] = candyVec[i - 1] + 1; } for (int i = ratings.size() - 2; i >= 0; i--) { if (ratings[i] > ratings[i + 1] ) { candyVec[i] = max(candyVec[i], candyVec[i + 1] + 1); } } int result = 0; for (int i = 0; i < candyVec.size(); i++) result += candyVec[i]; return result; }};",
+          "description": "C++实现的糖果分配算法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int candy(int[] ratings) { int len = ratings.length; int[] candyVec = new int[len]; candyVec[0] = 1; for (int i = 1; i < len; i++) { candyVec[i] = (ratings[i] > ratings[i - 1]) ? candyVec[i - 1] + 1 : 1; } for (int i = len - 2; i >= 0; i--) { if (ratings[i] > ratings[i + 1]) { candyVec[i] = Math.max(candyVec[i], candyVec[i + 1] + 1); } } int ans = 0; for (int num : candyVec) { ans += num; } return ans; }}",
+          "description": "Java实现的糖果分配算法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def candy(self, ratings: List[int]) -> int: n = len(ratings) candies = [1] * n for i in range(1, n): if ratings[i] > ratings[i - 1]: candies[i] = candies[i - 1] + 1 for i in range(n - 2, -1, -1): if ratings[i] > ratings[i + 1]: candies[i] = max(candies[i], candies[i + 1] + 1) return sum(candies)",
+          "description": "Python实现的糖果分配算法"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(n)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int candy(vector<int>& ratings) { vector<int> candyVec(ratings.size(), 1); for (int i = 1; i < ratings.size(); i++) { if (ratings[i] > ratings[i - 1]) candyVec[i] = candyVec[i - 1] + 1; } for (int i = ratings.size() - 2; i >= 0; i--) { if (ratings[i] > ratings[i + 1] ) { candyVec[i] = max(candyVec[i], candyVec[i + 1] + 1); } } int result = 0; for (int i = 0; i < candyVec.size(); i++) result += candyVec[i]; return result; }};",
+      "description": "C++实现的糖果分发算法"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public int candy(int[] ratings) { int len = ratings.length; int[] candyVec = new int[len]; candyVec[0] = 1; for (int i = 1; i < len; i++) { candyVec[i] = (ratings[i] > ratings[i - 1]) ? candyVec[i - 1] + 1 : 1; } for (int i = len - 2; i >= 0; i--) { if (ratings[i] > ratings[i + 1]) { candyVec[i] = Math.max(candyVec[i], candyVec[i + 1] + 1); } } int ans = 0; for (int num : candyVec) { ans += num; } return ans; }}",
+      "description": "Java实现的糖果分发算法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def candy(self, ratings: List[int]) -> int: n = len(ratings) candies = [1] * n for i in range(1, n): if ratings[i] > ratings[i - 1]: candies[i] = candies[i - 1] + 1 for i in range(n - 2, -1, -1): if ratings[i] > ratings[i + 1]: candies[i] = max(candies[i], candies[i + 1] + 1) return sum(candies)",
+      "description": "Python实现的糖果分发算法"
+    }
+  ],
+  "common_mistakes": [
+    "试图同时考虑两边的情况可能导致逻辑混乱或错误的解决方案。",
+    "忽视了必须分别从前向后和从后向前进行两次遍历来正确解决问题。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201117114916878.png",
+      "description": "该图片展示了根据孩子得分（rating）数组分配糖果（candyVec）的过程，采用从左向右比较相邻元素的方法来确定每个孩子的糖果数量。",
+      "context": "该图展示了通过从前向后遍历，根据评分分配糖果的过程，其中当一个孩子的评分高于前一个孩子时，他获得的糖果数比前一个孩子多一个。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230202102044.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20230202102044.png",
+      "context": "该图片展示了为什么在比较相邻元素时需要采用从后向前遍历的方式，以确保每个比较都能利用到其后继元素的比较结果。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201117115658791.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20201117115658791.png",
+      "context": "该图展示了如何通过比较相邻孩子之间的评分来分配糖果，确保评分较高的孩子能够获得更多的糖果，并且每个孩子的糖果数量既大于其左边也大于其右边的孩子。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201117114916878.png",
+      "description": "GIF展示了根据孩子评分从左至右遍历分配糖果的过程，确保评分较高的孩子获得比左侧邻居更多的糖果。",
+      "context": "该GIF动画展示了根据孩子的评分从前向后分配糖果的过程，确保每个孩子得到的糖果数量至少比前一个孩子多一个（如果他的评分更高）。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230202102044.png",
+      "description": "GIF展示了从后向前遍历数组以调整每个孩子所获得糖果数量的过程，确保满足题目要求的同时尽可能减少总发放的糖果数。",
+      "context": "GIF动画展示了为什么在确定左孩子大于右孩子的情况时需要从后向前遍历，而不是从前向后遍历的原因。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201117115658791.png",
+      "description": "GIF展示了算法从后向前遍历评分数组并根据相邻元素值调整每个孩子所分配糖果数量的过程。",
+      "context": "GIF动画展示了如何通过比较相邻孩子之间的评分来分配糖果，确保评分较高的孩子能够获得更多的糖果，同时保持整个序列中每个孩子的糖果数既大于左边也大于右边的孩子。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\贪心算法\\分发糖果.txt",
+  "extracted_at": "2025-07-22T14:48:02.155510",
+  "raw_content": "分发糖果\n力扣题目链接(https://leetcode.cn/problems/candy/)\n\n老师想给孩子们分发糖果，有 N 个孩子站成了一条直线，老师会根据每个孩子的表现，预先给他们评分。\n\n你需要按照以下要求，帮助老师给这些孩子分发糖果：\n\n每个孩子至少分配到 1 个糖果。\n相邻的孩子中，评分高的孩子必须获得更多的糖果。\n那么这样下来，老师至少需要准备多少颗糖果呢？\n\n示例 1:\n\n输入: [1,0,2]\n输出: 5\n解释: 你可以分别给这三个孩子分发 2、1、2 颗糖果。\n示例 2:\n\n输入: [1,2,2]\n输出: 4\n解释: 你可以分别给这三个孩子分发 1、2、1 颗糖果。第三个孩子只得到 1 颗糖果，这已满足上述两个条件。\n\n#思路\n这道题目一定是要确定一边之后，再确定另一边，例如比较每一个孩子的左边，然后再比较右边，如果两边一起考虑一定会顾此失彼。\n\n先确定右边评分大于左边的情况（也就是从前向后遍历）\n\n此时局部最优：只要右边评分比左边大，右边的孩子就多一个糖果，全局最优：相邻的孩子中，评分高的右孩子获得比左边孩子更多的糖果\n\n局部最优可以推出全局最优。\n\n如果ratings[i] > ratings[i - 1] 那么[i]的糖 一定要比[i - 1]的糖多一个，所以贪心：candyVec[i] = candyVec[i - 1] + 1\n\n代码如下：\n\n// 从前向后\nfor (int i = 1; i < ratings.size(); i++) {\n    if (ratings[i] > ratings[i - 1]) candyVec[i] = candyVec[i - 1] + 1;\n}\n如图：\n\nhttps://file1.kamacoder.com/i/algo/20201117114916878.png\n\n再确定左孩子大于右孩子的情况（从后向前遍历）\n\n遍历顺序这里有同学可能会有疑问，为什么不能从前向后遍历呢？\n\n因为 rating[5]与rating[4]的比较 要利用上 rating[5]与rating[6]的比较结果，所以 要从后向前遍历。\n\n如果从前向后遍历，rating[5]与rating[4]的比较 就不能用上 rating[5]与rating[6]的比较结果了 。如图：\n\nhttps://file1.kamacoder.com/i/algo/20230202102044.png\n\n所以确定左孩子大于右孩子的情况一定要从后向前遍历！\n\n如果 ratings[i] > ratings[i + 1]，此时candyVec[i]（第i个小孩的糖果数量）就有两个选择了，一个是candyVec[i + 1] + 1（从右边这个加1得到的糖果数量），一个是candyVec[i]（之前比较右孩子大于左孩子得到的糖果数量）。\n\n那么又要贪心了，局部最优：取candyVec[i + 1] + 1 和 candyVec[i] 最大的糖果数量，保证第i个小孩的糖果数量既大于左边的也大于右边的。全局最优：相邻的孩子中，评分高的孩子获得更多的糖果。\n\n局部最优可以推出全局最优。\n\n所以就取candyVec[i + 1] + 1 和 candyVec[i] 最大的糖果数量，candyVec[i]只有取最大的才能既保持对左边candyVec[i - 1]的糖果多，也比右边candyVec[i + 1]的糖果多。\n\n如图：\n\nhttps://file1.kamacoder.com/i/algo/20201117115658791.png\n\n所以该过程代码如下：\n\n// 从后向前\nfor (int i = ratings.size() - 2; i >= 0; i--) {\n    if (ratings[i] > ratings[i + 1] ) {\n        candyVec[i] = max(candyVec[i], candyVec[i + 1] + 1);\n    }\n}\n整体代码如下：\n\nclass Solution {\npublic:\n    int candy(vector<int>& ratings) {\n        vector<int> candyVec(ratings.size(), 1);\n        // 从前向后\n        for (int i = 1; i < ratings.size(); i++) {\n            if (ratings[i] > ratings[i - 1]) candyVec[i] = candyVec[i - 1] + 1;\n        }\n        // 从后向前\n        for (int i = ratings.size() - 2; i >= 0; i--) {\n            if (ratings[i] > ratings[i + 1] ) {\n                candyVec[i] = max(candyVec[i], candyVec[i + 1] + 1);\n            }\n        }\n        // 统计结果\n        int result = 0;\n        for (int i = 0; i < candyVec.size(); i++) result += candyVec[i];\n        return result;\n    }\n};\n时间复杂度: O(n)\n空间复杂度: O(n)\n#总结\n这在leetcode上是一道困难的题目，其难点就在于贪心的策略，如果在考虑局部的时候想两边兼顾，就会顾此失彼。\n\n那么本题我采用了两次贪心的策略：\n\n一次是从左到右遍历，只比较右边孩子评分比左边大的情况。\n一次是从右到左遍历，只比较左边孩子评分比右边大的情况。\n这样从局部最优推出了全局最优，即：相邻的孩子中，评分高的孩子获得更多的糖果。\n\n#其他语言版本\n#Java\nclass Solution {\n    /**\n         分两个阶段\n         1、起点下标1 从左往右，只要 右边 比 左边 大，右边的糖果=左边 + 1\n         2、起点下标 ratings.length - 2 从右往左， 只要左边 比 右边 大，此时 左边的糖果应该 取本身的糖果数（符合比它左边大） 和 右边糖果数 + 1 二者的最大值，这样才符合 它比它左边的大，也比它右边大\n    */\n    public int candy(int[] ratings) {\n        int len = ratings.length;\n        int[] candyVec = new int[len];\n        candyVec[0] = 1;\n        for (int i = 1; i < len; i++) {\n            candyVec[i] = (ratings[i] > ratings[i - 1]) ? candyVec[i - 1] + 1 : 1;\n        }\n\n        for (int i = len - 2; i >= 0; i--) {\n            if (ratings[i] > ratings[i + 1]) {\n                candyVec[i] = Math.max(candyVec[i], candyVec[i + 1] + 1);\n            }\n        }\n\n        int ans = 0;\n        for (int num : candyVec) {\n            ans += num;\n        }\n        return ans;\n    }\n}\n#Python\nclass Solution:\n    def candy(self, ratings: List[int]) -> int:\n        n = len(ratings)\n        candies = [1] * n\n        \n        # Forward pass: handle cases where right rating is higher than left\n        for i in range(1, n):\n            if ratings[i] > ratings[i - 1]:\n                candies[i] = candies[i - 1] + 1\n        \n        # Backward pass: handle cases where left rating is higher than right\n        for i in range(n - 2, -1, -1):\n            if ratings[i] > ratings[i + 1]:\n                candies[i] = max(candies[i], candies[i + 1] + 1)\n        \n        return sum(candies)"
+}

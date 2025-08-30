@@ -1,0 +1,281 @@
+{
+  "id": "AP_be8dd0a9",
+  "title": "解数独",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/sudoku-solver/",
+  "description": "编写一个程序，通过填充空格来解决数独问题。\n\n一个数独的解法需遵循如下规则： 数字 1-9 在每一行只能出现一次。 数字 1-9 在每一列只能出现一次。 数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。 空白格用 '.' 表示。\n\nhttps://file1.kamacoder.com/i/algo/202011171912586.png\n\n一个数独。\n\nhttps://file1.kamacoder.com/i/algo/20201117191340669.png\n\n答案被标成红色。\n\n提示：\n\n给定的数独序列只包含数字 1-9 和字符 '.' 。\n你可以假设给定的数独只有唯一解。\n给定数独永远是 9x9 形式的。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "回溯",
+    "深度优先搜索"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "剪枝",
+    "状态恢复"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过回溯法来解决数独问题。整个过程包括递归填充棋盘的每一个空位（用'.'表示），并检查每次放置数字是否满足数独规则。如果发现当前放置无法找到最终解，则撤销本次操作（回溯）并尝试下一个可能。当所有空格都被正确填充时，即找到了一个可行解。",
+  "key_insights": [
+    {
+      "content": "不同于N皇后等一维递归问题，解数独需要在每个位置上尝试1-9中的每一个数字，因此形成了更宽更深的搜索树。"
+    },
+    {
+      "content": "由于每一步递归都会增加至少一个确定值到棋盘中，当整个棋盘填满时自然结束，故不需要额外设置终止条件。"
+    },
+    {
+      "content": "在每次放置新数字前，必须确保该数字不违反行、列及所在3x3小方格内的唯一性约束。"
+    },
+    {
+      "content": "使用了二维递归的方法遍历整个棋盘，并对每一个空白单元格进行1-9的数字尝试。"
+    },
+    {
+      "content": "利用有效的验证函数判断所放置的数字是否符合数独规则，从而减少无效尝试，提高算法效率。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "棋盘搜索问题可以使用回溯法暴力搜索，只不过这次我们要做的是二维递归。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\nbool backtracking(vector<vector<char>>& board) {\n    for (int i = 0; i < board.size(); i++) {        // 遍历行\n        for (int j = 0; j < board[0].size(); j++) { // 遍历列\n            if (board[i][j] == '.') {\n                for (char k = '1'; k <= '9'; k++) {     // (i, j) 这个位置放k是否合适\n                    if (isValid(i, j, k, board)) {\n                        board[i][j] = k;                // 放置k\n                        if (backtracking(board)) return true; // 如果找到合适一组立刻返回\n                        board[i][j] = '.';              // 回溯，撤销k\n                    }\n                }\n                return false;  // 9个数都试完了，都不行，那么就返回false\n            }\n        }\n    }\n    return true; // 遍历完没有返回false，说明找到了合适棋盘位置了\n}\nbool isValid(int row, int col, char val, vector<vector<char>>& board) {\n    for (int i = 0; i < 9; i++) { // 判断行里是否重复\n        if (board[row][i] == val) {\n            return false;\n        }\n    }\n    for (int j = 0; j < 9; j++) { // 判断列里是否重复\n        if (board[j][col] == val) {\n            return false;\n        }\n    }\n    int startRow = (row / 3) * 3;\n    int startCol = (col / 3) * 3;\n    for (int i = startRow; i < startRow + 3; i++) { // 判断9方格里是否重复\n        for (int j = startCol; j < startCol + 3; j++) {\n            if (board[i][j] == val ) {\n                return false;\n            }\n        }\n    }\n    return true;\n}\npublic:\n    void solveSudoku(vector<vector<char>>& board) {\n        backtracking(board);\n    }\n};",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public void solveSudoku(char[][] board) {\n        solveSudokuHelper(board);\n    }\n\n    private boolean solveSudokuHelper(char[][] board){\n        for (int i = 0; i < 9; i++){ // 遍历行\n            for (int j = 0; j < 9; j++){ // 遍历列\n                if (board[i][j] != '.'){ // 跳过原始数字\n                    continue;\n                }\n                for (char k = '1'; k <= '9'; k++){ // (i, j) 这个位置放k是否合适\n                    if (isValidSudoku(i, j, k, board)){\n                        board[i][j] = k;\n                        if (solveSudokuHelper(board)){ // 如果找到合适一组立刻返回\n                            return true;\n                        }\n                        board[i][j] = '.';\n                    }\n                }\n                return false;\n            }\n        }\n        return true;\n    }\n\n    private boolean isValidSudoku(int row, int col, char val, char[][] board){\n        for (int i = 0; i < 9; i++){\n            if (board[row][i] == val){\n                return false;\n            }\n        }\n        for (int j = 0; j < 9; j++){\n            if (board[j][col] == val){\n                return false;\n            }\n        }\n        int startRow = (row / 3) * 3;\n        int startCol = (col / 3) * 3;\n        for (int i = startRow; i < startRow + 3; i++){\n            for (int j = startCol; j < startCol + 3; j++){\n                if (board[i][j] == val){\n                    return false;\n                }\n            }\n        }\n        return true;\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def solveSudoku(self, board: List[List[str]]) -> None:\n        row_used = [set() for _ in range(9)]\n        col_used = [set() for _ in range(9)]\n        box_used = [set() for _ in range(9)]\n        for row in range(9):\n            for col in range(9):\n                num = board[row][col]\n                if num == \".\":\n                    continue\n                row_used[row].add(num)\n                col_used[col].add(num)\n                box_used[(row // 3) * 3 + col // 3].add(num)\n        self.backtracking(0, 0, board, row_used, col_used, box_used)\n\n    def backtracking(\n        self,\n        row: int,\n        col: int,\n        board: List[List[str]],\n        row_used: List[List[int]],\n        col_used: List[List[int]],\n        box_used: List[List[int]],\n    ) -> bool:\n        if row == 9:\n            return True\n\n        next_row, next_col = (row, col + 1) if col < 8 else (row + 1, 0)\n        if board[row][col] != \".\":\n            return self.backtracking(\n                next_row, next_col, board, row_used, col_used, box_used\n            )\n\n        for num in map(str, range(1, 10)):\n            if (\n                num not in row_used[row]\n                and num not in col_used[col]\n                and num not in box_used[(row // 3) * 3 + col // 3]\n            ):\n                board[row][col] = num\n                row_used[row].add(num)\n                col_used[col].add(num)\n                box_used[(row // 3) * 3 + col // 3].add(num)\n                if self.backtracking(\n                    next_row, next_col, board, row_used, col_used, box_used\n                ):\n                    return True\n                board[row][col] = \".\"\n                row_used[row].remove(num)\n                col_used[col].remove(num)\n                box_used[(row // 3) * 3 + col // 3].remove(num)\n        return False",
+          "description": null
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "回溯三部曲",
+      "text": "递归函数以及参数",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "bool backtracking(vector<vector<char>>& board) {\n    for (int i = 0; i < board.size(); i++) {        // 遍历行\n        for (int j = 0; j < board[0].size(); j++) { // 遍历列\n            if (board[i][j] == '.') {\n                for (char k = '1'; k <= '9'; k++) {     // (i, j) 这个位置放k是否合适\n                    if (isValid(i, j, k, board)) {\n                        board[i][j] = k;                // 放置k\n                        if (backtracking(board)) return true; // 如果找到合适一组立刻返回\n                        board[i][j] = '.';              // 回溯，撤销k\n                    }\n                }\n                return false;  // 9个数都试完了，都不行，那么就返回false\n            }\n        }\n    }\n    return true; // 遍历完没有返回false，说明找到了合适棋盘位置了\n}\nbool isValid(int row, int col, char val, vector<vector<char>>& board) {\n    for (int i = 0; i < 9; i++) { // 判断行里是否重复\n        if (board[row][i] == val) {\n            return false;\n        }\n    }\n    for (int j = 0; j < 9; j++) { // 判断列里是否重复\n        if (board[j][col] == val) {\n            return false;\n        }\n    }\n    int startRow = (row / 3) * 3;\n    int startCol = (col / 3) * 3;\n    for (int i = startRow; i < startRow + 3; i++) { // 判断9方格里是否重复\n        for (int j = startCol; j < startCol + 3; j++) {\n            if (board[i][j] == val ) {\n                return false;\n            }\n        }\n    }\n    return true;\n}\nvoid solveSudoku(vector<vector<char>>& board) {\n    backtracking(board);\n}",
+          "description": "C++版本的解数独问题代码"
+        },
+        {
+          "language": "java",
+          "code": "public void solveSudoku(char[][] board) {\n    solveSudokuHelper(board);\n}\nprivate boolean solveSudokuHelper(char[][] board){\n    for (int i = 0; i < 9; i++){ // 遍历行\n        for (int j = 0; j < 9; j++){ // 遍历列\n            if (board[i][j] != '.'){ // 跳过原始数字\n                continue;\n            }\n            for (char k = '1'; k <= '9'; k++){ // (i, j) 这个位置放k是否合适\n                if (isValidSudoku(i, j, k, board)){\n                    board[i][j] = k;\n                    if (solveSudokuHelper(board)){ // 如果找到合适一组立刻返回\n                        return true;\n                    }\n                    board[i][j] = '.';\n                }\n            }\n            return false;\n        }\n    }\n    return true;\n}\nprivate boolean isValidSudoku(int row, int col, char val, char[][] board){\n    for (int i = 0; i < 9; i++){\n        if (board[row][i] == val){\n            return false;\n        }\n    }\n    for (int j = 0; j < 9; j++){\n        if (board[j][col] == val){\n            return false;\n        }\n    }\n    int startRow = (row / 3) * 3;\n    int startCol = (col / 3) * 3;\n    for (int i = startRow; i < startRow + 3; i++){\n        for (int j = startCol; j < startCol + 3; j++){\n            if (board[i][j] == val){\n                return false;\n            }\n        }\n    }\n    return true;\n}",
+          "description": "Java版本的解数独问题代码"
+        },
+        {
+          "language": "python",
+          "code": "def solveSudoku(self, board: List[List[str]]) -> None:\n    row_used = [set() for _ in range(9)]\n    col_used = [set() for _ in range(9)]\n    box_used = [set() for _ in range(9)]\n    for row in range(9):\n        for col in range(9):\n            num = board[row][col]\n            if num == \".\":\n                continue\n            row_used[row].add(num)\n            col_used[col].add(num)\n            box_used[(row // 3) * 3 + col // 3].add(num)\n    self.backtracking(0, 0, board, row_used, col_used, box_used)\ndef backtracking(\n    self,\n    row: int,\n    col: int,\n    board: List[List[str]],\n    row_used: List[List[int]],\n    col_used: List[List[int]],\n    box_used: List[List[int]],\n) -> bool:\n    if row == 9:\n        return True\n    next_row, next_col = (row, col + 1) if col < 8 else (row + 1, 0)\n    if board[row][col] != \".\":\n        return self.backtracking(\n            next_row, next_col, board, row_used, col_used, box_used\n        )\n    for num in map(str, range(1, 10)):\n        if (\n            num not in row_used[row]\n            and num not in col_used[col]\n            and num not in box_used[(row // 3) * 3 + col // 3]\n        ):\n            board[row][col] = num\n            row_used[row].add(num)\n            col_used[col].add(num)\n            box_used[(row // 3) * 3 + col // 3].add(num)\n            if self.backtracking(\n                next_row, next_col, board, row_used, col_used, box_used\n            ):\n                return True\n            board[row][col] = \".\"\n            row_used[row].remove(num)\n            col_used[col].remove(num)\n            box_used[(row // 3) * 3 + col // 3].remove(num)\n    return False",
+          "description": "Python版本的解数独问题代码"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "判断棋盘是否合法",
+      "text": "判断棋盘是否合法有如下三个维度：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private:bool backtracking(vector<vector<char>>& board) {for (int i = 0; i < board.size(); i++) {for (int j = 0; j < board[0].size(); j++) {if (board[i][j] == '.') {for (char k = '1'; k <= '9'; k++) {if (isValid(i, j, k, board)) {board[i][j] = k;if (backtracking(board)) return true;board[i][j] = '.';}}return false;}}}return true;}bool isValid(int row, int col, char val, vector<vector<char>>& board) {for (int i = 0; i < 9; i++) {if (board[row][i] == val) {return false;}}for (int j = 0; j < 9; j++) {if (board[j][col] == val) {return false;}}int startRow = (row / 3) * 3;int startCol = (col / 3) * 3;for (int i = startRow; i < startRow + 3; i++) {for (int j = startCol; j < startCol + 3; j++) {if (board[i][j] == val ) {return false;}}}return true;}public:void solveSudoku(vector<vector<char>>& board) {backtracking(board);};}",
+          "description": "C++版本的解数独问题实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public void solveSudoku(char[][] board) {solveSudokuHelper(board);}private boolean solveSudokuHelper(char[][] board){for (int i = 0; i < 9; i++){for (int j = 0; j < 9; j++){if (board[i][j] != '.'){continue;}for (char k = '1'; k <= '9'; k++){if (isValidSudoku(i, j, k, board)){board[i][j] = k;if (solveSudokuHelper(board)){return true;}board[i][j] = '.';}}return false;}}return true;}private boolean isValidSudoku(int row, int col, char val, char[][] board){for (int i = 0; i < 9; i++){if (board[row][i] == val){return false;}}for (int j = 0; j < 9; j++){if (board[j][col] == val){return false;}}int startRow = (row / 3) * 3;int startCol = (col / 3) * 3;for (int i = startRow; i < startRow + 3; i++){for (int j = startCol; j < startCol + 3; j++){if (board[i][j] == val){return false;}}}return true;}}",
+          "description": "Java版本的解数独问题实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def solveSudoku(self, board: List[List[str]]) -> None:self.backtracking(0, 0, board, [set() for _ in range(9)], [set() for _ in range(9)], [set() for _ in range(9)])def backtracking(self, row: int, col: int, board: List[List[str]], row_used: List[List[int]], col_used: List[List[int]], box_used: List[List[int]]) -> bool:if row == 9:return Truenext_row, next_col = (row, col + 1) if col < 8 else (row + 1, 0)if board[row][col] != \".\":return self.backtracking(next_row, next_col, board, row_used, col_used, box_used)for num in map(str, range(1, 10)):if num not in row_used[row] and num not in col_used[col] and num not in box_used[(row // 3) * 3 + col // 3]:board[row][col] = numrow_used[row].add(num)col_used[col].add(num)box_used[(row // 3) * 3 + col // 3].add(num)if self.backtracking(next_row, next_col, board, row_used, col_used, box_used):return Trueboard[row][col] = \".\"row_used[row].remove(num)col_used[col].remove(num)box_used[(row // 3) * 3 + col // 3].remove(num)return False",
+          "description": "Python版本的解数独问题实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "解数独可以说是非常难的题目了，如果还一直停留在单层递归的逻辑中，这道题目可以让大家瞬间崩溃。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\nbool backtracking(vector<vector<char>>& board) {\nfor (int i = 0; i < board.size(); i++) {        // 遍历行\n    for (int j = 0; j < board[0].size(); j++) { // 遍历列\n        if (board[i][j] == '.') {\n            for (char k = '1'; k <= '9'; k++) {     // (i, j) 这个位置放k是否合适\n                if (isValid(i, j, k, board)) {\n                    board[i][j] = k;                // 放置k\n                    if (backtracking(board)) return true; // 如果找到合适一组立刻返回\n                    board[i][j] = '.';              // 回溯，撤销k\n                }\n            }\n            return false;  // 9个数都试完了，都不行，那么就返回false\n        }\n    }\n}\nreturn true; // 遍历完没有返回false，说明找到了合适棋盘位置了\n}\nbool isValid(int row, int col, char val, vector<vector<char>>& board) {\nfor (int i = 0; i < 9; i++) { // 判断行里是否重复\n    if (board[row][i] == val) {\n        return false;\n    }\n}\nfor (int j = 0; j < 9; j++) { // 判断列里是否重复\n    if (board[j][col] == val) {\n        return false;\n    }\n}\nint startRow = (row / 3) * 3;\nint startCol = (col / 3) * 3;\nfor (int i = startRow; i < startRow + 3; i++) { // 判断9方格里是否重复\n    for (int j = startCol; j < startCol + 3; j++) {\n        if (board[i][j] == val ) {\n            return false;\n        }\n    }\n}\nreturn true;\n}\npublic:\nvoid solveSudoku(vector<vector<char>>& board) {\n    backtracking(board);\n}\n};",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\npublic void solveSudoku(char[][] board) {\nsolveSudokuHelper(board);\n}\nprivate boolean solveSudokuHelper(char[][] board){\nfor (int i = 0; i < 9; i++){ // 遍历行\n    for (int j = 0; j < 9; j++){ // 遍历列\n        if (board[i][j] != '.'){ // 跳过原始数字\n            continue;\n        }\n        for (char k = '1'; k <= '9'; k++){ // (i, j) 这个位置放k是否合适\n            if (isValidSudoku(i, j, k, board)){\n                board[i][j] = k;\n                if (solveSudokuHelper(board)){ // 如果找到合适一组立刻返回\n                    return true;\n                }\n                board[i][j] = '.';\n            }\n        }\n        return false;\n    }\n}\nreturn true;\n}\nprivate boolean isValidSudoku(int row, int col, char val, char[][] board){\nfor (int i = 0; i < 9; i++){\n    if (board[row][i] == val){\n        return false;\n    }\n}\nfor (int j = 0; j < 9; j++){\n    if (board[j][col] == val){\n        return false;\n    }\n}\nint startRow = (row / 3) * 3;\nint startCol = (col / 3) * 3;\nfor (int i = startRow; i < startRow + 3; i++){\n    for (int j = startCol; j < startCol + 3; j++){\n        if (board[i][j] == val){\n            return false;\n        }\n    }\n}\nreturn true;\n}\n}",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\ndef solveSudoku(self, board: List[List[str]]) -> None:\nrow_used = [set() for _ in range(9)]\ncol_used = [set() for _ in range(9)]\nbox_used = [set() for _ in range(9)]\nfor row in range(9):\n    for col in range(9):\n        num = board[row][col]\n        if num == \".\":\n            continue\n        row_used[row].add(num)\n        col_used[col].add(num)\n        box_used[(row // 3) * 3 + col // 3].add(num)\nself.backtracking(0, 0, board, row_used, col_used, box_used)\ndef backtracking(\n    self,\n    row: int,\n    col: int,\n    board: List[List[str]],\n    row_used: List[List[int]],\n    col_used: List[List[int]],\n    box_used: List[List[int]],\n) -> bool:\nif row == 9:\n    return True\nnext_row, next_col = (row, col + 1) if col < 8 else (row + 1, 0)\nif board[row][col] != \".\":\n    return self.backtracking(\n        next_row, next_col, board, row_used, col_used, box_used\n    )\nfor num in map(str, range(1, 10)):\n    if (\n        num not in row_used[row]\n        and num not in col_used[col]\n        and num not in box_used[(row // 3) * 3 + col // 3]\n    ):\n        board[row][col] = num\n        row_used[row].add(num)\n        col_used[col].add(num)\n        box_used[(row // 3) * 3 + col // 3].add(num)\n        if self.backtracking(\n            next_row, next_col, board, row_used, col_used, box_used\n        ):\n            return True\n        board[row][col] = \".\"\n        row_used[row].remove(num)\n        col_used[col].remove(num)\n        box_used[(row // 3) * 3 + col // 3].remove(num)\nreturn False",
+          "description": null
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "bool backtracking(vector<vector<char>>& board) {\n    for (int i = 0; i < board.size(); i++) {        // 遍历行\n        for (int j = 0; j < board[0].size(); j++) { // 遍历列\n            if (board[i][j] == '.') {\n                for (char k = '1'; k <= '9'; k++) {     // (i, j) 这个位置放k是否合适\n                    if (isValid(i, j, k, board)) {\n                        board[i][j] = k;                // 放置k\n                        if (backtracking(board)) return true; // 如果找到合适一组立刻返回\n                        board[i][j] = '.';              // 回溯，撤销k\n                    }\n                }\n                return false;  // 9个数都试完了，都不行，那么就返回false\n            }\n        }\n    }\n    return true; // 遍历完没有返回false，说明找到了合适棋盘位置了\n}\nbool isValid(int row, int col, char val, vector<vector<char>>& board) {\n    for (int i = 0; i < 9; i++) { // 判断行里是否重复\n        if (board[row][i] == val) {\n            return false;\n        }\n    }\n    for (int j = 0; j < 9; j++) { // 判断列里是否重复\n        if (board[j][col] == val) {\n            return false;\n        }\n    }\n    int startRow = (row / 3) * 3;\n    int startCol = (col / 3) * 3;\n    for (int i = startRow; i < startRow + 3; i++) { // 判断9方格里是否重复\n        for (int j = startCol; j < startCol + 3; j++) {\n            if (board[i][j] == val ) {\n                return false;\n            }\n        }\n    }\n    return true;\n}",
+          "description": "C++语言实现的解数独算法。"
+        },
+        {
+          "language": "java",
+          "code": "public void solveSudoku(char[][] board) {\n    solveSudokuHelper(board);\n}\nprivate boolean solveSudokuHelper(char[][] board){\n    for (int i = 0; i < 9; i++){ // 遍历行\n        for (int j = 0; j < 9; j++){ // 遍历列\n            if (board[i][j] != '.'){ // 跳过原始数字\n                continue;\n            }\n            for (char k = '1'; k <= '9'; k++){ // (i, j) 这个位置放k是否合适\n                if (isValidSudoku(i, j, k, board)){\n                    board[i][j] = k;\n                    if (solveSudokuHelper(board)){ // 如果找到合适一组立刻返回\n                        return true;\n                    }\n                    board[i][j] = '.';\n                }\n            }\n            return false; // 9个数都试完了，都不行，那么就返回false\n        }\n    }\n    return true; // 遍历完没有返回false，说明找到了合适棋盘位置了\n}\nprivate boolean isValidSudoku(int row, int col, char val, char[][] board){\n    for (int i = 0; i < 9; i++){\n        if (board[row][i] == val){\n            return false;\n        }\n    }\n    for (int j = 0; j < 9; j++){\n        if (board[j][col] == val){\n            return false;\n        }\n    }\n    int startRow = (row / 3) * 3;\n    int startCol = (col / 3) * 3;\n    for (int i = startRow; i < startRow + 3; i++){\n        for (int j = startCol; j < startCol + 3; j++){\n            if (board[i][j] == val){\n                return false;\n            }\n        }\n    }\n    return true;\n}",
+          "description": "Java语言实现的解数独算法。"
+        },
+        {
+          "language": "python",
+          "code": "def solveSudoku(self, board: List[List[str]]) -> None:\n    row_used = [set() for _ in range(9)]\n    col_used = [set() for _ in range(9)]\n    box_used = [set() for _ in range(9)]\n    for row in range(9):\n        for col in range(9):\n            num = board[row][col]\n            if num == \".\":\n                continue\n            row_used[row].add(num)\n            col_used[col].add(num)\n            box_used[(row // 3) * 3 + col // 3].add(num)\n    self.backtracking(0, 0, board, row_used, col_used, box_used)\ndef backtracking(\n    self,\n    row: int,\n    col: int,\n    board: List[List[str]],\n    row_used: List[List[int]],\n    col_used: List[List[int]],\n    box_used: List[List[int]],\n) -> bool:\n    if row == 9:\n        return True\n\n    next_row, next_col = (row, col + 1) if col < 8 else (row + 1, 0)\n    if board[row][col] != \".\":\n        return self.backtracking(\n            next_row, next_col, board, row_used, col_used, box_used\n        )\n\n    for num in map(str, range(1, 10)):\n        if (\n            num not in row_used[row]\n            and num not in col_used[col]\n            and num not in box_used[(row // 3) * 3 + col // 3]\n        ):\n            board[row][col] = num\n            row_used[row].add(num)\n            col_used[col].add(num)\n            box_used[(row // 3) * 3 + col // 3].add(num)\n            if self.backtracking(\n                next_row, next_col, board, row_used, col_used, box_used\n            ):\n                return True\n            board[row][col] = \".\"\n            row_used[row].remove(num)\n            col_used[col].remove(num)\n            box_used[(row // 3) * 3 + col // 3].remove(num)\n    return False",
+          "description": "Python语言实现的解数独算法。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "解法一:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\nbool backtracking(vector<vector<char>>& board) {\n    for (int i = 0; i < board.size(); i++) {        // 遍历行\n        for (int j = 0; j < board[0].size(); j++) { // 遍历列\n            if (board[i][j] == '.') {\n                for (char k = '1'; k <= '9'; k++) {     // (i, j) 这个位置放k是否合适\n                    if (isValid(i, j, k, board)) {\n                        board[i][j] = k;                // 放置k\n                        if (backtracking(board)) return true; // 如果找到合适一组立刻返回\n                        board[i][j] = '.';              // 回溯，撤销k\n                    }\n                }\n                return false;  // 9个数都试完了，都不行，那么就返回false\n            }\n        }\n    }\n    return true; // 遍历完没有返回false，说明找到了合适棋盘位置了\n}\nbool isValid(int row, int col, char val, vector<vector<char>>& board) {\n    for (int i = 0; i < 9; i++) { // 判断行里是否重复\n        if (board[row][i] == val) {\n            return false;\n        }\n    }\n    for (int j = 0; j < 9; j++) { // 判断列里是否重复\n        if (board[j][col] == val) {\n            return false;\n        }\n    }\n    int startRow = (row / 3) * 3;\n    int startCol = (col / 3) * 3;\n    for (int i = startRow; i < startRow + 3; i++) { // 判断9方格里是否重复\n        for (int j = startCol; j < startCol + 3; j++) {\n            if (board[i][j] == val ) {\n                return false;\n            }\n        }\n    }\n    return true;\n}\npublic:\n    void solveSudoku(vector<vector<char>>& board) {\n        backtracking(board);\n    }\n};",
+          "description": "C++版本的解数独问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public void solveSudoku(char[][] board) {\n        solveSudokuHelper(board);\n    }\n\n    private boolean solveSudokuHelper(char[][] board){\n        for (int i = 0; i < 9; i++){\n            for (int j = 0; j < 9; j++){\n                if (board[i][j] != '.'){ \n                    continue;\n                }\n                for (char k = '1'; k <= '9'; k++){\n                    if (isValidSudoku(i, j, k, board)){\n                        board[i][j] = k;\n                        if (solveSudokuHelper(board)){\n                            return true;\n                        }\n                        board[i][j] = '.';\n                    }\n                }\n                return false;\n            }\n        }\n        return true;\n    }\n\n    private boolean isValidSudoku(int row, int col, char val, char[][] board){\n        for (int i = 0; i < 9; i++){\n            if (board[row][i] == val){\n                return false;\n            }\n        }\n        for (int j = 0; j < 9; j++){\n            if (board[j][col] == val){\n                return false;\n            }\n        }\n        int startRow = (row / 3) * 3;\n        int startCol = (col / 3) * 3;\n        for (int i = startRow; i < startRow + 3; i++){\n            for (int j = startCol; j < startCol + 3; j++){\n                if (board[i][j] == val){\n                    return false;\n                }\n            }\n        }\n        return true;\n    }\n}",
+          "description": "Java版本的解数独问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def solveSudoku(self, board: List[List[str]]) -> None:\n        row_used = [set() for _ in range(9)]\n        col_used = [set() for _ in range(9)]\n        box_used = [set() for _ in range(9)]\n        for row in range(9):\n            for col in range(9):\n                num = board[row][col]\n                if num == \".\":\n                    continue\n                row_used[row].add(num)\n                col_used[col].add(num)\n                box_used[(row // 3) * 3 + col // 3].add(num)\n        self.backtracking(0, 0, board, row_used, col_used, box_used)\n\n    def backtracking(\n        self,\n        row: int,\n        col: int,\n        board: List[List[str]],\n        row_used: List[List[int]],\n        col_used: List[List[int]],\n        box_used: List[List[int]],\n    ) -> bool:\n        if row == 9:\n            return True\n\n        next_row, next_col = (row, col + 1) if col < 8 else (row + 1, 0)\n        if board[row][col] != \".\":\n            return self.backtracking(next_row, next_col, board, row_used, col_used, box_used)\n\n        for num in map(str, range(1, 10)):\n            if (\n                num not in row_used[row]\n                and num not in col_used[col]\n                and num not in box_used[(row // 3) * 3 + col // 3]\n            ):\n                board[row][col] = num\n                row_used[row].add(num)\n                col_used[col].add(num)\n                box_used[(row // 3) * 3 + col // 3].add(num)\n                if self.backtracking(next_row, next_col, board, row_used, col_used, box_used):\n                    return True\n                board[row][col] = \".\"\n                row_used[row].remove(num)\n                col_used[col].remove(num)\n                box_used[(row // 3) * 3 + col // 3].remove(num)\n        return False",
+          "description": "Python版本的解数独问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "class Solution:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private:bool backtracking(vector<vector<char>>& board) {for (int i = 0; i < board.size(); i++) {for (int j = 0; j < board[0].size(); j++) {if (board[i][j] == '.') {for (char k = '1'; k <= '9'; k++) {if (isValid(i, j, k, board)) {board[i][j] = k;if (backtracking(board)) return true;board[i][j] = '.';}}return false;}}}return true;}bool isValid(int row, int col, char val, vector<vector<char>>& board) {for (int i = 0; i < 9; i++) {if (board[row][i] == val) {return false;}}for (int j = 0; j < 9; j++) {if (board[j][col] == val) {return false;}}int startRow = (row / 3) * 3;int startCol = (col / 3) * 3;for (int i = startRow; i < startRow + 3; i++) {for (int j = startCol; j < startCol + 3; j++) {if (board[i][j] == val ) {return false;}}}}return true;}public:void solveSudoku(vector<vector<char>>& board) {backtracking(board);}};",
+          "description": "C++解数独"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public void solveSudoku(char[][] board) {solveSudokuHelper(board);}private boolean solveSudokuHelper(char[][] board){for (int i = 0; i < 9; i++){for (int j = 0; j < 9; j++){if (board[i][j] != '.'){continue;}for (char k = '1'; k <= '9'; k++){if (isValidSudoku(i, j, k, board)){board[i][j] = k;if (solveSudokuHelper(board)){return true;}board[i][j] = '.';}}return false;}}return true;}private boolean isValidSudoku(int row, int col, char val, char[][] board){for (int i = 0; i < 9; i++){if (board[row][i] == val){return false;}}for (int j = 0; j < 9; j++){if (board[j][col] == val){return false;}}int startRow = (row / 3) * 3;int startCol = (col / 3) * 3;for (int i = startRow; i < startRow + 3; i++){for (int j = startCol; j < startCol + 3; j++){if (board[i][j] == val){return false;}}}}return true;}}",
+          "description": "Java解数独"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:def solveSudoku(self, board: List[List[str]]) -> None:self.backtracking(0, 0, board, [set() for _ in range(9)], [set() for _ in range(9)], [set() for _ in range(9)])def backtracking(self, row: int, col: int, board: List[List[str]], row_used: List[List[int]], col_used: List[List[int]], box_used: List[List[int]]) -> bool:if row == 9:return Truenext_row, next_col = (row, col + 1) if col < 8 else (row + 1, 0)if board[row][col] != \".\":return self.backtracking(next_row, next_col, board, row_used, col_used, box_used)for num in map(str, range(1, 10)):if num not in row_used[row] and num not in col_used[col] and num not in box_used[(row // 3) * 3 + col // 3]:board[row][col] = numrow_used[row].add(num)col_used[col].add(num)box_used[(row // 3) * 3 + col // 3].add(num)if self.backtracking(next_row, next_col, board, row_used, col_used, box_used):return Trueboard[row][col] = \".\"row_used[row].remove(num)col_used[col].remove(num)box_used[(row // 3) * 3 + col // 3].remove(num)return False",
+          "description": "Python解数独"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {private:bool backtracking(vector<vector<char>>& board) {for (int i = 0; i < board.size(); i++) {for (int j = 0; j < board[0].size(); j++) {if (board[i][j] == '.') {for (char k = '1'; k <= '9'; k++) {if (isValid(i, j, k, board)) {board[i][j] = k;if (backtracking(board)) return true;board[i][j] = '.';}}return false;}}}return true;}bool isValid(int row, int col, char val, vector<vector<char>>& board) {for (int i = 0; i < 9; i++) {if (board[row][i] == val) {return false;}}for (int j = 0; j < 9; j++) {if (board[j][col] == val) {return false;}}int startRow = (row / 3) * 3;int startCol = (col / 3) * 3;for (int i = startRow; i < startRow + 3; i++) {for (int j = startCol; j < startCol + 3; j++) {if (board[i][j] == val ) {return false;}}}}return true;}public:void solveSudoku(vector<vector<char>>& board) {backtracking(board);}};",
+      "description": "C++实现的解数独问题，使用回溯法。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public void solveSudoku(char[][] board) {solveSudokuHelper(board);}private boolean solveSudokuHelper(char[][] board){for (int i = 0; i < 9; i++){for (int j = 0; j < 9; j++){if (board[i][j] != '.'){continue;}for (char k = '1'; k <= '9'; k++){if (isValidSudoku(i, j, k, board)){board[i][j] = k;if (solveSudokuHelper(board)){return true;}board[i][j] = '.';}}return false;}}return true;}private boolean isValidSudoku(int row, int col, char val, char[][] board){for (int i = 0; i < 9; i++){if (board[row][i] == val){return false;}}for (int j = 0; j < 9; j++){if (board[j][col] == val){return false;}}int startRow = (row / 3) * 3;int startCol = (col / 3) * 3;for (int i = startRow; i < startRow + 3; i++){for (int j = startCol; j < startCol + 3; j++){if (board[i][j] == val){return false;}}}}return true;}}",
+      "description": "Java实现的解数独问题，同样采用了回溯算法。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution:def solveSudoku(self, board: List[List[str]]) -> None:row_used = [set() for _ in range(9)]col_used = [set() for _ in range(9)]box_used = [set() for _ in range(9)]for row in range(9):for col in range(9):num = board[row][col]if num == \".\":continuerow_used[row].add(num)col_used[col].add(num)box_used[(row // 3) * 3 + col // 3].add(num)self.backtracking(0, 0, board, row_used, col_used, box_used)def backtracking(self,row: int,col: int,board: List[List[str]],row_used: List[List[int]],col_used: List[List[int]],box_used: List[List[int]],) -> bool:if row == 9:return Truenext_row, next_col = (row, col + 1) if col < 8 else (row + 1, 0)if board[row][col] != \".\":return self.backtracking(next_row, next_col, board, row_used, col_used, box_used)for num in map(str, range(1, 10)):if num not in row_used[row] and num not in col_used[col] and num not in box_used[(row // 3) * 3 + col // 3]:board[row][col] = numrow_used[row].add(num)col_used[col].add(num)box_used[(row // 3) * 3 + col // 3].add(num)if self.backtracking(next_row, next_col, board, row_used, col_used, box_used):return Trueboard[row][col] = \".\"row_used[row].remove(num)col_used[col].remove(num)box_used[(row // 3) * 3 + col // 3].remove(num)return False",
+      "description": "Python版本的解数独代码，也运用了回溯方法来寻找解决方案。"
+    }
+  ],
+  "common_mistakes": [
+    "忘记处理回溯后的状态恢复。",
+    "没有正确理解何时应该立即返回结果，导致不必要的继续搜索。",
+    "对于数独规则的理解不足，可能导致无效的数字放置。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/202011171912586.png",
+      "description": "这是一个部分填充的数独谜题，需要使用回溯算法来找到每个空格的正确数字以满足数独规则。",
+      "context": "这张图片展示了一个待解的数独谜题，用以说明需要编程解决的具体问题实例。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201117191340669.png",
+      "description": "这是一张展示9x9数独谜题的图片，其中红色数字表示已填充的答案，体现了回溯算法在解决数独问题中的应用。",
+      "context": "该图片展示了数独问题的答案，其中正确填入的数字被标记为红色。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/2020111720451790-20230310131816104.png",
+      "description": "这张图片展示了使用回溯算法解决数独问题的过程，通过递归尝试每个空格的可能值并检查其合法性来逐步填充数独网格。",
+      "context": "该图展示了数独问题解决方案搜索过程中树形结构的一部分，以帮助理解其比N皇后问题更宽更深的特性。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/2020111720451790-20230310131822254.png",
+      "description": "这张图片展示了使用回溯算法解决数独问题的过程，通过递归尝试每个空格的可能值并检查其合法性来逐步填充数独网格。",
+      "context": "该图片展示了数独问题解决过程中递归单层搜索逻辑的树形结构，帮助理解如何通过行和列双重循环来尝试每个位置放置9个数字的可能性。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/202011171912586.png",
+      "description": "GIF展示了数独求解过程中，算法逐步填充空白格直至找到最终解的动态过程。",
+      "context": "GIF动画展示了数独问题的初始状态，即待解决的数独棋盘布局。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201117191340669.png",
+      "description": "GIF展示了数独求解过程中，通过回溯法逐步填充空白格直至找到完整解的过程。",
+      "context": "GIF动画展示了数独问题被解决的过程，其中新填入的答案以红色高亮显示。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/2020111720451790-20230310131816104.png",
+      "description": "GIF展示了数独求解过程中，通过回溯算法逐步填充棋盘直至找到解决方案的过程。",
+      "context": "该GIF动画展示了数独问题解空间树的一部分结构，帮助理解回溯算法在解决数独时如何探索所有可能的数字放置方案。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/2020111720451790-20230310131822254.png",
+      "description": "GIF展示了数独求解过程中，通过递归尝试填充每个空格不同数字的搜索过程。",
+      "context": "GIF动画展示了通过二维递归（行与列）遍历棋盘，并尝试在每个位置放置9个数字之一的过程，用以直观解释数独求解算法中的递归单层搜索逻辑。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\回溯算法\\解数独.txt",
+  "extracted_at": "2025-07-21T12:41:51.895441",
+  "raw_content": "解数独\n力扣题目链接(https://leetcode.cn/problems/sudoku-solver/)\n\n编写一个程序，通过填充空格来解决数独问题。\n\n一个数独的解法需遵循如下规则： 数字 1-9 在每一行只能出现一次。 数字 1-9 在每一列只能出现一次。 数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。 空白格用 '.' 表示。\n\nhttps://file1.kamacoder.com/i/algo/202011171912586.png\n\n一个数独。\n\nhttps://file1.kamacoder.com/i/algo/20201117191340669.png\n\n答案被标成红色。\n\n提示：\n\n给定的数独序列只包含数字 1-9 和字符 '.' 。\n你可以假设给定的数独只有唯一解。\n给定数独永远是 9x9 形式的。\n\n\n#思路\n棋盘搜索问题可以使用回溯法暴力搜索，只不过这次我们要做的是二维递归。\n\n怎么做二维递归呢？\n\n大家已经刷过了如下回溯法题目，例如：77.组合（组合问题） (https://programmercarl.com/0077.%E7%BB%84%E5%90%88.html)，131.分割回文串（分割问题） (https://programmercarl.com/0131.%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.html)，78.子集（子集问题） (https://programmercarl.com/0078.%E5%AD%90%E9%9B%86.html)，46.全排列（排列问题） (https://programmercarl.com/0046.%E5%85%A8%E6%8E%92%E5%88%97.html)，以及51.N皇后（N皇后问题） (https://programmercarl.com/0051.N%E7%9A%87%E5%90%8E.html)，其实这些题目都是一维递归。\n\n如果以上这几道题目没有做过的话，不建议上来就做这道题哈！\n\nN皇后问题 (https://programmercarl.com/0051.N%E7%9A%87%E5%90%8E.html)是因为每一行每一列只放一个皇后，只需要一层for循环遍历一行，递归来遍历列，然后一行一列确定皇后的唯一位置。\n\n本题就不一样了，本题中棋盘的每一个位置都要放一个数字（而N皇后是一行只放一个皇后），并检查数字是否合法，解数独的树形结构要比N皇后更宽更深。\n\n因为这个树形结构太大了，我抽取一部分，如图所示：\n\nhttps://file1.kamacoder.com/i/algo/2020111720451790-20230310131816104.png\n\n#回溯三部曲\n递归函数以及参数\n递归函数的返回值需要是bool类型，为什么呢？\n\n因为解数独找到一个符合的条件（就在树的叶子节点上）立刻就返回，相当于找从根节点到叶子节点一条唯一路径，所以需要使用bool返回值。\n\n代码如下：\n\nbool backtracking(vector<vector<char>>& board)\n递归终止条件\n本题递归不用终止条件，解数独是要遍历整个树形结构寻找可能的叶子节点就立刻返回。\n\n不用终止条件会不会死循环？\n\n递归的下一层的棋盘一定比上一层的棋盘多一个数，等数填满了棋盘自然就终止（填满当然好了，说明找到结果了），所以不需要终止条件！\n\n那么有没有永远填不满的情况呢？\n\n这个问题我在递归单层搜索逻辑里再来讲！\n\n递归单层搜索逻辑\nhttps://file1.kamacoder.com/i/algo/2020111720451790-20230310131822254.png\n\n在树形图中可以看出我们需要的是一个二维的递归 （一行一列）\n\n一个for循环遍历棋盘的行，一个for循环遍历棋盘的列，一行一列确定下来之后，递归遍历这个位置放9个数字的可能性！\n\n代码如下：（详细看注释）\n\nbool backtracking(vector<vector<char>>& board) {\n    for (int i = 0; i < board.size(); i++) {        // 遍历行\n        for (int j = 0; j < board[0].size(); j++) { // 遍历列\n            if (board[i][j] != '.') continue;\n            for (char k = '1'; k <= '9'; k++) {     // (i, j) 这个位置放k是否合适\n                if (isValid(i, j, k, board)) {\n                    board[i][j] = k;                // 放置k\n                    if (backtracking(board)) return true; // 如果找到合适一组立刻返回\n                    board[i][j] = '.';              // 回溯，撤销k\n                }\n            }\n            return false;                           // 9个数都试完了，都不行，那么就返回false\n        }\n    }\n    return true; // 遍历完没有返回false，说明找到了合适棋盘位置了\n}\n注意这里return false的地方，这里放return false 是有讲究的。\n\n因为如果一行一列确定下来了，这里尝试了9个数都不行，说明这个棋盘找不到解决数独问题的解！\n\n那么会直接返回， 这也就是为什么没有终止条件也不会永远填不满棋盘而无限递归下去！\n\n#判断棋盘是否合法\n判断棋盘是否合法有如下三个维度：\n\n同行是否重复\n同列是否重复\n9宫格里是否重复\n代码如下：\n\nbool isValid(int row, int col, char val, vector<vector<char>>& board) {\n    for (int i = 0; i < 9; i++) { // 判断行里是否重复\n        if (board[row][i] == val) {\n            return false;\n        }\n    }\n    for (int j = 0; j < 9; j++) { // 判断列里是否重复\n        if (board[j][col] == val) {\n            return false;\n        }\n    }\n    int startRow = (row / 3) * 3;\n    int startCol = (col / 3) * 3;\n    for (int i = startRow; i < startRow + 3; i++) { // 判断9方格里是否重复\n        for (int j = startCol; j < startCol + 3; j++) {\n            if (board[i][j] == val ) {\n                return false;\n            }\n        }\n    }\n    return true;\n}\n最后整体C++代码如下：\n\nclass Solution {\nprivate:\nbool backtracking(vector<vector<char>>& board) {\n    for (int i = 0; i < board.size(); i++) {        // 遍历行\n        for (int j = 0; j < board[0].size(); j++) { // 遍历列\n            if (board[i][j] == '.') {\n                for (char k = '1'; k <= '9'; k++) {     // (i, j) 这个位置放k是否合适\n                    if (isValid(i, j, k, board)) {\n                        board[i][j] = k;                // 放置k\n                        if (backtracking(board)) return true; // 如果找到合适一组立刻返回\n                        board[i][j] = '.';              // 回溯，撤销k\n                    }\n                }\n                return false;  // 9个数都试完了，都不行，那么就返回false\n            }\n        }\n    }\n    return true; // 遍历完没有返回false，说明找到了合适棋盘位置了\n}\nbool isValid(int row, int col, char val, vector<vector<char>>& board) {\n    for (int i = 0; i < 9; i++) { // 判断行里是否重复\n        if (board[row][i] == val) {\n            return false;\n        }\n    }\n    for (int j = 0; j < 9; j++) { // 判断列里是否重复\n        if (board[j][col] == val) {\n            return false;\n        }\n    }\n    int startRow = (row / 3) * 3;\n    int startCol = (col / 3) * 3;\n    for (int i = startRow; i < startRow + 3; i++) { // 判断9方格里是否重复\n        for (int j = startCol; j < startCol + 3; j++) {\n            if (board[i][j] == val ) {\n                return false;\n            }\n        }\n    }\n    return true;\n}\npublic:\n    void solveSudoku(vector<vector<char>>& board) {\n        backtracking(board);\n    }\n};\n\n#总结\n解数独可以说是非常难的题目了，如果还一直停留在单层递归的逻辑中，这道题目可以让大家瞬间崩溃。\n\n所以我在开篇就提到了二维递归，这也是我自创词汇，希望可以帮助大家理解解数独的搜索过程。\n\n一波分析之后，再看代码会发现其实也不难，唯一难点就是理解二维递归的思维逻辑。\n\n这样，解数独这么难的问题，也被我们攻克了。\n\n恭喜一路上坚持打卡的录友们，回溯算法已经接近尾声了，接下来就是要一波总结了。\n\n#其他语言版本\n#Java\n解法一:\n\nclass Solution {\n    public void solveSudoku(char[][] board) {\n        solveSudokuHelper(board);\n    }\n\n    private boolean solveSudokuHelper(char[][] board){\n        //「一个for循环遍历棋盘的行，一个for循环遍历棋盘的列，\n        // 一行一列确定下来之后，递归遍历这个位置放9个数字的可能性！」\n        for (int i = 0; i < 9; i++){ // 遍历行\n            for (int j = 0; j < 9; j++){ // 遍历列\n                if (board[i][j] != '.'){ // 跳过原始数字\n                    continue;\n                }\n                for (char k = '1'; k <= '9'; k++){ // (i, j) 这个位置放k是否合适\n                    if (isValidSudoku(i, j, k, board)){\n                        board[i][j] = k;\n                        if (solveSudokuHelper(board)){ // 如果找到合适一组立刻返回\n                            return true;\n                        }\n                        board[i][j] = '.';\n                    }\n                }\n                // 9个数都试完了，都不行，那么就返回false\n                return false;\n                // 因为如果一行一列确定下来了，这里尝试了9个数都不行，说明这个棋盘找不到解决数独问题的解！\n                // 那么会直接返回， 「这也就是为什么没有终止条件也不会永远填不满棋盘而无限递归下去！」\n            }\n        }\n        // 遍历完没有返回false，说明找到了合适棋盘位置了\n        return true;\n    }\n\n    /**\n     * 判断棋盘是否合法有如下三个维度:\n     *     同行是否重复\n     *     同列是否重复\n     *     9宫格里是否重复\n     */\n    private boolean isValidSudoku(int row, int col, char val, char[][] board){\n        // 同行是否重复\n        for (int i = 0; i < 9; i++){\n            if (board[row][i] == val){\n                return false;\n            }\n        }\n        // 同列是否重复\n        for (int j = 0; j < 9; j++){\n            if (board[j][col] == val){\n                return false;\n            }\n        }\n        // 9宫格里是否重复\n        int startRow = (row / 3) * 3;\n        int startCol = (col / 3) * 3;\n        for (int i = startRow; i < startRow + 3; i++){\n            for (int j = startCol; j < startCol + 3; j++){\n                if (board[i][j] == val){\n                    return false;\n                }\n            }\n        }\n        return true;\n    }\n}\n解法二(bitmap标记)\n\nclass Solution{\n    int[] rowBit = new int[9];\n    int[] colBit = new int[9];\n    int[] square9Bit = new int[9];\n\n    public void solveSudoku(char[][] board) {\n        // 1 10 11\n        for (int y = 0; y < board.length; y++) {\n            for (int x = 0; x < board[y].length; x++) {\n                int numBit = 1 << (board[y][x] - '1');\n                rowBit[y] ^= numBit;\n                colBit[x] ^= numBit;\n                square9Bit[(y / 3) * 3 + x / 3] ^= numBit;\n            }\n        }\n        backtrack(board, 0);\n    }\n\n    public boolean backtrack(char[][] board, int n) {\n        if (n >= 81) {\n            return true;\n        }\n\n        // 快速算出行列编号 n/9 n%9\n        int row = n / 9;\n        int col = n % 9;\n\n        if (board[row][col] != '.') {\n            return backtrack(board, n + 1);\n        }\n\n        for (char c = '1'; c <= '9'; c++) {\n            int numBit = 1 << (c - '1');\n            if (!isValid(numBit, row, col)) continue;\n            {\n                board[row][col] = c;    // 当前的数字放入到数组之中，\n                rowBit[row] ^= numBit; // 第一行rowBit[0],第一个元素eg: 1 , 0^1=1,第一个元素:4, 100^1=101,...\n                colBit[col] ^= numBit;\n                square9Bit[(row / 3) * 3 + col / 3] ^= numBit;\n            }\n            if (backtrack(board, n + 1)) return true;\n            {\n                board[row][col] = '.';    // 不满足条件，回退成'.'\n                rowBit[row] &= ~numBit; // 第一行rowBit[0],第一个元素eg: 1 , 101&=~1==>101&111111110==>100\n                colBit[col] &= ~numBit;\n                square9Bit[(row / 3) * 3 + col / 3] &= ~numBit;\n            }\n        }\n        return false;\n    }\n\n\n    boolean isValid(int numBit, int row, int col) {\n        // 左右\n        if ((rowBit[row] & numBit) > 0) return false;\n        // 上下\n        if ((colBit[col] & numBit) > 0) return false;\n        // 9宫格: 快速算出第n个九宫格,编号[0,8] , 编号=(row / 3) * 3 + col / 3\n        if ((square9Bit[(row / 3) * 3 + col / 3] & numBit) > 0) return false;\n        return true;\n    }\n\n}\n\n#Python\nclass Solution:\n    def solveSudoku(self, board: List[List[str]]) -> None:\n        \"\"\"\n        Do not return anything, modify board in-place instead.\n        \"\"\"\n        row_used = [set() for _ in range(9)]\n        col_used = [set() for _ in range(9)]\n        box_used = [set() for _ in range(9)]\n        for row in range(9):\n            for col in range(9):\n                num = board[row][col]\n                if num == \".\":\n                    continue\n                row_used[row].add(num)\n                col_used[col].add(num)\n                box_used[(row // 3) * 3 + col // 3].add(num)\n        self.backtracking(0, 0, board, row_used, col_used, box_used)\n\n    def backtracking(\n        self,\n        row: int,\n        col: int,\n        board: List[List[str]],\n        row_used: List[List[int]],\n        col_used: List[List[int]],\n        box_used: List[List[int]],\n    ) -> bool:\n        if row == 9:\n            return True\n\n        next_row, next_col = (row, col + 1) if col < 8 else (row + 1, 0)\n        if board[row][col] != \".\":\n            return self.backtracking(\n                next_row, next_col, board, row_used, col_used, box_used\n            )\n\n        for num in map(str, range(1, 10)):\n            if (\n                num not in row_used[row]\n                and num not in col_used[col]\n                and num not in box_used[(row // 3) * 3 + col // 3]\n            ):\n                board[row][col] = num\n                row_used[row].add(num)\n                col_used[col].add(num)\n                box_used[(row // 3) * 3 + col // 3].add(num)\n                if self.backtracking(\n                    next_row, next_col, board, row_used, col_used, box_used\n                ):\n                    return True\n                board[row][col] = \".\"\n                row_used[row].remove(num)\n                col_used[col].remove(num)\n                box_used[(row // 3) * 3 + col // 3].remove(num)\n        return False"
+}

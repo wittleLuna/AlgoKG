@@ -1,0 +1,221 @@
+{
+  "id": "AP_0150f105",
+  "title": "有效的字母异位词",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/valid-anagram/",
+  "description": "两个字符串 s 和 t ，编写一个函数来判断 t 是否是 s 的字母异位词。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "哈希",
+    "计数"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "ASCII码映射",
+    "常量空间优化"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过使用一个大小为26的数组作为哈希表来记录每个字母出现的次数，首先遍历字符串s增加对应字符计数，然后遍历字符串t减少对应字符计数。最后检查数组中是否所有元素均为0，以此判断两个字符串是否互为字母异位词。",
+  "key_insights": [
+    {
+      "content": "由于只涉及小写字母a到z，可以将它们映射到数组索引上（a->0, ..., z->25），从而简化了字符到数字的转换过程。"
+    },
+    {
+      "content": "采用固定大小为26的数组模拟哈希表，既能够高效地统计字符频率又能保证空间复杂度为O(1)。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "先看暴力的解法，两层for循环，同时还要记录字符是否重复出现，很明显时间复杂度是 O(n^2)。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool isAnagram(string s, string t) {int record[26] = {0}; for (int i = 0; i < s.size(); i++) {record[s[i] - 'a']++;} for (int i = 0; i < t.size(); i++) {record[t[i] - 'a']--;} for (int i = 0; i < 26; i++) {if (record[i] != 0) {return false;}} return true;}};",
+          "description": "C++实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isAnagram(String s, String t) {int[] record = new int[26];for (int i = 0; i < s.length(); i++) {record[s.charAt(i) - 'a']++;}for (int i = 0; i < t.length(); i++) {record[t.charAt(i) - 'a']--;}for (int count: record) {if (count != 0) {return false;}}return true;}}",
+          "description": "Java实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isAnagram(self, s: str, t: str) -> bool: record = [0] * 26 for i in s: record[ord(i) - ord(\"a\")] += 1 for i in t: record[ord(i) - ord(\"a\")] -= 1 for i in range(26): if record[i] != 0: return False return True",
+          "description": "Python实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isAnagram(self, s: str, t: str) -> bool: from collections import defaultdict s_dict = defaultdict(int) t_dict = defaultdict(int) for x in s: s_dict[x] += 1 for x in t: t_dict[x] += 1 return s_dict == t_dict",
+          "description": "Python使用defaultdict实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def isAnagram(self, s: str, t: str) -> bool: from collections import Counter a_count = Counter(s) b_count = Counter(t) return a_count == b_count",
+          "description": "Python使用Counter实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool isAnagram(string s, string t) {int record[26] = {0}; for (int i = 0; i < s.size(); i++) {record[s[i] - 'a']++;} for (int i = 0; i < t.size(); i++) {record[t[i] - 'a']--;} for (int i = 0; i < 26; i++) {if (record[i] != 0) {return false;}} return true;}};",
+          "description": "使用数组记录字符出现次数"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isAnagram(String s, String t) {int[] record = new int[26]; for (int i = 0; i < s.length(); i++) {record[s.charAt(i) - 'a']++;} for (int i = 0; i < t.length(); i++) {record[t.charAt(i) - 'a']--;} for (int count: record) {if (count != 0) {return false;}} return true;}}",
+          "description": "使用数组记录字符出现次数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isAnagram(self, s: str, t: str) -> bool: record = [0] * 26 for i in s: record[ord(i) - ord(\"a\")] += 1 for i in t: record[ord(i) - ord(\"a\")] -= 1 for i in range(26): if record[i] != 0: return False return True",
+          "description": "使用数组记录字符出现次数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isAnagram(self, s: str, t: str) -> bool: from collections import defaultdict s_dict = defaultdict(int) t_dict = defaultdict(int) for x in s: s_dict[x] += 1 for x in t: t_dict[x] += 1 return s_dict == t_dict",
+          "description": "使用defaultdict记录字符出现次数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def isAnagram(self, s: str, t: str) -> bool: from collections import Counter a_count = Counter(s) b_count = Counter(t) return a_count == b_count",
+          "description": "使用Counter比较字符串"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "/**",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool isAnagram(string s, string t) {int record[26] = {0}; for (int i = 0; i < s.size(); i++) {record[s[i] - 'a']++;} for (int i = 0; i < t.size(); i++) {record[t[i] - 'a']--;} for (int i = 0; i < 26; i++) {if (record[i] != 0) {return false;}} return true;}};",
+          "description": "使用数组记录字符出现次数，判断两个字符串是否为字母异位词"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isAnagram(String s, String t) {int[] record = new int[26]; for (int i = 0; i < s.length(); i++) {record[s.charAt(i) - 'a']++;} for (int i = 0; i < t.length(); i++) {record[t.charAt(i) - 'a']--;} for (int count: record) {if (count != 0) {return false;}} return true;}}",
+          "description": "使用数组记录字符出现次数，判断两个字符串是否为字母异位词"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isAnagram(self, s: str, t: str) -> bool: record = [0] * 26 for i in s: record[ord(i) - ord(\"a\")] += 1 for i in t: record[ord(i) - ord(\"a\")] -= 1 for i in range(26): if record[i] != 0: return False return True",
+          "description": "使用数组记录字符出现次数，判断两个字符串是否为字母异位词"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isAnagram(self, s: str, t: str) -> bool: from collections import defaultdict s_dict = defaultdict(int) t_dict = defaultdict(int) for x in s: s_dict[x] += 1 for x in t: t_dict[x] += 1 return s_dict == t_dict",
+          "description": "使用defaultdict记录字符出现次数，比较两字典是否相等来判断是否为字母异位词"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def isAnagram(self, s: str, t: str) -> bool: from collections import Counter a_count = Counter(s) b_count = Counter(t) return a_count == b_count",
+          "description": "使用Counter统计字符出现次数，直接比较两个计数器是否相同"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "class Solution:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool isAnagram(string s, string t) {int record[26] = {0}; for (int i = 0; i < s.size(); i++) {record[s[i] - 'a']++;} for (int i = 0; i < t.size(); i++) {record[t[i] - 'a']--;} for (int i = 0; i < 26; i++) {if (record[i] != 0) {return false;}} return true;}};",
+          "description": "使用数组记录字符出现次数判断是否为字母异位词"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean isAnagram(String s, String t) {int[] record = new int[26]; for (int i = 0; i < s.length(); i++) {record[s.charAt(i) - 'a']++;} for (int i = 0; i < t.length(); i++) {record[t.charAt(i) - 'a']--;} for (int count: record) {if (count != 0) {return false;}} return true;}}",
+          "description": "使用数组记录字符出现次数判断是否为字母异位词"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isAnagram(self, s: str, t: str) -> bool: record = [0] * 26 for i in s: record[ord(i) - ord(\"a\")] += 1 for i in t: record[ord(i) - ord(\"a\")] -= 1 for i in range(26): if record[i] != 0: return False return True",
+          "description": "使用数组记录字符出现次数判断是否为字母异位词"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def isAnagram(self, s: str, t: str) -> bool: from collections import defaultdict s_dict = defaultdict(int) t_dict = defaultdict(int) for x in s: s_dict[x] += 1 for x in t: t_dict[x] += 1 return s_dict == t_dict",
+          "description": "使用defaultdict记录字符出现次数判断是否为字母异位词"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def isAnagram(self, s: str, t: str) -> bool: from collections import Counter a_count = Counter(s) b_count = Counter(t) return a_count == b_count",
+          "description": "使用Counter记录字符出现次数判断是否为字母异位词"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "explanation": "直接看一下有没有更优的方式。"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: bool isAnagram(string s, string t) {int record[26] = {0}; for (int i = 0; i < s.size(); i++) {record[s[i] - 'a']++;} for (int i = 0; i < t.size(); i++) {record[t[i] - 'a']--;} for (int i = 0; i < 26; i++) {if (record[i] != 0) {return false;}} return true;}};",
+      "description": "使用数组记录字符出现次数，判断两个字符串是否为字母异位词"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public boolean isAnagram(String s, String t) {int[] record = new int[26]; for (int i = 0; i < s.length(); i++) {record[s.charAt(i) - 'a']++;} for (int i = 0; i < t.length(); i++) {record[t.charAt(i) - 'a']--;} for (int count: record) {if (count != 0) {return false;}} return true;}}",
+      "description": "使用数组记录字符出现次数，判断两个字符串是否为字母异位词"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def isAnagram(self, s: str, t: str) -> bool: record = [0] * 26 for i in s: record[ord(i) - ord('a')] += 1 for i in t: record[ord(i) - ord('a')] -= 1 for i in range(26): if record[i] != 0: return False return True",
+      "description": "使用列表记录字符出现次数，判断两个字符串是否为字母异位词"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def isAnagram(self, s: str, t: str) -> bool: from collections import defaultdict s_dict = defaultdict(int) t_dict = defaultdict(int) for x in s: s_dict[x] += 1 for x in t: t_dict[x] += 1 return s_dict == t_dict",
+      "description": "使用defaultdict记录字符出现次数，比较两字典是否相等来判断是否为字母异位词"
+    },
+    {
+      "language": "python",
+      "code": "class Solution(object): def isAnagram(self, s: str, t: str) -> bool: from collections import Counter a_count = Counter(s) b_count = Counter(t) return a_count == b_count",
+      "description": "使用Counter统计字符出现次数，比较两计数器是否相等来判断是否为字母异位词"
+    }
+  ],
+  "common_mistakes": [
+    "忘记初始化记录数组可能导致错误的结果。",
+    "未考虑当输入为空字符串时的情况。",
+    "直接比较两字符串排序后结果而非利用更高效的计数方法。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/242.%E6%9C%89%E6%95%88%E7%9A%84%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D.gif",
+      "description": "该图片展示了两个字符串 `s=\"aee\"` 和 `t=\"eae\"` 的比较过程，使用了一个初始化为全零的数组（数据结构）来辅助分析或存储中间结果。",
+      "context": "该图片展示了如何通过数组记录字符串s中字符出现次数的过程，以判断两个给定字符串是否为字母异位词。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/242.%E6%9C%89%E6%95%88%E7%9A%84%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D.gif",
+      "description": "GIF展示了通过数组作为哈希表记录字符出现次数的过程，来判断两个字符串是否为有效字母异位词。",
+      "context": "该GIF动画展示了如何通过遍历字符串s并使用大小为26的数组record来记录每个字符出现次数的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\哈希表\\有效的字母异位词.txt",
+  "extracted_at": "2025-07-21T03:48:33.860251",
+  "raw_content": "有效的字母异位词\n力扣题目链接(https://leetcode.cn/problems/valid-anagram/)\n\n给定两个字符串 s 和 t ，编写一个函数来判断 t 是否是 s 的字母异位词。\n\n示例 1: 输入: s = \"anagram\", t = \"nagaram\" 输出: true\n\n示例 2: 输入: s = \"rat\", t = \"car\" 输出: false\n\n说明: 你可以假设字符串只包含小写字母。\n\n\n\n#思路\n先看暴力的解法，两层for循环，同时还要记录字符是否重复出现，很明显时间复杂度是 O(n^2)。\n\n暴力的方法这里就不做介绍了，直接看一下有没有更优的方式。\n\n数组其实就是一个简单哈希表，而且这道题目中字符串只有小写字符，那么就可以定义一个数组，来记录字符串s里字符出现的次数。\n\n如果对哈希表的理论基础关于数组，set，map不了解的话可以看这篇：关于哈希表，你该了解这些！(opens new window)\n\n需要定义一个多大的数组呢，定一个数组叫做record，大小为26 就可以了，初始化为0，因为字符a到字符z的ASCII也是26个连续的数值。\n\n为了方便举例，判断一下字符串s= \"aee\", t = \"eae\"。\n\n操作动画如下：\n\nhttps://file1.kamacoder.com/i/algo/242.%E6%9C%89%E6%95%88%E7%9A%84%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D.gif\n\n定义一个数组叫做record用来上记录字符串s里字符出现的次数。\n\n需要把字符映射到数组也就是哈希表的索引下标上，因为字符a到字符z的ASCII是26个连续的数值，所以字符a映射为下标0，相应的字符z映射为下标25。\n\n再遍历 字符串s的时候，只需要将 s[i] - ‘a’ 所在的元素做+1 操作即可，并不需要记住字符a的ASCII，只要求出一个相对数值就可以了。 这样就将字符串s中字符出现的次数，统计出来了。\n\n那看一下如何检查字符串t中是否出现了这些字符，同样在遍历字符串t的时候，对t中出现的字符映射哈希表索引上的数值再做-1的操作。\n\n那么最后检查一下，record数组如果有的元素不为零0，说明字符串s和t一定是谁多了字符或者谁少了字符，return false。\n\n最后如果record数组所有元素都为零0，说明字符串s和t是字母异位词，return true。\n\n时间复杂度为O(n)，空间上因为定义是的一个常量大小的辅助数组，所以空间复杂度为O(1)。\n\nC++ 代码如下：\n\nclass Solution {\npublic:\n    bool isAnagram(string s, string t) {\n        int record[26] = {0};\n        for (int i = 0; i < s.size(); i++) {\n            // 并不需要记住字符a的ASCII，只要求出一个相对数值就可以了\n            record[s[i] - 'a']++;\n        }\n        for (int i = 0; i < t.size(); i++) {\n            record[t[i] - 'a']--;\n        }\n        for (int i = 0; i < 26; i++) {\n            if (record[i] != 0) {\n                // record数组如果有的元素不为零0，说明字符串s和t 一定是谁多了字符或者谁少了字符。\n                return false;\n            }\n        }\n        // record数组所有元素都为零0，说明字符串s和t是字母异位词\n        return true;\n    }\n};\n时间复杂度: O(n)\n空间复杂度: O(1)\n#其他语言版本\n#Java：\n/**\n * 242. 有效的字母异位词 字典解法\n * 时间复杂度O(m+n) 空间复杂度O(1)\n */\nclass Solution {\n    public boolean isAnagram(String s, String t) {\n        int[] record = new int[26];\n\n        for (int i = 0; i < s.length(); i++) {\n            record[s.charAt(i) - 'a']++;     // 并不需要记住字符a的ASCII，只要求出一个相对数值就可以了\n        }\n\n        for (int i = 0; i < t.length(); i++) {\n            record[t.charAt(i) - 'a']--;\n        }\n        \n        for (int count: record) {\n            if (count != 0) {               // record数组如果有的元素不为零0，说明字符串s和t 一定是谁多了字符或者谁少了字符。\n                return false;\n            }\n        }\n        return true;                        // record数组所有元素都为零0，说明字符串s和t是字母异位词\n    }\n}\n#Python：\nclass Solution:\n    def isAnagram(self, s: str, t: str) -> bool:\n        record = [0] * 26\n        for i in s:\n            #并不需要记住字符a的ASCII，只要求出一个相对数值就可以了\n            record[ord(i) - ord(\"a\")] += 1\n        for i in t:\n            record[ord(i) - ord(\"a\")] -= 1\n        for i in range(26):\n            if record[i] != 0:\n                #record数组如果有的元素不为零0，说明字符串s和t 一定是谁多了字符或者谁少了字符。\n                return False\n        return True\nPython写法二（没有使用数组作为哈希表，只是介绍defaultdict这样一种解题思路）：\n\nclass Solution:\n    def isAnagram(self, s: str, t: str) -> bool:\n        from collections import defaultdict\n        \n        s_dict = defaultdict(int)\n        t_dict = defaultdict(int)\n        for x in s:\n            s_dict[x] += 1\n        \n        for x in t:\n            t_dict[x] += 1\n        return s_dict == t_dict\nPython写法三(没有使用数组作为哈希表，只是介绍Counter这种更方便的解题思路)：\n\nclass Solution(object):\n    def isAnagram(self, s: str, t: str) -> bool:\n        from collections import Counter\n        a_count = Counter(s)\n        b_count = Counter(t)\n        return a_count == b_count"
+}

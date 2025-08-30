@@ -1,0 +1,217 @@
+{
+  "id": "AP_c2b76b6b",
+  "title": "螺旋矩阵II",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/spiral-matrix-ii/",
+  "description": "一个正整数 n，生成一个包含 1 到 n^2 所有元素，且元素按顺时针顺序螺旋排列的正方形矩阵。",
+  "examples": [
+    {
+      "input": "3",
+      "output": "[ [ 1, 2, 3 ], [ 8, 9, 4 ], [ 7, 6, 5 ] ]",
+      "explanation": null,
+      "image": null
+    }
+  ],
+  "constraints": [],
+  "algorithm_tags": [
+    "模拟"
+  ],
+  "data_structure_tags": [
+    "二维数组",
+    "列表"
+  ],
+  "technique_tags": [
+    "循环不变量",
+    "边界控制"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过模拟顺时针填充矩阵的过程来生成螺旋矩阵。该方法主要依赖于循环不变量原则，确保每一步操作（如填充上行、右列、下行和左列）都遵循统一的边界处理规则，从而避免了逻辑混乱。",
+  "key_insights": [
+    {
+      "content": "为了正确地实现螺旋填充，必须在每次填充操作中保持一致的边界条件处理方式（例如始终采用左闭右开的原则），这有助于简化逻辑并减少错误。"
+    },
+    {
+      "content": "将整个矩阵划分为多个由外向内的圈层，逐层填充数字。对于奇数大小的矩阵，在所有圈层处理完毕后单独处理中心位置。这样可以清晰地管理不同层级之间的转换。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目可以说在面试中出现频率较高的题目，本题并不涉及到什么算法，就是模拟过程，但却十分考察对代码的掌控能力。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "class Solution {public: vector<vector<int>> generateMatrix(int n) {vector<vector<int>> res(n, vector<int>(n, 0)); int startx = 0, starty = 0; int loop = n / 2; int mid = n / 2; int count = 1; int offset = 1; int i,j; while (loop --) {i = startx; j = starty; for (j; j < n - offset; j++) {res[i][j] = count++;} for (i; i < n - offset; i++) {res[i][j] = count++;} for (; j > starty; j--) {res[i][j] = count++;} for (; i > startx; i--) {res[i][j] = count++;} startx++; starty++; offset += 1;} if (n % 2) {res[mid][mid] = count;} return res;}};",
+          "description": "使用C++实现螺旋矩阵II"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public int[][] generateMatrix(int n) {int[][] nums = new int[n][n]; int startX = 0, startY = 0; int offset = 1; int count = 1; int loop = 1; int i, j; while (loop <= n / 2) {for (j = startY; j < n - offset; j++) {nums[startX][j] = count++;} for (i = startX; i < n - offset; i++) {nums[i][j] = count++;} for (; j > startY; j--) {nums[i][j] = count++;} for (; i > startX; i--) {nums[i][j] = count++;} startX++; startY++; offset++; loop++;} if (n % 2 == 1) {nums[startX][startY] = count;} return nums;}}",
+          "description": "使用Java实现螺旋矩阵II"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def generateMatrix(self, n: int) -> List[List[int]]: nums = [[0] * n for _ in range(n)] startx, starty = 0, 0 loop, mid = n // 2, n // 2 count = 1 for offset in range(1, loop + 1): for i in range(starty, n - offset): nums[startx][i] = count count += 1 for i in range(startx, n - offset): nums[i][n - offset] = count count += 1 for i in range(n - offset, starty, -1): nums[n - offset][i] = count count += 1 for i in range(n - offset, startx, -1): nums[i][starty] = count count += 1 startx += 1 starty += 1 if n % 2 != 0: nums[mid][mid] = count return nums",
+          "description": "使用Python实现螺旋矩阵II，版本一"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution(object): def generateMatrix(self, n): if n <= 0: return [] matrix = [[0]*n for _ in range(n)] top, bottom, left, right = 0, n-1, 0, n-1 num = 1 while top <= bottom and left <= right: for i in range(left, right + 1): matrix[top][i] = num num += 1 top += 1 for i in range(top, bottom + 1): matrix[i][right] = num num += 1 right -= 1 for i in range(right, left - 1, -1): matrix[bottom][i] = num num += 1 bottom -= 1 for i in range(bottom, top - 1, -1): matrix[i][left] = num num += 1 left += 1 return matrix",
+          "description": "使用Python实现螺旋矩阵II，版本二"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "类似题目",
+      "text": "54.螺旋矩阵(opens new window)",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "class Solution {public: vector<vector<int>> generateMatrix(int n) {vector<vector<int>> res(n, vector<int>(n, 0)); int startx = 0, starty = 0; int loop = n / 2; int mid = n / 2; int count = 1; int offset = 1; int i,j; while (loop --) {i = startx; j = starty; for (j; j < n - offset; j++) {res[i][j] = count++;} for (i; i < n - offset; i++) {res[i][j] = count++;} for (; j > starty; j--) {res[i][j] = count++;} for (; i > startx; i--) {res[i][j] = count++;} startx++; starty++; offset += 1;} if (n % 2) {res[mid][mid] = count;} return res;}};",
+          "description": "使用C++实现螺旋矩阵II"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public int[][] generateMatrix(int n) {int[][] nums = new int[n][n]; int startX = 0, startY = 0; int offset = 1; int count = 1; int loop = 1; int i, j; while (loop <= n / 2) {for (j = startY; j < n - offset; j++) {nums[startX][j] = count++;} for (i = startX; i < n - offset; i++) {nums[i][j] = count++;} for (; j > startY; j--) {nums[i][j] = count++;} for (; i > startX; i--) {nums[i][j] = count++;} startX++; startY++; offset++; loop++;} if (n % 2 == 1) {nums[startX][startY] = count;} return nums;}}",
+          "description": "使用Java实现螺旋矩阵II"
+        },
+        {
+          "language": "Python3",
+          "code": "class Solution: def generateMatrix(self, n: int) -> List[List[int]]: nums = [[0] * n for _ in range(n)] startx, starty = 0, 0 loop, mid = n // 2, n // 2 count = 1 for offset in range(1, loop + 1) : for i in range(starty, n - offset) : nums[startx][i] = count count += 1 for i in range(startx, n - offset) : nums[i][n - offset] = count count += 1 for i in range(n - offset, starty, -1) : nums[n - offset][i] = count count += 1 for i in range(n - offset, startx, -1) : nums[i][starty] = count count += 1 startx += 1 starty += 1 if n % 2 != 0 : nums[mid][mid] = count return nums",
+          "description": "使用Python3实现螺旋矩阵II，版本一"
+        },
+        {
+          "language": "Python3",
+          "code": "class Solution(object): def generateMatrix(self, n): if n <= 0: return [] matrix = [[0]*n for _ in range(n)] top, bottom, left, right = 0, n-1, 0, n-1 num = 1 while top <= bottom and left <= right: for i in range(left, right + 1): matrix[top][i] = num num += 1 top += 1 for i in range(top, bottom + 1): matrix[i][right] = num num += 1 right -= 1 for i in range(right, left - 1, -1): matrix[bottom][i] = num num += 1 bottom -= 1 for i in range(bottom, top - 1, -1): matrix[i][left] = num num += 1 left += 1 return matrix",
+          "description": "使用Python3实现螺旋矩阵II，版本二"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> generateMatrix(int n) {vector<vector<int>> res(n, vector<int>(n, 0)); int startx = 0, starty = 0; int loop = n / 2; int mid = n / 2; int count = 1; int offset = 1; int i,j; while (loop --) {i = startx; j = starty; for (j; j < n - offset; j++) {res[i][j] = count++;} for (i; i < n - offset; i++) {res[i][j] = count++;} for (; j > starty; j--) {res[i][j] = count++;} for (; i > startx; i--) {res[i][j] = count++;} startx++; starty++; offset += 1;} if (n % 2) {res[mid][mid] = count;} return res;}};",
+          "description": "C++实现的螺旋矩阵II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[][] generateMatrix(int n) {int[][] nums = new int[n][n]; int startX = 0, startY = 0; int offset = 1; int count = 1; int loop = 1; int i, j; while (loop <= n / 2) {for (j = startY; j < n - offset; j++) {nums[startX][j] = count++;} for (i = startX; i < n - offset; i++) {nums[i][j] = count++;} for (; j > startY; j--) {nums[i][j] = count++;} for (; i > startX; i--) {nums[i][j] = count++;} startX++; startY++; offset++; loop++;} if (n % 2 == 1) {nums[startX][startY] = count;} return nums;}}",
+          "description": "Java实现的螺旋矩阵II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def generateMatrix(self, n: int) -> List[List[int]]: nums = [[0] * n for _ in range(n)] startx, starty = 0, 0 loop, mid = n // 2, n // 2 count = 1 for offset in range(1, loop + 1) : for i in range(starty, n - offset) : nums[startx][i] = count count += 1 for i in range(startx, n - offset) : nums[i][n - offset] = count count += 1 for i in range(n - offset, starty, -1) : nums[n - offset][i] = count count += 1 for i in range(n - offset, startx, -1) : nums[i][starty] = count count += 1 startx += 1 starty += 1 if n % 2 != 0 : nums[mid][mid] = count return nums",
+          "description": "Python版本一实现的螺旋矩阵II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def generateMatrix(self, n): if n <= 0: return [] matrix = [[0]*n for _ in range(n)] top, bottom, left, right = 0, n-1, 0, n-1 num = 1 while top <= bottom and left <= right: for i in range(left, right + 1): matrix[top][i] = num num += 1 top += 1 for i in range(top, bottom + 1): matrix[i][right] = num num += 1 right -= 1 for i in range(right, left - 1, -1): matrix[bottom][i] = num num += 1 bottom -= 1 for i in range(bottom, top - 1, -1): matrix[i][left] = num num += 1 left += 1 return matrix",
+          "description": "Python版本二实现的螺旋矩阵II，使用四个边界定义"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> generateMatrix(int n) {vector<vector<int>> res(n, vector<int>(n, 0)); int startx = 0, starty = 0; int loop = n / 2; int mid = n / 2; int count = 1; int offset = 1; int i,j; while (loop --) {i = startx; j = starty; for (j; j < n - offset; j++) {res[i][j] = count++;} for (i; i < n - offset; i++) {res[i][j] = count++;} for (; j > starty; j--) {res[i][j] = count++;} for (; i > startx; i--) {res[i][j] = count++;} startx++; starty++; offset += 1;} if (n % 2) {res[mid][mid] = count;} return res;}};",
+          "description": "C++实现螺旋矩阵II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[][] generateMatrix(int n) {int[][] nums = new int[n][n]; int startX = 0, startY = 0; int offset = 1; int count = 1; int loop = 1; int i, j; while (loop <= n / 2) {for (j = startY; j < n - offset; j++) {nums[startX][j] = count++;} for (i = startX; i < n - offset; i++) {nums[i][j] = count++;} for (; j > startY; j--) {nums[i][j] = count++;} for (; i > startX; i--) {nums[i][j] = count++;} startX++; startY++; offset++; loop++;} if (n % 2 == 1) {nums[startX][startY] = count;} return nums;}}",
+          "description": "Java实现螺旋矩阵II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def generateMatrix(self, n: int) -> List[List[int]]: nums = [[0] * n for _ in range(n)] startx, starty = 0, 0 loop, mid = n // 2, n // 2 count = 1 for offset in range(1, loop + 1) : for i in range(starty, n - offset) : nums[startx][i] = count count += 1 for i in range(startx, n - offset) : nums[i][n - offset] = count count += 1 for i in range(n - offset, starty, -1) : nums[n - offset][i] = count count += 1 for i in range(n - offset, startx, -1) : nums[i][starty] = count count += 1 startx += 1 starty += 1 if n % 2 != 0 : nums[mid][mid] = count return nums",
+          "description": "Python实现螺旋矩阵II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def generateMatrix(self, n): if n <= 0: return [] matrix = [[0]*n for _ in range(n)] top, bottom, left, right = 0, n-1, 0, n-1 num = 1 while top <= bottom and left <= right: for i in range(left, right + 1): matrix[top][i] = num num += 1 top += 1 for i in range(top, bottom + 1): matrix[i][right] = num num += 1 right -= 1 for i in range(right, left - 1, -1): matrix[bottom][i] = num num += 1 bottom -= 1 for i in range(bottom, top - 1, -1): matrix[i][left] = num num += 1 left += 1 return matrix",
+          "description": "Python另一种实现螺旋矩阵II"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "python3:",
+      "text": "class Solution:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<vector<int>> generateMatrix(int n) {vector<vector<int>> res(n, vector<int>(n, 0)); int startx = 0, starty = 0; int loop = n / 2; int mid = n / 2; int count = 1; int offset = 1; int i,j; while (loop --) {i = startx; j = starty; for (j; j < n - offset; j++) {res[i][j] = count++;} for (i; i < n - offset; i++) {res[i][j] = count++;} for (; j > starty; j--) {res[i][j] = count++;} for (; i > startx; i--) {res[i][j] = count++;} startx++; starty++; offset += 1;} if (n % 2) {res[mid][mid] = count;} return res;}};",
+          "description": "C++实现螺旋矩阵II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int[][] generateMatrix(int n) {int[][] nums = new int[n][n]; int startX = 0, startY = 0; int offset = 1; int count = 1; int loop = 1; int i, j; while (loop <= n / 2) {for (j = startY; j < n - offset; j++) {nums[startX][j] = count++;} for (i = startX; i < n - offset; i++) {nums[i][j] = count++;} for (; j > startY; j--) {nums[i][j] = count++;} for (; i > startX; i--) {nums[i][j] = count++;} startX++; startY++; offset++; loop++;} if (n % 2 == 1) {nums[startX][startY] = count;} return nums;}}",
+          "description": "Java实现螺旋矩阵II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def generateMatrix(self, n: int) -> List[List[int]]: nums = [[0] * n for _ in range(n)] startx, starty = 0, 0 loop, mid = n // 2, n // 2 count = 1 for offset in range(1, loop + 1) : for i in range(starty, n - offset) : nums[startx][i] = count count += 1 for i in range(startx, n - offset) : nums[i][n - offset] = count count += 1 for i in range(n - offset, starty, -1) : nums[n - offset][i] = count count += 1 for i in range(n - offset, startx, -1) : nums[i][starty] = count count += 1 startx += 1 starty += 1 if n % 2 != 0 : nums[mid][mid] = count return nums",
+          "description": "Python3实现螺旋矩阵II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution(object): def generateMatrix(self, n): if n <= 0: return [] matrix = [[0]*n for _ in range(n)] top, bottom, left, right = 0, n-1, 0, n-1 num = 1 while top <= bottom and left <= right: for i in range(left, right + 1): matrix[top][i] = num num += 1 top += 1 for i in range(top, bottom + 1): matrix[i][right] = num num += 1 right -= 1 for i in range(right, left - 1, -1): matrix[bottom][i] = num num += 1 bottom -= 1 for i in range(bottom, top - 1, -1): matrix[i][left] = num num += 1 left += 1 return matrix",
+          "description": "Python版本二实现螺旋矩阵II，定义四个边界"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(1)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "C++",
+      "code": "class Solution {public: vector<vector<int>> generateMatrix(int n) {vector<vector<int>> res(n, vector<int>(n, 0)); int startx = 0, starty = 0; int loop = n / 2; int mid = n / 2; int count = 1; int offset = 1; int i,j; while (loop --) {i = startx; j = starty; for (j; j < n - offset; j++) {res[i][j] = count++;} for (i; i < n - offset; i++) {res[i][j] = count++;} for (; j > starty; j--) {res[i][j] = count++;} for (; i > startx; i--) {res[i][j] = count++;} startx++; starty++; offset += 1;} if (n % 2) {res[mid][mid] = count;} return res;}};",
+      "description": "使用C++实现螺旋矩阵II"
+    },
+    {
+      "language": "Java",
+      "code": "class Solution {public int[][] generateMatrix(int n) {int[][] nums = new int[n][n]; int startX = 0, startY = 0; int offset = 1; int count = 1; int loop = 1; int i, j; while (loop <= n / 2) {for (j = startY; j < n - offset; j++) {nums[startX][j] = count++;} for (i = startX; i < n - offset; i++) {nums[i][j] = count++;} for (; j > startY; j--) {nums[i][j] = count++;} for (; i > startX; i--) {nums[i][j] = count++;} startX++; startY++; offset++; loop++;} if (n % 2 == 1) {nums[startX][startY] = count;} return nums;}}",
+      "description": "使用Java实现螺旋矩阵II"
+    },
+    {
+      "language": "Python3",
+      "code": "class Solution: def generateMatrix(self, n: int) -> List[List[int]]: nums = [[0] * n for _ in range(n)] startx, starty = 0, 0 loop, mid = n // 2, n // 2 count = 1 for offset in range(1, loop + 1) : for i in range(starty, n - offset) : nums[startx][i] = count count += 1 for i in range(startx, n - offset) : nums[i][n - offset] = count count += 1 for i in range(n - offset, starty, -1) : nums[n - offset][i] = count count += 1 for i in range(n - offset, startx, -1) : nums[i][starty] = count count += 1 startx += 1 starty += 1 if n % 2 != 0 : nums[mid][mid] = count return nums",
+      "description": "使用Python3实现螺旋矩阵II，版本一"
+    },
+    {
+      "language": "Python3",
+      "code": "class Solution(object): def generateMatrix(self, n): if n <= 0: return [] matrix = [[0]*n for _ in range(n)] top, bottom, left, right = 0, n-1, 0, n-1 num = 1 while top <= bottom and left <= right: for i in range(left, right + 1): matrix[top][i] = num num += 1 top += 1 for i in range(top, bottom + 1): matrix[i][right] = num num += 1 right -= 1 for i in range(right, left - 1, -1): matrix[bottom][i] = num num += 1 bottom -= 1 for i in range(bottom, top - 1, -1): matrix[i][left] = num num += 1 left += 1 return matrix",
+      "description": "使用Python3实现螺旋矩阵II，版本二"
+    }
+  ],
+  "common_mistakes": [
+    "不一致的边界条件处理导致逻辑混乱",
+    "未考虑到奇数尺寸矩阵中心点的特殊处理"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\数组\\螺旋矩阵II.txt",
+  "extracted_at": "2025-07-21T23:02:38.835122",
+  "raw_content": "螺旋矩阵II\n力扣题目链接(https://leetcode.cn/problems/spiral-matrix-ii/)\n\n给定一个正整数 n，生成一个包含 1 到 n^2 所有元素，且元素按顺时针顺序螺旋排列的正方形矩阵。\n\n示例:\n\n输入: 3 输出: [ [ 1, 2, 3 ], [ 8, 9, 4 ], [ 7, 6, 5 ] ]\n\n\n\n#思路\n这道题目可以说在面试中出现频率较高的题目，本题并不涉及到什么算法，就是模拟过程，但却十分考察对代码的掌控能力。\n\n要如何画出这个螺旋排列的正方形矩阵呢？\n\n相信很多同学刚开始做这种题目的时候，上来就是一波判断猛如虎。\n\n结果运行的时候各种问题，然后开始各种修修补补，最后发现改了这里那里有问题，改了那里这里又跑不起来了。\n\n大家还记得我们在这篇文章数组：每次遇到二分法，都是一看就会，一写就废 (opens new window)中讲解了二分法，提到如果要写出正确的二分法一定要坚持循环不变量原则。\n\n而求解本题依然是要坚持循环不变量原则。\n\n模拟顺时针画矩阵的过程:\n\n填充上行从左到右\n填充右列从上到下\n填充下行从右到左\n填充左列从下到上\n由外向内一圈一圈这么画下去。\n\n可以发现这里的边界条件非常多，在一个循环中，如此多的边界条件，如果不按照固定规则来遍历，那就是一进循环深似海，从此offer是路人。\n\n这里一圈下来，我们要画每四条边，这四条边怎么画，每画一条边都要坚持一致的左闭右开，或者左开右闭的原则，这样这一圈才能按照统一的规则画下来。\n\n那么我按照左闭右开的原则，来画一圈，大家看一下：\n\n\n\n这里每一种颜色，代表一条边，我们遍历的长度，可以看出每一个拐角处的处理规则，拐角处让给新的一条边来继续画。\n\n这也是坚持了每条边左闭右开的原则。\n\n一些同学做这道题目之所以一直写不好，代码越写越乱。\n\n就是因为在画每一条边的时候，一会左开右闭，一会左闭右闭，一会又来左闭右开，岂能不乱。\n\n代码如下，已经详细注释了每一步的目的，可以看出while循环里判断的情况是很多的，代码里处理的原则也是统一的左闭右开。\n\n整体C++代码如下：\n\nclass Solution {\npublic:\n    vector<vector<int>> generateMatrix(int n) {\n        vector<vector<int>> res(n, vector<int>(n, 0)); // 使用vector定义一个二维数组\n        int startx = 0, starty = 0; // 定义每循环一个圈的起始位置\n        int loop = n / 2; // 每个圈循环几次，例如n为奇数3，那么loop = 1 只是循环一圈，矩阵中间的值需要单独处理\n        int mid = n / 2; // 矩阵中间的位置，例如：n为3， 中间的位置就是(1，1)，n为5，中间位置为(2, 2)\n        int count = 1; // 用来给矩阵中每一个空格赋值\n        int offset = 1; // 需要控制每一条边遍历的长度，每次循环右边界收缩一位\n        int i,j;\n        while (loop --) {\n            i = startx;\n            j = starty;\n\n            // 下面开始的四个for就是模拟转了一圈\n            // 模拟填充上行从左到右(左闭右开)\n            for (j; j < n - offset; j++) {\n                res[i][j] = count++;\n            }\n            // 模拟填充右列从上到下(左闭右开)\n            for (i; i < n - offset; i++) {\n                res[i][j] = count++;\n            }\n            // 模拟填充下行从右到左(左闭右开)\n            for (; j > starty; j--) {\n                res[i][j] = count++;\n            }\n            // 模拟填充左列从下到上(左闭右开)\n            for (; i > startx; i--) {\n                res[i][j] = count++;\n            }\n\n            // 第二圈开始的时候，起始位置要各自加1， 例如：第一圈起始位置是(0, 0)，第二圈起始位置是(1, 1)\n            startx++;\n            starty++;\n\n            // offset 控制每一圈里每一条边遍历的长度\n            offset += 1;\n        }\n\n        // 如果n为奇数的话，需要单独给矩阵最中间的位置赋值\n        if (n % 2) {\n            res[mid][mid] = count;\n        }\n        return res;\n    }\n};\n时间复杂度 O(n^2): 模拟遍历二维矩阵的时间\n空间复杂度 O(1)\n#类似题目\n54.螺旋矩阵(opens new window)\n剑指Offer 29.顺时针打印矩阵(opens new window)\n#其他语言版本\n#Java：\nclass Solution {\n    public int[][] generateMatrix(int n) {\n        int[][] nums = new int[n][n];\n        int startX = 0, startY = 0;  // 每一圈的起始点\n        int offset = 1;\n        int count = 1;  // 矩阵中需要填写的数字\n        int loop = 1; // 记录当前的圈数\n        int i, j; // j 代表列, i 代表行;\n\n        while (loop <= n / 2) {\n\n            // 顶部\n            // 左闭右开，所以判断循环结束时， j 不能等于 n - offset\n            for (j = startY; j < n - offset; j++) {\n                nums[startX][j] = count++;\n            }\n\n            // 右列\n            // 左闭右开，所以判断循环结束时， i 不能等于 n - offset\n            for (i = startX; i < n - offset; i++) {\n                nums[i][j] = count++;\n            }\n\n            // 底部\n            // 左闭右开，所以判断循环结束时， j != startY\n            for (; j > startY; j--) {\n                nums[i][j] = count++;\n            }\n\n            // 左列\n            // 左闭右开，所以判断循环结束时， i != startX\n            for (; i > startX; i--) {\n                nums[i][j] = count++;\n            }\n            startX++;\n            startY++;\n            offset++;\n            loop++;\n        }\n        if (n % 2 == 1) { // n 为奇数时，单独处理矩阵中心的值\n            nums[startX][startY] = count;\n        }\n        return nums;\n    }\n}\n\n\n#python3:\nclass Solution:\n    def generateMatrix(self, n: int) -> List[List[int]]:\n        nums = [[0] * n for _ in range(n)]\n        startx, starty = 0, 0               # 起始点\n        loop, mid = n // 2, n // 2          # 迭代次数、n为奇数时，矩阵的中心点\n        count = 1                           # 计数\n\n        for offset in range(1, loop + 1) :      # 每循环一层偏移量加1，偏移量从1开始\n            for i in range(starty, n - offset) :    # 从左至右，左闭右开\n                nums[startx][i] = count\n                count += 1\n            for i in range(startx, n - offset) :    # 从上至下\n                nums[i][n - offset] = count\n                count += 1\n            for i in range(n - offset, starty, -1) : # 从右至左\n                nums[n - offset][i] = count\n                count += 1\n            for i in range(n - offset, startx, -1) : # 从下至上\n                nums[i][starty] = count\n                count += 1                \n            startx += 1         # 更新起始点\n            starty += 1\n\n        if n % 2 != 0 :\t\t\t# n为奇数时，填充中心点\n            nums[mid][mid] = count \n        return nums\n版本二：定义四个边界\n\nclass Solution(object):\n    def generateMatrix(self, n):\n        if n <= 0:\n            return []\n        \n        # 初始化 n x n 矩阵\n        matrix = [[0]*n for _ in range(n)]\n\n        # 初始化边界和起始值\n        top, bottom, left, right = 0, n-1, 0, n-1\n        num = 1\n\n        while top <= bottom and left <= right:\n            # 从左到右填充上边界\n            for i in range(left, right + 1):\n                matrix[top][i] = num\n                num += 1\n            top += 1\n\n            # 从上到下填充右边界\n            for i in range(top, bottom + 1):\n                matrix[i][right] = num\n                num += 1\n            right -= 1\n\n            # 从右到左填充下边界\n\n            for i in range(right, left - 1, -1):\n                matrix[bottom][i] = num\n                num += 1\n            bottom -= 1\n\n            # 从下到上填充左边界\n\n            for i in range(bottom, top - 1, -1):\n                matrix[i][left] = num\n                num += 1\n            left += 1\n\n        return matrix"
+}

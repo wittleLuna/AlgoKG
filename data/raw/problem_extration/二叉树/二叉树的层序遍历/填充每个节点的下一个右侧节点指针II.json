@@ -1,0 +1,158 @@
+{
+  "id": "AP_d40ba6fc",
+  "title": "填充每个节点的下一个右侧节点指针II",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/populating-next-right-pointers-in-each-node-ii/",
+  "description": "",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "广度优先搜索",
+    "层次遍历"
+  ],
+  "data_structure_tags": [
+    "队列",
+    "树"
+  ],
+  "technique_tags": [
+    "迭代",
+    "指针操作"
+  ],
+  "difficulty": null,
+  "solution_approach": "采用广度优先搜索（BFS）方法遍历整个二叉树，对于每一层节点，设置每个节点的next指针指向其右侧相邻的节点。如果当前节点是该层最后一个节点，则将其next设为null。",
+  "key_insights": [
+    {
+      "content": "通过队列可以有效地实现对二叉树的层次遍历，确保每层节点能够按顺序处理，并且容易跟踪每层的开始和结束。"
+    },
+    {
+      "content": "在遍历过程中动态地将当前节点与下一个节点链接起来，这样可以在遍历时直接构建所需的next指针链表结构，而无需额外存储或复杂的回溯操作。"
+    },
+    {
+      "content": "即使题目中提到的是普通二叉树而非完全二叉树，解决方法及其逻辑保持不变，证明了算法的通用性。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目说是二叉树，但116题目说是完整二叉树，其实没有任何差别，一样的代码一样的逻辑一样的味道",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: Node* connect(Node* root) {queue<Node*> que;if (root != NULL) que.push(root);while (!que.empty()) {int size = que.size();Node* nodePre;Node* node;for (int i = 0; i < size; i++) {if (i == 0) {nodePre = que.front();que.pop();node = nodePre;} else {node = que.front();que.pop();nodePre->next = node;nodePre = nodePre->next;}if (node->left) que.push(node->left);if (node->right) que.push(node->right);}nodePre->next = NULL;}}return root;}};",
+          "description": "C++实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public Node connect(Node root) {Queue<Node> queue = new LinkedList<>();if (root != null) {queue.add(root);}while (!queue.isEmpty()) {int size = queue.size();Node node = null;Node nodePre = null;for (int i = 0; i < size; i++) {if (i == 0) {nodePre = queue.poll();node = nodePre;} else {node = queue.poll();nodePre.next = node;nodePre = nodePre.next;}if (node.left != null) {queue.add(node.left);}if (node.right != null) {queue.add(node.right);}}nodePre.next = null;}}return root;}}",
+          "description": "Java实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def connect(self, root: 'Node') -> 'Node': if not root: return root queue = collections.deque([root]) while queue: level_size = len(queue) prev = None for i in range(level_size): node = queue.popleft() if prev: prev.next = node prev = node if node.left: queue.append(node.left) if node.right: queue.append(node.right) return root",
+          "description": "Python实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: Node* connect(Node* root) { queue<Node*> que; if (root != NULL) que.push(root); while (!que.empty()) { int size = que.size(); vector<int> vec; Node* nodePre; Node* node; for (int i = 0; i < size; i++) { if (i == 0) { nodePre = que.front(); // 取出一层的头结点 que.pop(); node = nodePre; } else { node = que.front(); que.pop(); nodePre->next = node; // 本层前一个节点next指向本节点 nodePre = nodePre->next; } if (node->left) que.push(node->left); if (node->right) que.push(node->right); } nodePre->next = NULL; // 本层最后一个节点指向NULL }} return root;}};",
+          "description": "C++版本的解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public Node connect(Node root) { Queue<Node> queue = new LinkedList<>(); if (root != null) { queue.add(root); } while (!queue.isEmpty()) { int size = queue.size(); Node node = null; Node nodePre = null; for (int i = 0; i < size; i++) { if (i == 0) { nodePre = queue.poll(); // 取出本层头一个节点 node = nodePre; } else { node = queue.poll(); nodePre.next = node; // 本层前一个节点 next 指向当前节点 nodePre = nodePre.next; } if (node.left != null) { queue.add(node.left); } if (node.right != null) { queue.add(node.right); } } nodePre.next = null; // 本层最后一个节点 next 指向 null }} return root;}}",
+          "description": "Java版本的解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def connect(self, root: 'Node') -> 'Node': if not root: return root queue = collections.deque([root]) while queue: level_size = len(queue) prev = None for i in range(level_size): node = queue.popleft() if prev: prev.next = node prev = node if node.left: queue.append(node.left) if node.right: queue.append(node.right) return root",
+          "description": "Python版本的解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "// 二叉树之层次遍历",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: Node* connect(Node* root) { queue<Node*> que; if (root != NULL) que.push(root); while (!que.empty()) { int size = que.size(); vector<int> vec; Node* nodePre; Node* node; for (int i = 0; i < size; i++) { if (i == 0) { nodePre = que.front(); // 取出一层的头结点 que.pop(); node = nodePre; } else { node = que.front(); que.pop(); nodePre->next = node; // 本层前一个节点next指向本节点 nodePre = nodePre->next; } if (node->left) que.push(node->left); if (node->right) que.push(node->right); } nodePre->next = NULL; // 本层最后一个节点指向NULL }} return root;}};",
+          "description": "C++实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public Node connect(Node root) { Queue<Node> queue = new LinkedList<>(); if (root != null) { queue.add(root); } while (!queue.isEmpty()) { int size = queue.size(); Node node = null; Node nodePre = null; for (int i = 0; i < size; i++) { if (i == 0) { nodePre = queue.poll(); // 取出本层头一个节点 node = nodePre; } else { node = queue.poll(); nodePre.next = node; // 本层前一个节点 next 指向当前节点 nodePre = nodePre.next; } if (node.left != null) { queue.add(node.left); } if (node.right != null) { queue.add(node.right); } } nodePre.next = null; // 本层最后一个节点 next 指向 null } return root; }}",
+          "description": "Java实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def connect(self, root: 'Node') -> 'Node': if not root: return root queue = collections.deque([root]) while queue: level_size = len(queue) prev = None for i in range(level_size): node = queue.popleft() if prev: prev.next = node prev = node if node.left: queue.append(node.left) if node.right: queue.append(node.right) return root",
+          "description": "Python实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "# 层序遍历解法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: Node* connect(Node* root) { queue<Node*> que; if (root != NULL) que.push(root); while (!que.empty()) { int size = que.size(); vector<int> vec; Node* nodePre; Node* node; for (int i = 0; i < size; i++) { if (i == 0) { nodePre = que.front(); que.pop(); node = nodePre; } else { node = que.front(); que.pop(); nodePre->next = node; nodePre = nodePre->next; } if (node->left) que.push(node->left); if (node->right) que.push(node->right); } nodePre->next = NULL; } return root; }};",
+          "description": "C++实现的层序遍历解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public Node connect(Node root) { Queue<Node> queue = new LinkedList<>(); if (root != null) { queue.add(root); } while (!queue.isEmpty()) { int size = queue.size(); Node node = null; Node nodePre = null; for (int i = 0; i < size; i++) { if (i == 0) { nodePre = queue.poll(); node = nodePre; } else { node = queue.poll(); nodePre.next = node; nodePre = nodePre.next; } if (node.left != null) { queue.add(node.left); } if (node.right != null) { queue.add(node.right); } } nodePre.next = null; } return root; }}",
+          "description": "Java实现的层序遍历解法"
+        },
+        {
+          "language": "python",
+          "code": "class Node: def __init__(self, val: int = 0, left: 'Node' = None, right: 'Node' = None, next: 'Node' = None): self.val = val self.left = left self.right = right self.next = next class Solution: def connect(self, root: 'Node') -> 'Node': if not root: return root queue = collections.deque([root]) while queue: level_size = len(queue) prev = None for i in range(level_size): node = queue.popleft() if prev: prev.next = node prev = node if node.left: queue.append(node.left) if node.right: queue.append(node.right) return root",
+          "description": "Python实现的层序遍历解法"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: Node* connect(Node* root) { queue<Node*> que; if (root != NULL) que.push(root); while (!que.empty()) { int size = que.size(); vector<int> vec; Node* nodePre; Node* node; for (int i = 0; i < size; i++) { if (i == 0) { nodePre = que.front(); // \\u53d6\\u51fa\\u4e00\\u5c42\\u7684\\u5934\\u7ed3\\u70b9 que.pop(); node = nodePre; } else { node = que.front(); que.pop(); nodePre->next = node; // \\u672c\\u5c42\\u524d\\u4e00\\u4e2a\\u8282\\u70b9next\\u6307\\u5411\\u672c\\u8282\\u70b9 nodePre = nodePre->next; } if (node->left) que.push(node->left); if (node->right) que.push(node->right); } nodePre->next = NULL; // \\u672c\\u5c42\\u6700\\u540e\\u4e00\\u4e2a\\u8282\\u70b9\\u6307\\u5411NULL } return root; }};",
+      "description": ""
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public Node connect(Node root) { Queue<Node> queue = new LinkedList<>(); if (root != null) { queue.add(root); } while (!queue.isEmpty()) { int size = queue.size(); Node node = null; Node nodePre = null; for (int i = 0; i < size; i++) { if (i == 0) { nodePre = queue.poll(); // \\u53d6\\u51fa\\u672c\\u5c42\\u5934\\u4e00\\u4e2a\\u8282\\u70b9 node = nodePre; } else { node = queue.poll(); nodePre.next = node; // \\u672c\\u5c42\\u524d\\u4e00\\u4e2a\\u8282\\u70b9 next \\u6307\\u5411\\u5f53\\u524d\\u8282\\u70b9 nodePre = nodePre.next; } if (node.left != null) { queue.add(node.left); } if (node.right != null) { queue.add(node.right); } } nodePre.next = null; // \\u672c\\u5c42\\u6700\\u540e\\u4e00\\u4e2a\\u8282\\u70b9 next \\u6307\\u5411 null } return root; }}",
+      "description": ""
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def connect(self, root: 'Node') -> 'Node': if not root: return root queue = collections.deque([root]) while queue: level_size = len(queue) prev = None for i in range(level_size): node = queue.popleft() if prev: prev.next = node prev = node if node.left: queue.append(node.left) if node.right: queue.append(node.right) return root",
+      "description": ""
+    }
+  ],
+  "common_mistakes": [
+    "忘记在每层的最后一个元素设置next为null。",
+    "不正确地初始化队列，比如没有检查root是否为空就直接添加到队列中。",
+    "混淆了nodePre和node的作用，导致逻辑错误。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\二叉树的层序遍历\\填充每个节点的下一个右侧节点指针II.txt",
+  "extracted_at": "2025-07-20T11:38:05.846854",
+  "raw_content": "填充每个节点的下一个右侧节点指针II\n力扣题目链接(https://leetcode.cn/problems/populating-next-right-pointers-in-each-node-ii/)\n\n#思路\n这道题目说是二叉树，但116题目说是完整二叉树，其实没有任何差别，一样的代码一样的逻辑一样的味道\n\nC++代码：\n\nclass Solution {\npublic:\n    Node* connect(Node* root) {\n        queue<Node*> que;\n        if (root != NULL) que.push(root);\n        while (!que.empty()) {\n            int size = que.size();\n            vector<int> vec;\n            Node* nodePre;\n            Node* node;\n            for (int i = 0; i < size; i++) {\n                if (i == 0) {\n                    nodePre = que.front(); // 取出一层的头结点\n                    que.pop();\n                    node = nodePre;\n                } else {\n                    node = que.front();\n                    que.pop();\n                    nodePre->next = node; // 本层前一个节点next指向本节点\n                    nodePre = nodePre->next;\n                }\n                if (node->left) que.push(node->left);\n                if (node->right) que.push(node->right);\n            }\n            nodePre->next = NULL; // 本层最后一个节点指向NULL\n        }\n        return root;\n    }\n};\n#其他语言版本\n#Java：\n// 二叉树之层次遍历\nclass Solution {\n    public Node connect(Node root) {\n        Queue<Node> queue = new LinkedList<>();\n        if (root != null) {\n            queue.add(root);\n        }\n        while (!queue.isEmpty()) {\n            int size = queue.size();\n            Node node = null;\n            Node nodePre = null;\n\n            for (int i = 0; i < size; i++) {\n                if (i == 0) {\n                    nodePre = queue.poll(); // 取出本层头一个节点\n                    node = nodePre;\n                } else {\n                    node = queue.poll();\n                    nodePre.next = node; // 本层前一个节点 next 指向当前节点\n                    nodePre = nodePre.next;\n                }\n                if (node.left != null) {\n                    queue.add(node.left);\n                }\n                if (node.right != null) {\n                    queue.add(node.right);\n                }\n            }\n            nodePre.next = null; // 本层最后一个节点 next 指向 null\n        }\n        return root;\n    }\n}\n#Python：\n# 层序遍历解法\n\"\"\"\n# Definition for a Node.\nclass Node:\n    def __init__(self, val: int = 0, left: 'Node' = None, right: 'Node' = None, next: 'Node' = None):\n        self.val = val\n        self.left = left\n        self.right = right\n        self.next = next\n\"\"\"\n\nclass Solution:\n    def connect(self, root: 'Node') -> 'Node':\n        if not root:\n            return root\n        \n        queue = collections.deque([root])\n        \n        while queue:\n            level_size = len(queue)\n            prev = None\n            \n            for i in range(level_size):\n                node = queue.popleft()\n                \n                if prev:\n                    prev.next = node\n                \n                prev = node\n                \n                if node.left:\n                    queue.append(node.left)\n                \n                if node.right:\n                    queue.append(node.right)\n        \n        return root"
+}

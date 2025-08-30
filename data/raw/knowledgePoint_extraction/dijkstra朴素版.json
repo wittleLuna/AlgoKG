@@ -1,0 +1,56 @@
+{
+  "id": "SA001",
+  "name": "Dijkstra算法",
+  "alias": [
+    "dijkstra"
+  ],
+  "type": "specific_algorithm",
+  "description": "在有权图（权值非负数）中求从起点到其他节点的最短路径算法。",
+  "key_concepts": [
+    "最短路径",
+    "贪心算法",
+    "图论"
+  ],
+  "applications": [
+    "路径规划",
+    "网络路由"
+  ],
+  "created_at": "2025-07-19T12:34:41Z",
+  "updated_at": "2025-07-19T12:34:41Z",
+  "source_files": [
+    "dijkstra朴素版_kama.txt"
+  ],
+  "spacy_entities": {
+    "COMPLEXITY": [
+      "O(n²)",
+      "O(n^2)"
+    ],
+    "DATA_STRUCTURE": [
+      "有向图",
+      "堆",
+      "数组",
+      "树",
+      "图",
+      "String"
+    ],
+    "CORE_CONCEPT": [
+      "初始化",
+      "空间复杂度",
+      "时间复杂度",
+      "顶点",
+      "路径"
+    ],
+    "PROBLEM_TYPE": [
+      "最短路径问题"
+    ],
+    "ALGORITHM_PARADIGM": [
+      "贪心",
+      "图论"
+    ],
+    "SPECIFIC_ALGORITHM": [
+      "dijkstra",
+      "Dijkstra",
+      "prim"
+    ]
+  }
+}

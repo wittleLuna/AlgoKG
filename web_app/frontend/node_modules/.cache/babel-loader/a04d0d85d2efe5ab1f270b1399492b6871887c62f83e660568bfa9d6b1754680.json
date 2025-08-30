@@ -1,0 +1,1 @@
+{"ast":null,"code":"import count from \"../count.js\";\nexport default function thresholdSturges(values) {\n  return Math.max(1, Math.ceil(Math.log(count(values)) / Math.LN2) + 1);\n}","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}

@@ -1,0 +1,96 @@
+二叉树的最大深度
+力扣题目链接(https://leetcode.cn/problems/maximum-depth-of-binary-tree/)
+
+给定一个二叉树，找出其最大深度。
+
+二叉树的深度为根节点到最远叶子节点的最长路径上的节点数。
+
+说明: 叶子节点是指没有子节点的节点。
+
+示例：
+
+给定二叉树 [3,9,20,null,null,15,7]，
+
+https://file1.kamacoder.com/i/algo/20210203153031914-20230310134849764.png
+
+返回它的最大深度 3 。
+
+思路
+使用迭代法的话，使用层序遍历是最为合适的，因为最大的深度就是二叉树的层数，和层序遍历的方式极其吻合。
+
+在二叉树中，一层一层的来遍历二叉树，记录一下遍历的层数就是二叉树的深度，如图所示：
+
+https://file1.kamacoder.com/i/algo/20200810193056585-20230310134854803.png
+
+所以这道题的迭代法就是一道模板题，可以使用二叉树层序遍历的模板来解决的。
+
+C++代码如下：
+
+class Solution {
+public:
+    int maxDepth(TreeNode* root) {
+        if (root == NULL) return 0;
+        int depth = 0;
+        queue<TreeNode*> que;
+        que.push(root);
+        while(!que.empty()) {
+            int size = que.size();
+            depth++; // 记录深度
+            for (int i = 0; i < size; i++) {
+                TreeNode* node = que.front();
+                que.pop();
+                if (node->left) que.push(node->left);
+                if (node->right) que.push(node->right);
+            }
+        }
+        return depth;
+    }
+};
+#其他语言版本
+#Java：
+class Solution {
+    public int maxDepth(TreeNode root) {
+        if (root == null)   return 0;
+        Queue<TreeNode> que = new LinkedList<>();
+        que.offer(root);
+        int depth = 0;
+        while (!que.isEmpty())
+        {
+            int len = que.size();
+            while (len > 0)
+            {
+                TreeNode node = que.poll();
+                if (node.left != null)  que.offer(node.left);
+                if (node.right != null) que.offer(node.right);
+                len--;
+            }
+            depth++;
+        }
+        return depth;
+    }
+}
+#Python：
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def maxDepth(self, root: TreeNode) -> int:
+        if not root:
+            return 0
+        
+        depth = 0
+        queue = collections.deque([root])
+        
+        while queue:
+            depth += 1
+            for _ in range(len(queue)):
+                node = queue.popleft()
+                if node.left:
+                    queue.append(node.left)
+                if node.right:
+                    queue.append(node.right)
+        
+        return depth

@@ -1,0 +1,45 @@
+{
+  "id": "PT027",
+  "name": "多重背包问题",
+  "alias": [
+    "Multiple Knapsack Problem"
+  ],
+  "type": "problem_type",
+  "description": "在给定的N种物品和一个容量为V的背包中，每种物品有最大数量限制，求解将哪些物品装入背包可使这些物品的耗费的空间总和不超过背包容量，且价值总和最大。",
+  "key_concepts": [
+    "动态规划",
+    "状态转移",
+    "最优子结构"
+  ],
+  "applications": [
+    "资源分配",
+    "组合优化"
+  ],
+  "created_at": "2025-07-19T12:57:59Z",
+  "updated_at": "2025-07-19T12:57:59Z",
+  "source_files": [
+    "动态规划：关于多重背包，你该了解这些!_kama.txt"
+  ],
+  "spacy_entities": {
+    "PROBLEM_TYPE": [
+      "背包问题",
+      "01背包问题",
+      "完全背包问题",
+      "多重背包问题"
+    ],
+    "ALGORITHM_PARADIGM": [
+      "动态规划",
+      "dp"
+    ],
+    "DATA_STRUCTURE": [
+      "数组",
+      "String"
+    ],
+    "CORE_CONCEPT": [
+      "动态规划",
+      "时间复杂度",
+      "状态转移",
+      "最优子结构"
+    ]
+  }
+}

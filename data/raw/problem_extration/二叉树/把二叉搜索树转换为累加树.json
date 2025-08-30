@@ -1,0 +1,445 @@
+{
+  "id": "AP_4589c4cd",
+  "title": "把二叉搜索树转换为累加树",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/convert-bst-to-greater-tree/",
+  "description": "将其转换为累加树（Greater Sum Tree），使每个节点 node 的新值等于原树中大于或等于 node.val 的值之和。\n\n提醒一下，二叉搜索树满足下列约束条件：\n\n节点的左子树仅包含键 小于 节点键的节点。 节点的右子树仅包含键 大于 节点键的节点。 左右子树也必须是二叉搜索树。",
+  "examples": [
+    {
+      "input": "见图",
+      "output": "见图",
+      "explanation": null,
+      "image": "https://file1.kamacoder.com/i/algo/20201023160751832.png"
+    }
+  ],
+  "constraints": [],
+  "algorithm_tags": [
+    "递归",
+    "迭代"
+  ],
+  "data_structure_tags": [
+    "二叉树",
+    "栈"
+  ],
+  "technique_tags": [
+    "反向中序遍历",
+    "累积求和"
+  ],
+  "difficulty": null,
+  "solution_approach": "将二叉搜索树转换为累加树的核心在于利用其有序性。通过反向中序遍历（即右-根-左顺序），可以确保每个节点的新值等于原树中大于或等于该节点值的所有节点值之和。",
+  "key_insights": [
+    {
+      "content": "二叉搜索树的性质保证了右子树所有节点的值都大于当前节点的值，因此可以通过反向中序遍历来实现累加效果。"
+    },
+    {
+      "content": "引入一个全局变量pre来存储之前访问过的最大节点值，这样在遍历时能够方便地更新当前节点的值。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "一看到累加树，相信很多小伙伴都会疑惑：如何累加？遇到一个节点，然后再遍历其他节点累加？怎么一想这么麻烦呢。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: int pre = 0; void traversal(TreeNode* cur) { if (cur == NULL) return; traversal(cur->right); cur->val += pre; pre = cur->val; traversal(cur->left); }public: TreeNode* convertBST(TreeNode* root) { pre = 0; traversal(root); return root; }};",
+          "description": "使用递归方法将二叉搜索树转换为累加树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: int pre; void traversal(TreeNode* root) { stack<TreeNode*> st; TreeNode* cur = root; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->right; } else { cur = st.top(); st.pop(); cur->val += pre; pre = cur->val; cur = cur->left; }}}public: TreeNode* convertBST(TreeNode* root) { pre = 0; traversal(root); return root; }};",
+          "description": "使用迭代方法将二叉搜索树转换为累加树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { int sum; public TreeNode convertBST(TreeNode root) { sum = 0; convertBST1(root); return root; } public void convertBST1(TreeNode root) { if (root == null) { return; } convertBST1(root.right); sum += root.val; root.val = sum; convertBST1(root.left); }}",
+          "description": "Java语言下，使用递归方法将二叉搜索树转换为累加树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode convertBST(TreeNode root) { int pre = 0; Stack<TreeNode> stack = new Stack<>(); if(root == null) return null; stack.add(root); while(!stack.isEmpty()){ TreeNode curr = stack.peek(); if(curr != null){ stack.pop(); if(curr.left != null) stack.add(curr.left); stack.add(curr); stack.add(null); if(curr.right != null) stack.add(curr.right); }else{ stack.pop(); TreeNode temp = stack.pop(); temp.val += pre; pre = temp.val; }} return root; }}",
+          "description": "Java语言下，使用迭代方法将二叉搜索树转换为累加树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.pre = 0 def convertBST(self, root: TreeNode) -> TreeNode: self.traversal(root) return root def traversal(self, cur): if cur is None: return self.traversal(cur.right) cur.val += self.pre self.pre = cur.val self.traversal(cur.left)",
+          "description": "Python语言下，使用递归方法将二叉搜索树转换为累加树（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.count = 0 def convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]: if root == None: return self.convertBST(root.right) self.count += root.val root.val = self.count self.convertBST(root.left) return root",
+          "description": "Python语言下，使用递归方法将二叉搜索树转换为累加树（版本二）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.pre = 0 def traversal(self, root): stack = [] cur = root while cur or stack: if cur: stack.append(cur) cur = cur.right else: cur = stack.pop() cur.val += self.pre self.pre = cur.val cur = cur.left def convertBST(self, root): self.pre = 0 self.traversal(root) return root",
+          "description": "Python语言下，使用迭代方法将二叉搜索树转换为累加树（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]: if not root: return root stack = [] result = [] cur = root pre = 0 while cur or stack: if cur: stack.append(cur) cur = cur.right else: cur = stack.pop() cur.val+= pre pre = cur.val cur =cur.left return root",
+          "description": "Python语言下，使用迭代方法将二叉搜索树转换为累加树（版本二）"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "递归",
+      "text": "遍历顺序如图所示：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: int pre = 0; void traversal(TreeNode* cur) { if (cur == NULL) return; traversal(cur->right); cur->val += pre; pre = cur->val; traversal(cur->left); } public: TreeNode* convertBST(TreeNode* root) { pre = 0; traversal(root); return root; }};",
+          "description": "C++递归法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: int pre; void traversal(TreeNode* root) { stack<TreeNode*> st; TreeNode* cur = root; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->right; } else { cur = st.top(); st.pop(); cur->val += pre; pre = cur->val; cur = cur->left; }} }public: TreeNode* convertBST(TreeNode* root) { pre = 0; traversal(root); return root; }};",
+          "description": "C++迭代法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {int sum; public TreeNode convertBST(TreeNode root) { sum = 0; convertBST1(root); return root; } public void convertBST1(TreeNode root) { if (root == null) { return; } convertBST1(root.right); sum += root.val; root.val = sum; convertBST1(root.left); }}",
+          "description": "Java递归法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode convertBST(TreeNode root) { int pre = 0; Stack<TreeNode> stack = new Stack<>(); if(root == null) return null; stack.add(root); while(!stack.isEmpty()){ TreeNode curr = stack.peek(); if(curr != null){ stack.pop(); if(curr.left != null) stack.add(curr.left); stack.add(curr); stack.add(null); if(curr.right != null) stack.add(curr.right); }else{ stack.pop(); TreeNode temp = stack.pop(); temp.val += pre; pre = temp.val; }} return root;}}",
+          "description": "Java迭代法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.pre = 0 def convertBST(self, root: TreeNode) -> TreeNode: self.traversal(root) return root def traversal(self, cur): if cur is None: return self.traversal(cur.right) cur.val += self.pre self.pre = cur.val self.traversal(cur.left)",
+          "description": "Python递归法(版本一)"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.count = 0 def convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]: if root == None: return self.convertBST(root.right) self.count += root.val root.val = self.count self.convertBST(root.left) return root",
+          "description": "Python递归法(版本二)"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.pre = 0 def traversal(self, root): stack = [] cur = root while cur or stack: if cur: stack.append(cur) cur = cur.right else: cur = stack.pop() cur.val += self.pre self.pre = cur.val cur = cur.left def convertBST(self, root): self.pre = 0 self.traversal(root) return root",
+          "description": "Python迭代法(版本一)"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]: if not root: return root stack = [] result = [] cur = root pre = 0 while cur or stack: if cur: stack.append(cur) cur = cur.right else: cur = stack.pop() cur.val+= pre pre = cur.val cur =cur.left return root",
+          "description": "Python迭代法(版本二)"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "迭代法",
+      "text": "迭代法其实就是中序模板题了，在二叉树：前中后序迭代法 (https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E8%BF%AD%E4%BB%A3%E9%81%8D%E5%8E%86.html)和二叉树：前中后序统一方式迭代法 (https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E7%BB%9F%E4%B8%80%E8%BF%AD%E4%BB%A3%E6%B3%95.html)可以选一种自己习惯的写法。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: int pre = 0; void traversal(TreeNode* cur) { if (cur == NULL) return; traversal(cur->right); cur->val += pre; pre = cur->val; traversal(cur->left); }public: TreeNode* convertBST(TreeNode* root) { pre = 0; traversal(root); return root; }};",
+          "description": "C++递归法实现二叉搜索树转换为累加树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: int pre; void traversal(TreeNode* root) { stack<TreeNode*> st; TreeNode* cur = root; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->right; } else { cur = st.top(); st.pop(); cur->val += pre; pre = cur->val; cur = cur->left; }} }public: TreeNode* convertBST(TreeNode* root) { pre = 0; traversal(root); return root; }};",
+          "description": "C++迭代法实现二叉搜索树转换为累加树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { int sum; public TreeNode convertBST(TreeNode root) { sum = 0; convertBST1(root); return root; } public void convertBST1(TreeNode root) { if (root == null) { return; } convertBST1(root.right); sum += root.val; root.val = sum; convertBST1(root.left); }}",
+          "description": "Java递归法实现二叉搜索树转换为累加树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode convertBST(TreeNode root) { int pre = 0; Stack<TreeNode> stack = new Stack<>(); if(root == null) return null; stack.add(root); while(!stack.isEmpty()){ TreeNode curr = stack.peek(); if(curr != null){ stack.pop(); if(curr.left != null) stack.add(curr.left); stack.add(curr); stack.add(null); if(curr.right != null) stack.add(curr.right); }else{ stack.pop(); TreeNode temp = stack.pop(); temp.val += pre; pre = temp.val; }} return root; }}",
+          "description": "Java迭代法实现二叉搜索树转换为累加树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.pre = 0 def traversal(self, cur): if cur is None: return self.traversal(cur.right) cur.val += self.pre self.pre = cur.val self.traversal(cur.left) def convertBST(self, root): self.pre = 0 self.traversal(root) return root",
+          "description": "Python递归法（版本一）实现二叉搜索树转换为累加树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.count = 0 def convertBST(self, root): if root == None: return self.convertBST(root.right) self.count += root.val root.val = self.count self.convertBST(root.left) return root",
+          "description": "Python递归法（版本二）实现二叉搜索树转换为累加树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.pre = 0 def traversal(self, root): stack = [] cur = root while cur or stack: if cur: stack.append(cur) cur = cur.right else: cur = stack.pop() cur.val += self.pre self.pre = cur.val cur = cur.left def convertBST(self, root): self.pre = 0 self.traversal(root) return root",
+          "description": "Python迭代法（版本一）实现二叉搜索树转换为累加树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def convertBST(self, root): if not root: return root stack = [] result = [] cur = root pre = 0 while cur or stack: if cur: stack.append(cur) cur = cur.right else: cur = stack.pop() cur.val+= pre pre = cur.val cur =cur.left return root",
+          "description": "Python迭代法（版本二）实现二叉搜索树转换为累加树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "经历了前面各种二叉树增删改查的洗礼之后，这道题目应该比较简单了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    int pre = 0; // 记录前一个节点的数值\n    void traversal(TreeNode* cur) { // 右中左遍历\n        if (cur == NULL) return;\n        traversal(cur->right);\n        cur->val += pre;\n        pre = cur->val;\n        traversal(cur->left);\n    }\npublic:\n    TreeNode* convertBST(TreeNode* root) {\n        pre = 0;\n        traversal(root);\n        return root;\n    }\n};",
+          "description": "C++递归实现二叉搜索树转换为累加树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    int pre; // 记录前一个节点的数值\n    void traversal(TreeNode* root) {\n        stack<TreeNode*> st;\n        TreeNode* cur = root;\n        while (cur != NULL || !st.empty()) {\n            if (cur != NULL) {\n                st.push(cur);\n                cur = cur->right;   // 右\n            } else {\n                cur = st.top();     // 中\n                st.pop();\n                cur->val += pre;\n                pre = cur->val;\n                cur = cur->left;    // 左\n            }\n        }\n    }\npublic:\n    TreeNode* convertBST(TreeNode* root) {\n        pre = 0;\n        traversal(root);\n        return root;\n    }\n};",
+          "description": "C++迭代实现二叉搜索树转换为累加树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    int sum;\n    public TreeNode convertBST(TreeNode root) {\n        sum = 0;\n        convertBST1(root);\n        return root;\n    }\n\n    // 按右中左顺序遍历，累加即可\n    public void convertBST1(TreeNode root) {\n        if (root == null) {\n            return;\n        }\n        convertBST1(root.right);\n        sum += root.val;\n        root.val = sum;\n        convertBST1(root.left);\n    }\n}",
+          "description": "Java递归实现二叉搜索树转换为累加树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    //DFS iteraion統一迭代法\n    public TreeNode convertBST(TreeNode root) {\n        int pre = 0;\n        Stack<TreeNode> stack = new Stack<>();\n        if(root == null) //edge case check\n            return null;\n\n        stack.add(root);\n\n        while(!stack.isEmpty()){\n            TreeNode curr = stack.peek();\n            //curr != null的狀況，只負責存node到stack中\n            if(curr != null){ \n                stack.pop();\n                if(curr.left != null)       //左\n                    stack.add(curr.left);\n                stack.add(curr);            //中\n                stack.add(null);\n                if(curr.right != null)      //右\n                    stack.add(curr.right);\n            }else{\n            //curr == null的狀況，只負責做單層邏輯\n                stack.pop();\n                TreeNode temp = stack.pop();\n                temp.val += pre;\n                pre = temp.val;\n            }\n        }\n        return root;\n    }\n}",
+          "description": "Java迭代实现二叉搜索树转换为累加树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.pre = 0  # 记录前一个节点的数值\n\n    def traversal(self, cur):\n        if cur is None:\n            return         \n        self.traversal(cur.right)\n        cur.val += self.pre\n        self.pre = cur.val\n        self.traversal(cur.left)\n\n    def convertBST(self, root: TreeNode) -> TreeNode:\n        self.pre = 0  # 初始化pre\n        self.traversal(root)\n        return root",
+          "description": "Python递归实现二叉搜索树转换为累加树版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.count = 0\n\n    def convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]:\n        if root == None:\n            return \n        # 右\n        self.convertBST(root.right)\n        # 中\n        self.count += root.val\n        root.val = self.count \n        # 左\n        self.convertBST(root.left)\n        return root",
+          "description": "Python递归实现二叉搜索树转换为累加树版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.pre = 0  # 记录前一个节点的数值\n\n    def traversal(self, root):\n        stack = []\n        cur = root\n        while cur or stack:\n            if cur:\n                stack.append(cur)\n                cur = cur.right  # 右\n            else:\n                cur = stack.pop()  # 中\n                cur.val += self.pre\n                self.pre = cur.val\n                cur = cur.left  # 左\n\n    def convertBST(self, root):\n        self.pre = 0\n        self.traversal(root)\n        return root",
+          "description": "Python迭代实现二叉搜索树转换为累加树版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]:\n        if not root: return root\n        stack = []\n        result = []\n        cur = root\n        pre = 0\n        while cur or stack:\n            if cur:\n                stack.append(cur)\n                cur = cur.right\n            else: \n                cur = stack.pop()\n                cur.val+= pre\n                pre = cur.val\n                cur =cur.left\n        return root",
+          "description": "Python迭代实现二叉搜索树转换为累加树版本二"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution {\n    int sum;\n    public TreeNode convertBST(TreeNode root) {\n        sum = 0;\n        convertBST1(root);\n        return root;\n    }\n\n    // 按右中左顺序遍历，累加即可\n    public void convertBST1(TreeNode root) {\n        if (root == null) {\n            return;\n        }\n        convertBST1(root.right);\n        sum += root.val;\n        root.val = sum;\n        convertBST1(root.left);\n    }\n}",
+          "description": "Java递归实现二叉搜索树转换为累加树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    //DFS iteraion統一迭代法\n    public TreeNode convertBST(TreeNode root) {\n        int pre = 0;\n        Stack<TreeNode> stack = new Stack<>();\n        if(root == null) //edge case check\n            return null;\n\n        stack.add(root);\n\n        while(!stack.isEmpty()){\n            TreeNode curr = stack.peek();\n            //curr != null的狀況，只負責存node到stack中\n            if(curr != null){ \n                stack.pop();\n                if(curr.left != null)       //左\n                    stack.add(curr.left);\n                stack.add(curr);            //中\n                stack.add(null);\n                if(curr.right != null)      //右\n                    stack.add(curr.right);\n            }else{\n            //curr == null的狀況，只負責做單層邏輯\n                stack.pop();\n                TreeNode temp = stack.pop();\n                temp.val += pre;\n                pre = temp.val;\n            }\n        }\n        return root;\n    }\n}",
+          "description": "Java迭代实现二叉搜索树转换为累加树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.pre = 0  # 记录前一个节点的数值\n    \n    def traversal(self, cur):\n        if cur is None:\n            return         \n        self.traversal(cur.right)\n        cur.val += self.pre\n        self.pre = cur.val\n        self.traversal(cur.left)\n    \n    def convertBST(self, root: TreeNode) -> TreeNode:\n        self.pre = 0  # 初始化pre\n        self.traversal(root)\n        return root",
+          "description": "Python递归实现二叉搜索树转换为累加树（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.count = 0\n\n    def convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]:\n        if root == None:\n            return \n        '''\n        倒序累加替换：  \n        '''\n        # 右\n        self.convertBST(root.right)\n\n        # 中\n        # 中节点：用当前root的值加上pre的值\n        self.count += root.val\n\n        root.val = self.count \n\n        # 左\n        self.convertBST(root.left)\n\n        return root ",
+          "description": "Python递归实现二叉搜索树转换为累加树（版本二）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.pre = 0  # 记录前一个节点的数值\n    \n    def traversal(self, root):\n        stack = []\n        cur = root\n        while cur or stack:\n            if cur:\n                stack.append(cur)\n                cur = cur.right  # 右\n            else:\n                cur = stack.pop()  # 中\n                cur.val += self.pre\n                self.pre = cur.val\n                cur = cur.left  # 左\n    \n    def convertBST(self, root):\n        self.pre = 0\n        self.traversal(root)\n        return root",
+          "description": "Python迭代实现二叉搜索树转换为累加树（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]:\n        if not root: return root\n        stack = []\n        result = []\n        cur = root\n        pre = 0\n        while cur or stack:\n            if cur:\n                stack.append(cur)\n                cur = cur.right\n            else: \n                cur = stack.pop()\n                cur.val+= pre\n                pre = cur.val\n                cur =cur.left\n        return root",
+          "description": "Python迭代实现二叉搜索树转换为累加树（版本二）"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "递归",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "int pre = 0; // 记录前一个节点的数值\nvoid traversal(TreeNode* cur) { // 右中左遍历\n    if (cur == NULL) return;\n    traversal(cur->right);\n    cur->val += pre;\n    pre = cur->val;\n    traversal(cur->left);\n}\npublic:\nTreeNode* convertBST(TreeNode* root) {\n    pre = 0;\n    traversal(root);\n    return root;\n}",
+          "description": "C++递归方法实现二叉搜索树转换为累加树"
+        },
+        {
+          "language": "cpp",
+          "code": "int pre; // 记录前一个节点的数值\nvoid traversal(TreeNode* root) {\n    stack<TreeNode*> st;\n    TreeNode* cur = root;\n    while (cur != NULL || !st.empty()) {\n        if (cur != NULL) {\n            st.push(cur);\n            cur = cur->right;   // 右\n        } else {\n            cur = st.top();     // 中\n            st.pop();\n            cur->val += pre;\n            pre = cur->val;\n            cur = cur->left;    // 左\n        }\n    }\n}\npublic:\nTreeNode* convertBST(TreeNode* root) {\n    pre = 0;\n    traversal(root);\n    return root;\n}",
+          "description": "C++迭代方法实现二叉搜索树转换为累加树"
+        },
+        {
+          "language": "java",
+          "code": "int sum;\npublic TreeNode convertBST(TreeNode root) {\n    sum = 0;\n    convertBST1(root);\n    return root;\n}\n// 按右中左顺序遍历，累加即可\npublic void convertBST1(TreeNode root) {\n    if (root == null) {\n        return;\n    }\n    convertBST1(root.right);\n    sum += root.val;\n    root.val = sum;\n    convertBST1(root.left);\n}",
+          "description": "Java递归方法实现二叉搜索树转换为累加树"
+        },
+        {
+          "language": "java",
+          "code": "int pre = 0;\nStack<TreeNode> stack = new Stack<>();\nif(root == null) //edge case check\n    return null;\nstack.add(root);\nwhile(!stack.isEmpty()){\n    TreeNode curr = stack.peek();\n    if(curr != null){ \n        stack.pop();\n        if(curr.left != null)       //左\n            stack.add(curr.left);\n        stack.add(curr);            //中\n        stack.add(null);\n        if(curr.right != null)      //右\n            stack.add(curr.right);\n    }else{\n        stack.pop();\n        TreeNode temp = stack.pop();\n        temp.val += pre;\n        pre = temp.val;\n    }\n}\nreturn root;",
+          "description": "Java迭代方法实现二叉搜索树转换为累加树"
+        },
+        {
+          "language": "python",
+          "code": "self.pre = 0  # 记录前一个节点的数值\nself.traversal(root)\nreturn root\ndef traversal(self, cur):\n    if cur is None:\n        return        \n    self.traversal(cur.right)\n    cur.val += self.pre\n    self.pre = cur.val\n    self.traversal(cur.left)",
+          "description": "Python递归方法实现二叉搜索树转换为累加树（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "self.count = 0\ndef convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]:\n    if root == None:\n        return \n    self.convertBST(root.right)\n    self.count += root.val\n    root.val = self.count \n    self.convertBST(root.left)\n    return root ",
+          "description": "Python递归方法实现二叉搜索树转换为累加树（版本二）"
+        },
+        {
+          "language": "python",
+          "code": "self.pre = 0  # 记录前一个节点的数值\ndef traversal(self, root):\n    stack = []\n    cur = root\n    while cur or stack:\n        if cur:\n            stack.append(cur)\n            cur = cur.right  # 右\n        else:\n            cur = stack.pop()  # 中\n            cur.val += self.pre\n            self.pre = cur.val\n            cur = cur.left  # 左\ndef convertBST(self, root):\n    self.pre = 0\n    self.traversal(root)\n    return root",
+          "description": "Python迭代方法实现二叉搜索树转换为累加树（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "pre = 0\ncur = root\nwhile cur or stack:\n    if cur:\n        stack.append(cur)\n        cur = cur.right\n    else: \n        cur = stack.pop()\n        cur.val+= pre\n        pre = cur.val\n        cur =cur.left\nreturn root",
+          "description": "Python迭代方法实现二叉搜索树转换为累加树（版本二）"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "递归法(版本一)",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    int pre = 0; // 记录前一个节点的数值\n    void traversal(TreeNode* cur) { // 右中左遍历\n        if (cur == NULL) return;\n        traversal(cur->right);\n        cur->val += pre;\n        pre = cur->val;\n        traversal(cur->left);\n    }\npublic:\n    TreeNode* convertBST(TreeNode* root) {\n        pre = 0;\n        traversal(root);\n        return root;\n    }\n};",
+          "description": "C++递归法实现二叉搜索树转累加树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    int pre; // 记录前一个节点的数值\n    void traversal(TreeNode* root) {\n        stack<TreeNode*> st;\n        TreeNode* cur = root;\n        while (cur != NULL || !st.empty()) {\n            if (cur != NULL) {\n                st.push(cur);\n                cur = cur->right;   // 右\n            } else {\n                cur = st.top();     // 中\n                st.pop();\n                cur->val += pre;\n                pre = cur->val;\n                cur = cur->left;    // 左\n            }\n        }\n    }\npublic:\n    TreeNode* convertBST(TreeNode* root) {\n        pre = 0;\n        traversal(root);\n        return root;\n    }\n};",
+          "description": "C++迭代法实现二叉搜索树转累加树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    int sum;\n    public TreeNode convertBST(TreeNode root) {\n        sum = 0;\n        convertBST1(root);\n        return root;\n    }\n\n    // 按右中左顺序遍历，累加即可\n    public void convertBST1(TreeNode root) {\n        if (root == null) {\n            return;\n        }\n        convertBST1(root.right);\n        sum += root.val;\n        root.val = sum;\n        convertBST1(root.left);\n    }\n}",
+          "description": "Java递归法实现二叉搜索树转累加树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    //DFS iteraion統一迭代法\n    public TreeNode convertBST(TreeNode root) {\n        int pre = 0;\n        Stack<TreeNode> stack = new Stack<>();\n        if(root == null) //edge case check\n            return null;\n\n        stack.add(root);\n\n        while(!stack.isEmpty()){\n            TreeNode curr = stack.peek();\n            //curr != null的狀況，只負責存node到stack中\n            if(curr != null){ \n                stack.pop();\n                if(curr.left != null)       //左\n                    stack.add(curr.left);\n                stack.add(curr);            //中\n                stack.add(null);\n                if(curr.right != null)      //右\n                    stack.add(curr.right);\n            }else{\n            //curr == null的狀況，只負責做單層邏輯\n                stack.pop();\n                TreeNode temp = stack.pop();\n                temp.val += pre;\n                pre = temp.val;\n            }\n        }\n        return root;\n    }\n}",
+          "description": "Java迭代法实现二叉搜索树转累加树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.pre = 0  # 记录前一个节点的数值\n\n    def convertBST(self, root: TreeNode) -> TreeNode:\n        self.traversal(root)\n        return root\n\n    def traversal(self, cur):\n        if cur is None:\n            return        \n        self.traversal(cur.right)\n        cur.val += self.pre\n        self.pre = cur.val\n        self.traversal(cur.left)",
+          "description": "Python递归法(版本一)实现二叉搜索树转累加树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.count = 0\n\n    def convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]:\n        if root == None:\n            return \n        # 右\n        self.convertBST(root.right)\n\n        # 中\n        self.count += root.val\n        root.val = self.count \n\n        # 左\n        self.convertBST(root.left)\n\n        return root",
+          "description": "Python递归法(版本二)实现二叉搜索树转累加树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.pre = 0  # 记录前一个节点的数值\n    \n    def traversal(self, root):\n        stack = []\n        cur = root\n        while cur or stack:\n            if cur:\n                stack.append(cur)\n                cur = cur.right  # 右\n            else:\n                cur = stack.pop()  # 中\n                cur.val += self.pre\n                self.pre = cur.val\n                cur = cur.left  # 左\n\n    def convertBST(self, root):\n        self.pre = 0\n        self.traversal(root)\n        return root",
+          "description": "Python迭代法(版本一)实现二叉搜索树转累加树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]:\n        if not root: return root\n        stack = []\n        result = []\n        cur = root\n        pre = 0\n        while cur or stack:\n            if cur:\n                stack.append(cur)\n                cur = cur.right\n            else: \n                cur = stack.pop()\n                cur.val+= pre\n                pre = cur.val\n                cur =cur.left\n        return root",
+          "description": "Python迭代法(版本二)实现二叉搜索树转累加树"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {private: int pre = 0; void traversal(TreeNode* cur) { if (cur == NULL) return; traversal(cur->right); cur->val += pre; pre = cur->val; traversal(cur->left); }public: TreeNode* convertBST(TreeNode* root) { pre = 0; traversal(root); return root; }};",
+      "description": "使用递归方法将二叉搜索树转换为累加树"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {private: int pre; void traversal(TreeNode* root) { stack<TreeNode*> st; TreeNode* cur = root; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->right; } else { cur = st.top(); st.pop(); cur->val += pre; pre = cur->val; cur = cur->left; }}}public: TreeNode* convertBST(TreeNode* root) { pre = 0; traversal(root); return root; }};",
+      "description": "使用迭代方法将二叉搜索树转换为累加树"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {int sum; public TreeNode convertBST(TreeNode root) { sum = 0; convertBST1(root); return root; } public void convertBST1(TreeNode root) { if (root == null) { return; } convertBST1(root.right); sum += root.val; root.val = sum; convertBST1(root.left); }}",
+      "description": "Java版本，使用递归方法将二叉搜索树转换为累加树"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public TreeNode convertBST(TreeNode root) { int pre = 0; Stack<TreeNode> stack = new Stack<>(); if(root == null) return null; stack.add(root); while(!stack.isEmpty()){ TreeNode curr = stack.peek(); if(curr != null){ stack.pop(); if(curr.left != null) stack.add(curr.left); stack.add(curr); stack.add(null); if(curr.right != null) stack.add(curr.right); }else{ stack.pop(); TreeNode temp = stack.pop(); temp.val += pre; pre = temp.val; }}}}",
+      "description": "Java版本，使用迭代方法将二叉搜索树转换为累加树"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def __init__(self): self.pre = 0 def convertBST(self, root: TreeNode) -> TreeNode: self.traversal(root) return root def traversal(self, cur): if cur is None: return self.traversal(cur.right) cur.val += self.pre self.pre = cur.val self.traversal(cur.left)",
+      "description": "Python版本，使用递归方法将二叉搜索树转换为累加树"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def __init__(self): self.count = 0 def convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]: if root == None: return self.convertBST(root.right) self.count += root.val root.val = self.count self.convertBST(root.left) return root",
+      "description": "Python版本，另一种递归实现方式将二叉搜索树转换为累加树"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def __init__(self): self.pre = 0 def traversal(self, root): stack = [] cur = root while cur or stack: if cur: stack.append(cur) cur = cur.right else: cur = stack.pop() cur.val += self.pre self.pre = cur.val cur = cur.left def convertBST(self, root): self.pre = 0 self.traversal(root) return root",
+      "description": "Python版本，使用迭代方法将二叉搜索树转换为累加树"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]: if not root: return root stack = [] result = [] cur = root pre = 0 while cur or stack: if cur: stack.append(cur) cur = cur.right else: cur = stack.pop() cur.val+= pre pre = cur.val cur =cur.left return root",
+      "description": "Python版本，另一种迭代实现方式将二叉搜索树转换为累加树"
+    }
+  ],
+  "common_mistakes": [
+    "忘记初始化全局变量pre导致错误结果。",
+    "未正确理解二叉搜索树的特点，尝试使用其他非优化方式计算累加值。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201023160751832.png",
+      "description": "这是一棵二叉树的示意图，每个节点包含一个索引和一个值，展示了树结构的基本形态及其数据存储方式。",
+      "context": "该图片展示了将给定的二叉搜索树转换为累加树前后的对比，其中每个节点的新值等于原树中大于或等于其值的所有节点值之和。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210204153440666.png",
+      "description": "这张图片展示了二叉树的反中序遍历过程，节点值分别为2、5和13，红色箭头表示遍历路径。",
+      "context": "图片展示了二叉树的反中序遍历顺序，帮助理解如何通过从右子树到左子树的方式进行节点值的累加。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201023160751832.png",
+      "description": "GIF展示了将给定的二叉搜索树转换为累加树的过程，通过反向中序遍历更新每个节点值。",
+      "context": "该GIF动画展示了如何将给定的二叉搜索树转换为累加树的过程，其中每个节点的新值等于原树中大于或等于该节点值的所有节点值之和。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210204153440666.png",
+      "description": "GIF展示了二叉搜索树的反中序遍历过程，通过动画形式演示了从右子节点到根节点再到左子节点的访问顺序，并累加每个节点值。",
+      "context": "GIF动画展示了按照右中左顺序反向中序遍历二叉搜索树的过程，帮助理解如何通过遍历实现节点值的累加。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\把二叉搜索树转换为累加树.txt",
+  "extracted_at": "2025-07-19T22:27:57.479899",
+  "raw_content": "把二叉搜索树转换为累加树\n力扣题目链接(https://leetcode.cn/problems/convert-bst-to-greater-tree/)\n\n给出二叉 搜索 树的根节点，该树的节点值各不相同，请你将其转换为累加树（Greater Sum Tree），使每个节点 node 的新值等于原树中大于或等于 node.val 的值之和。\n\n提醒一下，二叉搜索树满足下列约束条件：\n\n节点的左子树仅包含键 小于 节点键的节点。 节点的右子树仅包含键 大于 节点键的节点。 左右子树也必须是二叉搜索树。\n\n示例 1：\n\nhttps://file1.kamacoder.com/i/algo/20201023160751832.png\n\n输入：[4,1,6,0,2,5,7,null,null,null,3,null,null,null,8]\n输出：[30,36,21,36,35,26,15,null,null,null,33,null,null,null,8]\n示例 2：\n\n输入：root = [0,null,1]\n输出：[1,null,1]\n示例 3：\n\n输入：root = [1,0,2]\n输出：[3,3,2]\n示例 4：\n\n输入：root = [3,2,4,1]\n输出：[7,9,4,10]\n提示：\n\n树中的节点数介于 0 和 104 之间。\n每个节点的值介于 -104 和 104 之间。\n树中的所有值 互不相同 。\n给定的树为二叉搜索树。\n\n\n#思路\n一看到累加树，相信很多小伙伴都会疑惑：如何累加？遇到一个节点，然后再遍历其他节点累加？怎么一想这么麻烦呢。\n\n然后再发现这是一棵二叉搜索树，二叉搜索树啊，这是有序的啊。\n\n那么有序的元素如何求累加呢？\n\n其实这就是一棵树，大家可能看起来有点别扭，换一个角度来看，这就是一个有序数组[2, 5, 13]，求从后到前的累加数组，也就是[20, 18, 13]，是不是感觉这就简单了。\n\n为什么变成数组就是感觉简单了呢？\n\n因为数组大家都知道怎么遍历啊，从后向前，挨个累加就完事了，这换成了二叉搜索树，看起来就别扭了一些是不是。\n\n那么知道如何遍历这个二叉树，也就迎刃而解了，从树中可以看出累加的顺序是右中左，所以我们需要反中序遍历这个二叉树，然后顺序累加就可以了。\n\n#递归\n遍历顺序如图所示：\n\nhttps://file1.kamacoder.com/i/algo/20210204153440666.png\n\n本题依然需要一个pre指针记录当前遍历节点cur的前一个节点，这样才方便做累加。\n\npre指针的使用技巧，我们在二叉树：搜索树的最小绝对差 (https://programmercarl.com/0530.%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E7%BB%9D%E5%AF%B9%E5%B7%AE.html)和二叉树：我的众数是多少？ (https://programmercarl.com/0501.%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E4%BC%97%E6%95%B0.html)都提到了，这是常用的操作手段。\n\n递归函数参数以及返回值\n这里很明确了，不需要递归函数的返回值做什么操作了，要遍历整棵树。\n\n同时需要定义一个全局变量pre，用来保存cur节点的前一个节点的数值，定义为int型就可以了。\n\n代码如下：\n\nint pre = 0; // 记录前一个节点的数值\nvoid traversal(TreeNode* cur)\n确定终止条件\n遇空就终止。\n\nif (cur == NULL) return;\n确定单层递归的逻辑\n注意要右中左来遍历二叉树， 中节点的处理逻辑就是让cur的数值加上前一个节点的数值。\n\n代码如下：\n\ntraversal(cur->right);  // 右\ncur->val += pre;        // 中\npre = cur->val;\ntraversal(cur->left);   // 左\n递归法整体代码如下：\n\nclass Solution {\nprivate:\n    int pre = 0; // 记录前一个节点的数值\n    void traversal(TreeNode* cur) { // 右中左遍历\n        if (cur == NULL) return;\n        traversal(cur->right);\n        cur->val += pre;\n        pre = cur->val;\n        traversal(cur->left);\n    }\npublic:\n    TreeNode* convertBST(TreeNode* root) {\n        pre = 0;\n        traversal(root);\n        return root;\n    }\n};\n#迭代法\n迭代法其实就是中序模板题了，在二叉树：前中后序迭代法 (https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E8%BF%AD%E4%BB%A3%E9%81%8D%E5%8E%86.html)和二叉树：前中后序统一方式迭代法 (https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E7%BB%9F%E4%B8%80%E8%BF%AD%E4%BB%A3%E6%B3%95.html)可以选一种自己习惯的写法。\n\n这里我给出其中的一种，代码如下：\n\nclass Solution {\nprivate:\n    int pre; // 记录前一个节点的数值\n    void traversal(TreeNode* root) {\n        stack<TreeNode*> st;\n        TreeNode* cur = root;\n        while (cur != NULL || !st.empty()) {\n            if (cur != NULL) {\n                st.push(cur);\n                cur = cur->right;   // 右\n            } else {\n                cur = st.top();     // 中\n                st.pop();\n                cur->val += pre;\n                pre = cur->val;\n                cur = cur->left;    // 左\n            }\n        }\n    }\npublic:\n    TreeNode* convertBST(TreeNode* root) {\n        pre = 0;\n        traversal(root);\n        return root;\n    }\n};\n#总结\n经历了前面各种二叉树增删改查的洗礼之后，这道题目应该比较简单了。\n\n好了，二叉树已经接近尾声了，接下来就是要对二叉树来一个大总结了。\n\n#其他语言版本\n#Java\n递归\n\nclass Solution {\n    int sum;\n    public TreeNode convertBST(TreeNode root) {\n        sum = 0;\n        convertBST1(root);\n        return root;\n    }\n\n    // 按右中左顺序遍历，累加即可\n    public void convertBST1(TreeNode root) {\n        if (root == null) {\n            return;\n        }\n        convertBST1(root.right);\n        sum += root.val;\n        root.val = sum;\n        convertBST1(root.left);\n    }\n}\n迭代\n\nclass Solution {\n    //DFS iteraion統一迭代法\n    public TreeNode convertBST(TreeNode root) {\n        int pre = 0;\n        Stack<TreeNode> stack = new Stack<>();\n        if(root == null) //edge case check\n            return null;\n\n        stack.add(root);\n\n        while(!stack.isEmpty()){\n            TreeNode curr = stack.peek();\n            //curr != null的狀況，只負責存node到stack中\n            if(curr != null){ \n                stack.pop();\n                if(curr.left != null)       //左\n                    stack.add(curr.left);\n                stack.add(curr);            //中\n                stack.add(null);\n                if(curr.right != null)      //右\n                    stack.add(curr.right);\n            }else{\n            //curr == null的狀況，只負責做單層邏輯\n                stack.pop();\n                TreeNode temp = stack.pop();\n                temp.val += pre;\n                pre = temp.val;\n            }\n        }\n        return root;\n    }\n}\n#Python\n递归法(版本一)\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def convertBST(self, root: TreeNode) -> TreeNode:\n        self.pre = 0  # 记录前一个节点的数值\n        self.traversal(root)\n        return root\n    def traversal(self, cur):\n        if cur is None:\n            return        \n        self.traversal(cur.right)\n        cur.val += self.pre\n        self.pre = cur.val\n        self.traversal(cur.left)\n    \n        \n递归法（版本二）\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def __init__(self):\n        self.count = 0\n\n    def convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]:\n        if root == None:\n            return \n        '''\n        倒序累加替换：  \n        '''\n        # 右\n        self.convertBST(root.right)\n\n        # 中\n        # 中节点：用当前root的值加上pre的值\n        self.count += root.val\n\n        root.val = self.count \n\n        # 左\n        self.convertBST(root.left)\n\n        return root \n        \n迭代法（版本一）\n\nclass Solution:\n    def __init__(self):\n        self.pre = 0  # 记录前一个节点的数值\n    \n    def traversal(self, root):\n        stack = []\n        cur = root\n        while cur or stack:\n            if cur:\n                stack.append(cur)\n                cur = cur.right  # 右\n            else:\n                cur = stack.pop()  # 中\n                cur.val += self.pre\n                self.pre = cur.val\n                cur = cur.left  # 左\n    \n    def convertBST(self, root):\n        self.pre = 0\n        self.traversal(root)\n        return root\n\n迭代法（版本二）\n\nclass Solution:\n    def convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]:\n        if not root: return root\n        stack = []\n        result = []\n        cur = root\n        pre = 0\n        while cur or stack:\n            if cur:\n                stack.append(cur)\n                cur = cur.right\n            else: \n                cur = stack.pop()\n                cur.val+= pre\n                pre = cur.val\n                cur =cur.left\n        return root"
+}

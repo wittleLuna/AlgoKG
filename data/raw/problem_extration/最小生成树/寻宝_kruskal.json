@@ -1,0 +1,512 @@
+{
+  "id": "AP_a9af1710",
+  "title": "寻宝_kruskal",
+  "alternative_titles": [],
+  "platform": "kamacoder",
+  "url": "https://kamacoder.com/problempage.php?pid=1053",
+  "description": "一张地图，其中包括了所有的岛屿，以及它们之间的距离。以最小化公路建设长度，确保可以链接到所有岛屿。\n\n输入描述：\n\n第一行包含两个整数V 和 E，V代表顶点数，E代表边数 。顶点编号是从1到V。例如：V=2，一个有两个顶点，分别是1和2。\n\n接下来共有 E 行，每行三个整数 v1，v2 和 val，v1 和 v2 为边的起点和终点，val代表边的权值。\n\n输出描述：\n\n输出联通所有岛屿的最小路径总距离\n\n输入",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "Kruskal",
+    "最小生成树"
+  ],
+  "data_structure_tags": [
+    "并查集",
+    "数组"
+  ],
+  "technique_tags": [
+    "贪心算法",
+    "路径压缩",
+    "按秩合并"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用Kruskal算法求解最小生成树问题。首先对所有边按照权重进行升序排序，然后依次尝试将每条边加入到生成树中，如果这条边的两个顶点不在同一个集合（通过并查集判断），则将这条边加入生成树，并更新这两个顶点所在的集合。",
+  "key_insights": [
+    {
+      "content": "总是优先考虑权值较小的边，这样可以确保最终得到的是连接所有顶点且总权值最小的生成树。"
+    },
+    {
+      "content": "利用并查集数据结构来高效地处理连通性查询和合并操作，避免了生成环路的问题。"
+    },
+    {
+      "content": "当图是稀疏图时，Kruskal算法比Prim算法更优，因为Kruskal算法的时间复杂度主要依赖于边的数量而不是节点数量。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "解题思路",
+      "text": "在上一篇 我们讲解了 prim算法求解 最小生成树，本篇我们来讲解另一个算法：Kruskal，同样可以求最小生成树。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]); \n}\n\nvoid join(int u, int v) {\n    u = find(u); \n    v = find(v); \n    if (u == v) return ; \n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    init();\n\n    for (Edge edge : edges) {\n\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n\n        if (x != y) {\n            result_val += edge.val; \n            join(x, y);\n        }\n    }\n    cout << result_val << endl;\n    return 0;\n}",
+          "description": "C++实现的Kruskal算法求解最小生成树"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\n\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]); \n}\n\nvoid join(int u, int v) {\n    u = find(u); \n    v = find(v); \n    if (u == v) return ; \n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    vector<Edge> result; // 存储最小生成树的边\n\n    init();\n\n    for (Edge edge : edges) {\n\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n\n        if (x != y) {\n            result.push_back(edge); // 保存最小生成树的边\n            result_val += edge.val; \n            join(x, y);\n        }\n    }\n\n    // 打印最小生成树的边\n    for (Edge edge : result) {\n        cout << edge.l << \" - \" << edge.r << \" : \" << edge.val << endl;\n    }\n\n    return 0;\n}",
+          "description": "C++实现的Kruskal算法求解最小生成树，并输出所有边"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\nclass Edge {\n    int l, r, val;\n\n    Edge(int l, int r, int val) {\n        this.l = l;\n        this.r = r;\n        this.val = val;\n    }\n}\npublic class Main {\n    private static int n = 10001;\n    private static int[] father = new int[n];\n\n    public static void init() {\n        for (int i = 0; i < n; i++) {\n            father[i] = i;\n        }\n    }\n\n    public static int find(int u) {\n        if (u == father[u]) return u;\n        return father[u] = find(father[u]);\n    }\n\n    public static void join(int u, int v) {\n        u = find(u);\n        v = find(v);\n        if (u == v) return;\n        father[v] = u;\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        List<Edge> edges = new ArrayList<>();\n        int result_val = 0;\n\n        for (int i = 0; i < e; i++) {\n            int v1 = scanner.nextInt();\n            int v2 = scanner.nextInt();\n            int val = scanner.nextInt();\n            edges.add(new Edge(v1, v2, val));\n        }\n\n        edges.sort(Comparator.comparingInt(edge -> edge.val));\n\n        init();\n\n        for (Edge edge : edges) {\n            int x = find(edge.l);\n            int y = find(edge.r);\n\n            if (x != y) {\n                result_val += edge.val;\n                join(x, y);\n            }\n        }\n        System.out.println(result_val);\n        scanner.close();\n    }\n}",
+          "description": "Java实现的Kruskal算法求解最小生成树"
+        },
+        {
+          "language": "python",
+          "code": "class Edge:\n    def __init__(self, l, r, val):\n        self.l = l\n        self.r = r\n        self.val = val\n\nn = 10001\nfather = list(range(n))\n\ndef init():\n    global father\n    father = list(range(n))\n\ndef find(u):\n    if u != father[u]:\n        father[u] = find(father[u])\n    return father[u]\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[v] = u\n\ndef kruskal(v, edges):\n    edges.sort(key=lambda edge: edge.val)\n    init()\n    result_val = 0\n\n    for edge in edges:\n        x = find(edge.l)\n        y = find(edge.r)\n        if x != y:\n            result_val += edge.val\n            join(x, y)\n\n    return result_val\n\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    v = int(data[0])\n    e = int(data[1])\n\n    edges = []\n    index = 2\n    for _ in range(e):\n        v1 = int(data[index])\n        v2 = int(data[index + 1])\n        val = int(data[index + 2])\n        edges.append(Edge(v1, v2, val))\n        index += 3\n\n    result_val = kruskal(v, edges)\n    print(result_val)",
+          "description": "Python实现的Kruskal算法求解最小生成树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]); \n}\n\nvoid join(int u, int v) {\n    u = find(u); \n    v = find(v); \n    if (u == v) return ; \n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    init();\n\n    for (Edge edge : edges) {\n\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n\n        if (x != y) {\n            result_val += edge.val; \n            join(x, y);\n        }\n    }\n    cout << result_val << endl;\n    return 0;\n}",
+          "description": "C++实现的Kruskal算法求解最小生成树"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]); \n}\n\nvoid join(int u, int v) {\n    u = find(u); \n    v = find(v); \n    if (u == v) return ; \n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    vector<Edge> result; // 存储最小生成树的边\n\n    init();\n\n    for (Edge edge : edges) {\n\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n\n        if (x != y) {\n            result.push_back(edge); // 保存最小生成树的边\n            result_val += edge.val; \n            join(x, y);\n        }\n    }\n\n    // 打印最小生成树的边\n    for (Edge edge : result) {\n        cout << edge.l << \" - \" << edge.r << \" : \" << edge.val << endl;\n    }\n\n    return 0;\n}",
+          "description": "C++实现的Kruskal算法求解最小生成树，并输出具体边的信息"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\nclass Edge {\n    int l, r, val;\n\n    Edge(int l, int r, int val) {\n        this.l = l;\n        this.r = r;\n        this.val = val;\n    }\n}\n\npublic class Main {\n    private static int n = 10001;\n    private static int[] father = new int[n];\n\n    // 并查集初始化\n    public static void init() {\n        for (int i = 0; i < n; i++) {\n            father[i] = i;\n        }\n    }\n\n    // 并查集的查找操作\n    public static int find(int u) {\n        if (u == father[u]) return u;\n        return father[u] = find(father[u]);\n    }\n\n    // 并查集的加入集合\n    public static void join(int u, int v) {\n        u = find(u);\n        v = find(v);\n        if (u == v) return;\n        father[v] = u;\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        List<Edge> edges = new ArrayList<>();\n        int result_val = 0;\n\n        for (int i = 0; i < e; i++) {\n            int v1 = scanner.nextInt();\n            int v2 = scanner.nextInt();\n            int val = scanner.nextInt();\n            edges.add(new Edge(v1, v2, val));\n        }\n\n        // 执行Kruskal算法\n        edges.sort(Comparator.comparingInt(edge -> edge.val));\n\n        // 并查集初始化\n        init();\n\n        // 从头开始遍历边\n        for (Edge edge : edges) {\n            int x = find(edge.l);\n            int y = find(edge.r);\n\n            if (x != y) {\n                result_val += edge.val;\n                join(x, y);\n            }\n        }\n        System.out.println(result_val);\n        scanner.close();\n    }\n}",
+          "description": "Java实现的Kruskal算法求解最小生成树"
+        },
+        {
+          "language": "python",
+          "code": "class Edge:\n    def __init__(self, l, r, val):\n        self.l = l\n        self.r = r\n        self.val = val\n\nn = 10001\nfather = list(range(n))\n\ndef init():\n    global father\n    father = list(range(n))\n\ndef find(u):\n    if u != father[u]:\n        father[u] = find(father[u])\n    return father[u]\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[v] = u\n\ndef kruskal(v, edges):\n    edges.sort(key=lambda edge: edge.val)\n    init()\n    result_val = 0\n\n    for edge in edges:\n        x = find(edge.l)\n        y = find(edge.r)\n        if x != y:\n            result_val += edge.val\n            join(x, y)\n\n    return result_val\n\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    v = int(data[0])\n    e = int(data[1])\n\n    edges = []\n    index = 2\n    for _ in range(e):\n        v1 = int(data[index])\n        v2 = int(data[index + 1])\n        val = int(data[index + 2])\n        edges.append(Edge(v1, v2, val))\n        index += 3\n\n    result_val = kruskal(v, edges)\n    print(result_val)",
+          "description": "Python实现的Kruskal算法求解最小生成树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "#include <algorithm>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]); \n}\n\nvoid join(int u, int v) {\n    u = find(u); \n    v = find(v); \n    if (u == v) return ; \n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    init();\n\n    for (Edge edge : edges) {\n\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n\n        if (x != y) {\n            result_val += edge.val; \n            join(x, y);\n        }\n    }\n    cout << result_val << endl;\n    return 0;\n}",
+          "description": "使用C++实现Kruskal算法求解最小生成树问题。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]); \n}\n\nvoid join(int u, int v) {\n    u = find(u); \n    v = find(v); \n    if (u == v) return ; \n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    vector<Edge> result; // 存储最小生成树的边\n\n    init();\n\n    for (Edge edge : edges) {\n\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n\n        if (x != y) {\n            result.push_back(edge); // 保存最小生成树的边\n            result_val += edge.val; \n            join(x, y);\n        }\n    }\n\n    // 打印最小生成树的边\n    for (Edge edge : result) {\n        cout << edge.l << \" - \" << edge.r << \" : \" << edge.val << endl;\n    }\n\n    return 0;\n}",
+          "description": "扩展版C++代码，不仅计算了最小生成树的总权重，还输出了构成最小生成树的所有边。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\nclass Edge {\n    int l, r, val;\n\n    Edge(int l, int r, int val) {\n        this.l = l;\n        this.r = r;\n        this.val = val;\n    }\n}\n\npublic class Main {\n    private static int n = 10001;\n    private static int[] father = new int[n];\n\n    public static void init() {\n        for (int i = 0; i < n; i++) {\n            father[i] = i;\n        }\n    }\n\n    public static int find(int u) {\n        if (u == father[u]) return u;\n        return father[u] = find(father[u]);\n    }\n\n    public static void join(int u, int v) {\n        u = find(u);\n        v = find(v);\n        if (u == v) return;\n        father[v] = u;\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        List<Edge> edges = new ArrayList<>();\n        int result_val = 0;\n\n        for (int i = 0; i < e; i++) {\n            int v1 = scanner.nextInt();\n            int v2 = scanner.nextInt();\n            int val = scanner.nextInt();\n            edges.add(new Edge(v1, v2, val));\n        }\n\n        edges.sort(Comparator.comparingInt(edge -> edge.val));\n\n        init();\n\n        for (Edge edge : edges) {\n            int x = find(edge.l);\n            int y = find(edge.r);\n\n            if (x != y) {\n                result_val += edge.val;\n                join(x, y);\n            }\n        }\n        System.out.println(result_val);\n        scanner.close();\n    }\n}",
+          "description": "Java版本的Kruskal算法实现，用于解决最小生成树问题。"
+        },
+        {
+          "language": "python",
+          "code": "class Edge:\n    def __init__(self, l, r, val):\n        self.l = l\n        self.r = r\n        self.val = val\n\nn = 10001\nfather = list(range(n))\n\ndef init():\n    global father\n    father = list(range(n))\n\ndef find(u):\n    if u != father[u]:\n        father[u] = find(father[u])\n    return father[u]\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[v] = u\n\ndef kruskal(v, edges):\n    edges.sort(key=lambda edge: edge.val)\n    init()\n    result_val = 0\n\n    for edge in edges:\n        x = find(edge.l)\n        y = find(edge.r)\n        if x != y:\n            result_val += edge.val\n            join(x, y)\n\n    return result_val\n\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    v = int(data[0])\n    e = int(data[1])\n\n    edges = []\n    index = 2\n    for _ in range(e):\n        v1 = int(data[index])\n        v2 = int(data[index + 1])\n        val = int(data[index + 2])\n        edges.append(Edge(v1, v2, val))\n        index += 3\n\n    result_val = kruskal(v, edges)\n    print(result_val)",
+          "description": "Python语言实现的Kruskal算法，解决了给定图的最小生成树问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <algorithm>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]); \n}\n\nvoid join(int u, int v) {\n    u = find(u); \n    v = find(v); \n    if (u == v) return ; \n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    init();\n\n    for (Edge edge : edges) {\n\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n\n        if (x != y) {\n            result_val += edge.val; \n            join(x, y);\n        }\n    }\n    cout << result_val << endl;\n    return 0;\n}",
+          "description": "使用C++实现Kruskal算法求最小生成树"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\nclass Edge {\n    int l, r, val;\n\n    Edge(int l, int r, int val) {\n        this.l = l;\n        this.r = r;\n        this.val = val;\n    }\n}\npublic class Main {\n    private static int n = 10001;\n    private static int[] father = new int[n];\n\n    public static void init() {\n        for (int i = 0; i < n; i++) {\n            father[i] = i;\n        }\n    }\n\n    public static int find(int u) {\n        if (u == father[u]) return u;\n        return father[u] = find(father[u]);\n    }\n\n    public static void join(int u, int v) {\n        u = find(u);\n        v = find(v);\n        if (u == v) return;\n        father[v] = u;\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        List<Edge> edges = new ArrayList<>();\n        int result_val = 0;\n\n        for (int i = 0; i < e; i++) {\n            int v1 = scanner.nextInt();\n            int v2 = scanner.nextInt();\n            int val = scanner.nextInt();\n            edges.add(new Edge(v1, v2, val));\n        }\n\n        edges.sort(Comparator.comparingInt(edge -> edge.val));\n\n        init();\n\n        for (Edge edge : edges) {\n            int x = find(edge.l);\n            int y = find(edge.r);\n\n            if (x != y) {\n                result_val += edge.val;\n                join(x, y);\n            }\n        }\n        System.out.println(result_val);\n        scanner.close();\n    }\n}",
+          "description": "使用Java实现Kruskal算法求最小生成树"
+        },
+        {
+          "language": "python",
+          "code": "class Edge:\n    def __init__(self, l, r, val):\n        self.l = l\n        self.r = r\n        self.val = val\n\nn = 10001\nfather = list(range(n))\n\ndef init():\n    global father\n    father = list(range(n))\n\ndef find(u):\n    if u != father[u]:\n        father[u] = find(father[u])\n    return father[u]\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[v] = u\n\ndef kruskal(v, edges):\n    edges.sort(key=lambda edge: edge.val)\n    init()\n    result_val = 0\n\n    for edge in edges:\n        x = find(edge.l)\n        y = find(edge.r)\n        if x != y:\n            result_val += edge.val\n            join(x, y)\n\n    return result_val\n\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    v = int(data[0])\n    e = int(data[1])\n\n    edges = []\n    index = 2\n    for _ in range(e):\n        v1 = int(data[index])\n        v2 = int(data[index + 1])\n        val = int(data[index + 2])\n        edges.append(Edge(v1, v2, val))\n        index += 3\n\n    result_val = kruskal(v, edges)\n    print(result_val)",
+          "description": "使用Python实现Kruskal算法求最小生成树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "拓展一",
+      "text": "如果题目要求将最小生成树的边输出的话，应该怎么办呢？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]);\n}\n\nvoid join(int u, int v) {\n    u = find(u);\n    v = find(v);\n    if (u == v) return ;\n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    init();\n\n    for (Edge edge : edges) {\n\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n\n        if (x != y) {\n            result_val += edge.val;\n            join(x, y);\n        }\n    }\n    cout << result_val << endl;\n    return 0;\n}",
+          "description": "使用Kruskal算法计算最小生成树的总距离"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\n\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]);\n}\n\nvoid join(int u, int v) {\n    u = find(u);\n    v = find(v);\n    if (u == v) return ;\n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    vector<Edge> result;\n\n    init();\n\n    for (Edge edge : edges) {\n\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n\n        if (x != y) {\n            result.push_back(edge);\n            result_val += edge.val;\n            join(x, y);\n        }\n    }\n\n    for (Edge edge : result) {\n        cout << edge.l << \" - \" << edge.r << \" : \" << edge.val << endl;\n    }\n\n    return 0;\n}",
+          "description": "使用Kruskal算法输出构成最小生成树的所有边"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\n\nclass Edge {\n    int l, r, val;\n\n    Edge(int l, int r, int val) {\n        this.l = l;\n        this.r = r;\n        this.val = val;\n    }\n}\n\npublic class Main {\n    private static int n = 10001;\n    private static int[] father = new int[n];\n\n    public static void init() {\n        for (int i = 0; i < n; i++) {\n            father[i] = i;\n        }\n    }\n\n    public static int find(int u) {\n        if (u == father[u]) return u;\n        return father[u] = find(father[u]);\n    }\n\n    public static void join(int u, int v) {\n        u = find(u);\n        v = find(v);\n        if (u == v) return;\n        father[v] = u;\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        List<Edge> edges = new ArrayList<>();\n        int result_val = 0;\n\n        for (int i = 0; i < e; i++) {\n            int v1 = scanner.nextInt();\n            int v2 = scanner.nextInt();\n            int val = scanner.nextInt();\n            edges.add(new Edge(v1, v2, val));\n        }\n\n        edges.sort(Comparator.comparingInt(edge -> edge.val));\n\n        init();\n\n        for (Edge edge : edges) {\n            int x = find(edge.l);\n            int y = find(edge.r);\n\n            if (x != y) {\n                result_val += edge.val;\n                join(x, y);\n            }\n        }\n        System.out.println(result_val);\n        scanner.close();\n    }\n}",
+          "description": "Java版本的Kruskal算法实现，用于计算最小生成树的总距离"
+        },
+        {
+          "language": "python",
+          "code": "class Edge:\n    def __init__(self, l, r, val):\n        self.l = l\n        self.r = r\n        self.val = val\n\nn = 10001\nfather = list(range(n))\n\ndef init():\n    global father\n    father = list(range(n))\n\ndef find(u):\n    if u != father[u]:\n        father[u] = find(father[u])\n    return father[u]\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[v] = u\n\ndef kruskal(v, edges):\n    edges.sort(key=lambda edge: edge.val)\n    init()\n    result_val = 0\n\n    for edge in edges:\n        x = find(edge.l)\n        y = find(edge.r)\n        if x != y:\n            result_val += edge.val\n            join(x, y)\n\n    return result_val\n\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    v = int(data[0])\n    e = int(data[1])\n\n    edges = []\n    index = 2\n    for _ in range(e):\n        v1 = int(data[index])\n        v2 = int(data[index + 1])\n        val = int(data[index + 2])\n        edges.append(Edge(v1, v2, val))\n        index += 3\n\n    result_val = kruskal(v, edges)\n    print(result_val)",
+          "description": "Python版本的Kruskal算法实现，用于计算最小生成树的总距离"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]);\n}\n\nvoid join(int u, int v) {\n    u = find(u);\n    v = find(v);\n    if (u == v) return ;\n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    init();\n\n    for (Edge edge : edges) {\n\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n\n        if (x != y) {\n            result_val += edge.val;\n            join(x, y);\n        }\n    }\n    cout << result_val << endl;\n    return 0;\n}",
+          "description": "C++实现Kruskal算法求解最小生成树"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]);\n}\n\nvoid join(int u, int v) {\n    u = find(u);\n    v = find(v);\n    if (u == v) return ;\n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    vector<Edge> result; // 存储最小生成树的边\n\n    init();\n\n    for (Edge edge : edges) {\n\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n\n        if (x != y) {\n            result.push_back(edge); // 保存最小生成树的边\n            result_val += edge.val;\n            join(x, y);\n        }\n    }\n\n    // 打印最小生成树的边\n    for (Edge edge : result) {\n        cout << edge.l << \" - \" << edge.r << \" : \" << edge.val << endl;\n    }\n\n    return 0;\n}",
+          "description": "C++实现带边输出的Kruskal算法求解最小生成树"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\nclass Edge {\n    int l, r, val;\n\n    Edge(int l, int r, int val) {\n        this.l = l;\n        this.r = r;\n        this.val = val;\n    }\n}\n\npublic class Main {\n    private static int n = 10001;\n    private static int[] father = new int[n];\n\n    public static void init() {\n        for (int i = 0; i < n; i++) {\n            father[i] = i;\n        }\n    }\n\n    public static int find(int u) {\n        if (u == father[u]) return u;\n        return father[u] = find(father[u]);\n    }\n\n    public static void join(int u, int v) {\n        u = find(u);\n        v = find(v);\n        if (u == v) return;\n        father[v] = u;\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        List<Edge> edges = new ArrayList<>();\n        int result_val = 0;\n\n        for (int i = 0; i < e; i++) {\n            int v1 = scanner.nextInt();\n            int v2 = scanner.nextInt();\n            int val = scanner.nextInt();\n            edges.add(new Edge(v1, v2, val));\n        }\n\n        edges.sort(Comparator.comparingInt(edge -> edge.val));\n\n        init();\n\n        for (Edge edge : edges) {\n            int x = find(edge.l);\n            int y = find(edge.r);\n\n            if (x != y) {\n                result_val += edge.val;\n                join(x, y);\n            }\n        }\n        System.out.println(result_val);\n        scanner.close();\n    }\n}",
+          "description": "Java实现Kruskal算法求解最小生成树"
+        },
+        {
+          "language": "python",
+          "code": "class Edge:\n    def __init__(self, l, r, val):\n        self.l = l\n        self.r = r\n        self.val = val\n\nn = 10001\nfather = list(range(n))\n\ndef init():\n    global father\n    father = list(range(n))\n\ndef find(u):\n    if u != father[u]:\n        father[u] = find(father[u])\n    return father[u]\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[v] = u\n\ndef kruskal(v, edges):\n    edges.sort(key=lambda edge: edge.val)\n    init()\n    result_val = 0\n\n    for edge in edges:\n        x = find(edge.l)\n        y = find(edge.r)\n        if x != y:\n            result_val += edge.val\n            join(x, y)\n\n    return result_val\n\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    v = int(data[0])\n    e = int(data[1])\n\n    edges = []\n    index = 2\n    for _ in range(e):\n        v1 = int(data[index])\n        v2 = int(data[index + 1])\n        val = int(data[index + 2])\n        edges.append(Edge(v1, v2, val))\n        index += 3\n\n    result_val = kruskal(v, edges)\n    print(result_val)",
+          "description": "Python实现Kruskal算法求解最小生成树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "#include <algorithm>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]); \n}\n\nvoid join(int u, int v) {\n    u = find(u); \n    v = find(v); \n    if (u == v) return ; \n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    init();\n\n    for (Edge edge : edges) {\n\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n\n        if (x != y) {\n            result_val += edge.val; \n            join(x, y);\n        }\n    }\n    cout << result_val << endl;\n    return 0;\n}",
+          "description": "C++版本的Kruskal算法实现，用于寻找最小生成树。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\nclass Edge {\n    int l, r, val;\n    Edge(int l, int r, int val) {\n        this.l = l;\n        this.r = r;\n        this.val = val;\n    }\n}\npublic class Main {\n    private static int n = 10001;\n    private static int[] father = new int[n];\n    public static void init() {\n        for (int i = 0; i < n; i++) {\n            father[i] = i;\n        }\n    }\n    public static int find(int u) {\n        if (u == father[u]) return u;\n        return father[u] = find(father[u]);\n    }\n    public static void join(int u, int v) {\n        u = find(u);\n        v = find(v);\n        if (u == v) return;\n        father[v] = u;\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        List<Edge> edges = new ArrayList<>();\n        int result_val = 0;\n        for (int i = 0; i < e; i++) {\n            int v1 = scanner.nextInt();\n            int v2 = scanner.nextInt();\n            int val = scanner.nextInt();\n            edges.add(new Edge(v1, v2, val));\n        }\n        edges.sort(Comparator.comparingInt(edge -> edge.val));\n        init();\n        for (Edge edge : edges) {\n            int x = find(edge.l);\n            int y = find(edge.r);\n            if (x != y) {\n                result_val += edge.val;\n                join(x, y);\n            }\n        }\n        System.out.println(result_val);\n        scanner.close();\n    }\n}",
+          "description": "Java版本的Kruskal算法实现，用于寻找最小生成树。"
+        },
+        {
+          "language": "python",
+          "code": "class Edge:\n    def __init__(self, l, r, val):\n        self.l = l\n        self.r = r\n        self.val = val\n\nn = 10001\nfather = list(range(n))\n\ndef init():\n    global father\n    father = list(range(n))\n\ndef find(u):\n    if u != father[u]:\n        father[u] = find(father[u])\n    return father[u]\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[v] = u\n\ndef kruskal(v, edges):\n    edges.sort(key=lambda edge: edge.val)\n    init()\n    result_val = 0\n\n    for edge in edges:\n        x = find(edge.l)\n        y = find(edge.r)\n        if x != y:\n            result_val += edge.val\n            join(x, y)\n\n    return result_val\n\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    v = int(data[0])\n    e = int(data[1])\n\n    edges = []\n    index = 2\n    for _ in range(e):\n        v1 = int(data[index])\n        v2 = int(data[index + 1])\n        val = int(data[index + 2])\n        edges.append(Edge(v1, v2, val))\n        index += 3\n\n    result_val = kruskal(v, edges)\n    print(result_val)",
+          "description": "Python版本的Kruskal算法实现，用于寻找最小生成树。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <algorithm>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]); \n}\n\nvoid join(int u, int v) {\n    u = find(u); \n    v = find(v); \n    if (u == v) return ; \n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    init();\n\n    for (Edge edge : edges) {\n\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n\n        if (x != y) {\n            result_val += edge.val; \n            join(x, y);\n        }\n    }\n    cout << result_val << endl;\n    return 0;\n}",
+          "description": "C++实现的Kruskal算法求解最小生成树"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\nclass Edge {\n    int l, r, val;\n\n    Edge(int l, int r, int val) {\n        this.l = l;\n        this.r = r;\n        this.val = val;\n    }\n}\npublic class Main {\n    private static int n = 10001;\n    private static int[] father = new int[n];\n\n    public static void init() {\n        for (int i = 0; i < n; i++) {\n            father[i] = i;\n        }\n    }\n\n    public static int find(int u) {\n        if (u == father[u]) return u;\n        return father[u] = find(father[u]);\n    }\n\n    public static void join(int u, int v) {\n        u = find(u);\n        v = find(v);\n        if (u == v) return;\n        father[v] = u;\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        List<Edge> edges = new ArrayList<>();\n        int result_val = 0;\n\n        for (int i = 0; i < e; i++) {\n            int v1 = scanner.nextInt();\n            int v2 = scanner.nextInt();\n            int val = scanner.nextInt();\n            edges.add(new Edge(v1, v2, val));\n        }\n\n        edges.sort(Comparator.comparingInt(edge -> edge.val));\n\n        init();\n\n        for (Edge edge : edges) {\n            int x = find(edge.l);\n            int y = find(edge.r);\n\n            if (x != y) {\n                result_val += edge.val;\n                join(x, y);\n            }\n        }\n        System.out.println(result_val);\n        scanner.close();\n    }\n}",
+          "description": "Java实现的Kruskal算法求解最小生成树"
+        },
+        {
+          "language": "python",
+          "code": "class Edge:\n    def __init__(self, l, r, val):\n        self.l = l\n        self.r = r\n        self.val = val\n\nn = 10001\nfather = list(range(n))\n\ndef init():\n    global father\n    father = list(range(n))\n\ndef find(u):\n    if u != father[u]:\n        father[u] = find(father[u])\n    return father[u]\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[v] = u\n\ndef kruskal(v, edges):\n    edges.sort(key=lambda edge: edge.val)\n    init()\n    result_val = 0\n\n    for edge in edges:\n        x = find(edge.l)\n        y = find(edge.r)\n        if x != y:\n            result_val += edge.val\n            join(x, y)\n\n    return result_val\n\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    v = int(data[0])\n    e = int(data[1])\n\n    edges = []\n    index = 2\n    for _ in range(e):\n        v1 = int(data[index])\n        v2 = int(data[index + 1])\n        val = int(data[index + 2])\n        edges.append(Edge(v1, v2, val))\n        index += 3\n\n    result_val = kruskal(v, edges)\n    print(result_val)",
+          "description": "Python实现的Kruskal算法求解最小生成树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "拓展二",
+      "text": "此时我们已经讲完了 Kruskal 和 prim 两个解法来求最小生成树。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]); \n}\n\nvoid join(int u, int v) {\n    u = find(u); \n    v = find(v); \n    if (u == v) return ; \n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    init();\n\n    for (Edge edge : edges) {\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n        if (x != y) {\n            result_val += edge.val; \n            join(x, y);\n        }\n    }\n    cout << result_val << endl;\n    return 0;\n}",
+          "description": "使用C++实现的Kruskal算法，用于求解给定图的最小生成树。通过排序边并利用并查集来构建树。"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]); \n}\n\nvoid join(int u, int v) {\n    u = find(u); \n    v = find(v); \n    if (u == v) return ; \n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    vector<Edge> result; // 存储最小生成树的边\n\n    init();\n\n    for (Edge edge : edges) {\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n        if (x != y) {\n            result.push_back(edge); // 保存最小生成树的边\n            result_val += edge.val; \n            join(x, y);\n        }\n    }\n\n    // 打印最小生成树的边\n    for (Edge edge : result) {\n        cout << edge.l << \" - \" << edge.r << \" : \" << edge.val << endl;\n    }\n\n    return 0;\n}",
+          "description": "使用C++实现的Kruskal算法，除了计算最小生成树的总权重外，还输出构成该树的所有边。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\nclass Edge {\n    int l, r, val;\n    Edge(int l, int r, int val) {\n        this.l = l;\n        this.r = r;\n        this.val = val;\n    }\n}\npublic class Main {\n    private static int n = 10001;\n    private static int[] father = new int[n];\n\n    public static void init() {\n        for (int i = 0; i < n; i++) {\n            father[i] = i;\n        }\n    }\n\n    public static int find(int u) {\n        if (u == father[u]) return u;\n        return father[u] = find(father[u]);\n    }\n\n    public static void join(int u, int v) {\n        u = find(u);\n        v = find(v);\n        if (u == v) return;\n        father[v] = u;\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        List<Edge> edges = new ArrayList<>();\n        int result_val = 0;\n\n        for (int i = 0; i < e; i++) {\n            int v1 = scanner.nextInt();\n            int v2 = scanner.nextInt();\n            int val = scanner.nextInt();\n            edges.add(new Edge(v1, v2, val));\n        }\n\n        edges.sort(Comparator.comparingInt(edge -> edge.val));\n\n        init();\n\n        for (Edge edge : edges) {\n            int x = find(edge.l);\n            int y = find(edge.r);\n\n            if (x != y) {\n                result_val += edge.val;\n                join(x, y);\n            }\n        }\n        System.out.println(result_val);\n        scanner.close();\n    }\n}",
+          "description": "Java语言版本的Kruskal算法实现，功能与上述C++版本一致，用于求解图的最小生成树。"
+        },
+        {
+          "language": "python",
+          "code": "class Edge:\n    def __init__(self, l, r, val):\n        self.l = l\n        self.r = r\n        self.val = val\n\nn = 10001\nfather = list(range(n))\n\ndef init():\n    global father\n    father = list(range(n))\n\ndef find(u):\n    if u != father[u]:\n        father[u] = find(father[u])\n    return father[u]\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[v] = u\n\ndef kruskal(v, edges):\n    edges.sort(key=lambda edge: edge.val)\n    init()\n    result_val = 0\n\n    for edge in edges:\n        x = find(edge.l)\n        y = find(edge.r)\n        if x != y:\n            result_val += edge.val\n            join(x, y)\n\n    return result_val\n\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    v = int(data[0])\n    e = int(data[1])\n\n    edges = []\n    index = 2\n    for _ in range(e):\n        v1 = int(data[index])\n        v2 = int(data[index + 1])\n        val = int(data[index + 2])\n        edges.append(Edge(v1, v2, val))\n        index += 3\n\n    result_val = kruskal(v, edges)\n    print(result_val)",
+          "description": "Python语言版本的Kruskal算法实现，同样用于求解给定图的最小生成树问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "如果学过了并查集，其实 kruskal 比 prim更好理解一些。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]); \n}\n\nvoid join(int u, int v) {\n    u = find(u); \n    v = find(v); \n    if (u == v) return ; \n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    init();\n\n    for (Edge edge : edges) {\n\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n\n        if (x != y) {\n            result_val += edge.val; \n            join(x, y);\n        }\n    }\n    cout << result_val << endl;\n    return 0;\n}",
+          "description": "C++实现的Kruskal算法，用于求解最小生成树问题。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\nclass Edge {\n    int l, r, val;\n\n    Edge(int l, int r, int val) {\n        this.l = l;\n        this.r = r;\n        this.val = val;\n    }\n}\npublic class Main {\n    private static int n = 10001;\n    private static int[] father = new int[n];\n\n    public static void init() {\n        for (int i = 0; i < n; i++) {\n            father[i] = i;\n        }\n    }\n\n    public static int find(int u) {\n        if (u == father[u]) return u;\n        return father[u] = find(father[u]);\n    }\n\n    public static void join(int u, int v) {\n        u = find(u);\n        v = find(v);\n        if (u == v) return;\n        father[v] = u;\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        List<Edge> edges = new ArrayList<>();\n        int result_val = 0;\n\n        for (int i = 0; i < e; i++) {\n            int v1 = scanner.nextInt();\n            int v2 = scanner.nextInt();\n            int val = scanner.nextInt();\n            edges.add(new Edge(v1, v2, val));\n        }\n\n        edges.sort(Comparator.comparingInt(edge -> edge.val));\n\n        init();\n\n        for (Edge edge : edges) {\n            int x = find(edge.l);\n            int y = find(edge.r);\n\n            if (x != y) {\n                result_val += edge.val;\n                join(x, y);\n            }\n        }\n        System.out.println(result_val);\n        scanner.close();\n    }\n}",
+          "description": "Java实现的Kruskal算法，用于求解最小生成树问题。"
+        },
+        {
+          "language": "python",
+          "code": "class Edge:\n    def __init__(self, l, r, val):\n        self.l = l\n        self.r = r\n        self.val = val\n\nn = 10001\nfather = list(range(n))\n\ndef init():\n    global father\n    father = list(range(n))\n\ndef find(u):\n    if u != father[u]:\n        father[u] = find(father[u])\n    return father[u]\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[v] = u\n\ndef kruskal(v, edges):\n    edges.sort(key=lambda edge: edge.val)\n    init()\n    result_val = 0\n\n    for edge in edges:\n        x = find(edge.l)\n        y = find(edge.r)\n        if x != y:\n            result_val += edge.val\n            join(x, y)\n\n    return result_val\n\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    v = int(data[0])\n    e = int(data[1])\n\n    edges = []\n    index = 2\n    for _ in range(e):\n        v1 = int(data[index])\n        v2 = int(data[index + 1])\n        val = int(data[index + 2])\n        edges.append(Edge(v1, v2, val))\n        index += 3\n\n    result_val = kruskal(v, edges)\n    print(result_val)",
+          "description": "Python实现的Kruskal算法，用于求解最小生成树问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "import java.util.*; class Edge { int l, r, val; Edge(int l, int r, int val) { this.l = l; this.r = r; this.val = val; } } public class Main { private static int n = 10001; private static int[] father = new int[n]; public static void init() { for (int i = 0; i < n; i++) { father[i] = i; } } public static int find(int u) { if (u == father[u]) return u; return father[u] = find(father[u]); } public static void join(int u, int v) { u = find(u); v = find(v); if (u == v) return; father[v] = u; } public static void main(String[] args) { Scanner scanner = new Scanner(System.in); int v = scanner.nextInt(); int e = scanner.nextInt(); List<Edge> edges = new ArrayList<>(); int result_val = 0; for (int i = 0; i < e; i++) { int v1 = scanner.nextInt(); int v2 = scanner.nextInt(); int val = scanner.nextInt(); edges.add(new Edge(v1, v2, val)); } edges.sort(Comparator.comparingInt(edge -> edge.val)); init(); for (Edge edge : edges) { int x = find(edge.l); int y = find(edge.r); if (x != y) { result_val += edge.val; join(x, y); } } System.out.println(result_val); scanner.close(); } }",
+          "description": "Java实现Kruskal算法求最小生成树"
+        },
+        {
+          "language": "python",
+          "code": "class Edge: def __init__(self, l, r, val): self.l = l self.r = r self.val = val n = 10001 father = list(range(n)) def init(): global father father = list(range(n)) def find(u): if u != father[u]: father[u] = find(father[u]) return father[u] def join(u, v): u = find(u) v = find(v) if u != v: father[v] = u def kruskal(v, edges): edges.sort(key=lambda edge: edge.val) init() result_val = 0 for edge in edges: x = find(edge.l) y = find(edge.r) if x != y: result_val += edge.val join(x, y) return result_val if __name__ == \"__main__\": import sys input = sys.stdin.read data = input().split() v = int(data[0]) e = int(data[1]) edges = [] index = 2 for _ in range(e): v1 = int(data[index]) v2 = int(data[index + 1]) val = int(data[index + 2]) edges.append(Edge(v1, v2, val)) index += 3 result_val = kruskal(v, edges) print(result_val)",
+          "description": "Python实现Kruskal算法求最小生成树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "import java.util.*;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]);\n}\n\nvoid join(int u, int v) {\n    u = find(u);\n    v = find(v);\n    if (u == v) return;\n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    init();\n\n    for (Edge edge : edges) {\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n        if (x != y) {\n            result_val += edge.val;\n            join(x, y);\n        }\n    }\n    cout << result_val << endl;\n    return 0;\n}",
+          "description": "C++实现Kruskal算法求解最小生成树"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\nclass Edge {\n    int l, r, val;\n\n    Edge(int l, int r, int val) {\n        this.l = l;\n        this.r = r;\n        this.val = val;\n    }\n}\npublic class Main {\n    private static int n = 10001;\n    private static int[] father = new int[n];\n\n    public static void init() {\n        for (int i = 0; i < n; i++) {\n            father[i] = i;\n        }\n    }\n\n    public static int find(int u) {\n        if (u == father[u]) return u;\n        return father[u] = find(father[u]);\n    }\n\n    public static void join(int u, int v) {\n        u = find(u);\n        v = find(v);\n        if (u == v) return;\n        father[v] = u;\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        List<Edge> edges = new ArrayList<>();\n        int result_val = 0;\n\n        for (int i = 0; i < e; i++) {\n            int v1 = scanner.nextInt();\n            int v2 = scanner.nextInt();\n            int val = scanner.nextInt();\n            edges.add(new Edge(v1, v2, val));\n        }\n\n        edges.sort(Comparator.comparingInt(edge -> edge.val));\n\n        init();\n\n        for (Edge edge : edges) {\n            int x = find(edge.l);\n            int y = find(edge.r);\n\n            if (x != y) {\n                result_val += edge.val;\n                join(x, y);\n            }\n        }\n        System.out.println(result_val);\n        scanner.close();\n    }\n}",
+          "description": "Java实现Kruskal算法求解最小生成树"
+        },
+        {
+          "language": "python",
+          "code": "class Edge:\n    def __init__(self, l, r, val):\n        self.l = l\n        self.r = r\n        self.val = val\n\nn = 10001\nfather = list(range(n))\n\ndef init():\n    global father\n    father = list(range(n))\n\ndef find(u):\n    if u != father[u]:\n        father[u] = find(father[u])\n    return father[u]\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[v] = u\n\ndef kruskal(v, edges):\n    edges.sort(key=lambda edge: edge.val)\n    init()\n    result_val = 0\n\n    for edge in edges:\n        x = find(edge.l)\n        y = find(edge.r)\n        if x != y:\n            result_val += edge.val\n            join(x, y)\n\n    return result_val\n\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    v = int(data[0])\n    e = int(data[1])\n\n    edges = []\n    index = 2\n    for _ in range(e):\n        v1 = int(data[index])\n        v2 = int(data[index + 1])\n        val = int(data[index + 2])\n        edges.append(Edge(v1, v2, val))\n        index += 3\n\n    result_val = kruskal(v, edges)\n    print(result_val)",
+          "description": "Python实现Kruskal算法求解最小生成树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "class Edge:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]); \n}\n\nvoid join(int u, int v) {\n    u = find(u); \n    v = find(v); \n    if (u == v) return ; \n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    init();\n\n    for (Edge edge : edges) {\n\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n\n        if (x != y) {\n            result_val += edge.val; \n            join(x, y);\n        }\n    }\n    cout << result_val << endl;\n    return 0;\n}",
+          "description": "使用C++实现Kruskal算法求解最小生成树"
+        },
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]); \n}\n\nvoid join(int u, int v) {\n    u = find(u); \n    v = find(v); \n    if (u == v) return ; \n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    vector<Edge> result; // 存储最小生成树的边\n\n    init();\n\n    for (Edge edge : edges) {\n\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n\n        if (x != y) {\n            result.push_back(edge); // 保存最小生成树的边\n            result_val += edge.val; \n            join(x, y);\n        }\n    }\n\n    // 打印最小生成树的边\n    for (Edge edge : result) {\n        cout << edge.l << \" - \" << edge.r << \" : \" << edge.val << endl;\n    }\n\n    return 0;\n}",
+          "description": "扩展版C++代码，输出最小生成树的具体边"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.*;\nclass Edge {\n    int l, r, val;\n\n    Edge(int l, int r, int val) {\n        this.l = l;\n        this.r = r;\n        this.val = val;\n    }\n}\npublic class Main {\n    private static int n = 10001;\n    private static int[] father = new int[n];\n\n    public static void init() {\n        for (int i = 0; i < n; i++) {\n            father[i] = i;\n        }\n    }\n\n    public static int find(int u) {\n        if (u == father[u]) return u;\n        return father[u] = find(father[u]);\n    }\n\n    public static void join(int u, int v) {\n        u = find(u);\n        v = find(v);\n        if (u == v) return;\n        father[v] = u;\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        List<Edge> edges = new ArrayList<>();\n        int result_val = 0;\n\n        for (int i = 0; i < e; i++) {\n            int v1 = scanner.nextInt();\n            int v2 = scanner.nextInt();\n            int val = scanner.nextInt();\n            edges.add(new Edge(v1, v2, val));\n        }\n\n        edges.sort(Comparator.comparingInt(edge -> edge.val));\n\n        init();\n\n        for (Edge edge : edges) {\n            int x = find(edge.l);\n            int y = find(edge.r);\n\n            if (x != y) {\n                result_val += edge.val;\n                join(x, y);\n            }\n        }\n        System.out.println(result_val);\n        scanner.close();\n    }\n}",
+          "description": "使用Java实现Kruskal算法求解最小生成树"
+        },
+        {
+          "language": "python",
+          "code": "class Edge:\n    def __init__(self, l, r, val):\n        self.l = l\n        self.r = r\n        self.val = val\n\nn = 10001\nfather = list(range(n))\n\ndef init():\n    global father\n    father = list(range(n))\n\ndef find(u):\n    if u != father[u]:\n        father[u] = find(father[u])\n    return father[u]\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[v] = u\n\ndef kruskal(v, edges):\n    edges.sort(key=lambda edge: edge.val)\n    init()\n    result_val = 0\n\n    for edge in edges:\n        x = find(edge.l)\n        y = find(edge.r)\n        if x != y:\n            result_val += edge.val\n            join(x, y)\n\n    return result_val\n\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    v = int(data[0])\n    e = int(data[1])\n\n    edges = []\n    index = 2\n    for _ in range(e):\n        v1 = int(data[index])\n        v2 = int(data[index + 1])\n        val = int(data[index + 2])\n        edges.append(Edge(v1, v2, val))\n        index += 3\n\n    result_val = kruskal(v, edges)\n    print(result_val)",
+          "description": "使用Python实现Kruskal算法求解最小生成树"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\nint n = 10001;\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]); \n}\n\nvoid join(int u, int v) {\n    u = find(u); \n    v = find(v); \n    if (u == v) return ; \n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    init();\n\n    for (Edge edge : edges) {\n\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n\n        if (x != y) {\n            result_val += edge.val; \n            join(x, y);\n        }\n    }\n    cout << result_val << endl;\n    return 0;\n}",
+      "description": "C++实现的Kruskal算法，用于求解最小生成树问题。"
+    },
+    {
+      "language": "java",
+      "code": "import java.util.*;\nclass Edge {\n    int l, r, val;\n\n    Edge(int l, int r, int val) {\n        this.l = l;\n        this.r = r;\n        this.val = val;\n    }\n}\npublic class Main {\n    private static int n = 10001;\n    private static int[] father = new int[n];\n\n    public static void init() {\n        for (int i = 0; i < n; i++) {\n            father[i] = i;\n        }\n    }\n\n    public static int find(int u) {\n        if (u == father[u]) return u;\n        return father[u] = find(father[u]);\n    }\n\n    public static void join(int u, int v) {\n        u = find(u);\n        v = find(v);\n        if (u == v) return;\n        father[v] = u;\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        List<Edge> edges = new ArrayList<>();\n        int result_val = 0;\n\n        for (int i = 0; i < e; i++) {\n            int v1 = scanner.nextInt();\n            int v2 = scanner.nextInt();\n            int val = scanner.nextInt();\n            edges.add(new Edge(v1, v2, val));\n        }\n\n        edges.sort(Comparator.comparingInt(edge -> edge.val));\n\n        init();\n\n        for (Edge edge : edges) {\n            int x = find(edge.l);\n            int y = find(edge.r);\n\n            if (x != y) {\n                result_val += edge.val;\n                join(x, y);\n            }\n        }\n        System.out.println(result_val);\n        scanner.close();\n    }\n}",
+      "description": "Java实现的Kruskal算法，用于求解最小生成树问题。"
+    },
+    {
+      "language": "python",
+      "code": "class Edge:\n    def __init__(self, l, r, val):\n        self.l = l\n        self.r = r\n        self.val = val\n\nn = 10001\nfather = list(range(n))\n\ndef init():\n    global father\n    father = list(range(n))\n\ndef find(u):\n    if u != father[u]:\n        father[u] = find(father[u])\n    return father[u]\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[v] = u\n\ndef kruskal(v, edges):\n    edges.sort(key=lambda edge: edge.val)\n    init()\n    result_val = 0\n\n    for edge in edges:\n        x = find(edge.l)\n        y = find(edge.r)\n        if x != y:\n            result_val += edge.val\n            join(x, y)\n\n    return result_val\n\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    v = int(data[0])\n    e = int(data[1])\n\n    edges = []\n    index = 2\n    for _ in range(e):\n        v1 = int(data[index])\n        v2 = int(data[index + 1])\n        val = int(data[index + 2])\n        edges.append(Edge(v1, v2, val))\n        index += 3\n\n    result_val = kruskal(v, edges)\n    print(result_val)",
+      "description": "Python实现的Kruskal算法，用于求解最小生成树问题。"
+    }
+  ],
+  "common_mistakes": [
+    "没有正确初始化并查集，导致后续操作出错。",
+    "在实现并查集时忽略了路径压缩或按秩合并等优化措施，影响性能。",
+    "忘记对边进行排序，直接遍历可能导致结果不是最优解。",
+    "对于已经属于同一集合的节点再次执行合并操作，可能产生不必要的计算。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240111113514.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20240111113514.png",
+      "context": "该图展示了用于说明Kruskal算法工作过程的一个示例图形，其中边按照权值从小到大排序后依次被考虑加入最小生成树。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240111114204.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20240111114204.png",
+      "context": "这张图片展示了在生成树过程中，添加边(1,2)后节点1和节点2被绿色粗线连接表示它们处于同一集合的状态。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240111120458.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20240111120458.png",
+      "context": "该图片展示了在节点4和节点5之间添加边(4,5)后，将这两个节点放入同一个集合的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240112105834.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20240112105834.png",
+      "context": "这张图片展示了在选边(2,6)之后，由于节点2和节点6不在同一个集合中，因此将它们通过绿色粗线连接起来，并放入同一集合的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240112110214.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20240112110214.png",
+      "context": "该图片展示了在生成树中添加边(2,6)并将节点2和节点6合并到同一集合的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240112110450.png",
+      "description": "这张图片展示了一个加权无向图，节点间通过带权重的边连接，适用于最短路径或最小生成树等图算法分析。",
+      "context": "该图片展示了选边(3,4)后，将节点3和节点4添加到生成树中并放入同一集合的过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240112110637.png",
+      "description": "这张图片展示了一个加权无向图，节点间通过带权重的边连接，适用于最短路径或最小生成树等图算法分析。",
+      "context": "该图片展示了最终形成的最小生成树，其中包含了所有被选中且连接了不同集合节点的边。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240112110637.png",
+      "description": "这张图片展示了一个加权无向图，节点间通过带权重的边连接，适用于最短路径或最小生成树等图算法分析。",
+      "context": "该图片展示了最终形成的最小生成树，其中包含了所有成功添加的边及其连接的节点。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240116163014.png",
+      "description": "该图片展示了两种方法（模拟过程和代码生成）构建最小生成树的结果，体现了图论中Prim或Kruskal算法的应用。",
+      "context": "该图片展示了根据代码生成的最小生成树结果，与最初设想有所不同，特别指出节点5和节点7直接相连的情况，用以说明相同权值边排序顺序对最终生成树形态的影响。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240116152211.png",
+      "description": "这张图片展示了一个加权无向图的数据结构，包含七个节点和它们之间的连接权重。",
+      "context": "该图片展示了一个节点数量较多但边相对较少的图例，用以直观说明在某些情况下图可以是稀疏的，从而解释为什么在这样的图中使用Kruskal算法更为合适。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240111113514.png",
+      "description": "GIF展示了Kruskal算法执行过程，按照边的权值从小到大排序后依次选择边构建最小生成树，同时通过集合操作避免形成环。",
+      "context": "GIF动画展示了Kruskal算法如何从排序后的边列表中选择(1,2)这条边，并将其加入到最小生成树的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240111114204.png",
+      "description": "GIF展示了选取最小生成树过程中，边(4,5)被加入并连接节点4和节点5的情形。",
+      "context": "此GIF动画展示了如何从排序后的边列表中选择(1,2)这条边，并将其加入生成树中，同时将节点1和节点2合并到同一个集合的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240111120458.png",
+      "description": "GIF展示了在构建最小生成树过程中，通过连接不同集合中的节点(4,5)来逐步形成树结构的过程。",
+      "context": "该GIF展示了在算法执行过程中，选择边(4,5)后，由于节点4和节点5不在同一集合中，从而将这条边加入生成树，并用绿色粗线连接这两个节点表示它们现在属于同一个集合。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240112105834.png",
+      "description": "GIF展示了通过逐步选择边并将不在同一集合中的节点连接起来，构建最小生成树的过程。",
+      "context": "该GIF展示了在判断节点2和节点6不属于同一集合后，通过添加边(2,6)并将这两个节点合并到同一集合的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240112110214.png",
+      "description": "GIF展示了在构建最小生成树过程中，选取边(3,4)并将节点3和节点4合并到同一集合的操作。",
+      "context": "该GIF展示了在算法执行过程中，选择边(2,6)并将其添加到生成树中，同时将节点2和节点6合并到同一个集合的操作。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240112110450.png",
+      "description": "GIF展示了通过逐步选择边并将相关联的节点合并到同一集合中来构建最小生成树的过程。",
+      "context": "该GIF动画展示了在算法执行过程中，当选择边(3,4)时，由于节点3和节点4不在同一个集合中，因此将这条边添加到生成树中，并将这两个节点归并到同一集合的操作过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240112110637.png",
+      "description": "GIF展示了构建最小生成树过程中，边被逐步添加到生成树中并将相应节点合并到同一集合的动画过程。",
+      "context": "该GIF动画展示了在算法执行过程中，如何通过选择合适的边来逐步构建最小生成树的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240116163014.png",
+      "description": "GIF展示了使用Kruskal算法构建最小生成树的过程，通过逐步添加边来连接图中的节点。",
+      "context": "该GIF动画展示了由于边排序时相同权值边的顺序不同而导致生成的不同最小生成树结构。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240116152211.png",
+      "description": "GIF展示了在稀疏图中使用Kruskal算法逐步构建最小生成树的过程。",
+      "context": "此GIF动画展示了即使在节点数量相同的情况下，图中边的数量可以显著不同，从而直观地帮助理解为什么在稀疏图（边少）中Kruskal算法更优。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\最小生成树\\寻宝_kruskal.txt",
+  "extracted_at": "2025-07-21T23:36:06.521148",
+  "raw_content": "寻宝_kruskal\n\n卡码网：53. 寻宝(https://kamacoder.com/problempage.php?pid=1053)\n\n题目描述：\n\n在世界的某个区域，有一些分散的神秘岛屿，每个岛屿上都有一种珍稀的资源或者宝藏。国王打算在这些岛屿上建公路，方便运输。\n\n不同岛屿之间，路途距离不同，国王希望你可以规划建公路的方案，如何可以以最短的总公路距离将 所有岛屿联通起来。\n\n给定一张地图，其中包括了所有的岛屿，以及它们之间的距离。以最小化公路建设长度，确保可以链接到所有岛屿。\n\n输入描述：\n\n第一行包含两个整数V 和 E，V代表顶点数，E代表边数 。顶点编号是从1到V。例如：V=2，一个有两个顶点，分别是1和2。\n\n接下来共有 E 行，每行三个整数 v1，v2 和 val，v1 和 v2 为边的起点和终点，val代表边的权值。\n\n输出描述：\n\n输出联通所有岛屿的最小路径总距离\n\n输入示例：\n\n7 11\n1 2 1\n1 3 1\n1 5 2\n2 6 1\n2 4 2\n2 3 2\n3 4 1\n4 5 1\n5 6 2\n5 7 1\n6 7 1\n输出示例：\n\n6\n\n#解题思路\n在上一篇 我们讲解了 prim算法求解 最小生成树，本篇我们来讲解另一个算法：Kruskal，同样可以求最小生成树。\n\nprim 算法是维护节点的集合，而 Kruskal 是维护边的集合。\n\n上来就这么说，大家应该看不太懂，这里是先让大家有这么个印象，带着这个印象在看下文，理解的会更到位一些。\n\nkruscal的思路：\n\n边的权值排序，因为要优先选最小的边加入到生成树里\n遍历排序后的边\n如果边首尾的两个节点在同一个集合，说明如果连上这条边图中会出现环\n如果边首尾的两个节点不在同一个集合，加入到最小生成树，并把两个节点加入同一个集合\n下面我们画图举例说明kruscal的工作过程。\n\n依然以示例中，如下这个图来举例。\n\nhttps://file1.kamacoder.com/i/algo/20240111113514.png\n\n将图中的边按照权值有小到大排序，这样从贪心的角度来说，优先选 权值小的边加入到 最小生成树中。\n\n排序后的边顺序为[(1,2) (4,5) (1,3) (2,6) (3,4) (6,7) (5,7) (1,5) (3,2) (2,4) (5,6)]\n\n(1,2) 表示节点1 与 节点2 之间的边。权值相同的边，先后顺序无所谓。\n\n开始从头遍历排序后的边。\n\n选边(1,2)，节点1 和 节点2 不在同一个集合，所以生成树可以添加边(1,2)，并将 节点1，节点2 放在同一个集合。\n\nhttps://file1.kamacoder.com/i/algo/20240111114204.png\n\n选边(4,5)，节点4 和 节点 5 不在同一个集合，生成树可以添加边(4,5) ，并将节点4，节点5 放到同一个集合。\n\nhttps://file1.kamacoder.com/i/algo/20240111120458.png\n\n大家判断两个节点是否在同一个集合，就看图中两个节点是否有绿色的粗线连着就行\n\n（这里在强调一下，以下选边是按照上面排序好的边的数组来选择的）\n\n选边(1,3)，节点1 和 节点3 不在同一个集合，生成树添加边(1,3)，并将节点1，节点3 放到同一个集合。\n\nhttps://file1.kamacoder.com/i/algo/20240112105834.png\n\n选边(2,6)，节点2 和 节点6 不在同一个集合，生成树添加边(2,6)，并将节点2，节点6 放到同一个集合。\n\nhttps://file1.kamacoder.com/i/algo/20240112110214.png\n\n选边(3,4)，节点3 和 节点4 不在同一个集合，生成树添加边(3,4)，并将节点3，节点4 放到同一个集合。\n\nhttps://file1.kamacoder.com/i/algo/20240112110450.png\n\n选边(6,7)，节点6 和 节点7 不在同一个集合，生成树添加边(6,7)，并将 节点6，节点7 放到同一个集合。\nhttps://file1.kamacoder.com/i/algo/20240112110637.png\n\n\n选边(5,7)，节点5 和 节点7 在同一个集合，不做计算。\n\n选边(1,5)，两个节点在同一个集合，不做计算。\n\n后面遍历 边(3,2)，(2,4)，(5,6) 同理，都因两个节点已经在同一集合，不做计算。\n\n此时 我们就已经生成了一个最小生成树，即：\n\nhttps://file1.kamacoder.com/i/algo/20240112110637.png\n\n在上面的讲解中，看图的话 大家知道如何判断 两个节点 是否在同一个集合（是否有绿色的线连在一起），以及如何把两个节点加入集合（就在图中把两个节点连上）\n\n但在代码中，如果将两个节点加入同一个集合，又如何判断两个节点是否在同一个集合呢？\n\n这里就涉及到我们之前讲解的并查集。\n\n我们在并查集开篇的时候就讲了，并查集主要就两个功能：\n\n将两个元素添加到一个集合中\n判断两个元素在不在同一个集合\n大家发现这正好符合 Kruskal算法的需求，这也是为什么 我要先讲并查集，再讲 Kruskal。\n\n关于 并查集，我已经在并查集精讲 详细讲解过了，所以这里不再赘述，我们直接用。\n\n本题代码如下，已经详细注释：\n\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\n// l,r为 边两边的节点，val为边的数值\nstruct Edge {\n    int l, r, val;\n};\n\n// 节点数量\nint n = 10001;\n// 并查集标记节点关系的数组\nvector<int> father(n, -1); // 节点编号是从1开始的，n要大一些\n\n// 并查集初始化\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\n// 并查集的查找操作\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]); // 路径压缩\n}\n\n// 并查集的加入集合\nvoid join(int u, int v) {\n    u = find(u); // 寻找u的根\n    v = find(v); // 寻找v的根\n    if (u == v) return ; // 如果发现根相同，则说明在一个集合，不用两个节点相连直接返回\n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    // 执行Kruskal算法\n    // 按边的权值对边进行从小到大排序\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    // 并查集初始化\n    init();\n\n    // 从头开始遍历边\n    for (Edge edge : edges) {\n        // 并查集，搜出两个节点的祖先\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n        // 如果祖先不同，则不在同一个集合\n        if (x != y) {\n            result_val += edge.val; // 这条边可以作为生成树的边\n            join(x, y); // 两个节点加入到同一个集合\n        }\n    }\n    cout << result_val << endl;\n    return 0;\n}\n\n时间复杂度：nlogn （快排） + logn （并查集） ，所以最后依然是 nlogn 。n为边的数量。\n\n关于并查集时间复杂度，可以看我在 并查集理论基础 (opens new window)的讲解。\n\n#拓展一\n如果题目要求将最小生成树的边输出的话，应该怎么办呢？\n\nKruskal 算法 输出边的话，相对prim 要容易很多，因为 Kruskal 本来就是直接操作边，边的结构自然清晰，不用像 prim一样 需要再将节点连成线输出边 （因为prim是对节点操作，而 Kruskal是对边操作，这是本质区别）\n\n本题中，边的结构为：\n\nstruct Edge {\n    int l, r, val;\n};\n那么我们只需要找到 在哪里把生成树的边保存下来就可以了。\n\n当判断两个节点不在同一个集合的时候，这两个节点的边就加入到最小生成树， 所以添加边的操作在这里：\n\nvector<Edge> result; // 存储最小生成树的边\n// 如果祖先不同，则不在同一个集合\nif (x != y) {\n    result.push_back(edge); // 记录最小生成树的边\n    result_val += edge.val; // 这条边可以作为生成树的边\n    join(x, y); // 两个节点加入到同一个集合\n}\n整体代码如下，为了突出重点，我仅仅将 打印最小生成树的部分代码注释了，大家更容易看到哪些改动。\n\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Edge {\n    int l, r, val;\n};\n\n\nint n = 10001;\n\nvector<int> father(n, -1); \n\nvoid init() {\n    for (int i = 0; i < n; ++i) {\n        father[i] = i;\n    }\n}\n\nint find(int u) {\n    return u == father[u] ? u : father[u] = find(father[u]); \n}\n\nvoid join(int u, int v) {\n    u = find(u); \n    v = find(v); \n    if (u == v) return ; \n    father[v] = u;\n}\n\nint main() {\n\n    int v, e;\n    int v1, v2, val;\n    vector<Edge> edges;\n    int result_val = 0;\n    cin >> v >> e;\n    while (e--) {\n        cin >> v1 >> v2 >> val;\n        edges.push_back({v1, v2, val});\n    }\n\n    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n            return a.val < b.val;\n    });\n\n    vector<Edge> result; // 存储最小生成树的边\n\n    init();\n\n    for (Edge edge : edges) {\n\n        int x = find(edge.l);\n        int y = find(edge.r);\n\n\n        if (x != y) {\n            result.push_back(edge); // 保存最小生成树的边\n            result_val += edge.val; \n            join(x, y);\n        }\n    }\n\n    // 打印最小生成树的边\n    for (Edge edge : result) {\n        cout << edge.l << \" - \" << edge.r << \" : \" << edge.val << endl;\n    }\n\n    return 0;\n}\n\n\n按照题目中的示例，打印边的输出为：\n\n1 - 2 : 1\n1 - 3 : 1\n2 - 6 : 1\n3 - 4 : 1\n4 - 5 : 1\n5 - 7 : 1\n大家可能发现 怎么和我们 模拟画的图不一样，差别在于 代码生成的最小生成树中 节点5 和 节点7相连的。\n\nhttps://file1.kamacoder.com/i/algo/20240116163014.png\n\n其实造成这个差别 是对边排序的时候 权值相同的边先后顺序的问题导致的，无论相同权值边的顺序是什么样的，最后都能得出最小生成树。\n\n#拓展二\n此时我们已经讲完了 Kruskal 和 prim 两个解法来求最小生成树。\n\n什么情况用哪个算法更合适呢。\n\nKruskal 与 prim 的关键区别在于，prim维护的是节点的集合，而 Kruskal 维护的是边的集合。 如果 一个图中，节点多，但边相对较少，那么使用Kruskal 更优。\n\n有录友可能疑惑，一个图里怎么可能节点多，边却少呢？\n\n节点未必一定要连着边那， 例如 这个图，大家能明显感受到边没有那么多对吧，但节点数量 和 上述我们讲的例子是一样的。\n\nhttps://file1.kamacoder.com/i/algo/20240116152211.png\n\n为什么边少的话，使用 Kruskal 更优呢？\n\n因为 Kruskal 是对边进行排序的后 进行操作是否加入到最小生成树。\n\n边如果少，那么遍历操作的次数就少。\n\n在节点数量固定的情况下，图中的边越少，Kruskal 需要遍历的边也就越少。\n\n而 prim 算法是对节点进行操作的，节点数量越少，prim算法效率就越优。\n\n所以在 稀疏图中，用Kruskal更优。 在稠密图中，用prim算法更优。\n\n边数量较少为稀疏图，接近或等于完全图（所有节点皆相连）为稠密图\n\nPrim 算法 时间复杂度为 O(n^2)，其中 n 为节点数量，它的运行效率和图中边树无关，适用稠密图。\n\nKruskal算法 时间复杂度 为 nlogn，其中n 为边的数量，适用稀疏图。\n\n#总结\n如果学过了并查集，其实 kruskal 比 prim更好理解一些。\n\n本篇，我们依然通过模拟 Kruskal 算法的过程，来带大家一步步了解其工作过程。\n\n在 拓展一 中讲解了 如何输出最小生成树的边。\n\n在拓展二 中讲解了 prim 和 Kruskal的区别。\n\n录友们可以细细体会。\n\n#其他语言版本\n#Java\nimport java.util.*;\n\nclass Edge {\n    int l, r, val;\n\n    Edge(int l, int r, int val) {\n        this.l = l;\n        this.r = r;\n        this.val = val;\n    }\n}\n\npublic class Main {\n    private static int n = 10001;\n    private static int[] father = new int[n];\n\n    // 并查集初始化\n    public static void init() {\n        for (int i = 0; i < n; i++) {\n            father[i] = i;\n        }\n    }\n\n    // 并查集的查找操作\n    public static int find(int u) {\n        if (u == father[u]) return u;\n        return father[u] = find(father[u]);\n    }\n\n    // 并查集的加入集合\n    public static void join(int u, int v) {\n        u = find(u);\n        v = find(v);\n        if (u == v) return;\n        father[v] = u;\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int v = scanner.nextInt();\n        int e = scanner.nextInt();\n        List<Edge> edges = new ArrayList<>();\n        int result_val = 0;\n\n        for (int i = 0; i < e; i++) {\n            int v1 = scanner.nextInt();\n            int v2 = scanner.nextInt();\n            int val = scanner.nextInt();\n            edges.add(new Edge(v1, v2, val));\n        }\n\n        // 执行Kruskal算法\n        edges.sort(Comparator.comparingInt(edge -> edge.val));\n\n        // 并查集初始化\n        init();\n\n        // 从头开始遍历边\n        for (Edge edge : edges) {\n            int x = find(edge.l);\n            int y = find(edge.r);\n\n            if (x != y) {\n                result_val += edge.val;\n                join(x, y);\n            }\n        }\n        System.out.println(result_val);\n        scanner.close();\n    }\n}\n \n#Python\nclass Edge:\n    def __init__(self, l, r, val):\n        self.l = l\n        self.r = r\n        self.val = val\n\nn = 10001\nfather = list(range(n))\n\ndef init():\n    global father\n    father = list(range(n))\n\ndef find(u):\n    if u != father[u]:\n        father[u] = find(father[u])\n    return father[u]\n\ndef join(u, v):\n    u = find(u)\n    v = find(v)\n    if u != v:\n        father[v] = u\n\ndef kruskal(v, edges):\n    edges.sort(key=lambda edge: edge.val)\n    init()\n    result_val = 0\n\n    for edge in edges:\n        x = find(edge.l)\n        y = find(edge.r)\n        if x != y:\n            result_val += edge.val\n            join(x, y)\n\n    return result_val\n\nif __name__ == \"__main__\":\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n\n    v = int(data[0])\n    e = int(data[1])\n\n    edges = []\n    index = 2\n    for _ in range(e):\n        v1 = int(data[index])\n        v2 = int(data[index + 1])\n        val = int(data[index + 2])\n        edges.append(Edge(v1, v2, val))\n        index += 3\n\n    result_val = kruskal(v, edges)\n    print(result_val)"
+}

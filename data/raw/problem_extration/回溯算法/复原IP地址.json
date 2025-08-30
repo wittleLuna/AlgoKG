@@ -1,0 +1,285 @@
+{
+  "id": "AP_b7b97a8e",
+  "title": "复原IP地址",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/restore-ip-addresses/",
+  "description": "一个只包含数字的字符串，复原它并返回所有可能的 IP 地址格式。\n\n有效的 IP 地址 正好由四个整数（每个整数位于 0 到 255 之间组成，且不能含有前导 0），整数之间用 '.' 分隔。\n\n例如：\"0.1.2.201\" 和 \"192.168.1.1\" 是 有效的 IP 地址，但是 \"0.011.255.245\"、\"192.168.1.312\" 和 \"192.168@1.1\" 是 无效的 IP 地址。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "回溯",
+    "深度优先搜索"
+  ],
+  "data_structure_tags": [
+    "字符串"
+  ],
+  "technique_tags": [
+    "递归",
+    "剪枝"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过回溯算法搜索所有可能的IP地址格式。首先确定这是一个切割问题，利用回溯法来尝试所有可能的分割方式，并检查每个部分是否符合有效IP地址的标准。",
+  "key_insights": [
+    {
+      "content": "认识到题目要求从字符串中分割出有效的IP地址片段，这与经典的切割问题相似，可以使用递归和回溯的方法解决。"
+    },
+    {
+      "content": "通过记录已添加的点（'.'）数量来控制分割成四段的要求，确保不会超过四个数字段。"
+    },
+    {
+      "content": "对于每次分割后的子串，必须确认其值在0到255之间且不以0开头（除非是单独的0），以此保证形成的IP地址有效。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "做这道题目之前，最好先把131.分割回文串 (https://programmercarl.com/0131.%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.html)这个做了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<string> result;// 记录结果\n    // startIndex: 搜索的起始位置，pointNum:添加逗点的数量\n    void backtracking(string& s, int startIndex, int pointNum) {\n        if (pointNum == 3) { // 逗点数量为3时，分隔结束\n            // 判断第四段子字符串是否合法，如果合法就放进result中\n            if (isValid(s, startIndex, s.size() - 1)) {\n                result.push_back(s);\n            }\n            return;\n        }\n        for (int i = startIndex; i < s.size(); i++) {\n            if (isValid(s, startIndex, i)) { // 判断 [startIndex,i] 这个区间的子串是否合法\n                s.insert(s.begin() + i + 1 , '.');  // 在i的后面插入一个逗点\n                pointNum++;\n                backtracking(s, i + 2, pointNum);   // 插入逗点之后下一个子串的起始位置为i+2\n                pointNum--;                         // 回溯\n                s.erase(s.begin() + i + 1);         // 回溯删掉逗点\n            } else break; // 不合法，直接结束本层循环\n        }\n    }\n    // 判断字符串s在左闭右闭区间[start, end]所组成的数字是否合法\n    bool isValid(const string& s, int start, int end) {\n        if (start > end) {\n            return false;\n        }\n        if (s[start] == '0' && start != end) { // 0开头的数字不合法\n                return false;\n        }\n        int num = 0;\n        for (int i = start; i <= end; i++) {\n            if (s[i] > '9' || s[i] < '0') { // 遇到非数字字符不合法\n                return false;\n            }\n            num = num * 10 + (s[i] - '0');\n            if (num > 255) { // 如果大于255了不合法\n                return false;\n            }\n        }\n        return true;\n    }\npublic:\n    vector<string> restoreIpAddresses(string s) {\n        result.clear();\n        if (s.size() < 4 || s.size() > 12) return result; // 算是剪枝了\n        backtracking(s, 0, 0);\n        return result;\n    }\n};",
+          "description": "C++版本的复原IP地址解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<String> result = new ArrayList<>();\n\n    public List<String> restoreIpAddresses(String s) {\n        if (s.length() > 12) return result; // 算是剪枝了\n        backTrack(s, 0, 0);\n        return result;\n    }\n\n    // startIndex: 搜索的起始位置， pointNum:添加逗点的数量\n    private void backTrack(String s, int startIndex, int pointNum) {\n        if (pointNum == 3) {// 逗点数量为3时，分隔结束\n            // 判断第四段⼦字符串是否合法，如果合法就放进result中\n            if (isValid(s,startIndex,s.length()-1)) {\n                result.add(s);\n            }\n            return;\n        }\n        for (int i = startIndex; i < s.length(); i++) {\n            if (isValid(s, startIndex, i)) {\n                s = s.substring(0, i + 1) + \".\" + s.substring(i + 1);    //在str的后⾯插⼊⼀个逗点\n                pointNum++;\n                backTrack(s, i + 2, pointNum);// 插⼊逗点之后下⼀个⼦串的起始位置为i+2\n                pointNum--;// 回溯\n                s = s.substring(0, i + 1) + s.substring(i + 2);// 回溯删掉逗点\n            } else {\n                break;\n            }\n        }\n    }\n\n    // 判断字符串s在左闭⼜闭区间[start, end]所组成的数字是否合法\n    private Boolean isValid(String s, int start, int end) {\n        if (start > end) {\n            return false;\n        }\n        if (s.charAt(start) == '0' && start != end) { // 0开头的数字不合法\n            return false;\n        }\n        int num = 0;\n        for (int i = start; i <= end; i++) {\n            if (s.charAt(i) > '9' || s.charAt(i) < '0') { // 遇到⾮数字字符不合法\n                return false;\n            }\n            num = num * 10 + (s.charAt(i) - '0');\n            if (num > 255) { // 如果⼤于255了不合法\n                return false;\n            }\n        }\n        return true;\n    }\n}",
+          "description": "Java版本的复原IP地址解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<String> result = new ArrayList<>();\n    public List<String> restoreIpAddresses(String s) {\n        StringBuilder sb = new StringBuilder(s);\n        backTracking(sb, 0, 0);\n        return result;\n    }\n    private void backTracking(StringBuilder s, int startIndex, int dotCount){\n        if(dotCount == 3){\n            if(isValid(s, startIndex, s.length() - 1)){\n                result.add(s.toString());\n            }\n            return;\n        }\n        for(int i = startIndex; i < s.length(); i++){\n            if(isValid(s, startIndex, i)){\n                s.insert(i + 1, '.');\n                backTracking(s, i + 2, dotCount + 1);\n                s.deleteCharAt(i + 1);\n            }else{\n                break;\n            }\n        }\n    }\n    //[start, end]\n    private boolean isValid(StringBuilder s, int start, int end){\n        if(start > end)\n            return false;\n        if(s.charAt(start) == '0' && start != end)\n            return false;\n        int num = 0;\n        for(int i = start; i <= end; i++){\n            int digit = s.charAt(i) - '0';\n            num = num * 10 + digit;\n            if(num > 255)\n                return false;\n        }\n        return true;\n    }\n}",
+          "description": "优化后的Java版本的复原IP地址解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def restoreIpAddresses(self, s: str) -> List[str]:\n        result = []\n        self.backtracking(s, 0, 0, \"\", result)\n        return result\n\n    def backtracking(self, s, start_index, point_num, current, result):\n        if point_num == 3:  # 逗点数量为3时，分隔结束\n            if self.is_valid(s, start_index, len(s) - 1):  # 判断第四段子字符串是否合法\n                current += s[start_index:]  # 添加最后一段子字符串\n                result.append(current)\n            return\n\n        for i in range(start_index, len(s)):\n            if self.is_valid(s, start_index, i):  # 判断 [start_index, i] 这个区间的子串是否合法\n                sub = s[start_index:i + 1]\n                self.backtracking(s, i + 1, point_num + 1, current + sub + '.', result)\n            else:\n                break\n\n    def is_valid(self, s, start, end):\n        if start > end:\n            return False\n        if s[start] == '0' and start != end:  # 0开头的数字不合法\n            return False\n        num = 0\n        for i in range(start, end + 1):\n            if not s[i].isdigit():  # 遇到非数字字符不合法\n                return False\n            num = num * 10 + int(s[i])\n            if num > 255:  # 如果大于255了不合法\n                return False\n        return True",
+          "description": "Python版本一的复原IP地址解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def restoreIpAddresses(self, s: str) -> List[str]:\n        results = []\n        self.backtracking(s, 0, [], results)\n        return results\n\n    def backtracking(self, s, index, path, results):\n        if index == len(s) and len(path) == 4:\n            results.append('.'.join(path))\n            return\n\n        if len(path) > 4:  # 剪枝\n            return\n\n        for i in range(index, min(index + 3, len(s))):\n            if self.is_valid(s, index, i):\n                sub = s[index:i+1]\n                path.append(sub)\n                self.backtracking(s, i+1, path, results)\n                path.pop()\n\n    def is_valid(self, s, start, end):\n        if start > end:\n            return False\n        if s[start] == '0' and start != end:  # 0开头的数字不合法\n            return False\n        num = int(s[start:end+1])\n        return 0 <= num <= 255",
+          "description": "Python版本二的复原IP地址解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def restoreIpAddresses(self, s: str) -> List[str]:\n        result = []\n        self.backtracking(s, 0, [], result)\n        return result\n    \n    def backtracking(self, s, startIndex, path, result):\n        if startIndex == len(s):\n            result.append('.'.join(path[:]))\n            return\n        \n        for i in range(startIndex, min(startIndex+3, len(s))):\n            if i > startIndex and s[startIndex] == '0':\n                break\n            if (4 - len(path)) * 3 < len(s) - i or 4 - len(path) > len(s) - i:\n                break\n            if i - startIndex == 2:\n                if not int(s[startIndex:i+1]) <= 255:\n                    break\n            path.append(s[startIndex:i+1])\n            self.backtracking(s, i+1, path, result)\n            path.pop()",
+          "description": "Python版本三的复原IP地址解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "回溯三部曲",
+      "text": "递归参数",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<string> result;\n    void backtracking(string& s, int startIndex, int pointNum) {\n        if (pointNum == 3) {\n            if (isValid(s, startIndex, s.size() - 1)) {\n                result.push_back(s);\n            }\n            return;\n        }\n        for (int i = startIndex; i < s.size(); i++) {\n            if (isValid(s, startIndex, i)) {\n                s.insert(s.begin() + i + 1 , '.');\n                pointNum++;\n                backtracking(s, i + 2, pointNum);\n                pointNum--;\n                s.erase(s.begin() + i + 1);\n            } else break;\n        }\n    }\n    bool isValid(const string& s, int start, int end) {\n        if (start > end) return false;\n        if (s[start] == '0' && start != end) return false;\n        int num = 0;\n        for (int i = start; i <= end; i++) {\n            if (s[i] > '9' || s[i] < '0') return false;\n            num = num * 10 + (s[i] - '0');\n            if (num > 255) return false;\n        }\n        return true;\n    }\npublic:\n    vector<string> restoreIpAddresses(string s) {\n        result.clear();\n        if (s.size() < 4 || s.size() > 12) return result;\n        backtracking(s, 0, 0);\n        return result;\n    }\n};",
+          "description": "C++解决方案，使用回溯法解决复原IP地址问题。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<String> result = new ArrayList<>();\n    public List<String> restoreIpAddresses(String s) {\n        if (s.length() > 12) return result;\n        backTrack(s, 0, 0);\n        return result;\n    }\n    private void backTrack(String s, int startIndex, int pointNum) {\n        if (pointNum == 3) {\n            if (isValid(s, startIndex, s.length()-1)) {\n                result.add(s);\n            }\n            return;\n        }\n        for (int i = startIndex; i < s.length(); i++) {\n            if (isValid(s, startIndex, i)) {\n                s = s.substring(0, i + 1) + \".\" + s.substring(i + 1);\n                pointNum++;\n                backTrack(s, i + 2, pointNum);\n                pointNum--;\n                s = s.substring(0, i + 1) + s.substring(i + 2);\n            } else {\n                break;\n            }\n        }\n    }\n    private Boolean isValid(String s, int start, int end) {\n        if (start > end) return false;\n        if (s.charAt(start) == '0' && start != end) return false;\n        int num = 0;\n        for (int i = start; i <= end; i++) {\n            if (s.charAt(i) > '9' || s.charAt(i) < '0') return false;\n            num = num * 10 + (s.charAt(i) - '0');\n            if (num > 255) return false;\n        }\n        return true;\n    }\n}",
+          "description": "Java解决方案，同样采用回溯方法来找出所有可能的IP地址格式。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def restoreIpAddresses(self, s: str) -> List[str]:\n        result = []\n        self.backtracking(s, 0, 0, \"\", result)\n        return result\n\n    def backtracking(self, s, start_index, point_num, current, result):\n        if point_num == 3:\n            if self.is_valid(s, start_index, len(s) - 1):\n                current += s[start_index:]\n                result.append(current)\n            return\n\n        for i in range(start_index, len(s)):\n            if self.is_valid(s, start_index, i):\n                sub = s[start_index:i + 1]\n                self.backtracking(s, i + 1, point_num + 1, current + sub + '.', result)\n            else:\n                break\n\n    def is_valid(self, s, start, end):\n        if start > end: return False\n        if s[start] == '0' and start != end: return False\n        num = 0\n        for i in range(start, end + 1):\n            if not s[i].isdigit(): return False\n            num = num * 10 + int(s[i])\n            if num > 255: return False\n        return True",
+          "description": "Python版本的解决方案，利用回溯搜索算法来生成所有符合条件的IP地址。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "判断子串是否合法",
+      "text": "最后就是在写一个判断段位是否是有效段位了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<string> result;\n    void backtracking(string& s, int startIndex, int pointNum) {\n        if (pointNum == 3) {\n            if (isValid(s, startIndex, s.size() - 1)) {\n                result.push_back(s);\n            }\n            return;\n        }\n        for (int i = startIndex; i < s.size(); i++) {\n            if (isValid(s, startIndex, i)) {\n                s.insert(s.begin() + i + 1 , '.');\n                pointNum++;\n                backtracking(s, i + 2, pointNum);\n                pointNum--;\n                s.erase(s.begin() + i + 1);\n            } else break;\n        }\n    }\n    bool isValid(const string& s, int start, int end) {\n        if (start > end) {\n            return false;\n        }\n        if (s[start] == '0' && start != end) {\n            return false;\n        }\n        int num = 0;\n        for (int i = start; i <= end; i++) {\n            if (s[i] > '9' || s[i] < '0') {\n                return false;\n            }\n            num = num * 10 + (s[i] - '0');\n            if (num > 255) {\n                return false;\n            }\n        }\n        return true;\n    }\npublic:\n    vector<string> restoreIpAddresses(string s) {\n        result.clear();\n        if (s.size() < 4 || s.size() > 12) return result;\n        backtracking(s, 0, 0);\n        return result;\n    }\n};",
+          "description": "C++实现的IP地址复原算法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<String> result = new ArrayList<>();\n    public List<String> restoreIpAddresses(String s) {\n        if (s.length() > 12) return result;\n        backTrack(s, 0, 0);\n        return result;\n    }\n    private void backTrack(String s, int startIndex, int pointNum) {\n        if (pointNum == 3) {\n            if (isValid(s, startIndex, s.length() - 1)) {\n                result.add(s);\n            }\n            return;\n        }\n        for (int i = startIndex; i < s.length(); i++) {\n            if (isValid(s, startIndex, i)) {\n                s = s.substring(0, i + 1) + \".\" + s.substring(i + 1);\n                pointNum++;\n                backTrack(s, i + 2, pointNum);\n                pointNum--;\n                s = s.substring(0, i + 1) + s.substring(i + 2);\n            } else {\n                break;\n            }\n        }\n    }\n    private Boolean isValid(String s, int start, int end) {\n        if (start > end) {\n            return false;\n        }\n        if (s.charAt(start) == '0' && start != end) {\n            return false;\n        }\n        int num = 0;\n        for (int i = start; i <= end; i++) {\n            if (s.charAt(i) > '9' || s.charAt(i) < '0') {\n                return false;\n            }\n            num = num * 10 + (s.charAt(i) - '0');\n            if (num > 255) {\n                return false;\n            }\n        }\n        return true;\n    }\n}",
+          "description": "Java实现的IP地址复原算法，使用了StringBuilder来优化性能"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def restoreIpAddresses(self, s: str) -> List[str]:\n        result = []\n        self.backtracking(s, 0, 0, \"\", result)\n        return result\n\n    def backtracking(self, s, start_index, point_num, current, result):\n        if point_num == 3:\n            if self.is_valid(s, start_index, len(s) - 1):\n                current += s[start_index:]\n                result.append(current)\n            return\n\n        for i in range(start_index, len(s)):\n            if self.is_valid(s, start_index, i):\n                sub = s[start_index:i + 1]\n                self.backtracking(s, i + 1, point_num + 1, current + sub + '.', result)\n            else:\n                break\n\n    def is_valid(self, s, start, end):\n        if start > end:\n            return False\n        if s[start] == '0' and start != end:\n            return False\n        num = 0\n        for i in range(start, end + 1):\n            if not s[i].isdigit():\n                return False\n            num = num * 10 + int(s[i])\n            if num > 255:\n                return False\n        return True",
+          "description": "Python版本的IP地址复原算法，采用回溯法进行求解"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "在131.分割回文串 (https://programmercarl.com/0131.%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.html)中我列举的分割字符串的难点，本题都覆盖了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<string> result; void backtracking(string& s, int startIndex, int pointNum) { if (pointNum == 3) { if (isValid(s, startIndex, s.size() - 1)) { result.push_back(s); } return; } for (int i = startIndex; i < s.size(); i++) { if (isValid(s, startIndex, i)) { s.insert(s.begin() + i + 1 , '.'); pointNum++; backtracking(s, i + 2, pointNum); pointNum--; s.erase(s.begin() + i + 1); } else break; }} bool isValid(const string& s, int start, int end) { if (start > end) { return false; } if (s[start] == '0' && start != end) { return false; } int num = 0; for (int i = start; i <= end; i++) { if (s[i] > '9' || s[i] < '0') { return false; } num = num * 10 + (s[i] - '0'); if (num > 255) { return false; }} return true; } public: vector<string> restoreIpAddresses(string s) { result.clear(); if (s.size() < 4 || s.size() > 12) return result; backtracking(s, 0, 0); return result; }};",
+          "description": "C++实现的IP地址复原算法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {List<String> result = new ArrayList<>(); public List<String> restoreIpAddresses(String s) { if (s.length() > 12) return result; backTrack(s, 0, 0); return result; } private void backTrack(String s, int startIndex, int pointNum) { if (pointNum == 3) { if (isValid(s, startIndex, s.length()-1)) { result.add(s); } return; } for (int i = startIndex; i < s.length(); i++) { if (isValid(s, startIndex, i)) { s = s.substring(0, i + 1) + \".\" + s.substring(i + 1); pointNum++; backTrack(s, i + 2, pointNum); pointNum--; s = s.substring(0, i + 1) + s.substring(i + 2); } else { break; }}} private Boolean isValid(String s, int start, int end) { if (start > end) { return false; } if (s.charAt(start) == '0' && start != end) { return false; } int num = 0; for (int i = start; i <= end; i++) { if (s.charAt(i) > '9' || s.charAt(i) < '0') { return false; } num = num * 10 + (s.charAt(i) - '0'); if (num > 255) { return false; }} return true; }};",
+          "description": "Java实现的IP地址复原算法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def restoreIpAddresses(self, s: str) -> List[str]: result = [] self.backtracking(s, 0, 0, '', result) return result def backtracking(self, s, start_index, point_num, current, result): if point_num == 3: if self.is_valid(s, start_index, len(s) - 1): current += s[start_index:] result.append(current) return for i in range(start_index, len(s)): if self.is_valid(s, start_index, i): sub = s[start_index:i + 1] self.backtracking(s, i + 1, point_num + 1, current + sub + '.', result) else: break def is_valid(self, s, start, end): if start > end: return False if s[start] == '0' and start != end: return False num = 0 for i in range(start, end + 1): if not s[i].isdigit(): return False num = num * 10 + int(s[i]) if num > 255: return False return True",
+          "description": "Python实现的IP地址复原算法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution {List<String> result = new ArrayList<>(); public List<String> restoreIpAddresses(String s) {if (s.length() > 12) return result; backTrack(s, 0, 0); return result;} private void backTrack(String s, int startIndex, int pointNum) {if (pointNum == 3) {if (isValid(s,startIndex,s.length()-1)) {result.add(s);}return;} for (int i = startIndex; i < s.length(); i++) {if (isValid(s, startIndex, i)) {s = s.substring(0, i + 1) + \".\" + s.substring(i + 1); pointNum++; backTrack(s, i + 2, pointNum); pointNum--; s = s.substring(0, i + 1) + s.substring(i + 2);} else {break;}}} private Boolean isValid(String s, int start, int end) {if (start > end) {return false;} if (s.charAt(start) == '0' && start != end) {return false;} int num = 0; for (int i = start; i <= end; i++) {if (s.charAt(i) > '9' || s.charAt(i) < '0') {return false;} num = num * 10 + (s.charAt(i) - '0'); if (num > 255) {return false;}} return true;}}",
+          "description": "Java实现的IP地址复原算法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {List<String> result = new ArrayList<>(); public List<String> restoreIpAddresses(String s) {StringBuilder sb = new StringBuilder(s); backTracking(sb, 0, 0); return result;} private void backTracking(StringBuilder s, int startIndex, int dotCount){if(dotCount == 3){if(isValid(s, startIndex, s.length() - 1)){result.add(s.toString());}return;} for(int i = startIndex; i < s.length(); i++){if(isValid(s, startIndex, i)){s.insert(i + 1, '.'); backTracking(s, i + 2, dotCount + 1); s.deleteCharAt(i + 1);}else{break;}}} private boolean isValid(StringBuilder s, int start, int end){if(start > end) return false;if(s.charAt(start) == '0' && start != end) return false;int num = 0;for(int i = start; i <= end; i++){int digit = s.charAt(i) - '0';num = num * 10 + digit;if(num > 255) return false;}return true;}}",
+          "description": "使用StringBuilder优化时间和空间复杂度的Java实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {List<String> result = new ArrayList<String>();StringBuilder stringBuilder = new StringBuilder();public List<String> restoreIpAddresses(String s) {restoreIpAddressesHandler(s, 0, 0);return result;}public void restoreIpAddressesHandler(String s, int start, int number) {if (start == s.length() && number == 4) {result.add(stringBuilder.toString());return;}if (start == s.length() || number == 4) {return;}for (int i = start; i < s.length() && i - start < 3 && Integer.parseInt(s.substring(start, i + 1)) >= 0 && Integer.parseInt(s.substring(start, i + 1)) <= 255; i++) {if (i + 1 - start > 1 && s.charAt(start) - '0' == 0) {break;}stringBuilder.append(s.substring(start, i + 1));if (number < 3) {stringBuilder.append(\".\");}number++;restoreIpAddressesHandler(s, i + 1, number);number--;stringBuilder.delete(start + number, i + number + 2);}}}",
+          "description": "进一步剪枝优化时间复杂度的Java版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def restoreIpAddresses(self, s: str) -> List[str]: result = [] self.backtracking(s, 0, 0, '', result) return result def backtracking(self, s, start_index, point_num, current, result): if point_num == 3: if self.is_valid(s, start_index, len(s) - 1): current += s[start_index:] result.append(current) return for i in range(start_index, len(s)): if self.is_valid(s, start_index, i): sub = s[start_index:i + 1] self.backtracking(s, i + 1, point_num + 1, current + sub + '.', result) else: break def is_valid(self, s, start, end): if start > end: return False if s[start] == '0' and start != end: return False num = 0 for i in range(start, end + 1): if not s[i].isdigit(): return False num = num * 10 + int(s[i]) if num > 255: return False return True",
+          "description": "Python回溯法解决IP地址复原问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def restoreIpAddresses(self, s: str) -> List[str]: results = [] self.backtracking(s, 0, [], results) return results def backtracking(self, s, index, path, results): if index == len(s) and len(path) == 4: results.append('.'.join(path)) return if len(path) > 4: return for i in range(index, min(index + 3, len(s))): if self.is_valid(s, index, i): sub = s[index:i+1] path.append(sub) self.backtracking(s, i+1, path, results) path.pop() def is_valid(self, s, start, end): if start > end: return False if s[start] == '0' and start != end: return False num = int(s[start:end+1]) return 0 <= num <= 255",
+          "description": "另一种Python回溯方法实现IP地址复原"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def restoreIpAddresses(self, s: str) -> List[str]: result = [] self.backtracking(s, 0, [], result) return result def backtracking(self, s, startIndex, path, result): if startIndex == len(s): result.append('.'.join(path[:])) return for i in range(startIndex, min(startIndex+3, len(s))): if i > startIndex and s[startIndex] == '0': break if (4 - len(path)) * 3 < len(s) - i or 4 - len(path) > len(s) - i: break if i - startIndex == 2: if not int(s[startIndex:i+1]) <= 255: break path.append(s[startIndex:i+1]) self.backtracking(s, i+1, path, result) path.pop()",
+          "description": "第三种Python实现方式，通过更严格的条件控制进行剪枝"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<string> result;// 记录结果\n    // startIndex: 搜索的起始位置，pointNum:添加逗点的数量\n    void backtracking(string& s, int startIndex, int pointNum) {\n        if (pointNum == 3) { // 逗点数量为3时，分隔结束\n            // 判断第四段子字符串是否合法，如果合法就放进result中\n            if (isValid(s, startIndex, s.size() - 1)) {\n                result.push_back(s);\n            }\n            return;\n        }\n        for (int i = startIndex; i < s.size(); i++) {\n            if (isValid(s, startIndex, i)) { // 判断 [startIndex,i] 这个区间的子串是否合法\n                s.insert(s.begin() + i + 1 , '.');  // 在i的后面插入一个逗点\n                pointNum++;\n                backtracking(s, i + 2, pointNum);   // 插入逗点之后下一个子串的起始位置为i+2\n                pointNum--;                         // 回溯\n                s.erase(s.begin() + i + 1);         // 回溯删掉逗点\n            } else break; // 不合法，直接结束本层循环\n        }\n    }\n    // 判断字符串s在左闭右闭区间[start, end]所组成的数字是否合法\n    bool isValid(const string& s, int start, int end) {\n        if (start > end) {\n            return false;\n        }\n        if (s[start] == '0' && start != end) { // 0开头的数字不合法\n                return false;\n        }\n        int num = 0;\n        for (int i = start; i <= end; i++) {\n            if (s[i] > '9' || s[i] < '0') { // 遇到非数字字符不合法\n                return false;\n            }\n            num = num * 10 + (s[i] - '0');\n            if (num > 255) { // 如果大于255了不合法\n                return false;\n            }\n        }\n        return true;\n    }\npublic:\n    vector<string> restoreIpAddresses(string s) {\n        result.clear();\n        if (s.size() < 4 || s.size() > 12) return result; // 算是剪枝了\n        backtracking(s, 0, 0);\n        return result;\n    }\n};",
+          "description": "C++实现的复原IP地址问题解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<String> result = new ArrayList<>();\n\n    public List<String> restoreIpAddresses(String s) {\n        if (s.length() > 12) return result; // 算是剪枝了\n        backTrack(s, 0, 0);\n        return result;\n    }\n\n    // startIndex: 搜索的起始位置， pointNum:添加逗点的数量\n    private void backTrack(String s, int startIndex, int pointNum) {\n        if (pointNum == 3) {// 逗点数量为3时，分隔结束\n            // 判断第四段⼦字符串是否合法，如果合法就放进result中\n            if (isValid(s,startIndex,s.length()-1)) {\n                result.add(s);\n            }\n            return;\n        }\n        for (int i = startIndex; i < s.length(); i++) {\n            if (isValid(s, startIndex, i)) {\n                s = s.substring(0, i + 1) + \".\" + s.substring(i + 1);    //在str的后⾯插⼊⼀个逗点\n                pointNum++;\n                backTrack(s, i + 2, pointNum);// 插⼊逗点之后下⼀个⼦串的起始位置为i+2\n                pointNum--;// 回溯\n                s = s.substring(0, i + 1) + s.substring(i + 2);// 回溯删掉逗点\n            } else {\n                break;\n            }\n        }\n    }\n\n    // 判断字符串s在左闭⼜闭区间[start, end]所组成的数字是否合法\n    private Boolean isValid(String s, int start, int end) {\n        if (start > end) {\n            return false;\n        }\n        if (s.charAt(start) == '0' && start != end) { // 0开头的数字不合法\n            return false;\n        }\n        int num = 0;\n        for (int i = start; i <= end; i++) {\n            if (s.charAt(i) > '9' || s.charAt(i) < '0') { // 遇到⾮数字字符不合法\n                return false;\n            }\n            num = num * 10 + (s.charAt(i) - '0');\n            if (num > 255) { // 如果⼤于255了不合法\n                return false;\n            }\n        }\n        return true;\n    }\n}",
+          "description": "Java实现的复原IP地址问题解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def restoreIpAddresses(self, s: str) -> List[str]:\n        result = []\n        self.backtracking(s, 0, 0, \"\", result)\n        return result\n\n    def backtracking(self, s, start_index, point_num, current, result):\n        if point_num == 3:  # 逗点数量为3时，分隔结束\n            if self.is_valid(s, start_index, len(s) - 1):  # 判断第四段子字符串是否合法\n                current += s[start_index:]  # 添加最后一段子字符串\n                result.append(current)\n            return\n\n        for i in range(start_index, len(s)):\n            if self.is_valid(s, start_index, i):  # 判断 [start_index, i] 这个区间的子串是否合法\n                sub = s[start_index:i + 1]\n                self.backtracking(s, i + 1, point_num + 1, current + sub + '.', result)\n            else:\n                break\n\n    def is_valid(self, s, start, end):\n        if start > end:\n            return False\n        if s[start] == '0' and start != end:  # 0开头的数字不合法\n            return False\n        num = 0\n        for i in range(start, end + 1):\n            if not s[i].isdigit():  # 遇到非数字字符不合法\n                return False\n            num = num * 10 + int(s[i])\n            if num > 255:  # 如果大于255了不合法\n                return False\n        return True",
+          "description": "Python实现的复原IP地址问题解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "回溯（版本一）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    vector<string> result;\n    void backtracking(string& s, int startIndex, int pointNum) {\n        if (pointNum == 3) { \n            if (isValid(s, startIndex, s.size() - 1)) {\n                result.push_back(s);\n            }\n            return;\n        }\n        for (int i = startIndex; i < s.size(); i++) {\n            if (isValid(s, startIndex, i)) {\n                s.insert(s.begin() + i + 1 , '.');\n                pointNum++;\n                backtracking(s, i + 2, pointNum);\n                pointNum--;\n                s.erase(s.begin() + i + 1);\n            } else break;\n        }\n    }\n    bool isValid(const string& s, int start, int end) {\n        if (start > end) {\n            return false;\n        }\n        if (s[start] == '0' && start != end) {\n            return false;\n        }\n        int num = 0;\n        for (int i = start; i <= end; i++) {\n            if (s[i] > '9' || s[i] < '0') {\n                return false;\n            }\n            num = num * 10 + (s[i] - '0');\n            if (num > 255) {\n                return false;\n            }\n        }\n        return true;\n    }\npublic:\n    vector<string> restoreIpAddresses(string s) {\n        result.clear();\n        if (s.size() < 4 || s.size() > 12) return result;\n        backtracking(s, 0, 0);\n        return result;\n    }\n};",
+          "description": "C++实现的恢复IP地址问题，使用回溯算法。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    List<String> result = new ArrayList<>();\n    public List<String> restoreIpAddresses(String s) {\n        if (s.length() > 12) return result;\n        backTrack(s, 0, 0);\n        return result;\n    }\n    private void backTrack(String s, int startIndex, int pointNum) {\n        if (pointNum == 3) {\n            if (isValid(s, startIndex, s.length() - 1)) {\n                result.add(s);\n            }\n            return;\n        }\n        for (int i = startIndex; i < s.length(); i++) {\n            if (isValid(s, startIndex, i)) {\n                s = s.substring(0, i + 1) + \".\" + s.substring(i + 1);\n                pointNum++;\n                backTrack(s, i + 2, pointNum);\n                pointNum--;\n                s = s.substring(0, i + 1) + s.substring(i + 2);\n            } else {\n                break;\n            }\n        }\n    }\n    private Boolean isValid(String s, int start, int end) {\n        if (start > end) {\n            return false;\n        }\n        if (s.charAt(start) == '0' && start != end) {\n            return false;\n        }\n        int num = 0;\n        for (int i = start; i <= end; i++) {\n            if (s.charAt(i) > '9' || s.charAt(i) < '0') {\n                return false;\n            }\n            num = num * 10 + (s.charAt(i) - '0');\n            if (num > 255) {\n                return false;\n            }\n        }\n        return true;\n    }\n}",
+          "description": "Java版本的解决方法，通过回溯算法来复原IP地址。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def restoreIpAddresses(self, s: str) -> list:\n        result = []\n        self.backtracking(s, 0, 0, '', result)\n        return result\n\n    def backtracking(self, s, start_index, point_num, current, result):\n        if point_num == 3:\n            if self.is_valid(s, start_index, len(s) - 1):\n                current += s[start_index:]\n                result.append(current)\n            return\n\n        for i in range(start_index, len(s)):\n            if self.is_valid(s, start_index, i):\n                sub = s[start_index:i + 1]\n                self.backtracking(s, i + 1, point_num + 1, current + sub + '.', result)\n            else:\n                break\n\n    def is_valid(self, s, start, end):\n        if start > end:\n            return False\n        if s[start] == '0' and start != end:\n            return False\n        num = 0\n        for i in range(start, end + 1):\n            if not s[i].isdigit():\n                return False\n            num = num * 10 + int(s[i])\n            if num > 255:\n                return False\n        return True",
+          "description": "Python版的解决方案，采用回溯算法来找出所有可能的IP地址组合。"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(3^4)",
+    "space_complexity": "O(n)",
+    "explanation": "IP地址最多包含4个数字，每个数字最多有3种可能的分割方式，则搜索树的最大深度为4，每个节点最多有3个子节点。"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {private: vector<string> result; void backtracking(string& s, int startIndex, int pointNum) { if (pointNum == 3) { if (isValid(s, startIndex, s.size() - 1)) { result.push_back(s); } return; } for (int i = startIndex; i < s.size(); i++) { if (isValid(s, startIndex, i)) { s.insert(s.begin() + i + 1 , '.'); pointNum++; backtracking(s, i + 2, pointNum); pointNum--; s.erase(s.begin() + i + 1); } else break; } } bool isValid(const string& s, int start, int end) { if (start > end) { return false; } if (s[start] == '0' && start != end) { return false; } int num = 0; for (int i = start; i <= end; i++) { if (s[i] > '9' || s[i] < '0') { return false; } num = num * 10 + (s[i] - '0'); if (num > 255) { return false; } } return true; } public: vector<string> restoreIpAddresses(string s) { result.clear(); if (s.size() < 4 || s.size() > 12) return result; backtracking(s, 0, 0); return result; }};",
+      "description": "C++实现的IP地址复原算法"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {List<String> result = new ArrayList<>(); public List<String> restoreIpAddresses(String s) { if (s.length() > 12) return result; backTrack(s, 0, 0); return result; } private void backTrack(String s, int startIndex, int pointNum) { if (pointNum == 3) { if (isValid(s,startIndex,s.length()-1)) { result.add(s); } return; } for (int i = startIndex; i < s.length(); i++) { if (isValid(s, startIndex, i)) { s = s.substring(0, i + 1) + \".\" + s.substring(i + 1); pointNum++; backTrack(s, i + 2, pointNum); pointNum--; s = s.substring(0, i + 1) + s.substring(i + 2); } else { break; } } } private Boolean isValid(String s, int start, int end) { if (start > end) { return false; } if (s.charAt(start) == '0' && start != end) { return false; } int num = 0; for (int i = start; i <= end; i++) { if (s.charAt(i) > '9' || s.charAt(i) < '0') { return false; } num = num * 10 + (s.charAt(i) - '0'); if (num > 255) { return false; } } return true; }}",
+      "description": "Java实现的IP地址复原算法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def restoreIpAddresses(self, s: str) -> List[str]: result = [] self.backtracking(s, 0, 0, \"\", result) return result def backtracking(self, s, start_index, point_num, current, result): if point_num == 3: if self.is_valid(s, start_index, len(s) - 1): current += s[start_index:] result.append(current) return for i in range(start_index, len(s)): if self.is_valid(s, start_index, i): sub = s[start_index:i + 1] self.backtracking(s, i + 1, point_num + 1, current + sub + '.', result) else: break def is_valid(self, s, start, end): if start > end: return False if s[start] == '0' and start != end: return False num = 0 for i in range(start, end + 1): if not s[i].isdigit(): return False num = num * 10 + int(s[i]) if num > 255: return False return True",
+      "description": "Python实现的IP地址复原算法"
+    }
+  ],
+  "common_mistakes": [
+    "未正确处理前导零的情况。",
+    "忽视了IP地址各段不能超出255的限制。",
+    "没有考虑完整的分割情况，即最后也需要验证第四段是否合规。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201123203735933.png",
+      "description": "这张图片展示了一个基于字符串分割的递归算法过程，用于验证和生成合法的IP地址格式。",
+      "context": "该图展示了如何将切割问题抽象为树型结构，帮助理解使用回溯搜索法解决此类问题的方法。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201123203735933-20230310132314109.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20201123203735933-20230310132314109.png",
+      "context": "该图片展示了在字符串分割过程中，当子串不合法时剪掉的分支情况。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201123203735933.png",
+      "description": "GIF展示了回溯算法在解决分割问题时的递归调用过程，通过树型结构逐步探索所有可能的分割方式。",
+      "context": "GIF动画展示了如何将切割问题抽象为树型结构，帮助理解回溯搜索法在解决此类问题时的工作原理。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201123203735933-20230310132314109.png",
+      "description": "GIF展示了在分割字符串过程中，通过递归与回溯方法探索所有可能的回文子串分割方式，并使用点号作为分隔符标记有效分割的过程。",
+      "context": "GIF动画展示了在字符串分割过程中，当子串不合法时剪枝（即结束当前层循环）的具体操作。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\回溯算法\\复原IP地址.txt",
+  "extracted_at": "2025-07-21T10:46:04.600650",
+  "raw_content": "复原IP地址\n力扣题目链接(https://leetcode.cn/problems/restore-ip-addresses/)\n\n给定一个只包含数字的字符串，复原它并返回所有可能的 IP 地址格式。\n\n有效的 IP 地址 正好由四个整数（每个整数位于 0 到 255 之间组成，且不能含有前导 0），整数之间用 '.' 分隔。\n\n例如：\"0.1.2.201\" 和 \"192.168.1.1\" 是 有效的 IP 地址，但是 \"0.011.255.245\"、\"192.168.1.312\" 和 \"192.168@1.1\" 是 无效的 IP 地址。\n\n示例 1：\n\n输入：s = \"25525511135\"\n输出：[\"255.255.11.135\",\"255.255.111.35\"]\n示例 2：\n\n输入：s = \"0000\"\n输出：[\"0.0.0.0\"]\n示例 3：\n\n输入：s = \"1111\"\n输出：[\"1.1.1.1\"]\n示例 4：\n\n输入：s = \"010010\"\n输出：[\"0.10.0.10\",\"0.100.1.0\"]\n示例 5：\n\n输入：s = \"101023\"\n输出：[\"1.0.10.23\",\"1.0.102.3\",\"10.1.0.23\",\"10.10.2.3\",\"101.0.2.3\"]\n提示：\n\n0 <= s.length <= 3000\ns 仅由数字组成\n\n\n#思路\n做这道题目之前，最好先把131.分割回文串 (https://programmercarl.com/0131.%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.html)这个做了。\n\n这道题目相信大家刚看的时候，应该会一脸茫然。\n\n其实只要意识到这是切割问题，切割问题就可以使用回溯搜索法把所有可能性搜出来，和刚做过的131.分割回文串 (https://programmercarl.com/0131.%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.html)就十分类似了。\n\n切割问题可以抽象为树型结构，如图：\n\nhttps://file1.kamacoder.com/i/algo/20201123203735933.png\n\n#回溯三部曲\n递归参数\n在131.分割回文串 (https://programmercarl.com/0131.%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.html)中我们就提到切割问题类似组合问题。\n\nstartIndex一定是需要的，因为不能重复分割，记录下一层递归分割的起始位置。\n\n本题我们还需要一个变量pointNum，记录添加逗点的数量。\n\n所以代码如下：\n\nvector<string> result;// 记录结果\n// startIndex: 搜索的起始位置，pointNum:添加逗点的数量\nvoid backtracking(string& s, int startIndex, int pointNum) {\n递归终止条件\n终止条件和131.分割回文串 (opens new window)情况就不同了，本题明确要求只会分成4段，所以不能用切割线切到最后作为终止条件，而是分割的段数作为终止条件。\n\npointNum表示逗点数量，pointNum为3说明字符串分成了4段了。\n\n然后验证一下第四段是否合法，如果合法就加入到结果集里\n\n代码如下：\n\nif (pointNum == 3) { // 逗点数量为3时，分隔结束\n    // 判断第四段子字符串是否合法，如果合法就放进result中\n    if (isValid(s, startIndex, s.size() - 1)) {\n        result.push_back(s);\n    }\n    return;\n}\n单层搜索的逻辑\n在131.分割回文串 (https://programmercarl.com/0131.%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.html)中已经讲过在循环遍历中如何截取子串。\n\n在for (int i = startIndex; i < s.size(); i++)循环中 [startIndex, i] 这个区间就是截取的子串，需要判断这个子串是否合法。\n\n如果合法就在字符串后面加上符号.表示已经分割。\n\n如果不合法就结束本层循环，如图中剪掉的分支：\n\nhttps://file1.kamacoder.com/i/algo/20201123203735933-20230310132314109.png\n\n然后就是递归和回溯的过程：\n\n递归调用时，下一层递归的startIndex要从i+2开始（因为需要在字符串中加入了分隔符.），同时记录分割符的数量pointNum 要 +1。\n\n回溯的时候，就将刚刚加入的分隔符. 删掉就可以了，pointNum也要-1。\n\n代码如下：\n\nfor (int i = startIndex; i < s.size(); i++) {\n    if (isValid(s, startIndex, i)) { // 判断 [startIndex,i] 这个区间的子串是否合法\n        s.insert(s.begin() + i + 1 , '.');  // 在i的后面插入一个逗点\n        pointNum++;\n        backtracking(s, i + 2, pointNum);   // 插入逗点之后下一个子串的起始位置为i+2\n        pointNum--;                         // 回溯\n        s.erase(s.begin() + i + 1);         // 回溯删掉逗点\n    } else break; // 不合法，直接结束本层循环\n}\n#判断子串是否合法\n最后就是在写一个判断段位是否是有效段位了。\n\n主要考虑到如下三点：\n\n段位以0为开头的数字不合法\n段位里有非正整数字符不合法\n段位如果大于255了不合法\n代码如下：\n\n// 判断字符串s在左闭右闭区间[start, end]所组成的数字是否合法\nbool isValid(const string& s, int start, int end) {\n    if (start > end) {\n        return false;\n    }\n    if (s[start] == '0' && start != end) { // 0开头的数字不合法\n            return false;\n    }\n    int num = 0;\n    for (int i = start; i <= end; i++) {\n        if (s[i] > '9' || s[i] < '0') { // 遇到非数字字符不合法\n            return false;\n        }\n        num = num * 10 + (s[i] - '0');\n        if (num > 255) { // 如果大于255了不合法\n            return false;\n        }\n    }\n    return true;\n}\n根据关于回溯算法，你该了解这些！ (https://programmercarl.com/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80.html)给出的回溯算法模板：\n\nvoid backtracking(参数) {\n    if (终止条件) {\n        存放结果;\n        return;\n    }\n\n    for (选择：本层集合中元素（树中节点孩子的数量就是集合的大小）) {\n        处理节点;\n        backtracking(路径，选择列表); // 递归\n        回溯，撤销处理结果\n    }\n}\n可以写出如下回溯算法C++代码：\n\nclass Solution {\nprivate:\n    vector<string> result;// 记录结果\n    // startIndex: 搜索的起始位置，pointNum:添加逗点的数量\n    void backtracking(string& s, int startIndex, int pointNum) {\n        if (pointNum == 3) { // 逗点数量为3时，分隔结束\n            // 判断第四段子字符串是否合法，如果合法就放进result中\n            if (isValid(s, startIndex, s.size() - 1)) {\n                result.push_back(s);\n            }\n            return;\n        }\n        for (int i = startIndex; i < s.size(); i++) {\n            if (isValid(s, startIndex, i)) { // 判断 [startIndex,i] 这个区间的子串是否合法\n                s.insert(s.begin() + i + 1 , '.');  // 在i的后面插入一个逗点\n                pointNum++;\n                backtracking(s, i + 2, pointNum);   // 插入逗点之后下一个子串的起始位置为i+2\n                pointNum--;                         // 回溯\n                s.erase(s.begin() + i + 1);         // 回溯删掉逗点\n            } else break; // 不合法，直接结束本层循环\n        }\n    }\n    // 判断字符串s在左闭右闭区间[start, end]所组成的数字是否合法\n    bool isValid(const string& s, int start, int end) {\n        if (start > end) {\n            return false;\n        }\n        if (s[start] == '0' && start != end) { // 0开头的数字不合法\n                return false;\n        }\n        int num = 0;\n        for (int i = start; i <= end; i++) {\n            if (s[i] > '9' || s[i] < '0') { // 遇到非数字字符不合法\n                return false;\n            }\n            num = num * 10 + (s[i] - '0');\n            if (num > 255) { // 如果大于255了不合法\n                return false;\n            }\n        }\n        return true;\n    }\npublic:\n    vector<string> restoreIpAddresses(string s) {\n        result.clear();\n        if (s.size() < 4 || s.size() > 12) return result; // 算是剪枝了\n        backtracking(s, 0, 0);\n        return result;\n    }\n};\n\n时间复杂度: O(3^4)，IP地址最多包含4个数字，每个数字最多有3种可能的分割方式，则搜索树的最大深度为4，每个节点最多有3个子节点。\n空间复杂度: O(n)\n#总结\n在131.分割回文串 (https://programmercarl.com/0131.%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.html)中我列举的分割字符串的难点，本题都覆盖了。\n\n而且本题还需要操作字符串添加逗号作为分隔符，并验证区间的合法性。\n\n可以说是131.分割回文串 (https://programmercarl.com/0131.%E5%88%86%E5%89%B2%E5%9B%9E%E6%96%87%E4%B8%B2.html)的加强版。\n\n在本文的树形结构图中，我已经把详细的分析思路都画了出来，相信大家看了之后一定会思路清晰不少！\n\n#其他语言版本\n#Java\nclass Solution {\n    List<String> result = new ArrayList<>();\n\n    public List<String> restoreIpAddresses(String s) {\n        if (s.length() > 12) return result; // 算是剪枝了\n        backTrack(s, 0, 0);\n        return result;\n    }\n\n    // startIndex: 搜索的起始位置， pointNum:添加逗点的数量\n    private void backTrack(String s, int startIndex, int pointNum) {\n        if (pointNum == 3) {// 逗点数量为3时，分隔结束\n            // 判断第四段⼦字符串是否合法，如果合法就放进result中\n            if (isValid(s,startIndex,s.length()-1)) {\n                result.add(s);\n            }\n            return;\n        }\n        for (int i = startIndex; i < s.length(); i++) {\n            if (isValid(s, startIndex, i)) {\n                s = s.substring(0, i + 1) + \".\" + s.substring(i + 1);    //在str的后⾯插⼊⼀个逗点\n                pointNum++;\n                backTrack(s, i + 2, pointNum);// 插⼊逗点之后下⼀个⼦串的起始位置为i+2\n                pointNum--;// 回溯\n                s = s.substring(0, i + 1) + s.substring(i + 2);// 回溯删掉逗点\n            } else {\n                break;\n            }\n        }\n    }\n\n    // 判断字符串s在左闭⼜闭区间[start, end]所组成的数字是否合法\n    private Boolean isValid(String s, int start, int end) {\n        if (start > end) {\n            return false;\n        }\n        if (s.charAt(start) == '0' && start != end) { // 0开头的数字不合法\n            return false;\n        }\n        int num = 0;\n        for (int i = start; i <= end; i++) {\n            if (s.charAt(i) > '9' || s.charAt(i) < '0') { // 遇到⾮数字字符不合法\n                return false;\n            }\n            num = num * 10 + (s.charAt(i) - '0');\n            if (num > 255) { // 如果⼤于255了不合法\n                return false;\n            }\n        }\n        return true;\n    }\n}\n//方法一：但使用stringBuilder，故优化时间、空间复杂度，因为向字符串插入字符时无需复制整个字符串，从而减少了操作的时间复杂度，也不用开新空间存subString，从而减少了空间复杂度。\nclass Solution {\n    List<String> result = new ArrayList<>();\n    public List<String> restoreIpAddresses(String s) {\n        StringBuilder sb = new StringBuilder(s);\n        backTracking(sb, 0, 0);\n        return result;\n    }\n    private void backTracking(StringBuilder s, int startIndex, int dotCount){\n        if(dotCount == 3){\n            if(isValid(s, startIndex, s.length() - 1)){\n                result.add(s.toString());\n            }\n            return;\n        }\n        for(int i = startIndex; i < s.length(); i++){\n            if(isValid(s, startIndex, i)){\n                s.insert(i + 1, '.');\n                backTracking(s, i + 2, dotCount + 1);\n                s.deleteCharAt(i + 1);\n            }else{\n                break;\n            }\n        }\n    }\n    //[start, end]\n    private boolean isValid(StringBuilder s, int start, int end){\n        if(start > end)\n            return false;\n        if(s.charAt(start) == '0' && start != end)\n            return false;\n        int num = 0;\n        for(int i = start; i <= end; i++){\n            int digit = s.charAt(i) - '0';\n            num = num * 10 + digit;\n            if(num > 255)\n                return false;\n        }\n        return true;\n    }\n}\n\n//方法二：比上面的方法时间复杂度低，更好地剪枝，优化时间复杂度\nclass Solution {\n    List<String> result = new ArrayList<String>();\n\tStringBuilder stringBuilder = new StringBuilder();\n\n\tpublic List<String> restoreIpAddresses(String s) {\n\t\trestoreIpAddressesHandler(s, 0, 0);\n\t\treturn result;\n\t}\n\n\t// number表示stringbuilder中ip段的数量\n\tpublic void restoreIpAddressesHandler(String s, int start, int number) {\n\t\t// 如果start等于s的长度并且ip段的数量是4，则加入结果集，并返回\n\t\tif (start == s.length() && number == 4) {\n\t\t\tresult.add(stringBuilder.toString());\n\t\t\treturn;\n\t\t}\n\t\t// 如果start等于s的长度但是ip段的数量不为4，或者ip段的数量为4但是start小于s的长度，则直接返回\n\t\tif (start == s.length() || number == 4) {\n\t\t\treturn;\n\t\t}\n\t\t// 剪枝：ip段的长度最大是3，并且ip段处于[0,255]\n\t\tfor (int i = start; i < s.length() && i - start < 3 && Integer.parseInt(s.substring(start, i + 1)) >= 0\n\t\t\t\t&& Integer.parseInt(s.substring(start, i + 1)) <= 255; i++) {\n\t\t\tif (i + 1 - start > 1 && s.charAt(start) - '0' == 0) {\n\t\t\t\tbreak;\n\t\t\t}\n\t\t\tstringBuilder.append(s.substring(start, i + 1));\n\t\t\t// 当stringBuilder里的网段数量小于3时，才会加点；如果等于3，说明已经有3段了，最后一段不需要再加点\n\t\t\tif (number < 3) {\n\t\t\t\tstringBuilder.append(\".\");\n\t\t\t}\n\t\t\tnumber++;\n\t\t\trestoreIpAddressesHandler(s, i + 1, number);\n\t\t\tnumber--;\n\t\t\t// 删除当前stringBuilder最后一个网段，注意考虑点的数量的问题\n\t\t\tstringBuilder.delete(start + number, i + number + 2);\n\t\t}\n\t}\n}\n#Python\n回溯（版本一）\n\nclass Solution:\n    def restoreIpAddresses(self, s: str) -> List[str]:\n        result = []\n        self.backtracking(s, 0, 0, \"\", result)\n        return result\n\n    def backtracking(self, s, start_index, point_num, current, result):\n        if point_num == 3:  # 逗点数量为3时，分隔结束\n            if self.is_valid(s, start_index, len(s) - 1):  # 判断第四段子字符串是否合法\n                current += s[start_index:]  # 添加最后一段子字符串\n                result.append(current)\n            return\n\n        for i in range(start_index, len(s)):\n            if self.is_valid(s, start_index, i):  # 判断 [start_index, i] 这个区间的子串是否合法\n                sub = s[start_index:i + 1]\n                self.backtracking(s, i + 1, point_num + 1, current + sub + '.', result)\n            else:\n                break\n\n    def is_valid(self, s, start, end):\n        if start > end:\n            return False\n        if s[start] == '0' and start != end:  # 0开头的数字不合法\n            return False\n        num = 0\n        for i in range(start, end + 1):\n            if not s[i].isdigit():  # 遇到非数字字符不合法\n                return False\n            num = num * 10 + int(s[i])\n            if num > 255:  # 如果大于255了不合法\n                return False\n        return True\n\n回溯（版本二）\n\nclass Solution:\n    def restoreIpAddresses(self, s: str) -> List[str]:\n        results = []\n        self.backtracking(s, 0, [], results)\n        return results\n\n    def backtracking(self, s, index, path, results):\n        if index == len(s) and len(path) == 4:\n            results.append('.'.join(path))\n            return\n\n        if len(path) > 4:  # 剪枝\n            return\n\n        for i in range(index, min(index + 3, len(s))):\n            if self.is_valid(s, index, i):\n                sub = s[index:i+1]\n                path.append(sub)\n                self.backtracking(s, i+1, path, results)\n                path.pop()\n\n    def is_valid(self, s, start, end):\n        if start > end:\n            return False\n        if s[start] == '0' and start != end:  # 0开头的数字不合法\n            return False\n        num = int(s[start:end+1])\n        return 0 <= num <= 255\n\n回溯（版本三）\n\n```python\nclass Solution:\n    def restoreIpAddresses(self, s: str) -> List[str]:\n        result = []\n        self.backtracking(s, 0, [], result)\n        return result\n    \n    def backtracking(self, s, startIndex, path, result):\n        if startIndex == len(s):\n            result.append('.'.join(path[:]))\n            return\n        \n        for i in range(startIndex, min(startIndex+3, len(s))):\n            # 如果 i 往后遍历了，并且当前地址的第一个元素是 0 ，就直接退出\n            if i > startIndex and s[startIndex] == '0':\n                break\n            # 比如 s 长度为 5，当前遍历到 i = 3 这个元素\n            # 因为还没有执行任何操作，所以此时剩下的元素数量就是 5 - 3 = 2 ，即包括当前的 i 本身\n            # path 里面是当前包含的子串，所以有几个元素就表示储存了几个地址\n            # 所以 (4 - len(path)) * 3 表示当前路径至多能存放的元素个数\n            # 4 - len(path) 表示至少要存放的元素个数\n            if (4 - len(path)) * 3 < len(s) - i or 4 - len(path) > len(s) - i:\n                break\n            if i - startIndex == 2:\n                if not int(s[startIndex:i+1]) <= 255:\n                    break\n            path.append(s[startIndex:i+1])\n            self.backtracking(s, i+1, path, result)\n            path.pop()"
+}

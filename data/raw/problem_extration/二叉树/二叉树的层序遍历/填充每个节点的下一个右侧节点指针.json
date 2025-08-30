@@ -1,0 +1,166 @@
+{
+  "id": "AP_5c780598",
+  "title": "填充每个节点的下一个右侧节点指针",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/populating-next-right-pointers-in-each-node/",
+  "description": "给定一个完美二叉树，其所有叶子节点都在同一层，每个父节点都有两个子节点。二叉树定义如下：\n\nstruct Node {\n  int val;\n  Node *left;\n  Node *right;\n  Node *next;\n}\n填充它的每个 next 指针，让这个指针指向其下一个右侧节点。如果找不到下一个右侧节点，则将 next 指针设置为 NULL。\n\n初始状态下，所有 next 指针都被设置为 NULL。\n\nhttps://file1.kamacoder.com/i/algo/20210203152044855.jpg",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "广度优先搜索",
+    "层序遍历"
+  ],
+  "data_structure_tags": [
+    "队列"
+  ],
+  "technique_tags": [
+    "迭代",
+    "指针操作"
+  ],
+  "difficulty": null,
+  "solution_approach": "利用层序遍历算法来解决这个问题。对于每一层，首先确定当前层的头节点，并随着遍历将前一个节点的next指针指向当前节点，直到遍历完该层的所有节点。此外，在遍历过程中，如果当前节点有子节点（左或右），则将这些子节点加入队列中以供下一层遍历。",
+  "key_insights": [
+    {
+      "content": "通过层序遍历可以方便地处理每个层级内的节点连接问题，确保每层内所有节点按照从左到右顺序正确链接起来。"
+    },
+    {
+      "content": "队列用于存储待处理节点，特别适合于逐层处理二叉树的问题。每次循环开始时记录队列大小即为当前层数目，然后依次处理这些节点并更新队列。"
+    },
+    {
+      "content": "在遍历过程中维护一个`nodePre`变量来追踪上一个访问过的节点，这样可以很容易地设置当前节点的`next`指针。"
+    },
+    {
+      "content": "对于每一层最后一个节点，需要显式将其`next`指针设为`NULL`，因为默认情况下它们不指向任何节点。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "本题依然是层序遍历，只不过在单层遍历的时候记录一下本层的头部节点，然后在遍历的时候让前一个节点指向本节点就可以了",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: Node* connect(Node* root) { queue<Node*> que; if (root != NULL) que.push(root); while (!que.empty()) { int size = que.size(); Node* nodePre; Node* node; for (int i = 0; i < size; i++) { if (i == 0) { nodePre = que.front(); que.pop(); node = nodePre; } else { node = que.front(); que.pop(); nodePre->next = node; nodePre = nodePre->next; } if (node->left) que.push(node->left); if (node->right) que.push(node->right); } nodePre->next = NULL; } return root; }};",
+          "description": "C++实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public Node connect(Node root) { Queue<Node> tmpQueue = new LinkedList<Node>(); if (root != null) tmpQueue.add(root); while (tmpQueue.size() != 0){ int size = tmpQueue.size(); Node cur = tmpQueue.poll(); if (cur.left != null) tmpQueue.add(cur.left); if (cur.right != null) tmpQueue.add(cur.right); for (int index = 1; index < size; index++){ Node next = tmpQueue.poll(); if (next.left != null) tmpQueue.add(next.left); if (next.right != null) tmpQueue.add(next.right); cur.next = next; cur = next; } } return root; }}",
+          "description": "Java实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def connect(self, root: 'Node') -> 'Node': if not root: return root queue = collections.deque([root]) while queue: level_size = len(queue) prev = None for i in range(level_size): node = queue.popleft() if prev: prev.next = node prev = node if node.left: queue.append(node.left) if node.right: queue.append(node.right) return root",
+          "description": "Python实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: Node* connect(Node* root) {queue<Node*> que;if (root != NULL) que.push(root);while (!que.empty()) {int size = que.size();Node* nodePre;Node* node;for (int i = 0; i < size; i++) {if (i == 0) {nodePre = que.front();que.pop();node = nodePre;} else {node = que.front();que.pop();nodePre->next = node;nodePre = nodePre->next;}if (node->left) que.push(node->left);if (node->right) que.push(node->right);}nodePre->next = NULL;}}return root;}}",
+          "description": "C++版本的解决方案，使用队列实现层序遍历并设置每个节点的next指针"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public Node connect(Node root) {Queue<Node> tmpQueue = new LinkedList<Node>();if (root != null) tmpQueue.add(root);while (tmpQueue.size() != 0){int size = tmpQueue.size();Node cur = tmpQueue.poll();if (cur.left != null) tmpQueue.add(cur.left);if (cur.right != null) tmpQueue.add(cur.right);for (int index = 1; index < size; index++){Node next = tmpQueue.poll();if (next.left != null) tmpQueue.add(next.left);if (next.right != null) tmpQueue.add(next.right);cur.next = next;cur = next;}}return root;}}",
+          "description": "Java版本的解决方案，使用队列实现层序遍历并设置每个节点的next指针"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def connect(self, root: 'Node') -> 'Node': if not root: return root queue = collections.deque([root]) while queue: level_size = len(queue) prev = None for i in range(level_size): node = queue.popleft() if prev: prev.next = node prev = node if node.left: queue.append(node.left) if node.right: queue.append(node.right) return root",
+          "description": "Python版本的解决方案，使用双端队列实现层序遍历并设置每个节点的next指针"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: Node* connect(Node* root) { queue<Node*> que; if (root != NULL) que.push(root); while (!que.empty()) { int size = que.size(); Node* nodePre; Node* node; for (int i = 0; i < size; i++) { if (i == 0) { nodePre = que.front(); que.pop(); node = nodePre; } else { node = que.front(); que.pop(); nodePre->next = node; nodePre = nodePre->next; } if (node->left) que.push(node->left); if (node->right) que.push(node->right); } nodePre->next = NULL; } return root;}};",
+          "description": "C++解决方案，使用队列实现层次遍历填充二叉树的每个节点的下一个右侧节点指针。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public Node connect(Node root) { Queue<Node> tmpQueue = new LinkedList<Node>(); if (root != null) tmpQueue.add(root); while (tmpQueue.size() != 0){ int size = tmpQueue.size(); Node cur = tmpQueue.poll(); if (cur.left != null) tmpQueue.add(cur.left); if (cur.right != null) tmpQueue.add(cur.right); for (int index = 1; index < size; index++){ Node next = tmpQueue.poll(); if (next.left != null) tmpQueue.add(next.left); if (next.right != null) tmpQueue.add(next.right); cur.next = next; cur = next; }} return root; }}",
+          "description": "Java解决方案，采用队列进行层次遍历以设置每个节点的next指针至其右侧邻居。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def connect(self, root: 'Node') -> 'Node': if not root: return root queue = collections.deque([root]) while queue: level_size = len(queue) prev = None for i in range(level_size): node = queue.popleft() if prev: prev.next = node prev = node if node.left: queue.append(node.left) if node.right: queue.append(node.right) return root",
+          "description": "Python解决方案，利用双端队列来实现层次遍历，并正确设置每个节点指向其右侧相邻节点的指针。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "\"\"\"",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: Node* connect(Node* root) {queue<Node*> que; if (root != NULL) que.push(root); while (!que.empty()) {int size = que.size(); Node* nodePre; Node* node; for (int i = 0; i < size; i++) {if (i == 0) {nodePre = que.front(); que.pop(); node = nodePre;} else {node = que.front(); que.pop(); nodePre->next = node; nodePre = nodePre->next;} if (node->left) que.push(node->left); if (node->right) que.push(node->right);} nodePre->next = NULL;}} return root;}}",
+          "description": "使用队列实现层次遍历，连接每个节点的下一个右侧节点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public Node connect(Node root) {Queue<Node> tmpQueue = new LinkedList<Node>(); if (root != null) tmpQueue.add(root); while (tmpQueue.size() != 0){int size = tmpQueue.size(); Node cur = tmpQueue.poll(); if (cur.left != null) tmpQueue.add(cur.left); if (cur.right != null) tmpQueue.add(cur.right); for (int index = 1; index < size; index++){Node next = tmpQueue.poll(); if (next.left != null) tmpQueue.add(next.left); if (next.right != null) tmpQueue.add(next.right); cur.next = next; cur = next;}}} return root;}}",
+          "description": "Java版本，采用队列进行层次遍历，并设置每个节点的next指针"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def connect(self, root: 'Node') -> 'Node': if not root: return root queue = collections.deque([root]) while queue: level_size = len(queue) prev = None for i in range(level_size): node = queue.popleft() if prev: prev.next = node prev = node if node.left: queue.append(node.left) if node.right: queue.append(node.right) return root",
+          "description": "Python版本实现，利用双端队列进行层次遍历，同时设置每个节点的next属性"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: Node* connect(Node* root) { queue<Node*> que; if (root != NULL) que.push(root); while (!que.empty()) { int size = que.size(); Node* nodePre; Node* node; for (int i = 0; i < size; i++) { if (i == 0) { nodePre = que.front(); que.pop(); node = nodePre; } else { node = que.front(); que.pop(); nodePre->next = node; nodePre = nodePre->next; } if (node->left) que.push(node->left); if (node->right) que.push(node->right); } nodePre->next = NULL; } return root; }};",
+      "description": "使用队列实现层序遍历，填充每个节点的下一个右侧指针"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public Node connect(Node root) { Queue<Node> tmpQueue = new LinkedList<Node>(); if (root != null) tmpQueue.add(root); while (tmpQueue.size() != 0){ int size = tmpQueue.size(); Node cur = tmpQueue.poll(); if (cur.left != null) tmpQueue.add(cur.left); if (cur.right != null) tmpQueue.add(cur.right); for (int index = 1; index < size; index++){ Node next = tmpQueue.poll(); if (next.left != null) tmpQueue.add(next.left); if (next.right != null) tmpQueue.add(next.right); cur.next = next; cur = next; } } return root; }}",
+      "description": "使用队列实现层序遍历，连接每层节点的next指针"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def connect(self, root: 'Node') -> 'Node': if not root: return root queue = collections.deque([root]) while queue: level_size = len(queue) prev = None for i in range(level_size): node = queue.popleft() if prev: prev.next = node prev = node if node.left: queue.append(node.left) if node.right: queue.append(node.right) return root",
+      "description": "通过队列进行层次遍历，并设置每个节点的next指针指向同层的下一个节点"
+    }
+  ],
+  "common_mistakes": [
+    "忘记设置最后一层节点的next指针为NULL。",
+    "在遍历过程中没有正确维护前驱节点引用，导致无法正确建立next链接。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210203152044855.jpg",
+      "description": "该图片展示了如何通过层次遍历将一个二叉树（如图A）转换为每个节点的next指针指向其同层下一个节点的结构（如图B），并给出了相应的输入输出示例。",
+      "context": "该图片展示了需要通过层序遍历方法来填充每个节点的next指针，使之指向其右侧相邻节点（若存在）的二叉树结构。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\二叉树的层序遍历\\填充每个节点的下一个右侧节点指针.txt",
+  "extracted_at": "2025-07-20T11:33:07.050613",
+  "raw_content": "填充每个节点的下一个右侧节点指针\n力扣题目链接(https://leetcode.cn/problems/populating-next-right-pointers-in-each-node/)\n\n给定一个完美二叉树，其所有叶子节点都在同一层，每个父节点都有两个子节点。二叉树定义如下：\n\nstruct Node {\n  int val;\n  Node *left;\n  Node *right;\n  Node *next;\n}\n填充它的每个 next 指针，让这个指针指向其下一个右侧节点。如果找不到下一个右侧节点，则将 next 指针设置为 NULL。\n\n初始状态下，所有 next 指针都被设置为 NULL。\n\nhttps://file1.kamacoder.com/i/algo/20210203152044855.jpg\n\n#思路\n本题依然是层序遍历，只不过在单层遍历的时候记录一下本层的头部节点，然后在遍历的时候让前一个节点指向本节点就可以了\n\nC++代码：\n\nclass Solution {\npublic:\n    Node* connect(Node* root) {\n        queue<Node*> que;\n        if (root != NULL) que.push(root);\n        while (!que.empty()) {\n            int size = que.size();\n            // vector<int> vec;\n            Node* nodePre;\n            Node* node;\n            for (int i = 0; i < size; i++) {\n                if (i == 0) {\n                    nodePre = que.front(); // 取出一层的头结点\n                    que.pop();\n                    node = nodePre;\n                } else {\n                    node = que.front();\n                    que.pop();\n                    nodePre->next = node; // 本层前一个节点next指向本节点\n                    nodePre = nodePre->next;\n                }\n                if (node->left) que.push(node->left);\n                if (node->right) que.push(node->right);\n            }\n            nodePre->next = NULL; // 本层最后一个节点指向NULL\n        }\n        return root;\n\n    }\n};\n#其他语言版本\n#Java：\nclass Solution {\n    public Node connect(Node root) {\n\tQueue<Node> tmpQueue = new LinkedList<Node>();\n\tif (root != null) tmpQueue.add(root);\n\n\twhile (tmpQueue.size() != 0){\n\t    int size = tmpQueue.size();\n\n            Node cur = tmpQueue.poll();\n            if (cur.left != null) tmpQueue.add(cur.left);\n            if (cur.right != null) tmpQueue.add(cur.right);\n\n\t    for (int index = 1; index < size; index++){\n\t\tNode next = tmpQueue.poll();\n\t\tif (next.left != null) tmpQueue.add(next.left);\n\t\tif (next.right != null) tmpQueue.add(next.right);\n\n                cur.next = next;\n                cur = next;\n\t    }\n\t}\n\n        return root;\n    }\n}\n#Python：\n\"\"\"\n# Definition for a Node.\nclass Node:\n    def __init__(self, val: int = 0, left: 'Node' = None, right: 'Node' = None, next: 'Node' = None):\n        self.val = val\n        self.left = left\n        self.right = right\n        self.next = next\n\"\"\"\nclass Solution:\n    def connect(self, root: 'Node') -> 'Node':\n        if not root:\n            return root\n        \n        queue = collections.deque([root])\n        \n        while queue:\n            level_size = len(queue)\n            prev = None\n            \n            for i in range(level_size):\n                node = queue.popleft()\n                \n                if prev:\n                    prev.next = node\n                \n                prev = node\n                \n                if node.left:\n                    queue.append(node.left)\n                \n                if node.right:\n                    queue.append(node.right)\n        \n        return root"
+}

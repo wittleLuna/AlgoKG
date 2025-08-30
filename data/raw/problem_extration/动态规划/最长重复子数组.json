@@ -1,0 +1,390 @@
+{
+  "id": "AP_30d36e7e",
+  "title": "最长重复子数组",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/maximum-length-of-repeated-subarray/",
+  "description": "给两个整数数组 A 和 B ，返回两个数组中公共的、长度最长的子数组的长度。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "动态规划"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "二维转一维优化",
+    "状态转移"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用动态规划方法来解决最长重复子数组问题。定义一个二维dp数组，其中dp[i][j]表示以A中第i-1个元素和B中第j-1个元素结尾的最长公共子数组长度。如果A[i-1]==B[j-1]，则dp[i][j]=dp[i-1][j-1]+1；否则，dp[i][j]保持为0。遍历过程中记录最大值作为结果。",
+  "key_insights": [
+    {
+      "content": "题目中的子数组指的是连续子序列，这与子串类似但不完全相同，强调的是连续性。"
+    },
+    {
+      "content": "dp数组定义为以特定位置结尾的最长公共子数组长度，这样的定义使得递推公式简单直观，便于理解和实现。同时也决定了初始化方式及遍历顺序。"
+    },
+    {
+      "content": "利用一维数组代替二维数组（滚动数组）来减少空间复杂度。通过从后向前更新数组值避免了覆盖问题。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "注意题目中说的子数组，其实就是连续子序列。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLength(vector<int>& nums1, vector<int>& nums2) {vector<vector<int>> dp (nums1.size() + 1, vector<int>(nums2.size() + 1, 0));int result = 0;for (int i = 1; i <= nums1.size(); i++) {for (int j = 1; j <= nums2.size(); j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;}if (dp[i][j] > result) result = dp[i][j];}}return result;}};",
+          "description": "C++版本一：二维动态规划"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLength(vector<int>& A, vector<int>& B) {vector<int> dp(vector<int>(B.size() + 1, 0));int result = 0;for (int i = 1; i <= A.size(); i++) {for (int j = B.size(); j > 0; j--) {if (A[i - 1] == B[j - 1]) {dp[j] = dp[j - 1] + 1;} else dp[j] = 0;if (dp[j] > result) result = dp[j];}}return result;}};",
+          "description": "C++版本二：滚动数组优化"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLength(vector<int>& nums1, vector<int>& nums2) {vector<vector<int>> dp (nums1.size() + 1, vector<int>(nums2.size() + 1, 0));int result = 0;for (int i = 0; i < nums1.size(); i++) if (nums1[i] == nums2[0]) dp[i][0] = 1;for (int j = 0; j < nums2.size(); j++) if (nums1[0] == nums2[j]) dp[0][j] = 1;for (int i = 0; i < nums1.size(); i++) {for (int j = 0; j < nums2.size(); j++) {if (nums1[i] == nums2[j] && i > 0 && j > 0) {dp[i][j] = dp[i - 1][j - 1] + 1;}if (dp[i][j] > result) result = dp[i][j];}}return result;}};",
+          "description": "C++版本三：不同方式初始化"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int findLength(int[] nums1, int[] nums2) {int result = 0;int[][] dp = new int[nums1.length + 1][nums2.length + 1];for (int i = 1; i < nums1.length + 1; i++) {for (int j = 1; j < nums2.length + 1; j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;result = Math.max(result, dp[i][j]);}}}return result;}}",
+          "description": "Java版本一：二维动态规划"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int findLength(int[] nums1, int[] nums2) {int[] dp = new int[nums2.length + 1];int result = 0;for (int i = 1; i <= nums1.length; i++) {for (int j = nums2.length; j > 0; j--) {if (nums1[i - 1] == nums2[j - 1]) {dp[j] = dp[j - 1] + 1;} else {dp[j] = 0;}result = Math.max(result, dp[j]);}}return result;}}",
+          "description": "Java版本二：滚动数组"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLength(self, nums1: List[int], nums2: List[int]) -> int: dp = [[0] * (len(nums2) + 1) for _ in range(len(nums1) + 1)] result = 0 for i in range(1, len(nums1) + 1): for j in range(1, len(nums2) + 1): if nums1[i - 1] == nums2[j - 1]: dp[i][j] = dp[i - 1][j - 1] + 1 if dp[i][j] > result: result = dp[i][j] return result",
+          "description": "Python版本一：二维动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLength(self, nums1: List[int], nums2: List[int]) -> int: dp = [0] * (len(nums2) + 1) result = 0 for i in range(1, len(nums1) + 1): prev = 0 for j in range(1, len(nums2) + 1): current = dp[j] if nums1[i - 1] == nums2[j - 1]: dp[j] = prev + 1 if dp[j] > result: result = dp[j] else: dp[j] = 0 prev = current return result",
+          "description": "Python版本二：滚动数组"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLength(self, nums1: List[int], nums2: List[int]) -> int: dp = [[0] * (len(nums2) + 1) for _ in range(len(nums1) + 1)] result = 0 for i in range(len(nums1)): if nums1[i] == nums2[0]: dp[i + 1][1] = 1 for j in range(len(nums2)): if nums1[0] == nums2[j]: dp[1][j + 1] = 1 for i in range(1, len(nums1) + 1): for j in range(1, len(nums2) + 1): if nums1[i - 1] == nums2[j - 1]: dp[i][j] = dp[i - 1][j - 1] + 1 if dp[i][j] > result: result = dp[i][j] return result",
+          "description": "Python版本三：不同方式初始化"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "滚动数组",
+      "text": "在如下图中：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLength(vector<int>& nums1, vector<int>& nums2) {vector<vector<int>> dp (nums1.size() + 1, vector<int>(nums2.size() + 1, 0));int result = 0;for (int i = 1; i <= nums1.size(); i++) {for (int j = 1; j <= nums2.size(); j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;}if (dp[i][j] > result) result = dp[i][j];}}return result;}};",
+          "description": "C++版本一：使用二维数组记录最长重复子数组长度"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLength(vector<int>& A, vector<int>& B) {vector<int> dp(vector<int>(B.size() + 1, 0));int result = 0;for (int i = 1; i <= A.size(); i++) {for (int j = B.size(); j > 0; j--) {if (A[i - 1] == B[j - 1]) {dp[j] = dp[j - 1] + 1;} else dp[j] = 0;if (dp[j] > result) result = dp[j];}}return result;}};",
+          "description": "C++版本二：使用滚动数组优化空间复杂度"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLength(vector<int>& nums1, vector<int>& nums2) {vector<vector<int>> dp (nums1.size() + 1, vector<int>(nums2.size() + 1, 0));int result = 0;for (int i = 0; i < nums1.size(); i++) if (nums1[i] == nums2[0]) dp[i][0] = 1;for (int j = 0; j < nums2.size(); j++) if (nums1[0] == nums2[j]) dp[0][j] = 1;for (int i = 0; i < nums1.size(); i++) {for (int j = 0; j < nums2.size(); j++) {if (nums1[i] == nums2[j] && i > 0 && j > 0) {dp[i][j] = dp[i - 1][j - 1] + 1;}if (dp[i][j] > result) result = dp[i][j];}}return result;}};",
+          "description": "C++版本三：另一种定义方式的二维DP"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int findLength(int[] nums1, int[] nums2) {int result = 0;int[][] dp = new int[nums1.length + 1][nums2.length + 1];for (int i = 1; i < nums1.length + 1; i++) {for (int j = 1; j < nums2.length + 1; j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;result = Math.max(result, dp[i][j]);}}}return result;}}",
+          "description": "Java版本一：使用二维数组记录最长重复子数组长度"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int findLength(int[] nums1, int[] nums2) {int[] dp = new int[nums2.length + 1];int result = 0;for (int i = 1; i <= nums1.length; i++) {for (int j = nums2.length; j > 0; j--) {if (nums1[i - 1] == nums2[j - 1]) {dp[j] = dp[j - 1] + 1;} else {dp[j] = 0;}result = Math.max(result, dp[j]);}}return result;}}",
+          "description": "Java版本二：使用滚动数组优化空间复杂度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLength(self, nums1: List[int], nums2: List[int]) -> int: dp = [[0] * (len(nums2) + 1) for _ in range(len(nums1) + 1)] result = 0 for i in range(1, len(nums1) + 1): for j in range(1, len(nums2) + 1): if nums1[i - 1] == nums2[j - 1]: dp[i][j] = dp[i - 1][j - 1] + 1 if dp[i][j] > result: result = dp[i][j] return result",
+          "description": "Python版本：使用二维数组记录最长重复子数组长度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLength(self, nums1: List[int], nums2: List[int]) -> int: dp = [0] * (len(nums2) + 1) result = 0 for i in range(1, len(nums1) + 1): prev = 0 for j in range(1, len(nums2) + 1): current = dp[j] if nums1[i - 1] == nums2[j - 1]: dp[j] = prev + 1 if dp[j] > result: result = dp[j] else: dp[j] = 0 prev = current return result",
+          "description": "Python版本：使用一维滚动数组记录最长重复子数组长度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLength(self, nums1: List[int], nums2: List[int]) -> int: dp = [[0] * (len(nums2) + 1) for _ in range(len(nums1) + 1)] result = 0 for i in range(len(nums1)): if nums1[i] == nums2[0]: dp[i + 1][1] = 1 for j in range(len(nums2)): if nums1[0] == nums2[j]: dp[1][j + 1] = 1 for i in range(1, len(nums1) + 1): for j in range(1, len(nums2) + 1): if nums1[i - 1] == nums2[j - 1]: dp[i][j] = dp[i - 1][j - 1] + 1 if dp[i][j] > result: result = dp[i][j] return result",
+          "description": "Python版本扩展：另一种定义方式的二维DP"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "拓展",
+      "text": "前面讲了 dp数组为什么定义：以下标i - 1为结尾的A，和以下标j - 1为结尾的B，最长重复子数组长度为dp[i][j]。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLength(vector<int>& nums1, vector<int>& nums2) {vector<vector<int>> dp (nums1.size() + 1, vector<int>(nums2.size() + 1, 0));int result = 0;for (int i = 1; i <= nums1.size(); i++) {for (int j = 1; j <= nums2.size(); j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;}if (dp[i][j] > result) result = dp[i][j];}}return result;}};",
+          "description": "C++版本一"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLength(vector<int>& A, vector<int>& B) {vector<int> dp(vector<int>(B.size() + 1, 0));int result = 0;for (int i = 1; i <= A.size(); i++) {for (int j = B.size(); j > 0; j--) {if (A[i - 1] == B[j - 1]) {dp[j] = dp[j - 1] + 1;} else dp[j] = 0;if (dp[j] > result) result = dp[j];}}return result;}};",
+          "description": "C++版本二"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLength(vector<int>& nums1, vector<int>& nums2) {vector<vector<int>> dp (nums1.size() + 1, vector<int>(nums2.size() + 1, 0));int result = 0;for (int i = 0; i < nums1.size(); i++) if (nums1[i] == nums2[0]) dp[i][0] = 1;for (int j = 0; j < nums2.size(); j++) if (nums1[0] == nums2[j]) dp[0][j] = 1;for (int i = 0; i < nums1.size(); i++) {for (int j = 0; j < nums2.size(); j++) {if (nums1[i] == nums2[j] && i > 0 && j > 0) {dp[i][j] = dp[i - 1][j - 1] + 1;}if (dp[i][j] > result) result = dp[i][j];}}return result;}};",
+          "description": "C++版本三"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int findLength(int[] nums1, int[] nums2) {int result = 0;int[][] dp = new int[nums1.length + 1][nums2.length + 1];for (int i = 1; i < nums1.length + 1; i++) {for (int j = 1; j < nums2.length + 1; j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;result = Math.max(result, dp[i][j]);}}}return result;}}",
+          "description": "Java版本一"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int findLength(int[] nums1, int[] nums2) {int[] dp = new int[nums2.length + 1];int result = 0;for (int i = 1; i <= nums1.length; i++) {for (int j = nums2.length; j > 0; j--) {if (nums1[i - 1] == nums2[j - 1]) {dp[j] = dp[j - 1] + 1;} else {dp[j] = 0;}result = Math.max(result, dp[j]);}}return result;}}",
+          "description": "Java版本二"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLength(self, nums1: List[int], nums2: List[int]) -> int: dp = [[0] * (len(nums2) + 1) for _ in range(len(nums1) + 1)] result = 0 for i in range(1, len(nums1) + 1): for j in range(1, len(nums2) + 1): if nums1[i - 1] == nums2[j - 1]: dp[i][j] = dp[i - 1][j - 1] + 1 if dp[i][j] > result: result = dp[i][j] return result",
+          "description": "Python二维DP"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLength(self, nums1: List[int], nums2: List[int]) -> int: dp = [0] * (len(nums2) + 1) result = 0 for i in range(1, len(nums1) + 1): prev = 0 for j in range(1, len(nums2) + 1): current = dp[j] if nums1[i - 1] == nums2[j - 1]: dp[j] = prev + 1 if dp[j] > result: result = dp[j] else: dp[j] = 0 prev = current return result",
+          "description": "Python一维DP"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLength(self, nums1: List[int], nums2: List[int]) -> int: dp = [[0] * (len(nums2) + 1) for _ in range(len(nums1) + 1)] result = 0 for i in range(len(nums1)): if nums1[i] == nums2[0]: dp[i + 1][1] = 1 for j in range(len(nums2)): if nums1[0] == nums2[j]: dp[1][j + 1] = 1 for i in range(1, len(nums1) + 1): for j in range(1, len(nums2) + 1): if nums1[i - 1] == nums2[j - 1]: dp[i][j] = dp[i - 1][j - 1] + 1 if dp[i][j] > result: result = dp[i][j] return result",
+          "description": "Python二维DP扩展"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int findLength(int[] nums1, int[] nums2) {\n        int result = 0;\n        int[][] dp = new int[nums1.length + 1][nums2.length + 1];\n        for (int i = 1; i < nums1.length + 1; i++) {\n            for (int j = 1; j < nums2.length + 1; j++) {\n                if (nums1[i - 1] == nums2[j - 1]) {\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                    result = Math.max(result, dp[i][j]);\n                }\n            }\n        }\n        return result;\n    }\n}",
+          "description": "Java版本一：使用二维数组实现最长重复子数组长度的计算。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int findLength(int[] nums1, int[] nums2) {\n        int[] dp = new int[nums2.length + 1];\n        int result = 0;\n        for (int i = 1; i <= nums1.length; i++) {\n            for (int j = nums2.length; j > 0; j--) {\n                if (nums1[i - 1] == nums2[j - 1]) {\n                    dp[j] = dp[j - 1] + 1;\n                } else {\n                    dp[j] = 0;\n                }\n                result = Math.max(result, dp[j]);\n            }\n        }\n        return result;\n    }\n}",
+          "description": "Java版本二：使用滚动数组（一维数组）优化空间复杂度，实现最长重复子数组长度的计算。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def findLength(self, nums1: List[int], nums2: List[int]) -> int:\n        dp = [[0] * (len(nums2) + 1) for _ in range(len(nums1) + 1)]\n        result = 0\n        for i in range(1, len(nums1) + 1):\n            for j in range(1, len(nums2) + 1):\n                if nums1[i - 1] == nums2[j - 1]:\n                    dp[i][j] = dp[i - 1][j - 1] + 1\n                if dp[i][j] > result:\n                    result = dp[i][j]\n        return result",
+          "description": "Python版本一：使用二维数组实现最长重复子数组长度的计算。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def findLength(self, nums1: List[int], nums2: List[int]) -> int:\n        dp = [0] * (len(nums2) + 1)\n        result = 0\n        for i in range(1, len(nums1) + 1):\n            prev = 0\n            for j in range(1, len(nums2) + 1):\n                current = dp[j]\n                if nums1[i - 1] == nums2[j - 1]:\n                    dp[j] = prev + 1\n                    if dp[j] > result:\n                        result = dp[j]\n                else:\n                    dp[j] = 0\n                prev = current\n        return result",
+          "description": "Python版本二：使用滚动数组（一维数组）优化空间复杂度，实现最长重复子数组长度的计算。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def findLength(self, nums1: List[int], nums2: List[int]) -> int:\n        dp = [[0] * (len(nums2) + 1) for _ in range(len(nums1) + 1)]\n        result = 0\n        for i in range(len(nums1)):\n            if nums1[i] == nums2[0]:\n                dp[i + 1][1] = 1\n        for j in range(len(nums2)):\n            if nums1[0] == nums2[j]:\n                dp[1][j + 1] = 1\n        for i in range(1, len(nums1) + 1):\n            for j in range(1, len(nums2) + 1):\n                if nums1[i - 1] == nums2[j - 1]:\n                    dp[i][j] = dp[i - 1][j - 1] + 1\n                if dp[i][j] > result:\n                    result = dp[i][j]\n        return result",
+          "description": "Python版本三：扩展版，对第一行和第一列进行初始化后，使用二维数组实现最长重复子数组长度的计算。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "// 版本一",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLength(vector<int>& nums1, vector<int>& nums2) {vector<vector<int>> dp (nums1.size() + 1, vector<int>(nums2.size() + 1, 0));int result = 0;for (int i = 1; i <= nums1.size(); i++) {for (int j = 1; j <= nums2.size(); j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;}if (dp[i][j] > result) result = dp[i][j];}}return result;}};",
+          "description": "版本一：使用二维动态规划解决最长重复子数组问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLength(vector<int>& A, vector<int>& B) {vector<int> dp(vector<int>(B.size() + 1, 0));int result = 0;for (int i = 1; i <= A.size(); i++) {for (int j = B.size(); j > 0; j--) {if (A[i - 1] == B[j - 1]) {dp[j] = dp[j - 1] + 1;} else dp[j] = 0;if (dp[j] > result) result = dp[j];}}return result;}};",
+          "description": "版本二：使用滚动数组优化空间复杂度"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLength(vector<int>& nums1, vector<int>& nums2) {vector<vector<int>> dp (nums1.size() + 1, vector<int>(nums2.size() + 1, 0));int result = 0;for (int i = 0; i < nums1.size(); i++) if (nums1[i] == nums2[0]) dp[i][0] = 1;for (int j = 0; j < nums2.size(); j++) if (nums1[0] == nums2[j]) dp[0][j] = 1;for (int i = 0; i < nums1.size(); i++) {for (int j = 0; j < nums2.size(); j++) {if (nums1[i] == nums2[j] && i > 0 && j > 0) {dp[i][j] = dp[i - 1][j - 1] + 1;}if (dp[i][j] > result) result = dp[i][j];}}return result;}};",
+          "description": "版本三：修改DP数组定义，初始化第一行和第一列"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int findLength(int[] nums1, int[] nums2) {int result = 0;int[][] dp = new int[nums1.length + 1][nums2.length + 1];for (int i = 1; i < nums1.length + 1; i++) {for (int j = 1; j < nums2.length + 1; j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;result = Math.max(result, dp[i][j]);}}}return result;}}",
+          "description": "Java版本一：二维动态规划"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int findLength(int[] nums1, int[] nums2) {int[] dp = new int[nums2.length + 1];int result = 0;for (int i = 1; i <= nums1.length; i++) {for (int j = nums2.length; j > 0; j--) {if (nums1[i - 1] == nums2[j - 1]) {dp[j] = dp[j - 1] + 1;} else {dp[j] = 0;}result = Math.max(result, dp[j]);}}return result;}}",
+          "description": "Java版本二：滚动数组优化"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLength(self, nums1: List[int], nums2: List[int]) -> int: dp = [[0] * (len(nums2) + 1) for _ in range(len(nums1) + 1)] result = 0 for i in range(1, len(nums1) + 1): for j in range(1, len(nums2) + 1): if nums1[i - 1] == nums2[j - 1]: dp[i][j] = dp[i - 1][j - 1] + 1 if dp[i][j] > result: result = dp[i][j] return result",
+          "description": "Python版本一：二维动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLength(self, nums1: List[int], nums2: List[int]) -> int: dp = [0] * (len(nums2) + 1) result = 0 for i in range(1, len(nums1) + 1): prev = 0 for j in range(1, len(nums2) + 1): current = dp[j] if nums1[i - 1] == nums2[j - 1]: dp[j] = prev + 1 if dp[j] > result: result = dp[j] else: dp[j] = 0 prev = current return result",
+          "description": "Python版本二：一维动态规划（滚动数组）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLength(self, nums1: List[int], nums2: List[int]) -> int: dp = [[0] * (len(nums2) + 1) for _ in range(len(nums1) + 1)] result = 0 for i in range(len(nums1)): if nums1[i] == nums2[0]: dp[i + 1][1] = 1 for j in range(len(nums2)): if nums1[0] == nums2[j]: dp[1][j + 1] = 1 for i in range(1, len(nums1) + 1): for j in range(1, len(nums2) + 1): if nums1[i - 1] == nums2[j - 1]: dp[i][j] = dp[i - 1][j - 1] + 1 if dp[i][j] > result: result = dp[i][j] return result",
+          "description": "Python版本三：二维动态规划，初始化第一行和第一列"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "2维DP",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLength(vector<int>& nums1, vector<int>& nums2) {vector<vector<int>> dp (nums1.size() + 1, vector<int>(nums2.size() + 1, 0));int result = 0;for (int i = 1; i <= nums1.size(); i++) {for (int j = 1; j <= nums2.size(); j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;}if (dp[i][j] > result) result = dp[i][j];}}return result;}};",
+          "description": "C++版本一，使用二维DP"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLength(vector<int>& A, vector<int>& B) {vector<int> dp(vector<int>(B.size() + 1, 0));int result = 0;for (int i = 1; i <= A.size(); i++) {for (int j = B.size(); j > 0; j--) {if (A[i - 1] == B[j - 1]) {dp[j] = dp[j - 1] + 1;} else dp[j] = 0;if (dp[j] > result) result = dp[j];}}return result;}};",
+          "description": "C++版本二，使用滚动数组"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int findLength(vector<int>& nums1, vector<int>& nums2) {vector<vector<int>> dp (nums1.size() + 1, vector<int>(nums2.size() + 1, 0));int result = 0;for (int i = 0; i < nums1.size(); i++) if (nums1[i] == nums2[0]) dp[i][0] = 1;for (int j = 0; j < nums2.size(); j++) if (nums1[0] == nums2[j]) dp[0][j] = 1;for (int i = 0; i < nums1.size(); i++) {for (int j = 0; j < nums2.size(); j++) {if (nums1[i] == nums2[j] && i > 0 && j > 0) {dp[i][j] = dp[i - 1][j - 1] + 1;}if (dp[i][j] > result) result = dp[i][j];}}return result;}};",
+          "description": "C++版本三，扩展二维DP"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int findLength(int[] nums1, int[] nums2) {int result = 0;int[][] dp = new int[nums1.length + 1][nums2.length + 1];for (int i = 1; i < nums1.length + 1; i++) {for (int j = 1; j < nums2.length + 1; j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;result = Math.max(result, dp[i][j]);}}}return result;}}",
+          "description": "Java版本一，使用二维DP"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int findLength(int[] nums1, int[] nums2) {int[] dp = new int[nums2.length + 1];int result = 0;for (int i = 1; i <= nums1.length; i++) {for (int j = nums2.length; j > 0; j--) {if (nums1[i - 1] == nums2[j - 1]) {dp[j] = dp[j - 1] + 1;} else {dp[j] = 0;}result = Math.max(result, dp[j]);}}return result;}}",
+          "description": "Java版本二，使用滚动数组"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLength(self, nums1: List[int], nums2: List[int]) -> int: dp = [[0] * (len(nums2) + 1) for _ in range(len(nums1) + 1)] result = 0 for i in range(1, len(nums1) + 1): for j in range(1, len(nums2) + 1): if nums1[i - 1] == nums2[j - 1]: dp[i][j] = dp[i - 1][j - 1] + 1 if dp[i][j] > result: result = dp[i][j] return result",
+          "description": "Python版本一，使用二维DP"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLength(self, nums1: List[int], nums2: List[int]) -> int: dp = [0] * (len(nums2) + 1) result = 0 for i in range(1, len(nums1) + 1): prev = 0 for j in range(1, len(nums2) + 1): current = dp[j] if nums1[i - 1] == nums2[j - 1]: dp[j] = prev + 1 if dp[j] > result: result = dp[j] else: dp[j] = 0 prev = current return result",
+          "description": "Python版本二，使用滚动数组"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findLength(self, nums1: List[int], nums2: List[int]) -> int: dp = [[0] * (len(nums2) + 1) for _ in range(len(nums1) + 1)] result = 0 for i in range(len(nums1)): if nums1[i] == nums2[0]: dp[i + 1][1] = 1 for j in range(len(nums2)): if nums1[0] == nums2[j]: dp[1][j + 1] = 1 for i in range(1, len(nums1) + 1): for j in range(1, len(nums2) + 1): if nums1[i - 1] == nums2[j - 1]: dp[i][j] = dp[i - 1][j - 1] + 1 if dp[i][j] > result: result = dp[i][j] return result",
+          "description": "Python版本三，扩展二维DP"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n × m)",
+    "space_complexity": "O(n × m)",
+    "explanation": "n 为A长度，m为B长度"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int findLength(vector<int>& nums1, vector<int>& nums2) {vector<vector<int>> dp (nums1.size() + 1, vector<int>(nums2.size() + 1, 0));int result = 0;for (int i = 1; i <= nums1.size(); i++) {for (int j = 1; j <= nums2.size(); j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;}if (dp[i][j] > result) result = dp[i][j];}}return result;}};",
+      "description": "使用二维数组记录最长重复子数组的长度，版本一"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int findLength(vector<int>& A, vector<int>& B) {vector<int> dp(vector<int>(B.size() + 1, 0));int result = 0;for (int i = 1; i <= A.size(); i++) {for (int j = B.size(); j > 0; j--) {if (A[i - 1] == B[j - 1]) {dp[j] = dp[j - 1] + 1;} else dp[j] = 0;if (dp[j] > result) result = dp[j];}}return result;}};",
+      "description": "使用滚动数组优化空间复杂度，版本二"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int findLength(vector<int>& nums1, vector<int>& nums2) {vector<vector<int>> dp (nums1.size() + 1, vector<int>(nums2.size() + 1, 0));int result = 0;for (int i = 0; i < nums1.size(); i++) if (nums1[i] == nums2[0]) dp[i][0] = 1;for (int j = 0; j < nums2.size(); j++) if (nums1[0] == nums2[j]) dp[0][j] = 1;for (int i = 0; i < nums1.size(); i++) {for (int j = 0; j < nums2.size(); j++) {if (nums1[i] == nums2[j] && i > 0 && j > 0) {dp[i][j] = dp[i - 1][j - 1] + 1;}if (dp[i][j] > result) result = dp[i][j];}}return result;}};",
+      "description": "初始化第一行和第一列，版本三"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int findLength(int[] nums1, int[] nums2) {int result = 0;int[][] dp = new int[nums1.length + 1][nums2.length + 1];for (int i = 1; i < nums1.length + 1; i++) {for (int j = 1; j < nums2.length + 1; j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;result = Math.max(result, dp[i][j]);}}}return result;}}",
+      "description": "Java版本实现，版本一"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int findLength(int[] nums1, int[] nums2) {int[] dp = new int[nums2.length + 1];int result = 0;for (int i = 1; i <= nums1.length; i++) {for (int j = nums2.length; j > 0; j--) {if (nums1[i - 1] == nums2[j - 1]) {dp[j] = dp[j - 1] + 1;} else {dp[j] = 0;}result = Math.max(result, dp[j]);}}return result;}}",
+      "description": "Java版本实现，使用滚动数组，版本二"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def findLength(self, nums1: List[int], nums2: List[int]) -> int: dp = [[0] * (len(nums2) + 1) for _ in range(len(nums1) + 1)] result = 0 for i in range(1, len(nums1) + 1): for j in range(1, len(nums2) + 1): if nums1[i - 1] == nums2[j - 1]: dp[i][j] = dp[i - 1][j - 1] + 1 if dp[i][j] > result: result = dp[i][j] return result",
+      "description": "Python版本实现，二维DP"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def findLength(self, nums1: List[int], nums2: List[int]) -> int: dp = [0] * (len(nums2) + 1) result = 0 for i in range(1, len(nums1) + 1): prev = 0 for j in range(1, len(nums2) + 1): current = dp[j] if nums1[i - 1] == nums2[j - 1]: dp[j] = prev + 1 if dp[j] > result: result = dp[j] else: dp[j] = 0 prev = current return result",
+      "description": "Python版本实现，一维DP"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def findLength(self, nums1: List[int], nums2: List[int]) -> int: dp = [[0] * (len(nums2) + 1) for _ in range(len(nums1) + 1)] result = 0 for i in range(len(nums1)): if nums1[i] == nums2[0]: dp[i + 1][1] = 1 for j in range(len(nums2)): if nums1[0] == nums2[j]: dp[1][j + 1] = 1 for i in range(1, len(nums1) + 1): for j in range(1, len(nums2) + 1): if nums1[i - 1] == nums2[j - 1]: dp[i][j] = dp[i - 1][j - 1] + 1 if dp[i][j] > result: result = dp[i][j] return result",
+      "description": "Python版本实现，二维DP扩展"
+    }
+  ],
+  "common_mistakes": [
+    "错误地将dp[i][j]定义为以i, j索引处元素结尾而非i-1, j-1索引处导致边界处理复杂。",
+    "在使用滚动数组时忘记反向遍历来防止值被提前更新覆盖。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/2021011215282060.jpg",
+      "description": "该图片展示了使用动态规划算法求解两个数组A和B的最长公共子数组长度的过程，最大长度为3。",
+      "context": "这张图片展示了示例1中数组A和B对应的dp数组状态变化过程，帮助理解动态规划解法如何逐步计算最长公共子数组长度。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/2021011215282060-20230310134554486.jpg",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/2021011215282060-20230310134554486.jpg",
+      "context": "该图展示了如何通过滚动数组技术将二维动态规划问题的空间复杂度优化，具体表现为dp[i][j]值的更新依赖于其左上方元素dp[i-1][j-1]的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/2021011215282060.jpg",
+      "description": "GIF展示了动态规划数组dp在处理两个整数数组匹配问题时的状态变化过程。",
+      "context": "该GIF动画展示了动态规划过程中dp数组如何随输入序列A和B的变化而逐步构建的状态变化过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/2021011215282060-20230310134554486.jpg",
+      "description": "GIF展示了使用动态规划方法寻找两个数组中最长公共子序列的过程，通过二维数组逐步更新来可视化每一步的状态变化。",
+      "context": "GIF动画展示了如何通过从后向前遍历数组B来更新一维动态规划数组，以避免数据被重复覆盖的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\动态规划\\最长重复子数组.txt",
+  "extracted_at": "2025-07-20T21:42:07.260261",
+  "raw_content": "最长重复子数组\n力扣题目链接(https://leetcode.cn/problems/maximum-length-of-repeated-subarray/)\n\n给两个整数数组 A 和 B ，返回两个数组中公共的、长度最长的子数组的长度。\n\n示例：\n\n输入：\n\nA: [1,2,3,2,1]\nB: [3,2,1,4,7]\n输出：3\n解释：长度最长的公共子数组是 [3, 2, 1] 。\n提示：\n\n1 <= len(A), len(B) <= 1000\n0 <= A[i], B[i] < 100\n\n\n#思路\n注意题目中说的子数组，其实就是连续子序列。\n\n要求两个数组中最长重复子数组，如果是暴力的解法 只需要先两层for循环确定两个数组起始位置，然后再来一个循环可以是for或者while，来从两个起始位置开始比较，取得重复子数组的长度。\n\n本题其实是动规解决的经典题目，我们只要想到 用二维数组可以记录两个字符串的所有比较情况，这样就比较好推 递推公式了。 动规五部曲分析如下：\n\n确定dp数组（dp table）以及下标的含义\ndp[i][j] ：以下标i - 1为结尾的A，和以下标j - 1为结尾的B，最长重复子数组长度为dp[i][j]。 （特别注意： “以下标i - 1为结尾的A” 标明一定是 以A[i-1]为结尾的字符串 ）\n\n此时细心的同学应该发现，那dp[0][0]是什么含义呢？总不能是以下标-1为结尾的A数组吧。\n\n其实dp[i][j]的定义也就决定着，我们在遍历dp[i][j]的时候i 和 j都要从1开始。\n\n那有同学问了，我就定义dp[i][j]为 以下标i为结尾的A，和以下标j 为结尾的B，最长重复子数组长度。不行么？\n\n行倒是行！ 但实现起来就麻烦一点，需要单独处理初始化部分，在本题解下面的拓展内容里，我给出了 第二种 dp数组的定义方式所对应的代码和讲解，大家比较一下就了解了。\n\n确定递推公式\n根据dp[i][j]的定义，dp[i][j]的状态只能由dp[i - 1][j - 1]推导出来。\n\n即当A[i - 1] 和B[j - 1]相等的时候，dp[i][j] = dp[i - 1][j - 1] + 1;\n\n根据递推公式可以看出，遍历i 和 j 要从1开始！\n\ndp数组如何初始化\n根据dp[i][j]的定义，dp[i][0] 和dp[0][j]其实都是没有意义的！\n\n但dp[i][0] 和dp[0][j]要初始值，因为 为了方便递归公式dp[i][j] = dp[i - 1][j - 1] + 1;\n\n所以dp[i][0] 和dp[0][j]初始化为0。\n\n举个例子A[0]如果和B[0]相同的话，dp[1][1] = dp[0][0] + 1，只有dp[0][0]初始为0，正好符合递推公式逐步累加起来。\n\n确定遍历顺序\n外层for循环遍历A，内层for循环遍历B。\n\n那又有同学问了，外层for循环遍历B，内层for循环遍历A。不行么？\n\n也行，一样的，我这里就用外层for循环遍历A，内层for循环遍历B了。\n\n同时题目要求长度最长的子数组的长度。所以在遍历的时候顺便把dp[i][j]的最大值记录下来。\n\n代码如下：\n\nfor (int i = 1; i <= nums1.size(); i++) {\n    for (int j = 1; j <= nums2.size(); j++) {\n        if (nums1[i - 1] == nums2[j - 1]) {\n            dp[i][j] = dp[i - 1][j - 1] + 1;\n        }\n        if (dp[i][j] > result) result = dp[i][j];\n    }\n}\n\n举例推导dp数组\n拿示例1中，A: [1,2,3,2,1]，B: [3,2,1,4,7]为例，画一个dp数组的状态变化，如下：\n\nhttps://file1.kamacoder.com/i/algo/2021011215282060.jpg\n\n以上五部曲分析完毕，C++代码如下：\n\n// 版本一\nclass Solution {\npublic:\n    int findLength(vector<int>& nums1, vector<int>& nums2) {\n        vector<vector<int>> dp (nums1.size() + 1, vector<int>(nums2.size() + 1, 0));\n        int result = 0;\n        for (int i = 1; i <= nums1.size(); i++) {\n            for (int j = 1; j <= nums2.size(); j++) {\n                if (nums1[i - 1] == nums2[j - 1]) {\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                }\n                if (dp[i][j] > result) result = dp[i][j];\n            }\n        }\n        return result;\n    }\n};\n时间复杂度：O(n × m)，n 为A长度，m为B长度\n空间复杂度：O(n × m)\n#滚动数组\n在如下图中：\n\nhttps://file1.kamacoder.com/i/algo/2021011215282060-20230310134554486.jpg\n\n我们可以看出dp[i][j]都是由dp[i - 1][j - 1]推出。那么压缩为一维数组，也就是dp[j]都是由dp[j - 1]推出。\n\n也就是相当于可以把上一层dp[i - 1][j]拷贝到下一层dp[i][j]来继续用。\n\n此时遍历B数组的时候，就要从后向前遍历，这样避免重复覆盖。\n\n// 版本二\nclass Solution {\npublic:\n    int findLength(vector<int>& A, vector<int>& B) {\n        vector<int> dp(vector<int>(B.size() + 1, 0));\n        int result = 0;\n        for (int i = 1; i <= A.size(); i++) {\n            for (int j = B.size(); j > 0; j--) {\n                if (A[i - 1] == B[j - 1]) {\n                    dp[j] = dp[j - 1] + 1;\n                } else dp[j] = 0; // 注意这里不相等的时候要有赋0的操作\n                if (dp[j] > result) result = dp[j];\n            }\n        }\n        return result;\n    }\n};\n时间复杂度：$O(n × m)$，n 为A长度，m为B长度\n空间复杂度：$O(m)$\n#拓展\n前面讲了 dp数组为什么定义：以下标i - 1为结尾的A，和以下标j - 1为结尾的B，最长重复子数组长度为dp[i][j]。\n\n我就定义dp[i][j]为 以下标i为结尾的A，和以下标j 为结尾的B，最长重复子数组长度。不行么？\n\n当然可以，就是实现起来麻烦一些。\n\n如果定义 dp[i][j]为 以下标i为结尾的A，和以下标j 为结尾的B，那么 第一行和第一列毕竟要进行初始化，如果nums1[i] 与 nums2[0] 相同的话，对应的 dp[i][0]就要初始为1， 因为此时最长重复子数组为1。 nums2[j] 与 nums1[0]相同的话，同理。\n\n所以代码如下：\n\n// 版本三\nclass Solution {\npublic:\n    int findLength(vector<int>& nums1, vector<int>& nums2) {\n        vector<vector<int>> dp (nums1.size() + 1, vector<int>(nums2.size() + 1, 0));\n        int result = 0;\n\n        // 要对第一行，第一列经行初始化\n        for (int i = 0; i < nums1.size(); i++) if (nums1[i] == nums2[0]) dp[i][0] = 1;\n        for (int j = 0; j < nums2.size(); j++) if (nums1[0] == nums2[j]) dp[0][j] = 1;\n\n        for (int i = 0; i < nums1.size(); i++) {\n            for (int j = 0; j < nums2.size(); j++) {\n                if (nums1[i] == nums2[j] && i > 0 && j > 0) { // 防止 i-1 出现负数\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                }\n                if (dp[i][j] > result) result = dp[i][j];\n            }\n        }\n        return result;\n    }\n};\n大家会发现 这种写法 一定要多写一段初始化的过程。\n\n而且为了让 if (dp[i][j] > result) result = dp[i][j]; 收集到全部结果，两层for训练一定从0开始遍历，这样需要加上 && i > 0 && j > 0的判断。\n\n对于基础不牢的小白来说，在推导出转移方程后可能疑惑上述代码为什么要从i=0,j=0遍历而不是从i=1,j=1开始遍历，原因在于这里如果不是从i=0,j=0位置开始遍历，会漏掉如下样例结果：\n\nnums1 = [70,39,25,40,7]\nnums2 = [52,20,67,5,31]\n当然，如果你愿意也可以使用如下代码，与上面那个c++是同一思路：\n\nclass Solution {\n    public int findLength(int[] nums1, int[] nums2) {\n        int len1 = nums1.length;\n        int len2 = nums2.length;\n        int[][] result = new int[len1][len2];\n\n        int maxresult = Integer.MIN_VALUE;\n\n        for(int i=0;i<len1;i++){\n            if(nums1[i] == nums2[0])\n                result[i][0] = 1;\n            if(maxresult<result[i][0])\n                    maxresult = result[i][0];\n        }\n\n        for(int j=0;j<len2;j++){\n            if(nums1[0] == nums2[j])\n                result[0][j] = 1;\n            if(maxresult<result[0][j])\n                maxresult = result[0][j];\n        }\n\n        for(int i=1;i<len1;i++){\n            for(int j=1;j<len2;j++){\n\n                if(nums1[i]==nums2[j])\n                    result[i][j] = result[i-1][j-1]+1;\n\n                if(maxresult<result[i][j])\n                    maxresult = result[i][j];\n\n            }\n\n        }\n\n        return maxresult;\n    }\n}\n对于小白来说一定要明确dp数组中初始化的数据是什么\n\n整体而言相对于版本一来说还是多写了不少代码。而且逻辑上也复杂了一些。 优势就是dp数组的定义，更直观一点。\n\n#其他语言版本\n#Java：\n// 版本一\nclass Solution {\n    public int findLength(int[] nums1, int[] nums2) {\n        int result = 0;\n        int[][] dp = new int[nums1.length + 1][nums2.length + 1];\n        \n        for (int i = 1; i < nums1.length + 1; i++) {\n            for (int j = 1; j < nums2.length + 1; j++) {\n                if (nums1[i - 1] == nums2[j - 1]) {\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                    result = Math.max(result, dp[i][j]);\n                }\n            }\n        }\n        \n        return result;\n    }\n}\n\n// 版本二: 滚动数组\nclass Solution {\n    public int findLength(int[] nums1, int[] nums2) {\n        int[] dp = new int[nums2.length + 1];\n        int result = 0;\n\n        for (int i = 1; i <= nums1.length; i++) {\n            for (int j = nums2.length; j > 0; j--) {\n                if (nums1[i - 1] == nums2[j - 1]) {\n                    dp[j] = dp[j - 1] + 1;\n                } else {\n                    dp[j] = 0;\n                }\n                result = Math.max(result, dp[j]);\n            }\n        }\n        return result;\n    }\n}\n#Python：\n2维DP\n\nclass Solution:\n    def findLength(self, nums1: List[int], nums2: List[int]) -> int:\n        # 创建一个二维数组 dp，用于存储最长公共子数组的长度\n        dp = [[0] * (len(nums2) + 1) for _ in range(len(nums1) + 1)]\n        # 记录最长公共子数组的长度\n        result = 0\n\n        # 遍历数组 nums1\n        for i in range(1, len(nums1) + 1):\n            # 遍历数组 nums2\n            for j in range(1, len(nums2) + 1):\n                # 如果 nums1[i-1] 和 nums2[j-1] 相等\n                if nums1[i - 1] == nums2[j - 1]:\n                    # 在当前位置上的最长公共子数组长度为前一个位置上的长度加一\n                    dp[i][j] = dp[i - 1][j - 1] + 1\n                # 更新最长公共子数组的长度\n                if dp[i][j] > result:\n                    result = dp[i][j]\n\n        # 返回最长公共子数组的长度\n        return result\n\n1维DP\n\nclass Solution:\n    def findLength(self, nums1: List[int], nums2: List[int]) -> int:\n        # 创建一个一维数组 dp，用于存储最长公共子数组的长度\n        dp = [0] * (len(nums2) + 1)\n        # 记录最长公共子数组的长度\n        result = 0\n\n        # 遍历数组 nums1\n        for i in range(1, len(nums1) + 1):\n            # 用于保存上一个位置的值\n            prev = 0\n            # 遍历数组 nums2\n            for j in range(1, len(nums2) + 1):\n                # 保存当前位置的值，因为会在后面被更新\n                current = dp[j]\n                # 如果 nums1[i-1] 和 nums2[j-1] 相等\n                if nums1[i - 1] == nums2[j - 1]:\n                    # 在当前位置上的最长公共子数组长度为上一个位置的长度加一\n                    dp[j] = prev + 1\n                    # 更新最长公共子数组的长度\n                    if dp[j] > result:\n                        result = dp[j]\n                else:\n                    # 如果不相等，将当前位置的值置为零\n                    dp[j] = 0\n                # 更新 prev 变量为当前位置的值，供下一次迭代使用\n                prev = current\n\n        # 返回最长公共子数组的长度\n        return result\n\n2维DP 扩展\n\nclass Solution:\n    def findLength(self, nums1: List[int], nums2: List[int]) -> int:\n        # 创建一个二维数组 dp，用于存储最长公共子数组的长度\n        dp = [[0] * (len(nums2) + 1) for _ in range(len(nums1) + 1)]\n        # 记录最长公共子数组的长度\n        result = 0\n\n        # 对第一行和第一列进行初始化\n        for i in range(len(nums1)):\n            if nums1[i] == nums2[0]:\n                dp[i + 1][1] = 1\n        for j in range(len(nums2)):\n            if nums1[0] == nums2[j]:\n                dp[1][j + 1] = 1\n\n        # 填充dp数组\n        for i in range(1, len(nums1) + 1):\n            for j in range(1, len(nums2) + 1):\n                if nums1[i - 1] == nums2[j - 1]:\n                    # 如果 nums1[i-1] 和 nums2[j-1] 相等，则当前位置的最长公共子数组长度为左上角位置的值加一\n                    dp[i][j] = dp[i - 1][j - 1] + 1\n                if dp[i][j] > result:\n                    # 更新最长公共子数组的长度\n                    result = dp[i][j]\n\n        # 返回最长公共子数组的长度\n        return result"
+}

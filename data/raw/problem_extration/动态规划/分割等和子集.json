@@ -1,0 +1,546 @@
+{
+  "id": "AP_4caddc38",
+  "title": "分割等和子集",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/partition-equal-subset-sum/",
+  "description": "一个只包含正整数的非空数组。是否可以将这个数组分割成两个子集，使得两个子集的元素和相等。\n\n注意: 每个数组中的元素不会超过 100 数组的大小不会超过 200",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "动态规划",
+    "01背包"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "空间优化",
+    "回溯法放弃"
+  ],
+  "difficulty": null,
+  "solution_approach": "将问题转化为01背包问题，目的是找到总和为数组元素总和一半的子集。通过动态规划方法来解决这个问题，其中物品的重量和价值均是数组中的数值。",
+  "key_insights": [
+    {
+      "content": "题目要求分割数组成两个等和子集的问题可以转化为：是否存在一个子集其元素之和等于整个数组元素之和的一半。这与01背包问题中寻找是否可以用给定的物品（数组元素）装满一个特定容量（数组元素总和的一半）的背包相类似。"
+    },
+    {
+      "content": "使用一维dp数组来存储对于每个可能的目标值（即背包容量），能获得的最大价值。这里的价值和重量都是数组里的数。当dp[target] == target时，意味着找到了一个子集，其元素之和正好为目标值。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目初步看，和如下两题几乎是一样的，大家可以用回溯法，解决如下两题",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canPartition(vector<int>& nums) {int sum = 0;vector<int> dp(10001, 0);for (int i = 0; i < nums.size(); i++) {sum += nums[i];}if (sum % 2 == 1) return false;int target = sum / 2;for(int i = 0; i < nums.size(); i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = max(dp[j], dp[j - nums[i]] + nums[i]);}}return dp[target] == target;}};",
+          "description": "C++版本的解决方案，使用一维动态规划解决分割等和子集问题。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canPartition(int[] nums) {if(nums == null || nums.length == 0) return false;int n = nums.length;int sum = 0;for(int num : nums) {sum += num;}if(sum % 2 != 0) return false;int target = sum / 2;int[] dp = new int[target + 1];for(int i = 0; i < n; i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = Math.max(dp[j], dp[j - nums[i]] + nums[i]);}if(dp[target] == target)return true;}return dp[target] == target;}}",
+          "description": "Java版本的解决方案，同样使用一维动态规划处理。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: _sum = 0dp = [0] * 10001for num in nums: _sum += numif _sum % 2 == 1: return False target = _sum // 2for num in nums: for j in range(target, num - 1, -1): dp[j] = max(dp[j], dp[j - num] + num)if dp[target] == target: return True return False",
+          "description": "Python版本的解法，通过一维数组实现动态规划来解决问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "01背包问题",
+      "text": "01背包问题，大家都知道，有N件物品和一个最多能背重量为W 的背包。第i件物品的重量是weight[i]，得到的价值是value[i] 。每件物品只能用一次，求解将哪些物品装入背包里物品价值总和最大。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canPartition(vector<int>& nums) { int sum = 0; vector<int> dp(10001, 0); for (int i = 0; i < nums.size(); i++) {sum += nums[i];} if (sum % 2 == 1) return false; int target = sum / 2; for(int i = 0; i < nums.size(); i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = max(dp[j], dp[j - nums[i]] + nums[i]);}} if (dp[target] == target) return true; return false;}};",
+          "description": "C++解决方案，使用动态规划解决分割等和子集问题。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canPartition(int[] nums) {if(nums == null || nums.length == 0) return false; int n = nums.length, sum = 0; for(int num : nums) {sum += num;} if(sum % 2 != 0) return false; int target = sum / 2, dp[] = new int[target + 1]; for(int i = 0; i < n; i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = Math.max(dp[j], dp[j - nums[i]] + nums[i]);} if(dp[target] == target) return true;} return dp[target] == target;}}",
+          "description": "Java解决方案，通过动态规划判断数组是否可以分割为两个和相等的子集。"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution {public static boolean canPartition(int[] nums) {int len = nums.length, sum = 0; for (int num : nums) {sum += num;} if ((sum % 2) != 0) {return false;} int target = sum / 2; boolean[][] dp = new boolean[len][target + 1]; if (nums[0] <= target) {dp[0][nums[0]] = true;} for (int i = 1; i < len; i++) {for (int j = 0; j <= target; j++) {dp[i][j] = dp[i - 1][j]; if (nums[i] == j) {dp[i][j] = true; continue;} if (nums[i] < j) {dp[i][j] = dp[i - 1][j] || dp[i - 1][j - nums[i]] ;}}}} return dp[len - 1][target];}}",
+          "description": "Java解决方案，采用二维数组存储状态来解决分割等和子集问题。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canPartition(int[] nums) {int len = nums.length, sum = 0; for (int num : nums) {sum += num;} if(sum % 2 == 1) return false; int target = sum / 2, dp[][] = new int[nums.length][target + 1]; for(int j = nums[0]; j <= target; j++) {dp[0][j] = nums[0];} for(int i = 1; i < len; i++) {for(int j = 0; j <= target; j++) {if (j < nums[i]) dp[i][j] = dp[i - 1][j]; else dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - nums[i]] + nums[i]);}} return dp[len - 1][target] == target;}}",
+          "description": "Java解决方案，利用二维整数数组实现动态规划解决题目要求。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: _sum = 0; dp = [0] * 10001; for num in nums: _sum += num; if _sum % 2 == 1: return False; target = _sum // 2; for num in nums: for j in range(target, num - 1, -1): dp[j] = max(dp[j], dp[j - num] + num); if dp[target] == target: return True; return False;",
+          "description": "Python解决方案，应用一维动态规划求解是否存在两个和相等的子集。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: if sum(nums) % 2 != 0: return False; target = sum(nums) // 2; dp = [0] * (target + 1); for num in nums: for j in range(target, num-1, -1): dp[j] = max(dp[j], dp[j-num] + num); return dp[-1] == target;",
+          "description": "简化版Python代码，同样基于一维动态规划思想寻找等和子集。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: total_sum = sum(nums); if total_sum % 2 != 0: return False; target_sum = total_sum // 2; dp = [[False] * (target_sum + 1) for _ in range(len(nums) + 1)]; for i in range(len(nums) + 1): dp[i][0] = True; for i in range(1, len(nums) + 1): for j in range(1, target_sum + 1): if j < nums[i - 1]: dp[i][j] = dp[i - 1][j]; else: dp[i][j] = dp[i - 1][j] or dp[i - 1][j - nums[i - 1]]; return dp[len(nums)][target_sum];",
+          "description": "Python中使用二维DP数组的方法解决本题。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: total_sum = sum(nums); if total_sum % 2 != 0: return False; target_sum = total_sum // 2; dp = [False] * (target_sum + 1); dp[0] = True; for num in nums: for i in range(target_sum, num - 1, -1): dp[i] = dp[i] or dp[i - num]; return dp[target_sum];",
+          "description": "优化后的Python版本，仅用一维数组实现了动态规划算法。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "1. 确定dp数组以及下标的含义",
+      "text": "01背包中，dp[j] 表示： 容量（所能装的重量）为j的背包，所背的物品价值最大可以为dp[j]。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canPartition(vector<int>& nums) {int sum = 0;vector<int> dp(10001, 0);for (int i = 0; i < nums.size(); i++) {sum += nums[i];}if (sum % 2 == 1) return false;int target = sum / 2;for(int i = 0; i < nums.size(); i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = max(dp[j], dp[j - nums[i]] + nums[i]);}}if (dp[target] == target) return true;return false;}};",
+          "description": "C++实现的01背包问题解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canPartition(int[] nums) {if(nums == null || nums.length == 0) return false;int n = nums.length;int sum = 0;for(int num : nums) {sum += num;}if(sum % 2 != 0) return false;int target = sum / 2;int[] dp = new int[target + 1];for(int i = 0; i < n; i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = Math.max(dp[j], dp[j - nums[i]] + nums[i]);}if(dp[target] == target)return true;}return dp[target] == target;}}",
+          "description": "Java实现的01背包问题解法"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution {public static boolean canPartition(int[] nums) {int len = nums.length;int sum = 0;for (int num : nums) {sum += num;}if ((sum %2 ) != 0) {return false;}int target = sum / 2;boolean[][] dp = new boolean[len][target + 1];if (nums[0] <= target) {dp[0][nums[0]] = true;}for (int i = 1; i < len; i++) {for (int j = 0; j <= target; j++) {dp[i][j] = dp[i - 1][j];if (nums[i] == j) {dp[i][j] = true;continue;}if (nums[i] < j) {dp[i][j] = dp[i - 1][j] || dp[i - 1][j - nums[i]];}}}}return dp[len - 1][target];}}",
+          "description": "二维数组版本的Java实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canPartition(int[] nums) {int len = nums.length;if(len == 0)return false;int sum = 0;for (int num : nums)sum += num;if(sum % 2 == 1)return false;int target = sum / 2;int[][] dp = new int[nums.length][target + 1];for(int j = nums[0]; j <= target; j++){dp[0][j] = nums[0];}for(int i = 1; i < len; i++){for(int j = 0; j <= target; j++){if (j < nums[i])dp[i][j] = dp[i - 1][j];else dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - nums[i]] + nums[i]);}}returndp[len - 1][target] == target;}}",
+          "description": "二維數組整數版本的Java实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: _sum = 0dp = [0] * 10001for num in nums: _sum += numif _sum % 2 == 1: return Falsetarget = _sum // 2for num in nums: for j in range(target, num - 1, -1): dp[j] = max(dp[j], dp[j - num] + num)if dp[target] == target: return True return False",
+          "description": "Python实现的简化版01背包问题解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: if sum(nums) % 2 != 0: return Falsetarget = sum(nums) // 2dp = [0] * (target + 1)for num in nums: for j in range(target, num-1, -1): dp[j] = max(dp[j], dp[j-num] + num)return dp[-1] == target",
+          "description": "Python实现的简化版01背包问题解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: total_sum = sum(nums)if total_sum % 2 != 0: return Falsetarget_sum = total_sum // 2dp = [[False] * (target_sum + 1) for _ in range(len(nums) + 1)]for i in range(len(nums) + 1): dp[i][0] = Truefor i in range(1, len(nums) + 1): for j in range(1, target_sum + 1): if j < nums[i - 1]: dp[i][j] = dp[i - 1][j] else: dp[i][j] = dp[i - 1][j] or dp[i - 1][j - nums[i - 1]]return dp[len(nums)][target_sum]",
+          "description": "二维DP版Python实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: total_sum = sum(nums)if total_sum % 2 != 0: return Falsetarget_sum = total_sum // 2dp = [False] * (target_sum + 1)dp[0] = Truefor num in nums: for i in range(target_sum, num - 1, -1): dp[i] = dp[i] or dp[i - num]return dp[target_sum]",
+          "description": "一维DP版Python实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "2. 确定递推公式",
+      "text": "01背包的递推公式为：dp[j] = max(dp[j], dp[j - weight[i]] + value[i]);",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canPartition(vector<int>& nums) {int sum = 0;vector<int> dp(10001, 0);for (int i = 0; i < nums.size(); i++) {sum += nums[i];}if (sum % 2 == 1) return false;int target = sum / 2;for(int i = 0; i < nums.size(); i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = max(dp[j], dp[j - nums[i]] + nums[i]);}}return dp[target] == target;}};",
+          "description": "C++实现的分割等和子集问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canPartition(int[] nums) {if(nums == null || nums.length == 0) return false;int n = nums.length;int sum = 0;for(int num : nums) {sum += num;}if(sum % 2 != 0) return false;int target = sum / 2;int[] dp = new int[target + 1];for(int i = 0; i < n; i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = Math.max(dp[j], dp[j - nums[i]] + nums[i]);}if(dp[target] == target)return true;}return dp[target] == target;}}",
+          "description": "Java实现的分割等和子集问题"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution {public static boolean canPartition(int[] nums) {int len = nums.length;int sum = 0;for (int num : nums) {sum += num;}if ((sum %2 ) != 0) {return false;}int target = sum / 2;boolean[][] dp = new boolean[len][target + 1];if (nums[0] <= target) {dp[0][nums[0]] = true;}for (int i = 1; i < len; i++) {for (int j = 0; j <= target; j++) {dp[i][j] = dp[i - 1][j];if (nums[i] == j) {dp[i][j] = true;continue;}if (nums[i] < j) {dp[i][j] = dp[i - 1][j] || dp[i - 1][j - nums[i]];}}}}return dp[len - 1][target];}}",
+          "description": "二维数组版本，易于理解的Java实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canPartition(int[] nums) {int len = nums.length;if(len == 0)return false;int sum = 0;for (int num : nums)sum += num;if(sum % 2 == 1)return false;int target = sum / 2;int[][] dp = new int[nums.length][target + 1];for(int j = nums[0]; j <= target; j++){dp[0][j] = nums[0];}for(int i = 1; i < len; i++){for(int j = 0; j <= target; j++){if (j < nums[i]) dp[i][j] = dp[i - 1][j];else dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - nums[i]] + nums[i]);}}returndp[len - 1][target] == target;}}",
+          "description": "二維數組整數版本的Java实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: _sum = 0dp = [0] * 10001for num in nums: _sum += numif _sum % 2 == 1: return False target = _sum // 2for num in nums: for j in range(target, num - 1, -1): dp[j] = max(dp[j], dp[j - num] + num)if dp[target] == target: return True return False",
+          "description": "Python实现的分割等和子集问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: if sum(nums) % 2 != 0: return Falsetarget = sum(nums) // 2dp = [0] * (target + 1)for num in nums: for j in range(target, num-1, -1): dp[j] = max(dp[j], dp[j-num] + num)return dp[-1] == target",
+          "description": "简化版的Python实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: total_sum = sum(nums)if total_sum % 2 != 0: return Falsetarget_sum = total_sum // 2dp = [[False] * (target_sum + 1) for _ in range(len(nums) + 1)]for i in range(len(nums) + 1): dp[i][0] = Truefor i in range(1, len(nums) + 1): for j in range(1, target_sum + 1): if j < nums[i - 1]: dp[i][j] = dp[i - 1][j] else: dp[i][j] = dp[i - 1][j] or dp[i - 1][j - nums[i - 1]]return dp[len(nums)][target_sum]",
+          "description": "二维DP版的Python实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: total_sum = sum(nums)if total_sum % 2 != 0: return Falsetarget_sum = total_sum // 2dp = [False] * (target_sum + 1)dp[0] = Truefor num in nums: for i in range(target_sum, num - 1, -1): dp[i] = dp[i] or dp[i - num]return dp[target_sum]",
+          "description": "一维DP版的Python实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "3. dp数组如何初始化",
+      "text": "在01背包，一维dp如何初始化，已经讲过，",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canPartition(vector<int>& nums) {int sum = 0;vector<int> dp(10001, 0);for (int i = 0; i < nums.size(); i++) {sum += nums[i];}if (sum % 2 == 1) return false;int target = sum / 2;for(int i = 0; i < nums.size(); i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = max(dp[j], dp[j - nums[i]] + nums[i]);}}return dp[target] == target;}};",
+          "description": "C++实现的分割等和子集问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canPartition(int[] nums) {if(nums == null || nums.length == 0) return false;int n = nums.length;int sum = 0;for(int num : nums) {sum += num;}if(sum % 2 != 0) return false;int target = sum / 2;int[] dp = new int[target + 1];for(int i = 0; i < n; i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = Math.max(dp[j], dp[j - nums[i]] + nums[i]);}if(dp[target] == target)return true;}return dp[target] == target;}}",
+          "description": "Java实现的分割等和子集问题"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution {public static boolean canPartition(int[] nums) {int len = nums.length;int sum = 0;for (int num : nums) {sum += num;}if ((sum %2 ) != 0) {return false;}int target = sum / 2;boolean[][] dp = new boolean[len][target + 1];if (nums[0] <= target) {dp[0][nums[0]] = true;}for (int i = 1; i < len; i++) {for (int j = 0; j <= target; j++) {dp[i][j] = dp[i - 1][j];if (nums[i] == j) {dp[i][j] = true;continue;}if (nums[i] < j) {dp[i][j] = dp[i - 1][j] || dp[i - 1][j - nums[i]];}}}}return dp[len - 1][target];}}",
+          "description": "二维数组版本，易于理解的Java实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canPartition(int[] nums) {int len = nums.length;if(len == 0)return false;int sum = 0;for (int num : nums)sum += num;if(sum % 2 == 1)return false;int target = sum / 2;int[][] dp = new int[nums.length][target + 1];for(int j = nums[0]; j <= target; j++){dp[0][j] = nums[0];}for(int i = 1; i < len; i++){for(int j = 0; j <= target; j++){if (j < nums[i]) dp[i][j] = dp[i - 1][j];else dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - nums[i]] + nums[i]);}}returndp[len - 1][target] == target;}}",
+          "description": "二維數組整數版本的Java实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: _sum = 0;dp = [0] * 10001;for num in nums: _sum += num;if _sum % 2 == 1: return False;target = _sum // 2;for num in nums: for j in range(target, num - 1, -1): dp[j] = max(dp[j], dp[j - num] + num);return dp[target] == target;",
+          "description": "Python实现的分割等和子集问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: if sum(nums) % 2 != 0: return False;target = sum(nums) // 2;dp = [0] * (target + 1);for num in nums: for j in range(target, num-1, -1): dp[j] = max(dp[j], dp[j-num] + num);return dp[-1] == target;",
+          "description": "简化版的Python实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: total_sum = sum(nums);if total_sum % 2 != 0: return False;target_sum = total_sum // 2;dp = [[False] * (target_sum + 1) for _ in range(len(nums) + 1)];for i in range(len(nums) + 1): dp[i][0] = True;for i in range(1, len(nums) + 1): for j in range(1, target_sum + 1): if j < nums[i - 1]: dp[i][j] = dp[i - 1][j];else: dp[i][j] = dp[i - 1][j] or dp[i - 1][j - nums[i - 1]];return dp[len(nums)][target_sum];",
+          "description": "二维DP版的Python实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: total_sum = sum(nums);if total_sum % 2 != 0: return False;target_sum = total_sum // 2;dp = [False] * (target_sum + 1);dp[0] = True;for num in nums: for i in range(target_sum, num - 1, -1): dp[i] = dp[i] or dp[i - num];return dp[target_sum];",
+          "description": "一维DP版的Python实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "4. 确定遍历顺序",
+      "text": "在动态规划：关于01背包问题，你该了解这些！（滚动数组） (https://programmercarl.com/%E8%83%8C%E5%8C%85%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%8001%E8%83%8C%E5%8C%85-2.html)中就已经说明：如果使用一维dp数组，物品遍历的for循环放在外层，遍历背包的for循环放在内层，且内层for循环倒序遍历！",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "class Solution {public: bool canPartition(vector<int>& nums) {int sum = 0;vector<int> dp(10001, 0);for (int i = 0; i < nums.size(); i++) {sum += nums[i];}if (sum % 2 == 1) return false;int target = sum / 2;for(int i = 0; i < nums.size(); i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = max(dp[j], dp[j - nums[i]] + nums[i]);}}return dp[target] == target;}};",
+          "description": "使用一维DP数组解决分割等和子集问题"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public boolean canPartition(int[] nums) {if(nums == null || nums.length == 0) return false;int n = nums.length;int sum = 0;for(int num : nums) {sum += num;}if(sum % 2 != 0) return false;int target = sum / 2;int[] dp = new int[target + 1];for(int i = 0; i < n; i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = Math.max(dp[j], dp[j - nums[i]] + nums[i]);}if(dp[target] == target)return true;}return dp[target] == target;}}",
+          "description": "使用一维DP数组解决分割等和子集问题"
+        },
+        {
+          "language": "Java",
+          "code": "public class Solution {public static boolean canPartition(int[] nums) {int len = nums.length;int sum = 0;for (int num : nums) {sum += num;}if ((sum %2 ) != 0) {return false;}int target = sum / 2;boolean[][] dp = new boolean[len][target + 1];if (nums[0] <= target) {dp[0][nums[0]] = true;}for (int i = 1; i < len; i++) {for (int j = 0; j <= target; j++) {dp[i][j] = dp[i - 1][j];if (nums[i] == j) {dp[i][j] = true;continue;}if (nums[i] < j) {dp[i][j] = dp[i - 1][j] || dp[i - 1][j - nums[i]] ;}}}}return dp[len - 1][target];}}",
+          "description": "使用二维DP数组解决分割等和子集问题"
+        },
+        {
+          "language": "Java",
+          "code": "class Solution {public boolean canPartition(int[] nums) {int len = nums.length;if(len == 0)return false;int sum = 0;for (int num : nums)sum += num;if(sum % 2 == 1)return false;int target = sum / 2;int[][] dp = new int[nums.length][target + 1];for(int j = nums[0]; j <= target; j++){dp[0][j] = nums[0];}for(int i = 1; i < len; i++){for(int j = 0; j <= target; j++){if (j < nums[i])dp[i][j] = dp[i - 1][j];else dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - nums[i]] + nums[i]);}}returndp[len - 1][target] == target;}}",
+          "description": "使用二维DP整数数组解决分割等和子集问题"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: _sum = 0;dp = [0] * 10001;for num in nums: _sum += num;if _sum % 2 == 1: return False;target = _sum // 2;for num in nums: for j in range(target, num - 1, -1): dp[j] = max(dp[j], dp[j - num] + num);return dp[target] == target;",
+          "description": "使用一维DP数组解决分割等和子集问题（卡哥版）"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: if sum(nums) % 2 != 0: return False;target = sum(nums) // 2;dp = [0] * (target + 1);for num in nums: for j in range(target, num-1, -1): dp[j] = max(dp[j], dp[j-num] + num);return dp[-1] == target;",
+          "description": "简化版一维DP数组解决分割等和子集问题（卡哥版）"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: total_sum = sum(nums);if total_sum % 2 != 0: return False;target_sum = total_sum // 2;dp = [[False] * (target_sum + 1) for _ in range(len(nums) + 1)];for i in range(len(nums) + 1): dp[i][0] = True;for i in range(1, len(nums) + 1): for j in range(1, target_sum + 1): if j < nums[i - 1]: dp[i][j] = dp[i - 1][j];else: dp[i][j] = dp[i - 1][j] or dp[i - 1][j - nums[i - 1]];return dp[len(nums)][target_sum];",
+          "description": "使用二维DP数组解决分割等和子集问题"
+        },
+        {
+          "language": "Python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: total_sum = sum(nums);if total_sum % 2 != 0: return False;target_sum = total_sum // 2;dp = [False] * (target_sum + 1);dp[0] = True;for num in nums: for i in range(target_sum, num - 1, -1): dp[i] = dp[i] or dp[i - num];return dp[target_sum];",
+          "description": "优化后的一维DP数组解决分割等和子集问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "5. 举例推导dp数组",
+      "text": "dp[j]的数值一定是小于等于j的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canPartition(vector<int>& nums) {int sum = 0;vector<int> dp(10001, 0);for (int i = 0; i < nums.size(); i++) {sum += nums[i];}if (sum % 2 == 1) return false;int target = sum / 2;for(int i = 0; i < nums.size(); i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = max(dp[j], dp[j - nums[i]] + nums[i]);}}if (dp[target] == target) return true;return false;}};",
+          "description": "C++实现的分割等和子集问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canPartition(int[] nums) {if(nums == null || nums.length == 0) return false;int n = nums.length;int sum = 0;for(int num : nums) {sum += num;}if(sum % 2 != 0) return false;int target = sum / 2;int[] dp = new int[target + 1];for(int i = 0; i < n; i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = Math.max(dp[j], dp[j - nums[i]] + nums[i]);}if(dp[target] == target)return true;}return dp[target] == target;}}",
+          "description": "Java实现的分割等和子集问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canPartition(int[] nums) {int len = nums.length;if(len == 0)return false;int sum = 0;for (int num : nums)sum += num;if(sum % 2 == 1)return false;int target = sum / 2;int[][] dp = new int[nums.length][target + 1];for(int j = nums[0]; j <= target; j++){dp[0][j] = nums[0];}for(int i = 1; i < len; i++){for(int j = 0; j <= target; j++){if (j < nums[i])dp[i][j] = dp[i - 1][j];else dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - nums[i]] + nums[i]);}}return dp[len - 1][target] == target;}}",
+          "description": "Java二维数组版本实现的分割等和子集问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: _sum = 0dp = [0] * 10001for num in nums: _sum += numif _sum % 2 == 1: return False target = _sum // 2for num in nums: for j in range(target, num - 1, -1): dp[j] = max(dp[j], dp[j - num] + num)if dp[target] == target: return True return False",
+          "description": "Python实现的分割等和子集问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: if sum(nums) % 2 != 0: return Falsetarget = sum(nums) // 2dp = [0] * (target + 1)for num in nums: for j in range(target, num-1, -1): dp[j] = max(dp[j], dp[j-num] + num)return dp[-1] == target",
+          "description": "Python简化版实现的分割等和子集问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: total_sum = sum(nums)if total_sum % 2 != 0: return Falsetarget_sum = total_sum // 2dp = [[False] * (target_sum + 1) for _ in range(len(nums) + 1)]for i in range(len(nums) + 1): dp[i][0] = Truefor i in range(1, len(nums) + 1): for j in range(1, target_sum + 1): if j < nums[i - 1]: dp[i][j] = dp[i - 1][j] else: dp[i][j] = dp[i - 1][j] or dp[i - 1][j - nums[i - 1]]return dp[len(nums)][target_sum]",
+          "description": "Python二维DP版本实现的分割等和子集问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: total_sum = sum(nums)if total_sum % 2 != 0: return Falsetarget_sum = total_sum // 2dp = [False] * (target_sum + 1)dp[0] = Truefor num in nums: for i in range(target_sum, num - 1, -1): dp[i] = dp[i] or dp[i - num]return dp[target_sum]",
+          "description": "Python一维DP版本实现的分割等和子集问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "这道题目就是一道01背包经典应用类的题目，需要我们拆解题目，然后才能发现可以使用01背包。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canPartition(vector<int>& nums) {int sum = 0;vector<int> dp(10001, 0);for (int i = 0; i < nums.size(); i++) {sum += nums[i];}if (sum % 2 == 1) return false;int target = sum / 2;for(int i = 0; i < nums.size(); i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = max(dp[j], dp[j - nums[i]] + nums[i]);}}if (dp[target] == target) return true;return false;}};",
+          "description": "使用一维动态规划解决分割等和子集问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canPartition(int[] nums) {if(nums == null || nums.length == 0) return false;int n = nums.length;int sum = 0;for(int num : nums) {sum += num;}if(sum % 2 != 0) return false;int target = sum / 2;int[] dp = new int[target + 1];for(int i = 0; i < n; i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = Math.max(dp[j], dp[j - nums[i]] + nums[i]);}if(dp[target] == target)return true;}return dp[target] == target;}}",
+          "description": "Java版本的一维动态规划实现"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution {public static boolean canPartition(int[] nums) {int len = nums.length;int sum = 0;for (int num : nums) {sum += num;}if ((sum %2 ) != 0) {return false;}int target = sum / 2;boolean[][] dp = new boolean[len][target + 1];if (nums[0] <= target) {dp[0][nums[0]] = true;}for (int i = 1; i < len; i++) {for (int j = 0; j <= target; j++) {dp[i][j] = dp[i - 1][j];if (nums[i] == j) {dp[i][j] = true;continue;}if (nums[i] < j) {dp[i][j] = dp[i - 1][j] || dp[i - 1][j - nums[i]];}}}}return dp[len - 1][target];}}",
+          "description": "二维数组的Java实现，用于理解背包问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: _sum = 0dp = [0] * 10001for num in nums: _sum += numif _sum % 2 == 1: return Falsetarget = _sum // 2for num in nums: for j in range(target, num - 1, -1): dp[j] = max(dp[j], dp[j - num] + num)if dp[target] == target: return True return False",
+          "description": "Python版的一维动态规划解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean canPartition(int[] nums) {\n        if(nums == null || nums.length == 0) return false;\n        int n = nums.length;\n        int sum = 0;\n        for(int num : nums) {\n            sum += num;\n        }\n        if(sum % 2 != 0) return false;\n        int target = sum / 2;\n        int[] dp = new int[target + 1];\n        for(int i = 0; i < n; i++) {\n            for(int j = target; j >= nums[i]; j--) {\n                dp[j] = Math.max(dp[j], dp[j - nums[i]] + nums[i]);\n            }\n            if(dp[target] == target)\n                return true;\n        }\n        return dp[target] == target;\n    }\n}",
+          "description": "Java版本的一维DP解决分割等和子集问题"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution {\n    public static boolean canPartition(int[] nums) {\n        int len = nums.length;\n        int sum = 0;\n        for (int num : nums) {\n            sum += num;\n        }\n        if ((sum %2 ) != 0) {\n            return false;\n        }\n        int target = sum / 2; \n        boolean[][] dp = new boolean[len][target + 1];\n        if (nums[0] <= target) {\n            dp[0][nums[0]] = true;\n        }\n        for (int i = 1; i < len; i++) {\n            for (int j = 0; j <= target; j++) {\n                dp[i][j] = dp[i - 1][j];\n                if (nums[i] == j) {\n                    dp[i][j] = true;\n                    continue;\n                }\n                if (nums[i] < j) {\n                    dp[i][j] = dp[i - 1][j] || dp[i - 1][j - nums[i]];\n                }\n            }\n        }\n        return dp[len - 1][target];\n    }\n}",
+          "description": "Java版本的二维DP解决分割等和子集问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean canPartition(int[] nums) {\n        int len = nums.length;\n        if(len == 0) return false;\n        int sum = 0;\n        for (int num : nums) sum += num;\n        if(sum % 2 == 1) return false;\n        int target = sum / 2;\n        int[][] dp = new int[nums.length][target + 1];\n        for(int j = nums[0]; j <= target; j++){\n            dp[0][j] = nums[0];\n        }\n        for(int i = 1; i < len; i++){\n            for(int j = 0; j <= target; j++){\n                if (j < nums[i]) \n                    dp[i][j] = dp[i - 1][j];\n                else \n                    dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - nums[i]] + nums[i]);\n            }\n        }\n        return dp[len - 1][target] == target;\n    }\n}",
+          "description": "Java版本的二维整数数组DP解决分割等和子集问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def canPartition(self, nums: List[int]) -> bool:\n        _sum = 0\n        dp = [0] * 10001\n        for num in nums:\n            _sum += num\n        if _sum % 2 == 1:\n            return False\n        target = _sum // 2\n        for num in nums:\n            for j in range(target, num - 1, -1):\n                dp[j] = max(dp[j], dp[j - num] + num)\n        if dp[target] == target:\n            return True\n        return False",
+          "description": "Python版本的一维DP解决分割等和子集问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def canPartition(self, nums: List[int]) -> bool:\n        if sum(nums) % 2 != 0:\n            return False\n        target = sum(nums) // 2\n        dp = [0] * (target + 1)\n        for num in nums:\n            for j in range(target, num-1, -1):\n                dp[j] = max(dp[j], dp[j-num] + num)\n        return dp[-1] == target",
+          "description": "Python版本简化版的一维DP解决分割等和子集问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def canPartition(self, nums: List[int]) -> bool:\n        total_sum = sum(nums)\n        if total_sum % 2 != 0:\n            return False\n        target_sum = total_sum // 2\n        dp = [[False] * (target_sum + 1) for _ in range(len(nums) + 1)]\n        for i in range(len(nums) + 1):\n            dp[i][0] = True\n        for i in range(1, len(nums) + 1):\n            for j in range(1, target_sum + 1):\n                if j < nums[i - 1]:\n                    dp[i][j] = dp[i - 1][j]\n                else:\n                    dp[i][j] = dp[i - 1][j] or dp[i - 1][j - nums[i - 1]]\n        return dp[len(nums)][target_sum]",
+          "description": "Python版本的二维DP解决分割等和子集问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def canPartition(self, nums: List[int]) -> bool:\n        total_sum = sum(nums)\n        if total_sum % 2 != 0:\n            return False\n        target_sum = total_sum // 2\n        dp = [False] * (target_sum + 1)\n        dp[0] = True\n        for num in nums:\n            for i in range(target_sum, num - 1, -1):\n                dp[i] = dp[i] or dp[i - num]\n        return dp[target_sum]",
+          "description": "Python版本的一维DP解决分割等和子集问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canPartition(vector<int>& nums) {int sum = 0;vector<int> dp(10001, 0);for (int i = 0; i < nums.size(); i++) {sum += nums[i];}if (sum % 2 == 1) return false;int target = sum / 2;for(int i = 0; i < nums.size(); i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = max(dp[j], dp[j - nums[i]] + nums[i]);}}if (dp[target] == target) return true;return false;}};",
+          "description": "C++实现的分割等和子集问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canPartition(int[] nums) {if(nums == null || nums.length == 0) return false;int n = nums.length;int sum = 0;for(int num : nums) {sum += num;}if(sum % 2 != 0) return false;int target = sum / 2;int[] dp = new int[target + 1];for(int i = 0; i < n; i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = Math.max(dp[j], dp[j - nums[i]] + nums[i]);}if(dp[target] == target)return true;}return dp[target] == target;}}",
+          "description": "Java实现的分割等和子集问题"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution {public static boolean canPartition(int[] nums) {int len = nums.length;int sum = 0;for (int num : nums) {sum += num;}if ((sum %2 ) != 0) {return false;}int target = sum / 2;boolean[][] dp = new boolean[len][target + 1];if (nums[0] <= target) {dp[0][nums[0]] = true;}for (int i = 1; i < len; i++) {for (int j = 0; j <= target; j++) {dp[i][j] = dp[i - 1][j];if (nums[i] == j) {dp[i][j] = true;continue;}if (nums[i] < j) {dp[i][j] = dp[i - 1][j] || dp[i - 1][j - nums[i]];}}}}return dp[len - 1][target];}}",
+          "description": "二维数组版本的Java实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: _sum = 0dp = [0] * 10001for num in nums: _sum += numif _sum % 2 == 1: return False target = _sum // 2for num in nums: for j in range(target, num - 1, -1): dp[j] = max(dp[j], dp[j - num] + num)if dp[target] == target: return Truereturn False",
+          "description": "Python实现的分割等和子集问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: if sum(nums) % 2 != 0: return Falsetarget = sum(nums) // 2dp = [0] * (target + 1)for num in nums: for j in range(target, num-1, -1): dp[j] = max(dp[j], dp[j-num] + num)return dp[-1] == target",
+          "description": "简化版Python实现的分割等和子集问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: total_sum = sum(nums)if total_sum % 2 != 0: return Falsetarget_sum = total_sum // 2dp = [[False] * (target_sum + 1) for _ in range(len(nums) + 1)]for i in range(len(nums) + 1): dp[i][0] = Truefor i in range(1, len(nums) + 1): for j in range(1, target_sum + 1): if j < nums[i - 1]: dp[i][j] = dp[i - 1][j] else: dp[i][j] = dp[i - 1][j] or dp[i - 1][j - nums[i - 1]]return dp[len(nums)][target_sum]",
+          "description": "二维DP版Python实现的分割等和子集问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: total_sum = sum(nums)if total_sum % 2 != 0: return Falsetarget_sum = total_sum // 2dp = [False] * (target_sum + 1)dp[0] = Truefor num in nums: for i in range(target_sum, num - 1, -1): dp[i] = dp[i] or dp[i - num]return dp[target_sum]",
+          "description": "一维DP版Python实现的分割等和子集问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "卡哥版",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool canPartition(vector<int>& nums) {int sum = 0;vector<int> dp(10001, 0);for (int i = 0; i < nums.size(); i++) {sum += nums[i];}if (sum % 2 == 1) return false;int target = sum / 2;for(int i = 0; i < nums.size(); i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = max(dp[j], dp[j - nums[i]] + nums[i]);}}if (dp[target] == target) return true;return false;}};",
+          "description": "C++版本的解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canPartition(int[] nums) {if(nums == null || nums.length == 0) return false;int n = nums.length;int sum = 0;for(int num : nums) {sum += num;}if(sum % 2 != 0) return false;int target = sum / 2;int[] dp = new int[target + 1];for(int i = 0; i < n; i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = Math.max(dp[j], dp[j - nums[i]] + nums[i]);}if(dp[target] == target)return true;}return dp[target] == target;}}",
+          "description": "Java版本的解决方案"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution {public static boolean canPartition(int[] nums) {int len = nums.length;int sum = 0;for (int num : nums) {sum += num;}if ((sum %2 ) != 0) {return false;}int target = sum / 2;boolean[][] dp = new boolean[len][target + 1];if (nums[0] <= target) {dp[0][nums[0]] = true;}for (int i = 1; i < len; i++) {for (int j = 0; j <= target; j++) {dp[i][j] = dp[i - 1][j];if (nums[i] == j) {dp[i][j] = true;continue;}if (nums[i] < j) {dp[i][j] = dp[i - 1][j] || dp[i - 1][j - nums[i]];}}}}return dp[len - 1][target];}}",
+          "description": "Java二维数组版本的解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean canPartition(int[] nums) {int len = nums.length;if(len == 0)return false;int sum = 0;for (int num : nums)sum += num;if(sum % 2 == 1)return false;int target = sum / 2;int[][] dp = new int[nums.length][target + 1];for(int j = nums[0]; j <= target; j++){dp[0][j] = nums[0];}for(int i = 1; i < len; i++){for(int j = 0; j <= target; j++){if (j < nums[i])dp[i][j] = dp[i - 1][j];else dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - nums[i]] + nums[i]);}}returndp[len - 1][target] == target;}}",
+          "description": "Java二維數組整數版本的解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: _sum = 0dp = [0] * 10001for num in nums: _sum += numif _sum % 2 == 1: return Falsetarget = _sum // 2for num in nums: for j in range(target, num - 1, -1): dp[j] = max(dp[j], dp[j - num] + num)if dp[target] == target: return True return False",
+          "description": "Python版本的解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: if sum(nums) % 2 != 0: return Falsetarget = sum(nums) // 2dp = [0] * (target + 1)for num in nums: for j in range(target, num-1, -1): dp[j] = max(dp[j], dp[j-num] + num)return dp[-1] == target",
+          "description": "Python简化版的解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: total_sum = sum(nums) if total_sum % 2 != 0: return False target_sum = total_sum // 2dp = [[False] * (target_sum + 1) for _ in range(len(nums) + 1)]for i in range(len(nums) + 1): dp[i][0] = Truefor i in range(1, len(nums) + 1): for j in range(1, target_sum + 1): if j < nums[i - 1]: dp[i][j] = dp[i - 1][j] else: dp[i][j] = dp[i - 1][j] or dp[i - 1][j - nums[i - 1]]return dp[len(nums)][target_sum]",
+          "description": "Python二维DP版的解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: total_sum = sum(nums) if total_sum % 2 != 0: return False target_sum = total_sum // 2dp = [False] * (target_sum + 1)dp[0] = Truefor num in nums: for i in range(target_sum, num - 1, -1): dp[i] = dp[i] or dp[i - num]return dp[target_sum]",
+          "description": "Python一维DP版的解决方案"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(n)",
+    "explanation": "虽然dp数组大小为一个常数，但是大常数"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: bool canPartition(vector<int>& nums) {int sum = 0;vector<int> dp(10001, 0);for (int i = 0; i < nums.size(); i++) {sum += nums[i];}if (sum % 2 == 1) return false;int target = sum / 2;for(int i = 0; i < nums.size(); i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = max(dp[j], dp[j - nums[i]] + nums[i]);}}if (dp[target] == target) return true;return false;}};",
+      "description": "C++实现的解决方案，使用动态规划解决分割等和子集问题。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public boolean canPartition(int[] nums) {if(nums == null || nums.length == 0) return false;int n = nums.length;int sum = 0;for(int num : nums) {sum += num;}if(sum % 2 != 0) return false;int target = sum / 2;int[] dp = new int[target + 1];for(int i = 0; i < n; i++) {for(int j = target; j >= nums[i]; j--) {dp[j] = Math.max(dp[j], dp[j - nums[i]] + nums[i]);}if(dp[target] == target)return true;}return dp[target] == target;}}",
+      "description": "Java实现的解决方案，同样利用了动态规划来解决问题。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def canPartition(self, nums: List[int]) -> bool: _sum = 0dp = [0] * 10001for num in nums: _sum += numif _sum % 2 == 1: return Falsetarget = _sum // 2for num in nums: for j in range(target, num - 1, -1): dp[j] = max(dp[j], dp[j - num] + num)if dp[target] == target: return Truereturn False",
+      "description": "Python版本的解决方案，采用一维数组进行动态规划求解。"
+    }
+  ],
+  "common_mistakes": [
+    "未考虑数组元素总和为奇数的情况，直接尝试分割。",
+    "忽略对物品只能选择一次的限制条件，在处理时错误地当作完全背包问题对待。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210110104240545.png",
+      "description": "这张图片展示了使用动态规划（DP）算法解决子集和问题的过程，具体为找到一个子集使其和等于目标值11。",
+      "context": "该图片展示了通过动态规划方法解决特定用例[1,5,11,5]时，dp数组如何被逐步填充以判断是否可以将给定数组分割成两个元素和相等的子集的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210110104240545.png",
+      "description": "GIF展示了01背包问题中动态规划数组dp的更新过程，通过遍历给定数组元素来填充dp数组，最终确定是否存在一个子集其和等于目标值的一半。",
+      "context": "该GIF动画展示了如何通过动态规划方法填充dp数组，以判断给定数组[1,5,11,5]是否可以分割成两个和相等的子集的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\动态规划\\分割等和子集.txt",
+  "extracted_at": "2025-07-20T16:47:26.673313",
+  "raw_content": "分割等和子集\n力扣题目链接(https://leetcode.cn/problems/partition-equal-subset-sum/)\n\n题目难易：中等\n\n给定一个只包含正整数的非空数组。是否可以将这个数组分割成两个子集，使得两个子集的元素和相等。\n\n注意: 每个数组中的元素不会超过 100 数组的大小不会超过 200\n\n示例 1:\n\n输入: [1, 5, 11, 5]\n输出: true\n解释: 数组可以分割成 [1, 5, 5] 和 [11].\n示例 2:\n\n输入: [1, 2, 3, 5]\n输出: false\n解释: 数组不能分割成两个元素和相等的子集.\n提示：\n\n1 <= nums.length <= 200\n1 <= nums[i] <= 100\n\n\n#思路\n这道题目初步看，和如下两题几乎是一样的，大家可以用回溯法，解决如下两题\n\n698.划分为k个相等的子集\n473.火柴拼正方形\n这道题目是要找是否可以将这个数组分割成两个子集，使得两个子集的元素和相等。\n\n那么只要找到集合里能够出现 sum / 2 的子集总和，就算是可以分割成两个相同元素和子集了。\n\n本题是可以用回溯暴力搜索出所有答案的，但最后超时了，也不想再优化了，放弃回溯。\n\n是否有其他解法可以解决此题。\n\n本题的本质是，能否把容量为 sum / 2的背包装满。\n\n这是 背包算法可以解决的经典类型题目。\n\n如果对01背包不够了解，建议仔细看完如下两篇：\n\n动态规划：关于01背包问题，你该了解这些！(https://programmercarl.com/%E8%83%8C%E5%8C%85%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%8001%E8%83%8C%E5%8C%85-1.html)\n动态规划：关于01背包问题，你该了解这些！（滚动数组）(https://programmercarl.com/%E8%83%8C%E5%8C%85%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%8001%E8%83%8C%E5%8C%85-2.html)\n#01背包问题\n01背包问题，大家都知道，有N件物品和一个最多能背重量为W 的背包。第i件物品的重量是weight[i]，得到的价值是value[i] 。每件物品只能用一次，求解将哪些物品装入背包里物品价值总和最大。\n\n背包问题有多种背包方式，常见的有：01背包、完全背包、多重背包、分组背包和混合背包等等。\n\n要注意题目描述中商品是不是可以重复放入。\n\n即一个商品如果可以重复多次放入是完全背包，而只能放入一次是01背包，写法还是不一样的。\n\n元素我们只能用一次，如果使用背包，那么也是01背包\n\n回归主题：首先，本题要求集合里能否出现总和为 sum / 2 的子集。\n\n既有一个 只能装重量为 sum / 2 的背包，商品为数字，这些数字能不能把 这个背包装满。\n\n那每一件商品是数字的话，对应的重量 和 价值是多少呢？\n\n一个数字只有一个维度，即 重量等于价值。\n\n当数字 可以装满 承载重量为 sum / 2 的背包的背包时，这个背包的价值也是 sum / 2。\n\n那么这道题就是 装满 承载重量为 sum / 2 的背包，价值最大是多少？\n\n如果最大价值是 sum / 2，说明正好被商品装满了。\n\n因为商品是数字，重量和对应的价值是相同的。\n\n以上分析完，我们就可以直接用01背包 来解决这个问题了。\n\n动规五部曲分析如下：\n\n#1. 确定dp数组以及下标的含义\n01背包中，dp[j] 表示： 容量（所能装的重量）为j的背包，所背的物品价值最大可以为dp[j]。\n\n如果背包所载重量为target， dp[target]就是装满 背包之后的总价值，因为 本题中每一个元素的数值既是重量，也是价值，所以，当 dp[target] == target 的时候，背包就装满了。\n\n有录友可能想，那还有装不满的时候？\n\n拿输入数组 [1, 5, 11, 5]，举例， dp[7] 只能等于 6，因为 只能放进 1 和 5。\n\n而dp[6] 就可以等于6了，放进1 和 5，那么dp[6] == 6，说明背包装满了。\n\n#2. 确定递推公式\n01背包的递推公式为：dp[j] = max(dp[j], dp[j - weight[i]] + value[i]);\n\n本题，相当于背包里放入数值，那么物品i的重量是nums[i]，其价值也是nums[i]。\n\n所以递推公式：dp[j] = max(dp[j], dp[j - nums[i]] + nums[i]);\n\n#3. dp数组如何初始化\n在01背包，一维dp如何初始化，已经讲过，\n\n从dp[j]的定义来看，首先dp[0]一定是0。\n\n如果题目给的价值都是正整数那么非0下标都初始化为0就可以了，如果题目给的价值有负数，那么非0下标就要初始化为负无穷。\n\n这样才能让dp数组在递推的过程中取得最大的价值，而不是被初始值覆盖了。\n\n本题题目中 只包含正整数的非空数组，所以非0下标的元素初始化为0就可以了。\n\n代码如下：\n\n// 题目中说：每个数组中的元素不会超过 100，数组的大小不会超过 200\n// 总和不会大于20000，背包最大只需要其中一半，所以10001大小就可以了\nvector<int> dp(10001, 0);\n#4. 确定遍历顺序\n在动态规划：关于01背包问题，你该了解这些！（滚动数组） (https://programmercarl.com/%E8%83%8C%E5%8C%85%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%8001%E8%83%8C%E5%8C%85-2.html)中就已经说明：如果使用一维dp数组，物品遍历的for循环放在外层，遍历背包的for循环放在内层，且内层for循环倒序遍历！\n\n代码如下：\n\n// 开始 01背包\nfor(int i = 0; i < nums.size(); i++) {\n    for(int j = target; j >= nums[i]; j--) { // 每一个元素一定是不可重复放入，所以从大到小遍历\n        dp[j] = max(dp[j], dp[j - nums[i]] + nums[i]);\n    }\n}\n#5. 举例推导dp数组\ndp[j]的数值一定是小于等于j的。\n\n如果dp[j] == j 说明，集合中的子集总和正好可以凑成总和j，理解这一点很重要。\n\n用例1，输入[1,5,11,5] 为例，如图：\n\nhttps://file1.kamacoder.com/i/algo/20210110104240545.png\n\n最后dp[11] == 11，说明可以将这个数组分割成两个子集，使得两个子集的元素和相等。\n\n综上分析完毕，C++代码如下：\n\nclass Solution {\npublic:\n    bool canPartition(vector<int>& nums) {\n        int sum = 0;\n\n        // dp[i]中的i表示背包内总和\n        // 题目中说：每个数组中的元素不会超过 100，数组的大小不会超过 200\n        // 总和不会大于20000，背包最大只需要其中一半，所以10001大小就可以了\n        vector<int> dp(10001, 0);\n        for (int i = 0; i < nums.size(); i++) {\n            sum += nums[i];\n        }\n        // 也可以使用库函数一步求和\n        // int sum = accumulate(nums.begin(), nums.end(), 0);\n        if (sum % 2 == 1) return false;\n        int target = sum / 2;\n\n        // 开始 01背包\n        for(int i = 0; i < nums.size(); i++) {\n            for(int j = target; j >= nums[i]; j--) { // 每一个元素一定是不可重复放入，所以从大到小遍历\n                dp[j] = max(dp[j], dp[j - nums[i]] + nums[i]);\n            }\n        }\n        // 集合中的元素正好可以凑成总和target\n        if (dp[target] == target) return true;\n        return false;\n    }\n};\n时间复杂度：O(n^2)\n空间复杂度：O(n)，虽然dp数组大小为一个常数，但是大常数\n#总结\n这道题目就是一道01背包经典应用类的题目，需要我们拆解题目，然后才能发现可以使用01背包。\n\n01背包相对于本题，主要要理解，题目中物品是nums[i]，重量是nums[i]，价值也是nums[i]，背包体积是sum/2。\n\n做完本题后，需要大家清晰：背包问题，不仅可以求 背包能被的最大价值，还可以求这个背包是否可以装满。\n\n#其他语言版本\n#Java：\nclass Solution {\n    public boolean canPartition(int[] nums) {\n        if(nums == null || nums.length == 0) return false;\n        int n = nums.length;\n        int sum = 0;\n        for(int num : nums) {\n            sum += num;\n        }\n        //总和为奇数，不能平分\n        if(sum % 2 != 0) return false;\n        int target = sum / 2;\n        int[] dp = new int[target + 1];\n        for(int i = 0; i < n; i++) {\n            for(int j = target; j >= nums[i]; j--) {\n                //物品 i 的重量是 nums[i]，其价值也是 nums[i]\n                dp[j] = Math.max(dp[j], dp[j - nums[i]] + nums[i]);\n            }\n           \n            //剪枝一下，每一次完成內層的for-loop，立即檢查是否dp[target] == target，優化時間複雜度（26ms -> 20ms）\n            if(dp[target] == target)\n                return true;\n        }\n        return dp[target] == target;\n    }\n}\n二维数组版本（易于理解）：\n\npublic class Solution {\n    public static void main(String[] args) {\n        int num[] = {1,5,11,5};\n        canPartition(num);\n\n    }\n    public static boolean canPartition(int[] nums) {\n        int len = nums.length;\n        // 题目已经说非空数组，可以不做非空判断\n        int sum = 0;\n        for (int num : nums) {\n            sum += num;\n        }\n        // 特判：如果是奇数，就不符合要求\n        if ((sum %2 ) != 0) {\n            return false;\n        }\n\n        int target = sum / 2; //目标背包容量\n        // 创建二维状态数组，行：物品索引，列：容量（包括 0）\n        /*\n        dp[i][j]表示从数组的 [0, i] 这个子区间内挑选一些正整数\n          每个数只能用一次，使得这些数的和恰好等于 j。\n        */\n        boolean[][] dp = new boolean[len][target + 1];\n\n        // 先填表格第 0 行，第 1 个数只能让容积为它自己的背包恰好装满  （这里的dp[][]数组的含义就是“恰好”，所以就算容积比它大的也不要）\n        if (nums[0] <= target) {\n            dp[0][nums[0]] = true;\n        }\n        // 再填表格后面几行\n        //外层遍历物品\n        for (int i = 1; i < len; i++) {\n            //内层遍历背包\n            for (int j = 0; j <= target; j++) {\n                // 直接从上一行先把结果抄下来，然后再修正\n                dp[i][j] = dp[i - 1][j];\n\n                //如果某个物品单独的重量恰好就等于背包的重量，那么也是满足dp数组的定义的\n                if (nums[i] == j) {\n                    dp[i][j] = true;\n                    continue;\n                }\n                //如果某个物品的重量小于j，那就可以看该物品是否放入背包\n                //dp[i - 1][j]表示该物品不放入背包，如果在 [0, i - 1] 这个子区间内已经有一部分元素，使得它们的和为 j ，那么 dp[i][j] = true；\n                //dp[i - 1][j - nums[i]]表示该物品放入背包。如果在 [0, i - 1] 这个子区间内就得找到一部分元素，使得它们的和为 j - nums[i]。\n                if (nums[i] < j) {\n                    dp[i][j] = dp[i - 1][j] || dp[i - 1][j - nums[i]];\n                }\n            }\n        }\n        for (int i = 0; i < len; i++) {\n            for (int j = 0; j <= target; j++) {\n                System.out.print(dp[i][j]+\" \");\n            }\n            System.out.println();\n        }\n        return dp[len - 1][target];\n    }\n}\n//dp数组的打印结果\nfalse true false false false false false false false false false false \nfalse true false false false true true false false false false false \nfalse true false false false true true false false false false true \nfalse true false false false true true false false false true true \n二維數組整數版本\n\nclass Solution {\n    public boolean canPartition(int[] nums) {\n        //using 2-D DP array.\n        int len = nums.length;\n        //check edge cases;\n        if(len == 0)\n            return false;\n\n        int sum = 0;\n        for (int num : nums)\n            sum += num;\n        //we only deal with even numbers. If sum is odd, return false;\n        if(sum % 2 == 1)\n            return false;\n        \n        int target = sum / 2;\n        int[][] dp = new int[nums.length][target + 1];\n\n        // for(int j = 0; j <= target; j++){\n        //     if(j < nums[0])\n        //         dp[0][j] = 0;\n        //     else\n        //         dp[0][j] = nums[0];\n        // }\n\n        //initialize dp array\n        for(int j = nums[0]; j <= target; j++){\n            dp[0][j] = nums[0];\n        }\n\n        for(int i = 1; i < len; i++){\n            for(int j = 0; j <= target; j++){\n                if (j < nums[i]) \n                    dp[i][j] = dp[i - 1][j];\n                else \n                    dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - nums[i]] + nums[i]);\n            }\n        }\n\n        //print out DP array\n        // for(int x : dp){\n        //     System.out.print(x + \",\");\n        // }\n        // System.out.print(\"    \"+i+\" row\"+\"\\n\");\n        return dp[len - 1][target] == target;\n    }\n}\n//dp数组的打印结果 for test case 1.\n0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \n0, 1, 1, 1, 1, 5, 6, 6, 6, 6, 6, 6, \n0, 1, 1, 1, 1, 5, 6, 6, 6, 6, 6, 11, \n0, 1, 1, 1, 1, 5, 6, 6, 6, 6, 10, 11, \n#Python：\n卡哥版\n\nclass Solution:\n    def canPartition(self, nums: List[int]) -> bool:\n        _sum = 0\n\n        # dp[i]中的i表示背包内总和\n        # 题目中说：每个数组中的元素不会超过 100，数组的大小不会超过 200\n        # 总和不会大于20000，背包最大只需要其中一半，所以10001大小就可以了\n        dp = [0] * 10001\n        for num in nums:\n            _sum += num\n        # 也可以使用内置函数一步求和\n        # _sum = sum(nums)\n        if _sum % 2 == 1:\n            return False\n        target = _sum // 2\n\n        # 开始 0-1背包\n        for num in nums:\n            for j in range(target, num - 1, -1):  # 每一个元素一定是不可重复放入，所以从大到小遍历\n                dp[j] = max(dp[j], dp[j - num] + num)\n\n        # 集合中的元素正好可以凑成总和target\n        if dp[target] == target:\n            return True\n        return False\n\n卡哥版(简化版)\n\nclass Solution:\n    def canPartition(self, nums: List[int]) -> bool:\n        if sum(nums) % 2 != 0:\n            return False\n        target = sum(nums) // 2\n        dp = [0] * (target + 1)\n        for num in nums:\n            for j in range(target, num-1, -1):\n                dp[j] = max(dp[j], dp[j-num] + num)\n        return dp[-1] == target\n\n二维DP版\n\nclass Solution:\n    def canPartition(self, nums: List[int]) -> bool:\n        \n        total_sum = sum(nums)\n\n        if total_sum % 2 != 0:\n            return False\n\n        target_sum = total_sum // 2\n        dp = [[False] * (target_sum + 1) for _ in range(len(nums) + 1)]\n\n        # 初始化第一行（空子集可以得到和为0）\n        for i in range(len(nums) + 1):\n            dp[i][0] = True\n\n        for i in range(1, len(nums) + 1):\n            for j in range(1, target_sum + 1):\n                if j < nums[i - 1]:\n                    # 当前数字大于目标和时，无法使用该数字\n                    dp[i][j] = dp[i - 1][j]\n                else:\n                    # 当前数字小于等于目标和时，可以选择使用或不使用该数字\n                    dp[i][j] = dp[i - 1][j] or dp[i - 1][j - nums[i - 1]]\n\n        return dp[len(nums)][target_sum]\n\n一维DP版\n\nclass Solution:\n    def canPartition(self, nums: List[int]) -> bool:\n\n        total_sum = sum(nums)\n\n        if total_sum % 2 != 0:\n            return False\n\n        target_sum = total_sum // 2\n        dp = [False] * (target_sum + 1)\n        dp[0] = True\n\n        for num in nums:\n            # 从target_sum逆序迭代到num，步长为-1\n            for i in range(target_sum, num - 1, -1):\n                dp[i] = dp[i] or dp[i - num]\n        return dp[target_sum]"
+}

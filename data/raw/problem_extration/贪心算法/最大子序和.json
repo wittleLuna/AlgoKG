@@ -1,0 +1,638 @@
+{
+  "id": "AP_c6e3ce8b",
+  "title": "最大子序和",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/maximum-subarray/",
+  "description": "一个整数数组 nums ，找到一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "暴力搜索",
+    "贪心算法",
+    "动态规划"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "双指针",
+    "状态转移",
+    "累积和"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过暴力解法、贪心算法和动态规划三种方法来解决最大子序和问题。其中，暴力解法通过双重循环遍历所有可能的子数组并记录最大值；贪心算法利用局部最优（放弃负数贡献）实现全局最优（找到最大连续子数组之和）；动态规划则定义dp[i]表示以i结尾的最大子数组和，并通过状态转移方程求解。",
+  "key_insights": [
+    {
+      "content": "通过在每次累加过程中遇到负数时重置计数器的方式，保证了当前子序列总是从正收益开始，从而保证了局部最优能够累积成全局最优。"
+    },
+    {
+      "content": "此题同样适合使用动态规划求解，通过定义状态dp[i]表示以i结尾的最大子数组和，可以有效地转移状态直至求得最终答案。"
+    },
+    {
+      "content": "贪心算法的核心在于当累积和为负时立即放弃当前子序列，重新开始新的子序列计算，确保了每一步都尽可能地接近最优解。"
+    },
+    {
+      "content": "动态规划方法中，每个位置的状态仅依赖于前一个位置的状态，这使得该方法的时间复杂度降低至O(n)。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "#暴力解法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) {int result = INT32_MIN; int count = 0; for (int i = 0; i < nums.size(); i++) {count = 0; for (int j = i; j < nums.size(); j++) {count += nums[j]; result = count > result ? count : result;}}} return result;} };",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) {int result = INT32_MIN; int count = 0; for (int i = 0; i < nums.size(); i++) {count += nums[i]; if (count > result) {result = count;} if (count <= 0) count = 0;}} return result;} };",
+          "description": "贪心解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxSubArray(int[] nums) {if (nums.length == 1){return nums[0];} int sum = Integer.MIN_VALUE; int count = 0; for (int i = 0; i < nums.length; i++){count += nums[i]; sum = Math.max(sum, count); if (count <= 0){count = 0;}} return sum;}}",
+          "description": "Java贪心解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxSubArray(int[] nums) {int ans = Integer.MIN_VALUE; int[] dp = new int[nums.length]; dp[0] = nums[0]; ans = dp[0]; for (int i = 1; i < nums.length; i++){dp[i] = Math.max(dp[i-1] + nums[i], nums[i]); ans = Math.max(dp[i], ans);} return ans;}}",
+          "description": "Java动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') count = 0 for i in range(len(nums)): count = 0 for j in range(i, len(nums)): count += nums[j] result = max(count, result) return result",
+          "description": "Python暴力解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') count = 0 for i in range(len(nums)): count += nums[i] if count > result: result = count if count <= 0: count = 0 return result",
+          "description": "Python贪心解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: dp = [0] * len(nums) dp[0] = nums[0] res = nums[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1] + nums[i], nums[i]) res = max(res, dp[i]) return res",
+          "description": "Python动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): if not nums: return 0 dp = [0] * len(nums) dp[0] = nums[0] result = dp[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1]+nums[i], nums[i]) if dp[i] > result: result = dp[i] return result",
+          "description": "Python动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: max_sum = float(\"-inf\") current_sum = 0 for num in nums: current_sum = max(current_sum+num, num) max_sum = max(max_sum, current_sum) return max_sum",
+          "description": "Python动态规划优化解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "暴力解法",
+      "text": "暴力解法的思路，第一层 for 就是设置起始位置，第二层 for 循环遍历数组寻找最大值",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) { int result = INT32_MIN; int count = 0; for (int i = 0; i < nums.size(); i++) { count = 0; for (int j = i; j < nums.size(); j++) { count += nums[j]; result = count > result ? count : result; } } return result; }};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) { int result = INT32_MIN; int count = 0; for (int i = 0; i < nums.size(); i++) { count += nums[i]; if (count > result) { result = count; } if (count <= 0) count = 0; } return result; }};",
+          "description": "贪心解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) { if (nums.size() == 0) return 0; vector<int> dp(nums.size(), 0); dp[0] = nums[0]; int result = dp[0]; for (int i = 1; i < nums.size(); i++) { dp[i] = max(dp[i - 1] + nums[i], nums[i]); if (dp[i] > result) result = dp[i]; } return result; }};",
+          "description": "动态规划"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int maxSubArray(int[] nums) { if (nums.length == 1){ return nums[0]; } int sum = Integer.MIN_VALUE; int count = 0; for (int i = 0; i < nums.length; i++){ count += nums[i]; sum = Math.max(sum, count); if (count <= 0){ count = 0; } } return sum; }}",
+          "description": "贪心解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int maxSubArray(int[] nums) { int ans = Integer.MIN_VALUE; int[] dp = new int[nums.length]; dp[0] = nums[0]; ans = dp[0]; for (int i = 1; i < nums.length; i++){ dp[i] = Math.max(dp[i-1] + nums[i], nums[i]); ans = Math.max(dp[i], ans); } return ans; }}",
+          "description": "动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') count = 0 for i in range(len(nums)): count = 0 for j in range(i, len(nums)): count += nums[j] result = max(count, result) return result",
+          "description": "暴力解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') count = 0 for i in range(len(nums)): count += nums[i] if count > result: result = count if count <= 0: count = 0 return result",
+          "description": "贪心解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: dp = [0] * len(nums) dp[0] = nums[0] res = nums[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1] + nums[i], nums[i]) res = max(res, dp[i]) return res",
+          "description": "动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): if not nums: return 0 dp = [0] * len(nums) dp[0] = nums[0] result = dp[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1]+nums[i], nums[i]) if dp[i] > result: result = dp[i] return result",
+          "description": "动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: max_sum = float(\"-inf\") current_sum = 0 for num in nums: current_sum = max(current_sum+num, num) max_sum = max(max_sum, current_sum) return max_sum",
+          "description": "动态规划优化"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "贪心解法",
+      "text": "贪心贪的是哪里呢？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) {int result = INT32_MIN;int count = 0;for (int i = 0; i < nums.size(); i++) {count = 0;for (int j = i; j < nums.size(); j++) {count += nums[j];result = count > result ? count : result;}}return result;}};",
+          "description": "暴力解法，寻找最大子数组和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) {int result = INT32_MIN;int count = 0;for (int i = 0; i < nums.size(); i++) {count += nums[i];if (count > result) {result = count;}if (count <= 0) count = 0;}return result;}};",
+          "description": "贪心算法，寻找最大子数组和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) {if (nums.size() == 0) return 0;vector<int> dp(nums.size(), 0);dp[0] = nums[0];int result = dp[0];for (int i = 1; i < nums.size(); i++) {dp[i] = max(dp[i - 1] + nums[i], nums[i]);if (dp[i] > result) result = dp[i];}return result;}};",
+          "description": "动态规划方法，寻找最大子数组和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxSubArray(int[] nums) {if (nums.length == 1){return nums[0];}int sum = Integer.MIN_VALUE;int count = 0;for (int i = 0; i < nums.length; i++){count += nums[i];sum = Math.max(sum, count);if (count <= 0){count = 0;}}return sum;}}",
+          "description": "Java实现的贪心算法，寻找最大子数组和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxSubArray(int[] nums) {int ans = Integer.MIN_VALUE;int[] dp = new int[nums.length];dp[0] = nums[0];ans = dp[0];for (int i = 1; i < nums.length; i++){dp[i] = Math.max(dp[i-1] + nums[i], nums[i]);ans = Math.max(dp[i], ans);}return ans;}}",
+          "description": "Java实现的动态规划方法，寻找最大子数组和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') for i in range(len(nums)): count = 0 for j in range(i, len(nums)): count += nums[j] result = max(count, result) return result",
+          "description": "Python实现的暴力解法，寻找最大子数组和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') count = 0 for i in range(len(nums)): count += nums[i] if count > result: result = count if count <= 0: count = 0 return result",
+          "description": "Python实现的贪心算法，寻找最大子数组和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: dp = [0] * len(nums) dp[0] = nums[0] res = nums[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1] + nums[i], nums[i]) res = max(res, dp[i]) return res",
+          "description": "Python实现的动态规划方法，寻找最大子数组和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): if not nums: return 0 dp = [0] * len(nums) dp[0] = nums[0] result = dp[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1]+nums[i], nums[i]) if dp[i] > result: result = dp[i] return result",
+          "description": "另一种Python实现的动态规划方法，寻找最大子数组和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: max_sum = float(\"-inf\") current_sum = 0 for num in nums: current_sum = max(current_sum+num, num) max_sum = max(max_sum, current_sum) return max_sum",
+          "description": "优化后的Python动态规划方法，寻找最大子数组和"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "常见误区",
+      "text": "误区一：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) {int result = INT32_MIN; int count = 0; for (int i = 0; i < nums.size(); i++) {count = 0; for (int j = i; j < nums.size(); j++) {count += nums[j];result = count > result ? count : result;}}return result;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) {int result = INT32_MIN; int count = 0; for (int i = 0; i < nums.size(); i++) {count += nums[i]; if (count > result) {result = count;} if (count <= 0) count = 0;}return result;}};",
+          "description": "贪心解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) {if (nums.size() == 0) return 0; vector<int> dp(nums.size(), 0);dp[0] = nums[0];int result = dp[0];for (int i = 1; i < nums.size(); i++) {dp[i] = max(dp[i - 1] + nums[i], nums[i]);if (dp[i] > result) result = dp[i];}return result;}};",
+          "description": "动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxSubArray(int[] nums) {if (nums.length == 1){return nums[0];}int sum = Integer.MIN_VALUE;int count = 0;for (int i = 0; i < nums.length; i++){count += nums[i];sum = Math.max(sum, count);if (count <= 0){count = 0;}}return sum;}}",
+          "description": "贪心解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxSubArray(int[] nums) {int ans = Integer.MIN_VALUE;int[] dp = new int[nums.length];dp[0] = nums[0];ans = dp[0];for (int i = 1; i < nums.length; i++){dp[i] = Math.max(dp[i-1] + nums[i], nums[i]);ans = Math.max(dp[i], ans);}return ans;}}",
+          "description": "动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') count = 0 for i in range(len(nums)): count = 0 for j in range(i, len(nums)): count += nums[j] result = max(count, result) return result",
+          "description": "暴力解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') count = 0 for i in range(len(nums)): count += nums[i] if count > result: result = count if count <= 0: count = 0 return result",
+          "description": "贪心解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: dp = [0] * len(nums) dp[0] = nums[0] res = nums[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1] + nums[i], nums[i]) res = max(res, dp[i]) return res",
+          "description": "动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): if not nums: return 0 dp = [0] * len(nums) dp[0] = nums[0] result = dp[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1]+nums[i], nums[i]) if dp[i] > result: result = dp[i] return result",
+          "description": "动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: max_sum = float(\"-inf\") current_sum = 0 for num in nums: current_sum = max(current_sum+num, num) max_sum = max(max_sum, current_sum) return max_sum",
+          "description": "动态规划优化"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "动态规划",
+      "text": "当然本题还可以用动态规划来做，在代码随想录动态规划章节我会详细介绍，如果大家想在想看，可以直接跳转：动态规划版本详解(https://programmercarl.com/0053.%E6%9C%80%E5%A4%A7%E5%AD%90%E5%BA%8F%E5%92%8C%EF%BC%88%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%89.html#%E6%80%9D%E8%B7%AF)",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) { int result = INT32_MIN; int count = 0; for (int i = 0; i < nums.size(); i++) { count = 0; for (int j = i; j < nums.size(); j++) { count += nums[j]; result = count > result ? count : result; } } return result; }};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) { int result = INT32_MIN; int count = 0; for (int i = 0; i < nums.size(); i++) { count += nums[i]; if (count > result) { result = count; } if (count <= 0) count = 0; } return result; }};",
+          "description": "贪心解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) { if (nums.size() == 0) return 0; vector<int> dp(nums.size(), 0); dp[0] = nums[0]; int result = dp[0]; for (int i = 1; i < nums.size(); i++) { dp[i] = max(dp[i - 1] + nums[i], nums[i]); if (dp[i] > result) result = dp[i]; } return result; }};",
+          "description": "动态规划"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxSubArray(int[] nums) { if (nums.length == 1){ return nums[0]; } int sum = Integer.MIN_VALUE; int count = 0; for (int i = 0; i < nums.length; i++){ count += nums[i]; sum = Math.max(sum, count); if (count <= 0){ count = 0; } } return sum; }};",
+          "description": "贪心解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxSubArray(int[] nums) { int ans = Integer.MIN_VALUE; int[] dp = new int[nums.length]; dp[0] = nums[0]; ans = dp[0]; for (int i = 1; i < nums.length; i++){ dp[i] = Math.max(dp[i-1] + nums[i], nums[i]); ans = Math.max(dp[i], ans); } return ans; }};",
+          "description": "动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') count = 0 for i in range(len(nums)): count = 0 for j in range(i, len(nums)): count += nums[j] result = max(count, result) return result",
+          "description": "暴力解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') count = 0 for i in range(len(nums)): count += nums[i] if count > result: result = count if count <= 0: count = 0 return result",
+          "description": "贪心解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: dp = [0] * len(nums) dp[0] = nums[0] res = nums[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1] + nums[i], nums[i]) res = max(res, dp[i]) return res",
+          "description": "动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): if not nums: return 0 dp = [0] * len(nums) dp[0] = nums[0] result = dp[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1]+nums[i], nums[i]) if dp[i] > result: result = dp[i] return result",
+          "description": "动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: max_sum = float(\"-inf\") current_sum = 0 for num in nums: current_sum = max(current_sum+num, num) max_sum = max(max_sum, current_sum) return max_sum",
+          "description": "动态规划优化"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "本题的贪心思路其实并不好想，这也进一步验证了，别看贪心理论很直白，有时候看似是常识，但贪心的题目一点都不简单！",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) { int result = INT32_MIN; int count = 0; for (int i = 0; i < nums.size(); i++) { // 设置起始位置 count = 0; for (int j = i; j < nums.size(); j++) { // 每次从起始位置i开始遍历寻找最大值 count += nums[j]; result = count > result ? count : result; } } return result; }};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) { int result = INT32_MIN; int count = 0; for (int i = 0; i < nums.size(); i++) { count += nums[i]; if (count > result) { // 取区间累计的最大值（相当于不断确定最大子序终止位置） result = count; } if (count <= 0) count = 0; // 相当于重置最大子序起始位置，因为遇到负数一定是拉低总和 } return result; }};",
+          "description": "贪心解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) { if (nums.size() == 0) return 0; vector<int> dp(nums.size(), 0); // dp[i]表示包括i之前的最大连续子序列和 dp[0] = nums[0]; int result = dp[0]; for (int i = 1; i < nums.size(); i++) { dp[i] = max(dp[i - 1] + nums[i], nums[i]); // 状态转移公式 if (dp[i] > result) result = dp[i]; // result 保存dp[i]的最大值 } return result; }};",
+          "description": "动态规划"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxSubArray(int[] nums) { if (nums.length == 1){ return nums[0]; } int sum = Integer.MIN_VALUE; int count = 0; for (int i = 0; i < nums.length; i++){ count += nums[i]; sum = Math.max(sum, count); // 取区间累计的最大值（相当于不断确定最大子序终止位置） if (count <= 0){ count = 0; // 相当于重置最大子序起始位置，因为遇到负数一定是拉低总和 } } return sum; }}",
+          "description": "贪心解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxSubArray(int[] nums) { int ans = Integer.MIN_VALUE; int[] dp = new int[nums.length]; dp[0] = nums[0]; ans = dp[0]; for (int i = 1; i < nums.length; i++){ dp[i] = Math.max(dp[i-1] + nums[i], nums[i]); ans = Math.max(dp[i], ans); } return ans; }}",
+          "description": "动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') # 初始化结果为负无穷大 count = 0 for i in range(len(nums)): # 设置起始位置 count = 0 for j in range(i, len(nums)): # 从起始位置i开始遍历寻找最大值 count += nums[j] result = max(count, result) # 更新最大值 return result",
+          "description": "暴力解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') # 初始化结果为负无穷大 count = 0 for i in range(len(nums)): count += nums[i] if count > result: # 取区间累计的最大值（相当于不断确定最大子序终止位置） result = count if count <= 0: # 相当于重置最大子序起始位置，因为遇到负数一定是拉低总和 count = 0 return result",
+          "description": "贪心解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: dp = [0] * len(nums) dp[0] = nums[0] res = nums[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1] + nums[i], nums[i]) res = max(res, dp[i]) return res",
+          "description": "动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): if not nums: return 0 dp = [0] * len(nums) # dp[i]表示包括i之前的最大连续子序列和 dp[0] = nums[0] result = dp[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1]+nums[i], nums[i]) # 状态转移公式 if dp[i] > result: result = dp[i] # result 保存dp[i]的最大值 return result",
+          "description": "动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: max_sum = float(\"-inf\") # 初始化结果为负无穷大，方便比较取最大值 current_sum = 0 # 初始化当前连续和 for num in nums: current_sum = max(current_sum+num, num) max_sum = max(max_sum, current_sum) # 更新结果 return max_sum",
+          "description": "动态规划优化"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) {int result = INT32_MIN; int count = 0; for (int i = 0; i < nums.size(); i++) {count = 0; for (int j = i; j < nums.size(); j++) {count += nums[j]; result = count > result ? count : result;}}} return result;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) {int result = INT32_MIN; int count = 0; for (int i = 0; i < nums.size(); i++) {count += nums[i]; if (count > result) {result = count;} if (count <= 0) count = 0;}} return result;}};",
+          "description": "贪心解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) {if (nums.size() == 0) return 0; vector<int> dp(nums.size(), 0); dp[0] = nums[0]; int result = dp[0]; for (int i = 1; i < nums.size(); i++) {dp[i] = max(dp[i - 1] + nums[i], nums[i]); if (dp[i] > result) result = dp[i];} return result;}};",
+          "description": "动态规划"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxSubArray(int[] nums) {if (nums.length == 1){return nums[0];} int sum = Integer.MIN_VALUE; int count = 0; for (int i = 0; i < nums.length; i++){count += nums[i]; sum = Math.max(sum, count); if (count <= 0){count = 0;}} return sum;}}",
+          "description": "贪心解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxSubArray(int[] nums) {int ans = Integer.MIN_VALUE; int[] dp = new int[nums.length]; dp[0] = nums[0]; ans = dp[0]; for (int i = 1; i < nums.length; i++){dp[i] = Math.max(dp[i-1] + nums[i], nums[i]); ans = Math.max(dp[i], ans);} return ans;}}",
+          "description": "动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') count = 0 for i in range(len(nums)): count = 0 for j in range(i, len(nums)): count += nums[j] result = max(count, result) return result",
+          "description": "暴力解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') count = 0 for i in range(len(nums)): count += nums[i] if count > result: result = count if count <= 0: count = 0 return result",
+          "description": "贪心解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: dp = [0] * len(nums) dp[0] = nums[0] res = nums[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1] + nums[i], nums[i]) res = max(res, dp[i]) return res",
+          "description": "动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): if not nums: return 0 dp = [0] * len(nums) dp[0] = nums[0] result = dp[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1]+nums[i], nums[i]) if dp[i] > result: result = dp[i] return result",
+          "description": "动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: max_sum = float(\"-inf\") current_sum = 0 for num in nums: current_sum = max(current_sum+num, num) max_sum = max(max_sum, current_sum) return max_sum",
+          "description": "动态规划优化"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) {int result = INT32_MIN;int count = 0;for (int i = 0; i < nums.size(); i++) {count = 0;for (int j = i; j < nums.size(); j++) {count += nums[j];result = count > result ? count : result;}}return result;}};",
+          "description": "暴力解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) {int result = INT32_MIN;int count = 0;for (int i = 0; i < nums.size(); i++) {count += nums[i];if (count > result) {result = count;}if (count <= 0) count = 0;}return result;}};",
+          "description": "贪心解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) {if (nums.size() == 0) return 0;vector<int> dp(nums.size(), 0);dp[0] = nums[0];int result = dp[0];for (int i = 1; i < nums.size(); i++) {dp[i] = max(dp[i - 1] + nums[i], nums[i]);if (dp[i] > result) result = dp[i];}return result;}};",
+          "description": "动态规划"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxSubArray(int[] nums) {if (nums.length == 1){return nums[0];}int sum = Integer.MIN_VALUE;int count = 0;for (int i = 0; i < nums.length; i++){count += nums[i];sum = Math.max(sum, count);if (count <= 0){count = 0;}}return sum;}}",
+          "description": "贪心解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxSubArray(int[] nums) {int ans = Integer.MIN_VALUE;int[] dp = new int[nums.length];dp[0] = nums[0];ans = dp[0];for (int i = 1; i < nums.length; i++){dp[i] = Math.max(dp[i-1] + nums[i], nums[i]);ans = Math.max(dp[i], ans);}return ans;}}",
+          "description": "动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') count = 0 for i in range(len(nums)): count = 0 for j in range(i, len(nums)): count += nums[j] result = max(count, result) return result",
+          "description": "暴力解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') count = 0 for i in range(len(nums)): count += nums[i] if count > result: result = count if count <= 0: count = 0 return result",
+          "description": "贪心解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: dp = [0] * len(nums) dp[0] = nums[0] res = nums[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1] + nums[i], nums[i]) res = max(res, dp[i]) return res",
+          "description": "动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): if not nums: return 0 dp = [0] * len(nums) dp[0] = nums[0] result = dp[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1]+nums[i], nums[i]) if dp[i] > result: result = dp[i] return result",
+          "description": "动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: max_sum = float(\"-inf\") current_sum = 0 for num in nums: current_sum = max(current_sum+num, num) max_sum = max(max_sum, current_sum) return max_sum",
+          "description": "动态规划优化"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "暴力法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) {int result = INT32_MIN;int count = 0;for (int i = 0; i < nums.size(); i++) {count = 0;for (int j = i; j < nums.size(); j++) {count += nums[j];result = count > result ? count : result;}}return result;}};",
+          "description": "暴力解法实现最大子序和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) {int result = INT32_MIN;int count = 0;for (int i = 0; i < nums.size(); i++) {count += nums[i];if (count > result) {result = count;}if (count <= 0) count = 0;}return result;}};",
+          "description": "贪心算法实现最大子序和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxSubArray(vector<int>& nums) {if (nums.size() == 0) return 0;vector<int> dp(nums.size(), 0);dp[0] = nums[0];int result = dp[0];for (int i = 1; i < nums.size(); i++) {dp[i] = max(dp[i - 1] + nums[i], nums[i]);if (dp[i] > result) result = dp[i];}return result;}};",
+          "description": "动态规划实现最大子序和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxSubArray(int[] nums) {if (nums.length == 1){return nums[0];}int sum = Integer.MIN_VALUE;int count = 0;for (int i = 0; i < nums.length; i++){count += nums[i];sum = Math.max(sum, count);if (count <= 0){count = 0;}}return sum;}}",
+          "description": "Java版贪心算法实现最大子序和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxSubArray(int[] nums) {int ans = Integer.MIN_VALUE;int[] dp = new int[nums.length];dp[0] = nums[0];ans = dp[0];for (int i = 1; i < nums.length; i++){dp[i] = Math.max(dp[i-1] + nums[i], nums[i]);ans = Math.max(dp[i], ans);}return ans;}}",
+          "description": "Java版动态规划实现最大子序和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') for i in range(len(nums)): count = 0 for j in range(i, len(nums)): count += nums[j] result = max(count, result) return result",
+          "description": "Python版暴力解法实现最大子序和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') count = 0 for i in range(len(nums)): count += nums[i] if count > result: result = count if count <= 0: count = 0 return result",
+          "description": "Python版贪心算法实现最大子序和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: dp = [0] * len(nums) dp[0] = nums[0] res = nums[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1] + nums[i], nums[i]) res = max(res, dp[i]) return res",
+          "description": "Python版动态规划实现最大子序和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums): if not nums: return 0 dp = [0] * len(nums) dp[0] = nums[0] result = dp[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1]+nums[i], nums[i]) if dp[i] > result: result = dp[i] return result",
+          "description": "另一种Python版动态规划实现最大子序和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: max_sum = float(\"-inf\") current_sum = 0 for num in nums: current_sum = max(current_sum+num, num) max_sum = max(max_sum, current_sum) return max_sum",
+          "description": "Python版动态规划优化实现最大子序和"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n^2)",
+    "space_complexity": "O(1)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int maxSubArray(vector<int>& nums) { int result = INT32_MIN; int count = 0; for (int i = 0; i < nums.size(); i++) { count = 0; for (int j = i; j < nums.size(); j++) { count += nums[j]; result = count > result ? count : result; } } return result; }};",
+      "description": "暴力解法"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int maxSubArray(vector<int>& nums) { int result = INT32_MIN; int count = 0; for (int i = 0; i < nums.size(); i++) { count += nums[i]; if (count > result) { result = count; } if (count <= 0) count = 0; } return result; }};",
+      "description": "贪心解法"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int maxSubArray(vector<int>& nums) { if (nums.size() == 0) return 0; vector<int> dp(nums.size(), 0); dp[0] = nums[0]; int result = dp[0]; for (int i = 1; i < nums.size(); i++) { dp[i] = max(dp[i - 1] + nums[i], nums[i]); if (dp[i] > result) result = dp[i]; } return result; }};",
+      "description": "动态规划"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int maxSubArray(int[] nums) { if (nums.length == 1){ return nums[0]; } int sum = Integer.MIN_VALUE; int count = 0; for (int i = 0; i < nums.length; i++){ count += nums[i]; sum = Math.max(sum, count); if (count <= 0){ count = 0; } } return sum; }}",
+      "description": "贪心解法"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int maxSubArray(int[] nums) { int ans = Integer.MIN_VALUE; int[] dp = new int[nums.length]; dp[0] = nums[0]; ans = dp[0]; for (int i = 1; i < nums.length; i++){ dp[i] = Math.max(dp[i-1] + nums[i], nums[i]); ans = Math.max(dp[i], ans); } return ans; }}",
+      "description": "动态规划"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') count = 0 for i in range(len(nums)): count = 0 for j in range(i, len(nums)): count += nums[j] result = max(count, result) return result",
+      "description": "暴力解法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def maxSubArray(self, nums): result = float('-inf') count = 0 for i in range(len(nums)): count += nums[i] if count > result: result = count if count <= 0: count = 0 return result",
+      "description": "贪心解法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: dp = [0] * len(nums) dp[0] = nums[0] res = nums[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1] + nums[i], nums[i]) res = max(res, dp[i]) return res",
+      "description": "动态规划"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def maxSubArray(self, nums): if not nums: return 0 dp = [0] * len(nums) dp[0] = nums[0] result = dp[0] for i in range(1, len(nums)): dp[i] = max(dp[i-1]+nums[i], nums[i]) if dp[i] > result: result = dp[i] return result",
+      "description": "动态规划"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def maxSubArray(self, nums: List[int]) -> int: max_sum = float(\"-inf\") current_sum = 0 for num in nums: current_sum = max(current_sum+num, num) max_sum = max(max_sum, current_sum) return max_sum",
+      "description": "动态规划优化"
+    }
+  ],
+  "common_mistakes": [
+    "认为输入全为负数时结果应为0而非最小负数。",
+    "混淆何时重置子序列起点：正确做法是在累计和变为负数时重置，而非简单地遇负即弃。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/53.%E6%9C%80%E5%A4%A7%E5%AD%90%E5%BA%8F%E5%92%8C.gif",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/53.%E6%9C%80%E5%A4%A7%E5%AD%90%E5%BA%8F%E5%92%8C.gif",
+      "context": "该动画展示了如何通过调整区间的起始位置并记录最大子序和来找到数组中的最大连续子序列和的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/53.%E6%9C%80%E5%A4%A7%E5%AD%90%E5%BA%8F%E5%92%8C.gif",
+      "description": "GIF展示了算法通过动态调整子数组的起始位置来寻找最大连续子数组和的过程，其中红色标记了每个新子数组的起点。",
+      "context": "GIF动画展示了通过调整区间的起始位置来寻找数组中最大子序和的过程，其中红色标记了新的起始点，并且每当累积和（count）超过当前记录的最大值时，更新最大子序和（result）。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\贪心算法\\最大子序和.txt",
+  "extracted_at": "2025-07-22T16:34:19.599505",
+  "raw_content": "最大子序和\n力扣题目链接(https://leetcode.cn/problems/maximum-subarray/)\n\n给定一个整数数组 nums ，找到一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。\n\n示例:\n\n输入: [-2,1,-3,4,-1,2,1,-5,4]\n输出: 6\n解释:  连续子数组  [4,-1,2,1] 的和最大，为  6。\n\n\n#思路\n#暴力解法\n暴力解法的思路，第一层 for 就是设置起始位置，第二层 for 循环遍历数组寻找最大值\n\nclass Solution {\npublic:\n    int maxSubArray(vector<int>& nums) {\n        int result = INT32_MIN;\n        int count = 0;\n        for (int i = 0; i < nums.size(); i++) { // 设置起始位置\n            count = 0;\n            for (int j = i; j < nums.size(); j++) { // 每次从起始位置i开始遍历寻找最大值\n                count += nums[j];\n                result = count > result ? count : result;\n            }\n        }\n        return result;\n    }\n};\n时间复杂度：O(n^2)\n空间复杂度：O(1)\n以上暴力的解法 C++勉强可以过，其他语言就不确定了。\n\n#贪心解法\n贪心贪的是哪里呢？\n\n如果 -2 1 在一起，计算起点的时候，一定是从 1 开始计算，因为负数只会拉低总和，这就是贪心贪的地方！\n\n局部最优：当前“连续和”为负数的时候立刻放弃，从下一个元素重新计算“连续和”，因为负数加上下一个元素 “连续和”只会越来越小。\n\n全局最优：选取最大“连续和”\n\n局部最优的情况下，并记录最大的“连续和”，可以推出全局最优。\n\n从代码角度上来讲：遍历 nums，从头开始用 count 累积，如果 count 一旦加上 nums[i]变为负数，那么就应该从 nums[i+1]开始从 0 累积 count 了，因为已经变为负数的 count，只会拖累总和。\n\n这相当于是暴力解法中的不断调整最大子序和区间的起始位置。\n\n那有同学问了，区间终止位置不用调整么？ 如何才能得到最大“连续和”呢？\n\n区间的终止位置，其实就是如果 count 取到最大值了，及时记录下来了。例如如下代码：\n\nif (count > result) result = count;\n这样相当于是用 result 记录最大子序和区间和（变相的算是调整了终止位置）。\n\n如动画所示：\n\nhttps://file1.kamacoder.com/i/algo/53.%E6%9C%80%E5%A4%A7%E5%AD%90%E5%BA%8F%E5%92%8C.gif\n\n红色的起始位置就是贪心每次取 count 为正数的时候，开始一个区间的统计。\n\n那么不难写出如下 C++代码（关键地方已经注释）\n\nclass Solution {\npublic:\n    int maxSubArray(vector<int>& nums) {\n        int result = INT32_MIN;\n        int count = 0;\n        for (int i = 0; i < nums.size(); i++) {\n            count += nums[i];\n            if (count > result) { // 取区间累计的最大值（相当于不断确定最大子序终止位置）\n                result = count;\n            }\n            if (count <= 0) count = 0; // 相当于重置最大子序起始位置，因为遇到负数一定是拉低总和\n        }\n        return result;\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(1)\n当然题目没有说如果数组为空，应该返回什么，所以数组为空的话返回啥都可以了。\n\n#常见误区\n误区一：\n\n不少同学认为 如果输入用例都是-1，或者 都是负数，这个贪心算法跑出来的结果是 0， 这是又一次证明脑洞模拟不靠谱的经典案例，建议大家把代码运行一下试一试，就知道了，也会理解 为什么 result 要初始化为最小负数了。\n\n误区二：\n\n大家在使用贪心算法求解本题，经常陷入的误区，就是分不清，是遇到 负数就选择起始位置，还是连续和为负选择起始位置。\n\n在动画演示用，大家可以发现， 4，遇到 -1 的时候，我们依然累加了，为什么呢？\n\n因为和为 3，只要连续和还是正数就会 对后面的元素 起到增大总和的作用。 所以只要连续和为正数我们就保留。\n\n这里也会有录友疑惑，那 4 + -1 之后 不就变小了吗？ 会不会错过 4 成为最大连续和的可能性？\n\n其实并不会，因为还有一个变量 result 一直在更新 最大的连续和，只要有更大的连续和出现，result 就更新了，那么 result 已经把 4 更新了，后面 连续和变成 3，也不会对最后结果有影响。\n\n#动态规划\n当然本题还可以用动态规划来做，在代码随想录动态规划章节我会详细介绍，如果大家想在想看，可以直接跳转：动态规划版本详解(https://programmercarl.com/0053.%E6%9C%80%E5%A4%A7%E5%AD%90%E5%BA%8F%E5%92%8C%EF%BC%88%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%89.html#%E6%80%9D%E8%B7%AF)\n\n那么先给出我的 dp 代码如下，有时间的录友可以提前做一做：\n\nclass Solution {\npublic:\n    int maxSubArray(vector<int>& nums) {\n        if (nums.size() == 0) return 0;\n        vector<int> dp(nums.size(), 0); // dp[i]表示包括i之前的最大连续子序列和\n        dp[0] = nums[0];\n        int result = dp[0];\n        for (int i = 1; i < nums.size(); i++) {\n            dp[i] = max(dp[i - 1] + nums[i], nums[i]); // 状态转移公式\n            if (dp[i] > result) result = dp[i]; // result 保存dp[i]的最大值\n        }\n        return result;\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(n)\n#总结\n本题的贪心思路其实并不好想，这也进一步验证了，别看贪心理论很直白，有时候看似是常识，但贪心的题目一点都不简单！\n\n后续将介绍的贪心题目都挺难的，所以贪心很有意思，别小看贪心！\n\n#其他语言版本\n#Java\nclass Solution {\n    public int maxSubArray(int[] nums) {\n        if (nums.length == 1){\n            return nums[0];\n        }\n        int sum = Integer.MIN_VALUE;\n        int count = 0;\n        for (int i = 0; i < nums.length; i++){\n            count += nums[i];\n            sum = Math.max(sum, count); // 取区间累计的最大值（相当于不断确定最大子序终止位置）\n            if (count <= 0){\n                count = 0; // 相当于重置最大子序起始位置，因为遇到负数一定是拉低总和\n            }\n        }\n       return sum;\n    }\n}\n// DP 方法\nclass Solution {\n    public int maxSubArray(int[] nums) {\n        int ans = Integer.MIN_VALUE;\n        int[] dp = new int[nums.length];\n        dp[0] = nums[0];\n        ans = dp[0];\n\n        for (int i = 1; i < nums.length; i++){\n            dp[i] = Math.max(dp[i-1] + nums[i], nums[i]);\n            ans = Math.max(dp[i], ans);\n        }\n\n        return ans;\n    }\n}\n#Python\n暴力法\n\nclass Solution:\n    def maxSubArray(self, nums):\n        result = float('-inf')  # 初始化结果为负无穷大\n        count = 0\n        for i in range(len(nums)):  # 设置起始位置\n            count = 0\n            for j in range(i, len(nums)):  # 从起始位置i开始遍历寻找最大值\n                count += nums[j]\n                result = max(count, result)  # 更新最大值\n        return result\n\n贪心法\n\nclass Solution:\n    def maxSubArray(self, nums):\n        result = float('-inf')  # 初始化结果为负无穷大\n        count = 0\n        for i in range(len(nums)):\n            count += nums[i]\n            if count > result:  # 取区间累计的最大值（相当于不断确定最大子序终止位置）\n                result = count\n            if count <= 0:  # 相当于重置最大子序起始位置，因为遇到负数一定是拉低总和\n                count = 0\n        return result\n动态规划\n\nclass Solution:\n    def maxSubArray(self, nums: List[int]) -> int:\n        dp = [0] * len(nums)\n        dp[0] = nums[0]\n        res = nums[0]\n        for i in range(1, len(nums)):\n            dp[i] = max(dp[i-1] + nums[i], nums[i])\n            res = max(res, dp[i])\n        return res\n动态规划\n\nclass Solution:\n    def maxSubArray(self, nums):\n        if not nums:\n            return 0\n        dp = [0] * len(nums)    # dp[i]表示包括i之前的最大连续子序列和\n        dp[0] = nums[0]\n        result = dp[0]\n        for i in range(1, len(nums)):\n            dp[i] = max(dp[i-1]+nums[i], nums[i])   # 状态转移公式\n            if dp[i] > result:\n                result = dp[i]                      # result 保存dp[i]的最大值\n        return result\n动态规划优化\n\nclass Solution:\n    def maxSubArray(self, nums: List[int]) -> int:\n        max_sum = float(\"-inf\") # 初始化结果为负无穷大，方便比较取最大值\n        current_sum = 0         # 初始化当前连续和\n\n        for num in nums:\n\n            # 更新当前连续和\n            # 如果原本的连续和加上当前数字之后没有当前数字大，说明原本的连续和是负数，那么就直接从当前数字开始重新计算连续和\n            current_sum = max(current_sum+num, num) \n            max_sum = max(max_sum, current_sum) # 更新结果\n\n        return max_sum"
+}

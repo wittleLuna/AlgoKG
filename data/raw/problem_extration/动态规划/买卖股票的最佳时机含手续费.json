@@ -1,0 +1,287 @@
+{
+  "id": "AP_d9c30c67",
+  "title": "买卖股票的最佳时机含手续费",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/",
+  "description": "一个整数数组 prices，其中第 i 个元素代表了第 i 天的股票价格 ；非负整数 fee 代表了交易股票的手续费用。\n\n你可以无限次地完成交易，但是你每笔交易都需要付手续费。如果你已经购买了一个股票，在卖出它之前你就不能再继续购买股票了。\n\n返回获得利润的最大值。\n\n注意：这里的一笔交易指买入持有并卖出股票的整个过程，每笔交易你只需要为支付一次手续费。",
+  "examples": [],
+  "constraints": [
+    "0 < prices.length <= 50000."
+  ],
+  "algorithm_tags": [
+    "动态规划",
+    "贪心算法"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "状态压缩",
+    "优化空间复杂度"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过定义一个二维dp数组，其中dp[i][0]表示第i天持有股票的最大利润，dp[i][1]表示第i天不持有股票的最大利润。递推公式为：dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) 和 dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i] - fee)。此外，可以通过状态压缩进一步降低空间复杂度。",
+  "key_insights": [
+    {
+      "content": "每一天持有或不持有股票的状态可以从前一天的状态转移而来。"
+    },
+    {
+      "content": "卖出时扣除手续费是关键操作，影响最终的利润计算。"
+    },
+    {
+      "content": "该问题可以通过两种方式处理手续费：在卖出时扣除或者在买入时考虑，两者均能正确反映交易成本。"
+    },
+    {
+      "content": "使用动态规划能够有效地解决这个问题，并且通过状态压缩技术可以将空间复杂度从O(n)优化到O(1)。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "本题贪心解法：贪心算法：买卖股票的最佳时机含手续费(https://programmercarl.com/0714.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BA%E5%90%AB%E6%89%8B%E7%BB%AD%E8%B4%B9.html)",
+      "resources": [
+        {
+          "type": "image",
+          "content": "https://programmercarl.com/0714.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BA%E5%90%AB%E6%89%8B%E7%BB%AD%E8%B4%B9.html",
+          "description": "图片链接: https://programmercarl.com/0714.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BA%E5%90%AB%E6%89%8B%E7%BB%AD%E8%B4%B9.html",
+          "context": "该图片展示了使用贪心算法解决含手续费的股票买卖问题的具体步骤和思路。"
+        }
+      ],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices, int fee) {int n = prices.size(); vector<vector<int>> dp(n, vector<int>(2, 0)); dp[0][0] -= prices[0]; for (int i = 1; i < n; i++) {dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]); dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i] - fee);} return max(dp[n - 1][0], dp[n - 1][1]);}};",
+          "description": "C++版本的动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "public int maxProfit(int[] prices, int fee) {int len = prices.length; int[][] dp = new int[len][2]; dp[0][0] = -prices[0]; for (int i = 1; i < len; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] - prices[i]); dp[i][1] = Math.max(dp[i - 1][0] + prices[i] - fee, dp[i - 1][1]);} return Math.max(dp[len - 1][0], dp[len - 1][1]);}",
+          "description": "Java版本，卖出时支付手续费"
+        },
+        {
+          "language": "java",
+          "code": "public int maxProfit(int[] prices, int fee) {int len = prices.length; int[][] dp = new int[len][2]; dp[0][0] = -prices[0] - fee; for (int i = 1; i < len; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] - prices[i] - fee); dp[i][1] = Math.max(dp[i - 1][0] + prices[i], dp[i - 1][1]);} return Math.max(dp[len - 1][0], dp[len - 1][1]);}",
+          "description": "Java版本，买入时支付手续费"
+        },
+        {
+          "language": "java",
+          "code": "public int maxProfit(int[] prices, int fee) {int[] dp = new int[2]; dp[0] = -prices[0]; dp[1] = 0; for (int i = 1; i <= prices.length; i++) {dp[0] = Math.max(dp[0], dp[1] - prices[i - 1]); dp[1] = Math.max(dp[1], dp[0] + prices[i - 1] - fee);} return dp[1];}",
+          "description": "Java优化版本，使用一维数组"
+        },
+        {
+          "language": "java",
+          "code": "public int maxProfit(int[] prices, int fee) {int dp[][] = new int[2][2]; int len = prices.length; dp[0][0] = -prices[0]; for(int i = 1; i < len; i++){dp[i % 2][0] = Math.max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]); dp[i % 2][1] = Math.max(dp[(i - 1) % 2][1], dp[(i - 1) % 2][0] + prices[i] - fee);} return dp[(len - 1) % 2][1];}",
+          "description": "Java版本，使用2*2数组优化空间"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int], fee: int) -> int: n = len(prices) dp = [[0] * 2 for _ in range(n)] dp[0][0] = -prices[0] for i in range(1, n): dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i] - fee) return max(dp[-1][0], dp[-1][1])",
+          "description": "Python版本的动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int], fee: int) -> int: hold = -prices[0] - fee not_hold = 0 for price in prices[1:]: new_hold = max(hold, not_hold - price - fee) new_not_hold = max(not_hold, hold + price) hold, not_hold = new_hold, new_not_hold return not_hold",
+          "description": "Python版本，优化空间复杂度"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "public int maxProfit(int[] prices, int fee) { int len = prices.length; int[][] dp = new int[len][2]; dp[0][0] = -prices[0]; for (int i = 1; i < len; i++) { dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] - prices[i]); dp[i][1] = Math.max(dp[i - 1][0] + prices[i] - fee, dp[i - 1][1]); } return Math.max(dp[len - 1][0], dp[len - 1][1]); }",
+          "description": "卖出时支付手续费的Java实现"
+        },
+        {
+          "language": "java",
+          "code": "public int maxProfit(int[] prices, int fee) { int len = prices.length; int[][] dp = new int[len][2]; dp[0][0] = -prices[0] - fee; for (int i = 1; i < len; i++) { dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] - prices[i] - fee); dp[i][1] = Math.max(dp[i - 1][0] + prices[i], dp[i - 1][1]); } return Math.max(dp[len - 1][0], dp[len - 1][1]); }",
+          "description": "买入时支付手续费的Java实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int maxProfit(int[] prices, int fee) { int[] dp = new int[2]; dp[0] = -prices[0]; dp[1] = 0; for (int i = 1; i <= prices.length; i++) { dp[0] = Math.max(dp[0], dp[1] - prices[i - 1]); dp[1] = Math.max(dp[1], dp[0] + prices[i - 1] - fee); } return dp[1]; }}",
+          "description": "使用一维数组优化的Java实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int maxProfit(int[] prices, int fee) { int dp[][] = new int[2][2]; int len = prices.length; dp[0][0] = -prices[0]; for(int i = 1; i < len; i++){ dp[i % 2][0] = Math.max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]); dp[i % 2][1] = Math.max(dp[(i - 1) % 2][1], dp[(i - 1) % 2][0] + prices[i] - fee); } return dp[(len - 1) % 2][1]; }}",
+          "description": "使用2*2 array的Java实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int], fee: int) -> int: n = len(prices) dp = [[0] * 2 for _ in range(n)] dp[0][0] = -prices[0] for i in range(1, n): dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i] - fee) return max(dp[-1][0], dp[-1][1])",
+          "description": "Python版本的动态规划实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int], fee: int) -> int: hold = -prices[0] - fee not_hold = 0 for price in prices[1:]: new_hold = max(hold, not_hold - price - fee) new_not_hold = max(not_hold, hold + price) hold, not_hold = new_hold, new_not_hold return not_hold",
+          "description": "Python版本的一维数组优化"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "/**",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices, int fee) {int n = prices.size(); vector<vector<int>> dp(n, vector<int>(2, 0)); dp[0][0] -= prices[0]; for (int i = 1; i < n; i++) {dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]); dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i] - fee);} return max(dp[n - 1][0], dp[n - 1][1]);}};",
+          "description": "C++实现"
+        },
+        {
+          "language": "java",
+          "code": "public int maxProfit(int[] prices, int fee) {int len = prices.length; int[][] dp = new int[len][2]; dp[0][0] = -prices[0]; for (int i = 1; i < len; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] - prices[i]); dp[i][1] = Math.max(dp[i - 1][0] + prices[i] - fee, dp[i - 1][1]);} return Math.max(dp[len - 1][0], dp[len - 1][1]);}",
+          "description": "Java卖出时支付手续费"
+        },
+        {
+          "language": "java",
+          "code": "public int maxProfit(int[] prices, int fee) {int len = prices.length; int[][] dp = new int[len][2]; dp[0][0] = -prices[0] - fee; for (int i = 1; i < len; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] - prices[i] - fee); dp[i][1] = Math.max(dp[i - 1][0] + prices[i], dp[i - 1][1]);} return Math.max(dp[len - 1][0], dp[len - 1][1]);}",
+          "description": "Java买入时支付手续费"
+        },
+        {
+          "language": "java",
+          "code": "public int maxProfit(int[] prices, int fee) {int[] dp = new int[2]; dp[0] = -prices[0]; dp[1] = 0; for (int i = 1; i <= prices.length; i++) {dp[0] = Math.max(dp[0], dp[1] - prices[i - 1]); dp[1] = Math.max(dp[1], dp[0] + prices[i - 1] - fee);} return dp[1];}",
+          "description": "Java使用一维数组优化"
+        },
+        {
+          "language": "java",
+          "code": "public int maxProfit(int[] prices, int fee) {int dp[][] = new int[2][2]; int len = prices.length; dp[0][0] = -prices[0]; for(int i = 1; i < len; i++){dp[i % 2][0] = Math.max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]); dp[i % 2][1] = Math.max(dp[(i - 1) % 2][1], dp[(i - 1) % 2][0] + prices[i] - fee);} return dp[(len - 1) % 2][1];}",
+          "description": "Java使用2*2数组"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int], fee: int) -> int: n = len(prices) dp = [[0] * 2 for _ in range(n)] dp[0][0] = -prices[0] for i in range(1, n): dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i] - fee) return max(dp[-1][0], dp[-1][1])",
+          "description": "Python动态规划"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int], fee: int) -> int: hold = -prices[0] - fee not_hold = 0 for price in prices[1:]: new_hold = max(hold, not_hold - price - fee) new_not_hold = max(not_hold, hold + price) hold, not_hold = new_hold, new_not_hold return not_hold",
+          "description": "Python状态压缩"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "python",
+      "text": "class Solution:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxProfit(vector<int>& prices, int fee) {int n = prices.size();vector<vector<int>> dp(n, vector<int>(2, 0));dp[0][0] -= prices[0]; for (int i = 1; i < n; i++) {dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i] - fee);}return max(dp[n - 1][0], dp[n - 1][1]);}};",
+          "description": "C++实现买卖股票的最佳时机含手续费"
+        },
+        {
+          "language": "java",
+          "code": "public int maxProfit(int[] prices, int fee) {int len = prices.length;int[][] dp = new int[len][2];dp[0][0] = -prices[0];for (int i = 1; i < len; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] - prices[i]);dp[i][1] = Math.max(dp[i - 1][0] + prices[i] - fee, dp[i - 1][1]);}return Math.max(dp[len - 1][0], dp[len - 1][1]);}",
+          "description": "Java实现卖出时支付手续费"
+        },
+        {
+          "language": "java",
+          "code": "public int maxProfit(int[] prices, int fee) {int len = prices.length;int[][] dp = new int[len][2];dp[0][0] = -prices[0] - fee;for (int i = 1; i < len; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] - prices[i] - fee);dp[i][1] = Math.max(dp[i - 1][0] + prices[i], dp[i - 1][1]);}return Math.max(dp[len - 1][0], dp[len - 1][1]);}",
+          "description": "Java实现买入时支付手续费"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices, int fee) {int[] dp = new int[2];dp[0] = -prices[0];dp[1] = 0;for (int i = 1; i <= prices.length; i++) {dp[0] = Math.max(dp[0], dp[1] - prices[i - 1]);dp[1] = Math.max(dp[1], dp[0] + prices[i - 1] - fee);}return dp[1];}}",
+          "description": "Java使用一维数组优化"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxProfit(int[] prices, int fee) {int dp[][] = new int[2][2];int len = prices.length;dp[0][0] = -prices[0];for(int i = 1; i < len; i++){dp[i % 2][0] = Math.max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]);dp[i % 2][1] = Math.max(dp[(i - 1) % 2][1], dp[(i - 1) % 2][0] + prices[i] - fee);}return dp[(len - 1) % 2][1];}}",
+          "description": "Java使用2*2 array"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int], fee: int) -> int: n = len(prices) dp = [[0] * 2 for _ in range(n)] dp[0][0] = -prices[0] for i in range(1, n): dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i] - fee) return max(dp[-1][0], dp[-1][1])",
+          "description": "Python实现买卖股票的最佳时机含手续费"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxProfit(self, prices: List[int], fee: int) -> int: hold = -prices[0] - fee not_hold = 0 for price in prices[1:]: new_hold = max(hold, not_hold - price - fee) new_not_hold = max(not_hold, hold + price) hold, not_hold = new_hold, new_not_hold return not_hold",
+          "description": "Python简化版实现"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n)",
+    "space_complexity": "O(1)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int maxProfit(vector<int>& prices, int fee) {int n = prices.size();vector<vector<int>> dp(n, vector<int>(2, 0));dp[0][0] -= prices[0]; for (int i = 1; i < n; i++) {dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i] - fee);}return max(dp[n - 1][0], dp[n - 1][1]);}};",
+      "description": "C++实现的动态规划解法"
+    },
+    {
+      "language": "java",
+      "code": "public int maxProfit(int[] prices, int fee) {int len = prices.length;int[][] dp = new int[len][2];dp[0][0] = -prices[0];for (int i = 1; i < len; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] - prices[i]);dp[i][1] = Math.max(dp[i - 1][0] + prices[i] - fee, dp[i - 1][1]);}return Math.max(dp[len - 1][0], dp[len - 1][1]);}",
+      "description": "Java实现的第一种动态规划解法，卖出时支付手续费"
+    },
+    {
+      "language": "java",
+      "code": "public int maxProfit(int[] prices, int fee) {int len = prices.length;int[][] dp = new int[len][2];dp[0][0] = -prices[0] - fee;for (int i = 1; i < len; i++) {dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] - prices[i] - fee);dp[i][1] = Math.max(dp[i - 1][0] + prices[i], dp[i - 1][1]);}return Math.max(dp[len - 1][0], dp[len - 1][1]);}",
+      "description": "Java实现的第二种动态规划解法，买入时支付手续费"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int maxProfit(int[] prices, int fee) {int[] dp = new int[2];dp[0] = -prices[0];dp[1] = 0;for (int i = 1; i <= prices.length; i++) {dp[0] = Math.max(dp[0], dp[1] - prices[i - 1]);dp[1] = Math.max(dp[1], dp[0] + prices[i - 1] - fee);}return dp[1];}}",
+      "description": "Java实现的一维数组优化版本"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int maxProfit(int[] prices, int fee) {int dp[][] = new int[2][2];int len = prices.length;dp[0][0] = -prices[0];for(int i = 1; i < len; i++){dp[i % 2][0] = Math.max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]);dp[i % 2][1] = Math.max(dp[(i - 1) % 2][1], dp[(i - 1) % 2][0] + prices[i] - fee);}return dp[(len - 1) % 2][1];}}",
+      "description": "使用2*2数组优化空间的Java实现"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def maxProfit(self, prices: List[int], fee: int) -> int: n = len(prices) dp = [[0] * 2 for _ in range(n)] dp[0][0] = -prices[0] for i in range(1, n): dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]) dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i] - fee) return max(dp[-1][0], dp[-1][1])",
+      "description": "Python实现的标准动态规划解法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def maxProfit(self, prices: List[int], fee: int) -> int: hold = -prices[0] - fee not_hold = 0 for price in prices[1:]: new_hold = max(hold, not_hold - price - fee) new_not_hold = max(not_hold, hold + price) hold, not_hold = new_hold, new_not_hold return not_hold",
+      "description": "Python实现的空间优化版本"
+    }
+  ],
+  "common_mistakes": [
+    "忽略手续费的影响，导致计算出的最大利润偏高。",
+    "未正确初始化状态值，例如第一天持有股票的成本应该直接减去当天的价格。",
+    "理解上的误区：认为每笔交易都要支付两次手续费，实际上每完成一次买卖仅需支付一次手续费。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/",
+      "description": "图片链接: https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/",
+      "context": "该图片链接指向了力扣平台上关于“买卖股票的最佳时机含手续费”问题的页面，用以提供题目详情和提交解答的入口。"
+    },
+    {
+      "type": "image",
+      "content": "https://programmercarl.com/0714.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BA%E5%90%AB%E6%89%8B%E7%BB%AD%E8%B4%B9.html",
+      "description": "图片链接: https://programmercarl.com/0714.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BA%E5%90%AB%E6%89%8B%E7%BB%AD%E8%B4%B9.html",
+      "context": "该图片展示了使用贪心算法解决含手续费的股票买卖问题的具体步骤和思路。"
+    },
+    {
+      "type": "image",
+      "content": "https://programmercarl.com/0122.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BAII%EF%BC%88%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%89.html",
+      "description": "图片链接: https://programmercarl.com/0122.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BAII%EF%BC%88%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%89.html",
+      "context": "该图片链接指向了关于使用动态规划解决买卖股票最佳时机问题的详细解析页面，与文中提到的通过动态规划方法来理解和解决当前问题相关。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\动态规划\\买卖股票的最佳时机含手续费.txt",
+  "extracted_at": "2025-07-20T16:16:14.308476",
+  "raw_content": "买卖股票的最佳时机含手续费\n力扣题目链接(https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/)\n\n给定一个整数数组 prices，其中第 i 个元素代表了第 i 天的股票价格 ；非负整数 fee 代表了交易股票的手续费用。\n\n你可以无限次地完成交易，但是你每笔交易都需要付手续费。如果你已经购买了一个股票，在卖出它之前你就不能再继续购买股票了。\n\n返回获得利润的最大值。\n\n注意：这里的一笔交易指买入持有并卖出股票的整个过程，每笔交易你只需要为支付一次手续费。\n\n示例 1:\n\n输入: prices = [1, 3, 2, 8, 4, 9], fee = 2\n输出: 8\n解释: 能够达到的最大利润:\n\n在此处买入 prices[0] = 1\n在此处卖出 prices[3] = 8\n在此处买入 prices[4] = 4\n在此处卖出 prices[5] = 9\n总利润: ((8 - 1) - 2) + ((9 - 4) - 2) = 8.\n注意:\n\n0 < prices.length <= 50000.\n0 < prices[i] < 50000.\n0 <= fee < 50000.\n\n\n#思路\n本题贪心解法：贪心算法：买卖股票的最佳时机含手续费(https://programmercarl.com/0714.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BA%E5%90%AB%E6%89%8B%E7%BB%AD%E8%B4%B9.html)\n\n性能是：\n\n时间复杂度：O(n)\n空间复杂度：O(1)\n本题使用贪心算法并不好理解，也很容易出错，那么我们再来看看使用动规的方法如何解题。\n\n相对于动态规划：122.买卖股票的最佳时机II (https://programmercarl.com/0122.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BAII%EF%BC%88%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%89.html)，本题只需要在计算卖出操作的时候减去手续费就可以了，代码几乎是一样的。\n\n唯一差别在于递推公式部分，所以本篇也就不按照动规五部曲详细讲解了，主要讲解一下递推公式部分。\n\n这里重申一下dp数组的含义：\n\ndp[i][0] 表示第i天持有股票所得最多现金。 dp[i][1] 表示第i天不持有股票所得最多现金\n\n如果第i天持有股票即dp[i][0]， 那么可以由两个状态推出来\n\n第i-1天就持有股票，那么就保持现状，所得现金就是昨天持有股票的所得现金 即：dp[i - 1][0]\n第i天买入股票，所得现金就是昨天不持有股票的所得现金减去 今天的股票价格 即：dp[i - 1][1] - prices[i]\n所以：dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);\n\n在来看看如果第i天不持有股票即dp[i][1]的情况， 依然可以由两个状态推出来\n\n第i-1天就不持有股票，那么就保持现状，所得现金就是昨天不持有股票的所得现金 即：dp[i - 1][1]\n第i天卖出股票，所得现金就是按照今天股票价格卖出后所得现金，注意这里需要有手续费了即：dp[i - 1][0] + prices[i] - fee\n所以：dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i] - fee);\n\n本题和动态规划：122.买卖股票的最佳时机II (https://programmercarl.com/0122.%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BAII%EF%BC%88%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%89.html)的区别就是这里需要多一个减去手续费的操作。\n\n以上分析完毕，C++代码如下：\n\nclass Solution {\npublic:\n    int maxProfit(vector<int>& prices, int fee) {\n        int n = prices.size();\n        vector<vector<int>> dp(n, vector<int>(2, 0));\n        dp[0][0] -= prices[0]; // 持股票\n        for (int i = 1; i < n; i++) {\n            dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);\n            dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i] - fee);\n        }\n        return max(dp[n - 1][0], dp[n - 1][1]);\n    }\n};\n时间复杂度：O(n)\n空间复杂度：O(n)\n#其他语言版本\n#Java：\n/**\n * 卖出时支付手续费\n * @param prices\n * @param fee\n * @return\n */\npublic int maxProfit(int[] prices, int fee) {\n    int len = prices.length;\n    // 0 : 持股（买入）\n    // 1 : 不持股（售出）\n    // dp 定义第i天持股/不持股 所得最多现金\n    int[][] dp = new int[len][2];\n    dp[0][0] = -prices[0];\n    for (int i = 1; i < len; i++) {\n        dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] - prices[i]);\n        dp[i][1] = Math.max(dp[i - 1][0] + prices[i] - fee, dp[i - 1][1]);\n    }\n    return Math.max(dp[len - 1][0], dp[len - 1][1]);\n}\n\n/**\n * 买入时支付手续费\n * @param prices\n * @param fee\n * @return\n */\npublic int maxProfit(int[] prices, int fee) {\n    int len = prices.length;\n    // 0 : 持股（买入）\n    // 1 : 不持股（售出）\n    // dp 定义第i天持股/不持股 所得最多现金\n    int[][] dp = new int[len][2];\n    // 考虑买入的时候就支付手续费\n    dp[0][0] = -prices[0] - fee;\n    for (int i = 1; i < len; i++) {\n        dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] - prices[i] - fee);\n        dp[i][1] = Math.max(dp[i - 1][0] + prices[i], dp[i - 1][1]);\n    }\n    return Math.max(dp[len - 1][0], dp[len - 1][1]);\n}\n\n// 一维数组优化\nclass Solution {\n    public int maxProfit(int[] prices, int fee) {\n    int[] dp = new int[2];\n    dp[0] = -prices[0];\n    dp[1] = 0;\n    for (int i = 1; i <= prices.length; i++) {\n      dp[0] = Math.max(dp[0], dp[1] - prices[i - 1]);\n      dp[1] = Math.max(dp[1], dp[0] + prices[i - 1] - fee);\n    }\n    return dp[1];\n    }\n}\n```Java\n//使用 2*2 array\nclass Solution {\n    public int maxProfit(int[] prices, int fee) {\n        int dp[][] = new int[2][2];\n        int len = prices.length;\n        //[i][0] = holding the stock\n        //[i][1] = not holding the stock\n        dp[0][0] = -prices[0];\n\n        for(int i = 1; i < len; i++){\n            dp[i % 2][0] = Math.max(dp[(i - 1) % 2][0], dp[(i - 1) % 2][1] - prices[i]);\n            dp[i % 2][1] = Math.max(dp[(i - 1) % 2][1], dp[(i - 1) % 2][0] + prices[i] - fee);\n        }\n\n        return dp[(len - 1) % 2][1];\n    }\n}\n#python\nclass Solution:\n    def maxProfit(self, prices: List[int], fee: int) -> int:\n        n = len(prices)\n        dp = [[0] * 2 for _ in range(n)]\n        dp[0][0] = -prices[0] #持股票\n        for i in range(1, n):\n            dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i])\n            dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i] - fee)\n        return max(dp[-1][0], dp[-1][1])\nclass Solution:\n    def maxProfit(self, prices: List[int], fee: int) -> int:\n        # 持有股票手上的最大現金\n        hold = -prices[0] - fee\n        # 不持有股票手上的最大現金\n        not_hold = 0\n        for price in prices[1:]:\n            new_hold = max(hold, not_hold - price - fee)\n            new_not_hold = max(not_hold, hold + price)\n            hold, not_hold = new_hold, new_not_hold\n        return not_hold"
+}

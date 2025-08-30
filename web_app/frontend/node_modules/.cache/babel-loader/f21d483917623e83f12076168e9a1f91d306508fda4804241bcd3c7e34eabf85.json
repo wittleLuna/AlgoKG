@@ -1,0 +1,1 @@
+{"ast":null,"code":"/**\n * @param {string} d\n * @returns {string}\n */\nexport function color(d) {\n  return d;\n}","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}

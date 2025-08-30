@@ -1,0 +1,60 @@
+{
+  "id": "SA001",
+  "name": "Dijkstra算法",
+  "alias": [
+    "迪杰斯特拉算法"
+  ],
+  "type": "specific_algorithm",
+  "description": "一种求解非负权图上单源最短路径的算法。",
+  "key_concepts": [
+    "最短路径",
+    "非负权图",
+    "单源"
+  ],
+  "applications": [
+    "网络路由",
+    "地图导航",
+    "资源分配"
+  ],
+  "created_at": "2025-07-19T12:34:30Z",
+  "updated_at": "2025-07-19T12:34:30Z",
+  "source_files": [
+    "dijkstra_wiki.txt"
+  ],
+  "spacy_entities": {
+    "COMPLEXITY": [
+      "O(n²)",
+      "O(n^2)",
+      "O(n)",
+      "O(n log n + m)"
+    ],
+    "DATA_STRUCTURE": [
+      "堆",
+      "队列",
+      "集合",
+      "树",
+      "图",
+      "优先队列",
+      "线段树",
+      "queue"
+    ],
+    "TECHNIQUE": [
+      "线段树",
+      "松弛操作"
+    ],
+    "CORE_CONCEPT": [
+      "递归",
+      "初始化",
+      "时间复杂度",
+      "最短路长度",
+      "路径"
+    ],
+    "PROBLEM_TYPE": [
+      "最短路径问题"
+    ],
+    "SPECIFIC_ALGORITHM": [
+      "Dijkstra算法",
+      "Dijkstra"
+    ]
+  }
+}

@@ -1,0 +1,326 @@
+{
+  "basic_info": {
+    "title": "不同的子序列",
+    "type": "Problem",
+    "description": "一个字符串 s 和一个字符串 t ，计算在 s 的子序列中 t 出现的个数。\n\n字符串的一个 子序列 是指，通过删除一些（也可以不删除）字符且不干扰剩余字符相对位置所组成的新字符串。（例如，\"ACE\" 是 \"ABCDE\" 的一个子序列，而 \"AEC\" 不是）",
+    "difficulty": null,
+    "platform": "leetcode",
+    "category": "动态规划",
+    "url": "https://leetcode.cn/problems/distinct-subsequences/"
+  },
+  "algorithms": [
+    {
+      "name": "双指针",
+      "description": "使用两个指针优化数组操作",
+      "category": "数组技巧"
+    },
+    {
+      "name": "组合数学",
+      "description": "组合数学算法",
+      "category": "其他"
+    },
+    {
+      "name": "Greedy",
+      "description": "Greedy算法",
+      "category": "其他"
+    },
+    {
+      "name": "深度优先搜索",
+      "description": "深度优先搜索算法",
+      "category": "其他"
+    },
+    {
+      "name": "动态规划",
+      "description": "通过子问题最优解构建全局最优解",
+      "category": "优化算法"
+    },
+    {
+      "name": "树形DP",
+      "description": "树形DP算法",
+      "category": "其他"
+    },
+    {
+      "name": "完全背包",
+      "description": "完全背包算法",
+      "category": "其他"
+    },
+    {
+      "name": "贪心算法",
+      "description": "贪心算法算法",
+      "category": "其他"
+    },
+    {
+      "name": "编辑距离",
+      "description": "编辑距离算法",
+      "category": "其他"
+    },
+    {
+      "name": "Backtracking",
+      "description": "Backtracking算法",
+      "category": "其他"
+    },
+    {
+      "name": "01背包",
+      "description": "01背包算法",
+      "category": "其他"
+    },
+    {
+      "name": "贪心",
+      "description": "贪心算法",
+      "category": "优化算法"
+    },
+    {
+      "name": "Dynamic Programming",
+      "description": "Dynamic Programming算法",
+      "category": "其他"
+    }
+  ],
+  "data_structures": [
+    {
+      "name": "Set",
+      "description": "",
+      "category": "其他"
+    },
+    {
+      "name": "二叉树",
+      "description": "",
+      "category": "其他"
+    },
+    {
+      "name": "哈希表(用于记忆化)",
+      "description": "",
+      "category": "其他"
+    },
+    {
+      "name": "String",
+      "description": "",
+      "category": "其他"
+    },
+    {
+      "name": "数组",
+      "description": "",
+      "category": "线性结构"
+    },
+    {
+      "name": "字符串",
+      "description": "",
+      "category": "其他"
+    },
+    {
+      "name": "Array",
+      "description": "",
+      "category": "其他"
+    },
+    {
+      "name": "二维数组",
+      "description": "",
+      "category": "其他"
+    }
+  ],
+  "techniques": [
+    {
+      "name": "递推",
+      "description": "递推"
+    },
+    {
+      "name": "递归",
+      "description": "递归"
+    },
+    {
+      "name": "双指针",
+      "description": "使用两个指针优化搜索和操作"
+    },
+    {
+      "name": "State Transition",
+      "description": "State Transition"
+    },
+    {
+      "name": "优化子问题",
+      "description": "优化子问题"
+    },
+    {
+      "name": "中心扩展",
+      "description": "中心扩展"
+    },
+    {
+      "name": "滚动数组",
+      "description": "滚动数组"
+    },
+    {
+      "name": "Optimization",
+      "description": "Optimization"
+    },
+    {
+      "name": "Complete Knapsack Problem",
+      "description": "Complete Knapsack Problem"
+    },
+    {
+      "name": "初始化",
+      "description": "初始化"
+    },
+    {
+      "name": "双层循环",
+      "description": "双层循环"
+    },
+    {
+      "name": "状态机",
+      "description": "状态机"
+    },
+    {
+      "name": "优化遍历",
+      "description": "优化遍历"
+    },
+    {
+      "name": "递归关系",
+      "description": "递归关系"
+    },
+    {
+      "name": "双指针（可选）",
+      "description": "双指针（可选）"
+    },
+    {
+      "name": "优化空间复杂度",
+      "description": "优化空间复杂度"
+    },
+    {
+      "name": "分而治之",
+      "description": "分而治之"
+    },
+    {
+      "name": "状态转移",
+      "description": "状态转移"
+    },
+    {
+      "name": "Memoization",
+      "description": "Memoization"
+    },
+    {
+      "name": "滚动数组优化",
+      "description": "滚动数组优化"
+    },
+    {
+      "name": "Subsequence Matching",
+      "description": "Subsequence Matching"
+    },
+    {
+      "name": "记忆化搜索",
+      "description": "记忆化搜索"
+    },
+    {
+      "name": "回溯法放弃",
+      "description": "回溯法放弃"
+    },
+    {
+      "name": "状态压缩",
+      "description": "状态压缩"
+    },
+    {
+      "name": "空间优化",
+      "description": "空间优化"
+    },
+    {
+      "name": "双层循环遍历",
+      "description": "双层循环遍历"
+    },
+    {
+      "name": "动态规划转移方程",
+      "description": "动态规划转移方程"
+    },
+    {
+      "name": "Two Loops",
+      "description": "Two Loops"
+    }
+  ],
+  "related_problems": [
+    {
+      "title": "买卖股票的最佳时机III",
+      "difficulty": null,
+      "similarity_score": 1.0
+    },
+    {
+      "title": "不相交的线",
+      "difficulty": null,
+      "similarity_score": 1.0
+    },
+    {
+      "title": "买卖股票的最佳时机II",
+      "difficulty": null,
+      "similarity_score": 1.0
+    },
+    {
+      "title": "使用最小花费爬楼梯",
+      "difficulty": null,
+      "similarity_score": 1.0
+    },
+    {
+      "title": "不同路径 II",
+      "difficulty": null,
+      "similarity_score": 1.0
+    }
+  ],
+  "complexity": {
+    "time": "未知",
+    "space": "未知"
+  },
+  "solutions": [
+    {
+      "name": "cpp解决方案",
+      "title": "",
+      "description": "C++实现：计算一个字符串作为另一个字符串子序列出现的次数",
+      "category": "",
+      "type": ""
+    },
+    {
+      "name": "python3解决方案",
+      "title": "",
+      "description": "Python3优化实现：通过压缩动态规划数组减少空间复杂度，计算一个字符串作为另一个字符串子序列出现的次数",
+      "category": "",
+      "type": ""
+    },
+    {
+      "name": "java解决方案",
+      "title": "",
+      "description": "Java实现：计算一个字符串作为另一个字符串子序列出现的次数",
+      "category": "",
+      "type": ""
+    },
+    {
+      "name": "python解决方案",
+      "title": "",
+      "description": "Python实现：计算一个字符串作为另一个字符串子序列出现的次数",
+      "category": "",
+      "type": ""
+    }
+  ],
+  "insights": [
+    {
+      "name": "洞察1",
+      "title": "",
+      "description": "",
+      "category": "通用技巧",
+      "type": ""
+    },
+    {
+      "name": "洞察3",
+      "title": "",
+      "description": "",
+      "category": "通用技巧",
+      "type": ""
+    },
+    {
+      "name": "洞察4",
+      "title": "",
+      "description": "",
+      "category": "通用技巧",
+      "type": ""
+    },
+    {
+      "name": "洞察2",
+      "title": "",
+      "description": "",
+      "category": "通用技巧",
+      "type": ""
+    }
+  ],
+  "step_by_step": []
+}

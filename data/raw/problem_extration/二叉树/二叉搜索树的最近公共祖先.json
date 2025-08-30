@@ -1,0 +1,429 @@
+{
+  "id": "AP_2e76262f",
+  "title": "二叉搜索树的最近公共祖先",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-search-tree/",
+  "description": "一个二叉搜索树, 找到该树中两个指定节点的最近公共祖先。\n\n百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”\n\n例如，给定如下二叉搜索树:  root = [6,2,8,0,4,7,9,null,null,3,5]\n\nhttps://file1.kamacoder.com/i/algo/20201018172243602.png",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "二叉搜索",
+    "递归"
+  ],
+  "data_structure_tags": [
+    "二叉搜索树"
+  ],
+  "technique_tags": [
+    "递归",
+    "条件判断"
+  ],
+  "difficulty": null,
+  "solution_approach": "利用二叉搜索树的有序特性来快速定位最近公共祖先。通过比较当前节点值与p、q节点值之间的关系，决定向左或向右子树继续查找，直到找到一个节点其值位于[p, q]区间内，则该节点即为所求的最近公共祖先。",
+  "key_insights": [
+    {
+      "content": "由于二叉搜索树的性质（左子树的所有节点值小于根节点值，右子树的所有节点值大于根节点值），可以直接依据当前节点与p、q节点值的关系来判断下一步遍历的方向。"
+    },
+    {
+      "content": "一旦发现当前节点值处于p和q之间，立刻返回当前节点作为最近公共祖先，无需遍历整棵树。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "做过二叉树：公共祖先问题 (https://programmercarl.com/0236.%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E8%BF%91%E5%85%AC%E5%85%B1%E7%A5%96%E5%85%88.html)题目的同学应该知道，利用回溯从底向上搜索，遇到一个节点的左子树里有p，右子树里有q，那么当前节点就是最近公共祖先。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    TreeNode* traversal(TreeNode* cur, TreeNode* p, TreeNode* q) {\n        if (cur == NULL) return cur;\n        if (cur->val > p->val && cur->val > q->val) {\n            TreeNode* left = traversal(cur->left, p, q);\n            if (left != NULL) {\n                return left;\n            }\n        }\n        if (cur->val < p->val && cur->val < q->val) {\n            TreeNode* right = traversal(cur->right, p, q);\n            if (right != NULL) {\n                return right;\n            }\n        }\n        return cur;\n    }\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        return traversal(root, p, q);\n    }\n};",
+          "description": "C++递归法实现二叉搜索树的最近公共祖先查找"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        if (root->val > p->val && root->val > q->val) {\n            return lowestCommonAncestor(root->left, p, q);\n        } else if (root->val < p->val && root->val < q->val) {\n            return lowestCommonAncestor(root->right, p, q);\n        } else return root;\n    }\n};",
+          "description": "C++精简递归法实现二叉搜索树的最近公共祖先查找"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        while(root) {\n            if (root->val > p->val && root->val > q->val) {\n                root = root->left;\n            } else if (root->val < p->val && root->val < q->val) {\n                root = root->right;\n            } else return root;\n        }\n        return NULL;\n    }\n};",
+          "description": "C++迭代法实现二叉搜索树的最近公共祖先查找"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        if (root.val > p.val && root.val > q.val) return lowestCommonAncestor(root.left, p, q);\n        if (root.val < p.val && root.val < q.val) return lowestCommonAncestor(root.right, p, q);\n        return root;\n    }\n}",
+          "description": "Java递归法实现二叉搜索树的最近公共祖先查找"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        while (true) {\n            if (root.val > p.val && root.val > q.val) {\n                root = root.left;\n            } else if (root.val < p.val && root.val < q.val) {\n                root = root.right;\n            } else {\n                break;\n            }\n        }\n        return root;\n    }\n}",
+          "description": "Java迭代法实现二叉搜索树的最近公共祖先查找"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def traversal(self, cur, p, q):\n        if cur is None:\n            return cur\n        if cur.val > p.val and cur.val > q.val:\n            left = self.traversal(cur.left, p, q)\n            if left is not None:\n                return left\n        if cur.val < p.val and cur.val < q.val:\n            right = self.traversal(cur.right, p, q)\n            if right is not None:\n                return right\n        return cur\n\n    def lowestCommonAncestor(self, root, p, q):\n        return self.traversal(root, p, q)",
+          "description": "Python递归法（版本一）实现二叉搜索树的最近公共祖先查找"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        if root.val > p.val and root.val > q.val:\n            return self.lowestCommonAncestor(root.left, p, q)\n        elif root.val < p.val and root.val < q.val:\n            return self.lowestCommonAncestor(root.right, p, q)\n        else:\n            return root",
+          "description": "Python递归法（版本二）精简实现二叉搜索树的最近公共祖先查找"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        while root:\n            if root.val > p.val and root.val > q.val:\n                root = root.left\n            elif root.val < p.val and root.val < q.val:\n                root = root.right\n            else:\n                return root\n        return None",
+          "description": "Python迭代法实现二叉搜索树的最近公共祖先查找"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "递归法",
+      "text": "递归三部曲如下：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    TreeNode* traversal(TreeNode* cur, TreeNode* p, TreeNode* q) {\n        if (cur == NULL) return cur;\n        if (cur->val > p->val && cur->val > q->val) {\n            TreeNode* left = traversal(cur->left, p, q);\n            if (left != NULL) {\n                return left;\n            }\n        }\n        if (cur->val < p->val && cur->val < q->val) {\n            TreeNode* right = traversal(cur->right, p, q);\n            if (right != NULL) {\n                return right;\n            }\n        }\n        return cur;\n    }\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        return traversal(root, p, q);\n    }\n};\nclass Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        if (root->val > p->val && root->val > q->val) {\n            return lowestCommonAncestor(root->left, p, q);\n        } else if (root->val < p->val && root->val < q->val) {\n            return lowestCommonAncestor(root->right, p, q);\n        } else return root;\n    }\n};\nclass Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        while(root) {\n            if (root->val > p->val && root->val > q->val) {\n                root = root->left;\n            } else if (root->val < p->val && root->val < q->val) {\n                root = root->right;\n            } else return root;\n        }\n        return NULL;\n    }\n};",
+          "description": "C++版本的二叉搜索树最近公共祖先问题解决方案，包括递归和迭代方法。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        if (root.val > p.val && root.val > q.val) return lowestCommonAncestor(root.left, p, q);\n        if (root.val < p.val && root.val < q.val) return lowestCommonAncestor(root.right, p, q);\n        return root;\n    }\n}\nclass Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        while (true) {\n            if (root.val > p.val && root.val > q.val) {\n                root = root.left;\n            } else if (root.val < p.val && root.val < q.val) {\n                root = root.right;\n            } else {\n                break;\n            }\n        }\n        return root;\n    }\n}",
+          "description": "Java版本的二叉搜索树最近公共祖先问题解决方案，包括递归和迭代方法。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def traversal(self, cur, p, q):\n        if cur is None:\n            return cur\n        if cur.val > p.val and cur.val > q.val:\n            left = self.traversal(cur.left, p, q)\n            if left is not None:\n                return left\n        if cur.val < p.val and cur.val < q.val:\n            right = self.traversal(cur.right, p, q)\n            if right is not None:\n                return right\n        return cur\n    def lowestCommonAncestor(self, root, p, q):\n        return self.traversal(root, p, q)\nclass Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        if root.val > p.val and root.val > q.val:\n            return self.lowestCommonAncestor(root.left, p, q)\n        elif root.val < p.val and root.val < q.val:\n            return self.lowestCommonAncestor(root.right, p, q)\n        else:\n            return root\nclass Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        while root:\n            if root.val > p.val and root.val > q.val:\n                root = root.left\n            elif root.val < p.val and root.val < q.val:\n                root = root.right\n            else:\n                return root\n        return None",
+          "description": "Python版本的二叉搜索树最近公共祖先问题解决方案，包括递归和迭代方法。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "迭代法",
+      "text": "对于二叉搜索树的迭代法，大家应该在二叉树：二叉搜索树登场！ (https://programmercarl.com/0700.%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E6%90%9C%E7%B4%A2.html)就了解了。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    TreeNode* traversal(TreeNode* cur, TreeNode* p, TreeNode* q) {\n        if (cur == NULL) return cur;\n                                                        // 中\n        if (cur->val > p->val && cur->val > q->val) {   // 左\n            TreeNode* left = traversal(cur->left, p, q);\n            if (left != NULL) {\n                return left;\n            }\n        }\n\n        if (cur->val < p->val && cur->val < q->val) {   // 右\n            TreeNode* right = traversal(cur->right, p, q);\n            if (right != NULL) {\n                return right;\n            }\n        }\n        return cur;\n    }\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        return traversal(root, p, q);\n    }\n};",
+          "description": "C++递归法实现二叉搜索树的最近公共祖先查找"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        while(root) {\n            if (root->val > p->val && root->val > q->val) {\n                root = root->left;\n            } else if (root->val < p->val && root->val < q->val) {\n                root = root->right;\n            } else return root;\n        }\n        return NULL;\n    }\n};",
+          "description": "C++迭代法实现二叉搜索树的最近公共祖先查找"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        if (root.val > p.val && root.val > q.val) return lowestCommonAncestor(root.left, p, q);\n        if (root.val < p.val && root.val < q.val) return lowestCommonAncestor(root.right, p, q);\n        return root;\n    }\n}",
+          "description": "Java递归法实现二叉搜索树的最近公共祖先查找"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        while (true) {\n            if (root.val > p.val && root.val > q.val) {\n                root = root.left;\n            } else if (root.val < p.val && root.val < q.val) {\n                root = root.right;\n            } else {\n                break;\n            }\n        }\n        return root;\n    }\n}",
+          "description": "Java迭代法实现二叉搜索树的最近公共祖先查找"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def traversal(self, cur, p, q):\n        if cur is None:\n            return cur\n                                                        # 中\n        if cur.val > p.val and cur.val > q.val:           # 左\n            left = self.traversal(cur.left, p, q)\n            if left is not None:\n                return left\n\n        if cur.val < p.val and cur.val < q.val:           # 右\n            right = self.traversal(cur.right, p, q)\n            if right is not None:\n                return right\n\n        return cur\n\n    def lowestCommonAncestor(self, root, p, q):\n        return self.traversal(root, p, q)",
+          "description": "Python递归法（版本一）实现二叉搜索树的最近公共祖先查找"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        if root.val > p.val and root.val > q.val:\n            return self.lowestCommonAncestor(root.left, p, q)\n        elif root.val < p.val and root.val < q.val:\n            return self.lowestCommonAncestor(root.right, p, q)\n        else:\n            return root",
+          "description": "Python递归法（版本二）精简实现二叉搜索树的最近公共祖先查找"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        while root:\n            if root.val > p.val and root.val > q.val:\n                root = root.left\n            elif root.val < p.val and root.val < q.val:\n                root = root.right\n            else:\n                return root\n        return None",
+          "description": "Python迭代法实现二叉搜索树的最近公共祖先查找"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "对于二叉搜索树的最近祖先问题，其实要比普通二叉树公共祖先问题 (https://programmercarl.com/0236.%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E8%BF%91%E5%85%AC%E5%85%B1%E7%A5%96%E5%85%88.html)简单的多。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution { private: TreeNode* traversal(TreeNode* cur, TreeNode* p, TreeNode* q) { if (cur == NULL) return cur; if (cur->val > p->val && cur->val > q->val) { TreeNode* left = traversal(cur->left, p, q); if (left != NULL) { return left; } } if (cur->val < p->val && cur->val < q->val) { TreeNode* right = traversal(cur->right, p, q); if (right != NULL) { return right; } } return cur; } public: TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) { return traversal(root, p, q); } };",
+          "description": "递归法求二叉搜索树的最近公共祖先"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution { public: TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) { if (root->val > p->val && root->val > q->val) { return lowestCommonAncestor(root->left, p, q); } else if (root->val < p->val && root->val < q->val) { return lowestCommonAncestor(root->right, p, q); } else return root; } };",
+          "description": "精简版递归法求二叉搜索树的最近公共祖先"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution { public: TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) { while(root) { if (root->val > p->val && root->val > q->val) { root = root->left; } else if (root->val < p->val && root->val < q->val) { root = root->right; } else return root; } return NULL; } };",
+          "description": "迭代法求二叉搜索树的最近公共祖先"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution { public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) { if (root.val > p.val && root.val > q.val) return lowestCommonAncestor(root.left, p, q); if (root.val < p.val && root.val < q.val) return lowestCommonAncestor(root.right, p, q); return root; } }",
+          "description": "Java递归法求二叉搜索树的最近公共祖先"
+        },
+        {
+          "language": "java",
+          "code": "public class Solution { public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) { while (true) { if (root.val > p.val && root.val > q.val) { root = root.left; } else if (root.val < p.val && root.val < q.val) { root = root.right; } else { break; } } return root; } }",
+          "description": "Java迭代法求二叉搜索树的最近公共祖先"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def traversal(self, cur, p, q): if cur is None: return cur if cur.val > p.val and cur.val > q.val: left = self.traversal(cur.left, p, q) if left is not None: return left if cur.val < p.val and cur.val < q.val: right = self.traversal(cur.right, p, q) if right is not None: return right return cur def lowestCommonAncestor(self, root, p, q): return self.traversal(root, p, q)",
+          "description": "Python递归法（版本一）求二叉搜索树的最近公共祖先"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def lowestCommonAncestor(self, root, p, q): if root.val > p.val and root.val > q.val: return self.lowestCommonAncestor(root.left, p, q) elif root.val < p.val and root.val < q.val: return self.lowestCommonAncestor(root.right, p, q) else: return root",
+          "description": "Python递归法（版本二）精简版求二叉搜索树的最近公共祖先"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def lowestCommonAncestor(self, root, p, q): while root: if root.val > p.val and root.val > q.val: root = root.left elif root.val < p.val and root.val < q.val: root = root.right else: return root return None",
+          "description": "Python迭代法求二叉搜索树的最近公共祖先"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    TreeNode* traversal(TreeNode* cur, TreeNode* p, TreeNode* q) {\n        if (cur == NULL) return cur;\n                                                        // 中\n        if (cur->val > p->val && cur->val > q->val) {   // 左\n            TreeNode* left = traversal(cur->left, p, q);\n            if (left != NULL) {\n                return left;\n            }\n        }\n\n        if (cur->val < p->val && cur->val < q->val) {   // 右\n            TreeNode* right = traversal(cur->right, p, q);\n            if (right != NULL) {\n                return right;\n            }\n        }\n        return cur;\n    }\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        return traversal(root, p, q);\n    }\n};",
+          "description": null
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        if (root->val > p->val && root->val > q->val) {\n            return lowestCommonAncestor(root->left, p, q);\n        } else if (root->val < p->val && root->val < q->val) {\n            return lowestCommonAncestor(root->right, p, q);\n        } else return root;\n    }\n};",
+          "description": null
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        while(root) {\n            if (root->val > p->val && root->val > q->val) {\n                root = root->left;\n            } else if (root->val < p->val && root->val < q->val) {\n                root = root->right;\n            } else return root;\n        }\n        return NULL;\n    }\n};",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        if (root.val > p.val && root.val > q.val) return lowestCommonAncestor(root.left, p, q);\n        if (root.val < p.val && root.val < q.val) return lowestCommonAncestor(root.right, p, q);\n        return root;\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        while (true) {\n            if (root.val > p.val && root.val > q.val) {\n                root = root.left;\n            } else if (root.val < p.val && root.val < q.val) {\n                root = root.right;\n            } else {\n                break;\n            }\n        }\n        return root;\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def traversal(self, cur, p, q):\n        if cur is None:\n            return cur\n                                                        # 中\n        if cur.val > p.val and cur.val > q.val:           # 左\n            left = self.traversal(cur.left, p, q)\n            if left is not None:\n                return left\n\n        if cur.val < p.val and cur.val < q.val:           # 右\n            right = self.traversal(cur.right, p, q)\n            if right is not None:\n                return right\n\n        return cur\n\n    def lowestCommonAncestor(self, root, p, q):\n        return self.traversal(root, p, q)",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        if root.val > p.val and root.val > q.val:\n            return self.lowestCommonAncestor(root.left, p, q)\n        elif root.val < p.val and root.val < q.val:\n            return self.lowestCommonAncestor(root.right, p, q)\n        else:\n            return root",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        while root:\n            if root.val > p.val and root.val > q.val:\n                root = root.left\n            elif root.val < p.val and root.val < q.val:\n                root = root.right\n            else:\n                return root\n        return None",
+          "description": null
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "递归法：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: TreeNode* traversal(TreeNode* cur, TreeNode* p, TreeNode* q) { if (cur == NULL) return cur; if (cur->val > p->val && cur->val > q->val) { TreeNode* left = traversal(cur->left, p, q); if (left != NULL) { return left; }} if (cur->val < p->val && cur->val < q->val) { TreeNode* right = traversal(cur->right, p, q); if (right != NULL) { return right; }} return cur; } public: TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) { return traversal(root, p, q); }};",
+          "description": "C++递归法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) { if (root->val > p->val && root->val > q->val) { return lowestCommonAncestor(root->left, p, q); } else if (root->val < p->val && root->val < q->val) { return lowestCommonAncestor(root->right, p, q); } else return root; }};",
+          "description": "C++精简递归法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) { while(root) { if (root->val > p->val && root->val > q->val) { root = root->left; } else if (root->val < p->val && root->val < q->val) { root = root->right; } else return root; } return NULL; }};",
+          "description": "C++迭代法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) { if (root.val > p.val && root.val > q.val) return lowestCommonAncestor(root.left, p, q); if (root.val < p.val && root.val < q.val) return lowestCommonAncestor(root.right, p, q); return root; }};",
+          "description": "Java递归法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) { while (true) { if (root.val > p.val && root.val > q.val) { root = root.left; } else if (root.val < p.val && root.val < q.val) { root = root.right; } else { break; } } return root; }};",
+          "description": "Java迭代法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def traversal(self, cur, p, q): if cur is None: return cur if cur.val > p.val and cur.val > q.val: left = self.traversal(cur.left, p, q) if left is not None: return left if cur.val < p.val and cur.val < q.val: right = self.traversal(cur.right, p, q) if right is not None: return right return cur def lowestCommonAncestor(self, root, p, q): return self.traversal(root, p, q)",
+          "description": "Python递归法版本一"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def lowestCommonAncestor(self, root, p, q): if root.val > p.val and root.val > q.val: return self.lowestCommonAncestor(root.left, p, q) elif root.val < p.val and root.val < q.val: return self.lowestCommonAncestor(root.right, p, q) else: return root",
+          "description": "Python精简递归法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def lowestCommonAncestor(self, root, p, q): while root: if root.val > p.val and root.val > q.val: root = root.left elif root.val < p.val and root.val < q.val: root = root.right else: return root return None",
+          "description": "Python迭代法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "递归法（版本一）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: TreeNode* traversal(TreeNode* cur, TreeNode* p, TreeNode* q) { if (cur == NULL) return cur; if (cur->val > p->val && cur->val > q->val) { TreeNode* left = traversal(cur->left, p, q); if (left != NULL) { return left; }} if (cur->val < p->val && cur->val < q->val) { TreeNode* right = traversal(cur->right, p, q); if (right != NULL) { return right; }} return cur; }public: TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) { return traversal(root, p, q); }};",
+          "description": "C++版本的递归法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) { if (root->val > p->val && root->val > q->val) { return lowestCommonAncestor(root->left, p, q); } else if (root->val < p->val && root->val < q->val) { return lowestCommonAncestor(root->right, p, q); } else return root; }};",
+          "description": "C++版本的简化递归法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) { while(root) { if (root->val > p->val && root->val > q->val) { root = root->left; } else if (root->val < p->val && root->val < q->val) { root = root->right; } else return root; } return NULL; }};",
+          "description": "C++版本的迭代法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) { if (root.val > p.val && root.val > q.val) return lowestCommonAncestor(root.left, p, q); if (root.val < p.val && root.val < q.val) return lowestCommonAncestor(root.right, p, q); return root; }}",
+          "description": "Java版本的递归法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) { while (true) { if (root.val > p.val && root.val > q.val) { root = root.left; } else if (root.val < p.val && root.val < q.val) { root = root.right; } else { break; } } return root; }}",
+          "description": "Java版本的迭代法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def traversal(self, cur, p, q): if cur is None: return cur if cur.val > p.val and cur.val > q.val: left = self.traversal(cur.left, p, q) if left is not None: return left if cur.val < p.val and cur.val < q.val: right = self.traversal(cur.right, p, q) if right is not None: return right return cur def lowestCommonAncestor(self, root, p, q): return self.traversal(root, p, q)",
+          "description": "Python版本的递归法（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def lowestCommonAncestor(self, root, p, q): if root.val > p.val and root.val > q.val: return self.lowestCommonAncestor(root.left, p, q) elif root.val < p.val and root.val < q.val: return self.lowestCommonAncestor(root.right, p, q) else: return root",
+          "description": "Python版本的精简递归法（版本二）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def lowestCommonAncestor(self, root, p, q): while root: if root.val > p.val and root.val > q.val: root = root.left elif root.val < p.val and root.val < q.val: root = root.right else: return root return None",
+          "description": "Python版本的迭代法"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {private: TreeNode* traversal(TreeNode* cur, TreeNode* p, TreeNode* q) { if (cur == NULL) return cur; if (cur->val > p->val && cur->val > q->val) { TreeNode* left = traversal(cur->left, p, q); if (left != NULL) { return left; }} if (cur->val < p->val && cur->val < q->val) { TreeNode* right = traversal(cur->right, p, q); if (right != NULL) { return right; }} return cur; }public: TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) { return traversal(root, p, q); }};",
+      "description": "递归法"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) { if (root->val > p->val && root->val > q->val) { return lowestCommonAncestor(root->left, p, q); } else if (root->val < p->val && root->val < q->val) { return lowestCommonAncestor(root->right, p, q); } else return root; }};",
+      "description": "精简后递归法"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) { while(root) { if (root->val > p->val && root->val > q->val) { root = root->left; } else if (root->val < p->val && root->val < q->val) { root = root->right; } else return root; } return NULL; }};",
+      "description": "迭代法"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) { if (root.val > p.val && root.val > q.val) return lowestCommonAncestor(root.left, p, q); if (root.val < p.val && root.val < q.val) return lowestCommonAncestor(root.right, p, q); return root; }}",
+      "description": "递归法"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) { while (true) { if (root.val > p.val && root.val > q.val) { root = root.left; } else if (root.val < p.val && root.val < q.val) { root = root.right; } else { break; } } return root; }}",
+      "description": "迭代法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def traversal(self, cur, p, q): if cur is None: return cur if cur.val > p.val and cur.val > q.val: left = self.traversal(cur.left, p, q) if left is not None: return left if cur.val < p.val and cur.val < q.val: right = self.traversal(cur.right, p, q) if right is not None: return right return cur def lowestCommonAncestor(self, root, p, q): return self.traversal(root, p, q)",
+      "description": "递归法（版本一）"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def lowestCommonAncestor(self, root, p, q): if root.val > p.val and root.val > q.val: return self.lowestCommonAncestor(root.left, p, q) elif root.val < p.val and root.val < q.val: return self.lowestCommonAncestor(root.right, p, q) else: return root",
+      "description": "递归法（版本二）精简"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def lowestCommonAncestor(self, root, p, q): while root: if root.val > p.val and root.val > q.val: root = root.left elif root.val < p.val and root.val < q.val: root = root.right else: return root return None",
+      "description": "迭代法"
+    }
+  ],
+  "common_mistakes": [
+    "忘记考虑p和q谁大谁小的问题，导致逻辑错误。",
+    "未充分利用二叉搜索树的特性，而是采用常规二叉树的方法处理，效率低下。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201018172243602.png",
+      "description": "这是一棵二叉树，根节点为6，展示了典型的树结构及其子节点关系。",
+      "context": "这张图片展示了一个具体的二叉搜索树实例，用于说明如何找到给定两个节点的最近公共祖先。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20220926164214.png",
+      "description": "这是一棵二叉搜索树，展示了节点1（标记为q）和节点9（标记为p）的最近公共祖先（LCA）为节点5的查找过程。",
+      "context": "该图展示了在二叉搜索树中寻找节点p和q的最近公共祖先的过程，其中当首次遇到数值位于[p, q]区间的节点5时，表明已找到p与q的最近公共祖先。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20220926165141.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20220926165141.png",
+      "context": "该图示例展示了在给定的二叉树中，如何通过递归遍历找到节点6和节点9的最近公共祖先节点8的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201018172243602.png",
+      "description": "GIF展示了在给定的二叉搜索树中寻找两个指定节点2和8最近公共祖先6的过程。",
+      "context": "GIF动画展示了给定二叉搜索树的结构，帮助理解如何查找两个指定节点的最近公共祖先。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20220926164214.png",
+      "description": "GIF展示了在有序树中寻找节点6和节点9最近公共祖先的过程，通过从根节点开始向下遍历直到找到第一个值位于[6, 9]区间内的节点。",
+      "context": "该GIF动画展示了从根节点开始遍历二叉树，寻找给定两个节点p和q的最近公共祖先的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20220926165141.png",
+      "description": "GIF展示了在二叉搜索树中寻找节点6和节点9的最近公共祖先的过程，最终确定为节点8。",
+      "context": "该GIF动画展示了如何通过直接按照指定方向遍历树来找到节点p和q的最近公共祖先，而无需遍历整棵树。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\二叉搜索树的最近公共祖先.txt",
+  "extracted_at": "2025-07-19T16:37:30.764863",
+  "raw_content": "二叉搜索树的最近公共祖先\n力扣题目链接(https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-search-tree/)\n\n给定一个二叉搜索树, 找到该树中两个指定节点的最近公共祖先。\n\n百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”\n\n例如，给定如下二叉搜索树:  root = [6,2,8,0,4,7,9,null,null,3,5]\n\nhttps://file1.kamacoder.com/i/algo/20201018172243602.png\n\n示例 1:\n\n输入: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8\n输出: 6\n解释: 节点 2 和节点 8 的最近公共祖先是 6。\n示例 2:\n\n输入: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 4\n输出: 2\n解释: 节点 2 和节点 4 的最近公共祖先是 2, 因为根据定义最近公共祖先节点可以为节点本身。\n说明:\n\n所有节点的值都是唯一的。\np、q 为不同节点且均存在于给定的二叉搜索树中。\n\n\n\n#思路\n做过二叉树：公共祖先问题 (https://programmercarl.com/0236.%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E8%BF%91%E5%85%AC%E5%85%B1%E7%A5%96%E5%85%88.html)题目的同学应该知道，利用回溯从底向上搜索，遇到一个节点的左子树里有p，右子树里有q，那么当前节点就是最近公共祖先。\n\n那么本题是二叉搜索树，二叉搜索树是有序的，那得好好利用一下这个特点。\n\n在有序树里，如果判断一个节点的左子树里有p，右子树里有q呢？\n\n因为是有序树，所以 如果 中间节点是 q 和 p 的公共祖先，那么 中节点的数组 一定是在 [p, q]区间的。即 中节点 > p && 中节点 < q 或者 中节点 > q && 中节点 < p。\n\n那么只要从上到下去遍历，遇到 cur节点是数值在[p, q]区间中则一定可以说明该节点cur就是p 和 q的公共祖先。 那问题来了，一定是最近公共祖先吗？\n\n如图，我们从根节点搜索，第一次遇到 cur节点是数值在[q, p]区间中，即 节点5，此时可以说明 q 和 p 一定分别存在于 节点 5的左子树，和右子树中。\nhttps://file1.kamacoder.com/i/algo/20220926164214.png\n\n此时节点5是不是最近公共祖先？ 如果 从节点5继续向左遍历，那么将错过成为p的祖先， 如果从节点5继续向右遍历则错过成为q的祖先。\n\n所以当我们从上向下去递归遍历，第一次遇到 cur节点是数值在[q, p]区间中，那么cur就是 q和p的最近公共祖先。\n\n理解这一点，本题就很好解了。\n\n而递归遍历顺序，本题就不涉及到 前中后序了（这里没有中节点的处理逻辑，遍历顺序无所谓了）。\n\n如图所示：p为节点6，q为节点9\n\nhttps://file1.kamacoder.com/i/algo/20220926165141.png\n\n可以看出直接按照指定的方向，就可以找到节点8，为最近公共祖先，而且不需要遍历整棵树，找到结果直接返回！\n\n#递归法\n递归三部曲如下：\n\n确定递归函数返回值以及参数\n参数就是当前节点，以及两个结点 p、q。\n\n返回值是要返回最近公共祖先，所以是TreeNode * 。\n\n代码如下：\n\nTreeNode* traversal(TreeNode* cur, TreeNode* p, TreeNode* q)\n确定终止条件\n遇到空返回就可以了，代码如下：\n\nif (cur == NULL) return cur;\n其实都不需要这个终止条件，因为题目中说了p、q 为不同节点且均存在于给定的二叉搜索树中。也就是说一定会找到公共祖先的，所以并不存在遇到空的情况。\n\n确定单层递归的逻辑\n在遍历二叉搜索树的时候就是寻找区间[p->val, q->val]（注意这里是左闭右闭）\n\n那么如果 cur->val 大于 p->val，同时 cur->val 大于q->val，那么就应该向左遍历（说明目标区间在左子树上）。\n\n需要注意的是此时不知道p和q谁大，所以两个都要判断\n\n代码如下：\n\nif (cur->val > p->val && cur->val > q->val) {\n    TreeNode* left = traversal(cur->left, p, q);\n    if (left != NULL) {\n        return left;\n    }\n}\n细心的同学会发现，在这里调用递归函数的地方，把递归函数的返回值left，直接return。\n\n在二叉树：公共祖先问题 (https://programmercarl.com/0236.%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E8%BF%91%E5%85%AC%E5%85%B1%E7%A5%96%E5%85%88.html)中，如果递归函数有返回值，如何区分要搜索一条边，还是搜索整个树。\n\n搜索一条边的写法：\n\nif (递归函数(root->left)) return ;\nif (递归函数(root->right)) return ;\n搜索整个树写法：\n\nleft = 递归函数(root->left);\nright = 递归函数(root->right);\nleft与right的逻辑处理;\n本题就是标准的搜索一条边的写法，遇到递归函数的返回值，如果不为空，立刻返回。\n\n如果 cur->val 小于 p->val，同时 cur->val 小于 q->val，那么就应该向右遍历（目标区间在右子树）。\n\nif (cur->val < p->val && cur->val < q->val) {\n    TreeNode* right = traversal(cur->right, p, q);\n    if (right != NULL) {\n        return right;\n    }\n}\n剩下的情况，就是cur节点在区间（p->val <= cur->val && cur->val <= q->val）或者 （q->val <= cur->val && cur->val <= p->val）中，那么cur就是最近公共祖先了，直接返回cur。\n\n代码如下：\n\nreturn cur;\n那么整体递归代码如下:\n\nclass Solution {\nprivate:\n    TreeNode* traversal(TreeNode* cur, TreeNode* p, TreeNode* q) {\n        if (cur == NULL) return cur;\n                                                        // 中\n        if (cur->val > p->val && cur->val > q->val) {   // 左\n            TreeNode* left = traversal(cur->left, p, q);\n            if (left != NULL) {\n                return left;\n            }\n        }\n\n        if (cur->val < p->val && cur->val < q->val) {   // 右\n            TreeNode* right = traversal(cur->right, p, q);\n            if (right != NULL) {\n                return right;\n            }\n        }\n        return cur;\n    }\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        return traversal(root, p, q);\n    }\n};\n精简后代码如下：\n\nclass Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        if (root->val > p->val && root->val > q->val) {\n            return lowestCommonAncestor(root->left, p, q);\n        } else if (root->val < p->val && root->val < q->val) {\n            return lowestCommonAncestor(root->right, p, q);\n        } else return root;\n    }\n};\n#迭代法\n对于二叉搜索树的迭代法，大家应该在二叉树：二叉搜索树登场！ (https://programmercarl.com/0700.%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E6%90%9C%E7%B4%A2.html)就了解了。\n\n利用其有序性，迭代的方式还是比较简单的，解题思路在递归中已经分析了。\n\n迭代代码如下：\n\nclass Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n        while(root) {\n            if (root->val > p->val && root->val > q->val) {\n                root = root->left;\n            } else if (root->val < p->val && root->val < q->val) {\n                root = root->right;\n            } else return root;\n        }\n        return NULL;\n    }\n};\n灵魂拷问：是不是又被简单的迭代法感动到痛哭流涕？\n\n#总结\n对于二叉搜索树的最近祖先问题，其实要比普通二叉树公共祖先问题 (https://programmercarl.com/0236.%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E8%BF%91%E5%85%AC%E5%85%B1%E7%A5%96%E5%85%88.html)简单的多。\n\n不用使用回溯，二叉搜索树自带方向性，可以方便的从上向下查找目标区间，遇到目标区间内的节点，直接返回。\n\n最后给出了对应的迭代法，二叉搜索树的迭代法甚至比递归更容易理解，也是因为其有序性（自带方向性），按照目标区间找就行了。\n\n#其他语言版本\n#Java\n递归法：\n\nclass Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        if (root.val > p.val && root.val > q.val) return lowestCommonAncestor(root.left, p, q);\n        if (root.val < p.val && root.val < q.val) return lowestCommonAncestor(root.right, p, q);\n        return root;\n    }\n}\n迭代法：\n\nclass Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n        while (true) {\n            if (root.val > p.val && root.val > q.val) {\n                root = root.left;\n            } else if (root.val < p.val && root.val < q.val) {\n                root = root.right;\n            } else {\n                break;\n            }\n        }\n        return root;\n    }\n}\n#Python\n递归法（版本一）\n\nclass Solution:\n    def traversal(self, cur, p, q):\n        if cur is None:\n            return cur\n                                                        # 中\n        if cur.val > p.val and cur.val > q.val:           # 左\n            left = self.traversal(cur.left, p, q)\n            if left is not None:\n                return left\n\n        if cur.val < p.val and cur.val < q.val:           # 右\n            right = self.traversal(cur.right, p, q)\n            if right is not None:\n                return right\n\n        return cur\n\n    def lowestCommonAncestor(self, root, p, q):\n        return self.traversal(root, p, q)\n递归法（版本二）精简\n\nclass Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        if root.val > p.val and root.val > q.val:\n            return self.lowestCommonAncestor(root.left, p, q)\n        elif root.val < p.val and root.val < q.val:\n            return self.lowestCommonAncestor(root.right, p, q)\n        else:\n            return root\n\n迭代法\n\nclass Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        while root:\n            if root.val > p.val and root.val > q.val:\n                root = root.left\n            elif root.val < p.val and root.val < q.val:\n                root = root.right\n            else:\n                return root\n        return None"
+}

@@ -1,0 +1,156 @@
+{
+  "id": "AP_91dc36a1",
+  "title": "二叉树的最大深度",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/maximum-depth-of-binary-tree/",
+  "description": "一个二叉树，找出其最大深度。\n\n二叉树的深度为根节点到最远叶子节点的最长路径上的节点数。\n\n说明: 叶子节点是指没有子节点的节点。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "BFS",
+    "迭代"
+  ],
+  "data_structure_tags": [
+    "队列",
+    "二叉树"
+  ],
+  "technique_tags": [
+    "层次遍历"
+  ],
+  "difficulty": null,
+  "solution_approach": "采用层序遍历的方法来计算二叉树的最大深度。通过使用队列存储每一层的节点，并逐层遍历直到队列为空，同时记录遍历的层数作为二叉树的深度。",
+  "key_insights": [
+    {
+      "content": "最大的深度实际上就是二叉树的层数。"
+    },
+    {
+      "content": "层序遍历能够一层一层地访问整个二叉树，因此适合用来解决这个问题。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxDepth(TreeNode* root) { if (root == NULL) return 0; int depth = 0; queue<TreeNode*> que; que.push(root); while(!que.empty()) { int size = que.size(); depth++; for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); if (node->left) que.push(node->left); if (node->right) que.push(node->right); } } return depth; }};",
+          "description": "C++实现二叉树的最大深度"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int maxDepth(TreeNode root) { if (root == null)   return 0; Queue<TreeNode> que = new LinkedList<>(); que.offer(root); int depth = 0; while (!que.isEmpty()) { int len = que.size(); while (len > 0) { TreeNode node = que.poll(); if (node.left != null)  que.offer(node.left); if (node.right != null) que.offer(node.right); len--; } depth++; } return depth; }}",
+          "description": "Java实现二叉树的最大深度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxDepth(self, root: TreeNode) -> int: if not root: return 0 depth = 0 queue = collections.deque([root]) while queue: depth += 1 for _ in range(len(queue)): node = queue.popleft() if node.left: queue.append(node.left) if node.right: queue.append(node.right) return depth",
+          "description": "Python实现二叉树的最大深度"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxDepth(TreeNode* root) {if (root == NULL) return 0;int depth = 0;queue<TreeNode*> que;que.push(root);while(!que.empty()) {int size = que.size();depth++; for (int i = 0; i < size; i++) {TreeNode* node = que.front();que.pop();if (node->left) que.push(node->left);if (node->right) que.push(node->right);}}return depth;}};",
+          "description": "C++实现的二叉树最大深度计算"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxDepth(TreeNode root) {if (root == null)   return 0;Queue<TreeNode> que = new LinkedList<>();que.offer(root);int depth = 0;while (!que.isEmpty()){int len = que.size();while (len > 0){TreeNode node = que.poll();if (node.left != null)  que.offer(node.left);if (node.right != null) que.offer(node.right);len--;}depth++;}return depth;}}",
+          "description": "Java实现的二叉树最大深度计算"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxDepth(self, root: TreeNode) -> int: if not root: return 0 depth = 0 queue = collections.deque([root]) while queue: depth += 1 for _ in range(len(queue)): node = queue.popleft() if node.left: queue.append(node.left) if node.right: queue.append(node.right) return depth",
+          "description": "Python实现的二叉树最大深度计算"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "# Definition for a binary tree node.",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxDepth(TreeNode* root) { if (root == NULL) return 0; int depth = 0; queue<TreeNode*> que; que.push(root); while(!que.empty()) { int size = que.size(); depth++; for (int i = 0; i < size; i++) { TreeNode* node = que.front(); que.pop(); if (node->left) que.push(node->left); if (node->right) que.push(node->right); } } return depth; }};",
+          "description": "C++实现二叉树的最大深度"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int maxDepth(TreeNode root) { if (root == null) return 0; Queue<TreeNode> que = new LinkedList<>(); que.offer(root); int depth = 0; while (!que.isEmpty()) { int len = que.size(); while (len > 0) { TreeNode node = que.poll(); if (node.left != null) que.offer(node.left); if (node.right != null) que.offer(node.right); len--; } depth++; } return depth; }}",
+          "description": "Java实现二叉树的最大深度"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxDepth(self, root: TreeNode) -> int: if not root: return 0 depth = 0 queue = collections.deque([root]) while queue: depth += 1 for _ in range(len(queue)): node = queue.popleft() if node.left: queue.append(node.left) if node.right: queue.append(node.right) return depth",
+          "description": "Python实现二叉树的最大深度"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int maxDepth(TreeNode* root) {if (root == NULL) return 0;int depth = 0;queue<TreeNode*> que;que.push(root);while(!que.empty()) {int size = que.size();depth++; for (int i = 0; i < size; i++) {TreeNode* node = que.front();que.pop();if (node->left) que.push(node->left);if (node->right) que.push(node->right);} }return depth;}};",
+      "description": ""
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int maxDepth(TreeNode root) {if (root == null)   return 0;Queue<TreeNode> que = new LinkedList<>();que.offer(root);int depth = 0;while (!que.isEmpty()){int len = que.size();while (len > 0){TreeNode node = que.poll();if (node.left != null)  que.offer(node.left);if (node.right != null) que.offer(node.right);len--;}depth++;}return depth;}}",
+      "description": ""
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def maxDepth(self, root: TreeNode) -> int: if not root: return 0 depth = 0 queue = collections.deque([root]) while queue: depth += 1 for _ in range(len(queue)): node = queue.popleft() if node.left: queue.append(node.left) if node.right: queue.append(node.right) return depth",
+      "description": ""
+    }
+  ],
+  "common_mistakes": [
+    "忘记初始化队列或没有正确处理空树的情况。",
+    "在循环中更新队列长度时未考虑新加入的元素，导致遗漏某些节点。",
+    "未能正确增加深度计数器，在每次开始新的一层遍历时才应该增加深度值。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210203153031914-20230310134849764.png",
+      "description": "这是一棵二叉树的示意图，根节点为3，左子节点为9，右子节点为20（其左子节点为15，右子节点为7）。",
+      "context": "该图片展示了给定二叉树 [3,9,20,null,null,15,7] 的结构，用于说明如何确定其最大深度为3。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20200810193056585-20230310134854803.png",
+      "description": "这是一棵二叉树的示意图，展示了节点之间的层次关系和连接结构。",
+      "context": "该图片展示了通过层序遍历方法计算二叉树最大深度的过程，直观地表示了如何一层一层遍历二叉树以确定其深度。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210203153031914-20230310134849764.png",
+      "description": "GIF展示了通过层序遍历计算给定二叉树最大深度的过程。",
+      "context": "GIF动画展示了通过层序遍历方法计算给定二叉树最大深度的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20200810193056585-20230310134854803.png",
+      "description": "GIF展示了通过层序遍历方法逐层访问二叉树节点，直至遍历完整棵树的过程。",
+      "context": "该GIF动画展示了通过层序遍历方法计算二叉树最大深度的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\二叉树的层序遍历\\二叉树的最大深度.txt",
+  "extracted_at": "2025-07-20T11:14:43.902652",
+  "raw_content": "二叉树的最大深度\n力扣题目链接(https://leetcode.cn/problems/maximum-depth-of-binary-tree/)\n\n给定一个二叉树，找出其最大深度。\n\n二叉树的深度为根节点到最远叶子节点的最长路径上的节点数。\n\n说明: 叶子节点是指没有子节点的节点。\n\n示例：\n\n给定二叉树 [3,9,20,null,null,15,7]，\n\nhttps://file1.kamacoder.com/i/algo/20210203153031914-20230310134849764.png\n\n返回它的最大深度 3 。\n\n思路\n使用迭代法的话，使用层序遍历是最为合适的，因为最大的深度就是二叉树的层数，和层序遍历的方式极其吻合。\n\n在二叉树中，一层一层的来遍历二叉树，记录一下遍历的层数就是二叉树的深度，如图所示：\n\nhttps://file1.kamacoder.com/i/algo/20200810193056585-20230310134854803.png\n\n所以这道题的迭代法就是一道模板题，可以使用二叉树层序遍历的模板来解决的。\n\nC++代码如下：\n\nclass Solution {\npublic:\n    int maxDepth(TreeNode* root) {\n        if (root == NULL) return 0;\n        int depth = 0;\n        queue<TreeNode*> que;\n        que.push(root);\n        while(!que.empty()) {\n            int size = que.size();\n            depth++; // 记录深度\n            for (int i = 0; i < size; i++) {\n                TreeNode* node = que.front();\n                que.pop();\n                if (node->left) que.push(node->left);\n                if (node->right) que.push(node->right);\n            }\n        }\n        return depth;\n    }\n};\n#其他语言版本\n#Java：\nclass Solution {\n    public int maxDepth(TreeNode root) {\n        if (root == null)   return 0;\n        Queue<TreeNode> que = new LinkedList<>();\n        que.offer(root);\n        int depth = 0;\n        while (!que.isEmpty())\n        {\n            int len = que.size();\n            while (len > 0)\n            {\n                TreeNode node = que.poll();\n                if (node.left != null)  que.offer(node.left);\n                if (node.right != null) que.offer(node.right);\n                len--;\n            }\n            depth++;\n        }\n        return depth;\n    }\n}\n#Python：\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def maxDepth(self, root: TreeNode) -> int:\n        if not root:\n            return 0\n        \n        depth = 0\n        queue = collections.deque([root])\n        \n        while queue:\n            depth += 1\n            for _ in range(len(queue)):\n                node = queue.popleft()\n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n        \n        return depth"
+}

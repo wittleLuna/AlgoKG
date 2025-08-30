@@ -1,0 +1,334 @@
+{
+  "id": "AP_82581fbf",
+  "title": "删除二叉搜索树中的节点",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/delete-node-in-a-bst/",
+  "description": "一个二叉搜索树的根节点 root 和一个值 key，删除二叉搜索树中的 key 对应的节点，并保证二叉搜索树的性质不变。返回二叉搜索树（有可能被更新）的根节点的引用。\n\n一般来说，删除节点可分为两个步骤：\n\n首先找到需要删除的节点； 如果找到了，删除它。 说明： 要求算法时间复杂度为 $O(h)$，h 为树的高度。",
+  "examples": [
+    {
+      "input": "见图",
+      "output": "见图",
+      "explanation": null,
+      "image": "https://file1.kamacoder.com/i/algo/20201020171048265.png"
+    }
+  ],
+  "constraints": [],
+  "algorithm_tags": [
+    "二分查找",
+    "递归"
+  ],
+  "data_structure_tags": [
+    "二叉搜索树"
+  ],
+  "technique_tags": [
+    "指针操作",
+    "内存管理"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过递归方式删除二叉搜索树中的指定节点。首先查找目标节点，然后根据该节点的不同情况（叶子节点、只有左/右子树、左右子树均存在）进行相应的处理以保持二叉搜索树性质。",
+  "key_insights": [
+    {
+      "content": "由于二叉搜索树的特殊结构（左子树所有节点值小于根节点值，右子树所有节点值大于根节点值），可以通过比较当前节点与待删除节点值来决定往哪个方向继续搜索或删除。"
+    },
+    {
+      "content": "针对不同类型的节点（无子节点、单个子节点、两个子节点），采用不同的删除策略确保操作后仍满足BST定义。"
+    },
+    {
+      "content": "特别是对于有两个子节点的情况，选择将左侧子树挂接到右侧子节点最左端，以维护树的平衡性。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "搜索树的节点删除要比节点增加复杂的多，有很多情况需要考虑，做好心理准备。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* deleteNode(TreeNode* root, int key) {\n        if (root == nullptr) return root;\n        if (root->val == key) {\n            if (root->left == nullptr && root->right == nullptr) {\n                delete root;\n                return nullptr;\n            }\n            else if (root->left == nullptr) {\n                auto retNode = root->right;\n                delete root;\n                return retNode;\n            }\n            else if (root->right == nullptr) {\n                auto retNode = root->left;\n                delete root;\n                return retNode;\n            }\n            else {\n                TreeNode* cur = root->right;\n                while(cur->left != nullptr) {\n                    cur = cur->left;\n                }\n                cur->left = root->left;\n                TreeNode* tmp = root;\n                root = root->right;\n                delete tmp;\n                return root;\n            }\n        }\n        if (root->val > key) root->left = deleteNode(root->left, key);\n        if (root->val < key) root->right = deleteNode(root->right, key);\n        return root;\n    }\n};",
+          "description": "C++实现的二叉搜索树节点删除"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* deleteNode(TreeNode* root, int key) {\n        if (root == nullptr) return root;\n        if (root->val == key) {\n            if (root->right == nullptr) {\n                return root->left;\n            }\n            TreeNode *cur = root->right;\n            while (cur->left) {\n                cur = cur->left;\n            }\n            swap(root->val, cur->val);\n        }\n        root->left = deleteNode(root->left, key);\n        root->right = deleteNode(root->right, key);\n        return root;\n    }\n};",
+          "description": "C++实现的另一种二叉搜索树节点删除方法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    TreeNode* deleteOneNode(TreeNode* target) {\n        if (target == nullptr) return target;\n        if (target->right == nullptr) return target->left;\n        TreeNode* cur = target->right;\n        while (cur->left) {\n            cur = cur->left;\n        }\n        cur->left = target->left;\n        return target->right;\n    }\npublic:\n    TreeNode* deleteNode(TreeNode* root, int key) {\n        if (root == nullptr) return root;\n        TreeNode* cur = root;\n        TreeNode* pre = nullptr;\n        while (cur) {\n            if (cur->val == key) break;\n            pre = cur;\n            if (cur->val > key) cur = cur->left;\n            else cur = cur->right;\n        }\n        if (pre == nullptr) {\n            return deleteOneNode(cur);\n        }\n        if (pre->left && pre->left->val == key) {\n            pre->left = deleteOneNode(cur);\n        }\n        if (pre->right && pre->right->val == key) {\n            pre->right = deleteOneNode(cur);\n        }\n        return root;\n    }\n};",
+          "description": "C++使用迭代法实现的二叉搜索树节点删除"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n  public TreeNode deleteNode(TreeNode root, int key) {\n    if (root == null) return root;\n    if (root.val == key) {\n      if (root.left == null) {\n        return root.right;\n      } else if (root.right == null) {\n        return root.left;\n      } else {\n        TreeNode cur = root.right;\n        while (cur.left != null) {\n          cur = cur.left;\n        }\n        cur.left = root.left;\n        root = root.right;\n        return root;\n      }\n    }\n    if (root.val > key) root.left = deleteNode(root.left, key);\n    if (root.val < key) root.right = deleteNode(root.right, key);\n    return root;\n  }\n}",
+          "description": "Java实现的二叉搜索树节点删除"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n  public TreeNode deleteNode(TreeNode root, int key) {\n    if (root == null) return null;\n    if (root.val > key) {\n      root.left = deleteNode(root.left,key);\n    } else if (root.val < key) {\n      root.right = deleteNode(root.right,key);\n    } else {\n      if (root.left == null) return root.right;\n      if (root.right == null) return root.left;\n      TreeNode tmp = root.right;\n      while (tmp.left != null) {\n        tmp = tmp.left;\n      }\n      root.val = tmp.val;\n      root.right = deleteNode(root.right,tmp.val);\n    }\n    return root;\n  }\n}",
+          "description": "Java实现的另一种二叉搜索树节点删除方法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n  public TreeNode deleteNode(TreeNode root, int key) {\n    if (root == null){\n      return null;\n    }\n    TreeNode cur = root;\n    TreeNode pre = null;\n    while (cur != null){\n      if (cur.val < key){\n        pre = cur;\n        cur = cur.right;\n      } else if (cur.val > key) {\n        pre = cur;\n        cur = cur.left;\n      }else {\n        break;\n      }\n    }\n    if (pre == null){\n      return deleteOneNode(cur);\n    }\n    if (pre.left !=null && pre.left.val == key){\n      pre.left = deleteOneNode(cur);\n    }\n    if (pre.right !=null && pre.right.val == key){\n      pre.right = deleteOneNode(cur);\n    }\n    return root;\n  }\n  public TreeNode deleteOneNode(TreeNode node){\n    if (node == null){\n      return null;\n    }\n    if (node.right == null){\n      return node.left;\n    }\n    TreeNode cur = node.right;\n    while (cur.left !=null){\n      cur = cur.left;\n    }\n    cur.left = node.left;\n    return node.right;\n  }\n}",
+          "description": "Java使用迭代法实现的二叉搜索树节点删除"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def deleteNode(self, root, key):\n        if root is None:\n            return root\n        if root.val == key:\n            if root.left is None and root.right is None:\n                return None\n            elif root.left is None:\n                return root.right\n            elif root.right is None:\n                return root.left\n            else:\n                cur = root.right\n                while cur.left is not None:\n                    cur = cur.left\n                cur.left = root.left\n                return root.right\n        if root.val > key:\n            root.left = self.deleteNode(root.left, key)\n        if root.val < key:\n            root.right = self.deleteNode(root.right, key)\n        return root",
+          "description": "Python实现的二叉搜索树节点删除"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def deleteNode(self, root, key):\n        if root is None:  # 如果根节点为空，直接返回\n            return root\n        if root.val == key:  # 找到要删除的节点\n            if root.right is None:  # 如果右子树为空，直接返回左子树作为新的根节点\n                return root.left\n            cur = root.right\n            while cur.left:  # 找到右子树中的最左节点\n                cur = cur.left\n            root.val, cur.val = cur.val, root.val  # 将要删除的节点值与最左节点值交换\n        root.left = self.deleteNode(root.left, key)  # 在左子树中递归删除目标节点\n        root.right = self.deleteNode(root.right, key)  # 在右子树中递归删除目标节点\n        return root",
+          "description": "Python实现的另一种二叉搜索树节点删除方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def deleteOneNode(self, target: TreeNode) -> TreeNode:\n        if target is None:\n            return target\n        if target.right is None:\n            return target.left\n        cur = target.right\n        while cur.left:\n            cur = cur.left\n        cur.left = target.left\n        return target.right\n    def deleteNode(self, root: TreeNode, key: int) -> TreeNode:\n        if root is None:\n            return root\n        cur = root\n        pre = None  # 记录cur的父节点，用来删除cur\n        while cur:\n            if cur.val == key:\n                break\n            pre = cur\n            if cur.val > key:\n                cur = cur.left\n            else:\n                cur = cur.right\n        if pre is None:  # 如果搜索树只有头结点\n            return self.deleteOneNode(cur)\n        if pre.left and pre.left.val == key:\n            pre.left = self.deleteOneNode(cur)\n        if pre.right and pre.right.val == key:\n            pre.right = self.deleteOneNode(cur)\n        return root",
+          "description": "Python使用迭代法实现的二叉搜索树节点删除"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "递归",
+      "text": "递归三部曲：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* deleteNode(TreeNode* root, int key) {if (root == nullptr) return root;if (root->val == key) {if (root->left == nullptr && root->right == nullptr) {delete root;return nullptr;}else if (root->left == nullptr) {auto retNode = root->right;delete root;return retNode;}else if (root->right == nullptr) {auto retNode = root->left;delete root;return retNode;}else {TreeNode* cur = root->right;while(cur->left != nullptr) {cur = cur->left;}cur->left = root->left;TreeNode* tmp = root;root = root->right;delete tmp;return root;}}if (root->val > key) root->left = deleteNode(root->left, key);if (root->val < key) root->right = deleteNode(root->right, key);return root;}};",
+          "description": "C++实现的二叉搜索树节点删除"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* deleteNode(TreeNode* root, int key) {if (root == nullptr) return root;if (root->val == key) {if (root->right == nullptr) {return root->left;}TreeNode *cur = root->right;while (cur->left) {cur = cur->left;}swap(root->val, cur->val);}root->left = deleteNode(root->left, key);root->right = deleteNode(root->right, key);return root;}};",
+          "description": "C++实现的另一种二叉树节点删除方法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode deleteNode(TreeNode root, int key) {if (root == null) return root;if (root.val == key) {if (root.left == null) {return root.right;} else if (root.right == null) {return root.left;} else {TreeNode cur = root.right;while (cur.left != null) {cur = cur.left;}cur.left = root.left;root = root.right;return root;}}if (root.val > key) root.left = deleteNode(root.left, key);if (root.val < key) root.right = deleteNode(root.right, key);return root;}}",
+          "description": "Java实现的二叉搜索树节点删除"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def deleteNode(self, root, key): if root is None: return root if root.val == key: if root.left is None and root.right is None: return None elif root.left is None: return root.right elif root.right is None: return root.left else: cur = root.right while cur.left is not None: cur = cur.left cur.left = root.left return root.right if root.val > key: root.left = self.deleteNode(root.left, key) if root.val < key: root.right = self.deleteNode(root.right, key) return root",
+          "description": "Python实现的二叉搜索树节点删除（版本一）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def deleteNode(self, root, key): if root is None: return root if root.val == key: if root.right is None: return root.left cur = root.right while cur.left: cur = cur.left root.val, cur.val = cur.val, root.val root.left = self.deleteNode(root.left, key) root.right = self.deleteNode(root.right, key) return root",
+          "description": "Python实现的二叉搜索树节点删除（版本二）"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "普通二叉树的删除方式",
+      "text": "这里我在介绍一种通用的删除，普通二叉树的删除方式（没有使用搜索树的特性，遍历整棵树），用交换值的操作来删除目标节点。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* deleteNode(TreeNode* root, int key) {if (root == nullptr) return root;if (root->val == key) {if (root->left == nullptr && root->right == nullptr) {delete root;return nullptr;} else if (root->left == nullptr) {auto retNode = root->right;delete root;return retNode;} else if (root->right == nullptr) {auto retNode = root->left;delete root;return retNode;} else {TreeNode* cur = root->right;while(cur->left != nullptr) {cur = cur->left;}cur->left = root->left;TreeNode* tmp = root;root = root->right;delete tmp;return root;}}if (root->val > key) root->left = deleteNode(root->left, key);if (root->val < key) root->right = deleteNode(root->right, key);return root;}};",
+          "description": "C++实现的二叉搜索树节点删除"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* deleteNode(TreeNode* root, int key) {if (root == nullptr) return root;if (root->val == key) {if (root->right == nullptr) {return root->left;}TreeNode *cur = root->right;while (cur->left) {cur = cur->left;}swap(root->val, cur->val);}root->left = deleteNode(root->left, key);root->right = deleteNode(root->right, key);return root;}};",
+          "description": "C++实现的通过交换值来删除普通二叉树中的节点"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: TreeNode* deleteOneNode(TreeNode* target) {if (target == nullptr) return target;if (target->right == nullptr) return target->left;TreeNode* cur = target->right;while (cur->left) {cur = cur->left;}cur->left = target->left;return target->right;}public: TreeNode* deleteNode(TreeNode* root, int key) {if (root == nullptr) return root;TreeNode* cur = root;TreeNode* pre = nullptr;while (cur) {if (cur->val == key) break;pre = cur;if (cur->val > key) cur = cur->left;else cur = cur->right;}if (pre == nullptr) {return deleteOneNode(cur);}if (pre->left && pre->left->val == key) {pre->left = deleteOneNode(cur);}if (pre->right && pre->right->val == key) {pre->right = deleteOneNode(cur);}return root;}};",
+          "description": "C++实现的迭代法删除二叉搜索树中的节点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode deleteNode(TreeNode root, int key) {if (root == null) return root;if (root.val == key) {if (root.left == null) {return root.right;} else if (root.right == null) {return root.left;} else {TreeNode cur = root.right;while (cur.left != null) {cur = cur.left;}cur.left = root.left;root = root.right;return root;}}if (root.val > key) root.left = deleteNode(root.left, key);if (root.val < key) root.right = deleteNode(root.right, key);return root;}}",
+          "description": "Java实现的二叉搜索树节点删除"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode deleteNode(TreeNode root, int key) {root = delete(root,key);return root;}private TreeNode delete(TreeNode root, int key) {if (root == null) return null;if (root.val > key) {root.left = delete(root.left,key);} else if (root.val < key) {root.right = delete(root.right,key);} else {if (root.left == null) return root.right;if (root.right == null) return root.left;TreeNode tmp = root.right;while (tmp.left != null) {tmp = tmp.left;}root.val = tmp.val;root.right = delete(root.right,tmp.val);}}return root;}}",
+          "description": "Java实现的另一种递归方式删除二叉搜索树中的节点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode deleteNode(TreeNode root, int key) {if (root == null){return null;}TreeNode cur = root;TreeNode pre = null;while (cur != null){if (cur.val < key){pre = cur;cur = cur.right;} else if (cur.val > key) {pre = cur;cur = cur.left;}else {break;}}if (pre == null){return deleteOneNode(cur);}if (pre.left !=null && pre.left.val == key){pre.left = deleteOneNode(cur);}if (pre.right !=null && pre.right.val == key){pre.right = deleteOneNode(cur);}return root;}public TreeNode deleteOneNode(TreeNode node){if (node == null){return null;}if (node.right == null){return node.left;}TreeNode cur = node.right;while (cur.left !=null){cur = cur.left;}cur.left = node.left;return node.right;}}",
+          "description": "Java实现的迭代法删除二叉搜索树中的节点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def deleteNode(self, root, key): if root is None: return root if root.val == key: if root.left is None and root.right is None: return None elif root.left is None: return root.right elif root.right is None: return root.left else: cur = root.right while cur.left is not None: cur = cur.left cur.left = root.left return root.right if root.val > key: root.left = self.deleteNode(root.left, key) if root.val < key: root.right = self.deleteNode(root.right, key) return root",
+          "description": "Python实现的二叉搜索树节点删除"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def deleteNode(self, root, key): if root is None: return root if root.val == key: if root.right is None: return root.left cur = root.right while cur.left: cur = cur.left root.val, cur.val = cur.val, root.val root.left = self.deleteNode(root.left, key) root.right = self.deleteNode(root.right, key) return root",
+          "description": "Python实现的另一种递归方式删除二叉搜索树中的节点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def deleteOneNode(self, target): if target is None: return target if target.right is None: return target.left cur = target.right while cur.left: cur = cur.left cur.left = target.left return target.right def deleteNode(self, root, key): if root is None: return root cur = root pre = None while cur: if cur.val == key: break pre = cur if cur.val > key: cur = cur.left else: cur = cur.right if pre is None: return self.deleteOneNode(cur) if pre.left and pre.left.val == key: pre.left = self.deleteOneNode(cur) if pre.right and pre.right.val == key: pre.right = self.deleteOneNode(cur) return root",
+          "description": "Python实现的迭代法删除二叉搜索树中的节点"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "迭代法",
+      "text": "删除节点的迭代法还是复杂一些的，但其本质我在递归法里都介绍了，最关键就是删除节点的操作（动画模拟的过程）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* deleteNode(TreeNode* root, int key) {\n        if (root == nullptr) return root; // 第一种情况：没找到删除的节点，遍历到空节点直接返回了\n        if (root->val == key) {\n            // 第二种情况：左右孩子都为空（叶子节点），直接删除节点， 返回NULL为根节点\n            if (root->left == nullptr && root->right == nullptr) {\n                ///! 内存释放\n                delete root;\n                return nullptr;\n            }\n            // 第三种情况：其左孩子为空，右孩子不为空，删除节点，右孩子补位 ，返回右孩子为根节点\n            else if (root->left == nullptr) {\n                auto retNode = root->right;\n                ///! 内存释放\n                delete root;\n                return retNode;\n            }\n            // 第四种情况：其右孩子为空，左孩子不为空，删除节点，左孩子补位，返回左孩子为根节点\n            else if (root->right == nullptr) {\n                auto retNode = root->left;\n                ///! 内存释放\n                delete root;\n                return retNode;\n            }\n            // 第五种情况：左右孩子节点都不为空，则将删除节点的左子树放到删除节点的右子树的最左面节点的左孩子的位置\n            // 并返回删除节点右孩子为新的根节点。\n            else {\n                TreeNode* cur = root->right; // 找右子树最左面的节点\n                while(cur->left != nullptr) {\n                    cur = cur->left;\n                }\n                cur->left = root->left; // 把要删除的节点（root）左子树放在cur的左孩子的位置\n                TreeNode* tmp = root;   // 把root节点保存一下，下面来删除\n                root = root->right;     // 返回旧root的右孩子作为新root\n                delete tmp;             // 释放节点内存（这里不写也可以，但C++最好手动释放一下吧）\n                return root;\n            }\n        }\n        if (root->val > key) root->left = deleteNode(root->left, key);\n        if (root->val < key) root->right = deleteNode(root->right, key);\n        return root;\n    }\n};",
+          "description": "删除二叉搜索树中指定值的节点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n  public TreeNode deleteNode(TreeNode root, int key) {\n    if (root == null) return root;\n    if (root.val == key) {\n      if (root.left == null) {\n        return root.right;\n      } else if (root.right == null) {\n        return root.left;\n      } else {\n        TreeNode cur = root.right;\n        while (cur.left != null) {\n          cur = cur.left;\n        }\n        cur.left = root.left;\n        root = root.right;\n        return root;\n      }\n    }\n    if (root.val > key) root.left = deleteNode(root.left, key);\n    if (root.val < key) root.right = deleteNode(root.right, key);\n    return root;\n  }\n}",
+          "description": "Java版本的删除二叉搜索树中的节点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def deleteNode(self, root, key):\n        if root is None:\n            return root\n        if root.val == key:\n            if root.left is None and root.right is None:\n                return None\n            elif root.left is None:\n                return root.right\n            elif root.right is None:\n                return root.left\n            else:\n                cur = root.right\n                while cur.left is not None:\n                    cur = cur.left\n                cur.left = root.left\n                return root.right\n        if root.val > key:\n            root.left = self.deleteNode(root.left, key)\n        if root.val < key:\n            root.right = self.deleteNode(root.right, key)\n        return root",
+          "description": "Python版本的递归法删除二叉搜索树中的节点"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "读完本篇，大家会发现二叉搜索树删除节点比增加节点复杂的多。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* deleteNode(TreeNode* root, int key) {\n        if (root == nullptr) return root;\n        if (root->val == key) {\n            if (root->left == nullptr && root->right == nullptr) {\n                delete root;\n                return nullptr;\n            }\n            else if (root->left == nullptr) {\n                auto retNode = root->right;\n                delete root;\n                return retNode;\n            }\n            else if (root->right == nullptr) {\n                auto retNode = root->left;\n                delete root;\n                return retNode;\n            }\n            else {\n                TreeNode* cur = root->right;\n                while(cur->left != nullptr) {\n                    cur = cur->left;\n                }\n                cur->left = root->left;\n                TreeNode* tmp = root;\n                root = root->right;\n                delete tmp;\n                return root;\n            }\n        }\n        if (root->val > key) root->left = deleteNode(root->left, key);\n        if (root->val < key) root->right = deleteNode(root->right, key);\n        return root;\n    }\n};",
+          "description": "C++实现的删除二叉搜索树中的节点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n  public TreeNode deleteNode(TreeNode root, int key) {\n    if (root == null) return root;\n    if (root.val == key) {\n      if (root.left == null) {\n        return root.right;\n      } else if (root.right == null) {\n        return root.left;\n      } else {\n        TreeNode cur = root.right;\n        while (cur.left != null) {\n          cur = cur.left;\n        }\n        cur.left = root.left;\n        root = root.right;\n        return root;\n      }\n    }\n    if (root.val > key) root.left = deleteNode(root.left, key);\n    if (root.val < key) root.right = deleteNode(root.right, key);\n    return root;\n  }\n}",
+          "description": "Java实现的删除二叉搜索树中的节点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def deleteNode(self, root, key):\n        if root is None:\n            return root\n        if root.val == key:\n            if root.left is None and root.right is None:\n                return None\n            elif root.left is None:\n                return root.right\n            elif root.right is None:\n                return root.left\n            else:\n                cur = root.right\n                while cur.left is not None:\n                    cur = cur.left\n                cur.left = root.left\n                return root.right\n        if root.val > key:\n            root.left = self.deleteNode(root.left, key)\n        if root.val < key:\n            root.right = self.deleteNode(root.right, key)\n        return root",
+          "description": "Python实现的删除二叉搜索树中的节点"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution {\n  public TreeNode deleteNode(TreeNode root, int key) {\n    if (root == null) return root;\n    if (root.val == key) {\n      if (root.left == null) {\n        return root.right;\n      } else if (root.right == null) {\n        return root.left;\n      } else {\n        TreeNode cur = root.right;\n        while (cur.left != null) {\n          cur = cur.left;\n        }\n        cur.left = root.left;\n        root = root.right;\n        return root;\n      }\n    }\n    if (root.val > key) root.left = deleteNode(root.left, key);\n    if (root.val < key) root.right = deleteNode(root.right, key);\n    return root;\n  }\n}\nclass Solution {\n    public TreeNode deleteNode(TreeNode root, int key) {\n        root = delete(root,key);\n        return root;\n    }\n\n    private TreeNode delete(TreeNode root, int key) {\n        if (root == null) return null;\n\n        if (root.val > key) {\n            root.left = delete(root.left,key);\n        } else if (root.val < key) {\n            root.right = delete(root.right,key);\n        } else {\n            if (root.left == null) return root.right;\n            if (root.right == null) return root.left;\n            TreeNode tmp = root.right;\n            while (tmp.left != null) {\n                tmp = tmp.left;\n            }\n            root.val = tmp.val;\n            root.right = delete(root.right,tmp.val);\n        }\n        return root;\n    }\n}\nclass Solution {\n  public TreeNode deleteNode(TreeNode root, int key) {\n    if (root == null){\n      return null;\n    }\n    //寻找对应的对应的前面的节点，以及他的前一个节点\n    TreeNode cur = root;\n    TreeNode pre = null;\n    while (cur != null){\n      if (cur.val < key){\n        pre = cur;\n        cur = cur.right;\n      } else if (cur.val > key) {\n        pre = cur;\n        cur = cur.left;\n      }else {\n        break;\n      }\n    }\n    if (pre == null){\n      return deleteOneNode(cur);\n    }\n    if (pre.left !=null && pre.left.val == key){\n      pre.left = deleteOneNode(cur);\n    }\n    if (pre.right !=null && pre.right.val == key){\n      pre.right = deleteOneNode(cur);\n    }\n    return root;\n  }\n\n  public TreeNode deleteOneNode(TreeNode node){\n    if (node == null){\n      return null;\n    }\n    if (node.right == null){\n      return node.left;\n    }\n    TreeNode cur = node.right;\n    while (cur.left !=null){\n      cur = cur.left;\n    }\n    cur.left = node.left;\n    return node.right;\n  }\n}",
+          "description": "Java代码实现删除二叉搜索树中的节点"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "// 解法1(最好理解的版本)",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* deleteNode(TreeNode* root, int key) {\n        if (root == nullptr) return root; // 第一种情况：没找到删除的节点，遍历到空节点直接返回了\n        if (root->val == key) {\n            // 第二种情况：左右孩子都为空（叶子节点），直接删除节点， 返回NULL为根节点\n            if (root->left == nullptr && root->right == nullptr) {\n                ///! 内存释放\n                delete root;\n                return nullptr;\n            }\n            // 第三种情况：其左孩子为空，右孩子不为空，删除节点，右孩子补位 ，返回右孩子为根节点\n            else if (root->left == nullptr) {\n                auto retNode = root->right;\n                ///! 内存释放\n                delete root;\n                return retNode;\n            }\n            // 第四种情况：其右孩子为空，左孩子不为空，删除节点，左孩子补位，返回左孩子为根节点\n            else if (root->right == nullptr) {\n                auto retNode = root->left;\n                ///! 内存释放\n                delete root;\n                return retNode;\n            }\n            // 第五种情况：左右孩子节点都不为空，则将删除节点的左子树放到删除节点的右子树的最左面节点的左孩子的位置\n            // 并返回删除节点右孩子为新的根节点。\n            else {\n                TreeNode* cur = root->right; // 找右子树最左面的节点\n                while(cur->left != nullptr) {\n                    cur = cur->left;\n                }\n                cur->left = root->left; // 把要删除的节点（root）左子树放在cur的左孩子的位置\n                TreeNode* tmp = root;   // 把root节点保存一下，下面来删除\n                root = root->right;     // 返回旧root的右孩子作为新root\n                delete tmp;             // 释放节点内存（这里不写也可以，但C++最好手动释放一下吧）\n                return root;\n            }\n        }\n        if (root->val > key) root->left = deleteNode(root->left, key);\n        if (root->val < key) root->right = deleteNode(root->right, key);\n        return root;\n    }\n};",
+          "description": "C++版本的二叉搜索树中删除指定节点"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n  public TreeNode deleteNode(TreeNode root, int key) {\n    if (root == null) return root;\n    if (root.val == key) {\n      if (root.left == null) {\n        return root.right;\n      } else if (root.right == null) {\n        return root.left;\n      } else {\n        TreeNode cur = root.right;\n        while (cur.left != null) {\n          cur = cur.left;\n        }\n        cur.left = root.left;\n        root = root.right;\n        return root;\n      }\n    }\n    if (root.val > key) root.left = deleteNode(root.left, key);\n    if (root.val < key) root.right = deleteNode(root.right, key);\n    return root;\n  }\n}",
+          "description": "Java版本的二叉搜索树中删除指定节点"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def deleteNode(self, root, key):\n        if root is None:\n            return root\n        if root.val == key:\n            if root.left is None and root.right is None:\n                return None\n            elif root.left is None:\n                return root.right\n            elif root.right is None:\n                return root.left\n            else:\n                cur = root.right\n                while cur.left is not None:\n                    cur = cur.left\n                cur.left = root.left\n                return root.right\n        if root.val > key:\n            root.left = self.deleteNode(root.left, key)\n        if root.val < key:\n            root.right = self.deleteNode(root.right, key)\n        return root",
+          "description": "Python版本的二叉搜索树中删除指定节点"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "递归法（版本一）",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* deleteNode(TreeNode* root, int key) {\n        if (root == nullptr) return root;\n        if (root->val == key) {\n            if (root->left == nullptr && root->right == nullptr) {\n                delete root;\n                return nullptr;\n            }\n            else if (root->left == nullptr) {\n                auto retNode = root->right;\n                delete root;\n                return retNode;\n            }\n            else if (root->right == nullptr) {\n                auto retNode = root->left;\n                delete root;\n                return retNode;\n            }\n            else {\n                TreeNode* cur = root->right;\n                while(cur->left != nullptr) {\n                    cur = cur->left;\n                }\n                cur->left = root->left;\n                TreeNode* tmp = root;\n                root = root->right;\n                delete tmp;\n                return root;\n            }\n        }\n        if (root->val > key) root->left = deleteNode(root->left, key);\n        if (root->val < key) root->right = deleteNode(root->right, key);\n        return root;\n    }\n};",
+          "description": "C++实现的二叉搜索树节点删除"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n  public TreeNode deleteNode(TreeNode root, int key) {\n    if (root == null) return root;\n    if (root.val == key) {\n      if (root.left == null) {\n        return root.right;\n      } else if (root.right == null) {\n        return root.left;\n      } else {\n        TreeNode cur = root.right;\n        while (cur.left != null) {\n          cur = cur.left;\n        }\n        cur.left = root.left;\n        root = root.right;\n        return root;\n      }\n    }\n    if (root.val > key) root.left = deleteNode(root.left, key);\n    if (root.val < key) root.right = deleteNode(root.right, key);\n    return root;\n  }\n}",
+          "description": "Java实现的二叉搜索树节点删除"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def deleteNode(self, root, key):\n        if root is None:\n            return root\n        if root.val == key:\n            if root.left is None and root.right is None:\n                return None\n            elif root.left is None:\n                return root.right\n            elif root.right is None:\n                return root.left\n            else:\n                cur = root.right\n                while cur.left is not None:\n                    cur = cur.left\n                cur.left = root.left\n                return root.right\n        if root.val > key:\n            root.left = self.deleteNode(root.left, key)\n        if root.val < key:\n            root.right = self.deleteNode(root.right, key)\n        return root",
+          "description": "Python实现的二叉搜索树节点删除"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {\npublic:\n    TreeNode* deleteNode(TreeNode* root, int key) {\n        if (root == nullptr) return root;\n        if (root->val == key) {\n            if (root->left == nullptr && root->right == nullptr) {\n                ///! 内存释放\n                delete root;\n                return nullptr;\n            }\n            else if (root->left == nullptr) {\n                auto retNode = root->right;\n                ///! 内存释放\n                delete root;\n                return retNode;\n            }\n            else if (root->right == nullptr) {\n                auto retNode = root->left;\n                ///! 内存释放\n                delete root;\n                return retNode;\n            }\n            else {\n                TreeNode* cur = root->right; // 找右子树最左面的节点\n                while(cur->left != nullptr) {\n                    cur = cur->left;\n                }\n                cur->left = root->left; // 把要删除的节点（root）左子树放在cur的左孩子的位置\n                TreeNode* tmp = root;   // 把root节点保存一下，下面来删除\n                root = root->right;     // 返回旧root的右孩子作为新root\n                delete tmp;             // 释放节点内存（这里不写也可以，但C++最好手动释放一下吧）\n                return root;\n            }\n        }\n        if (root->val > key) root->left = deleteNode(root->left, key);\n        if (root->val < key) root->right = deleteNode(root->right, key);\n        return root;\n    }\n};",
+      "description": "通过递归方法删除二叉搜索树中的指定节点"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {\n  public TreeNode deleteNode(TreeNode root, int key) {\n    if (root == null) return root;\n    if (root.val == key) {\n      if (root.left == null) {\n        return root.right;\n      } else if (root.right == null) {\n        return root.left;\n      } else {\n        TreeNode cur = root.right;\n        while (cur.left != null) {\n          cur = cur.left;\n        }\n        cur.left = root.left;\n        root = root.right;\n        return root;\n      }\n    }\n    if (root.val > key) root.left = deleteNode(root.left, key);\n    if (root.val < key) root.right = deleteNode(root.right, key);\n    return root;\n  }\n}",
+      "description": "Java版本的递归方法实现删除二叉搜索树中的指定节点"
+    },
+    {
+      "language": "python",
+      "code": "class Solution:\n    def deleteNode(self, root, key):\n        if root is None:\n            return root\n        if root.val == key:\n            if root.left is None and root.right is None:\n                return None\n            elif root.left is None:\n                return root.right\n            elif root.right is None:\n                return root.left\n            else:\n                cur = root.right\n                while cur.left is not None:\n                    cur = cur.left\n                cur.left = root.left\n                return root.right\n        if root.val > key:\n            root.left = self.deleteNode(root.left, key)\n        if root.val < key:\n            root.right = self.deleteNode(root.right, key)\n        return root",
+      "description": "Python版本的递归方法实现删除二叉搜索树中的指定节点"
+    }
+  ],
+  "common_mistakes": [
+    "忽略了删除节点后的内存释放问题，导致潜在内存泄漏。",
+    "在处理有两棵子树的节点时未正确调整子树位置，破坏了BST属性。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201020171048265.png",
+      "description": "该图片展示了在二叉搜索树中删除节点值为3的算法过程及其两种可能的正确结果。",
+      "context": "该图片展示了删除二叉搜索树中特定节点前后的树结构变化，帮助理解删除操作的具体过程。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/450.%E5%88%A0%E9%99%A4%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B9.gif",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/450.%E5%88%A0%E9%99%A4%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B9.gif",
+      "context": "该动画展示了在二叉搜索树中删除节点7的过程，通过将删除节点的左子树连接到其右子树最左侧节点的左侧，并使删除节点的右孩子成为新的根节点来完成操作。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/450.%E5%88%A0%E9%99%A4%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B9.gif",
+      "description": "该GIF展示了在二叉搜索树中删除节点7的过程，通过将节点7的左子树移动到其右子树最左侧节点的左侧，并使节点7的右孩子成为新的根节点来完成删除操作。",
+      "context": "该GIF动画展示了在二叉搜索树中删除具有左右孩子的节点（此处为元素7）时，如何将其左子树移动到其右子树最左侧节点之下，并以原删除节点的右孩子作为新根节点的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\删除二叉搜索树中的节点.txt",
+  "extracted_at": "2025-07-19T20:10:24.968701",
+  "raw_content": "删除二叉搜索树中的节点\n力扣题目链接(https://leetcode.cn/problems/delete-node-in-a-bst/)\n\n给定一个二叉搜索树的根节点 root 和一个值 key，删除二叉搜索树中的 key 对应的节点，并保证二叉搜索树的性质不变。返回二叉搜索树（有可能被更新）的根节点的引用。\n\n一般来说，删除节点可分为两个步骤：\n\n首先找到需要删除的节点； 如果找到了，删除它。 说明： 要求算法时间复杂度为 $O(h)$，h 为树的高度。\n\n示例:\n\nhttps://file1.kamacoder.com/i/algo/20201020171048265.png\n\n\n#思路\n搜索树的节点删除要比节点增加复杂的多，有很多情况需要考虑，做好心理准备。\n\n#递归\n递归三部曲：\n\n确定递归函数参数以及返回值\n说到递归函数的返回值，在二叉树：搜索树中的插入操作 (https://programmercarl.com/0701.%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E6%8F%92%E5%85%A5%E6%93%8D%E4%BD%9C.html)中通过递归返回值来加入新节点， 这里也可以通过递归返回值删除节点。\n\n代码如下：\n\nTreeNode* deleteNode(TreeNode* root, int key)\n确定终止条件\n遇到空返回，其实这也说明没找到删除的节点，遍历到空节点直接返回了\n\nif (root == nullptr) return root;\n确定单层递归的逻辑\n这里就把二叉搜索树中删除节点遇到的情况都搞清楚。\n\n有以下五种情况：\n\n第一种情况：没找到删除的节点，遍历到空节点直接返回了\n找到删除的节点\n第二种情况：左右孩子都为空（叶子节点），直接删除节点， 返回NULL为根节点\n第三种情况：删除节点的左孩子为空，右孩子不为空，删除节点，右孩子补位，返回右孩子为根节点\n第四种情况：删除节点的右孩子为空，左孩子不为空，删除节点，左孩子补位，返回左孩子为根节点\n第五种情况：左右孩子节点都不为空，则将删除节点的左子树头结点（左孩子）放到删除节点的右子树的最左面节点的左孩子上，返回删除节点右孩子为新的根节点。\n第五种情况有点难以理解，看下面动画：\n\nhttps://file1.kamacoder.com/i/algo/450.%E5%88%A0%E9%99%A4%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%AD%E7%9A%84%E8%8A%82%E7%82%B9.gif\n\n动画中的二叉搜索树中，删除元素7， 那么删除节点（元素7）的左孩子就是5，删除节点（元素7）的右子树的最左面节点是元素8。\n\n将删除节点（元素7）的左孩子放到删除节点（元素7）的右子树的最左面节点（元素8）的左孩子上，就是把5为根节点的子树移到了8的左孩子的位置。\n\n要删除的节点（元素7）的右孩子（元素9）为新的根节点。.\n\n这样就完成删除元素7的逻辑，最好动手画一个图，尝试删除一个节点试试。\n\n代码如下：\n\nif (root->val == key) {\n    // 第二种情况：左右孩子都为空（叶子节点），直接删除节点， 返回NULL为根节点\n    // 第三种情况：其左孩子为空，右孩子不为空，删除节点，右孩子补位 ，返回右孩子为根节点\n    if (root->left == nullptr) return root->right;\n    // 第四种情况：其右孩子为空，左孩子不为空，删除节点，左孩子补位，返回左孩子为根节点\n    else if (root->right == nullptr) return root->left;\n    // 第五种情况：左右孩子节点都不为空，则将删除节点的左子树放到删除节点的右子树的最左面节点的左孩子的位置\n    // 并返回删除节点右孩子为新的根节点。\n    else {\n        TreeNode* cur = root->right; // 找右子树最左面的节点\n        while(cur->left != nullptr) {\n            cur = cur->left;\n        }\n        cur->left = root->left; // 把要删除的节点（root）左子树放在cur的左孩子的位置\n        TreeNode* tmp = root;   // 把root节点保存一下，下面来删除\n        root = root->right;     // 返回旧root的右孩子作为新root\n        delete tmp;             // 释放节点内存（这里不写也可以，但C++最好手动释放一下吧）\n        return root;\n    }\n}\n这里相当于把新的节点返回给上一层，上一层就要用 root->left 或者 root->right接住，代码如下：\n\nif (root->val > key) root->left = deleteNode(root->left, key);\nif (root->val < key) root->right = deleteNode(root->right, key);\nreturn root;\n整体代码如下：（注释中：情况1，2，3，4，5和上面分析严格对应）\n\nclass Solution {\npublic:\n    TreeNode* deleteNode(TreeNode* root, int key) {\n        if (root == nullptr) return root; // 第一种情况：没找到删除的节点，遍历到空节点直接返回了\n        if (root->val == key) {\n            // 第二种情况：左右孩子都为空（叶子节点），直接删除节点， 返回NULL为根节点\n            if (root->left == nullptr && root->right == nullptr) {\n                ///! 内存释放\n                delete root;\n                return nullptr;\n            }\n            // 第三种情况：其左孩子为空，右孩子不为空，删除节点，右孩子补位 ，返回右孩子为根节点\n            else if (root->left == nullptr) {\n                auto retNode = root->right;\n                ///! 内存释放\n                delete root;\n                return retNode;\n            }\n            // 第四种情况：其右孩子为空，左孩子不为空，删除节点，左孩子补位，返回左孩子为根节点\n            else if (root->right == nullptr) {\n                auto retNode = root->left;\n                ///! 内存释放\n                delete root;\n                return retNode;\n            }\n            // 第五种情况：左右孩子节点都不为空，则将删除节点的左子树放到删除节点的右子树的最左面节点的左孩子的位置\n            // 并返回删除节点右孩子为新的根节点。\n            else {\n                TreeNode* cur = root->right; // 找右子树最左面的节点\n                while(cur->left != nullptr) {\n                    cur = cur->left;\n                }\n                cur->left = root->left; // 把要删除的节点（root）左子树放在cur的左孩子的位置\n                TreeNode* tmp = root;   // 把root节点保存一下，下面来删除\n                root = root->right;     // 返回旧root的右孩子作为新root\n                delete tmp;             // 释放节点内存（这里不写也可以，但C++最好手动释放一下吧）\n                return root;\n            }\n        }\n        if (root->val > key) root->left = deleteNode(root->left, key);\n        if (root->val < key) root->right = deleteNode(root->right, key);\n        return root;\n    }\n};\n#普通二叉树的删除方式\n这里我在介绍一种通用的删除，普通二叉树的删除方式（没有使用搜索树的特性，遍历整棵树），用交换值的操作来删除目标节点。\n\n代码中目标节点（要删除的节点）被操作了两次：\n\n第一次是和目标节点的右子树最左面节点交换。\n第二次直接被NULL覆盖了。\n思路有点绕，感兴趣的同学可以画图自己理解一下。\n\n代码如下：（关键部分已经注释）\n\nclass Solution {\npublic:\n    TreeNode* deleteNode(TreeNode* root, int key) {\n        if (root == nullptr) return root;\n        if (root->val == key) {\n            if (root->right == nullptr) { // 这里第二次操作目标值：最终删除的作用\n                return root->left;\n            }\n            TreeNode *cur = root->right;\n            while (cur->left) {\n                cur = cur->left;\n            }\n            swap(root->val, cur->val); // 这里第一次操作目标值：交换目标值其右子树最左面节点。\n        }\n        root->left = deleteNode(root->left, key);\n        root->right = deleteNode(root->right, key);\n        return root;\n    }\n};\n这个代码是简短一些，思路也巧妙，但是不太好想，实操性不强，推荐第一种写法！\n\n#迭代法\n删除节点的迭代法还是复杂一些的，但其本质我在递归法里都介绍了，最关键就是删除节点的操作（动画模拟的过程）\n\n代码如下：\n\nclass Solution {\nprivate:\n    // 将目标节点（删除节点）的左子树放到 目标节点的右子树的最左面节点的左孩子位置上\n    // 并返回目标节点右孩子为新的根节点\n    // 是动画里模拟的过程\n    TreeNode* deleteOneNode(TreeNode* target) {\n        if (target == nullptr) return target;\n        if (target->right == nullptr) return target->left;\n        TreeNode* cur = target->right;\n        while (cur->left) {\n            cur = cur->left;\n        }\n        cur->left = target->left;\n        return target->right;\n    }\npublic:\n    TreeNode* deleteNode(TreeNode* root, int key) {\n        if (root == nullptr) return root;\n        TreeNode* cur = root;\n        TreeNode* pre = nullptr; // 记录cur的父节点，用来删除cur\n        while (cur) {\n            if (cur->val == key) break;\n            pre = cur;\n            if (cur->val > key) cur = cur->left;\n            else cur = cur->right;\n        }\n        if (pre == nullptr) { // 如果搜索树只有头结点\n            return deleteOneNode(cur);\n        }\n        // pre 要知道是删左孩子还是右孩子\n        if (pre->left && pre->left->val == key) {\n            pre->left = deleteOneNode(cur);\n        }\n        if (pre->right && pre->right->val == key) {\n            pre->right = deleteOneNode(cur);\n        }\n        return root;\n    }\n};\n#总结\n读完本篇，大家会发现二叉搜索树删除节点比增加节点复杂的多。\n\n因为二叉搜索树添加节点只需要在叶子上添加就可以的，不涉及到结构的调整，而删除节点操作涉及到结构的调整。\n\n这里我们依然使用递归函数的返回值来完成把节点从二叉树中移除的操作。\n\n这里最关键的逻辑就是第五种情况（删除一个左右孩子都不为空的节点），这种情况一定要想清楚。\n\n而且就算想清楚了，对应的代码也未必可以写出来，所以这道题目既考察思维逻辑，也考察代码能力。\n\n递归中我给出了两种写法，推荐大家学会第一种（利用搜索树的特性）就可以了，第二种递归写法其实是比较绕的。\n\n最后我也给出了相应的迭代法，就是模拟递归法中的逻辑来删除节点，但需要一个pre记录cur的父节点，方便做删除操作。\n\n迭代法其实不太容易写出来，所以如果是初学者的话，彻底掌握第一种递归写法就够了。\n\n#其他语言版本\n#Java\n// 解法1(最好理解的版本)\nclass Solution {\n  public TreeNode deleteNode(TreeNode root, int key) {\n    if (root == null) return root;\n    if (root.val == key) {\n      if (root.left == null) {\n        return root.right;\n      } else if (root.right == null) {\n        return root.left;\n      } else {\n        TreeNode cur = root.right;\n        while (cur.left != null) {\n          cur = cur.left;\n        }\n        cur.left = root.left;\n        root = root.right;\n        return root;\n      }\n    }\n    if (root.val > key) root.left = deleteNode(root.left, key);\n    if (root.val < key) root.right = deleteNode(root.right, key);\n    return root;\n  }\n}\nclass Solution {\n    public TreeNode deleteNode(TreeNode root, int key) {\n        root = delete(root,key);\n        return root;\n    }\n\n    private TreeNode delete(TreeNode root, int key) {\n        if (root == null) return null;\n\n        if (root.val > key) {\n            root.left = delete(root.left,key);\n        } else if (root.val < key) {\n            root.right = delete(root.right,key);\n        } else {\n            if (root.left == null) return root.right;\n            if (root.right == null) return root.left;\n            TreeNode tmp = root.right;\n            while (tmp.left != null) {\n                tmp = tmp.left;\n            }\n            root.val = tmp.val;\n            root.right = delete(root.right,tmp.val);\n        }\n        return root;\n    }\n}\n递归法\n\nclass Solution {\n  public TreeNode deleteNode(TreeNode root, int key) {\n    if (root == null){\n      return null;\n    }\n    //寻找对应的对应的前面的节点，以及他的前一个节点\n    TreeNode cur = root;\n    TreeNode pre = null;\n    while (cur != null){\n      if (cur.val < key){\n        pre = cur;\n        cur = cur.right;\n      } else if (cur.val > key) {\n        pre = cur;\n        cur = cur.left;\n      }else {\n        break;\n      }\n    }\n    if (pre == null){\n      return deleteOneNode(cur);\n    }\n    if (pre.left !=null && pre.left.val == key){\n      pre.left = deleteOneNode(cur);\n    }\n    if (pre.right !=null && pre.right.val == key){\n      pre.right = deleteOneNode(cur);\n    }\n    return root;\n  }\n\n  public TreeNode deleteOneNode(TreeNode node){\n    if (node == null){\n      return null;\n    }\n    if (node.right == null){\n      return node.left;\n    }\n    TreeNode cur = node.right;\n    while (cur.left !=null){\n      cur = cur.left;\n    }\n    cur.left = node.left;\n    return node.right;\n  }\n}\n#Python\n递归法（版本一）\n\nclass Solution:\n    def deleteNode(self, root, key):\n        if root is None:\n            return root\n        if root.val == key:\n            if root.left is None and root.right is None:\n                return None\n            elif root.left is None:\n                return root.right\n            elif root.right is None:\n                return root.left\n            else:\n                cur = root.right\n                while cur.left is not None:\n                    cur = cur.left\n                cur.left = root.left\n                return root.right\n        if root.val > key:\n            root.left = self.deleteNode(root.left, key)\n        if root.val < key:\n            root.right = self.deleteNode(root.right, key)\n        return root\n递归法（版本二）\n\nclass Solution:\n    def deleteNode(self, root, key):\n        if root is None:  # 如果根节点为空，直接返回\n            return root\n        if root.val == key:  # 找到要删除的节点\n            if root.right is None:  # 如果右子树为空，直接返回左子树作为新的根节点\n                return root.left\n            cur = root.right\n            while cur.left:  # 找到右子树中的最左节点\n                cur = cur.left\n            root.val, cur.val = cur.val, root.val  # 将要删除的节点值与最左节点值交换\n        root.left = self.deleteNode(root.left, key)  # 在左子树中递归删除目标节点\n        root.right = self.deleteNode(root.right, key)  # 在右子树中递归删除目标节点\n        return root\n\n迭代法\n\nclass Solution:\n    def deleteOneNode(self, target: TreeNode) -> TreeNode:\n        \"\"\"\n        将目标节点（删除节点）的左子树放到目标节点的右子树的最左面节点的左孩子位置上\n        并返回目标节点右孩子为新的根节点\n        是动画里模拟的过程\n        \"\"\"\n        if target is None:\n            return target\n        if target.right is None:\n            return target.left\n        cur = target.right\n        while cur.left:\n            cur = cur.left\n        cur.left = target.left\n        return target.right\n\n    def deleteNode(self, root: TreeNode, key: int) -> TreeNode:\n        if root is None:\n            return root\n        cur = root\n        pre = None  # 记录cur的父节点，用来删除cur\n        while cur:\n            if cur.val == key:\n                break\n            pre = cur\n            if cur.val > key:\n                cur = cur.left\n            else:\n                cur = cur.right\n        if pre is None:  # 如果搜索树只有头结点\n            return self.deleteOneNode(cur)\n        # pre 要知道是删左孩子还是右孩子\n        if pre.left and pre.left.val == key:\n            pre.left = self.deleteOneNode(cur)\n        if pre.right and pre.right.val == key:\n            pre.right = self.deleteOneNode(cur)\n        return root"
+}

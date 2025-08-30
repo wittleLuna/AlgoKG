@@ -1,0 +1,250 @@
+{
+  "id": "AP_008415cf",
+  "title": "沉没孤岛",
+  "alternative_titles": [],
+  "platform": "kamacoder",
+  "url": "https://kamacoder.com/problempage.php?pid=1174",
+  "description": "一个由 1（陆地）和 0（水）组成的矩阵，岛屿指的是由水平或垂直方向上相邻的陆地单元格组成的区域，且完全被水域单元格包围。孤岛是那些位于矩阵内部、所有单元格都不接触边缘的岛屿。\n\n现在你需要将所有孤岛“沉没”，即将孤岛中的所有陆地单元格（1）转变为水域单元格（0）。\n\n输入描述：\n\n第一行包含两个整数 N, M，表示矩阵的行数和列数。\n\n之后 N 行，每行包含 M 个数字，数字为 1 或者 0，表示岛屿的单元格。\n\n输出描述\n\n输出将孤岛“沉没”之后的岛屿矩阵。\n\n输入",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "深度优先搜索",
+    "广度优先搜索"
+  ],
+  "data_structure_tags": [
+    "二维数组"
+  ],
+  "technique_tags": [
+    "递归调用",
+    "方向数组"
+  ],
+  "difficulty": null,
+  "solution_approach": "首先通过深度优先搜索(DFS)或广度优先搜索(BFS)遍历矩阵边缘上的所有陆地，并将这些陆地及其相连的部分标记为特殊值（例如2）。这一步骤确保了所有与边界相连的陆地不会被误认为是孤岛。然后，遍历整个矩阵，将所有未被标记的1（即孤岛）转换为0（水域）。最后，把之前为了区分而修改成特殊值2的所有位置恢复成原始的陆地标记1。",
+  "key_insights": [
+    {
+      "content": "通过将边缘连接的陆地标记为特殊值，可以有效地区分出那些真正孤立的岛屿。这种方法避免了额外的空间开销，同时简化了判断逻辑。"
+    },
+    {
+      "content": "先处理边界，再处理内部，这样的顺序保证了所有非孤岛部分都被正确识别和处理，从而准确地只对真正的孤岛进行操作。"
+    },
+    {
+      "content": "使用特殊值作为临时标记而非额外的visited数组，既节省空间又提高了实现的简洁性。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目和0101.孤岛的总面积 (https://kamacoder.com/problempage.php?pid=1173)正好反过来了，0101.孤岛的总面积 (https://kamacoder.com/problempage.php?pid=1173)是求 地图中间的空格数，而本题是要把地图中间的 1 都改成 0 。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint dir[4][2] = {-1, 0, 0, -1, 1, 0, 0, 1};\nvoid dfs(vector<vector<int>>& grid, int x, int y) {\n    grid[x][y] = 2;\n    for (int i = 0; i < 4; i++) {\n        int nextx = x + dir[i][0];\n        int nexty = y + dir[i][1];\n        if (nextx < 0 || nextx >= grid.size() || nexty < 0 || nexty >= grid[0].size()) continue;\n        if (grid[nextx][nexty] == 0 || grid[nextx][nexty] == 2) continue;\n        dfs (grid, nextx, nexty);\n    }\n}\n\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n    for (int i = 0; i < n; i++) {\n        if (grid[i][0] == 1) dfs(grid, i, 0);\n        if (grid[i][m - 1] == 1) dfs(grid, i, m - 1);\n    }\n    for (int j = 0; j < m; j++) {\n        if (grid[0][j] == 1) dfs(grid, 0, j);\n        if (grid[n - 1][j] == 1) dfs(grid, n - 1, j);\n    }\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) grid[i][j] = 0;\n            if (grid[i][j] == 2) grid[i][j] = 1;\n        }\n    }\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cout << grid[i][j] << \" \";\n        }\n        cout << endl;\n    }",
+          "description": "C++版本的孤岛沉没算法"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    static int[][] dir = { {-1, 0}, {0, -1}, {1, 0}, {0, 1} };\n\n    public static void dfs(int[][] grid, int x, int y) {\n        grid[x][y] = 2;\n        for (int[] d : dir) {\n            int nextX = x + d[0];\n            int nextY = y + d[1];\n            if (nextX < 0 || nextX >= grid.length || nextY < 0 || nextY >= grid[0].length) continue;\n            if (grid[nextX][nextY] == 0 || grid[nextX][nextY] == 2) continue;\n            dfs(grid, nextX, nextY);\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] grid = new int[n][m];\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                grid[i][j] = scanner.nextInt();\n            }\n        }\n        for (int i = 0; i < n; i++) {\n            if (grid[i][0] == 1) dfs(grid, i, 0);\n            if (grid[i][m - 1] == 1) dfs(grid, i, m - 1);\n        }\n        for (int j = 0; j < m; j++) {\n            if (grid[0][j] == 1) dfs(grid, 0, j);\n            if (grid[n - 1][j] == 1) dfs(grid, n - 1, j);\n        }\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                if (grid[i][j] == 1) grid[i][j] = 0;\n                if (grid[i][j] == 2) grid[i][j] = 1;\n            }\n        }\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                System.out.print(grid[i][j] + \" \");\n            }\n            System.out.println();\n        }\n        scanner.close();\n    }\n}",
+          "description": "Java版本的孤岛沉没算法"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(grid, x, y):\n    grid[x][y] = 2\n    directions = [(-1, 0), (0, -1), (1, 0), (0, 1)]\n    for dx, dy in directions:\n        nextx, nexty = x + dx, y + dy\n        if nextx < 0 or nextx >= len(grid) or nexty < 0 or nexty >= len(grid[0]):\n            continue\n        if grid[nextx][nexty] == 0 or grid[nextx][nexty] == 2:\n            continue\n        dfs(grid, nextx, nexty)\n\n\ndef main():\n    n, m = map(int, input().split())\n    grid = [[int(x) for x in input().split()] for _ in range(n)]\n    for i in range(n):\n        if grid[i][0] == 1:\n            dfs(grid, i, 0)\n        if grid[i][m - 1] == 1:\n            dfs(grid, i, m - 1)\n    for j in range(m):\n        if grid[0][j] == 1:\n            dfs(grid, 0, j)\n        if grid[n - 1][j] == 1:\n            dfs(grid, n - 1, j)\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1:\n                grid[i][j] = 0\n            if grid[i][j] == 2:\n                grid[i][j] = 1\n    for row in grid:\n        print(' '.join(map(str, row)))\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本的孤岛沉没算法（深度优先搜索）"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\n\nn, m = list(map(int, input().split()))\ng = []\nfor _ in range(n):\n    row = list(map(int, input().split()))\n    g.append(row)\ndirections = [(1,0),(-1,0),(0,1),(0,-1)]\ncount = 0\ndef bfs(r,c,mode):\n    global count\n    q = deque()\n    q.append((r,c))\n    count += 1\n    while q:\n        r, c = q.popleft()\n        if mode:\n            g[r][c] = 2\n        for di in directions:\n            next_r = r + di[0]\n            next_c = c + di[1]\n            if next_c < 0 or next_c >= m or next_r < 0 or next_r >= n:\n                continue\n            if g[next_r][next_c] == 1:\n                q.append((next_r, next_c))\n                if mode:\n                    g[r][c] = 2\n                count += 1\nfor i in range(n):\n    if g[i][0] == 1: bfs(i,0,True)\n    if g[i][m-1] == 1: bfs(i, m-1,True)\nfor j in range(m):\n    if g[0][j] == 1: bfs(0,j,True)\n    if g[n-1][j] == 1: bfs(n-1,j,True)\nfor i in range(n):\n    for j in range(m):\n        if g[i][j] == 2:\n            g[i][j] = 1\n        else:\n            g[i][j] = 0\nfor row in g:\n    print(\" \".join(map(str, row)))",
+          "description": "Python版本的孤岛沉没算法（广度优先搜索）"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <iostream>",
+      "text": "#include <vector>",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint dir[4][2] = {-1, 0, 0, -1, 1, 0, 0, 1}; // 保存四个方向\nvoid dfs(vector<vector<int>>& grid, int x, int y) {\n    grid[x][y] = 2;\n    for (int i = 0; i < 4; i++) { // 向四个方向遍历\n        int nextx = x + dir[i][0];\n        int nexty = y + dir[i][1];\n        // 超过边界\n        if (nextx < 0 || nextx >= grid.size() || nexty < 0 || nexty >= grid[0].size()) continue;\n        // 不符合条件，不继续遍历\n        if (grid[nextx][nexty] == 0 || grid[nextx][nexty] == 2) continue;\n        dfs (grid, nextx, nexty);\n    }\n    return;\n}\n\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n\n    // 步骤一：\n    // 从左侧边，和右侧边 向中间遍历\n    for (int i = 0; i < n; i++) {\n        if (grid[i][0] == 1) dfs(grid, i, 0);\n        if (grid[i][m - 1] == 1) dfs(grid, i, m - 1);\n    }\n\n    // 从上边和下边 向中间遍历\n    for (int j = 0; j < m; j++) {\n        if (grid[0][j] == 1) dfs(grid, 0, j);\n        if (grid[n - 1][j] == 1) dfs(grid, n - 1, j);\n    }\n    // 步骤二、步骤三\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) grid[i][j] = 0;\n            if (grid[i][j] == 2) grid[i][j] = 1;\n        }\n    }\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cout << grid[i][j] << \" \";\n        }\n        cout << endl;\n    }",
+          "description": "C++版本的孤岛沉没问题解决方案"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    static int[][] dir = { {-1, 0}, {0, -1}, {1, 0}, {0, 1} }; // 保存四个方向\n\n    public static void dfs(int[][] grid, int x, int y) {\n        grid[x][y] = 2;\n        for (int[] d : dir) {\n            int nextX = x + d[0];\n            int nextY = y + d[1];\n            // 超过边界\n            if (nextX < 0 || nextX >= grid.length || nextY < 0 || nextY >= grid[0].length) continue;\n            // 不符合条件，不继续遍历\n            if (grid[nextX][nextY] == 0 || grid[nextX][nextY] == 2) continue;\n            dfs(grid, nextX, nextY);\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] grid = new int[n][m];\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                grid[i][j] = scanner.nextInt();\n            }\n        }\n\n        // 步骤一：\n        // 从左侧边，和右侧边 向中间遍历\n        for (int i = 0; i < n; i++) {\n            if (grid[i][0] == 1) dfs(grid, i, 0);\n            if (grid[i][m - 1] == 1) dfs(grid, i, m - 1);\n        }\n\n        // 从上边和下边 向中间遍历\n        for (int j = 0; j < m; j++) {\n            if (grid[0][j] == 1) dfs(grid, 0, j);\n            if (grid[n - 1][j] == 1) dfs(grid, n - 1, j);\n        }\n\n        // 步骤二、步骤三\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                if (grid[i][j] == 1) grid[i][j] = 0;\n                if (grid[i][j] == 2) grid[i][j] = 1;\n            }\n        }\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                System.out.print(grid[i][j] + \" \");\n            }\n            System.out.println();\n        }\n        \n        scanner.close();\n    }\n}",
+          "description": "Java版本的孤岛沉没问题解决方案"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(grid, x, y):\n    grid[x][y] = 2\n    directions = [(-1, 0), (0, -1), (1, 0), (0, 1)]  # 四个方向\n    for dx, dy in directions:\n        nextx, nexty = x + dx, y + dy\n        # 超过边界\n        if nextx < 0 or nextx >= len(grid) or nexty < 0 or nexty >= len(grid[0]):\n            continue\n        # 不符合条件，不继续遍历\n        if grid[nextx][nexty] == 0 or grid[nextx][nexty] == 2:\n            continue\n        dfs(grid, nextx, nexty)\n\ndef main():\n    n, m = map(int, input().split())\n    grid = [[int(x) for x in input().split()] for _ in range(n)]\n\n    # 步骤一：\n    # 从左侧边，和右侧边 向中间遍历\n    for i in range(n):\n        if grid[i][0] == 1:\n            dfs(grid, i, 0)\n        if grid[i][m - 1] == 1:\n            dfs(grid, i, m - 1)\n\n    # 从上边和下边 向中间遍历\n    for j in range(m):\n        if grid[0][j] == 1:\n            dfs(grid, 0, j)\n        if grid[n - 1][j] == 1:\n            dfs(grid, n - 1, j)\n\n    # 步骤二、步骤三\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1:\n                grid[i][j] = 0\n            if grid[i][j] == 2:\n                grid[i][j] = 1\n\n    # 打印结果\n    for row in grid:\n        print(' '.join(map(str, row)))\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本的孤岛沉没问题解决方案"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "include <vector>",
+      "text": "using namespace std;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint dir[4][2] = {{-1, 0}, {0, -1}, {1, 0}, {0, 1}}; // 保存四个方向\nvoid dfs(vector<vector<int>>& grid, int x, int y) {\n    grid[x][y] = 2;\n    for (int i = 0; i < 4; i++) { // 向四个方向遍历\n        int nextx = x + dir[i][0];\n        int nexty = y + dir[i][1];\n        if (nextx < 0 || nextx >= grid.size() || nexty < 0 || nexty >= grid[0].size()) continue;\n        if (grid[nextx][nexty] == 0 || grid[nextx][nexty] == 2) continue;\n        dfs(grid, nextx, nexty);\n    }\n}\n\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n\n    for (int i = 0; i < n; i++) {\n        if (grid[i][0] == 1) dfs(grid, i, 0);\n        if (grid[i][m - 1] == 1) dfs(grid, i, m - 1);\n    }\n    for (int j = 0; j < m; j++) {\n        if (grid[0][j] == 1) dfs(grid, 0, j);\n        if (grid[n - 1][j] == 1) dfs(grid, n - 1, j);\n    }\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) grid[i][j] = 0;\n            if (grid[i][j] == 2) grid[i][j] = 1;\n        }\n    }\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cout << grid[i][j] << \" \";\n        }\n        cout << endl;\n    }\n}",
+          "description": "C++版本的岛屿沉没问题解决方案，使用深度优先搜索（DFS）算法。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    static int[][] dir = {{-1, 0}, {0, -1}, {1, 0}, {0, 1}}; // 保存四个方向\n\n    public static void dfs(int[][] grid, int x, int y) {\n        grid[x][y] = 2;\n        for (int[] d : dir) {\n            int nextX = x + d[0];\n            int nextY = y + d[1];\n            if (nextX < 0 || nextX >= grid.length || nextY < 0 || nextY >= grid[0].length) continue;\n            if (grid[nextX][nextY] == 0 || grid[nextX][nextY] == 2) continue;\n            dfs(grid, nextX, nextY);\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] grid = new int[n][m];\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                grid[i][j] = scanner.nextInt();\n            }\n        }\n\n        for (int i = 0; i < n; i++) {\n            if (grid[i][0] == 1) dfs(grid, i, 0);\n            if (grid[i][m - 1] == 1) dfs(grid, i, m - 1);\n        }\n\n        for (int j = 0; j < m; j++) {\n            if (grid[0][j] == 1) dfs(grid, 0, j);\n            if (grid[n - 1][j] == 1) dfs(grid, n - 1, j);\n        }\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                if (grid[i][j] == 1) grid[i][j] = 0;\n                if (grid[i][j] == 2) grid[i][j] = 1;\n            }\n        }\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                System.out.print(grid[i][j] + \" \");\n            }\n            System.out.println();\n        }\n        scanner.close();\n    }\n}",
+          "description": "Java版本的岛屿沉没问题解决方案，同样采用深度优先搜索（DFS）算法实现。"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(grid, x, y):\n    grid[x][y] = 2\n    directions = [(-1, 0), (0, -1), (1, 0), (0, 1)]  # 四个方向\n    for dx, dy in directions:\n        nextx, nexty = x + dx, y + dy\n        if nextx < 0 or nextx >= len(grid) or nexty < 0 or nexty >= len(grid[0]):\n            continue\n        if grid[nextx][nexty] == 0 or grid[nextx][nexty] == 2:\n            continue\n        dfs(grid, nextx, nexty)\n\n\ndef main():\n    n, m = map(int, input().split())\n    grid = [[int(x) for x in input().split()] for _ in range(n)]\n\n    for i in range(n):\n        if grid[i][0] == 1:\n            dfs(grid, i, 0)\n        if grid[i][m - 1] == 1:\n            dfs(grid, i, m - 1)\n\n    for j in range(m):\n        if grid[0][j] == 1:\n            dfs(grid, 0, j)\n        if grid[n - 1][j] == 1:\n            dfs(grid, n - 1, j)\n\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1:\n                grid[i][j] = 0\n            if grid[i][j] == 2:\n                grid[i][j] = 1\n\n    for row in grid:\n        print(' '.join(map(str, row)))\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本的岛屿沉没问题解决方案，实现了深度优先搜索（DFS）来解决该问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint dir[4][2] = {-1, 0, 0, -1, 1, 0, 0, 1}; // 保存四个方向\nvoid dfs(vector<vector<int>>& grid, int x, int y) {\n    grid[x][y] = 2;\n    for (int i = 0; i < 4; i++) { // 向四个方向遍历\n        int nextx = x + dir[i][0];\n        int nexty = y + dir[i][1];\n        // 超过边界\n        if (nextx < 0 || nextx >= grid.size() || nexty < 0 || nexty >= grid[0].size()) continue;\n        // 不符合条件，不继续遍历\n        if (grid[nextx][nexty] == 0 || grid[nextx][nexty] == 2) continue;\n        dfs (grid, nextx, nexty);\n    }\n    return;\n}\n\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n\n    // 步骤一：\n    // 从左侧边，和右侧边 向中间遍历\n    for (int i = 0; i < n; i++) {\n        if (grid[i][0] == 1) dfs(grid, i, 0);\n        if (grid[i][m - 1] == 1) dfs(grid, i, m - 1);\n    }\n\n    // 从上边和下边 向中间遍历\n    for (int j = 0; j < m; j++) {\n        if (grid[0][j] == 1) dfs(grid, 0, j);\n        if (grid[n - 1][j] == 1) dfs(grid, n - 1, j);\n    }\n    // 步骤二、步骤三\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) grid[i][j] = 0;\n            if (grid[i][j] == 2) grid[i][j] = 1;\n        }\n    }\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cout << grid[i][j] << \" \";\n        }\n        cout << endl;\n    }\n}",
+          "description": "C++代码实现沉没孤岛"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    static int[][] dir = { {-1, 0}, {0, -1}, {1, 0}, {0, 1} }; // 保存四个方向\n\n    public static void dfs(int[][] grid, int x, int y) {\n        grid[x][y] = 2;\n        for (int[] d : dir) {\n            int nextX = x + d[0];\n            int nextY = y + d[1];\n            // 超过边界\n            if (nextX < 0 || nextX >= grid.length || nextY < 0 || nextY >= grid[0].length) continue;\n            // 不符合条件，不继续遍历\n            if (grid[nextX][nextY] == 0 || grid[nextX][nextY] == 2) continue;\n            dfs(grid, nextX, nextY);\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] grid = new int[n][m];\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                grid[i][j] = scanner.nextInt();\n            }\n        }\n\n        // 步骤一：\n        // 从左侧边，和右侧边 向中间遍历\n        for (int i = 0; i < n; i++) {\n            if (grid[i][0] == 1) dfs(grid, i, 0);\n            if (grid[i][m - 1] == 1) dfs(grid, i, m - 1);\n        }\n\n        // 从上边和下边 向中间遍历\n        for (int j = 0; j < m; j++) {\n            if (grid[0][j] == 1) dfs(grid, 0, j);\n            if (grid[n - 1][j] == 1) dfs(grid, n - 1, j);\n        }\n\n        // 步骤二、步骤三\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                if (grid[i][j] == 1) grid[i][j] = 0;\n                if (grid[i][j] == 2) grid[i][j] = 1;\n            }\n        }\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                System.out.print(grid[i][j] + \" \");\n            }\n            System.out.println();\n        }\n        \n        scanner.close();\n    }\n}",
+          "description": "Java代码实现沉没孤岛"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(grid, x, y):\n    grid[x][y] = 2\n    directions = [(-1, 0), (0, -1), (1, 0), (0, 1)]  # 四个方向\n    for dx, dy in directions:\n        nextx, nexty = x + dx, y + dy\n        # 超过边界\n        if nextx < 0 or nextx >= len(grid) or nexty < 0 or nexty >= len(grid[0]):\n            continue\n        # 不符合条件，不继续遍历\n        if grid[nextx][nexty] == 0 or grid[nextx][nexty] == 2:\n            continue\n        dfs(grid, nextx, nexty)\n\ndef main():\n    n, m = map(int, input().split())\n    grid = [[int(x) for x in input().split()] for _ in range(n)]\n\n    # 步骤一：\n    # 从左侧边，和右侧边 向中间遍历\n    for i in range(n):\n        if grid[i][0] == 1:\n            dfs(grid, i, 0)\n        if grid[i][m - 1] == 1:\n            dfs(grid, i, m - 1)\n\n    # 从上边和下边 向中间遍历\n    for j in range(m):\n        if grid[0][j] == 1:\n            dfs(grid, 0, j)\n        if grid[n - 1][j] == 1:\n            dfs(grid, n - 1, j)\n\n    # 步骤二、步骤三\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1:\n                grid[i][j] = 0\n            if grid[i][j] == 2:\n                grid[i][j] = 1\n\n    # 打印结果\n    for row in grid:\n        print(' '.join(map(str, row)))\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python代码实现沉没孤岛"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "import java.util.Scanner;",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint dir[4][2] = {-1, 0, 0, -1, 1, 0, 0, 1};\nvoid dfs(vector<vector<int>>& grid, int x, int y) {\n    grid[x][y] = 2;\n    for (int i = 0; i < 4; i++) {\n        int nextx = x + dir[i][0];\n        int nexty = y + dir[i][1];\n        if (nextx < 0 || nextx >= grid.size() || nexty < 0 || nexty >= grid[0].size()) continue;\n        if (grid[nextx][nexty] == 0 || grid[nextx][nexty] == 2) continue;\n        dfs (grid, nextx, nexty);\n    }\n}\n\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n\n    for (int i = 0; i < n; i++) {\n        if (grid[i][0] == 1) dfs(grid, i, 0);\n        if (grid[i][m - 1] == 1) dfs(grid, i, m - 1);\n    }\n\n    for (int j = 0; j < m; j++) {\n        if (grid[0][j] == 1) dfs(grid, 0, j);\n        if (grid[n - 1][j] == 1) dfs(grid, n - 1, j);\n    }\n\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) grid[i][j] = 0;\n            if (grid[i][j] == 2) grid[i][j] = 1;\n        }\n    }\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cout << grid[i][j] << \" \";\n        }\n        cout << endl;\n    }\n}",
+          "description": "C++版本的孤岛沉没算法实现，包括DFS遍历和主函数。"
+        },
+        {
+          "language": "java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    static int[][] dir = { {-1, 0}, {0, -1}, {1, 0}, {0, 1} };\n\n    public static void dfs(int[][] grid, int x, int y) {\n        grid[x][y] = 2;\n        for (int[] d : dir) {\n            int nextX = x + d[0];\n            int nextY = y + d[1];\n            if (nextX < 0 || nextX >= grid.length || nextY < 0 || nextY >= grid[0].length) continue;\n            if (grid[nextX][nextY] == 0 || grid[nextX][nextY] == 2) continue;\n            dfs(grid, nextX, nextY);\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] grid = new int[n][m];\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                grid[i][j] = scanner.nextInt();\n            }\n        }\n\n        for (int i = 0; i < n; i++) {\n            if (grid[i][0] == 1) dfs(grid, i, 0);\n            if (grid[i][m - 1] == 1) dfs(grid, i, m - 1);\n        }\n\n        for (int j = 0; j < m; j++) {\n            if (grid[0][j] == 1) dfs(grid, 0, j);\n            if (grid[n - 1][j] == 1) dfs(grid, n - 1, j);\n        }\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                if (grid[i][j] == 1) grid[i][j] = 0;\n                if (grid[i][j] == 2) grid[i][j] = 1;\n            }\n        }\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                System.out.print(grid[i][j] + \" \");\n            }\n            System.out.println();\n        }\n\n        scanner.close();\n    }\n}",
+          "description": "Java版本的孤岛沉没算法实现，同样采用了DFS方法来遍历矩阵边缘。"
+        },
+        {
+          "language": "python",
+          "code": "def dfs(grid, x, y):\n    grid[x][y] = 2\n    directions = [(-1, 0), (0, -1), (1, 0), (0, 1)]\n    for dx, dy in directions:\n        nextx, nexty = x + dx, y + dy\n        if nextx < 0 or nextx >= len(grid) or nexty < 0 or nexty >= len(grid[0]):\n            continue\n        if grid[nextx][nexty] == 0 or grid[nextx][nexty] == 2:\n            continue\n        dfs(grid, nextx, nexty)\n\ndef main():\n    n, m = map(int, input().split())\n    grid = [[int(x) for x in input().split()] for _ in range(n)]\n\n    for i in range(n):\n        if grid[i][0] == 1:\n            dfs(grid, i, 0)\n        if grid[i][m - 1] == 1:\n            dfs(grid, i, m - 1)\n\n    for j in range(m):\n        if grid[0][j] == 1:\n            dfs(grid, 0, j)\n        if grid[n - 1][j] == 1:\n            dfs(grid, n - 1, j)\n\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1:\n                grid[i][j] = 0\n            if grid[i][j] == 2:\n                grid[i][j] = 1\n\n    for row in grid:\n        print(' '.join(map(str, row)))\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python版本的孤岛沉没解决方案，使用了深度优先搜索（DFS）技术来标记边界岛屿。"
+        },
+        {
+          "language": "python",
+          "code": "from collections import deque\n\nn, m = list(map(int, input().split()))\ng = []\nfor _ in range(n):\n    row = list(map(int, input().split()))\n    g.append(row)\n\ndirections = [(1,0),(-1,0),(0,1),(0,-1)]\ncount = 0\n\ndef bfs(r, c, mode):\n    global count\n    q = deque()\n    q.append((r, c))\n    count += 1\n\n    while q:\n        r, c = q.popleft()\n        if mode:\n            g[r][c] = 2\n\n        for di in directions:\n            next_r = r + di[0]\n            next_c = c + di[1]\n            if next_c < 0 or next_c >= m or next_r < 0 or next_r >= n:\n                continue\n            if g[next_r][next_c] == 1:\n                q.append((next_r, next_c))\n                if mode:\n                    g[r][c] = 2\n\n                count += 1\n\nfor i in range(n):\n    if g[i][0] == 1: bfs(i, 0, True)\n    if g[i][m-1] == 1: bfs(i, m-1, True)\n\nfor j in range(m):\n    if g[0][j] == 1: bfs(0, j, True)\n    if g[n-1][j] == 1: bfs(n-1, j, True)\n\nfor i in range(n):\n    for j in range(m):\n        if g[i][j] == 2:\n            g[i][j] = 1\n        else:\n            g[i][j] = 0\n\nfor row in g:\n    print(\" \".join(map(str, row)))",
+          "description": "另一种Python实现，这次使用广度优先搜索（BFS）来处理孤岛沉没问题。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "def dfs(grid, x, y):",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint dir[4][2] = {-1, 0, 0, -1, 1, 0, 0, 1};\nvoid dfs(vector<vector<int>>& grid, int x, int y) {\n    grid[x][y] = 2;\n    for (int i = 0; i < 4; i++) {\n        int nextx = x + dir[i][0];\n        int nexty = y + dir[i][1];\n        if (nextx < 0 || nextx >= grid.size() || nexty < 0 || nexty >= grid[0].size()) continue;\n        if (grid[nextx][nexty] == 0 || grid[nextx][nexty] == 2) continue;\n        dfs(grid, nextx, nexty);\n    }\n}\n\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n\n    for (int i = 0; i < n; i++) {\n        if (grid[i][0] == 1) dfs(grid, i, 0);\n        if (grid[i][m - 1] == 1) dfs(grid, i, m - 1);\n    }\n\n    for (int j = 0; j < m; j++) {\n        if (grid[0][j] == 1) dfs(grid, 0, j);\n        if (grid[n - 1][j] == 1) dfs(grid, n - 1, j);\n    }\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) grid[i][j] = 0;\n            if (grid[i][j] == 2) grid[i][j] = 1;\n        }\n    }\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cout << grid[i][j] << \" \";\n        }\n        cout << endl;\n    }\n}",
+          "description": "C++实现的孤岛沉没问题解决方案"
+        },
+        {
+          "language": "Java",
+          "code": "import java.util.Scanner;\n\npublic class Main {\n    static int[][] dir = { {-1, 0}, {0, -1}, {1, 0}, {0, 1} };\n\n    public static void dfs(int[][] grid, int x, int y) {\n        grid[x][y] = 2;\n        for (int[] d : dir) {\n            int nextX = x + d[0];\n            int nextY = y + d[1];\n            if (nextX < 0 || nextX >= grid.length || nextY < 0 || nextY >= grid[0].length) continue;\n            if (grid[nextX][nextY] == 0 || grid[nextX][nextY] == 2) continue;\n            dfs(grid, nextX, nextY);\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] grid = new int[n][m];\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                grid[i][j] = scanner.nextInt();\n            }\n        }\n\n        for (int i = 0; i < n; i++) {\n            if (grid[i][0] == 1) dfs(grid, i, 0);\n            if (grid[i][m - 1] == 1) dfs(grid, i, m - 1);\n        }\n\n        for (int j = 0; j < m; j++) {\n            if (grid[0][j] == 1) dfs(grid, 0, j);\n            if (grid[n - 1][j] == 1) dfs(grid, n - 1, j);\n        }\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                if (grid[i][j] == 1) grid[i][j] = 0;\n                if (grid[i][j] == 2) grid[i][j] = 1;\n            }\n        }\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                System.out.print(grid[i][j] + \" \");\n            }\n            System.out.println();\n        }\n\n        scanner.close();\n    }\n}",
+          "description": "Java实现的孤岛沉没问题解决方案"
+        },
+        {
+          "language": "Python",
+          "code": "def dfs(grid, x, y):\n    grid[x][y] = 2\n    directions = [(-1, 0), (0, -1), (1, 0), (0, 1)]\n    for dx, dy in directions:\n        nextx, nexty = x + dx, y + dy\n        if nextx < 0 or nextx >= len(grid) or nexty < 0 or nexty >= len(grid[0]):\n            continue\n        if grid[nextx][nexty] == 0 or grid[nextx][nexty] == 2:\n            continue\n        dfs(grid, nextx, nexty)\n\ndef main():\n    n, m = map(int, input().split())\n    grid = [[int(x) for x in input().split()] for _ in range(n)]\n\n    for i in range(n):\n        if grid[i][0] == 1: dfs(grid, i, 0)\n        if grid[i][m - 1] == 1: dfs(grid, i, m - 1)\n\n    for j in range(m):\n        if grid[0][j] == 1: dfs(grid, 0, j)\n        if grid[n - 1][j] == 1: dfs(grid, n - 1, j)\n\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1: grid[i][j] = 0\n            if grid[i][j] == 2: grid[i][j] = 1\n\n    for row in grid:\n        print(' '.join(map(str, row)))\n\nif __name__ == \"__main__\":\n    main()",
+          "description": "Python实现的孤岛沉没问题解决方案"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "#include <iostream>\n#include <vector>\nusing namespace std;\nint dir[4][2] = {-1, 0, 0, -1, 1, 0, 0, 1}; // 保存四个方向\nvoid dfs(vector<vector<int>>& grid, int x, int y) {\n    grid[x][y] = 2;\n    for (int i = 0; i < 4; i++) { // 向四个方向遍历\n        int nextx = x + dir[i][0];\n        int nexty = y + dir[i][1];\n        // 超过边界\n        if (nextx < 0 || nextx >= grid.size() || nexty < 0 || nexty >= grid[0].size()) continue;\n        // 不符合条件，不继续遍历\n        if (grid[nextx][nexty] == 0 || grid[nextx][nexty] == 2) continue;\n        dfs (grid, nextx, nexty);\n    }\n    return;\n}\n\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n\n    // 步骤一：\n    // 从左侧边，和右侧边 向中间遍历\n    for (int i = 0; i < n; i++) {\n        if (grid[i][0] == 1) dfs(grid, i, 0);\n        if (grid[i][m - 1] == 1) dfs(grid, i, m - 1);\n    }\n\n    // 从上边和下边 向中间遍历\n    for (int j = 0; j < m; j++) {\n        if (grid[0][j] == 1) dfs(grid, 0, j);\n        if (grid[n - 1][j] == 1) dfs(grid, n - 1, j);\n    }\n    // 步骤二、步骤三\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) grid[i][j] = 0;\n            if (grid[i][j] == 2) grid[i][j] = 1;\n        }\n    }\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cout << grid[i][j] << \" \";\n        }\n        cout << endl;\n    }\n}",
+      "description": "C++代码实现"
+    },
+    {
+      "language": "java",
+      "code": "import java.util.Scanner;\n\npublic class Main {\n    static int[][] dir = { {-1, 0}, {0, -1}, {1, 0}, {0, 1} }; // 保存四个方向\n\n    public static void dfs(int[][] grid, int x, int y) {\n        grid[x][y] = 2;\n        for (int[] d : dir) {\n            int nextX = x + d[0];\n            int nextY = y + d[1];\n            // 超过边界\n            if (nextX < 0 || nextX >= grid.length || nextY < 0 || nextY >= grid[0].length) continue;\n            // 不符合条件，不继续遍历\n            if (grid[nextX][nextY] == 0 || grid[nextX][nextY] == 2) continue;\n            dfs(grid, nextX, nextY);\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] grid = new int[n][m];\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                grid[i][j] = scanner.nextInt();\n            }\n        }\n\n        // 步骤一：\n        // 从左侧边，和右侧边 向中间遍历\n        for (int i = 0; i < n; i++) {\n            if (grid[i][0] == 1) dfs(grid, i, 0);\n            if (grid[i][m - 1] == 1) dfs(grid, i, m - 1);\n        }\n\n        // 从上边和下边 向中间遍历\n        for (int j = 0; j < m; j++) {\n            if (grid[0][j] == 1) dfs(grid, 0, j);\n            if (grid[n - 1][j] == 1) dfs(grid, n - 1, j);\n        }\n\n        // 步骤二、步骤三\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                if (grid[i][j] == 1) grid[i][j] = 0;\n                if (grid[i][j] == 2) grid[i][j] = 1;\n            }\n        }\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                System.out.print(grid[i][j] + \" \");\n            }\n            System.out.println();\n        }\n        \n        scanner.close();\n    }\n}",
+      "description": "Java代码实现"
+    },
+    {
+      "language": "python",
+      "code": "def dfs(grid, x, y):\n    grid[x][y] = 2\n    directions = [(-1, 0), (0, -1), (1, 0), (0, 1)]  # 四个方向\n    for dx, dy in directions:\n        nextx, nexty = x + dx, y + dy\n        # 超过边界\n        if nextx < 0 or nextx >= len(grid) or nexty < 0 or nexty >= len(grid[0]):\n            continue\n        # 不符合条件，不继续遍历\n        if grid[nextx][nexty] == 0 or grid[nextx][nexty] == 2:\n            continue\n        dfs(grid, nextx, nexty)\n\ndef main():\n    n, m = map(int, input().split())\n    grid = [[int(x) for x in input().split()] for _ in range(n)]\n\n    # 步骤一：\n    # 从左侧边，和右侧边 向中间遍历\n    for i in range(n):\n        if grid[i][0] == 1:\n            dfs(grid, i, 0)\n        if grid[i][m - 1] == 1:\n            dfs(grid, i, m - 1)\n\n    # 从上边和下边 向中间遍历\n    for j in range(m):\n        if grid[0][j] == 1:\n            dfs(grid, 0, j)\n        if grid[n - 1][j] == 1:\n            dfs(grid, n - 1, j)\n\n    # 步骤二、步骤三\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1:\n                grid[i][j] = 0\n            if grid[i][j] == 2:\n                grid[i][j] = 1\n\n    # 打印结果\n    for row in grid:\n        print(' '.join(map(str, row)))\n\nif __name__ == \"__main__\":\n    main()",
+      "description": "Python代码实现"
+    }
+  ],
+  "common_mistakes": [
+    "忘记恢复标记：在完成孤岛沉没后，需要记得将所有标记回原状，否则输出结果会包含错误的数据。",
+    "忽略边界条件：在进行坐标加减操作时，容易出现越界访问的问题，应当仔细检查边界情况。",
+    "仅使用一个额外数组来跟踪访问状态：虽然可行但增加了空间复杂度；直接改变原数组中的值作为标记是一种更高效的方法。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240517110932.png",
+      "description": "这张图片展示了一个二维数组（矩阵），其中包含多个“1”和“0”，可用于算法中的岛屿问题或连通分量分析。",
+      "context": "该图片展示了输入示例中岛屿矩阵的初始状态。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240517110953.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20240517110953.png",
+      "context": "该图片展示了将孤岛“沉没”之后的岛屿矩阵状态，即移除了所有不与边界相连的1后的结果。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240517113813.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/20240517113813.png",
+      "context": "该图片展示了通过特定步骤将地图边缘的陆地标记并最终转换部分陆地为水域的过程，辅助理解文本中描述的算法执行流程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240517110932.png",
+      "description": "GIF展示了从矩阵边缘开始，逐步将与边界相连的陆地单元格标记，并最终将所有未被标记的孤岛单元格（即不与边界相连的1）转变为水域单元格（0）的过程。",
+      "context": "GIF动画展示了如何根据给定规则将矩阵中的孤岛“沉没”的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240517110953.png",
+      "description": "GIF展示了从岛屿矩阵边缘开始，逐步将与边界不相连的陆地标记并转换为水域的过程。",
+      "context": "GIF动画展示了将矩阵中不与边界相连的1（孤岛）变为0的过程，即“孤岛沉没”的视觉效果。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240517113813.png",
+      "description": "GIF展示了通过深度优先搜索(DFS)将地图边缘陆地标记并转换，最终将被包围的陆地变为水域的过程。",
+      "context": "GIF动画展示了通过深搜或广搜算法将地图边缘的陆地标记为特殊值、内部陆地转换为水域，最后恢复边缘标记为陆地的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\图论\\沉没孤岛.txt",
+  "extracted_at": "2025-07-21T18:43:34.652514",
+  "raw_content": "沉没孤岛\n卡码网题目链接（ACM模式）(https://kamacoder.com/problempage.php?pid=1174)\n\n题目描述：\n\n给定一个由 1（陆地）和 0（水）组成的矩阵，岛屿指的是由水平或垂直方向上相邻的陆地单元格组成的区域，且完全被水域单元格包围。孤岛是那些位于矩阵内部、所有单元格都不接触边缘的岛屿。\n\n现在你需要将所有孤岛“沉没”，即将孤岛中的所有陆地单元格（1）转变为水域单元格（0）。\n\n输入描述：\n\n第一行包含两个整数 N, M，表示矩阵的行数和列数。\n\n之后 N 行，每行包含 M 个数字，数字为 1 或者 0，表示岛屿的单元格。\n\n输出描述\n\n输出将孤岛“沉没”之后的岛屿矩阵。\n\n输入示例：\n\n4 5\n1 1 0 0 0\n1 1 0 0 0\n0 0 1 0 0\n0 0 0 1 1\n输出示例：\n\n1 1 0 0 0\n1 1 0 0 0\n0 0 0 0 0\n0 0 0 1 1\n提示信息：\n\nhttps://file1.kamacoder.com/i/algo/20240517110932.png\n\n将孤岛沉没：\n\nhttps://file1.kamacoder.com/i/algo/20240517110953.png\n\n数据范围：\n\n1 <= M, N <= 50\n\n#思路\n\n\n这道题目和0101.孤岛的总面积 (https://kamacoder.com/problempage.php?pid=1173)正好反过来了，0101.孤岛的总面积 (https://kamacoder.com/problempage.php?pid=1173)是求 地图中间的空格数，而本题是要把地图中间的 1 都改成 0 。\n\n那么两题在思路上也是差不多的。\n\n思路依然是从地图周边出发，将周边空格相邻的陆地都做上标记，然后在遍历一遍地图，遇到 陆地 且没做过标记的，那么都是地图中间的 陆地 ，全部改成水域就行。\n\n有的录友可能想，我再定义一个 visited 二维数组，单独标记周边的陆地，然后遍历地图的时候同时对 地图数组 和 数组visited 进行判断，决定 陆地是否变成水域。\n\n这样做其实就有点麻烦了，不用额外定义空间了，标记周边的陆地，可以直接改陆地为其他特殊值作为标记。\n\n步骤一：深搜或者广搜将地图周边的 1 （陆地）全部改成 2 （特殊标记）\n\n步骤二：将水域中间 1 （陆地）全部改成 水域（0）\n\n步骤三：将之前标记的 2 改为 1 （陆地）\n\n如图：\n\nhttps://file1.kamacoder.com/i/algo/20240517113813.png\n\n整体C++代码如下，以下使用dfs实现，其实遍历方式dfs，bfs都是可以的。\n\n#include <iostream>\n#include <vector>\nusing namespace std;\nint dir[4][2] = {-1, 0, 0, -1, 1, 0, 0, 1}; // 保存四个方向\nvoid dfs(vector<vector<int>>& grid, int x, int y) {\n    grid[x][y] = 2;\n    for (int i = 0; i < 4; i++) { // 向四个方向遍历\n        int nextx = x + dir[i][0];\n        int nexty = y + dir[i][1];\n        // 超过边界\n        if (nextx < 0 || nextx >= grid.size() || nexty < 0 || nexty >= grid[0].size()) continue;\n        // 不符合条件，不继续遍历\n        if (grid[nextx][nexty] == 0 || grid[nextx][nexty] == 2) continue;\n        dfs (grid, nextx, nexty);\n    }\n    return;\n}\n\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<vector<int>> grid(n, vector<int>(m, 0));\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cin >> grid[i][j];\n        }\n    }\n\n    // 步骤一：\n    // 从左侧边，和右侧边 向中间遍历\n    for (int i = 0; i < n; i++) {\n        if (grid[i][0] == 1) dfs(grid, i, 0);\n        if (grid[i][m - 1] == 1) dfs(grid, i, m - 1);\n    }\n\n    // 从上边和下边 向中间遍历\n    for (int j = 0; j < m; j++) {\n        if (grid[0][j] == 1) dfs(grid, 0, j);\n        if (grid[n - 1][j] == 1) dfs(grid, n - 1, j);\n    }\n    // 步骤二、步骤三\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            if (grid[i][j] == 1) grid[i][j] = 0;\n            if (grid[i][j] == 2) grid[i][j] = 1;\n        }\n    }\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < m; j++) {\n            cout << grid[i][j] << \" \";\n        }\n        cout << endl;\n    }\n}\n#其他语言版本\n#Java\n\nimport java.util.Scanner;\n\npublic class Main {\n    static int[][] dir = { {-1, 0}, {0, -1}, {1, 0}, {0, 1} }; // 保存四个方向\n\n    public static void dfs(int[][] grid, int x, int y) {\n        grid[x][y] = 2;\n        for (int[] d : dir) {\n            int nextX = x + d[0];\n            int nextY = y + d[1];\n            // 超过边界\n            if (nextX < 0 || nextX >= grid.length || nextY < 0 || nextY >= grid[0].length) continue;\n            // 不符合条件，不继续遍历\n            if (grid[nextX][nextY] == 0 || grid[nextX][nextY] == 2) continue;\n            dfs(grid, nextX, nextY);\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int m = scanner.nextInt();\n        int[][] grid = new int[n][m];\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                grid[i][j] = scanner.nextInt();\n            }\n        }\n\n        // 步骤一：\n        // 从左侧边，和右侧边 向中间遍历\n        for (int i = 0; i < n; i++) {\n            if (grid[i][0] == 1) dfs(grid, i, 0);\n            if (grid[i][m - 1] == 1) dfs(grid, i, m - 1);\n        }\n\n        // 从上边和下边 向中间遍历\n        for (int j = 0; j < m; j++) {\n            if (grid[0][j] == 1) dfs(grid, 0, j);\n            if (grid[n - 1][j] == 1) dfs(grid, n - 1, j);\n        }\n\n        // 步骤二、步骤三\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                if (grid[i][j] == 1) grid[i][j] = 0;\n                if (grid[i][j] == 2) grid[i][j] = 1;\n            }\n        }\n\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < m; j++) {\n                System.out.print(grid[i][j] + \" \");\n            }\n            System.out.println();\n        }\n        \n        scanner.close();\n    }\n}\n\n\n#Python\n\ndef dfs(grid, x, y):\n    grid[x][y] = 2\n    directions = [(-1, 0), (0, -1), (1, 0), (0, 1)]  # 四个方向\n    for dx, dy in directions:\n        nextx, nexty = x + dx, y + dy\n        # 超过边界\n        if nextx < 0 or nextx >= len(grid) or nexty < 0 or nexty >= len(grid[0]):\n            continue\n        # 不符合条件，不继续遍历\n        if grid[nextx][nexty] == 0 or grid[nextx][nexty] == 2:\n            continue\n        dfs(grid, nextx, nexty)\n\ndef main():\n    n, m = map(int, input().split())\n    grid = [[int(x) for x in input().split()] for _ in range(n)]\n\n    # 步骤一：\n    # 从左侧边，和右侧边 向中间遍历\n    for i in range(n):\n        if grid[i][0] == 1:\n            dfs(grid, i, 0)\n        if grid[i][m - 1] == 1:\n            dfs(grid, i, m - 1)\n\n    # 从上边和下边 向中间遍历\n    for j in range(m):\n        if grid[0][j] == 1:\n            dfs(grid, 0, j)\n        if grid[n - 1][j] == 1:\n            dfs(grid, n - 1, j)\n\n    # 步骤二、步骤三\n    for i in range(n):\n        for j in range(m):\n            if grid[i][j] == 1:\n                grid[i][j] = 0\n            if grid[i][j] == 2:\n                grid[i][j] = 1\n\n    # 打印结果\n    for row in grid:\n        print(' '.join(map(str, row)))\n\nif __name__ == \"__main__\":\n    main()\n广搜版\n\nfrom collections import deque\n\nn, m = list(map(int, input().split()))\ng = []\nfor _ in range(n):\n    row = list(map(int,input().split()))\n    g.append(row)\n    \ndirections = [(1,0),(-1,0),(0,1),(0,-1)]\ncount = 0\n\ndef bfs(r,c,mode):\n    global count \n    q = deque()\n    q.append((r,c))\n    count += 1\n    \n    while q:\n        r, c = q.popleft()\n        if mode:\n            g[r][c] = 2\n            \n        for di in directions:\n            next_r = r + di[0]\n            next_c = c + di[1]\n            if next_c < 0 or next_c >= m or next_r < 0 or next_r >= n:\n                continue\n            if g[next_r][next_c] == 1:\n                q.append((next_r,next_c))\n                if mode:\n                    g[r][c] = 2\n                    \n                count += 1\n    \n\nfor i in range(n):\n    if g[i][0] == 1: bfs(i,0,True)\n    if g[i][m-1] == 1: bfs(i, m-1,True)\n    \nfor j in range(m):\n    if g[0][j] == 1: bfs(0,j,1)\n    if g[n-1][j] == 1: bfs(n-1,j,1)\n\nfor i in range(n):\n    for j in range(m):\n        if g[i][j] == 2:\n            g[i][j] = 1\n        else:\n            g[i][j] = 0\n            \nfor row in g:\n    print(\" \".join(map(str, row)))"
+}

@@ -1,0 +1,307 @@
+{
+  "id": "AP_a50a4eb2",
+  "title": "最大二叉树",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/maximum-binary-tree/",
+  "description": "一个不含重复元素的整数数组。一个以此数组构建的最大二叉树定义如下：\n\n二叉树的根是数组中的最大元素。\n左子树是通过数组中最大值左边部分构造出的最大二叉树。\n右子树是通过数组中最大值右边部分构造出的最大二叉树。\n通过给定的数组构建最大二叉树，并且输出这个树的根节点。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "递归",
+    "分治"
+  ],
+  "data_structure_tags": [
+    "二叉树",
+    "数组"
+  ],
+  "technique_tags": [
+    "前序遍历",
+    "最优化"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过递归方法构建最大二叉树。首先在给定数组中找到最大值作为当前子树的根节点，然后分别用最大值左边和右边的部分数组递归地构造左子树和右子树。",
+  "key_insights": [
+    {
+      "content": "使用递归的方式可以有效地根据数组中的最大元素来构建二叉树，并且保证了每次选择的最大元素作为子树的根节点。"
+    },
+    {
+      "content": "通过传递数组的索引而非创建新的数组片段，可以显著减少内存使用并提高效率。"
+    },
+    {
+      "content": "允许空节点进入递归简化了代码逻辑，但需要调整终止条件以适应这种变化。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "最大二叉树的构建过程如下：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "TreeNode* constructMaximumBinaryTree(vector<int>& nums) {\n    TreeNode* node = new TreeNode(0);\n    if (nums.size() == 1) {\n        node->val = nums[0];\n        return node;\n    }\n    int maxValue = 0;\n    int maxValueIndex = 0;\n    for (int i = 0; i < nums.size(); i++) {\n        if (nums[i] > maxValue) {\n            maxValue = nums[i];\n            maxValueIndex = i;\n        }\n    }\n    node->val = maxValue;\n    if (maxValueIndex > 0) {\n        vector<int> newVec(nums.begin(), nums.begin() + maxValueIndex);\n        node->left = constructMaximumBinaryTree(newVec);\n    }\n    if (maxValueIndex < (nums.size() - 1)) {\n        vector<int> newVec(nums.begin() + maxValueIndex + 1, nums.end());\n        node->right = constructMaximumBinaryTree(newVec);\n    }\n    return node;\n}",
+          "description": "构造最大二叉树的原始方法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    TreeNode* traversal(vector<int>& nums, int left, int right) {\n        if (left >= right) return nullptr;\n        int maxValueIndex = left;\n        for (int i = left + 1; i < right; ++i) {\n            if (nums[i] > nums[maxValueIndex]) maxValueIndex = i;\n        }\n        TreeNode* root = new TreeNode(nums[maxValueIndex]);\n        root->left = traversal(nums, left, maxValueIndex);\n        root->right = traversal(nums, maxValueIndex + 1, right);\n        return root;\n    }\npublic:\n    TreeNode* constructMaximumBinaryTree(vector<int>& nums) {\n        return traversal(nums, 0, nums.size());\n    }\n};",
+          "description": "通过下标优化后的最大二叉树构建方法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode constructMaximumBinaryTree(int[] nums) {\n        return constructMaximumBinaryTree1(nums, 0, nums.length);\n    }\n\n    public TreeNode constructMaximumBinaryTree1(int[] nums, int leftIndex, int rightIndex) {\n        if (rightIndex - leftIndex < 1) {\n            return null;\n        }\n        if (rightIndex - leftIndex == 1) {\n            return new TreeNode(nums[leftIndex]);\n        }\n        int maxIndex = leftIndex;\n        int maxVal = nums[maxIndex];\n        for (int i = leftIndex + 1; i < rightIndex; i++) {\n            if (nums[i] > maxVal){\n                maxVal = nums[i];\n                maxIndex = i;\n            }\n        }\n        TreeNode root = new TreeNode(maxVal);\n        root.left = constructMaximumBinaryTree1(nums, leftIndex, maxIndex);\n        root.right = constructMaximumBinaryTree1(nums, maxIndex + 1, rightIndex);\n        return root;\n    }\n}",
+          "description": "Java实现的最大二叉树构建"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode:\n        if len(nums) == 1:\n            return TreeNode(nums[0])\n        node = TreeNode(0)\n        maxValue = 0\n        maxValueIndex = 0\n        for i in range(len(nums)):\n            if nums[i] > maxValue:\n                maxValue = nums[i]\n                maxValueIndex = i\n        node.val = maxValue\n        if maxValueIndex > 0:\n            new_list = nums[:maxValueIndex]\n            node.left = self.constructMaximumBinaryTree(new_list)\n        if maxValueIndex < len(nums) - 1:\n            new_list = nums[maxValueIndex+1:]\n            node.right = self.constructMaximumBinaryTree(new_list)\n        return node",
+          "description": "Python基础版最大二叉树构建"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def traversal(self, nums: List[int], left: int, right: int) -> TreeNode:\n        if left >= right:\n            return None\n        maxValueIndex = left\n        for i in range(left + 1, right):\n            if nums[i] > nums[maxValueIndex]:\n                maxValueIndex = i\n        root = TreeNode(nums[maxValueIndex])\n        root.left = self.traversal(nums, left, maxValueIndex)\n        root.right = self.traversal(nums, maxValueIndex + 1, right)\n        return root\n\n    def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode:\n        return self.traversal(nums, 0, len(nums))",
+          "description": "使用下标的Python版本最大二叉树构建"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode:\n        if not nums:\n            return None\n        max_val = max(nums)\n        max_index = nums.index(max_val)\n        node = TreeNode(max_val)\n        node.left = self.constructMaximumBinaryTree(nums[:max_index])\n        node.right = self.constructMaximumBinaryTree(nums[max_index+1:])\n        return node",
+          "description": "使用切片的Python版本最大二叉树构建"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "拓展",
+      "text": "可以发现上面的代码看上去简洁一些，主要是因为第二版其实是允许空节点进入递归，所以不用在递归的时候加判断节点是否为空",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: TreeNode* traversal(vector<int>& nums, int left, int right) { if (left >= right) return nullptr; int maxValueIndex = left; for (int i = left + 1; i < right; ++i) { if (nums[i] > nums[maxValueIndex]) maxValueIndex = i; } TreeNode* root = new TreeNode(nums[maxValueIndex]); root->left = traversal(nums, left, maxValueIndex); root->right = traversal(nums, maxValueIndex + 1, right); return root; } public: TreeNode* constructMaximumBinaryTree(vector<int>& nums) { return traversal(nums, 0, nums.size()); }};",
+          "description": "使用C++实现的最大二叉树构造函数，通过递归和下标索引直接在原数组上操作。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode constructMaximumBinaryTree(int[] nums) { return constructMaximumBinaryTree1(nums, 0, nums.length); } public TreeNode constructMaximumBinaryTree1(int[] nums, int leftIndex, int rightIndex) { if (rightIndex - leftIndex < 1) { return null; } if (rightIndex - leftIndex == 1) { return new TreeNode(nums[leftIndex]); } int maxIndex = leftIndex; int maxVal = nums[maxIndex]; for (int i = leftIndex + 1; i < rightIndex; i++) { if (nums[i] > maxVal){ maxVal = nums[i]; maxIndex = i; } } TreeNode root = new TreeNode(maxVal); root.left = constructMaximumBinaryTree1(nums, leftIndex, maxIndex); root.right = constructMaximumBinaryTree1(nums, maxIndex + 1, rightIndex); return root; }}",
+          "description": "使用Java实现的最大二叉树构造函数，通过递归和下标索引来构建树。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def traversal(self, nums, left, right): if left >= right: return None maxValueIndex = left for i in range(left + 1, right): if nums[i] > nums[maxValueIndex]: maxValueIndex = i root = TreeNode(nums[maxValueIndex]) root.left = self.traversal(nums, left, maxValueIndex) root.right = self.traversal(nums, maxValueIndex + 1, right) return root def constructMaximumBinaryTree(self, nums): return self.traversal(nums, 0, len(nums))",
+          "description": "使用Python实现的最大二叉树构造函数，利用递归和数组切片来构建最大二叉树。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "这道题目其实和 二叉树：构造二叉树登场！ (https://programmercarl.com/0106.%E4%BB%8E%E4%B8%AD%E5%BA%8F%E4%B8%8E%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91.html)是一个思路，比二叉树：构造二叉树登场！ (https://programmercarl.com/0106.%E4%BB%8E%E4%B8%AD%E5%BA%8F%E4%B8%8E%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91.html)还简单一些。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* constructMaximumBinaryTree(vector<int>& nums) {\n        TreeNode* node = new TreeNode(0);\n        if (nums.size() == 1) {\n            node->val = nums[0];\n            return node;\n        }\n        int maxValue = 0;\n        int maxValueIndex = 0;\n        for (int i = 0; i < nums.size(); i++) {\n            if (nums[i] > maxValue) {\n                maxValue = nums[i];\n                maxValueIndex = i;\n            }\n        }\n        node->val = maxValue;\n        if (maxValueIndex > 0) {\n            vector<int> newVec(nums.begin(), nums.begin() + maxValueIndex);\n            node->left = constructMaximumBinaryTree(newVec);\n        }\n        if (maxValueIndex < (nums.size() - 1)) {\n            vector<int> newVec(nums.begin() + maxValueIndex + 1, nums.end());\n            node->right = constructMaximumBinaryTree(newVec);\n        }\n        return node;\n    }\n};",
+          "description": "C++实现的构建最大二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    TreeNode* traversal(vector<int>& nums, int left, int right) {\n        if (left >= right) return nullptr;\n        int maxValueIndex = left;\n        for (int i = left + 1; i < right; ++i) {\n            if (nums[i] > nums[maxValueIndex]) maxValueIndex = i;\n        }\n        TreeNode* root = new TreeNode(nums[maxValueIndex]);\n        root->left = traversal(nums, left, maxValueIndex);\n        root->right = traversal(nums, maxValueIndex + 1, right);\n        return root;\n    }\npublic:\n    TreeNode* constructMaximumBinaryTree(vector<int>& nums) {\n        return traversal(nums, 0, nums.size());\n    }\n};",
+          "description": "优化后的C++实现，使用下标代替新数组"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode constructMaximumBinaryTree(int[] nums) {\n        return constructMaximumBinaryTree1(nums, 0, nums.length);\n    }\n    public TreeNode constructMaximumBinaryTree1(int[] nums, int leftIndex, int rightIndex) {\n        if (rightIndex - leftIndex < 1) {\n            return null;\n        }\n        if (rightIndex - leftIndex == 1) {\n            return new TreeNode(nums[leftIndex]);\n        }\n        int maxIndex = leftIndex;\n        int maxVal = nums[maxIndex];\n        for (int i = leftIndex + 1; i < rightIndex; i++) {\n            if (nums[i] > maxVal){\n                maxVal = nums[i];\n                maxIndex = i;\n            }\n        }\n        TreeNode root = new TreeNode(maxVal);\n        root.left = constructMaximumBinaryTree1(nums, leftIndex, maxIndex);\n        root.right = constructMaximumBinaryTree1(nums, maxIndex + 1, rightIndex);\n        return root;\n    }\n}",
+          "description": "Java实现的构建最大二叉树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode:\n        if len(nums) == 1:\n            return TreeNode(nums[0])\n        node = TreeNode(0)\n        maxValue = 0\n        maxValueIndex = 0\n        for i in range(len(nums)):\n            if nums[i] > maxValue:\n                maxValue = nums[i]\n                maxValueIndex = i\n        node.val = maxValue\n        if maxValueIndex > 0:\n            new_list = nums[:maxValueIndex]\n            node.left = self.constructMaximumBinaryTree(new_list)\n        if maxValueIndex < len(nums) - 1:\n            new_list = nums[maxValueIndex+1:]\n            node.right = self.constructMaximumBinaryTree(new_list)\n        return node",
+          "description": "基础版Python实现的构建最大二叉树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def traversal(self, nums: List[int], left: int, right: int) -> TreeNode:\n        if left >= right:\n            return None\n        maxValueIndex = left\n        for i in range(left + 1, right):\n            if nums[i] > nums[maxValueIndex]:\n                maxValueIndex = i\n        root = TreeNode(nums[maxValueIndex])\n        root.left = self.traversal(nums, left, maxValueIndex)\n        root.right = self.traversal(nums, maxValueIndex + 1, right)\n        return root\n    def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode:\n        return self.traversal(nums, 0, len(nums))",
+          "description": "使用下标的Python实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode:\n        if not nums:\n            return None\n        max_val = max(nums)\n        max_index = nums.index(max_val)\n        node = TreeNode(max_val)\n        node.left = self.constructMaximumBinaryTree(nums[:max_index])\n        node.right = self.constructMaximumBinaryTree(nums[max_index+1:])\n        return node",
+          "description": "使用切片的Python实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "TreeNode* constructMaximumBinaryTree(vector<int>& nums) {\n    TreeNode* node = new TreeNode(0);\n    if (nums.size() == 1) {\n        node->val = nums[0];\n        return node;\n    }\n    int maxValue = 0;\n    int maxValueIndex = 0;\n    for (int i = 0; i < nums.size(); i++) {\n        if (nums[i] > maxValue) {\n            maxValue = nums[i];\n            maxValueIndex = i;\n        }\n    }\n    node->val = maxValue;\n    if (maxValueIndex > 0) {\n        vector<int> newVec(nums.begin(), nums.begin() + maxValueIndex);\n        node->left = constructMaximumBinaryTree(newVec);\n    }\n    if (maxValueIndex < (nums.size() - 1)) {\n        vector<int> newVec(nums.begin() + maxValueIndex + 1, nums.end());\n        node->right = constructMaximumBinaryTree(newVec);\n    }\n    return node;\n}",
+          "description": "构造最大二叉树的初始版本"
+        },
+        {
+          "language": "cpp",
+          "code": "private:\n    TreeNode* traversal(vector<int>& nums, int left, int right) {\n        if (left >= right) return nullptr;\n\n        int maxValueIndex = left;\n        for (int i = left + 1; i < right; ++i) {\n            if (nums[i] > nums[maxValueIndex]) maxValueIndex = i;\n        }\n\n        TreeNode* root = new TreeNode(nums[maxValueIndex]);\n\n        root->left = traversal(nums, left, maxValueIndex);\n        root->right = traversal(nums, maxValueIndex + 1, right);\n\n        return root;\n    }\npublic:\n    TreeNode* constructMaximumBinaryTree(vector<int>& nums) {\n        return traversal(nums, 0, nums.size());\n    }",
+          "description": "构造最大二叉树的优化版本，使用下标减少数组复制"
+        },
+        {
+          "language": "java",
+          "code": "public TreeNode constructMaximumBinaryTree(int[] nums) {\n    return constructMaximumBinaryTree1(nums, 0, nums.length);\n}\n\npublic TreeNode constructMaximumBinaryTree1(int[] nums, int leftIndex, int rightIndex) {\n    if (rightIndex - leftIndex < 1) {\n        return null;\n    }\n    if (rightIndex - leftIndex == 1) {\n        return new TreeNode(nums[leftIndex]);\n    }\n    int maxIndex = leftIndex;\n    int maxVal = nums[maxIndex];\n    for (int i = leftIndex + 1; i < rightIndex; i++) {\n        if (nums[i] > maxVal){\n            maxVal = nums[i];\n            maxIndex = i;\n        }\n    }\n    TreeNode root = new TreeNode(maxVal);\n    root.left = constructMaximumBinaryTree1(nums, leftIndex, maxIndex);\n    root.right = constructMaximumBinaryTree1(nums, maxIndex + 1, rightIndex);\n    return root;\n}",
+          "description": "Java版本的最大二叉树构造"
+        },
+        {
+          "language": "python",
+          "code": "def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode:\n    if len(nums) == 1:\n        return TreeNode(nums[0])\n    node = TreeNode(0)\n    maxValue = 0\n    maxValueIndex = 0\n    for i in range(len(nums)):\n        if nums[i] > maxValue:\n            maxValue = nums[i]\n            maxValueIndex = i\n    node.val = maxValue\n    if maxValueIndex > 0:\n        new_list = nums[:maxValueIndex]\n        node.left = self.constructMaximumBinaryTree(new_list)\n    if maxValueIndex < len(nums) - 1:\n        new_list = nums[maxValueIndex+1:]\n        node.right = self.constructMaximumBinaryTree(new_list)\n    return node",
+          "description": "Python版本的基础版最大二叉树构造"
+        },
+        {
+          "language": "python",
+          "code": "def traversal(self, nums: List[int], left: int, right: int) -> TreeNode:\n    if left >= right:\n        return None\n    maxValueIndex = left\n    for i in range(left + 1, right):\n        if nums[i] > nums[maxValueIndex]:\n            maxValueIndex = i\n    root = TreeNode(nums[maxValueIndex])\n    root.left = self.traversal(nums, left, maxValueIndex)\n    root.right = self.traversal(nums, maxValueIndex + 1, right)\n    return root\n\ndef constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode:\n    return self.traversal(nums, 0, len(nums))",
+          "description": "Python版本使用下标的最大二叉树构造"
+        },
+        {
+          "language": "python",
+          "code": "def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode:\n    if not nums:\n        return None\n    max_val = max(nums)\n    max_index = nums.index(max_val)\n    node = TreeNode(max_val)\n    node.left = self.constructMaximumBinaryTree(nums[:max_index])\n    node.right = self.constructMaximumBinaryTree(nums[max_index+1:])\n    return node",
+          "description": "Python版本使用切片的最大二叉树构造"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    TreeNode* constructMaximumBinaryTree(vector<int>& nums) {\n        TreeNode* node = new TreeNode(0);\n        if (nums.size() == 1) {\n            node->val = nums[0];\n            return node;\n        }\n        // 找到数组中最大的值和对应的下标\n        int maxValue = 0;\n        int maxValueIndex = 0;\n        for (int i = 0; i < nums.size(); i++) {\n            if (nums[i] > maxValue) {\n                maxValue = nums[i];\n                maxValueIndex = i;\n            }\n        }\n        node->val = maxValue;\n        // 最大值所在的下标左区间 构造左子树\n        if (maxValueIndex > 0) {\n            vector<int> newVec(nums.begin(), nums.begin() + maxValueIndex);\n            node->left = constructMaximumBinaryTree(newVec);\n        }\n        // 最大值所在的下标右区间 构造右子树\n        if (maxValueIndex < (nums.size() - 1)) {\n            vector<int> newVec(nums.begin() + maxValueIndex + 1, nums.end());\n            node->right = constructMaximumBinaryTree(newVec);\n        }\n        return node;\n    }\n};",
+          "description": "C++版本的构建最大二叉树"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    // 在左闭右开区间[left, right)，构造二叉树\n    TreeNode* traversal(vector<int>& nums, int left, int right) {\n        if (left >= right) return nullptr;\n\n        // 分割点下标：maxValueIndex\n        int maxValueIndex = left;\n        for (int i = left + 1; i < right; ++i) {\n            if (nums[i] > nums[maxValueIndex]) maxValueIndex = i;\n        }\n\n        TreeNode* root = new TreeNode(nums[maxValueIndex]);\n\n        // 左闭右开：[left, maxValueIndex)\n        root->left = traversal(nums, left, maxValueIndex);\n\n        // 左闭右开：[maxValueIndex + 1, right)\n        root->right = traversal(nums, maxValueIndex + 1, right);\n\n        return root;\n    }\npublic:\n    TreeNode* constructMaximumBinaryTree(vector<int>& nums) {\n        return traversal(nums, 0, nums.size());\n    }\n};",
+          "description": "优化后的C++版本，通过原数组上的索引操作来构建最大二叉树"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public TreeNode constructMaximumBinaryTree(int[] nums) {\n        return constructMaximumBinaryTree1(nums, 0, nums.length);\n    }\n\n    public TreeNode constructMaximumBinaryTree1(int[] nums, int leftIndex, int rightIndex) {\n        if (rightIndex - leftIndex < 1) {// 没有元素了\n            return null;\n        }\n        if (rightIndex - leftIndex == 1) {// 只有一个元素\n            return new TreeNode(nums[leftIndex]);\n        }\n        int maxIndex = leftIndex;// 最大值所在位置\n        int maxVal = nums[maxIndex];// 最大值\n        for (int i = leftIndex + 1; i < rightIndex; i++) {\n            if (nums[i] > maxVal){\n                maxVal = nums[i];\n                maxIndex = i;\n            }\n        }\n        TreeNode root = new TreeNode(maxVal);\n        // 根据maxIndex划分左右子树\n        root.left = constructMaximumBinaryTree1(nums, leftIndex, maxIndex);\n        root.right = constructMaximumBinaryTree1(nums, maxIndex + 1, rightIndex);\n        return root;\n    }\n}",
+          "description": "Java版本的构建最大二叉树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode:\n        if len(nums) == 1:\n            return TreeNode(nums[0])\n        node = TreeNode(0)\n        # 找到数组中最大的值和对应的下标\n        maxValue = 0\n        maxValueIndex = 0\n        for i in range(len(nums)):\n            if nums[i] > maxValue:\n                maxValue = nums[i]\n                maxValueIndex = i\n        node.val = maxValue\n        # 最大值所在的下标左区间 构造左子树\n        if maxValueIndex > 0:\n            new_list = nums[:maxValueIndex]\n            node.left = self.constructMaximumBinaryTree(new_list)\n        # 最大值所在的下标右区间 构造右子树\n        if maxValueIndex < len(nums) - 1:\n            new_list = nums[maxValueIndex+1:]\n            node.right = self.constructMaximumBinaryTree(new_list)\n        return node",
+          "description": "Python版本的基础版构建最大二叉树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def traversal(self, nums: List[int], left: int, right: int) -> TreeNode:\n        if left >= right:\n            return None\n        maxValueIndex = left\n        for i in range(left + 1, right):\n            if nums[i] > nums[maxValueIndex]:\n                maxValueIndex = i\n        root = TreeNode(nums[maxValueIndex])\n        root.left = self.traversal(nums, left, maxValueIndex)\n        root.right = self.traversal(nums, maxValueIndex + 1, right)\n        return root\n\n    def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode:\n        return self.traversal(nums, 0, len(nums))",
+          "description": "Python版本使用下标构建最大二叉树"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode:\n        if not nums:\n            return None\n        max_val = max(nums)\n        max_index = nums.index(max_val)\n        node = TreeNode(max_val)\n        node.left = self.constructMaximumBinaryTree(nums[:max_index])\n        node.right = self.constructMaximumBinaryTree(nums[max_index+1:])\n        return node",
+          "description": "Python版本使用切片构建最大二叉树"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "(版本一) 基础版",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: TreeNode* constructMaximumBinaryTree(vector<int>& nums) {TreeNode* node = new TreeNode(0);if (nums.size() == 1) {node->val = nums[0];return node;}int maxValue = 0;int maxValueIndex = 0;for (int i = 0; i < nums.size(); i++) {if (nums[i] > maxValue) {maxValue = nums[i];maxValueIndex = i;}}node->val = maxValue;if (maxValueIndex > 0) {vector<int> newVec(nums.begin(), nums.begin() + maxValueIndex);node->left = constructMaximumBinaryTree(newVec);}if (maxValueIndex < (nums.size() - 1)) {vector<int> newVec(nums.begin() + maxValueIndex + 1, nums.end());node->right = constructMaximumBinaryTree(newVec);}return node;}};",
+          "description": "基础版本的C++实现最大二叉树构造"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: TreeNode* traversal(vector<int>& nums, int left, int right) {if (left >= right) return nullptr;int maxValueIndex = left;for (int i = left + 1; i < right; ++i) {if (nums[i] > nums[maxValueIndex]) maxValueIndex = i;}TreeNode* root = new TreeNode(nums[maxValueIndex]);root->left = traversal(nums, left, maxValueIndex);root->right = traversal(nums, maxValueIndex + 1, right);return root;}public: TreeNode* constructMaximumBinaryTree(vector<int>& nums) {return traversal(nums, 0, nums.size());}};",
+          "description": "优化后的C++实现最大二叉树构造，使用下标索引避免数组复制"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public TreeNode constructMaximumBinaryTree(int[] nums) {return constructMaximumBinaryTree1(nums, 0, nums.length);}public TreeNode constructMaximumBinaryTree1(int[] nums, int leftIndex, int rightIndex) {if (rightIndex - leftIndex < 1) {return null;}if (rightIndex - leftIndex == 1) {return new TreeNode(nums[leftIndex]);}int maxIndex = leftIndex;int maxVal = nums[maxIndex];for (int i = leftIndex + 1; i < rightIndex; i++) {if (nums[i] > maxVal){maxVal = nums[i];maxIndex = i;}}TreeNode root = new TreeNode(maxVal);root.left = constructMaximumBinaryTree1(nums, leftIndex, maxIndex);root.right = constructMaximumBinaryTree1(nums, maxIndex + 1, rightIndex);return root;}}",
+          "description": "Java实现的最大二叉树构造"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode: if len(nums) == 1: return TreeNode(nums[0]) node = TreeNode(0) maxValue = 0 maxValueIndex = 0 for i in range(len(nums)): if nums[i] > maxValue: maxValue = nums[i] maxValueIndex = i node.val = maxValue if maxValueIndex > 0: new_list = nums[:maxValueIndex] node.left = self.constructMaximumBinaryTree(new_list) if maxValueIndex < len(nums) - 1: new_list = nums[maxValueIndex+1:] node.right = self.constructMaximumBinaryTree(new_list) return node",
+          "description": "Python基础版本实现最大二叉树构造"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def traversal(self, nums: List[int], left: int, right: int) -> TreeNode: if left >= right: return None maxValueIndex = left for i in range(left + 1, right): if nums[i] > nums[maxValueIndex]: maxValueIndex = i root = TreeNode(nums[maxValueIndex]) root.left = self.traversal(nums, left, maxValueIndex) root.right = self.traversal(nums, maxValueIndex + 1, right) return root def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode: return self.traversal(nums, 0, len(nums))",
+          "description": "Python使用下标索引优化实现最大二叉树构造"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode: if not nums: return None max_val = max(nums) max_index = nums.index(max_val) node = TreeNode(max_val) node.left = self.constructMaximumBinaryTree(nums[:max_index]) node.right = self.constructMaximumBinaryTree(nums[max_index+1:]) return node",
+          "description": "Python使用切片方式实现最大二叉树构造"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: TreeNode* constructMaximumBinaryTree(vector<int>& nums) { TreeNode* node = new TreeNode(0); if (nums.size() == 1) { node->val = nums[0]; return node; } int maxValue = 0; int maxValueIndex = 0; for (int i = 0; i < nums.size(); i++) { if (nums[i] > maxValue) { maxValue = nums[i]; maxValueIndex = i; } } node->val = maxValue; if (maxValueIndex > 0) { vector<int> newVec(nums.begin(), nums.begin() + maxValueIndex); node->left = constructMaximumBinaryTree(newVec); } if (maxValueIndex < (nums.size() - 1)) { vector<int> newVec(nums.begin() + maxValueIndex + 1, nums.end()); node->right = constructMaximumBinaryTree(newVec); } return node; }};",
+      "description": "C++实现的构建最大二叉树"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {private: TreeNode* traversal(vector<int>& nums, int left, int right) { if (left >= right) return nullptr; int maxValueIndex = left; for (int i = left + 1; i < right; ++i) { if (nums[i] > nums[maxValueIndex]) maxValueIndex = i; } TreeNode* root = new TreeNode(nums[maxValueIndex]); root->left = traversal(nums, left, maxValueIndex); root->right = traversal(nums, maxValueIndex + 1, right); return root; }public: TreeNode* constructMaximumBinaryTree(vector<int>& nums) { return traversal(nums, 0, nums.size()); }};",
+      "description": "优化后的C++实现，通过下标索引直接在原数组上操作"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public TreeNode constructMaximumBinaryTree(int[] nums) { return constructMaximumBinaryTree1(nums, 0, nums.length); } public TreeNode constructMaximumBinaryTree1(int[] nums, int leftIndex, int rightIndex) { if (rightIndex - leftIndex < 1) { return null; } if (rightIndex - leftIndex == 1) { return new TreeNode(nums[leftIndex]); } int maxIndex = leftIndex; int maxVal = nums[maxIndex]; for (int i = leftIndex + 1; i < rightIndex; i++) { if (nums[i] > maxVal){ maxVal = nums[i]; maxIndex = i; } } TreeNode root = new TreeNode(maxVal); root.left = constructMaximumBinaryTree1(nums, leftIndex, maxIndex); root.right = constructMaximumBinaryTree1(nums, maxIndex + 1, rightIndex); return root; }}",
+      "description": "Java实现的构建最大二叉树"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode: if len(nums) == 1: return TreeNode(nums[0]) node = TreeNode(0) maxValue = 0 maxValueIndex = 0 for i in range(len(nums)): if nums[i] > maxValue: maxValue = nums[i] maxValueIndex = i node.val = maxValue if maxValueIndex > 0: new_list = nums[:maxValueIndex] node.left = self.constructMaximumBinaryTree(new_list) if maxValueIndex < len(nums) - 1: new_list = nums[maxValueIndex+1:] node.right = self.constructMaximumBinaryTree(new_list) return node",
+      "description": "Python版本一：基础版实现最大二叉树"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def traversal(self, nums: List[int], left: int, right: int) -> TreeNode: if left >= right: return None maxValueIndex = left for i in range(left + 1, right): if nums[i] > nums[maxValueIndex]: maxValueIndex = i root = TreeNode(nums[maxValueIndex]) root.left = self.traversal(nums, left, maxValueIndex) root.right = self.traversal(nums, maxValueIndex + 1, right) return root def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode: return self.traversal(nums, 0, len(nums))",
+      "description": "Python版本二：使用下标实现最大二叉树"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode: if not nums: return None max_val = max(nums) max_index = nums.index(max_val) node = TreeNode(max_val) node.left = self.constructMaximumBinaryTree(nums[:max_index]) node.right = self.constructMaximumBinaryTree(nums[max_index+1:]) return node",
+      "description": "Python版本三：使用切片实现最大二叉树"
+    }
+  ],
+  "common_mistakes": [
+    "忘记处理边界条件，比如数组长度为1时的情况。",
+    "在分割数组以构建左右子树时未正确处理索引范围。",
+    "没有考虑空区间导致的潜在问题。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/654.%E6%9C%80%E5%A4%A7%E4%BA%8C%E5%8F%89%E6%A0%91.gif",
+      "description": "图片显示了一个输入数组 `[3, 2, 1, 6, 0, 5]`，暗示可能涉及数组相关的算法或数据结构问题。",
+      "context": "该动图展示了根据给定数组构建最大二叉树的具体步骤。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/654.%E6%9C%80%E5%A4%A7%E4%BA%8C%E5%8F%89%E6%A0%91.gif",
+      "description": "GIF展示了如何通过给定数组递归地构建最大二叉树的过程。",
+      "context": "该GIF动画展示了根据给定数组构建最大二叉树的全过程，包括如何选取根节点以及递归地构建左右子树。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\最大二叉树.txt",
+  "extracted_at": "2025-07-20T09:26:46.760280",
+  "raw_content": "最大二叉树\n力扣题目地址(https://leetcode.cn/problems/maximum-binary-tree/)\n\n给定一个不含重复元素的整数数组。一个以此数组构建的最大二叉树定义如下：\n\n二叉树的根是数组中的最大元素。\n左子树是通过数组中最大值左边部分构造出的最大二叉树。\n右子树是通过数组中最大值右边部分构造出的最大二叉树。\n通过给定的数组构建最大二叉树，并且输出这个树的根节点。\n\n示例 ：\n\n654.最大二叉树\n\n提示：\n\n给定的数组的大小在 [1, 1000] 之间。\n\n\n\n#思路\n最大二叉树的构建过程如下：\n\n654.最大二叉树 https://file1.kamacoder.com/i/algo/654.%E6%9C%80%E5%A4%A7%E4%BA%8C%E5%8F%89%E6%A0%91.gif\n\n构造树一般采用的是前序遍历，因为先构造中间节点，然后递归构造左子树和右子树。\n\n确定递归函数的参数和返回值\n参数传入的是存放元素的数组，返回该数组构造的二叉树的头结点，返回类型是指向节点的指针。\n\n代码如下：\n\nTreeNode* constructMaximumBinaryTree(vector<int>& nums)\n\n确定终止条件\n题目中说了输入的数组大小一定是大于等于1的，所以我们不用考虑小于1的情况，那么当递归遍历的时候，如果传入的数组大小为1，说明遍历到了叶子节点了。\n\n那么应该定义一个新的节点，并把这个数组的数值赋给新的节点，然后返回这个节点。 这表示一个数组大小是1的时候，构造了一个新的节点，并返回。\n\n代码如下：\n\nTreeNode* node = new TreeNode(0);\nif (nums.size() == 1) {\n    node->val = nums[0];\n    return node;\n}\n确定单层递归的逻辑\n这里有三步工作\n\n先要找到数组中最大的值和对应的下标， 最大的值构造根节点，下标用来下一步分割数组。\n代码如下：\n\nint maxValue = 0;\nint maxValueIndex = 0;\nfor (int i = 0; i < nums.size(); i++) {\n    if (nums[i] > maxValue) {\n        maxValue = nums[i];\n        maxValueIndex = i;\n    }\n}\nTreeNode* node = new TreeNode(0);\nnode->val = maxValue;\n最大值所在的下标左区间 构造左子树\n这里要判断maxValueIndex > 0，因为要保证左区间至少有一个数值。\n\n代码如下：\n\nif (maxValueIndex > 0) {\n    vector<int> newVec(nums.begin(), nums.begin() + maxValueIndex);\n    node->left = constructMaximumBinaryTree(newVec);\n}\n最大值所在的下标右区间 构造右子树\n判断maxValueIndex < (nums.size() - 1)，确保右区间至少有一个数值。\n\n代码如下：\n\nif (maxValueIndex < (nums.size() - 1)) {\n    vector<int> newVec(nums.begin() + maxValueIndex + 1, nums.end());\n    node->right = constructMaximumBinaryTree(newVec);\n}\n这样我们就分析完了，整体代码如下：（详细注释）\n\nclass Solution {\npublic:\n    TreeNode* constructMaximumBinaryTree(vector<int>& nums) {\n        TreeNode* node = new TreeNode(0);\n        if (nums.size() == 1) {\n            node->val = nums[0];\n            return node;\n        }\n        // 找到数组中最大的值和对应的下标\n        int maxValue = 0;\n        int maxValueIndex = 0;\n        for (int i = 0; i < nums.size(); i++) {\n            if (nums[i] > maxValue) {\n                maxValue = nums[i];\n                maxValueIndex = i;\n            }\n        }\n        node->val = maxValue;\n        // 最大值所在的下标左区间 构造左子树\n        if (maxValueIndex > 0) {\n            vector<int> newVec(nums.begin(), nums.begin() + maxValueIndex);\n            node->left = constructMaximumBinaryTree(newVec);\n        }\n        // 最大值所在的下标右区间 构造右子树\n        if (maxValueIndex < (nums.size() - 1)) {\n            vector<int> newVec(nums.begin() + maxValueIndex + 1, nums.end());\n            node->right = constructMaximumBinaryTree(newVec);\n        }\n        return node;\n    }\n};\n以上代码比较冗余，效率也不高，每次还要切割的时候每次都要定义新的vector（也就是数组），但逻辑比较清晰。\n\n和文章二叉树：构造二叉树登场！ (https://programmercarl.com/0106.%E4%BB%8E%E4%B8%AD%E5%BA%8F%E4%B8%8E%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91.html)中一样的优化思路，就是每次分隔不用定义新的数组，而是通过下标索引直接在原数组上操作。\n\n优化后代码如下：\n\nclass Solution {\nprivate:\n    // 在左闭右开区间[left, right)，构造二叉树\n    TreeNode* traversal(vector<int>& nums, int left, int right) {\n        if (left >= right) return nullptr;\n\n        // 分割点下标：maxValueIndex\n        int maxValueIndex = left;\n        for (int i = left + 1; i < right; ++i) {\n            if (nums[i] > nums[maxValueIndex]) maxValueIndex = i;\n        }\n\n        TreeNode* root = new TreeNode(nums[maxValueIndex]);\n\n        // 左闭右开：[left, maxValueIndex)\n        root->left = traversal(nums, left, maxValueIndex);\n\n        // 左闭右开：[maxValueIndex + 1, right)\n        root->right = traversal(nums, maxValueIndex + 1, right);\n\n        return root;\n    }\npublic:\n    TreeNode* constructMaximumBinaryTree(vector<int>& nums) {\n        return traversal(nums, 0, nums.size());\n    }\n};\n#拓展\n可以发现上面的代码看上去简洁一些，主要是因为第二版其实是允许空节点进入递归，所以不用在递归的时候加判断节点是否为空\n\n第一版递归过程：（加了if判断，为了不让空节点进入递归）\n\n\nif (maxValueIndex > 0) { // 这里加了判断是为了不让空节点进入递归\n    vector<int> newVec(nums.begin(), nums.begin() + maxValueIndex);\n    node->left = constructMaximumBinaryTree(newVec);\n}\n\nif (maxValueIndex < (nums.size() - 1)) { // 这里加了判断是为了不让空节点进入递归\n    vector<int> newVec(nums.begin() + maxValueIndex + 1, nums.end());\n    node->right = constructMaximumBinaryTree(newVec);\n}\n第二版递归过程： （如下代码就没有加if判断）\n\nroot->left = traversal(nums, left, maxValueIndex);\n\nroot->right = traversal(nums, maxValueIndex + 1, right);\n第二版代码是允许空节点进入递归，所以没有加if判断，当然终止条件也要有相应的改变。\n\n第一版终止条件，是遇到叶子节点就终止，因为空节点不会进入递归。\n\n第二版相应的终止条件，是遇到空节点，也就是数组区间为0，就终止了。\n\n#总结\n这道题目其实和 二叉树：构造二叉树登场！ (https://programmercarl.com/0106.%E4%BB%8E%E4%B8%AD%E5%BA%8F%E4%B8%8E%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91.html)是一个思路，比二叉树：构造二叉树登场！ (https://programmercarl.com/0106.%E4%BB%8E%E4%B8%AD%E5%BA%8F%E4%B8%8E%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91.html)还简单一些。\n\n注意类似用数组构造二叉树的题目，每次分隔尽量不要定义新的数组，而是通过下标索引直接在原数组上操作，这样可以节约时间和空间上的开销。\n\n一些同学也会疑惑，什么时候递归函数前面加if，什么时候不加if，这个问题我在最后也给出了解释。\n\n其实就是不同代码风格的实现，一般情况来说：如果让空节点（空指针）进入递归，就不加if，如果不让空节点进入递归，就加if限制一下， 终止条件也会相应的调整。\n\n#其他语言版本\n#Java\nclass Solution {\n    public TreeNode constructMaximumBinaryTree(int[] nums) {\n        return constructMaximumBinaryTree1(nums, 0, nums.length);\n    }\n\n    public TreeNode constructMaximumBinaryTree1(int[] nums, int leftIndex, int rightIndex) {\n        if (rightIndex - leftIndex < 1) {// 没有元素了\n            return null;\n        }\n        if (rightIndex - leftIndex == 1) {// 只有一个元素\n            return new TreeNode(nums[leftIndex]);\n        }\n        int maxIndex = leftIndex;// 最大值所在位置\n        int maxVal = nums[maxIndex];// 最大值\n        for (int i = leftIndex + 1; i < rightIndex; i++) {\n            if (nums[i] > maxVal){\n                maxVal = nums[i];\n                maxIndex = i;\n            }\n        }\n        TreeNode root = new TreeNode(maxVal);\n        // 根据maxIndex划分左右子树\n        root.left = constructMaximumBinaryTree1(nums, leftIndex, maxIndex);\n        root.right = constructMaximumBinaryTree1(nums, maxIndex + 1, rightIndex);\n        return root;\n    }\n}\n#Python\n(版本一) 基础版\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode:\n        if len(nums) == 1:\n            return TreeNode(nums[0])\n        node = TreeNode(0)\n        # 找到数组中最大的值和对应的下标\n        maxValue = 0\n        maxValueIndex = 0\n        for i in range(len(nums)):\n            if nums[i] > maxValue:\n                maxValue = nums[i]\n                maxValueIndex = i\n        node.val = maxValue\n        # 最大值所在的下标左区间 构造左子树\n        if maxValueIndex > 0:\n            new_list = nums[:maxValueIndex]\n            node.left = self.constructMaximumBinaryTree(new_list)\n        # 最大值所在的下标右区间 构造右子树\n        if maxValueIndex < len(nums) - 1:\n            new_list = nums[maxValueIndex+1:]\n            node.right = self.constructMaximumBinaryTree(new_list)\n        return node\n        \n(版本二) 使用下标\n\n\nclass Solution:\n    def traversal(self, nums: List[int], left: int, right: int) -> TreeNode:\n        if left >= right:\n            return None\n        maxValueIndex = left\n        for i in range(left + 1, right):\n            if nums[i] > nums[maxValueIndex]:\n                maxValueIndex = i\n        root = TreeNode(nums[maxValueIndex])\n        root.left = self.traversal(nums, left, maxValueIndex)\n        root.right = self.traversal(nums, maxValueIndex + 1, right)\n        return root\n\n    def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode:\n        return self.traversal(nums, 0, len(nums))\n\n(版本三) 使用切片\n\n\nclass Solution:\n    def constructMaximumBinaryTree(self, nums: List[int]) -> TreeNode:\n        if not nums:\n            return None\n        max_val = max(nums)\n        max_index = nums.index(max_val)\n        node = TreeNode(max_val)\n        node.left = self.constructMaximumBinaryTree(nums[:max_index])\n        node.right = self.constructMaximumBinaryTree(nums[max_index+1:])\n        return node"
+}

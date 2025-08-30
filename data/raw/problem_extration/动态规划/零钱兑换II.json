@@ -1,0 +1,666 @@
+{
+  "id": "AP_010c9047",
+  "title": "零钱兑换II",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/coin-change-ii/",
+  "description": "不同面额的硬币和一个总金额。写出函数来计算可以凑成总金额的硬币组合数。假设每一种面额的硬币有无限个。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "动态规划",
+    "背包问题"
+  ],
+  "data_structure_tags": [
+    "数组"
+  ],
+  "technique_tags": [
+    "状态转移方程",
+    "初始化DP表",
+    "组合数计算"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用动态规划解决完全背包问题，通过定义二维dp数组来表示使用前i种硬币凑成总金额j的方法数。递推公式为dp[i][j] = dp[i - 1][j] + dp[i][j - coins[i]]，其中dp[i][j]代表了考虑前i种面额时达到总额j的不同组合数量。",
+  "key_insights": [
+    {
+      "content": "题目要求的是组合数而不是排列数，这意味着不同的顺序被视为同一种组合。例如5=2+2+1和5=2+1+2都被视为同一种组合。"
+    },
+    {
+      "content": "与01背包不同，完全背包中每种物品可以被选取无限次。因此，在更新dp数组时，当前行可以直接基于之前的状态更新，而不需要回到上一行的状态（即dp[i-1][j-coins[i]]变为dp[i][j-coins[i]]）来反映这一点。"
+    },
+    {
+      "content": "为了确保求得的是组合数而非排列数，需要先遍历物品再遍历背包容量，这样可以避免重复计数不同顺序的相同组合。"
+    },
+    {
+      "content": "初始化dp[0] = 1，表示装满容量为0的背包有一种方法，即不放入任何物品。"
+    },
+    {
+      "content": "当背包容量小于当前硬币面值时，直接继承上一行的状态，即dp[i][j] = dp[i - 1][j]。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "二维dp讲解",
+      "text": "如果大家认真做完：分割等和子集 (https://www.programmercarl.com/0416.%E5%88%86%E5%89%B2%E7%AD%89%E5%92%8C%E5%AD%90%E9%9B%86.html)， 最后一块石头的重量II (https://www.programmercarl.com/1049.%E6%9C%80%E5%90%8E%E4%B8%80%E5%9D%97%E7%9F%B3%E5%A4%B4%E7%9A%84%E9%87%8D%E9%87%8FII.html)和 目标和(https://www.programmercarl.com/0494.%E7%9B%AE%E6%A0%87%E5%92%8C.html)",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int change(int amount, vector<int>& coins) {int bagSize = amount;vector<vector<uint64_t>> dp(coins.size(), vector<uint64_t>(bagSize + 1, 0));for (int j = 0; j <= bagSize; j++) {if (j % coins[0] == 0) dp[0][j] = 1;}for (int i = 0; i < coins.size(); i++) {dp[i][0] = 1;}for (int i = 1; i < coins.size(); i++) {for (int j = 0; j <= bagSize; j++) {if (coins[i] > j) dp[i][j] = dp[i - 1][j];else dp[i][j] = dp[i - 1][j] +  dp[i][j - coins[i]];}}return dp[coins.size() - 1][bagSize];}};",
+          "description": "二维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int change(int amount, vector<int>& coins) {vector<uint64_t> dp(amount + 1, 0);dp[0] = 1;for (int i = 0; i < coins.size(); i++) {for (int j = coins[i]; j <= amount; j++) {dp[j] += dp[j - coins[i]];}}return dp[amount];}};",
+          "description": "一维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int change(int amount, int[] coins) {int[] dp = new int[amount + 1];dp[0] = 1;for (int i = 0; i < coins.length; i++) {for (int j = coins[i]; j <= amount; j++) {dp[j] += dp[j - coins[i]];}}return dp[amount];}}",
+          "description": "Java语言实现的一维DP数组解决零钱兑换II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int change(int amount, int[] coins) {int[][] dp = new int[coins.length][amount+1];for(int i = 0; i < coins.length; i++){dp[i][0] = 1;}for(int j = coins[0]; j <= amount; j++){dp[0][j] += dp[0][j-coins[0]];}for(int i = 1; i < coins.length; i++){for(int j = 1; j <= amount; j++){if(j < coins[i]) dp[i][j] = dp[i-1][j];else dp[i][j] = dp[i][j-coins[i]] + dp[i-1][j];}}return dp[coins.length-1][amount];}}",
+          "description": "Java语言实现的二维DP数组解决零钱兑换II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def change(self, amount: int, coins: List[int]) -> int: dp = [0]*(amount + 1) dp[0] = 1 for i in range(len(coins)): for j in range(coins[i], amount + 1): dp[j] += dp[j - coins[i]] return dp[amount]",
+          "description": "Python语言实现的一维DP数组解决零钱兑换II"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "1、确定dp数组以及下标的含义",
+      "text": "定义二维dp数值 dp[i][j]：使用 下标为[0, i]的coins[i]能够凑满j（包括j）这么大容量的包，有dp[i][j]种组合方法。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        int bagSize = amount;\n\n        vector<vector<uint64_t>> dp(coins.size(), vector<uint64_t>(bagSize + 1, 0));\n\n        // 初始化最上行\n        for (int j = 0; j <= bagSize; j++) {\n            if (j % coins[0] == 0) dp[0][j] = 1;\n        }\n        // 初始化最左列\n        for (int i = 0; i < coins.size(); i++) {\n            dp[i][0] = 1;\n        }\n        // 以下遍历顺序行列可以颠倒\n        for (int i = 1; i < coins.size(); i++) { // 行，遍历物品\n            for (int j = 0; j <= bagSize; j++) { // 列，遍历背包\n                if (coins[i] > j) dp[i][j] = dp[i - 1][j]; \n                else dp[i][j] = dp[i - 1][j] +  dp[i][j - coins[i]];\n            }\n        }\n        return dp[coins.size() - 1][bagSize];\n    }\n};",
+          "description": "二维dp数组实现零钱兑换II问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        vector<uint64_t> dp(amount + 1, 0); // 防止相加数据超int\n        dp[0] = 1; // 只有一种方式达到0\n        for (int i = 0; i < coins.size(); i++) { // 遍历物品\n            for (int j = coins[i]; j <= amount; j++) { // 遍历背包\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount]; // 返回组合数\n    }\n};",
+          "description": "一维dp数组实现零钱兑换II问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        //递推表达式\n        int[] dp = new int[amount + 1];\n        //初始化dp数组，表示金额为0时只有一种情况，也就是什么都不装\n        dp[0] = 1;\n        for (int i = 0; i < coins.length; i++) {\n            for (int j = coins[i]; j <= amount; j++) {\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount];\n    }\n}",
+          "description": "Java版一维dp数组实现零钱兑换II问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        int[][] dp = new int[coins.length][amount+1];\n\n        // 初始化边界值\n        for(int i = 0; i < coins.length; i++){\n            // 第一列的初始值为1\n            dp[i][0] = 1;\n        }\n        for(int j = coins[0]; j <= amount; j++){\n            // 初始化第一行\n            dp[0][j] += dp[0][j-coins[0]];\n        }\n        \n        for(int i = 1; i < coins.length; i++){\n            for(int j = 1; j <= amount; j++){\n                if(j < coins[i]) dp[i][j] = dp[i-1][j];\n                else dp[i][j] = dp[i][j-coins[i]] + dp[i-1][j];\n            }\n        }\n\n        return dp[coins.length-1][amount];\n    }\n}",
+          "description": "Java版二维dp数组实现零钱兑换II问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def change(self, amount: int, coins: List[int]) -> int:\n        dp = [0]*(amount + 1)\n        dp[0] = 1\n        # 遍历物品\n        for i in range(len(coins)):\n            # 遍历背包\n            for j in range(coins[i], amount + 1):\n                dp[j] += dp[j - coins[i]]\n        return dp[amount]",
+          "description": "Python版一维dp数组实现零钱兑换II问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "2、确定递推公式",
+      "text": "注意： 这里的公式推导，与之前讲解过的 494. 目标和 (https://programmercarl.com/0494.%E7%9B%AE%E6%A0%87%E5%92%8C.html)、完全背包理论基础 (https://programmercarl.com/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85.html)有极大重复，所以我不在重复讲解原理，而是只讲解区别。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        int bagSize = amount;\n\n        vector<vector<uint64_t>> dp(coins.size(), vector<uint64_t>(bagSize + 1, 0));\n\n        // 初始化最上行\n        for (int j = 0; j <= bagSize; j++) {\n            if (j % coins[0] == 0) dp[0][j] = 1;\n        }\n        // 初始化最左列\n        for (int i = 0; i < coins.size(); i++) {\n            dp[i][0] = 1;\n        }\n        // 以下遍历顺序行列可以颠倒\n        for (int i = 1; i < coins.size(); i++) { // 行，遍历物品\n            for (int j = 0; j <= bagSize; j++) { // 列，遍历背包\n                if (coins[i] > j) dp[i][j] = dp[i - 1][j]; \n                else dp[i][j] = dp[i - 1][j] +  dp[i][j - coins[i]];\n            }\n        }\n        return dp[coins.size() - 1][bagSize];\n    }\n};",
+          "description": "二维DP数组实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        vector<uint64_t> dp(amount + 1, 0); // 防止相加数据超int\n        dp[0] = 1; // 只有一种方式达到0\n        for (int i = 0; i < coins.size(); i++) { // 遍历物品\n            for (int j = coins[i]; j <= amount; j++) { // 遍历背包\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount]; // 返回组合数\n    }\n};",
+          "description": "一维DP数组实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        int[] dp = new int[amount + 1];\n        dp[0] = 1;\n        for (int i = 0; i < coins.length; i++) {\n            for (int j = coins[i]; j <= amount; j++) {\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount];\n    }\n}",
+          "description": "Java语言的一维DP数组实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        int[][] dp = new int[coins.length][amount+1];\n\n        for(int i = 0; i < coins.length; i++){\n            dp[i][0] = 1;\n        }\n        for(int j = coins[0]; j <= amount; j++){\n            dp[0][j] += dp[0][j-coins[0]];\n        }\n\n        for(int i = 1; i < coins.length; i++){\n            for(int j = 1; j <= amount; j++){\n                if(j < coins[i]) dp[i][j] = dp[i-1][j];\n                else dp[i][j] = dp[i][j-coins[i]] + dp[i-1][j];\n            }\n        }\n\n        return dp[coins.length-1][amount];\n    }\n}",
+          "description": "Java语言的二维DP数组实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def change(self, amount: int, coins: List[int]) -> int:\n        dp = [0]*(amount + 1)\n        dp[0] = 1\n        for i in range(len(coins)):\n            for j in range(coins[i], amount + 1):\n                dp[j] += dp[j - coins[i]]\n        return dp[amount]",
+          "description": "Python语言的一维DP数组实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "3. dp数组如何初始化",
+      "text": "那么二维数组的最上行 和 最左列一定要初始化，这是递推公式推导的基础，如图红色部分：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int change(int amount, vector<int>& coins) {int bagSize = amount;vector<vector<uint64_t>> dp(coins.size(), vector<uint64_t>(bagSize + 1, 0));for (int j = 0; j <= bagSize; j++) {if (j % coins[0] == 0) dp[0][j] = 1;}for (int i = 0; i < coins.size(); i++) {dp[i][0] = 1;}for (int i = 1; i < coins.size(); i++) {for (int j = 0; j <= bagSize; j++) {if (coins[i] > j) dp[i][j] = dp[i - 1][j];else dp[i][j] = dp[i - 1][j] +  dp[i][j - coins[i]];}}return dp[coins.size() - 1][bagSize];}};",
+          "description": "二维DP解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int change(int amount, vector<int>& coins) {vector<uint64_t> dp(amount + 1, 0);dp[0] = 1;for (int i = 0; i < coins.size(); i++) {for (int j = coins[i]; j <= amount; j++) {dp[j] += dp[j - coins[i]];}}return dp[amount];}};",
+          "description": "一维DP解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int change(int amount, int[] coins) {int[] dp = new int[amount + 1];dp[0] = 1;for (int i = 0; i < coins.length; i++) {for (int j = coins[i]; j <= amount; j++) {dp[j] += dp[j - coins[i]];}}return dp[amount];}}",
+          "description": "Java一维DP解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int change(int amount, int[] coins) {int[][] dp = new int[coins.length][amount+1];for(int i = 0; i < coins.length; i++){dp[i][0] = 1;}for(int j = coins[0]; j <= amount; j++){dp[0][j] += dp[0][j-coins[0]];}for(int i = 1; i < coins.length; i++){for(int j = 1; j <= amount; j++){if(j < coins[i]) dp[i][j] = dp[i-1][j];else dp[i][j] = dp[i][j-coins[i]] + dp[i-1][j];}}return dp[coins.length-1][amount];}}",
+          "description": "Java二维DP解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def change(self, amount: int, coins: List[int]) -> int: dp = [0]*(amount + 1) dp[0] = 1 for i in range(len(coins)): for j in range(coins[i], amount + 1): dp[j] += dp[j - coins[i]] return dp[amount]",
+          "description": "Python一维DP解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "4. 确定遍历顺序",
+      "text": "二维DP数组的完全背包的两个for循环先后顺序是无所谓的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        int bagSize = amount;\n\n        vector<vector<uint64_t>> dp(coins.size(), vector<uint64_t>(bagSize + 1, 0));\n\n        // 初始化最上行\n        for (int j = 0; j <= bagSize; j++) {\n            if (j % coins[0] == 0) dp[0][j] = 1;\n        }\n        // 初始化最左列\n        for (int i = 0; i < coins.size(); i++) {\n            dp[i][0] = 1;\n        }\n        // 以下遍历顺序行列可以颠倒\n        for (int i = 1; i < coins.size(); i++) { // 行，遍历物品\n            for (int j = 0; j <= bagSize; j++) { // 列，遍历背包\n                if (coins[i] > j) dp[i][j] = dp[i - 1][j]; \n                else dp[i][j] = dp[i - 1][j] +  dp[i][j - coins[i]];\n            }\n        }\n        return dp[coins.size() - 1][bagSize];\n    }\n};",
+          "description": "二维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        vector<uint64_t> dp(amount + 1, 0); // 防止相加数据超int\n        dp[0] = 1; // 只有一种方式达到0\n        for (int i = 0; i < coins.size(); i++) { // 遍历物品\n            for (int j = coins[i]; j <= amount; j++) { // 遍历背包\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount]; // 返回组合数\n    }\n};",
+          "description": "一维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        int[] dp = new int[amount + 1];\n        dp[0] = 1;\n        for (int i = 0; i < coins.length; i++) {\n            for (int j = coins[i]; j <= amount; j++) {\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount];\n    }\n}",
+          "description": "Java实现零钱兑换II（一维DP）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        int[][] dp = new int[coins.length][amount+1];\n\n        for(int i = 0; i < coins.length; i++){\n            dp[i][0] = 1;\n        }\n        for(int j = coins[0]; j <= amount; j++){\n            dp[0][j] += dp[0][j-coins[0]];\n        }\n\n        for(int i = 1; i < coins.length; i++){\n            for(int j = 1; j <= amount; j++){\n                if(j < coins[i]) dp[i][j] = dp[i-1][j];\n                else dp[i][j] = dp[i][j-coins[i]] + dp[i-1][j];\n            }\n        }\n\n        return dp[coins.length-1][amount];\n    }\n}",
+          "description": "Java实现零钱兑换II（二维DP）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def change(self, amount: int, coins: List[int]) -> int:\n        dp = [0]*(amount + 1)\n        dp[0] = 1\n        for i in range(len(coins)):\n            for j in range(coins[i], amount + 1):\n                dp[j] += dp[j - coins[i]]\n        return dp[amount]",
+          "description": "Python实现零钱兑换II（一维DP）"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "5. 打印DP数组",
+      "text": "以amount为5，coins为：[2,3,5] 为例：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        int bagSize = amount;\n\n        vector<vector<uint64_t>> dp(coins.size(), vector<uint64_t>(bagSize + 1, 0));\n\n        // 初始化最上行\n        for (int j = 0; j <= bagSize; j++) {\n            if (j % coins[0] == 0) dp[0][j] = 1;\n        }\n        // 初始化最左列\n        for (int i = 0; i < coins.size(); i++) {\n            dp[i][0] = 1;\n        }\n        // 以下遍历顺序行列可以颠倒\n        for (int i = 1; i < coins.size(); i++) { // 行，遍历物品\n            for (int j = 0; j <= bagSize; j++) { // 列，遍历背包\n                if (coins[i] > j) dp[i][j] = dp[i - 1][j]; \n                else dp[i][j] = dp[i - 1][j] +  dp[i][j - coins[i]];\n            }\n        }\n        return dp[coins.size() - 1][bagSize];\n    }\n};",
+          "description": "二维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        vector<uint64_t> dp(amount + 1, 0); // 防止相加数据超int\n        dp[0] = 1; // 只有一种方式达到0\n        for (int i = 0; i < coins.size(); i++) { // 遍历物品\n            for (int j = coins[i]; j <= amount; j++) { // 遍历背包\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount]; // 返回组合数\n    }\n};",
+          "description": "一维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        int[] dp = new int[amount + 1];\n        dp[0] = 1;\n        for (int i = 0; i < coins.length; i++) {\n            for (int j = coins[i]; j <= amount; j++) {\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount];\n    }\n}",
+          "description": "Java版本的一维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        int[][] dp = new int[coins.length][amount+1];\n\n        for(int i = 0; i < coins.length; i++){\n            dp[i][0] = 1;\n        }\n        for(int j = coins[0]; j <= amount; j++){\n            dp[0][j] += dp[0][j-coins[0]];\n        }\n\n        for(int i = 1; i < coins.length; i++){\n            for(int j = 1; j <= amount; j++){\n                if(j < coins[i]) dp[i][j] = dp[i-1][j];\n                else dp[i][j] = dp[i][j-coins[i]] + dp[i-1][j];\n            }\n        }\n\n        return dp[coins.length-1][amount];\n    }\n}",
+          "description": "Java版本的二维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def change(self, amount: int, coins: List[int]) -> int:\n        dp = [0]*(amount + 1)\n        dp[0] = 1\n        for i in range(len(coins)):\n            for j in range(coins[i], amount + 1):\n                dp[j] += dp[j - coins[i]]\n        return dp[amount]",
+          "description": "Python版本的一维DP数组实现零钱兑换II"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "代码实现：",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        int bagSize = amount;\n\n        vector<vector<uint64_t>> dp(coins.size(), vector<uint64_t>(bagSize + 1, 0));\n\n        // 初始化最上行\n        for (int j = 0; j <= bagSize; j++) {\n            if (j % coins[0] == 0) dp[0][j] = 1;\n        }\n        // 初始化最左列\n        for (int i = 0; i < coins.size(); i++) {\n            dp[i][0] = 1;\n        }\n        // 以下遍历顺序行列可以颠倒\n        for (int i = 1; i < coins.size(); i++) { // 行，遍历物品\n            for (int j = 0; j <= bagSize; j++) { // 列，遍历背包\n                if (coins[i] > j) dp[i][j] = dp[i - 1][j]; \n                else dp[i][j] = dp[i - 1][j] +  dp[i][j - coins[i]];\n            }\n        }\n        return dp[coins.size() - 1][bagSize];\n    }\n};",
+          "description": "二维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        vector<uint64_t> dp(amount + 1, 0); // 防止相加数据超int\n        dp[0] = 1; // 只有一种方式达到0\n        for (int i = 0; i < coins.size(); i++) { // 遍历物品\n            for (int j = coins[i]; j <= amount; j++) { // 遍历背包\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount]; // 返回组合数\n    }\n};",
+          "description": "一维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        //递推表达式\n        int[] dp = new int[amount + 1];\n        //初始化dp数组，表示金额为0时只有一种情况，也就是什么都不装\n        dp[0] = 1;\n        for (int i = 0; i < coins.length; i++) {\n            for (int j = coins[i]; j <= amount; j++) {\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount];\n    }\n}",
+          "description": "Java版本一维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        int[][] dp = new int[coins.length][amount+1];\n\n        // 初始化边界值\n        for(int i = 0; i < coins.length; i++){\n            // 第一列的初始值为1\n            dp[i][0] = 1;\n        }\n        for(int j = coins[0]; j <= amount; j++){\n            // 初始化第一行\n            dp[0][j] += dp[0][j-coins[0]];\n        }\n        \n        for(int i = 1; i < coins.length; i++){\n            for(int j = 1; j <= amount; j++){\n                if(j < coins[i]) dp[i][j] = dp[i-1][j];\n                else dp[i][j] = dp[i][j-coins[i]] + dp[i-1][j];\n            }\n        }\n\n        return dp[coins.length-1][amount];\n    }\n}",
+          "description": "Java版本二维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def change(self, amount: int, coins: List[int]) -> int:\n        dp = [0]*(amount + 1)\n        dp[0] = 1\n        # 遍历物品\n        for i in range(len(coins)):\n            # 遍历背包\n            for j in range(coins[i], amount + 1):\n                dp[j] += dp[j - coins[i]]\n        return dp[amount]",
+          "description": "Python版本一维DP数组实现零钱兑换II"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "一维dp讲解",
+      "text": "#1、确定dp数组以及下标的含义",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int change(int amount, vector<int>& coins) {int bagSize = amount;vector<vector<uint64_t>> dp(coins.size(), vector<uint64_t>(bagSize + 1, 0));for (int j = 0; j <= bagSize; j++) {if (j % coins[0] == 0) dp[0][j] = 1;}for (int i = 0; i < coins.size(); i++) {dp[i][0] = 1;}for (int i = 1; i < coins.size(); i++) {for (int j = 0; j <= bagSize; j++) {if (coins[i] > j) dp[i][j] = dp[i - 1][j];else dp[i][j] = dp[i - 1][j] +  dp[i][j - coins[i]];}}return dp[coins.size() - 1][bagSize];}};",
+          "description": "二维DP数组解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int change(int amount, vector<int>& coins) {vector<uint64_t> dp(amount + 1, 0);dp[0] = 1;for (int i = 0; i < coins.size(); i++) {for (int j = coins[i]; j <= amount; j++) {dp[j] += dp[j - coins[i]];}}return dp[amount];}};",
+          "description": "一维DP数组解法，防止相加数据超int"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int change(int amount, int[] coins) {int[] dp = new int[amount + 1];dp[0] = 1;for (int i = 0; i < coins.length; i++) {for (int j = coins[i]; j <= amount; j++) {dp[j] += dp[j - coins[i]];}}return dp[amount];}}",
+          "description": "Java实现的一维DP数组解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def change(self, amount: int, coins: List[int]) -> int: dp = [0]*(amount + 1) dp[0] = 1 for i in range(len(coins)): for j in range(coins[i], amount + 1): dp[j] += dp[j - coins[i]] return dp[amount]",
+          "description": "Python实现的一维DP数组解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "1、确定dp数组以及下标的含义",
+      "text": "定义二维dp数值 dp[i][j]：使用 下标为[0, i]的coins[i]能够凑满j（包括j）这么大容量的包，有dp[i][j]种组合方法。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        int bagSize = amount;\n\n        vector<vector<uint64_t>> dp(coins.size(), vector<uint64_t>(bagSize + 1, 0));\n\n        // 初始化最上行\n        for (int j = 0; j <= bagSize; j++) {\n            if (j % coins[0] == 0) dp[0][j] = 1;\n        }\n        // 初始化最左列\n        for (int i = 0; i < coins.size(); i++) {\n            dp[i][0] = 1;\n        }\n        // 以下遍历顺序行列可以颠倒\n        for (int i = 1; i < coins.size(); i++) { // 行，遍历物品\n            for (int j = 0; j <= bagSize; j++) { // 列，遍历背包\n                if (coins[i] > j) dp[i][j] = dp[i - 1][j]; \n                else dp[i][j] = dp[i - 1][j] +  dp[i][j - coins[i]];\n            }\n        }\n        return dp[coins.size() - 1][bagSize];\n    }\n};",
+          "description": "二维DP数组实现零钱兑换II问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        vector<uint64_t> dp(amount + 1, 0); // 防止相加数据超int\n        dp[0] = 1; // 只有一种方式达到0\n        for (int i = 0; i < coins.size(); i++) { // 遍历物品\n            for (int j = coins[i]; j <= amount; j++) { // 遍历背包\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount]; // 返回组合数\n    }\n};",
+          "description": "一维DP数组实现零钱兑换II问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        int[] dp = new int[amount + 1];\n        dp[0] = 1;\n        for (int i = 0; i < coins.length; i++) {\n            for (int j = coins[i]; j <= amount; j++) {\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount];\n    }\n}",
+          "description": "Java版本一维DP数组实现零钱兑换II问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        int[][] dp = new int[coins.length][amount+1];\n\n        for(int i = 0; i < coins.length; i++){\n            dp[i][0] = 1;\n        }\n        for(int j = coins[0]; j <= amount; j++){\n            dp[0][j] += dp[0][j-coins[0]];\n        }\n\n        for(int i = 1; i < coins.length; i++){\n            for(int j = 1; j <= amount; j++){\n                if(j < coins[i]) dp[i][j] = dp[i-1][j];\n                else dp[i][j] = dp[i][j-coins[i]] + dp[i-1][j];\n            }\n        }\n\n        return dp[coins.length-1][amount];\n    }\n}",
+          "description": "Java版本二维DP数组实现零钱兑换II问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def change(self, amount: int, coins: List[int]) -> int:\n        dp = [0]*(amount + 1)\n        dp[0] = 1\n        for i in range(len(coins)):\n            for j in range(coins[i], amount + 1):\n                dp[j] += dp[j - coins[i]]\n        return dp[amount]",
+          "description": "Python版本一维DP数组实现零钱兑换II问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "2、确定递推公式",
+      "text": "注意： 这里的公式推导，与之前讲解过的 494. 目标和 (https://programmercarl.com/0494.%E7%9B%AE%E6%A0%87%E5%92%8C.html)、完全背包理论基础 (https://programmercarl.com/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85.html)有极大重复，所以我不在重复讲解原理，而是只讲解区别。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int change(int amount, vector<int>& coins) {int bagSize = amount;vector<vector<uint64_t>> dp(coins.size(), vector<uint64_t>(bagSize + 1, 0));for (int j = 0; j <= bagSize; j++) {if (j % coins[0] == 0) dp[0][j] = 1;}for (int i = 0; i < coins.size(); i++) {dp[i][0] = 1;}for (int i = 1; i < coins.size(); i++) {for (int j = 0; j <= bagSize; j++) {if (coins[i] > j) dp[i][j] = dp[i - 1][j];else dp[i][j] = dp[i - 1][j] +  dp[i][j - coins[i]];}}return dp[coins.size() - 1][bagSize];}};",
+          "description": "二维DP实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int change(int amount, vector<int>& coins) {vector<uint64_t> dp(amount + 1, 0);dp[0] = 1;for (int i = 0; i < coins.size(); i++) {for (int j = coins[i]; j <= amount; j++) {dp[j] += dp[j - coins[i]];}}return dp[amount];}};",
+          "description": "一维DP实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int change(int amount, vector<int>& coins) {vector<int> dp(amount + 1, 0);dp[0] = 1;for (int i = 0; i < coins.size(); i++) {for (int j = coins[i]; j <= amount; j++) {if (dp[j] < INT_MAX - dp[j - coins[i]]) {dp[j] += dp[j - coins[i]] ;}}}return dp[amount];}};",
+          "description": "一维DP，防止整数溢出的实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int change(int amount, int[] coins) {int[] dp = new int[amount + 1];dp[0] = 1;for (int i = 0; i < coins.length; i++) {for (int j = coins[i]; j <= amount; j++) {dp[j] += dp[j - coins[i]];}}return dp[amount];}}",
+          "description": "Java一维DP实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int change(int amount, int[] coins) {int[][] dp = new int[coins.length][amount+1];for(int i = 0; i < coins.length; i++){dp[i][0] = 1;}for(int j = coins[0]; j <= amount; j++){dp[0][j] += dp[0][j-coins[0]];}for(int i = 1; i < coins.length; i++){for(int j = 1; j <= amount; j++){if(j < coins[i]) dp[i][j] = dp[i-1][j];else dp[i][j] = dp[i][j-coins[i]] + dp[i-1][j];}}return dp[coins.length-1][amount];}}",
+          "description": "Java二维DP实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def change(self, amount: int, coins: List[int]) -> int: dp = [0]*(amount + 1) dp[0] = 1 for i in range(len(coins)): for j in range(coins[i], amount + 1): dp[j] += dp[j - coins[i]] return dp[amount]",
+          "description": "Python一维DP实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "3. dp数组如何初始化",
+      "text": "那么二维数组的最上行 和 最左列一定要初始化，这是递推公式推导的基础，如图红色部分：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int change(int amount, vector<int>& coins) {int bagSize = amount;vector<vector<uint64_t>> dp(coins.size(), vector<uint64_t>(bagSize + 1, 0));for (int j = 0; j <= bagSize; j++) {if (j % coins[0] == 0) dp[0][j] = 1;}for (int i = 0; i < coins.size(); i++) {dp[i][0] = 1;}for (int i = 1; i < coins.size(); i++) {for (int j = 0; j <= bagSize; j++) {if (coins[i] > j) dp[i][j] = dp[i - 1][j];else dp[i][j] = dp[i - 1][j] +  dp[i][j - coins[i]];}}return dp[coins.size() - 1][bagSize];}};",
+          "description": "使用二维动态规划计算组合数"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int change(int amount, vector<int>& coins) {vector<uint64_t> dp(amount + 1, 0);dp[0] = 1;for (int i = 0; i < coins.size(); i++) {for (int j = coins[i]; j <= amount; j++) {dp[j] += dp[j - coins[i]];}}return dp[amount];}};",
+          "description": "使用一维动态规划计算组合数"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int change(int amount, int[] coins) {int[] dp = new int[amount + 1];dp[0] = 1;for (int i = 0; i < coins.length; i++) {for (int j = coins[i]; j <= amount; j++) {dp[j] += dp[j - coins[i]];}}return dp[amount];}}",
+          "description": "Java实现的一维动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int change(int amount, int[] coins) {int[][] dp = new int[coins.length][amount+1];for(int i = 0; i < coins.length; i++){dp[i][0] = 1;}for(int j = coins[0]; j <= amount; j++){dp[0][j] += dp[0][j-coins[0]];}for(int i = 1; i < coins.length; i++){for(int j = 1; j <= amount; j++){if(j < coins[i]) dp[i][j] = dp[i-1][j];else dp[i][j] = dp[i][j-coins[i]] + dp[i-1][j];}}return dp[coins.length-1][amount];}}",
+          "description": "Java实现的二维动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def change(self, amount: int, coins: List[int]) -> int: dp = [0]*(amount + 1) dp[0] = 1 for i in range(len(coins)): for j in range(coins[i], amount + 1): dp[j] += dp[j - coins[i]] return dp[amount]",
+          "description": "Python实现的一维动态规划解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "4. 确定遍历顺序",
+      "text": "二维DP数组的完全背包的两个for循环先后顺序是无所谓的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        int bagSize = amount;\n\n        vector<vector<uint64_t>> dp(coins.size(), vector<uint64_t>(bagSize + 1, 0));\n\n        // 初始化最上行\n        for (int j = 0; j <= bagSize; j++) {\n            if (j % coins[0] == 0) dp[0][j] = 1;\n        }\n        // 初始化最左列\n        for (int i = 0; i < coins.size(); i++) {\n            dp[i][0] = 1;\n        }\n        // 以下遍历顺序行列可以颠倒\n        for (int i = 1; i < coins.size(); i++) { // 行，遍历物品\n            for (int j = 0; j <= bagSize; j++) { // 列，遍历背包\n                if (coins[i] > j) dp[i][j] = dp[i - 1][j]; \n                else dp[i][j] = dp[i - 1][j] +  dp[i][j - coins[i]];\n            }\n        }\n        return dp[coins.size() - 1][bagSize];\n    }\n};",
+          "description": "二维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        vector<uint64_t> dp(amount + 1, 0); // 防止相加数据超int\n        dp[0] = 1; // 只有一种方式达到0\n        for (int i = 0; i < coins.size(); i++) { // 遍历物品\n            for (int j = coins[i]; j <= amount; j++) { // 遍历背包\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount]; // 返回组合数\n    }\n};",
+          "description": "一维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        int[] dp = new int[amount + 1];\n        dp[0] = 1;\n        for (int i = 0; i < coins.length; i++) {\n            for (int j = coins[i]; j <= amount; j++) {\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount];\n    }\n}",
+          "description": "Java版本一维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        int[][] dp = new int[coins.length][amount+1];\n\n        for(int i = 0; i < coins.length; i++){\n            dp[i][0] = 1;\n        }\n        for(int j = coins[0]; j <= amount; j++){\n            dp[0][j] += dp[0][j-coins[0]];\n        }\n        for(int i = 1; i < coins.length; i++){\n            for(int j = 1; j <= amount; j++){\n                if(j < coins[i]) dp[i][j] = dp[i-1][j];\n                else dp[i][j] = dp[i][j-coins[i]] + dp[i-1][j];\n            }\n        }\n        return dp[coins.length-1][amount];\n    }\n}",
+          "description": "Java版本二维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def change(self, amount: int, coins: List[int]) -> int:\n        dp = [0]*(amount + 1)\n        dp[0] = 1\n        for i in range(len(coins)):\n            for j in range(coins[i], amount + 1):\n                dp[j] += dp[j - coins[i]]\n        return dp[amount]",
+          "description": "Python版本一维DP数组实现零钱兑换II"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "5. 举例推导dp数组",
+      "text": "输入: amount = 5, coins = [1, 2, 5] ，dp状态图如下：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int change(int amount, vector<int>& coins) {int bagSize = amount;vector<vector<uint64_t>> dp(coins.size(), vector<uint64_t>(bagSize + 1, 0));for (int j = 0; j <= bagSize; j++) {if (j % coins[0] == 0) dp[0][j] = 1;}for (int i = 0; i < coins.size(); i++) {dp[i][0] = 1;}for (int i = 1; i < coins.size(); i++) {for (int j = 0; j <= bagSize; j++) {if (coins[i] > j) dp[i][j] = dp[i - 1][j]; else dp[i][j] = dp[i - 1][j] +  dp[i][j - coins[i]];}}return dp[coins.size() - 1][bagSize];}};",
+          "description": "二维DP数组实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int change(int amount, vector<int>& coins) {vector<uint64_t> dp(amount + 1, 0);dp[0] = 1;for (int i = 0; i < coins.size(); i++) {for (int j = coins[i]; j <= amount; j++) {dp[j] += dp[j - coins[i]];}}return dp[amount];}};",
+          "description": "一维DP数组实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int change(int amount, int[] coins) {int[] dp = new int[amount + 1];dp[0] = 1;for (int i = 0; i < coins.length; i++) {for (int j = coins[i]; j <= amount; j++) {dp[j] += dp[j - coins[i]];}}return dp[amount];}}",
+          "description": "Java版本一维DP数组实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int change(int amount, int[] coins) {int[][] dp = new int[coins.length][amount+1];for(int i = 0; i < coins.length; i++){dp[i][0] = 1;}for(int j = coins[0]; j <= amount; j++){dp[0][j] += dp[0][j-coins[0]];}for(int i = 1; i < coins.length; i++){for(int j = 1; j <= amount; j++){if(j < coins[i]) dp[i][j] = dp[i-1][j];else dp[i][j] = dp[i][j-coins[i]] + dp[i-1][j];}}return dp[coins.length-1][amount];}}",
+          "description": "Java版本二维DP数组实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def change(self, amount: int, coins: List[int]) -> int: dp = [0]*(amount + 1) dp[0] = 1 for i in range(len(coins)): for j in range(coins[i], amount + 1): dp[j] += dp[j - coins[i]] return dp[amount]",
+          "description": "Python版本一维DP数组实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "本题我们从 二维 分析到 一维。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        int bagSize = amount;\n\n        vector<vector<uint64_t>> dp(coins.size(), vector<uint64_t>(bagSize + 1, 0));\n\n        // 初始化最上行\n        for (int j = 0; j <= bagSize; j++) {\n            if (j % coins[0] == 0) dp[0][j] = 1;\n        }\n        // 初始化最左列\n        for (int i = 0; i < coins.size(); i++) {\n            dp[i][0] = 1;\n        }\n        // 以下遍历顺序行列可以颠倒\n        for (int i = 1; i < coins.size(); i++) { // 行，遍历物品\n            for (int j = 0; j <= bagSize; j++) { // 列，遍历背包\n                if (coins[i] > j) dp[i][j] = dp[i - 1][j]; \n                else dp[i][j] = dp[i - 1][j] +  dp[i][j - coins[i]];\n            }\n        }\n        return dp[coins.size() - 1][bagSize];\n    }\n};",
+          "description": "二维dp数组实现零钱兑换II"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        vector<uint64_t> dp(amount + 1, 0); // 防止相加数据超int\n        dp[0] = 1; // 只有一种方式达到0\n        for (int i = 0; i < coins.size(); i++) { // 遍历物品\n            for (int j = coins[i]; j <= amount; j++) { // 遍历背包\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount]; // 返回组合数\n    }\n};",
+          "description": "一维dp数组实现零钱兑换II"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        vector<int> dp(amount + 1, 0);\n        dp[0] = 1; // 只有一种方式达到0\n        for (int i = 0; i < coins.size(); i++) { // 遍历物品\n            for (int j = coins[i]; j <= amount; j++) { // 遍历背包\n                if (dp[j] < INT_MAX - dp[j - coins[i]]) { //防止相加数据超int\n                    dp[j] += dp[j - coins[i]];\n                }\n            }\n        }\n        return dp[amount]; // 返回组合数\n    }\n};",
+          "description": "考虑整型溢出的一维dp数组实现零钱兑换II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        int[] dp = new int[amount + 1];\n        dp[0] = 1;\n        for (int i = 0; i < coins.length; i++) {\n            for (int j = coins[i]; j <= amount; j++) {\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount];\n    }\n}",
+          "description": "Java版本的一维dp数组实现零钱兑换II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        int[][] dp = new int[coins.length][amount+1];\n\n        for(int i = 0; i < coins.length; i++){\n            dp[i][0] = 1;\n        }\n        for(int j = coins[0]; j <= amount; j++){\n            dp[0][j] += dp[0][j-coins[0]];\n        }\n\n        for(int i = 1; i < coins.length; i++){\n            for(int j = 1; j <= amount; j++){\n                if(j < coins[i]) dp[i][j] = dp[i-1][j];\n                else dp[i][j] = dp[i][j-coins[i]] + dp[i-1][j];\n            }\n        }\n\n        return dp[coins.length-1][amount];\n    }\n}",
+          "description": "Java版本的二维dp数组实现零钱兑换II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def change(self, amount: int, coins: List[int]) -> int:\n        dp = [0]*(amount + 1)\n        dp[0] = 1\n        for i in range(len(coins)):\n            for j in range(coins[i], amount + 1):\n                dp[j] += dp[j - coins[i]]\n        return dp[amount]",
+          "description": "Python版本的一维dp数组实现零钱兑换II"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        //递推表达式\n        int[] dp = new int[amount + 1];\n        //初始化dp数组，表示金额为0时只有一种情况，也就是什么都不装\n        dp[0] = 1;\n        for (int i = 0; i < coins.length; i++) {\n            for (int j = coins[i]; j <= amount; j++) {\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount];\n    }\n}",
+          "description": "使用一维DP数组计算凑成总金额的硬币组合数"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        int[][] dp = new int[coins.length][amount+1];\n\n        // 初始化边界值\n        for(int i = 0; i < coins.length; i++){\n            // 第一列的初始值为1\n            dp[i][0] = 1;\n        }\n        for(int j = coins[0]; j <= amount; j++){\n            // 初始化第一行\n            dp[0][j] += dp[0][j-coins[0]];\n        }\n        \n        for(int i = 1; i < coins.length; i++){\n            for(int j = 1; j <= amount; j++){\n                if(j < coins[i]) dp[i][j] = dp[i-1][j];\n                else dp[i][j] = dp[i][j-coins[i]] + dp[i-1][j];\n            }\n        }\n\n        return dp[coins.length-1][amount];\n    }\n}",
+          "description": "使用二维DP数组计算凑成总金额的硬币组合数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def change(self, amount: int, coins: List[int]) -> int:\n        dp = [0]*(amount + 1)\n        dp[0] = 1\n        # 遍历物品\n        for i in range(len(coins)):\n            # 遍历背包\n            for j in range(coins[i], amount + 1):\n                dp[j] += dp[j - coins[i]]\n        return dp[amount]",
+          "description": "Python版本的一维DP解决方案来找出凑成总金额的硬币组合数"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        int bagSize = amount;\n\n        vector<vector<uint64_t>> dp(coins.size(), vector<uint64_t>(bagSize + 1, 0));\n\n        // 初始化最上行\n        for (int j = 0; j <= bagSize; j++) {\n            if (j % coins[0] == 0) dp[0][j] = 1;\n        }\n        // 初始化最左列\n        for (int i = 0; i < coins.size(); i++) {\n            dp[i][0] = 1;\n        }\n        // 以下遍历顺序行列可以颠倒\n        for (int i = 1; i < coins.size(); i++) { // 行，遍历物品\n            for (int j = 0; j <= bagSize; j++) { // 列，遍历背包\n                if (coins[i] > j) dp[i][j] = dp[i - 1][j]; \n                else dp[i][j] = dp[i - 1][j] +  dp[i][j - coins[i]];\n            }\n        }\n        return dp[coins.size() - 1][bagSize];\n    }\n};",
+          "description": "二维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        vector<uint64_t> dp(amount + 1, 0); // 防止相加数据超int\n        dp[0] = 1; // 只有一种方式达到0\n        for (int i = 0; i < coins.size(); i++) { // 遍历物品\n            for (int j = coins[i]; j <= amount; j++) { // 遍历背包\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount]; // 返回组合数\n    }\n};",
+          "description": "一维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        //递推表达式\n        int[] dp = new int[amount + 1];\n        //初始化dp数组，表示金额为0时只有一种情况，也就是什么都不装\n        dp[0] = 1;\n        for (int i = 0; i < coins.length; i++) {\n            for (int j = coins[i]; j <= amount; j++) {\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount];\n    }\n}",
+          "description": "Java版本一维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        int[][] dp = new int[coins.length][amount+1];\n\n        // 初始化边界值\n        for(int i = 0; i < coins.length; i++){\n            // 第一列的初始值为1\n            dp[i][0] = 1;\n        }\n        for(int j = coins[0]; j <= amount; j++){\n            // 初始化第一行\n            dp[0][j] += dp[0][j-coins[0]];\n        }\n        \n        for(int i = 1; i < coins.length; i++){\n            for(int j = 1; j <= amount; j++){\n                if(j < coins[i]) dp[i][j] = dp[i-1][j];\n                else dp[i][j] = dp[i][j-coins[i]] + dp[i-1][j];\n            }\n        }\n\n        return dp[coins.length-1][amount];\n    }\n}",
+          "description": "Java版本二维DP数组实现零钱兑换II"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def change(self, amount: int, coins: List[int]) -> int:\n        dp = [0]*(amount + 1)\n        dp[0] = 1\n        # 遍历物品\n        for i in range(len(coins)):\n            # 遍历背包\n            for j in range(coins[i], amount + 1):\n                dp[j] += dp[j - coins[i]]\n        return dp[amount]",
+          "description": "Python版本一维DP数组实现零钱兑换II"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "class Solution:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        int bagSize = amount;\n\n        vector<vector<uint64_t>> dp(coins.size(), vector<uint64_t>(bagSize + 1, 0));\n\n        // 初始化最上行\n        for (int j = 0; j <= bagSize; j++) {\n            if (j % coins[0] == 0) dp[0][j] = 1;\n        }\n        // 初始化最左列\n        for (int i = 0; i < coins.size(); i++) {\n            dp[i][0] = 1;\n        }\n        // 以下遍历顺序行列可以颠倒\n        for (int i = 1; i < coins.size(); i++) { // 行，遍历物品\n            for (int j = 0; j <= bagSize; j++) { // 列，遍历背包\n                if (coins[i] > j) dp[i][j] = dp[i - 1][j]; \n                else dp[i][j] = dp[i - 1][j] +  dp[i][j - coins[i]];\n            }\n        }\n        return dp[coins.size() - 1][bagSize];\n    }\n};",
+          "description": "二维DP数组实现硬币组合数计算"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        vector<uint64_t> dp(amount + 1, 0); // 防止相加数据超int\n        dp[0] = 1; // 只有一种方式达到0\n        for (int i = 0; i < coins.size(); i++) { // 遍历物品\n            for (int j = coins[i]; j <= amount; j++) { // 遍历背包\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount]; // 返回组合数\n    }\n};",
+          "description": "一维DP数组实现硬币组合数计算"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int change(int amount, int[] coins) {\n        int[] dp = new int[amount + 1];\n        dp[0] = 1;\n        for (int i = 0; i < coins.length; i++) {\n            for (int j = coins[i]; j <= amount; j++) {\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount];\n    }\n}",
+          "description": "Java版本一维DP数组实现硬币组合数计算"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def change(self, amount: int, coins: List[int]) -> int:\n        dp = [0]*(amount + 1)\n        dp[0] = 1\n        for i in range(len(coins)):\n            for j in range(coins[i], amount + 1):\n                dp[j] += dp[j - coins[i]]\n        return dp[amount]",
+          "description": "Python版本一维DP数组实现硬币组合数计算"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(mn)",
+    "space_complexity": "O(m)",
+    "explanation": "其中 m 是amount，n 是 coins 的长度"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int change(int amount, vector<int>& coins) {int bagSize = amount;vector<vector<uint64_t>> dp(coins.size(), vector<uint64_t>(bagSize + 1, 0));for (int j = 0; j <= bagSize; j++) {if (j % coins[0] == 0) dp[0][j] = 1;}for (int i = 0; i < coins.size(); i++) {dp[i][0] = 1;}for (int i = 1; i < coins.size(); i++) {for (int j = 0; j <= bagSize; j++) {if (coins[i] > j) dp[i][j] = dp[i - 1][j];else dp[i][j] = dp[i - 1][j] +  dp[i][j - coins[i]];}}return dp[coins.size() - 1][bagSize];}};",
+      "description": "二维DP数组实现"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int change(int amount, vector<int>& coins) {vector<uint64_t> dp(amount + 1, 0);dp[0] = 1;for (int i = 0; i < coins.size(); i++) {for (int j = coins[i]; j <= amount; j++) {dp[j] += dp[j - coins[i]];}}return dp[amount];}};",
+      "description": "一维DP数组实现"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int change(int amount, vector<int>& coins) {vector<int> dp(amount + 1, 0);dp[0] = 1;for (int i = 0; i < coins.size(); i++) {for (int j = coins[i]; j <= amount; j++) {if (dp[j] < INT_MAX - dp[j - coins[i]]) {dp[j] += dp[j - coins[i]];}}}return dp[amount];}};",
+      "description": "一维DP数组防止溢出实现"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int change(int amount, int[] coins) {int[] dp = new int[amount + 1];dp[0] = 1;for (int i = 0; i < coins.length; i++) {for (int j = coins[i]; j <= amount; j++) {dp[j] += dp[j - coins[i]];}}return dp[amount];}}",
+      "description": "一维DP数组Java实现"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int change(int amount, int[] coins) {int[][] dp = new int[coins.length][amount+1];for(int i = 0; i < coins.length; i++){dp[i][0] = 1;}for(int j = coins[0]; j <= amount; j++){dp[0][j] += dp[0][j-coins[0]];}for(int i = 1; i < coins.length; i++){for(int j = 1; j <= amount; j++){if(j < coins[i]) dp[i][j] = dp[i-1][j];else dp[i][j] = dp[i][j-coins[i]] + dp[i-1][j];}}return dp[coins.length-1][amount];}}",
+      "description": "二维DP数组Java实现"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def change(self, amount: int, coins: List[int]) -> int: dp = [0]*(amount + 1) dp[0] = 1 for i in range(len(coins)): for j in range(coins[i], amount + 1): dp[j] += dp[j - coins[i]] return dp[amount]",
+      "description": "一维DP数组Python实现"
+    }
+  ],
+  "common_mistakes": [
+    "未正确理解组合与排列的区别，导致错误地计算了排列数而非组合数。",
+    "忽略了从01背包到完全背包转换时对状态转移方程的影响，直接套用01背包的解决方案。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20240827103507.png",
+      "description": "这张图片展示了一个动态规划问题的二维表格，用于解决背包问题，其中行代表物品，列代表背包容量。",
+      "context": "该图片展示了二维dp数组的初始化情况，特别是最上行和最左列（用红色标注）作为递推公式的计算基础。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210120181331461.jpg",
+      "description": "这张图片展示了使用动态规划算法解决零钱兑换问题的过程，具体为通过逐步加入不同面额的硬币来更新状态数组 `dp` 的值。",
+      "context": "该图片展示了当amount=5且硬币面额为[1, 2, 5]时，动态规划数组dp的变化过程，用以帮助理解如何通过给定的硬币组合达到目标金额的所有可能排列数。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20240827103507.png",
+      "description": "GIF展示了二维dp数组初始化的过程，特别是最上行和最左列的设置。",
+      "context": "该GIF动画展示了二维dp数组初始化的过程，特别是最上行和最左列的设定，为理解后续递推公式的应用奠定基础。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210120181331461.jpg",
+      "description": "GIF展示了使用动态规划解决零钱兑换问题时，dp数组随不同面额硬币加入而更新的过程。",
+      "context": "GIF动画展示了当amount为5且硬币面额为[1, 2, 5]时，动态规划数组dp的状态变化过程，帮助理解如何通过不同组合达到目标金额的过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\动态规划\\零钱兑换II.txt",
+  "extracted_at": "2025-07-21T00:26:44.526652",
+  "raw_content": "零钱兑换II\n力扣题目链接(https://leetcode.cn/problems/coin-change-ii/)\n\n给定不同面额的硬币和一个总金额。写出函数来计算可以凑成总金额的硬币组合数。假设每一种面额的硬币有无限个。\n\n示例 1:\n\n输入: amount = 5, coins = [1, 2, 5]\n输出: 4\n解释: 有四种方式可以凑成总金额:\n\n5=5\n5=2+2+1\n5=2+1+1+1\n5=1+1+1+1+1\n示例 2:\n\n输入: amount = 3, coins = [2]\n输出: 0\n解释: 只用面额2的硬币不能凑成总金额3。\n示例 3:\n\n输入: amount = 10, coins = [10]\n输出: 1\n注意，你可以假设：\n\n0 <= amount (总金额) <= 5000\n1 <= coin (硬币面额) <= 5000\n硬币种类不超过 500 种\n结果符合 32 位符号整数\n\n#二维dp讲解\n如果大家认真做完：分割等和子集 (https://www.programmercarl.com/0416.%E5%88%86%E5%89%B2%E7%AD%89%E5%92%8C%E5%AD%90%E9%9B%86.html)， 最后一块石头的重量II (https://www.programmercarl.com/1049.%E6%9C%80%E5%90%8E%E4%B8%80%E5%9D%97%E7%9F%B3%E5%A4%B4%E7%9A%84%E9%87%8D%E9%87%8FII.html)和 目标和(https://www.programmercarl.com/0494.%E7%9B%AE%E6%A0%87%E5%92%8C.html)\n\n应该会知道类似这种题目：给出一个总数，一些物品，问能否凑成这个总数。\n\n这是典型的背包问题！\n\n本题求的是装满这个背包的物品组合数是多少。\n\n因为每一种面额的硬币有无限个，所以这是完全背包。\n\n对完全背包还不了解的同学，可以看这篇：完全背包理论基础(https://programmercarl.com/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85.html)\n\n但本题和纯完全背包不一样，纯完全背包是凑成背包最大价值是多少，而本题是要求凑成总金额的物品组合个数！\n\n注意题目描述中是凑成总金额的硬币组合数，为什么强调是组合数呢？\n\n例如示例一：\n\n5 = 2 + 2 + 1\n\n5 = 2 + 1 + 2\n\n这是一种组合，都是 2 2 1。\n\n如果问的是排列数，那么上面就是两种排列了。\n\n组合不强调元素之间的顺序，排列强调元素之间的顺序。 其实这一点我们在讲解回溯算法专题的时候就讲过。\n\n那我为什么要介绍这些呢，因为这和下文讲解遍历顺序息息相关!\n\n本题其实与我们讲过 494. 目标和 (https://programmercarl.com/0494.%E7%9B%AE%E6%A0%87%E5%92%8C.html)十分类似。\n\n494. 目标和 (https://programmercarl.com/0494.%E7%9B%AE%E6%A0%87%E5%92%8C.html)求的是装满背包有多少种方法，而本题是求装满背包有多少种组合。\n\n这有啥区别？\n\n求装满背包有几种方法其实就是求组合数。 不过 494. 目标和 (https://programmercarl.com/0494.%E7%9B%AE%E6%A0%87%E5%92%8C.html)是 01背包，即每一类物品只有一个。\n\n以下动规五部曲：\n\n#1、确定dp数组以及下标的含义\n定义二维dp数值 dp[i][j]：使用 下标为[0, i]的coins[i]能够凑满j（包括j）这么大容量的包，有dp[i][j]种组合方法。\n\n很多录友也会疑惑，凭什么上来就定义 dp数组，思考过程是什么样的， 这个思考过程我在 01背包理论基础（二维数组） (https://programmercarl.com/%E8%83%8C%E5%8C%85%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%8001%E8%83%8C%E5%8C%85-1.html)中的 “确定dp数组以及下标的含义” 有详细讲解。\n\n（强烈建议按照代码随想录的顺序学习，否则可能看不懂我的讲解）\n\n#2、确定递推公式\n注意： 这里的公式推导，与之前讲解过的 494. 目标和 (https://programmercarl.com/0494.%E7%9B%AE%E6%A0%87%E5%92%8C.html)、完全背包理论基础 (https://programmercarl.com/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85.html)有极大重复，所以我不在重复讲解原理，而是只讲解区别。\n\n我们再回顾一下，01背包理论基础 (https://programmercarl.com/%E8%83%8C%E5%8C%85%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%8001%E8%83%8C%E5%8C%85-1.html)，中二维DP数组的递推公式为：\n\ndp[i][j] = max(dp[i - 1][j], dp[i - 1][j - weight[i]] + value[i])\n\n在 完全背包理论基础 (https://programmercarl.com/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85.html)详细讲解了完全背包二维DP数组的递推公式为：\n\ndp[i][j] = max(dp[i - 1][j], dp[i][j - weight[i]] + value[i])\n\n看去完全背包 和 01背包的差别在哪里？\n\n在于01背包是 dp[i - 1][j - weight[i]] + value[i] ，完全背包是 dp[i][j - weight[i]] + value[i])\n\n主要原因就是 完全背包单类物品有无限个。\n\n具体原因我在 完全背包理论基础（二维） (https://programmercarl.com/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85.html)的 「确定递推公式」有详细讲解，如果大家忘了，再回顾一下。\n\n我上面有说过，本题和 494. 目标和 (https://programmercarl.com/0494.%E7%9B%AE%E6%A0%87%E5%92%8C.html)是一样的，唯一区别就是 494. 目标和 (https://programmercarl.com/0494.%E7%9B%AE%E6%A0%87%E5%92%8C.html)是 01背包，本题是完全背包。\n\n在494. 目标和 (https://programmercarl.com/0494.%E7%9B%AE%E6%A0%87%E5%92%8C.html)中详解讲解了装满背包有几种方法，二维DP数组的递推公式： dp[i][j] = dp[i - 1][j] + dp[i - 1][j - nums[i]]\n\n所以本题递推公式：dp[i][j] = dp[i - 1][j] + dp[i][j - nums[i]] ，区别依然是 dp[i - 1][j - nums[i]] 和 dp[i][j - nums[i]]\n\n这个 ‘所以’ 我省略了很多推导的内容，因为这些内容在 494. 目标和 (https://programmercarl.com/0494.%E7%9B%AE%E6%A0%87%E5%92%8C.html)和 完全背包理论基础 (https://programmercarl.com/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85.html)都详细讲过。\n\n这里不再重复讲解。\n\n大家主要疑惑点\n\n1、 dp[i][j] = dp[i - 1][j] + dp[i][j - nums[i]] 这个递归公式框架怎么来的，在 494. 目标和 (opens new window)有详细讲解。\n\n2、为什么是 dp[i][j - nums[i]] 而不是 dp[i - 1][j - nums[i]] ，在完全背包理论基础（二维） (opens new window)有详细讲解\n\n#3. dp数组如何初始化\n那么二维数组的最上行 和 最左列一定要初始化，这是递推公式推导的基础，如图红色部分：\n\nhttps://file1.kamacoder.com/i/algo/20240827103507.png\n\n这里首先要关注的就是 dp[0][0] 应该是多少？\n\n背包空间为0，装满「物品0」 的组合数有多少呢？\n\n应该是 0 个， 但如果 「物品0」 的 数值就是0呢？ 岂不是可以有无限个0 组合 和为0！\n\n题目描述中说了1 <= coins.length <= 300 ，所以不用考虑 物品数值为0的情况。\n\n那么最上行dp[0][j] 如何初始化呢？\n\ndp[0][j]的含义：用「物品0」（即coins[0]） 装满 背包容量为j的背包，有几种组合方法。 （如果看不懂dp数组的含义，建议先学习494. 目标和 (https://programmercarl.com/0494.%E7%9B%AE%E6%A0%87%E5%92%8C.html)）\n\n如果 j 可以整除 物品0，那么装满背包就有1种组合方法。\n\n初始化代码：\n\nfor (int j = 0; j <= bagSize; j++) {\n    if (j % coins[0] == 0) dp[0][j] = 1;\n}\n最左列如何初始化呢？\n\ndp[i][0] 的含义：用物品i（即coins[i]） 装满容量为0的背包 有几种组合方法。\n\n都有一种方法，即不装。\n\n所以 dp[i][0] 都初始化为1\n\n#4. 确定遍历顺序\n二维DP数组的完全背包的两个for循环先后顺序是无所谓的。\n\n先遍历背包，还是先遍历物品都是可以的。\n\n原理和 01背包理论基础（二维数组） (https://programmercarl.com/%E8%83%8C%E5%8C%85%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%8001%E8%83%8C%E5%8C%85-1.html)中的 「遍历顺序」是一样的，都是因为 两个for循环的先后顺序不影响 递推公式 所需要的数值。\n\n具体分析过程看 01背包理论基础（二维数组） (https://programmercarl.com/%E8%83%8C%E5%8C%85%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%8001%E8%83%8C%E5%8C%85-1.html)中的 「遍历顺序」\n\n#5. 打印DP数组\n以amount为5，coins为：[2,3,5] 为例：\n\ndp数组应该是这样的：\n\n1 0 1 0 1 0\n1 0 1 1 1 1\n1 0 1 1 1 2\n#代码实现：\nclass Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        int bagSize = amount;\n\n        vector<vector<uint64_t>> dp(coins.size(), vector<uint64_t>(bagSize + 1, 0));\n\n        // 初始化最上行\n        for (int j = 0; j <= bagSize; j++) {\n            if (j % coins[0] == 0) dp[0][j] = 1;\n        }\n        // 初始化最左列\n        for (int i = 0; i < coins.size(); i++) {\n            dp[i][0] = 1;\n        }\n        // 以下遍历顺序行列可以颠倒\n        for (int i = 1; i < coins.size(); i++) { // 行，遍历物品\n            for (int j = 0; j <= bagSize; j++) { // 列，遍历背包\n                if (coins[i] > j) dp[i][j] = dp[i - 1][j]; \n                else dp[i][j] = dp[i - 1][j] +  dp[i][j - coins[i]];\n            }\n        }\n        return dp[coins.size() - 1][bagSize];\n    }\n};\n#一维dp讲解\n#1、确定dp数组以及下标的含义\ndp[j]：凑成总金额j的货币组合数为dp[j]\n\n#2、确定递推公式\n本题 二维dp 递推公式： dp[i][j] = dp[i - 1][j] + dp[i][j - coins[i]]\n\n压缩成一维：dp[j] += dp[j - coins[i]]\n\n这个递推公式大家应该不陌生了，我在讲解01背包题目的时候在这篇494. 目标和 (https://programmercarl.com/0494.%E7%9B%AE%E6%A0%87%E5%92%8C.html)中就讲解了，求装满背包有几种方法，公式都是：dp[j] += dp[j - nums[i]]\n\n#3. dp数组如何初始化\n装满背包容量为0 的方法是1，即不放任何物品，dp[0] = 1\n\n#4. 确定遍历顺序\n本题中我们是外层for循环遍历物品（钱币），内层for遍历背包（金钱总额），还是外层for遍历背包（金钱总额），内层for循环遍历物品（钱币）呢？\n\n我在完全背包（一维DP)(https://programmercarl.com/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85%E4%B8%80%E7%BB%B4.html)中讲解了完全背包的两个for循环的先后顺序都是可以的。\n\n但本题就不行了！\n\n因为纯完全背包求得装满背包的最大价值是多少，和凑成总和的元素有没有顺序没关系，即：有顺序也行，没有顺序也行！\n\n而本题要求凑成总和的组合数，元素之间明确要求没有顺序。\n\n所以纯完全背包是能凑成总和就行，不用管怎么凑的。\n\n本题是求凑出来的方案个数，且每个方案个数是组合数。\n\n那么本题，两个for循环的先后顺序可就有说法了。\n\n我们先来看 外层for循环遍历物品（钱币），内层for遍历背包（金钱总额）的情况。\n\n代码如下：\n\nfor (int i = 0; i < coins.size(); i++) { // 遍历物品\n    for (int j = coins[i]; j <= amount; j++) { // 遍历背包容量\n        dp[j] += dp[j - coins[i]];\n    }\n}\n假设：coins[0] = 1，coins[1] = 5。\n\n那么就是先把1加入计算，然后再把5加入计算，得到的方法数量只有{1, 5}这种情况。而不会出现{5, 1}的情况。\n\n所以这种遍历顺序中dp[j]里计算的是组合数！\n\n如果把两个for交换顺序，代码如下：\n\nfor (int j = 0; j <= amount; j++) { // 遍历背包容量\n    for (int i = 0; i < coins.size(); i++) { // 遍历物品\n        if (j - coins[i] >= 0) dp[j] += dp[j - coins[i]];\n    }\n}\n背包容量的每一个值，都是经过 1 和 5 的计算，包含了{1, 5} 和 {5, 1}两种情况。\n\n此时dp[j]里算出来的就是排列数！\n\n可能这里很多同学还不是很理解，建议动手把这两种方案的dp数组数值变化打印出来，对比看一看！（实践出真知）\n\n#5. 举例推导dp数组\n输入: amount = 5, coins = [1, 2, 5] ，dp状态图如下：\n\nhttps://file1.kamacoder.com/i/algo/20210120181331461.jpg\n\n最后红色框dp[amount]为最终结果。\n\n以上分析完毕，C++代码如下：\n\nclass Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        vector<uint64_t> dp(amount + 1, 0); // 防止相加数据超int\n        dp[0] = 1; // 只有一种方式达到0\n        for (int i = 0; i < coins.size(); i++) { // 遍历物品\n            for (int j = coins[i]; j <= amount; j++) { // 遍历背包\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount]; // 返回组合数\n    }\n};\nC++测试用例有两个数相加超过int的数据，所以需要在if里加上dp[i] < INT_MAX - dp[i - num]。\n\n时间复杂度: O(mn)，其中 m 是amount，n 是 coins 的长度\n空间复杂度: O(m)\n为了防止相加的数据 超int 也可以这么写：\n\nclass Solution {\npublic:\n    int change(int amount, vector<int>& coins) {\n        vector<int> dp(amount + 1, 0);\n        dp[0] = 1; // 只有一种方式达到0\n        for (int i = 0; i < coins.size(); i++) { // 遍历物品\n            for (int j = coins[i]; j <= amount; j++) { // 遍历背包\n                if (dp[j] < INT_MAX - dp[j - coins[i]]) { //防止相加数据超int\n                    dp[j] += dp[j - coins[i]];\n                }\n            }\n        }\n        return dp[amount]; // 返回组合数\n    }\n};\n#总结\n本题我们从 二维 分析到 一维。\n\n大家在刚开始学习的时候，从二维开始学习 容易理解。\n\n之后，推荐大家直接掌握一维的写法，熟练后更容易写出来。\n\n本题中，二维dp主要是就要 想清楚和我们之前讲解的 01背包理论基础 (https://programmercarl.com/%E8%83%8C%E5%8C%85%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%8001%E8%83%8C%E5%8C%85-1.html)、494. 目标和 (https://programmercarl.com/0494.%E7%9B%AE%E6%A0%87%E5%92%8C.html)、 完全背包理论基础 (https://programmercarl.com/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E7%90%86%E8%AE%BA%E5%9F%BA%E7%A1%80%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85.html)联系与区别。\n\n这也是代码随想录安排刷题顺序的精髓所在。\n\n本题的一维dp中，难点在于理解便利顺序。\n\n在求装满背包有几种方案的时候，认清遍历顺序是非常关键的。\n\n如果求组合数就是外层for循环遍历物品，内层for遍历背包。\n\n如果求排列数就是外层for遍历背包，内层for循环遍历物品。\n\n可能说到排列数录友们已经有点懵了，后面我还会安排求排列数的题目，到时候在对比一下，大家就会发现神奇所在！\n\n#其他语言版本\n#Java：\nclass Solution {\n    public int change(int amount, int[] coins) {\n        //递推表达式\n        int[] dp = new int[amount + 1];\n        //初始化dp数组，表示金额为0时只有一种情况，也就是什么都不装\n        dp[0] = 1;\n        for (int i = 0; i < coins.length; i++) {\n            for (int j = coins[i]; j <= amount; j++) {\n                dp[j] += dp[j - coins[i]];\n            }\n        }\n        return dp[amount];\n    }\n}\n// 二维dp数组版本，方便理解\nclass Solution {\n    public int change(int amount, int[] coins) {\n        int[][] dp = new int[coins.length][amount+1];\n\n        // 初始化边界值\n        for(int i = 0; i < coins.length; i++){\n            // 第一列的初始值为1\n            dp[i][0] = 1;\n        }\n        for(int j = coins[0]; j <= amount; j++){\n            // 初始化第一行\n            dp[0][j] += dp[0][j-coins[0]];\n        }\n        \n        for(int i = 1; i < coins.length; i++){\n            for(int j = 1; j <= amount; j++){\n                if(j < coins[i]) dp[i][j] = dp[i-1][j];\n                else dp[i][j] = dp[i][j-coins[i]] + dp[i-1][j];\n            }\n        }\n\n        return dp[coins.length-1][amount];\n    }\n}\n#Python：\nclass Solution:\n    def change(self, amount: int, coins: List[int]) -> int:\n        dp = [0]*(amount + 1)\n        dp[0] = 1\n        # 遍历物品\n        for i in range(len(coins)):\n            # 遍历背包\n            for j in range(coins[i], amount + 1):\n                dp[j] += dp[j - coins[i]]\n        return dp[amount]"
+}

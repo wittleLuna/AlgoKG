@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "@types/d3": "^7.4.3",
+    "d3": "^7.9.0",
+    "date-fns": "^4.1.0",
+    "react-scripts": "^4.0.3"
+  },
+  "devDependencies": {
+    "customize-cra": "^1.0.0"
+  }
+}

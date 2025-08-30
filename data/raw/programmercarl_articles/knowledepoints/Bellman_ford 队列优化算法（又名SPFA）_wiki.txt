@@ -1,0 +1,64 @@
+队列优化：SPFA
+即 Shortest Path Faster Algorithm。
+
+很多时候我们并不需要那么多无用的松弛操作。
+
+很显然，只有上一次被松弛的结点，所连接的边，才有可能引起下一次的松弛操作。
+
+那么我们用队列来维护「哪些结点可能会引起松弛操作」，就能只访问必要的边了。
+
+SPFA 也可以用于判断 s 点是否能抵达一个负环，只需记录最短路经过了多少条边，当经过了至少 n 条边时，说明 s 点可以抵达一个负环。
+
+实现
+
+C++
+Python
+from collections import deque
+
+
+class Edge:
+    def __init__(self, v=0, w=0):
+        self.v = v
+        self.w = w
+
+
+e = [[Edge() for i in range(MAXN)] for j in range(MAXN)]
+INF = 0x3F3F3F3F
+
+
+def spfa(n, s):
+    dis = [INF] * (n + 1)
+    cnt = [0] * (n + 1)
+    vis = [False] * (n + 1)
+    q = deque()
+
+    dis[s] = 0
+    vis[s] = True
+    q.append(s)
+    while q:
+        u = q.popleft()
+        vis[u] = False
+        for ed in e[u]:
+            v, w = ed.v, ed.w
+            if dis[v] > dis[u] + w:
+                dis[v] = dis[u] + w
+                cnt[v] = cnt[u] + 1  # 记录最短路经过的边数
+                if cnt[v] >= n:
+                    return False
+                # 在不经过负环的情况下，最短路至多经过 n - 1 条边
+                # 因此如果经过了多于 n 条边，一定说明经过了负环
+                if not vis[v]:
+                    q.append(v)
+                    vis[v] = True
+
+虽然在大多数情况下 SPFA 跑得很快，但其最坏情况下的时间复杂度为 O(nm)，将其卡到这个复杂度也是不难的，所以考试时要谨慎使用（在没有负权边时最好使用 Dijkstra 算法，在有负权边且题目中的图没有特殊性质时，若 SPFA 是标算的一部分，题目不应当给出 Bellman–Ford 算法无法通过的数据范围）。
+
+Bellman–Ford 的其他优化
+除了队列优化（SPFA）之外，Bellman–Ford 还有其他形式的优化，这些优化在部分图上效果明显，但在某些特殊图上，最坏复杂度可能达到指数级。
+
+堆优化：将队列换成堆，与 Dijkstra 的区别是允许一个点多次入队。在有负权边的图可能被卡成指数级复杂度。
+栈优化：将队列换成栈（即将原来的 BFS 过程变成 DFS），在寻找负环时可能具有更高效率，但最坏时间复杂度仍然为指数级。
+LLL 优化：将普通队列换成双端队列，每次将入队结点距离和队内距离平均值比较，如果更大则插入至队尾，否则插入队首。
+SLF 优化：将普通队列换成双端队列，每次将入队结点距离和队首比较，如果更大则插入至队尾，否则插入队首。
+D´Esopo–Pape 算法：将普通队列换成双端队列，如果一个节点之前没有入队，则将其插入队尾，否则插入队首。
+更多优化以及针对这些优化的 Hack 方法，可以看 fstqwq 在知乎上的回答。

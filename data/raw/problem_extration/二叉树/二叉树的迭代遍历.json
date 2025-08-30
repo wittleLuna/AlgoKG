@@ -1,0 +1,533 @@
+{
+  "id": "AP_436bad54",
+  "title": "二叉树的迭代遍历",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/binary-tree-preorder-traversal/",
+  "description": "",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "二叉树遍历",
+    "迭代算法"
+  ],
+  "data_structure_tags": [
+    "栈"
+  ],
+  "technique_tags": [
+    "迭代代替递归",
+    "自定义遍历逻辑"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用迭代法（非递归的方式）实现二叉树的前序、中序和后序遍历。通过栈来模拟递归调用过程，从而达到遍历二叉树的目的。",
+  "key_insights": [
+    {
+      "content": "递归过程中每次函数调用都会将相关信息压入栈中，而通过手动管理一个栈可以模仿这一过程，使非递归遍历成为可能。"
+    },
+    {
+      "content": "在不同的遍历方式下，节点的处理（放入结果集）与访问（实际遍历到）的顺序不同，这决定了具体实现上的差异。例如，在中序遍历中，节点先被访问但最后才被处理。"
+    },
+    {
+      "content": "前序遍历的顺序是中左右，可以通过先将右孩子再左孩子入栈来保证正确的输出顺序。"
+    },
+    {
+      "content": "后序遍历可以通过调整前序遍历的顺序并反转结果数组来实现。"
+    },
+    {
+      "content": "中序遍历需要额外的指针来帮助访问节点，栈则用来处理节点上的元素。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "中序遍历（迭代法）",
+      "text": "为了解释清楚，我说明一下 刚刚在迭代的过程中，其实我们有两个操作：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> preorderTraversal(TreeNode* root) { stack<TreeNode*> st; vector<int> result; if (root == NULL) return result; st.push(root); while (!st.empty()) { TreeNode* node = st.top(); st.pop(); result.push_back(node->val); if (node->right) st.push(node->right); if (node->left) st.push(node->left); } return result; }};",
+          "description": "二叉树前序遍历的迭代实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> inorderTraversal(TreeNode* root) { vector<int> result; stack<TreeNode*> st; TreeNode* cur = root; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->left; } else { cur = st.top(); st.pop(); result.push_back(cur->val); cur = cur->right; }} return result; }};",
+          "description": "二叉树中序遍历的迭代实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> postorderTraversal(TreeNode* root) { stack<TreeNode*> st; vector<int> result; if (root == NULL) return result; st.push(root); while (!st.empty()) { TreeNode* node = st.top(); st.pop(); result.push_back(node->val); if (node->left) st.push(node->left); if (node->right) st.push(node->right); } reverse(result.begin(), result.end()); return result; }};",
+          "description": "二叉树后序遍历的迭代实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<Integer> preorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); stack.push(root); while (!stack.isEmpty()){ TreeNode node = stack.pop(); result.add(node.val); if (node.right != null){ stack.push(node.right); } if (node.left != null){ stack.push(node.left); }} return result; }}",
+          "description": "Java版二叉树前序遍历的迭代实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<Integer> inorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); TreeNode cur = root; while (cur != null || !stack.isEmpty()){ if (cur != null){ stack.push(cur); cur = cur.left; }else{ cur = stack.pop(); result.add(cur.val); cur = cur.right; }} return result; }}",
+          "description": "Java版二叉树中序遍历的迭代实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<Integer> postorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); stack.push(root); while (!stack.isEmpty()){ TreeNode node = stack.pop(); result.add(node.val); if (node.left != null){ stack.push(node.left); } if (node.right != null){ stack.push(node.right); }} Collections.reverse(result); return result; }}",
+          "description": "Java版二叉树后序遍历的迭代实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def preorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [root] result = [] while stack: node = stack.pop() result.append(node.val) if node.right: stack.append(node.right) if node.left: stack.append(node.left) return result",
+          "description": "Python版二叉树前序遍历的迭代实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def inorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [] result = [] cur = root while cur or stack: if cur: stack.append(cur) cur = cur.left else: cur = stack.pop() result.append(cur.val) cur = cur.right return result",
+          "description": "Python版二叉树中序遍历的迭代实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def postorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [root] result = [] while stack: node = stack.pop() result.append(node.val) if node.left: stack.append(node.left) if node.right: stack.append(node.right) return result[::-1]",
+          "description": "Python版二叉树后序遍历的迭代实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def postorderTraversal(self, root: Optional[TreeNode]) -> List[int]: values = [] stack = [] popped_nodes = set() current = root while current or stack: if current: stack.append(current) if current.right: stack.append(current.right) if current.left: stack.append(current.left) current = None continue node = stack.pop() if (node.left is None or node.left in popped_nodes) and (node.right is None or node.right in popped_nodes): popped_nodes.add(node) values.append(node.val) continue current = node return values",
+          "description": "Python版二叉树后序遍历的另一种迭代实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "后序遍历（迭代法）",
+      "text": "再来看后序遍历，先序遍历是中左右，后序遍历是左右中，那么我们只需要调整一下先序遍历的代码顺序，就变成中右左的遍历顺序，然后在反转result数组，输出的结果顺序就是左右中了，如下图：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> preorderTraversal(TreeNode* root) { stack<TreeNode*> st; vector<int> result; if (root == NULL) return result; st.push(root); while (!st.empty()) { TreeNode* node = st.top(); st.pop(); result.push_back(node->val); if (node->right) st.push(node->right); if (node->left) st.push(node->left); } return result; }};",
+          "description": "二叉树的前序遍历（迭代法）"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> inorderTraversal(TreeNode* root) { vector<int> result; stack<TreeNode*> st; TreeNode* cur = root; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->left; } else { cur = st.top(); st.pop(); result.push_back(cur->val); cur = cur->right; }} return result; }};",
+          "description": "二叉树的中序遍历（迭代法）"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> postorderTraversal(TreeNode* root) { stack<TreeNode*> st; vector<int> result; if (root == NULL) return result; st.push(root); while (!st.empty()) { TreeNode* node = st.top(); st.pop(); result.push_back(node->val); if (node->left) st.push(node->left); if (node->right) st.push(node->right); } reverse(result.begin(), result.end()); return result; }};",
+          "description": "二叉树的后序遍历（迭代法）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<Integer> preorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); stack.push(root); while (!stack.isEmpty()){ TreeNode node = stack.pop(); result.add(node.val); if (node.right != null){ stack.push(node.right); } if (node.left != null){ stack.push(node.left); }} return result; }}",
+          "description": "二叉树的前序遍历（迭代法，Java实现）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<Integer> inorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); TreeNode cur = root; while (cur != null || !stack.isEmpty()){ if (cur != null){ stack.push(cur); cur = cur.left; }else{ cur = stack.pop(); result.add(cur.val); cur = cur.right; }} return result; }}",
+          "description": "二叉树的中序遍历（迭代法，Java实现）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<Integer> postorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); stack.push(root); while (!stack.isEmpty()){ TreeNode node = stack.pop(); result.add(node.val); if (node.left != null){ stack.push(node.left); } if (node.right != null){ stack.push(node.right); }} Collections.reverse(result); return result; }}",
+          "description": "二叉树的后序遍历（迭代法，Java实现）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def preorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [root] result = [] while stack: node = stack.pop() result.append(node.val) if node.right: stack.append(node.right) if node.left: stack.append(node.left) return result",
+          "description": "二叉树的前序遍历（迭代法，Python实现）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def inorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [] result = [] cur = root while cur or stack: if cur: stack.append(cur) cur = cur.left else: cur = stack.pop() result.append(cur.val) cur = cur.right return result",
+          "description": "二叉树的中序遍历（迭代法，Python实现）"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def postorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [root] result = [] while stack: node = stack.pop() result.append(node.val) if node.left: stack.append(node.left) if node.right: stack.append(node.right) return result[::-1]",
+          "description": "二叉树的后序遍历（迭代法，Python实现）"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "此时我们用迭代法写出了二叉树的前后中序遍历，大家可以看出前序和中序是完全两种代码风格，并不像递归写法那样代码稍做调整，就可以实现前后中序。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> preorderTraversal(TreeNode* root) { stack<TreeNode*> st; vector<int> result; if (root == NULL) return result; st.push(root); while (!st.empty()) { TreeNode* node = st.top(); st.pop(); result.push_back(node->val); if (node->right) st.push(node->right); if (node->left) st.push(node->left); } return result; }};",
+          "description": "二叉树前序遍历的迭代实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> inorderTraversal(TreeNode* root) { vector<int> result; stack<TreeNode*> st; TreeNode* cur = root; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->left; } else { cur = st.top(); st.pop(); result.push_back(cur->val); cur = cur->right; }} return result; }};",
+          "description": "二叉树中序遍历的迭代实现"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> postorderTraversal(TreeNode* root) { stack<TreeNode*> st; vector<int> result; if (root == NULL) return result; st.push(root); while (!st.empty()) { TreeNode* node = st.top(); st.pop(); result.push_back(node->val); if (node->left) st.push(node->left); if (node->right) st.push(node->right); } reverse(result.begin(), result.end()); return result; }};",
+          "description": "二叉树后序遍历的迭代实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<Integer> preorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); stack.push(root); while (!stack.isEmpty()){ TreeNode node = stack.pop(); result.add(node.val); if (node.right != null){ stack.push(node.right); } if (node.left != null){ stack.push(node.left); }} return result; }}",
+          "description": "Java版本的二叉树前序遍历迭代实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<Integer> inorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); TreeNode cur = root; while (cur != null || !stack.isEmpty()){ if (cur != null){ stack.push(cur); cur = cur.left; }else{ cur = stack.pop(); result.add(cur.val); cur = cur.right; }} return result; }}",
+          "description": "Java版本的二叉树中序遍历迭代实现"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<Integer> postorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); stack.push(root); while (!stack.isEmpty()){ TreeNode node = stack.pop(); result.add(node.val); if (node.left != null){ stack.push(node.left); } if (node.right != null){ stack.push(node.right); }} Collections.reverse(result); return result; }}",
+          "description": "Java版本的二叉树后序遍历迭代实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def preorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [root] result = [] while stack: node = stack.pop() result.append(node.val) if node.right: stack.append(node.right) if node.left: stack.append(node.left) return result",
+          "description": "Python版本的二叉树前序遍历迭代实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def inorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [] result = [] cur = root while cur or stack: if cur: stack.append(cur) cur = cur.left else: cur = stack.pop() result.append(cur.val) cur = cur.right return result",
+          "description": "Python版本的二叉树中序遍历迭代实现"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def postorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [root] result = [] while stack: node = stack.pop() result.append(node.val) if node.left: stack.append(node.left) if node.right: stack.append(node.right) return result[::-1]",
+          "description": "Python版本的二叉树后序遍历迭代实现"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> preorderTraversal(TreeNode* root) { stack<TreeNode*> st; vector<int> result; if (root == NULL) return result; st.push(root); while (!st.empty()) { TreeNode* node = st.top(); st.pop(); result.push_back(node->val); if (node->right) st.push(node->right); if (node->left) st.push(node->left); } return result; }};",
+          "description": "C++实现的二叉树前序遍历"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> inorderTraversal(TreeNode* root) { vector<int> result; stack<TreeNode*> st; TreeNode* cur = root; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->left; } else { cur = st.top(); st.pop(); result.push_back(cur->val); cur = cur->right; }} return result; }};",
+          "description": "C++实现的二叉树中序遍历"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> postorderTraversal(TreeNode* root) { stack<TreeNode*> st; vector<int> result; if (root == NULL) return result; st.push(root); while (!st.empty()) { TreeNode* node = st.top(); st.pop(); result.push_back(node->val); if (node->left) st.push(node->left); if (node->right) st.push(node->right); } reverse(result.begin(), result.end()); return result; }};",
+          "description": "C++实现的二叉树后序遍历"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<Integer> preorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); stack.push(root); while (!stack.isEmpty()){ TreeNode node = stack.pop(); result.add(node.val); if (node.right != null){ stack.push(node.right); } if (node.left != null){ stack.push(node.left); }} return result; }};",
+          "description": "Java实现的二叉树前序遍历"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<Integer> inorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); TreeNode cur = root; while (cur != null || !stack.isEmpty()){ if (cur != null){ stack.push(cur); cur = cur.left; }else{ cur = stack.pop(); result.add(cur.val); cur = cur.right; }} return result; }};",
+          "description": "Java实现的二叉树中序遍历"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<Integer> postorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); stack.push(root); while (!stack.isEmpty()){ TreeNode node = stack.pop(); result.add(node.val); if (node.left != null){ stack.push(node.left); } if (node.right != null){ stack.push(node.right); }} Collections.reverse(result); return result; }};",
+          "description": "Java实现的二叉树后序遍历"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def preorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [root] result = [] while stack: node = stack.pop() result.append(node.val) if node.right: stack.append(node.right) if node.left: stack.append(node.left) return result",
+          "description": "Python实现的二叉树前序遍历"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def inorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [] result = [] cur = root while cur or stack: if cur: stack.append(cur) cur = cur.left else: cur = stack.pop() result.append(cur.val) cur = cur.right return result",
+          "description": "Python实现的二叉树中序遍历"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def postorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [root] result = [] while stack: node = stack.pop() result.append(node.val) if node.left: stack.append(node.left) if node.right: stack.append(node.right) return result[::-1]",
+          "description": "Python实现的二叉树后序遍历"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def postorderTraversal(self, root: Optional[TreeNode]) -> List[int]: values = [] stack = [] popped_nodes = set() current = root while current or stack: if current: stack.append(current) if current.right: stack.append(current.right) if current.left: stack.append(current.left) current = None continue node = stack.pop() if (node.left is None or node.left in popped_nodes) and (node.right is None or node.right in popped_nodes): popped_nodes.add(node) values.append(node.val) continue current = node return values",
+          "description": "Python实现的另一种二叉树后序遍历"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "// 前序遍历顺序：中-左-右，入栈顺序：中-右-左",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> preorderTraversal(TreeNode* root) { stack<TreeNode*> st; vector<int> result; if (root == NULL) return result; st.push(root); while (!st.empty()) { TreeNode* node = st.top(); st.pop(); result.push_back(node->val); if (node->right) st.push(node->right); if (node->left) st.push(node->left); } return result; }};",
+          "description": "前序遍历二叉树（迭代法）"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> inorderTraversal(TreeNode* root) { vector<int> result; stack<TreeNode*> st; TreeNode* cur = root; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->left; } else { cur = st.top(); st.pop(); result.push_back(cur->val); cur = cur->right; }} return result; }};",
+          "description": "中序遍历二叉树（迭代法）"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> postorderTraversal(TreeNode* root) { stack<TreeNode*> st; vector<int> result; if (root == NULL) return result; st.push(root); while (!st.empty()) { TreeNode* node = st.top(); st.pop(); result.push_back(node->val); if (node->left) st.push(node->left); if (node->right) st.push(node->right); } reverse(result.begin(), result.end()); return result; }};",
+          "description": "后序遍历二叉树（迭代法）"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<Integer> preorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); stack.push(root); while (!stack.isEmpty()){ TreeNode node = stack.pop(); result.add(node.val); if (node.right != null){ stack.push(node.right); } if (node.left != null){ stack.push(node.left); }} return result; }}",
+          "description": "前序遍历二叉树（迭代法）Java版本"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<Integer> inorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); TreeNode cur = root; while (cur != null || !stack.isEmpty()){ if (cur != null){ stack.push(cur); cur = cur.left; }else{ cur = stack.pop(); result.add(cur.val); cur = cur.right; }} return result; }}",
+          "description": "中序遍历二叉树（迭代法）Java版本"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<Integer> postorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); stack.push(root); while (!stack.isEmpty()){ TreeNode node = stack.pop(); result.add(node.val); if (node.left != null){ stack.push(node.left); } if (node.right != null){ stack.push(node.right); }} Collections.reverse(result); return result; }}",
+          "description": "后序遍历二叉树（迭代法）Java版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def preorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [root] result = [] while stack: node = stack.pop() result.append(node.val) if node.right: stack.append(node.right) if node.left: stack.append(node.left) return result",
+          "description": "前序遍历二叉树（迭代法）Python版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def inorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [] result = [] cur = root while cur or stack: if cur: stack.append(cur) cur = cur.left else: cur = stack.pop() result.append(cur.val) cur = cur.right return result",
+          "description": "中序遍历二叉树（迭代法）Python版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def postorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [root] result = [] while stack: node = stack.pop() result.append(node.val) if node.left: stack.append(node.left) if node.right: stack.append(node.right) return result[::-1]",
+          "description": "后序遍历二叉树（迭代法）Python版本"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def postorderTraversal(self, root: Optional[TreeNode]) -> List[int]: values = [] stack = [] popped_nodes = set() current = root while current or stack: if current: stack.append(current) if current.right: stack.append(current.right) if current.left: stack.append(current.left) current = None continue node = stack.pop() if (node.left is None or node.left in popped_nodes) and (node.right is None or node.right in popped_nodes): popped_nodes.add(node) values.append(node.val) continue current = node return values",
+          "description": "后序遍历二叉树的另一种迭代方法Python版本"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "# 前序遍历-迭代-LC144_二叉树的前序遍历",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> preorderTraversal(TreeNode* root) { stack<TreeNode*> st; vector<int> result; if (root == NULL) return result; st.push(root); while (!st.empty()) { TreeNode* node = st.top(); st.pop(); result.push_back(node->val); if (node->right) st.push(node->right); if (node->left) st.push(node->left); } return result; }};",
+          "description": "前序遍历-迭代-C++"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> inorderTraversal(TreeNode* root) { vector<int> result; stack<TreeNode*> st; TreeNode* cur = root; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->left; } else { cur = st.top(); st.pop(); result.push_back(cur->val); cur = cur->right; }} return result; }};",
+          "description": "中序遍历-迭代-C++"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> postorderTraversal(TreeNode* root) { stack<TreeNode*> st; vector<int> result; if (root == NULL) return result; st.push(root); while (!st.empty()) { TreeNode* node = st.top(); st.pop(); result.push_back(node->val); if (node->left) st.push(node->left); if (node->right) st.push(node->right); } reverse(result.begin(), result.end()); return result; }};",
+          "description": "后序遍历-迭代-C++"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<Integer> preorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); stack.push(root); while (!stack.isEmpty()){ TreeNode node = stack.pop(); result.add(node.val); if (node.right != null){ stack.push(node.right); } if (node.left != null){ stack.push(node.left); }} return result; }};",
+          "description": "前序遍历-迭代-Java"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<Integer> inorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); TreeNode cur = root; while (cur != null || !stack.isEmpty()){ if (cur != null){ stack.push(cur); cur = cur.left; }else{ cur = stack.pop(); result.add(cur.val); cur = cur.right; }} return result; }};",
+          "description": "中序遍历-迭代-Java"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<Integer> postorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); stack.push(root); while (!stack.isEmpty()){ TreeNode node = stack.pop(); result.add(node.val); if (node.left != null){ stack.push(node.left); } if (node.right != null){ stack.push(node.right); }} Collections.reverse(result); return result; }};",
+          "description": "后序遍历-迭代-Java"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def preorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [root] result = [] while stack: node = stack.pop() result.append(node.val) if node.right: stack.append(node.right) if node.left: stack.append(node.left) return result",
+          "description": "前序遍历-迭代-Python"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def inorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [] result = [] cur = root while cur or stack: if cur: stack.append(cur) cur = cur.left else: cur = stack.pop() result.append(cur.val) cur = cur.right return result",
+          "description": "中序遍历-迭代-Python"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def postorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [root] result = [] while stack: node = stack.pop() result.append(node.val) if node.left: stack.append(node.left) if node.right: stack.append(node.right) return result[::-1]",
+          "description": "后序遍历-迭代-Python"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def postorderTraversal(self, root: Optional[TreeNode]) -> List[int]: values = [] stack = [] popped_nodes = set() current = root while current or stack: if current: stack.append(current) if current.right: stack.append(current.right) if current.left: stack.append(current.left) current = None continue node = stack.pop() if (node.left is None or node.left in popped_nodes) and (node.right is None or node.right in popped_nodes): popped_nodes.add(node) values.append(node.val) continue current = node return values",
+          "description": "后序遍历-迭代新解法-Python"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python 后序遍历的迭代新解法：",
+      "text": "本解法不同于前文介绍的逆转前序遍历调整后的结果，而是采用了对每个节点直接处理。这个实现方法在面试中不容易写出来，在下一节，我将改造本代码，奉上代码更简洁、更套路化、更容易实现的统一方法。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> preorderTraversal(TreeNode* root) { stack<TreeNode*> st; vector<int> result; if (root == NULL) return result; st.push(root); while (!st.empty()) { TreeNode* node = st.top(); st.pop(); result.push_back(node->val); if (node->right) st.push(node->right); if (node->left) st.push(node->left); } return result; }};",
+          "description": "二叉树的前序遍历"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> inorderTraversal(TreeNode* root) { vector<int> result; stack<TreeNode*> st; TreeNode* cur = root; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->left; } else { cur = st.top(); st.pop(); result.push_back(cur->val); cur = cur->right; }} return result; }};",
+          "description": "二叉树的中序遍历"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> postorderTraversal(TreeNode* root) { stack<TreeNode*> st; vector<int> result; if (root == NULL) return result; st.push(root); while (!st.empty()) { TreeNode* node = st.top(); st.pop(); result.push_back(node->val); if (node->left) st.push(node->left); if (node->right) st.push(node->right); } reverse(result.begin(), result.end()); return result; }};",
+          "description": "二叉树的后序遍历"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<Integer> preorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); stack.push(root); while (!stack.isEmpty()){ TreeNode node = stack.pop(); result.add(node.val); if (node.right != null){ stack.push(node.right); } if (node.left != null){ stack.push(node.left); }} return result; }}",
+          "description": "二叉树的前序遍历"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<Integer> inorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); TreeNode cur = root; while (cur != null || !stack.isEmpty()){ if (cur != null){ stack.push(cur); cur = cur.left; }else{ cur = stack.pop(); result.add(cur.val); cur = cur.right; }} return result; }}",
+          "description": "二叉树的中序遍历"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<Integer> postorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); stack.push(root); while (!stack.isEmpty()){ TreeNode node = stack.pop(); result.add(node.val); if (node.left != null){ stack.push(node.left); } if (node.right != null){ stack.push(node.right); }} Collections.reverse(result); return result; }}",
+          "description": "二叉树的后序遍历"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def preorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [root] result = [] while stack: node = stack.pop() result.append(node.val) if node.right: stack.append(node.right) if node.left: stack.append(node.left) return result",
+          "description": "二叉树的前序遍历"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def inorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [] result = [] cur = root while cur or stack: if cur: stack.append(cur) cur = cur.left else: cur = stack.pop() result.append(cur.val) cur = cur.right return result",
+          "description": "二叉树的中序遍历"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def postorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [root] result = [] while stack: node = stack.pop() result.append(node.val) if node.left: stack.append(node.left) if node.right: stack.append(node.right) return result[::-1]",
+          "description": "二叉树的后序遍历"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def postorderTraversal(self, root: Optional[TreeNode]) -> List[int]: values = [] stack = [] popped_nodes = set() current = root while current or stack: if current: stack.append(current) if current.right: stack.append(current.right) if current.left: stack.append(current.left) current = None continue node = stack.pop() if (node.left is None or node.left in popped_nodes) and (node.right is None or node.right in popped_nodes): popped_nodes.add(node) values.append(node.val) continue current = node return values",
+          "description": "二叉树的后序遍历新解法"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: vector<int> preorderTraversal(TreeNode* root) { stack<TreeNode*> st; vector<int> result; if (root == NULL) return result; st.push(root); while (!st.empty()) { TreeNode* node = st.top(); st.pop(); result.push_back(node->val); if (node->right) st.push(node->right); if (node->left) st.push(node->left); } return result; }};",
+      "description": "二叉树的前序遍历（迭代法）"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: vector<int> inorderTraversal(TreeNode* root) { vector<int> result; stack<TreeNode*> st; TreeNode* cur = root; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->left; } else { cur = st.top(); st.pop(); result.push_back(cur->val); cur = cur->right; }} return result; }};",
+      "description": "二叉树的中序遍历（迭代法）"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: vector<int> postorderTraversal(TreeNode* root) { stack<TreeNode*> st; vector<int> result; if (root == NULL) return result; st.push(root); while (!st.empty()) { TreeNode* node = st.top(); st.pop(); result.push_back(node->val); if (node->left) st.push(node->left); if (node->right) st.push(node->right); } reverse(result.begin(), result.end()); return result; }};",
+      "description": "二叉树的后序遍历（迭代法）"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public List<Integer> preorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); stack.push(root); while (!stack.isEmpty()){ TreeNode node = stack.pop(); result.add(node.val); if (node.right != null){ stack.push(node.right); } if (node.left != null){ stack.push(node.left); } } return result; }}",
+      "description": "二叉树的前序遍历（迭代法）"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public List<Integer> inorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); TreeNode cur = root; while (cur != null || !stack.isEmpty()){ if (cur != null){ stack.push(cur); cur = cur.left; }else{ cur = stack.pop(); result.add(cur.val); cur = cur.right; } } return result; }}",
+      "description": "二叉树的中序遍历（迭代法）"
+    },
+    {
+      "language": "java",
+      "code": "class Solution { public List<Integer> postorderTraversal(TreeNode root) { List<Integer> result = new ArrayList<>(); if (root == null){ return result; } Stack<TreeNode> stack = new Stack<>(); stack.push(root); while (!stack.isEmpty()){ TreeNode node = stack.pop(); result.add(node.val); if (node.left != null){ stack.push(node.left); } if (node.right != null){ stack.push(node.right); } } Collections.reverse(result); return result; }}",
+      "description": "二叉树的后序遍历（迭代法）"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def preorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [root] result = [] while stack: node = stack.pop() result.append(node.val) if node.right: stack.append(node.right) if node.left: stack.append(node.left) return result",
+      "description": "二叉树的前序遍历（迭代法）"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def inorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [] result = [] cur = root while cur or stack: if cur: stack.append(cur) cur = cur.left else: cur = stack.pop() result.append(cur.val) cur = cur.right return result",
+      "description": "二叉树的中序遍历（迭代法）"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def postorderTraversal(self, root: TreeNode) -> List[int]: if not root: return [] stack = [root] result = [] while stack: node = stack.pop() result.append(node.val) if node.left: stack.append(node.left) if node.right: stack.append(node.right) return result[::-1]",
+      "description": "二叉树的后序遍历（迭代法）"
+    }
+  ],
+  "common_mistakes": [
+    "忘记空节点不入栈可能会导致无限循环或错误的结果。",
+    "在尝试从一种遍历方式转换成另一种时直接修改代码顺序而不考虑访问与处理的区别可能导致逻辑错误。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/二叉树前序遍历（迭代法）.gif",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/二叉树前序遍历（迭代法）.gif",
+      "context": "图片相关说明"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/二叉树中序遍历（迭代法）.gif",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/二叉树中序遍历（迭代法）.gif",
+      "context": "图片相关说明"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20200808200338924.png",
+      "description": "该图展示了通过调整代码顺序和反转结果数组，将先序遍历（中左右）转换为后序遍历（左右中）的算法过程。",
+      "context": "该图片展示了通过调整先序遍历代码顺序并反转结果数组来实现后序遍历的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/%E4%BA%8C%E5%8F%89%E6%A0%91%E5%89%8D%E5%BA%8F%E9%81%8D%E5%8E%86%EF%BC%88%E8%BF%AD%E4%BB%A3%E6%B3%95%EF%BC%89.gif",
+      "description": "GIF展示了使用栈实现二叉树前序遍历（中左右）的过程。",
+      "context": "该GIF动画展示了使用栈实现二叉树前序遍历（中左右）的过程，通过动态演示了节点如何依次入栈和出栈，直观地解释了为何要先将右孩子后左孩子压入栈中。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B8%AD%E5%BA%8F%E9%81%8D%E5%8E%86%EF%BC%88%E8%BF%AD%E4%BB%A3%E6%B3%95%EF%BC%89.gif",
+      "description": "GIF展示了通过迭代法实现二叉树中序遍历的过程，包括使用指针访问节点和栈来处理节点值。",
+      "context": "此GIF动画展示了如何通过迭代法和使用栈来实现二叉树的中序遍历过程，形象地说明了访问顺序与处理顺序的不同。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20200808200338924.png",
+      "description": "GIF展示了二叉树后序遍历（中右左顺序）的过程，并在最后反转结果以得到正确的左右中顺序。",
+      "context": "该GIF动画展示了如何通过调整先序遍历代码顺序并最终反转结果数组来实现二叉树的后序遍历过程。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\二叉树的迭代遍历.txt",
+  "extracted_at": "2025-07-19T18:08:30.369503",
+  "raw_content": "二叉树的迭代遍历\n\n看完本篇大家可以使用迭代法，再重新解决如下三道leetcode上的题目：\n\n144.二叉树的前序遍历(https://leetcode.cn/problems/binary-tree-preorder-traversal/)\n94.二叉树的中序遍历(https://leetcode.cn/problems/binary-tree-inorder-traversal/)\n145.二叉树的后序遍历(https://leetcode.cn/problems/binary-tree-postorder-traversal/)\n\n思路\n为什么可以用迭代法（非递归的方式）来实现二叉树的前后中序遍历呢？\n\n我们在栈与队列：匹配问题都是栈的强项 (https://programmercarl.com/1047.%E5%88%A0%E9%99%A4%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89%E7%9B%B8%E9%82%BB%E9%87%8D%E5%A4%8D%E9%A1%B9.html)中提到了，递归的实现就是：每一次递归调用都会把函数的局部变量、参数值和返回地址等压入调用栈中，然后递归返回的时候，从栈顶弹出上一次递归的各项参数，所以这就是递归为什么可以返回上一层位置的原因。\n\n此时大家应该知道我们用栈也可以是实现二叉树的前后中序遍历了。\n\n前序遍历（迭代法）\n我们先看一下前序遍历。\n\n前序遍历是中左右，每次先处理的是中间节点，那么先将根节点放入栈中，然后将右孩子加入栈，再加入左孩子。\n\n为什么要先加入 右孩子，再加入左孩子呢？ 因为这样出栈的时候才是中左右的顺序。\n\n动画如下：\n\nhttps://file1.kamacoder.com/i/algo/%E4%BA%8C%E5%8F%89%E6%A0%91%E5%89%8D%E5%BA%8F%E9%81%8D%E5%8E%86%EF%BC%88%E8%BF%AD%E4%BB%A3%E6%B3%95%EF%BC%89.gif\n\n不难写出如下代码: （注意代码中空节点不入栈）\n\nclass Solution {\npublic:\n    vector<int> preorderTraversal(TreeNode* root) {\n        stack<TreeNode*> st;\n        vector<int> result;\n        if (root == NULL) return result;\n        st.push(root);\n        while (!st.empty()) {\n            TreeNode* node = st.top();                       // 中\n            st.pop();\n            result.push_back(node->val);\n            if (node->right) st.push(node->right);           // 右（空节点不入栈）\n            if (node->left) st.push(node->left);             // 左（空节点不入栈）\n        }\n        return result;\n    }\n};\n此时会发现貌似使用迭代法写出前序遍历并不难，确实不难。\n\n此时是不是想改一点前序遍历代码顺序就把中序遍历搞出来了？\n\n其实还真不行！\n\n但接下来，再用迭代法写中序遍历的时候，会发现套路又不一样了，目前的前序遍历的逻辑无法直接应用到中序遍历上。\n\n#中序遍历（迭代法）\n为了解释清楚，我说明一下 刚刚在迭代的过程中，其实我们有两个操作：\n\n处理：将元素放进result数组中\n访问：遍历节点\n分析一下为什么刚刚写的前序遍历的代码，不能和中序遍历通用呢，因为前序遍历的顺序是中左右，先访问的元素是中间节点，要处理的元素也是中间节点，所以刚刚才能写出相对简洁的代码，因为要访问的元素和要处理的元素顺序是一致的，都是中间节点。\n\n那么再看看中序遍历，中序遍历是左中右，先访问的是二叉树顶部的节点，然后一层一层向下访问，直到到达树左面的最底部，再开始处理节点（也就是在把节点的数值放进result数组中），这就造成了处理顺序和访问顺序是不一致的。\n\n那么在使用迭代法写中序遍历，就需要借用指针的遍历来帮助访问节点，栈则用来处理节点上的元素。\n\n动画如下：\n\nhttps://file1.kamacoder.com/i/algo/%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B8%AD%E5%BA%8F%E9%81%8D%E5%8E%86%EF%BC%88%E8%BF%AD%E4%BB%A3%E6%B3%95%EF%BC%89.gif\n\n中序遍历，可以写出如下代码：\n\nclass Solution {\npublic:\n    vector<int> inorderTraversal(TreeNode* root) {\n        vector<int> result;\n        stack<TreeNode*> st;\n        TreeNode* cur = root;\n        while (cur != NULL || !st.empty()) {\n            if (cur != NULL) { // 指针来访问节点，访问到最底层\n                st.push(cur); // 将访问的节点放进栈\n                cur = cur->left;                // 左\n            } else {\n                cur = st.top(); // 从栈里弹出的数据，就是要处理的数据（放进result数组里的数据）\n                st.pop();\n                result.push_back(cur->val);     // 中\n                cur = cur->right;               // 右\n            }\n        }\n        return result;\n    }\n};\n\n#后序遍历（迭代法）\n再来看后序遍历，先序遍历是中左右，后序遍历是左右中，那么我们只需要调整一下先序遍历的代码顺序，就变成中右左的遍历顺序，然后在反转result数组，输出的结果顺序就是左右中了，如下图：\n\nhttps://file1.kamacoder.com/i/algo/20200808200338924.png\n\n所以后序遍历只需要前序遍历的代码稍作修改就可以了，代码如下：\n\nclass Solution {\npublic:\n    vector<int> postorderTraversal(TreeNode* root) {\n        stack<TreeNode*> st;\n        vector<int> result;\n        if (root == NULL) return result;\n        st.push(root);\n        while (!st.empty()) {\n            TreeNode* node = st.top();\n            st.pop();\n            result.push_back(node->val);\n            if (node->left) st.push(node->left); // 相对于前序遍历，这更改一下入栈顺序 （空节点不入栈）\n            if (node->right) st.push(node->right); // 空节点不入栈\n        }\n        reverse(result.begin(), result.end()); // 将结果反转之后就是左右中的顺序了\n        return result;\n    }\n};\n\n#总结\n此时我们用迭代法写出了二叉树的前后中序遍历，大家可以看出前序和中序是完全两种代码风格，并不像递归写法那样代码稍做调整，就可以实现前后中序。\n\n这是因为前序遍历中访问节点（遍历节点）和处理节点（将元素放进result数组中）可以同步处理，但是中序就无法做到同步！\n\n上面这句话，可能一些同学不太理解，建议自己亲手用迭代法，先写出来前序，再试试能不能写出中序，就能理解了。\n\n那么问题又来了，难道二叉树前后中序遍历的迭代法实现，就不能风格统一么（即前序遍历改变代码顺序就可以实现中序 和 后序）？\n\n当然可以，这种写法，还不是很好理解，我们将在下一篇文章里重点讲解，敬请期待！\n\n#其他语言版本\n#Java：\n// 前序遍历顺序：中-左-右，入栈顺序：中-右-左\nclass Solution {\n    public List<Integer> preorderTraversal(TreeNode root) {\n        List<Integer> result = new ArrayList<>();\n        if (root == null){\n            return result;\n        }\n        Stack<TreeNode> stack = new Stack<>();\n        stack.push(root);\n        while (!stack.isEmpty()){\n            TreeNode node = stack.pop();\n            result.add(node.val);\n            if (node.right != null){\n                stack.push(node.right);\n            }\n            if (node.left != null){\n                stack.push(node.left);\n            }\n        }\n        return result;\n    }\n}\n\n// 中序遍历顺序: 左-中-右 入栈顺序： 左-右\nclass Solution {\n    public List<Integer> inorderTraversal(TreeNode root) {\n        List<Integer> result = new ArrayList<>();\n        if (root == null){\n            return result;\n        }\n        Stack<TreeNode> stack = new Stack<>();\n        TreeNode cur = root;\n        while (cur != null || !stack.isEmpty()){\n           if (cur != null){\n               stack.push(cur);\n               cur = cur.left;\n           }else{\n               cur = stack.pop();\n               result.add(cur.val);\n               cur = cur.right;\n           }\n        }\n        return result;\n    }\n}\n\n// 后序遍历顺序 左-右-中 入栈顺序：中-左-右 出栈顺序：中-右-左， 最后翻转结果\nclass Solution {\n    public List<Integer> postorderTraversal(TreeNode root) {\n        List<Integer> result = new ArrayList<>();\n        if (root == null){\n            return result;\n        }\n        Stack<TreeNode> stack = new Stack<>();\n        stack.push(root);\n        while (!stack.isEmpty()){\n            TreeNode node = stack.pop();\n            result.add(node.val);\n            if (node.left != null){\n                stack.push(node.left);\n            }\n            if (node.right != null){\n                stack.push(node.right);\n            }\n        }\n        Collections.reverse(result);\n        return result;\n    }\n}\n#Python：\n# 前序遍历-迭代-LC144_二叉树的前序遍历\nclass Solution:\n    def preorderTraversal(self, root: TreeNode) -> List[int]:\n        # 根节点为空则返回空列表\n        if not root:\n            return []\n        stack = [root]\n        result = []\n        while stack:\n            node = stack.pop()\n            # 中节点先处理\n            result.append(node.val)\n            # 右孩子先入栈\n            if node.right:\n                stack.append(node.right)\n            # 左孩子后入栈\n            if node.left:\n                stack.append(node.left)\n        return result\n\n# 中序遍历-迭代-LC94_二叉树的中序遍历\nclass Solution:\n    def inorderTraversal(self, root: TreeNode) -> List[int]:\n\n        if not root:\n            return []\n        stack = []  # 不能提前将root节点加入stack中\n\n        result = []\n        cur = root\n        while cur or stack:\n            # 先迭代访问最底层的左子树节点\n            if cur:     \n                stack.append(cur)\n                cur = cur.left\t\t\n            # 到达最左节点后处理栈顶节点    \n            else:\t\t\n                cur = stack.pop()\n                result.append(cur.val)\n                # 取栈顶元素右节点\n                cur = cur.right\t\n        return result\n\n# 后序遍历-迭代-LC145_二叉树的后序遍历\nclass Solution:\n    def postorderTraversal(self, root: TreeNode) -> List[int]:\n        if not root:\n            return []\n        stack = [root]\n        result = []\n        while stack:\n            node = stack.pop()\n            # 中节点先处理\n            result.append(node.val)\n            # 左孩子先入栈\n            if node.left:\n                stack.append(node.left)\n            # 右孩子后入栈\n            if node.right:\n                stack.append(node.right)\n        # 将最终的数组翻转\n        return result[::-1]\n#Python 后序遍历的迭代新解法：\n本解法不同于前文介绍的逆转前序遍历调整后的结果，而是采用了对每个节点直接处理。这个实现方法在面试中不容易写出来，在下一节，我将改造本代码，奉上代码更简洁、更套路化、更容易实现的统一方法。\nclass Solution:\n    def postorderTraversal(self, root: Optional[TreeNode]) -> List[int]:\n        values = []\n        stack = []\n        popped_nodes = set() # 记录值已经被收割了的 nodes，这是关键，已经被收割的节点还在树中，还会被访问到，但逻辑上已经等同于 null 节点。\n        current = root\n\n        while current or stack:\n            if current: # 一次处理完一个节点和他的左右儿子节点，不处理孙子节点，孙子节点由左右儿子等会分别处理。\n                stack.append(current) # 入栈自己\n\n                if current.right:\n                    stack.append(current.right) # 入栈右儿子\n                \n                if current.left: # 因为栈是后进先出，后序是‘左右中’，所以后加左儿子\n                    stack.append(current.left) # 入栈左儿子\n\n                current = None # 会导致后面A处出栈\n                continue\n\n            node = stack.pop() # A处，出的是左儿子，如果无左儿子，出的就是右儿子，如果连右儿子也没有，出的就是自己了。\n\n            # 如果 node 是叶子节点，就可以收割了；如果左右儿子都已经被收割了，也可以收割\n            if (node.left is None or node.left in popped_nodes) and \\\n                (node.right is None or node.right in popped_nodes):\n                popped_nodes.add(node)\n                values.append(node.val)\n                continue\n            \n            current = node # 不符合收割条件，说明 node 下还有未入栈的儿子，就去入栈\n        \n        return values"
+}

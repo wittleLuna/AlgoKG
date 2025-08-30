@@ -1,0 +1,665 @@
+{
+  "id": "AP_0b732133",
+  "title": "路径总和",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/path-sum/",
+  "description": "一个二叉树和一个目标和，判断该树中是否存在根节点到叶子节点的路径，这条路径上所有节点值相加等于目标和。\n\n说明: 叶子节点是指没有子节点的节点。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "深度优先搜索",
+    "递归"
+  ],
+  "data_structure_tags": [
+    "二叉树"
+  ],
+  "technique_tags": [
+    "回溯"
+  ],
+  "difficulty": null,
+  "solution_approach": "通过递归方法遍历二叉树，检查是否存在从根节点到叶子节点的路径使得所有节点值之和等于给定的目标和。使用深度优先搜索（DFS），并在每次递归调用时更新当前路径上的节点值总和。",
+  "key_insights": [
+    {
+      "content": "当需要查找特定条件下的路径而不是遍历整棵树时，递归函数应当有返回值来及时停止进一步探索。本例中，一旦找到满足条件的路径就立即返回true。"
+    },
+    {
+      "content": "通过将目标和初始化为计数器，并在遍历过程中逐步减去节点值，简化了判断路径是否满足条件的过程。当到达叶子节点且计数器恰好减至0时，说明找到了符合条件的路径。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "相信很多同学都会疑惑，递归函数什么时候要有返回值，什么时候没有返回值，特别是有的时候递归函数返回类型为bool类型。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "bool traversal(TreeNode* cur, int count) { if (!cur->left && !cur->right && count == 0) return true; if (!cur->left && !cur->right) return false; if (cur->left) { count -= cur->left->val; if (traversal(cur->left, count)) return true; count += cur->left->val; } if (cur->right) { count -= cur->right->val; if (traversal(cur->right, count)) return true; count += cur->right->val; } return false; } public: bool hasPathSum(TreeNode* root, int sum) { if (root == NULL) return false; return traversal(root, sum - root->val); }",
+          "description": "C++递归实现路径总和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool hasPathSum(TreeNode* root, int sum) { if (!root) return false; if (!root->left && !root->right && sum == root->val) { return true; } return hasPathSum(root->left, sum - root->val) || hasPathSum(root->right, sum - root->val); }};",
+          "description": "C++精简递归实现路径总和"
+        },
+        {
+          "language": "cpp",
+          "code": "class solution {public: bool haspathsum(TreeNode* root, int sum) { if (root == null) return false; stack<pair<TreeNode*, int>> st; st.push(pair<TreeNode*, int>(root, root->val)); while (!st.empty()) { pair<TreeNode*, int> node = st.top(); st.pop(); if (!node.first->left && !node.first->right && sum == node.second) return true; if (node.first->right) { st.push(pair<TreeNode*, int>(node.first->right, node.second + node.first->right->val)); } if (node.first->left) { st.push(pair<TreeNode*, int>(node.first->left, node.second + node.first->left->val)); } } return false; }};",
+          "description": "C++迭代实现路径总和"
+        },
+        {
+          "language": "java",
+          "code": "public boolean hasPathSum(TreeNode root, int targetSum) { if (root == null) { return false; } targetSum -= root.val; if (root.left == null && root.right == null) { return targetSum == 0; } if (root.left != null) { boolean left = hasPathSum(root.left, targetSum); if (left) { return true; } } if (root.right != null) { boolean right = hasPathSum(root.right, targetSum); if (right) { return true; } } return false; }",
+          "description": "Java递归实现路径总和"
+        },
+        {
+          "language": "java",
+          "code": "public boolean hasPathSum(TreeNode root, int targetSum) { if (root == null) return false; if (root.left == null && root.right == null) return root.val == targetSum; return hasPathSum(root.left, targetSum - root.val) || hasPathSum(root.right, targetSum - root.val); }",
+          "description": "Java简洁递归实现路径总和"
+        },
+        {
+          "language": "java",
+          "code": "public boolean hasPathSum(TreeNode root, int targetSum) { if(root == null) return false; Stack<TreeNode> stack1 = new Stack<>(); Stack<Integer> stack2 = new Stack<>(); stack1.push(root); stack2.push(root.val); while(!stack1.isEmpty()) { int size = stack1.size(); for(int i = 0; i < size; i++) { TreeNode node = stack1.pop(); int sum = stack2.pop(); if(node.left == null && node.right == null && sum == targetSum) { return true; } if(node.right != null){ stack1.push(node.right); stack2.push(sum + node.right.val); } if(node.left != null) { stack1.push(node.left); stack2.push(sum + node.left.val); } } } return false; }",
+          "description": "Java迭代实现路径总和"
+        },
+        {
+          "language": "python",
+          "code": "def traversal(self, cur: TreeNode, count: int) -> bool: if not cur.left and not cur.right and count == 0: return True if not cur.left and not cur.right: return False if cur.left: count -= cur.left.val if self.traversal(cur.left, count): return True count += cur.left.val if cur.right: count -= cur.right.val if self.traversal(cur.right, count): return True count += cur.right.val return False def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool: if root is None: return False return self.traversal(root, targetSum - root.val)",
+          "description": "Python递归实现路径总和"
+        },
+        {
+          "language": "python",
+          "code": "def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool: if not root: return False if not root.left and not root.right and targetSum == root.val: return True return self.hasPathSum(root.left, targetSum - root.val) or self.hasPathSum(root.right, targetSum - root.val)",
+          "description": "Python简洁递归实现路径总和"
+        },
+        {
+          "language": "python",
+          "code": "def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool: if not root: return False st = [(root, root.val)] while st: node, path_sum = st.pop() if not node.left and not node.right and path_sum == targetSum: return True if node.right: st.append((node.right, path_sum + node.right.val)) if node.left: st.append((node.left, path_sum + node.left.val)) return False",
+          "description": "Python迭代实现路径总和"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "递归",
+      "text": "可以使用深度优先遍历的方式（本题前中后序都可以，无所谓，因为中节点也没有处理逻辑）来遍历二叉树",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: bool traversal(TreeNode* cur, int count) { if (!cur->left && !cur->right && count == 0) return true; if (!cur->left && !cur->right) return false; if (cur->left) { count -= cur->left->val; if (traversal(cur->left, count)) return true; count += cur->left->val; } if (cur->right) { count -= cur->right->val; if (traversal(cur->right, count)) return true; count += cur->right->val; } return false; } public: bool hasPathSum(TreeNode* root, int sum) { if (root == NULL) return false; return traversal(root, sum - root->val); }};",
+          "description": "C++实现的路径总和问题，使用递归方法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool hasPathSum(TreeNode* root, int sum) { if (!root) return false; if (!root->left && !root->right && sum == root->val) { return true; } return hasPathSum(root->left, sum - root->val) || hasPathSum(root->right, sum - root->val); }};",
+          "description": "简化版C++实现的路径总和问题，使用递归方法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool hasPathSum(TreeNode* root, int sum) { if (root == nullptr) return false; stack<pair<TreeNode*, int>> st; st.push(make_pair(root, root->val)); while (!st.empty()) { pair<TreeNode*, int> node = st.top(); st.pop(); if (!node.first->left && !node.first->right && sum == node.second) return true; if (node.first->right) st.push(make_pair(node.first->right, node.second + node.first->right->val)); if (node.first->left) st.push(make_pair(node.first->left, node.second + node.first->left->val)); } return false; }};",
+          "description": "C++实现的路径总和问题，使用迭代方法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean hasPathSum(TreeNode root, int targetSum) { if (root == null) return false; targetSum -= root.val; if (root.left == null && root.right == null) return targetSum == 0; if (root.left != null) { boolean left = hasPathSum(root.left, targetSum); if (left) return true; } if (root.right != null) { boolean right = hasPathSum(root.right, targetSum); if (right) return true; } return false; }};",
+          "description": "Java实现的路径总和问题，使用递归方法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean hasPathSum(TreeNode root, int targetSum) { if (root == null) return false; if (root.left == null && root.right == null) return root.val == targetSum; return hasPathSum(root.left, targetSum - root.val) || hasPathSum(root.right, targetSum - root.val); }};",
+          "description": "简化版Java实现的路径总和问题，使用递归方法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean hasPathSum(TreeNode root, int targetSum) { if (root == null) return false; Stack<TreeNode> stack1 = new Stack<>(); Stack<Integer> stack2 = new Stack<>(); stack1.push(root); stack2.push(root.val); while (!stack1.isEmpty()) { TreeNode node = stack1.pop(); int sum = stack2.pop(); if (node.left == null && node.right == null && sum == targetSum) return true; if (node.right != null) { stack1.push(node.right); stack2.push(sum + node.right.val); } if (node.left != null) { stack1.push(node.left); stack2.push(sum + node.left.val); } } return false; }};",
+          "description": "Java实现的路径总和问题，使用迭代方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def traversal(self, cur, count): if not cur.left and not cur.right and count == 0: return True if not cur.left and not cur.right: return False if cur.left: count -= cur.left.val if self.traversal(cur.left, count): return True count += cur.left.val if cur.right: count -= cur.right.val if self.traversal(cur.right, count): return True count += cur.right.val return False def hasPathSum(self, root, targetSum): if root is None: return False return self.traversal(root, targetSum - root.val)",
+          "description": "Python实现的路径总和问题，使用递归方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def hasPathSum(self, root, targetSum): if not root: return False if not root.left and not root.right and targetSum == root.val: return True return self.hasPathSum(root.left, targetSum - root.val) or self.hasPathSum(root.right, targetSum - root.val)",
+          "description": "简化版Python实现的路径总和问题，使用递归方法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def hasPathSum(self, root, targetSum): if not root: return False st = [(root, root.val)] while st: node, path_sum = st.pop() if not node.left and not node.right and path_sum == targetSum: return True if node.right: st.append((node.right, path_sum + node.right.val)) if node.left: st.append((node.left, path_sum + node.left.val)) return False",
+          "description": "Python实现的路径总和问题，使用迭代方法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "迭代",
+      "text": "如果使用栈模拟递归的话，那么如果做回溯呢？",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    bool traversal(TreeNode* cur, int count) {\n        if (!cur->left && !cur->right && count == 0) return true; \n        if (!cur->left && !cur->right) return false; \n\n        if (cur->left) { \n            count -= cur->left->val; \n            if (traversal(cur->left, count)) return true;\n            count += cur->left->val; \n        }\n        if (cur->right) { \n            count -= cur->right->val; \n            if (traversal(cur->right, count)) return true;\n            count += cur->right->val; \n        }\n        return false;\n    }\n\npublic:\n    bool hasPathSum(TreeNode* root, int sum) {\n        if (root == NULL) return false;\n        return traversal(root, sum - root->val);\n    }\n};",
+          "description": "C++实现的递归方法解决路径总和问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    bool hasPathSum(TreeNode* root, int sum) {\n        if (root == NULL) return false;\n        // 此时栈里要放的是pair<节点指针，路径数值>\n        stack<pair<TreeNode*, int>> st;\n        st.push(pair<TreeNode*, int>(root, root->val));\n        while (!st.empty()) {\n            pair<TreeNode*, int> node = st.top();\n            st.pop();\n            if (!node.first->left && !node.first->right && sum == node.second) return true;\n\n            if (node.first->right) {\n                st.push(pair<TreeNode*, int>(node.first->right, node.second + node.first->right->val));\n            }\n\n            if (node.first->left) {\n                st.push(pair<TreeNode*, int>(node.first->left, node.second + node.first->left->val));\n            }\n        }\n        return false;\n    }\n};",
+          "description": "C++实现的迭代方法使用栈来解决路径总和问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n   public boolean hasPathSum(TreeNode root, int targetSum) {\n        if (root == null) {\n            return false;\n        }\n        targetSum -= root.val;\n        if (root.left == null && root.right == null) {\n            return targetSum == 0;\n        }\n        if (root.left != null) {\n            boolean left = hasPathSum(root.left, targetSum);\n            if (left) {\n                return true;\n            }\n        }\n        if (root.right != null) {\n            boolean right = hasPathSum(root.right, targetSum);\n            if (right) {\n                return true;\n            }\n        }\n        return false;\n    }\n}",
+          "description": "Java实现的递归方法解决路径总和问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean hasPathSum(TreeNode root, int targetSum) {\n        if(root == null) return false;\n        Stack<TreeNode> stack1 = new Stack<>();\n        Stack<Integer> stack2 = new Stack<>();\n        stack1.push(root);\n        stack2.push(root.val);\n        while(!stack1.isEmpty()) {\n            int size = stack1.size();\n\n            for(int i = 0; i < size; i++) {\n                TreeNode node = stack1.pop();\n                int sum = stack2.pop();\n\n                if(node.left == null && node.right == null && sum == targetSum) {\n                    return true;\n                }\n                if(node.right != null){\n                    stack1.push(node.right);\n                    stack2.push(sum + node.right.val);\n                }\n                if(node.left != null) {\n                    stack1.push(node.left);\n                    stack2.push(sum + node.left.val);\n                }\n            }\n        }\n        return false;\n    }\n}",
+          "description": "Java实现的迭代方法使用双栈来解决路径总和问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def traversal(self, cur: TreeNode, count: int) -> bool:\n        if not cur.left and not cur.right and count == 0: \n            return True\n        if not cur.left and not cur.right: \n            return False\n\n        if cur.left: \n            count -= cur.left.val\n            if self.traversal(cur.left, count): \n                return True\n            count += cur.left.val \n\n        if cur.right: \n            count -= cur.right.val\n            if self.traversal(cur.right, count): \n                return True\n            count += cur.right.val \n\n        return False\n\n    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:\n        if root is None:\n            return False\n        return self.traversal(root, targetSum - root.val)",
+          "description": "Python实现的递归方法解决路径总和问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:\n        if not root:\n            return False\n        # 此时栈里要放的是pair<节点指针，路径数值>\n        st = [(root, root.val)]\n        while st:\n            node, path_sum = st.pop()\n            if not node.left and not node.right and path_sum == targetSum:\n                return True\n            if node.right:\n                st.append((node.right, path_sum + node.right.val))\n            if node.left:\n                st.append((node.left, path_sum + node.left.val))\n        return False",
+          "description": "Python实现的迭代方法使用栈来解决路径总和问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "相关题目推荐",
+      "text": "#113. 路径总和ii",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: bool traversal(TreeNode* cur, int count) { if (!cur->left && !cur->right && count == 0) return true; if (!cur->left && !cur->right) return false; if (cur->left) { count -= cur->left->val; if (traversal(cur->left, count)) return true; count += cur->left->val; } if (cur->right) { count -= cur->right->val; if (traversal(cur->right, count)) return true; count += cur->right->val; } return false; } public: bool hasPathSum(TreeNode* root, int sum) { if (root == NULL) return false; return traversal(root, sum - root->val); }};",
+          "description": "递归实现路径总和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool hasPathSum(TreeNode* root, int sum) { if (!root) return false; if (!root->left && !root->right && sum == root->val) { return true; } return hasPathSum(root->left, sum - root->val) || hasPathSum(root->right, sum - root->val); }};",
+          "description": "简化版递归实现路径总和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool hasPathSum(TreeNode* root, int sum) { if (root == NULL) return false; stack<pair<TreeNode*, int>> st; st.push(pair<TreeNode*, int>(root, root->val)); while (!st.empty()) { pair<TreeNode*, int> node = st.top(); st.pop(); if (!node.first->left && !node.first->right && sum == node.second) return true; if (node.first->right) { st.push(pair<TreeNode*, int>(node.first->right, node.second + node.first->right->val)); } if (node.first->left) { st.push(pair<TreeNode*, int>(node.first->left, node.second + node.first->left->val)); } } return false; }};",
+          "description": "使用栈模拟递归实现路径总和"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: vector<vector<int>> result; vector<int> path; void traversal(TreeNode* cur, int count) { if (!cur->left && !cur->right && count == 0) { result.push_back(path); return; } if (!cur->left && !cur->right) return ; if (cur->left) { path.push_back(cur->left->val); count -= cur->left->val; traversal(cur->left, count); count += cur->left->val; path.pop_back(); } if (cur->right) { path.push_back(cur->right->val); count -= cur->right->val; traversal(cur->right, count); count += cur->right->val; path.pop_back(); } return ; } public: vector<vector<int>> pathSum(TreeNode* root, int sum) { result.clear(); path.clear(); if (root == NULL) return result; path.push_back(root->val); traversal(root, sum - root->val); return result; }};",
+          "description": "递归实现路径总和II，找出所有路径"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean hasPathSum(TreeNode root, int targetSum) { if (root == null) { return false; } targetSum -= root.val; if (root.left == null && root.right == null) { return targetSum == 0; } if (root.left != null) { boolean left = hasPathSum(root.left, targetSum); if (left) { return true; } } if (root.right != null) { boolean right = hasPathSum(root.right, targetSum); if (right) { return true; } } return false; }};",
+          "description": "Java实现路径总和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean hasPathSum(TreeNode root, int targetSum) { if (root == null) return false; if (root.left == null && root.right == null) return root.val == targetSum; return hasPathSum(root.left, targetSum - root.val) || hasPathSum(root.right, targetSum - root.val); }};",
+          "description": "简洁的Java实现路径总和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public List<List<Integer>> pathSum(TreeNode root, int targetSum) { List<List<Integer>> res = new ArrayList<>(); if (root == null) return res; List<Integer> path = new LinkedList<>(); preOrderDfs(root, targetSum, res, path); return res; } public void preOrderDfs(TreeNode root, int targetSum, List<List<Integer>> res, List<Integer> path) { path.add(root.val); if (root.left == null && root.right == null) { if (targetSum - root.val == 0) { res.add(new ArrayList<>(path)); } return; } if (root.left != null) { preOrderDfs(root.left, targetSum - root.val, res, path); path.remove(path.size() - 1); } if (root.right != null) { preOrderDfs(root.right, targetSum - root.val, res, path); path.remove(path.size() - 1); }}};",
+          "description": "Java实现路径总和II，找出所有路径"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def traversal(self, cur: TreeNode, count: int) -> bool: if not cur.left and not cur.right and count == 0: return True if not cur.left and not cur.right: return False if cur.left: count -= cur.left.val if self.traversal(cur.left, count): return True count += cur.left.val if cur.right: count -= cur.right.val if self.traversal(cur.right, count): return True count += cur.right.val return False def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool: if root is None: return False return self.traversal(root, targetSum - root.val)",
+          "description": "Python递归实现路径总和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool: if not root: return False if not root.left and not root.right and targetSum == root.val: return True return self.hasPathSum(root.left, targetSum - root.val) or self.hasPathSum(root.right, targetSum - root.val)",
+          "description": "Python简化版递归实现路径总和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool: if not root: return False st = [(root, root.val)] while st: node, path_sum = st.pop() if not node.left and not node.right and path_sum == targetSum: return True if node.right: st.append((node.right, path_sum + node.right.val)) if node.left: st.append((node.left, path_sum + node.left.val)) return False",
+          "description": "Python迭代实现路径总和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.result = [] self.path = [] def traversal(self, cur, count): if not cur.left and not cur.right and count == 0: self.result.append(self.path[:]) return if not cur.left and not cur.right: return if cur.left: self.path.append(cur.left.val) count -= cur.left.val self.traversal(cur.left, count) count += cur.left.val self.path.pop() if cur.right: self.path.append(cur.right.val) count -= cur.right.val self.traversal(cur.right, count) count += cur.right.val self.path.pop() return def pathSum(self, root: Optional[TreeNode], targetSum: int) -> List[List[int]]: self.result.clear() self.path.clear() if not root: return self.result self.path.append(root.val) self.traversal(root, targetSum - root.val) return self.result",
+          "description": "Python递归实现路径总和II，找出所有路径"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def pathSum(self, root: Optional[TreeNode], targetSum: int) -> List[List[int]]: result = [] self.traversal(root, targetSum, [], result) return result def traversal(self, node, count, path, result): if not node: return path.append(node.val) count -= node.val if not node.left and not node.right and count == 0: result.append(list(path)) self.traversal(node.left, count, path, result) self.traversal(node.right, count, path, result) path.pop()",
+          "description": "Python简化版递归实现路径总和II，找出所有路径"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def pathSum(self, root: Optional[TreeNode], targetSum: int) -> List[List[int]]: if not root: return [] stack = [(root, [root.val])] res = [] while stack: node, path = stack.pop() if not node.left and not node.right and sum(path) == targetSum: res.append(path) if node.right: stack.append((node.right, path + [node.right.val])) if node.left: stack.append((node.left, path + [node.left.val])) return res",
+          "description": "Python迭代实现路径总和II，找出所有路径"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "113. 路径总和ii",
+      "text": "力扣题目链接(https://leetcode.cn/problems/path-sum-ii/)",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "bool traversal(TreeNode* cur, int count) {\n    if (!cur->left && !cur->right && count == 0) return true; \n    if (!cur->left && !cur->right) return false; \n\n    if (cur->left) { \n        count -= cur->left->val; \n        if (traversal(cur->left, count)) return true;\n        count += cur->left->val; \n    }\n    if (cur->right) { \n        count -= cur->right->val; \n        if (traversal(cur->right, count)) return true;\n        count += cur->right->val; \n    }\n    return false;\n}\n\nbool hasPathSum(TreeNode* root, int sum) {\n    if (root == NULL) return false;\n    return traversal(root, sum - root->val);\n}",
+          "description": null
+        },
+        {
+          "language": "cpp",
+          "code": "bool hasPathSum(TreeNode* root, int sum) {\n    if (!root) return false;\n    if (!root->left && !root->right && sum == root->val) {\n        return true;\n    }\n    return hasPathSum(root->left, sum - root->val) || hasPathSum(root->right, sum - root->val);\n}",
+          "description": null
+        },
+        {
+          "language": "cpp",
+          "code": "bool hasPathSum(TreeNode* root, int sum) {\n    if (root == nullptr) return false;\n    stack<pair<TreeNode*, int>> st;\n    st.push({root, root->val});\n    while (!st.empty()) {\n        auto node = st.top(); st.pop();\n        if (!node.first->left && !node.first->right && sum == node.second) return true;\n        if (node.first->right) st.push({node.first->right, node.second + node.first->right->val});\n        if (node.first->left) st.push({node.first->left, node.second + node.first->left->val});\n    }\n    return false;\n}",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "public boolean hasPathSum(TreeNode root, int targetSum) {\n    if (root == null) return false;\n    targetSum -= root.val;\n    if (root.left == null && root.right == null) return targetSum == 0;\n    return (root.left != null && hasPathSum(root.left, targetSum)) || (root.right != null && hasPathSum(root.right, targetSum));\n}",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "public List<List<Integer>> pathSum(TreeNode root, int targetSum) {\n    List<List<Integer>> res = new ArrayList<>();\n    if (root == null) return res;\n    List<Integer> path = new LinkedList<>();\n    preOrderDfs(root, targetSum, res, path);\n    return res;\n}\n\npublic void preOrderDfs(TreeNode root, int targetSum, List<List<Integer>> res, List<Integer> path) {\n    path.add(root.val);\n    if (root.left == null && root.right == null && targetSum - root.val == 0) {\n        res.add(new ArrayList<>(path));\n        return;\n    }\n    if (root.left != null) {\n        preOrderDfs(root.left, targetSum - root.val, res, path);\n        path.remove(path.size() - 1);\n    }\n    if (root.right != null) {\n        preOrderDfs(root.right, targetSum - root.val, res, path);\n        path.remove(path.size() - 1);\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:\n    if not root: return False\n    if not root.left and not root.right and targetSum == root.val: return True\n    return self.hasPathSum(root.left, targetSum - root.val) or self.hasPathSum(root.right, targetSum - root.val)",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "def pathSum(self, root: Optional[TreeNode], targetSum: int) -> List[List[int]]:\n    result, path = [], []\n    def traversal(node, count):\n        if not node: return\n        path.append(node.val)\n        count -= node.val\n        if not node.left and not node.right and count == 0: result.append(list(path))\n        traversal(node.left, count)\n        traversal(node.right, count)\n        path.pop()\n    if root: traversal(root, targetSum)\n    return result",
+          "description": null
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "思路",
+      "text": "相信很多同学都会疑惑，递归函数什么时候要有返回值，什么时候没有返回值，特别是有的时候递归函数返回类型为bool类型。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    bool traversal(TreeNode* cur, int count) {\n        if (!cur->left && !cur->right && count == 0) return true; \n        if (!cur->left && !cur->right) return false; \n\n        if (cur->left) { \n            count -= cur->left->val; \n            if (traversal(cur->left, count)) return true;\n            count += cur->left->val; \n        }\n        if (cur->right) { \n            count -= cur->right->val; \n            if (traversal(cur->right, count)) return true;\n            count += cur->right->val; \n        }\n        return false;\n    }\n\npublic:\n    bool hasPathSum(TreeNode* root, int sum) {\n        if (root == NULL) return false;\n        return traversal(root, sum - root->val);\n    }\n};",
+          "description": "C++实现的路径总和问题解决方案，使用递归方法。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    bool hasPathSum(TreeNode* root, int sum) {\n        if (!root) return false;\n        if (!root->left && !root->right && sum == root->val) {\n            return true;\n        }\n        return hasPathSum(root->left, sum - root->val) || hasPathSum(root->right, sum - root->val);\n    }\n};",
+          "description": "C++实现的简化版路径总和问题解决方案，使用递归方法。"
+        },
+        {
+          "language": "cpp",
+          "code": "class solution {\npublic:\n    bool haspathsum(TreeNode* root, int sum) {\n        if (root == null) return false;\n        stack<pair<TreeNode*, int>> st;\n        st.push(pair<TreeNode*, int>(root, root->val));\n        while (!st.empty()) {\n            pair<TreeNode*, int> node = st.top();\n            st.pop();\n            if (!node.first->left && !node.first->right && sum == node.second) return true;\n            if (node.first->right) {\n                st.push(pair<TreeNode*, int>(node.first->right, node.second + node.first->right->val));\n            }\n            if (node.first->left) {\n                st.push(pair<TreeNode*, int>(node.first->left, node.second + node.first->left->val));\n            }\n        }\n        return false;\n    }\n};",
+          "description": "C++实现的路径总和问题解决方案，使用迭代方法。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n   public boolean hasPathSum(TreeNode root, int targetSum) {\n        if (root == null) {\n            return false;\n        }\n        targetSum -= root.val;\n        if (root.left == null && root.right == null) {\n            return targetSum == 0;\n        }\n        if (root.left != null) {\n            boolean left = hasPathSum(root.left, targetSum);\n            if (left) {\n                return true;\n            }\n        }\n        if (root.right != null) {\n            boolean right = hasPathSum(root.right, targetSum);\n            if (right) {\n                return true;\n            }\n        }\n        return false;\n    }\n}",
+          "description": "Java实现的路径总和问题解决方案，使用递归方法。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean hasPathSum(TreeNode root, int targetSum) {\n        if (root == null) return false; \n        if (root.left == null && root.right == null) return root.val == targetSum;\n        return hasPathSum(root.left, targetSum - root.val) || hasPathSum(root.right, targetSum - root.val);\n    }\n}",
+          "description": "Java实现的简化版路径总和问题解决方案，使用递归方法。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public List<List<Integer>> pathSum(TreeNode root, int targetSum) {\n        List<List<Integer>> res = new ArrayList<>();\n        if (root == null) return res; \n        List<Integer> path = new LinkedList<>();\n        preOrderDfs(root, targetSum, res, path);\n        return res;\n    }\n    public void preOrderDfs(TreeNode root, int targetSum, List<List<Integer>> res, List<Integer> path) {\n        path.add(root.val);\n        if (root.left == null && root.right == null) {\n            if (targetSum - root.val == 0) {\n                res.add(new ArrayList<>(path));\n            }\n            return; \n        }\n        if (root.left != null) {\n            preOrderDfs(root.left, targetSum - root.val, res, path);\n            path.remove(path.size() - 1); \n        }\n        if (root.right != null) {\n            preOrderDfs(root.right, targetSum - root.val, res, path);\n            path.remove(path.size() - 1); \n        }\n    }\n}",
+          "description": "Java实现的路径总和II问题解决方案，使用递归方法寻找所有路径。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def traversal(self, cur: TreeNode, count: int) -> bool:\n        if not cur.left and not cur.right and count == 0: \n            return True\n        if not cur.left and not cur.right: \n            return False\n        if cur.left: \n            count -= cur.left.val\n            if self.traversal(cur.left, count): \n                return True\n            count += cur.left.val \n        if cur.right: \n            count -= cur.right.val\n            if self.traversal(cur.right, count): \n                return True\n            count += cur.right.val \n        return False\n    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:\n        if root is None:\n            return False\n        return self.traversal(root, targetSum - root.val)",
+          "description": "Python实现的路径总和问题解决方案，使用递归方法。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:\n        if not root:\n            return False\n        if not root.left and not root.right and targetSum == root.val:\n            return True\n        return self.hasPathSum(root.left, targetSum - root.val) or self.hasPathSum(root.right, targetSum - root.val)",
+          "description": "Python实现的简化版路径总和问题解决方案，使用递归方法。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:\n        if not root:\n            return False\n        st = [(root, root.val)]\n        while st:\n            node, path_sum = st.pop()\n            if not node.left and not node.right and path_sum == targetSum:\n                return True\n            if node.right:\n                st.append((node.right, path_sum + node.right.val))\n            if node.left:\n                st.append((node.left, path_sum + node.left.val))\n        return False",
+          "description": "Python实现的路径总和问题解决方案，使用迭代方法。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def __init__(self):\n        self.result = []\n        self.path = []\n    def traversal(self, cur, count):\n        if not cur.left and not cur.right and count == 0: \n            self.result.append(self.path[:])\n            return\n        if not cur.left and not cur.right: \n            return\n        if cur.left: \n            self.path.append(cur.left.val)\n            count -= cur.left.val\n            self.traversal(cur.left, count) \n            count += cur.left.val \n            self.path.pop() \n        if cur.right: \n            self.path.append(cur.right.val) \n            count -= cur.right.val\n            self.traversal(cur.right, count) \n            count += cur.right.val \n            self.path.pop() \n        return\n    def pathSum(self, root: Optional[TreeNode], targetSum: int) -> List[List[int]]:\n        self.result.clear()\n        self.path.clear()\n        if not root:\n            return self.result\n        self.path.append(root.val) \n        self.traversal(root, targetSum - root.val)\n        return self.result",
+          "description": "Python实现的路径总和II问题解决方案，使用递归方法寻找所有路径。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "本篇通过leetcode上112. 路径总和 和 113. 路径总和ii 详细的讲解了 递归函数什么时候需要返回值，什么不需要返回值。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {private: bool traversal(TreeNode* cur, int count) { if (!cur->left && !cur->right && count == 0) return true; if (!cur->left && !cur->right) return false; if (cur->left) { count -= cur->left->val; if (traversal(cur->left, count)) return true; count += cur->left->val; } if (cur->right) { count -= cur->right->val; if (traversal(cur->right, count)) return true; count += cur->right->val; } return false; } public: bool hasPathSum(TreeNode* root, int sum) { if (root == NULL) return false; return traversal(root, sum - root->val); }};",
+          "description": "C++实现的递归方式求解路径总和问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool hasPathSum(TreeNode* root, int sum) { if (!root) return false; if (!root->left && !root->right && sum == root->val) { return true; } return hasPathSum(root->left, sum - root->val) || hasPathSum(root->right, sum - root->val); }};",
+          "description": "C++实现的简化版递归方式求解路径总和问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: bool hasPathSum(TreeNode* root, int sum) { if (root == NULL) return false; stack<pair<TreeNode*, int>> st; st.push(pair<TreeNode*, int>(root, root->val)); while (!st.empty()) { pair<TreeNode*, int> node = st.top(); st.pop(); if (!node.first->left && !node.first->right && sum == node.second) return true; if (node.first->right) { st.push(pair<TreeNode*, int>(node.first->right, node.second + node.first->right->val)); } if (node.first->left) { st.push(pair<TreeNode*, int>(node.first->left, node.second + node.first->left->val)); } } return false; }};",
+          "description": "C++实现的迭代方式求解路径总和问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean hasPathSum(TreeNode root, int targetSum) { if (root == null) return false; targetSum -= root.val; if (root.left == null && root.right == null) return targetSum == 0; if (root.left != null) { boolean left = hasPathSum(root.left, targetSum); if (left) return true; } if (root.right != null) { boolean right = hasPathSum(root.right, targetSum); if (right) return true; } return false; }};",
+          "description": "Java实现的递归方式求解路径总和问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean hasPathSum(TreeNode root, int targetSum) { if (root == null) return false; if (root.left == null && root.right == null) return root.val == targetSum; return hasPathSum(root.left, targetSum - root.val) || hasPathSum(root.right, targetSum - root.val); }};",
+          "description": "Java实现的简化版递归方式求解路径总和问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public boolean hasPathSum(TreeNode root, int targetSum) { if (root == null) return false; Stack<TreeNode> stack1 = new Stack<>(); Stack<Integer> stack2 = new Stack<>(); stack1.push(root); stack2.push(root.val); while (!stack1.isEmpty()) { TreeNode node = stack1.pop(); int sum = stack2.pop(); if (node.left == null && node.right == null && sum == targetSum) return true; if (node.right != null) { stack1.push(node.right); stack2.push(sum + node.right.val); } if (node.left != null) { stack1.push(node.left); stack2.push(sum + node.left.val); } } return false; }};",
+          "description": "Java实现的迭代方式求解路径总和问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def traversal(self, cur, count): if not cur.left and not cur.right and count == 0: return True if not cur.left and not cur.right: return False if cur.left: count -= cur.left.val if self.traversal(cur.left, count): return True count += cur.left.val if cur.right: count -= cur.right.val if self.traversal(cur.right, count): return True count += cur.right.val return False def hasPathSum(self, root, targetSum): if root is None: return False return self.traversal(root, targetSum - root.val)",
+          "description": "Python实现的递归方式求解路径总和问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def hasPathSum(self, root, targetSum): if not root: return False if not root.left and not root.right and targetSum == root.val: return True return self.hasPathSum(root.left, targetSum - root.val) or self.hasPathSum(root.right, targetSum - root.val)",
+          "description": "Python实现的简化版递归方式求解路径总和问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def hasPathSum(self, root, targetSum): if not root: return False st = [(root, root.val)] while st: node, path_sum = st.pop() if not node.left and not node.right and path_sum == targetSum: return True if node.right: st.append((node.right, path_sum + node.right.val)) if node.left: st.append((node.left, path_sum + node.left.val)) return False",
+          "description": "Python实现的迭代方式求解路径总和问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution { public boolean hasPathSum(TreeNode root, int targetSum) { if (root == null) { return false; } targetSum -= root.val; if (root.left == null && root.right == null) { return targetSum == 0; } if (root.left != null) { boolean left = hasPathSum(root.left, targetSum); if (left) { return true; } } if (root.right != null) { boolean right = hasPathSum(root.right, targetSum); if (right) { return true; } } return false; } }",
+          "description": "递归方法判断路径总和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean hasPathSum(TreeNode root, int targetSum) { if (root == null) return false; if (root.left == null && root.right == null) return root.val == targetSum; return hasPathSum(root.left, targetSum - root.val) || hasPathSum(root.right, targetSum - root.val); } }",
+          "description": "简洁的递归方法判断路径总和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public boolean hasPathSum(TreeNode root, int targetSum) { if(root == null) return false; Stack<TreeNode> stack1 = new Stack<>(); Stack<Integer> stack2 = new Stack<>(); stack1.push(root); stack2.push(root.val); while(!stack1.isEmpty()) { int size = stack1.size(); for(int i = 0; i < size; i++) { TreeNode node = stack1.pop(); int sum = stack2.pop(); if(node.left == null && node.right == null && sum == targetSum) { return true; } if(node.right != null){ stack1.push(node.right); stack2.push(sum + node.right.val); } if(node.left != null) { stack1.push(node.left); stack2.push(sum + node.left.val); } } } return false; } }",
+          "description": "迭代方法使用栈判断路径总和"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public List<List<Integer>> pathSum(TreeNode root, int targetSum) { List<List<Integer>> res = new ArrayList<>(); if (root == null) return res; List<Integer> path = new LinkedList<>(); preOrderDfs(root, targetSum, res, path); return res; } public void preOrderDfs(TreeNode root, int targetSum, List<List<Integer>> res, List<Integer> path) { path.add(root.val); if (root.left == null && root.right == null) { if (targetSum - root.val == 0) { res.add(new ArrayList<>(path)); } return; } if (root.left != null) { preOrderDfs(root.left, targetSum - root.val, res, path); path.remove(path.size() - 1); } if (root.right != null) { preOrderDfs(root.right, targetSum - root.val, res, path); path.remove(path.size() - 1); } } }",
+          "description": "递归方法找到所有路径总和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def traversal(self, cur: TreeNode, count: int) -> bool: if not cur.left and not cur.right and count == 0: return True if not cur.left and not cur.right: return False if cur.left: count -= cur.left.val if self.traversal(cur.left, count): return True count += cur.left.val if cur.right: count -= cur.right.val if self.traversal(cur.right, count): return True count += cur.right.val return False def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool: if root is None: return False return self.traversal(root, targetSum - root.val)",
+          "description": "Python递归方法判断路径总和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool: if not root: return False if not root.left and not root.right and targetSum == root.val: return True return self.hasPathSum(root.left, targetSum - root.val) or self.hasPathSum(root.right, targetSum - root.val)",
+          "description": "简洁的Python递归方法判断路径总和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool: if not root: return False st = [(root, root.val)] while st: node, path_sum = st.pop() if not node.left and not node.right and path_sum == targetSum: return True if node.right: st.append((node.right, path_sum + node.right.val)) if node.left: st.append((node.left, path_sum + node.left.val)) return False",
+          "description": "Python迭代方法使用栈判断路径总和"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: result = [] path = [] def __init__(self): self.result.clear() self.path.clear() def traversal(self, cur, count): if not cur.left and not cur.right and count == 0: self.result.append(self.path[:]) return if not cur.left and not cur.right: return if cur.left: self.path.append(cur.left.val) count -= cur.left.val self.traversal(cur.left, count) count += cur.left.val self.path.pop() if cur.right: self.path.append(cur.right.val) count -= cur.right.val self.traversal(cur.right, count) count += cur.right.val self.path.pop() return def pathSum(self, root: Optional[TreeNode], targetSum: int) -> List[List[int]]: self.result.clear() self.path.clear() if not root: return self.result self.path.append(root.val) self.traversal(root, targetSum - root.val) return self.result",
+          "description": "Python递归方法找到所有路径总和"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "0112.路径总和",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    bool traversal(TreeNode* cur, int count) {\n        if (!cur->left && !cur->right && count == 0) return true; \n        if (!cur->left && !cur->right) return false; \n\n        if (cur->left) { \n            count -= cur->left->val; \n            if (traversal(cur->left, count)) return true;\n            count += cur->left->val; \n        }\n        if (cur->right) { \n            count -= cur->right->val; \n            if (traversal(cur->right, count)) return true;\n            count += cur->right->val; \n        }\n        return false;\n    }\n\npublic:\n    bool hasPathSum(TreeNode* root, int sum) {\n        if (root == NULL) return false;\n        return traversal(root, sum - root->val);\n    }\n};",
+          "description": null
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    bool hasPathSum(TreeNode* root, int sum) {\n        if (!root) return false;\n        if (!root->left && !root->right && sum == root->val) {\n            return true;\n        }\n        return hasPathSum(root->left, sum - root->val) || hasPathSum(root->right, sum - root->val);\n    }\n};",
+          "description": null
+        },
+        {
+          "language": "cpp",
+          "code": "class solution {\npublic:\n    bool haspathsum(TreeNode* root, int sum) {\n        if (root == null) return false;\n        stack<pair<TreeNode*, int>> st;\n        st.push(pair<TreeNode*, int>(root, root->val));\n        while (!st.empty()) {\n            pair<TreeNode*, int> node = st.top();\n            st.pop();\n            if (!node.first->left && !node.first->right && sum == node.second) return true;\n\n            if (node.first->right) {\n                st.push(pair<TreeNode*, int>(node.first->right, node.second + node.first->right->val));\n            }\n\n            if (node.first->left) {\n                st.push(pair<TreeNode*, int>(node.first->left, node.second + node.first->left->val));\n            }\n        }\n        return false;\n    }\n};",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n   public boolean hasPathSum(TreeNode root, int targetSum) {\n        if (root == null) {\n            return false;\n        }\n        targetSum -= root.val;\n        if (root.left == null && root.right == null) {\n            return targetSum == 0;\n        }\n        if (root.left != null) {\n            boolean left = hasPathSum(root.left, targetSum);\n            if (left) {\n                return true;\n            }\n        }\n        if (root.right != null) {\n            boolean right = hasPathSum(root.right, targetSum);\n            if (right) {\n                return true;\n            }\n        }\n        return false;\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean hasPathSum(TreeNode root, int targetSum) {\n        if (root == null) return false;\n        if (root.left == null && root.right == null) return root.val == targetSum;\n        return hasPathSum(root.left, targetSum - root.val) || hasPathSum(root.right, targetSum - root.val);\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean hasPathSum(TreeNode root, int targetSum) {\n        if(root == null) return false;\n        Stack<TreeNode> stack1 = new Stack<>();\n        Stack<Integer> stack2 = new Stack<>();\n        stack1.push(root);\n        stack2.push(root.val);\n        while(!stack1.isEmpty()) {\n            TreeNode node = stack1.pop();\n            int sum = stack2.pop();\n            if(node.left == null && node.right == null && sum == targetSum) {\n                return true;\n            }\n            if(node.right != null){\n                stack1.push(node.right);\n                stack2.push(sum + node.right.val);\n            }\n            if(node.left != null) {\n                stack1.push(node.left);\n                stack2.push(sum + node.left.val);\n            }\n        }\n        return false;\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def traversal(self, cur: TreeNode, count: int) -> bool:\n        if not cur.left and not cur.right and count == 0: \n            return True\n        if not cur.left and not cur.right: \n            return False\n\n        if cur.left: \n            count -= cur.left.val\n            if self.traversal(cur.left, count): \n                return True\n            count += cur.left.val \n\n        if cur.right: \n            count -= cur.right.val\n            if self.traversal(cur.right, count): \n                return True\n            count += cur.right.val \n\n        return False\n\n    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:\n        if root is None:\n            return False\n        return self.traversal(root, targetSum - root.val)",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:\n        if not root:\n            return False\n        if not root.left and not root.right and targetSum == root.val:\n            return True\n        return self.hasPathSum(root.left, targetSum - root.val) or self.hasPathSum(root.right, targetSum - root.val)",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:\n        if not root:\n            return False\n        st = [(root, root.val)]\n        while st:\n            node, path_sum = st.pop()\n            if not node.left and not node.right and path_sum == targetSum:\n                return True\n            if node.right:\n                st.append((node.right, path_sum + node.right.val))\n            if node.left:\n                st.append((node.left, path_sum + node.left.val))\n        return False",
+          "description": null
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "0112.路径总和",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {\nprivate:\n    bool traversal(TreeNode* cur, int count) {\n        if (!cur->left && !cur->right && count == 0) return true; \n        if (!cur->left && !cur->right) return false; \n\n        if (cur->left) { \n            count -= cur->left->val; \n            if (traversal(cur->left, count)) return true;\n            count += cur->left->val; \n        }\n        if (cur->right) { \n            count -= cur->right->val; \n            if (traversal(cur->right, count)) return true;\n            count += cur->right->val; \n        }\n        return false;\n    }\n\npublic:\n    bool hasPathSum(TreeNode* root, int sum) {\n        if (root == NULL) return false;\n        return traversal(root, sum - root->val);\n    }\n};",
+          "description": "递归解决路径总和问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    bool hasPathSum(TreeNode* root, int sum) {\n        if (!root) return false;\n        if (!root->left && !root->right && sum == root->val) {\n            return true;\n        }\n        return hasPathSum(root->left, sum - root->val) || hasPathSum(root->right, sum - root->val);\n    }\n};",
+          "description": "精简版递归解决路径总和问题"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    bool hasPathSum(TreeNode* root, int sum) {\n        if (root == nullptr) return false;\n        // 此时栈里要放的是pair<节点指针，路径数值>\n        stack<pair<TreeNode*, int>> st;\n        st.push({root, root->val});\n        while (!st.empty()) {\n            auto node = st.top();\n            st.pop();\n            // 如果该节点是叶子节点了，同时该节点的路径数值等于sum，那么就返回true\n            if (!node.first->left && !node.first->right && sum == node.second) return true;\n\n            if (node.first->right) {\n                st.push({node.first->right, node.second + node.first->right->val});\n            }\n            if (node.first->left) {\n                st.push({node.first->left, node.second + node.first->left->val});\n            }\n        }\n        return false;\n    }\n};",
+          "description": "使用栈模拟递归解决路径总和问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n   public boolean hasPathSum(TreeNode root, int targetSum) {\n        if (root == null) {\n            return false;\n        }\n        targetSum -= root.val;\n        if (root.left == null && root.right == null) {\n            return targetSum == 0;\n        }\n        if (root.left != null) {\n            boolean left = hasPathSum(root.left, targetSum);\n            if (left) {\n                return true;\n            }\n        }\n        if (root.right != null) {\n            boolean right = hasPathSum(root.right, targetSum);\n            if (right) {\n                return true;\n            }\n        }\n        return false;\n    }\n}",
+          "description": "Java版本递归解决路径总和问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean hasPathSum(TreeNode root, int targetSum) {\n        if (root == null) return false; // 为空退出\n        if (root.left == null && root.right == null) return root.val == targetSum;\n        return hasPathSum(root.left, targetSum - root.val) || hasPathSum(root.right, targetSum - root.val);\n    }\n}",
+          "description": "Java版本简洁递归解决路径总和问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public boolean hasPathSum(TreeNode root, int targetSum) {\n        if(root == null) return false;\n        Stack<TreeNode> stack1 = new Stack<>();\n        Stack<Integer> stack2 = new Stack<>();\n        stack1.push(root);\n        stack2.push(root.val);\n        while(!stack1.isEmpty()) {\n            int size = stack1.size();\n            for(int i = 0; i < size; i++) {\n                TreeNode node = stack1.pop();\n                int sum = stack2.pop();\n                if(node.left == null && node.right == null && sum == targetSum) {\n                    return true;\n                }\n                if(node.right != null){\n                    stack1.push(node.right);\n                    stack2.push(sum + node.right.val);\n                }\n                if(node.left != null) {\n                    stack1.push(node.left);\n                    stack2.push(sum + node.left.val);\n                }\n            }\n        }\n        return false;\n    }\n}",
+          "description": "Java版本迭代解决路径总和问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def traversal(self, cur: TreeNode, count: int) -> bool:\n        if not cur.left and not cur.right and count == 0: \n            return True\n        if not cur.left and not cur.right: \n            return False\n        if cur.left: \n            count -= cur.left.val\n            if self.traversal(cur.left, count): \n                return True\n            count += cur.left.val \n        if cur.right: \n            count -= cur.right.val\n            if self.traversal(cur.right, count): \n                return True\n            count += cur.right.val \n        return False\n    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:\n        if root is None:\n            return False\n        return self.traversal(root, targetSum - root.val)",
+          "description": "Python版本递归解决路径总和问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:\n        if not root:\n            return False\n        if not root.left and not root.right and targetSum == root.val:\n            return True\n        return self.hasPathSum(root.left, targetSum - root.val) or self.hasPathSum(root.right, targetSum - root.val)",
+          "description": "Python版本简洁递归解决路径总和问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:\n        if not root:\n            return False\n        st = [(root, root.val)]\n        while st:\n            node, path_sum = st.pop()\n            if not node.left and not node.right and path_sum == targetSum:\n                return True\n            if node.right:\n                st.append((node.right, path_sum + node.right.val))\n            if node.left:\n                st.append((node.left, path_sum + node.left.val))\n        return False",
+          "description": "Python版本迭代解决路径总和问题"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {\nprivate:\n    bool traversal(TreeNode* cur, int count) {\n        if (!cur->left && !cur->right && count == 0) return true; \n        if (!cur->left && !cur->right) return false; \n\n        if (cur->left) { \n            count -= cur->left->val; \n            if (traversal(cur->left, count)) return true;\n            count += cur->left->val; \n        }\n        if (cur->right) { \n            count -= cur->right->val; \n            if (traversal(cur->right, count)) return true;\n            count += cur->right->val; \n        }\n        return false;\n    }\n\npublic:\n    bool hasPathSum(TreeNode* root, int sum) {\n        if (root == NULL) return false;\n        return traversal(root, sum - root->val);\n    }\n};",
+      "description": "C++实现的路径总和问题，使用递归方法解决。"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {\npublic:\n    bool hasPathSum(TreeNode* root, int sum) {\n        if (!root) return false;\n        if (!root->left && !root->right && sum == root->val) {\n            return true;\n        }\n        return hasPathSum(root->left, sum - root->val) || hasPathSum(root->right, sum - root->val);\n    }\n};",
+      "description": "C++实现的路径总和问题，精简版递归方法。"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {\npublic:\n    bool hasPathSum(TreeNode* root, int sum) {\n        if (root == nullptr) return false;\n        stack<pair<TreeNode*, int>> st;\n        st.push({root, root->val});\n        while (!st.empty()) {\n            auto node = st.top();\n            st.pop();\n            if (!node.first->left && !node.first->right && sum == node.second) return true;\n            if (node.first->right) st.push({node.first->right, node.second + node.first->right->val});\n            if (node.first->left) st.push({node.first->left, node.second + node.first->left->val});\n        }\n        return false;\n    }\n};",
+      "description": "C++实现的路径总和问题，使用迭代方法解决。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {\n   public boolean hasPathSum(TreeNode root, int targetSum) {\n        if (root == null) {\n            return false;\n        }\n        targetSum -= root.val;\n        if (root.left == null && root.right == null) {\n            return targetSum == 0;\n        }\n        if (root.left != null) {\n            boolean left = hasPathSum(root.left, targetSum);\n            if (left) return true;\n        }\n        if (root.right != null) {\n            boolean right = hasPathSum(root.right, targetSum);\n            if (right) return true;\n        }\n        return false;\n    }\n}",
+      "description": "Java实现的路径总和问题，递归方法。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {\n    public boolean hasPathSum(TreeNode root, int targetSum) {\n        if (root == null) return false;\n        if (root.left == null && root.right == null) return root.val == targetSum;\n        return hasPathSum(root.left, targetSum - root.val) || hasPathSum(root.right, targetSum - root.val);\n    }\n}",
+      "description": "Java实现的路径总和问题，精简版递归方法。"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {\n    public boolean hasPathSum(TreeNode root, int targetSum) {\n        if(root == null) return false;\n        Stack<TreeNode> stack1 = new Stack<>();\n        Stack<Integer> stack2 = new Stack<>();\n        stack1.push(root);\n        stack2.push(root.val);\n        while(!stack1.isEmpty()) {\n            TreeNode node = stack1.pop();\n            int sum = stack2.pop();\n            if(node.left == null && node.right == null && sum == targetSum) {\n                return true;\n            }\n            if(node.right != null){\n                stack1.push(node.right);\n                stack2.push(sum + node.right.val);\n            }\n            if(node.left != null) {\n                stack1.push(node.left);\n                stack2.push(sum + node.left.val);\n            }\n        }\n        return false;\n    }\n}",
+      "description": "Java实现的路径总和问题，迭代方法。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution:\n    def traversal(self, cur: TreeNode, count: int) -> bool:\n        if not cur.left and not cur.right and count == 0: \n            return True\n        if not cur.left and not cur.right: \n            return False\n        if cur.left: \n            count -= cur.left.val\n            if self.traversal(cur.left, count): \n                return True\n            count += cur.left.val\n        if cur.right: \n            count -= cur.right.val\n            if self.traversal(cur.right, count): \n                return True\n            count += cur.right.val\n        return False\n    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:\n        if root is None:\n            return False\n        return self.traversal(root, targetSum - root.val)",
+      "description": "Python实现的路径总和问题，递归方法。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution:\n    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:\n        if not root:\n            return False\n        if not root.left and not root.right and targetSum == root.val:\n            return True\n        return self.hasPathSum(root.left, targetSum - root.val) or self.hasPathSum(root.right, targetSum - root.val)",
+      "description": "Python实现的路径总和问题，精简版递归方法。"
+    },
+    {
+      "language": "python",
+      "code": "class Solution:\n    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:\n        if not root:\n            return False\n        st = [(root, root.val)]\n        while st:\n            node, path_sum = st.pop()\n            if not node.left and not node.right and path_sum == targetSum:\n                return True\n            if node.right:\n                st.append((node.right, path_sum + node.right.val))\n            if node.left:\n                st.append((node.left, path_sum + node.left.val))\n        return False",
+      "description": "Python实现的路径总和问题，迭代方法。"
+    }
+  ],
+  "common_mistakes": [
+    "忘记处理空指针的情况导致程序崩溃。",
+    "未正确实现回溯机制，可能会导致错误的结果或无限循环。",
+    "忽视了只有在达到叶子节点时才应检查路径和是否等于目标值这一点。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230407210247.png",
+      "description": "这是一棵二叉树的示意图，展示了一个具有层级结构的数据组织形式。",
+      "context": "该图片展示了给定的二叉树结构，用于说明存在一条从根节点到叶子节点路径，其上所有节点值之和等于目标值22的例子。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/2021020316051216.png",
+      "description": "这张图片展示了一棵二叉树的遍历过程，重点在于回溯算法的应用，通过红色箭头和蓝色高亮节点表示路径选择与返回条件（`return false` 和 `return true`）。",
+      "context": "图示展示了树结构中的一条遍历路径，用于说明在寻找符合条件的路径时递归函数应如何设置返回值及终止条件。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210203160854654.png",
+      "description": "该图片展示了一棵二叉树及其从根节点到叶子节点的所有路径，路径值分别为 [5,4,11,2] 和 [5,8,4,5]。",
+      "context": "该图片展示了给定的一棵二叉树示例，用于说明如何找到所有从根节点到叶子节点路径总和等于给定目标和（本例中为22）的路径。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210203160922745.png",
+      "description": "这张图片展示了一棵二叉树及其节点间的遍历路径，红色实线和虚线分别表示不同的遍历顺序或回溯路径。",
+      "context": "该图展示了如何通过递归方法遍历二叉树，以寻找所有路径总和等于给定目标值的路径的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230407210247.png",
+      "description": "GIF展示了从根节点到叶子节点寻找路径总和等于给定值的过程。",
+      "context": "该GIF动画展示了给定二叉树结构及目标和为22时，寻找是否存在一条从根节点到叶子节点路径，其上所有节点值相加等于目标和的过程。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/2021020316051216.png",
+      "description": "GIF展示了在二叉树中寻找一条从根节点到叶子节点路径的过程，该路径上所有节点值的和等于给定的目标和。",
+      "context": "GIF动画展示了在树结构中寻找特定路径的过程，通过递归方式遍历节点，并使用布尔值作为返回类型来表示是否找到了满足条件的路径。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210203160854654.png",
+      "description": "GIF展示了从根节点到叶子节点寻找路径总和等于给定值的所有路径的过程。",
+      "context": "该GIF动画展示了给定二叉树的结构以及目标和为22时，所有从根节点到叶子节点路径总和等于给定目标和的路径。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210203160922745.png",
+      "description": "GIF展示了在二叉树中寻找所有路径总和等于给定值的过程，通过递归遍历每个节点直到叶子节点。",
+      "context": "GIF动画展示了在二叉树中寻找所有路径总和等于给定目标值的过程，通过递归遍历整棵树来实现。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\路径总和.txt",
+  "extracted_at": "2025-07-20T10:21:44.900303",
+  "raw_content": "路径总和\n力扣题目链接(https://leetcode.cn/problems/path-sum/)\n\n给定一个二叉树和一个目标和，判断该树中是否存在根节点到叶子节点的路径，这条路径上所有节点值相加等于目标和。\n\n说明: 叶子节点是指没有子节点的节点。\n\n示例: 给定如下二叉树，以及目标和 sum = 22，\n\nhttps://file1.kamacoder.com/i/algo/20230407210247.png\n\n返回 true, 因为存在目标和为 22 的根节点到叶子节点的路径 5->4->11->2。\n\n\n\n#思路\n相信很多同学都会疑惑，递归函数什么时候要有返回值，什么时候没有返回值，特别是有的时候递归函数返回类型为bool类型。\n\n那么接下来我通过详细讲解如下两道题，来回答这个问题：\n\n112.路径总和(https://leetcode.cn/problems/path-sum/)\n113.路径总和ii(https://leetcode.cn/problems/path-sum-ii/)\n这道题我们要遍历从根节点到叶子节点的路径看看总和是不是目标和。\n\n#递归\n可以使用深度优先遍历的方式（本题前中后序都可以，无所谓，因为中节点也没有处理逻辑）来遍历二叉树\n\n确定递归函数的参数和返回类型\n参数：需要二叉树的根节点，还需要一个计数器，这个计数器用来计算二叉树的一条边之和是否正好是目标和，计数器为int型。\n\n再来看返回值，递归函数什么时候需要返回值？什么时候不需要返回值？这里总结如下三点：\n\n如果需要搜索整棵二叉树且不用处理递归返回值，递归函数就不要返回值。（这种情况就是本文下半部分介绍的113.路径总和ii）\n如果需要搜索整棵二叉树且需要处理递归返回值，递归函数就需要返回值。 （这种情况我们在236. 二叉树的最近公共祖先 (https://programmercarl.com/0236.%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E8%BF%91%E5%85%AC%E5%85%B1%E7%A5%96%E5%85%88.html)中介绍）\n如果要搜索其中一条符合条件的路径，那么递归一定需要返回值，因为遇到符合条件的路径了就要及时返回。（本题的情况）\n而本题我们要找一条符合条件的路径，所以递归函数需要返回值，及时返回，那么返回类型是什么呢？\n\n如图所示：\n\nhttps://file1.kamacoder.com/i/algo/2021020316051216.png\n\n图中可以看出，遍历的路线，并不要遍历整棵树，所以递归函数需要返回值，可以用bool类型表示。\n\n所以代码如下：\n\nbool traversal(treenode* cur, int count)   // 注意函数的返回类型\n确定终止条件\n首先计数器如何统计这一条路径的和呢？\n\n不要去累加然后判断是否等于目标和，那么代码比较麻烦，可以用递减，让计数器count初始为目标和，然后每次减去遍历路径节点上的数值。\n\n如果最后count == 0，同时到了叶子节点的话，说明找到了目标和。\n\n如果遍历到了叶子节点，count不为0，就是没找到。\n\n递归终止条件代码如下：\n\nif (!cur->left && !cur->right && count == 0) return true; // 遇到叶子节点，并且计数为0\nif (!cur->left && !cur->right) return false; // 遇到叶子节点而没有找到合适的边，直接返回\n确定单层递归的逻辑\n因为终止条件是判断叶子节点，所以递归的过程中就不要让空节点进入递归了。\n\n递归函数是有返回值的，如果递归函数返回true，说明找到了合适的路径，应该立刻返回。\n\n代码如下：\n\nif (cur->left) { // 左 （空节点不遍历）\n    // 遇到叶子节点返回true，则直接返回true\n    if (traversal(cur->left, count - cur->left->val)) return true; // 注意这里有回溯的逻辑\n}\nif (cur->right) { // 右 （空节点不遍历）\n    // 遇到叶子节点返回true，则直接返回true\n    if (traversal(cur->right, count - cur->right->val)) return true; // 注意这里有回溯的逻辑\n}\nreturn false;\n以上代码中是包含着回溯的，没有回溯，如何后撤重新找另一条路径呢。\n\n回溯隐藏在traversal(cur->left, count - cur->left->val)这里， 因为把count - cur->left->val 直接作为参数传进去，函数结束，count的数值没有改变。\n\n为了把回溯的过程体现出来，可以改为如下代码：\n\nif (cur->left) { // 左\n    count -= cur->left->val; // 递归，处理节点;\n    if (traversal(cur->left, count)) return true;\n    count += cur->left->val; // 回溯，撤销处理结果\n}\nif (cur->right) { // 右\n    count -= cur->right->val;\n    if (traversal(cur->right, count)) return true;\n    count += cur->right->val;\n}\nreturn false;\n整体代码如下：\n\nclass Solution {\nprivate:\n    bool traversal(TreeNode* cur, int count) {\n        if (!cur->left && !cur->right && count == 0) return true; // 遇到叶子节点，并且计数为0\n        if (!cur->left && !cur->right) return false; // 遇到叶子节点直接返回\n\n        if (cur->left) { // 左\n            count -= cur->left->val; // 递归，处理节点;\n            if (traversal(cur->left, count)) return true;\n            count += cur->left->val; // 回溯，撤销处理结果\n        }\n        if (cur->right) { // 右\n            count -= cur->right->val; // 递归，处理节点;\n            if (traversal(cur->right, count)) return true;\n            count += cur->right->val; // 回溯，撤销处理结果\n        }\n        return false;\n    }\n\npublic:\n    bool hasPathSum(TreeNode* root, int sum) {\n        if (root == NULL) return false;\n        return traversal(root, sum - root->val);\n    }\n};\n以上代码精简之后如下：\n\nclass Solution {\npublic:\n    bool hasPathSum(TreeNode* root, int sum) {\n        if (!root) return false;\n        if (!root->left && !root->right && sum == root->val) {\n            return true;\n        }\n        return hasPathSum(root->left, sum - root->val) || hasPathSum(root->right, sum - root->val);\n    }\n};\n是不是发现精简之后的代码，已经完全看不出分析的过程了，所以我们要把题目分析清楚之后，再追求代码精简。 这一点我已经强调很多次了！\n\n#迭代\n如果使用栈模拟递归的话，那么如果做回溯呢？\n\n此时栈里一个元素不仅要记录该节点指针，还要记录从头结点到该节点的路径数值总和。\n\nc++就我们用pair结构来存放这个栈里的元素。\n\n定义为：pair<TreeNode*, int> pair<节点指针，路径数值>\n\n这个为栈里的一个元素。\n\n如下代码是使用栈模拟的前序遍历，如下：（详细注释）\n\nclass solution {\n\npublic:\n    bool haspathsum(TreeNode* root, int sum) {\n        if (root == null) return false;\n        // 此时栈里要放的是pair<节点指针，路径数值>\n        stack<pair<TreeNode*, int>> st;\n        st.push(pair<TreeNode*, int>(root, root->val));\n        while (!st.empty()) {\n            pair<TreeNode*, int> node = st.top();\n            st.pop();\n            // 如果该节点是叶子节点了，同时该节点的路径数值等于sum，那么就返回true\n            if (!node.first->left && !node.first->right && sum == node.second) return true;\n\n            // 右节点，压进去一个节点的时候，将该节点的路径数值也记录下来\n            if (node.first->right) {\n                st.push(pair<TreeNode*, int>(node.first->right, node.second + node.first->right->val));\n            }\n\n            // 左节点，压进去一个节点的时候，将该节点的路径数值也记录下来\n            if (node.first->left) {\n                st.push(pair<TreeNode*, int>(node.first->left, node.second + node.first->left->val));\n            }\n        }\n        return false;\n    }\n};\n如果大家完全理解了本题的递归方法之后，就可以顺便把leetcode上113. 路径总和ii做了。\n\n#相关题目推荐\n#113. 路径总和ii\n力扣题目链接(https://leetcode.cn/problems/path-sum-ii/)\n\n给定一个二叉树和一个目标和，找到所有从根节点到叶子节点路径总和等于给定目标和的路径。\n\n说明: 叶子节点是指没有子节点的节点。\n\n示例: 给定如下二叉树，以及目标和 sum = 22，\n\nhttps://file1.kamacoder.com/i/algo/20210203160854654.png\n\n#思路\n113.路径总和ii要遍历整个树，找到所有路径，所以递归函数不要返回值！\n\n如图：\n\nhttps://file1.kamacoder.com/i/algo/20210203160922745.png\n\n为了尽可能的把细节体现出来，我写出如下代码（这份代码并不简洁，但是逻辑非常清晰）\n\nclass solution {\nprivate:\n    vector<vector<int>> result;\n    vector<int> path;\n    // 递归函数不需要返回值，因为我们要遍历整个树\n    void traversal(TreeNode* cur, int count) {\n        if (!cur->left && !cur->right && count == 0) { // 遇到了叶子节点且找到了和为sum的路径\n            result.push_back(path);\n            return;\n        }\n\n        if (!cur->left && !cur->right) return ; // 遇到叶子节点而没有找到合适的边，直接返回\n\n        if (cur->left) { // 左 （空节点不遍历）\n            path.push_back(cur->left->val);\n            count -= cur->left->val;\n            traversal(cur->left, count);    // 递归\n            count += cur->left->val;        // 回溯\n            path.pop_back();                // 回溯\n        }\n        if (cur->right) { // 右 （空节点不遍历）\n            path.push_back(cur->right->val);\n            count -= cur->right->val;\n            traversal(cur->right, count);   // 递归\n            count += cur->right->val;       // 回溯\n            path.pop_back();                // 回溯\n        }\n        return ;\n    }\n\npublic:\n    vector<vector<int>> pathSum(TreeNode* root, int sum) {\n        result.clear();\n        path.clear();\n        if (root == NULL) return result;\n        path.push_back(root->val); // 把根节点放进路径\n        traversal(root, sum - root->val);\n        return result;\n    }\n};\n至于113. 路径总和ii 的迭代法我并没有写，用迭代方式记录所有路径比较麻烦，也没有必要，如果大家感兴趣的话，可以再深入研究研究。\n\n#总结\n本篇通过leetcode上112. 路径总和 和 113. 路径总和ii 详细的讲解了 递归函数什么时候需要返回值，什么不需要返回值。\n\n这两道题目是掌握这一知识点非常好的题目，大家看完本篇文章再去做题，就会感受到搜索整棵树和搜索某一路径的差别。\n\n对于112. 路径总和，我依然给出了递归法和迭代法，这种题目其实用迭代法会复杂一些，能掌握递归方式就够了！\n\n#其他语言版本\n#Java\n0112.路径总和\n\nclass Solution {\n   public boolean hasPathSum(TreeNode root, int targetSum) {\n        if (root == null) {\n            return false;\n        }\n        targetSum -= root.val;\n        // 叶子结点\n        if (root.left == null && root.right == null) {\n            return targetSum == 0;\n        }\n        if (root.left != null) {\n            boolean left = hasPathSum(root.left, targetSum);\n            if (left) {      // 已经找到，提前返回\n                return true;\n            }\n        }\n        if (root.right != null) {\n            boolean right = hasPathSum(root.right, targetSum);\n            if (right) {     // 已经找到，提前返回\n                return true;\n            }\n        }\n        return false;\n    }\n}\n\n// lc112 简洁方法\nclass Solution {\n    public boolean hasPathSum(TreeNode root, int targetSum) {\n\n        if (root == null) return false; // 为空退出\n\n        // 叶子节点判断是否符合\n        if (root.left == null && root.right == null) return root.val == targetSum;\n\n        // 求两侧分支的路径和\n        return hasPathSum(root.left, targetSum - root.val) || hasPathSum(root.right, targetSum - root.val);\n    }\n}\n迭代\n\nclass Solution {\n    public boolean hasPathSum(TreeNode root, int targetSum) {\n        if(root == null) return false;\n        Stack<TreeNode> stack1 = new Stack<>();\n        Stack<Integer> stack2 = new Stack<>();\n        stack1.push(root);\n        stack2.push(root.val);\n        while(!stack1.isEmpty()) {\n            int size = stack1.size();\n\n            for(int i = 0; i < size; i++) {\n                TreeNode node = stack1.pop();\n                int sum = stack2.pop();\n\n                // 如果该节点是叶子节点了，同时该节点的路径数值等于sum，那么就返回true\n                if(node.left == null && node.right == null && sum == targetSum) {\n                    return true;\n                }\n                // 右节点，压进去一个节点的时候，将该节点的路径数值也记录下来\n                if(node.right != null){\n                    stack1.push(node.right);\n                    stack2.push(sum + node.right.val);\n                }\n                // 左节点，压进去一个节点的时候，将该节点的路径数值也记录下来\n                if(node.left != null) {\n                    stack1.push(node.left);\n                    stack2.push(sum + node.left.val);\n                }\n            }\n        }\n        return false;\n    }\n}\nclass Solution {    \n\tpublic boolean hasPathSum(TreeNode root, int targetSum) {\n        Stack<TreeNode> treeNodeStack = new Stack<>();\n        Stack<Integer> sumStack = new Stack<>();\n\n        if(root == null)\n            return false;\n        treeNodeStack.add(root);\n        sumStack.add(root.val);\n\n        while(!treeNodeStack.isEmpty()){\n            TreeNode curr = treeNodeStack.peek();\n            int tempsum = sumStack.pop();\n            if(curr != null){\n                treeNodeStack.pop();\n                treeNodeStack.add(curr);\n                treeNodeStack.add(null);\n                sumStack.add(tempsum);\n                if(curr.right != null){\n                    treeNodeStack.add(curr.right);\n                    sumStack.add(tempsum + curr.right.val);\n                }\n                if(curr.left != null){\n                    treeNodeStack.add(curr.left);\n                    sumStack.add(tempsum + curr.left.val);\n                }\n            }else{\n                treeNodeStack.pop();\n                TreeNode temp = treeNodeStack.pop();\n                if(temp.left == null && temp.right == null && tempsum == targetSum)\n                    return true;\n            }\n        }\n        return false;\n    }\n}\n0113.路径总和-ii\n\nclass Solution {\n    public List<List<Integer>> pathSum(TreeNode root, int targetSum) {\n        List<List<Integer>> res = new ArrayList<>();\n        if (root == null) return res; // 非空判断\n\n        List<Integer> path = new LinkedList<>();\n        preOrderDfs(root, targetSum, res, path);\n        return res;\n    }\n\n    public void preOrderDfs(TreeNode root, int targetSum, List<List<Integer>> res, List<Integer> path) {\n        path.add(root.val);\n        // 遇到了叶子节点\n        if (root.left == null && root.right == null) {\n            // 找到了和为 targetsum 的路径\n            if (targetSum - root.val == 0) {\n                res.add(new ArrayList<>(path));\n            }\n            return; // 如果和不为 targetsum，返回\n        }\n\n        if (root.left != null) {\n            preOrderDfs(root.left, targetSum - root.val, res, path);\n            path.remove(path.size() - 1); // 回溯\n        }\n        if (root.right != null) {\n            preOrderDfs(root.right, targetSum - root.val, res, path);\n            path.remove(path.size() - 1); // 回溯\n        }\n    }\n}\n// 解法2\nclass Solution {\n    List<List<Integer>> result;\n    LinkedList<Integer> path;\n    public List<List<Integer>> pathSum (TreeNode root,int targetSum) {\n        result = new LinkedList<>();\n        path = new LinkedList<>();\n        travesal(root, targetSum);\n        return result;\n    }\n    private void travesal(TreeNode root,  int count) {\n        if (root == null) return;\n        path.offer(root.val);\n        count -= root.val;\n        if (root.left == null && root.right == null && count == 0) {\n            result.add(new LinkedList<>(path));\n        }\n        travesal(root.left, count);\n        travesal(root.right, count);\n        path.removeLast(); // 回溯\n    }\n}\n// 解法3 DFS统一迭代法\nclass Solution {\n    public List<List<Integer>> pathSum(TreeNode root, int targetSum) {\n        List<List<Integer>> result = new ArrayList<>();\n        Stack<TreeNode> nodeStack = new Stack<>();\n        Stack<Integer> sumStack = new Stack<>();\n        Stack<ArrayList<Integer>> pathStack = new Stack<>();\n        if(root == null)\n            return result;\n        nodeStack.add(root);\n        sumStack.add(root.val);\n        pathStack.add(new ArrayList<>());\n\n        while(!nodeStack.isEmpty()){\n            TreeNode currNode = nodeStack.peek();\n            int currSum = sumStack.pop();\n            ArrayList<Integer> currPath = pathStack.pop();\n            if(currNode != null){\n                nodeStack.pop();\n                nodeStack.add(currNode);\n                nodeStack.add(null);\n                sumStack.add(currSum);\n                currPath.add(currNode.val);\n                pathStack.add(new ArrayList(currPath));\n                if(currNode.right != null){\n                    nodeStack.add(currNode.right);\n                    sumStack.add(currSum + currNode.right.val);\n                    pathStack.add(new ArrayList(currPath));\n                }\n                if(currNode.left != null){\n                    nodeStack.add(currNode.left);\n                    sumStack.add(currSum + currNode.left.val);\n                    pathStack.add(new ArrayList(currPath));\n                }\n            }else{\n                nodeStack.pop();\n                TreeNode temp = nodeStack.pop();\n                if(temp.left == null && temp.right == null && currSum == targetSum)\n                    result.add(new ArrayList(currPath));\n            }\n        }\n        return result;\n    }\n}\n#Python\n0112.路径总和\n\n(版本一) 递归\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def traversal(self, cur: TreeNode, count: int) -> bool:\n        if not cur.left and not cur.right and count == 0: # 遇到叶子节点，并且计数为0\n            return True\n        if not cur.left and not cur.right: # 遇到叶子节点直接返回\n            return False\n        \n        if cur.left: # 左\n            count -= cur.left.val\n            if self.traversal(cur.left, count): # 递归，处理节点\n                return True\n            count += cur.left.val # 回溯，撤销处理结果\n            \n        if cur.right: # 右\n            count -= cur.right.val\n            if self.traversal(cur.right, count): # 递归，处理节点\n                return True\n            count += cur.right.val # 回溯，撤销处理结果\n            \n        return False\n    \n    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:\n        if root is None:\n            return False\n        return self.traversal(root, targetSum - root.val)      \n(版本二) 递归 + 精简\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:\n        if not root:\n            return False\n        if not root.left and not root.right and targetSum == root.val:\n            return True\n        return self.hasPathSum(root.left, targetSum - root.val) or self.hasPathSum(root.right, targetSum - root.val)\n  \n(版本三) 迭代\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:\n        if not root:\n            return False\n        # 此时栈里要放的是pair<节点指针，路径数值>\n        st = [(root, root.val)]\n        while st:\n            node, path_sum = st.pop()\n            # 如果该节点是叶子节点了，同时该节点的路径数值等于sum，那么就返回true\n            if not node.left and not node.right and path_sum == sum:\n                return True\n            # 右节点，压进去一个节点的时候，将该节点的路径数值也记录下来\n            if node.right:\n                st.append((node.right, path_sum + node.right.val))\n            # 左节点，压进去一个节点的时候，将该节点的路径数值也记录下来\n            if node.left:\n                st.append((node.left, path_sum + node.left.val))\n        return False\n\n\n  \n0113.路径总和-ii\n\n(版本一) 递归\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def __init__(self):\n        self.result = []\n        self.path = []\n\n    def traversal(self, cur, count):\n        if not cur.left and not cur.right and count == 0: # 遇到了叶子节点且找到了和为sum的路径\n            self.result.append(self.path[:])\n            return\n\n        if not cur.left and not cur.right: # 遇到叶子节点而没有找到合适的边，直接返回\n            return\n\n        if cur.left: # 左 （空节点不遍历）\n            self.path.append(cur.left.val)\n            count -= cur.left.val\n            self.traversal(cur.left, count) # 递归\n            count += cur.left.val # 回溯\n            self.path.pop() # 回溯\n\n        if cur.right: #  右 （空节点不遍历）\n            self.path.append(cur.right.val) \n            count -= cur.right.val\n            self.traversal(cur.right, count) # 递归\n            count += cur.right.val # 回溯\n            self.path.pop() # 回溯\n\n        return\n\n    def pathSum(self, root: Optional[TreeNode], targetSum: int) -> List[List[int]]:\n        self.result.clear()\n        self.path.clear()\n        if not root:\n            return self.result\n        self.path.append(root.val) # 把根节点放进路径\n        self.traversal(root, targetSum - root.val)\n        return self.result \n(版本二) 递归 + 精简\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def pathSum(self, root: Optional[TreeNode], targetSum: int) -> List[List[int]]:\n        \n        result = []\n        self.traversal(root, targetSum, [], result)\n        return result\n    def traversal(self,node, count, path, result):\n            if not node:\n                return\n            path.append(node.val)\n            count -= node.val\n            if not node.left and not node.right and count == 0:\n                result.append(list(path))\n            self.traversal(node.left, count, path, result)\n            self.traversal(node.right, count, path, result)\n            path.pop()\n(版本三) 迭代\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def pathSum(self, root: Optional[TreeNode], targetSum: int) -> List[List[int]]:\n        if not root:\n            return []\n        stack = [(root, [root.val])]\n        res = []\n        while stack:\n            node, path = stack.pop()\n            if not node.left and not node.right and sum(path) == targetSum:\n                res.append(path)\n            if node.right:\n                stack.append((node.right, path + [node.right.val]))\n            if node.left:\n                stack.append((node.left, path + [node.left.val]))\n        return res"
+}

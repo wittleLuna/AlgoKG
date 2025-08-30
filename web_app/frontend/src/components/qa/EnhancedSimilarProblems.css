@@ -1,0 +1,225 @@
+/* 增强版相似推荐题目样式 */
+
+.enhanced-similar-problems {
+  width: 100%;
+}
+
+/* 网格模式卡片样式 */
+.similar-problem-grid-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+.similar-problem-grid-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(24, 144, 255, 0.15) !important;
+  border-color: #1890ff !important;
+}
+
+.similar-problem-grid-card .ant-card-body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 列表模式卡片样式 */
+.similar-problem-list-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 8px !important;
+}
+
+.similar-problem-list-card:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* 推荐级别徽章动画 */
+.ant-badge-count {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 进度条样式优化 */
+.ant-progress-line {
+  margin: 0 !important;
+}
+
+.ant-progress-bg {
+  border-radius: 4px !important;
+}
+
+/* 标签样式优化 */
+.ant-tag {
+  border-radius: 4px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.ant-tag:hover {
+  transform: scale(1.05);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .similar-problem-grid-card {
+    margin-bottom: 12px;
+  }
+  
+  .similar-problem-list-card .ant-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .similar-problem-list-card .ant-col {
+    flex: none !important;
+    width: 100% !important;
+  }
+}
+
+/* 加载动画 */
+.enhanced-similar-problems .ant-spin-container {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 空状态样式 */
+.enhanced-similar-problems .ant-empty {
+  padding: 40px 20px;
+}
+
+/* 头部控制栏样式 */
+.enhanced-similar-problems .control-header {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 100%);
+  border: 1px solid #d6f7ff;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.enhanced-similar-problems .control-header:hover {
+  background: linear-gradient(135deg, #e6f7ff 0%, #d6f7ff 100%);
+  border-color: #91d5ff;
+}
+
+/* 底部统计信息样式 */
+.enhanced-similar-problems .stats-footer {
+  background: linear-gradient(135deg, #f0f9ff 0%, #f6ffed 100%);
+  border: 1px solid #d9f7be;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+/* 卡片内容布局优化 */
+.similar-problem-grid-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.similar-problem-grid-card .card-title {
+  margin: 0 0 8px 0;
+  color: #1890ff;
+  font-size: 14px;
+  line-height: 1.4;
+  flex: 0 0 auto;
+}
+
+.similar-problem-grid-card .card-description {
+  font-size: 12px;
+  color: #666;
+  margin: 0 0 12px 0;
+  flex: 1 1 auto;
+}
+
+.similar-problem-grid-card .card-tags {
+  margin-bottom: 8px;
+  flex: 0 0 auto;
+}
+
+.similar-problem-grid-card .card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+/* 图标动画效果 */
+.enhanced-similar-problems .anticon {
+  transition: all 0.3s ease;
+}
+
+.enhanced-similar-problems .anticon:hover {
+  transform: scale(1.1);
+}
+
+/* 按钮样式优化 */
+.enhanced-similar-problems .ant-btn {
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.enhanced-similar-problems .ant-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 工具提示样式 */
+.ant-tooltip-inner {
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+/* 折叠面板样式优化 */
+.ant-collapse-item {
+  border-radius: 8px !important;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.ant-collapse-header {
+  border-radius: 8px !important;
+  background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+}
+
+.ant-collapse-content {
+  border-radius: 0 0 8px 8px !important;
+}
+
+/* 深色主题适配 */
+@media (prefers-color-scheme: dark) {
+  .similar-problem-grid-card,
+  .similar-problem-list-card {
+    background: #1f1f1f;
+    border-color: #434343;
+  }
+  
+  .similar-problem-grid-card:hover,
+  .similar-problem-list-card:hover {
+    border-color: #1890ff;
+    background: #262626;
+  }
+  
+  .enhanced-similar-problems .control-header {
+    background: linear-gradient(135deg, #1f1f1f 0%, #262626 100%);
+    border-color: #434343;
+  }
+  
+  .enhanced-similar-problems .stats-footer {
+    background: linear-gradient(135deg, #1f1f1f 0%, #262626 100%);
+    border-color: #434343;
+  }
+}

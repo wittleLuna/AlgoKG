@@ -1,0 +1,591 @@
+{
+  "id": "AP_cce7c8a1",
+  "title": "二叉搜索树中的众数",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/find-mode-in-binary-search-tree/",
+  "description": "给定一个有相同值的二叉搜索树（BST），找出 BST 中的所有众数（出现频率最高的元素）。\n\n假定 BST 有如下定义：\n\n结点左子树中所含结点的值小于等于当前结点的值\n结点右子树中所含结点的值大于等于当前结点的值\n左子树和右子树都是二叉搜索树\n例如：\n\n给定 BST [1,null,2,2],\n\nhttps://file1.kamacoder.com/i/algo/20201014221532206.png\n\n返回[2].\n\n提示：如果众数超过1个，不需考虑输出顺序\n\n进阶：你可以不使用额外的空间吗？（假设由递归产生的隐式调用栈的开销不被计算在内）",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "深度优先搜索",
+    "二叉搜索树"
+  ],
+  "data_structure_tags": [
+    "哈希表",
+    "数组",
+    "二叉树"
+  ],
+  "technique_tags": [
+    "中序遍历",
+    "前驱节点"
+  ],
+  "difficulty": null,
+  "solution_approach": "本题主要通过两种方法解决：非二叉搜索树情况下使用全遍历统计频率并排序获取众数；对于二叉搜索树，利用其中序遍历有序的特点，结合前驱指针技巧单次遍历来找到所有众数。",
+  "key_insights": [
+    {
+      "content": "中序遍历二叉搜索树得到的序列是递增排列的，这使得我们可以高效地追踪元素出现的频率。"
+    },
+    {
+      "content": "通过维护当前最大频率和一个用于存放结果的集合，可以在一次中序遍历过程中同时完成频率计算与结果收集，避免了两次遍历的需求。"
+    },
+    {
+      "content": "使用前驱指针可以有效地在遍历过程中比较相邻节点值，从而更新频率计数器。"
+    },
+    {
+      "content": "当发现新的更高频率时，需要清空结果集并重新开始记录新的众数。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "这道题目呢，递归法我从两个维度来讲。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "void searchBST(TreeNode* cur, unordered_map<int, int>& map) { if (cur == NULL) return ; map[cur->val]++; searchBST(cur->left, map); searchBST(cur->right, map); return ; } bool static cmp (const pair<int, int>& a, const pair<int, int>& b) { return a.second > b.second; } vector<int> findMode(TreeNode* root) { unordered_map<int, int> map; vector<int> result; if (root == NULL) return result; searchBST(root, map); vector<pair<int, int>> vec(map.begin(), map.end()); sort(vec.begin(), vec.end(), cmp); result.push_back(vec[0].first); for (int i = 1; i < vec.size(); i++) { if (vec[i].second == vec[0].second) result.push_back(vec[i].first); else break; } return result; }",
+          "description": "使用unordered_map统计频率，然后排序找出众数"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: int maxCount = 0; int count = 0; TreeNode* pre = NULL; vector<int> result; void searchBST(TreeNode* cur) { if (cur == NULL) return ; searchBST(cur->left); if (pre == NULL) { count = 1; } else if (pre->val == cur->val) { count++; } else { count = 1; } pre = cur; if (count == maxCount) { result.push_back(cur->val); } if (count > maxCount) { maxCount = count; result.clear(); result.push_back(cur->val); } searchBST(cur->right); return ; } public: vector<int> findMode(TreeNode* root) { count = 0; maxCount = 0; pre = NULL; result.clear(); searchBST(root); return result; }};",
+          "description": "二叉搜索树中序遍历寻找众数"
+        },
+        {
+          "language": "cpp",
+          "code": "vector<int> findMode(TreeNode* root) { stack<TreeNode*> st; TreeNode* cur = root; TreeNode* pre = NULL; int maxCount = 0; int count = 0; vector<int> result; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->left; } else { cur = st.top(); st.pop(); if (pre == NULL) { count = 1; } else if (pre->val == cur->val) { count++; } else { count = 1; } if (count == maxCount) { result.push_back(cur->val); } if (count > maxCount) { maxCount = count; result.clear(); result.push_back(cur->val); } pre = cur; cur = cur->right; }} return result;}",
+          "description": "迭代法中序遍历求解二叉搜索树中的众数"
+        },
+        {
+          "language": "java",
+          "code": "public int[] findMode(TreeNode root) { Map<Integer, Integer> map = new HashMap<>(); List<Integer> list = new ArrayList<>(); if (root == null) return list.stream().mapToInt(Integer::intValue).toArray(); searchBST(root, map); List<Map.Entry<Integer, Integer>> mapList = map.entrySet().stream().sorted((c1, c2) -> c2.getValue().compareTo(c1.getValue())).collect(Collectors.toList()); list.add(mapList.get(0).getKey()); for (int i = 1; i < mapList.size(); i++) { if (mapList.get(i).getValue() == mapList.get(i - 1).getValue()) { list.add(mapList.get(i).getKey()); } else { break; }} return list.stream().mapToInt(Integer::intValue).toArray();} void searchBST(TreeNode curr, Map<Integer, Integer> map) { if (curr == null) return; map.put(curr.val, map.getOrDefault(curr.val, 0) + 1); searchBST(curr.left, map); searchBST(curr.right, map);}",
+          "description": "Java版本暴力法求解二叉搜索树中的众数"
+        },
+        {
+          "language": "java",
+          "code": "ArrayList<Integer> resList; int maxCount; int count; TreeNode pre; public int[] findMode(TreeNode root) { resList = new ArrayList<>(); maxCount = 0; count = 0; pre = null; findMode1(root); int[] res = new int[resList.size()]; for (int i = 0; i < resList.size(); i++) { res[i] = resList.get(i); } return res; } public void findMode1(TreeNode root) { if (root == null) { return; } findMode1(root.left); int rootValue = root.val; if (pre == null || rootValue != pre.val) { count = 1; } else { count++; } if (count > maxCount) { resList.clear(); resList.add(rootValue); maxCount = count; } else if (count == maxCount) { resList.add(rootValue); } pre = root; findMode1(root.right); }",
+          "description": "Java版本利用二叉搜索树特性求解众数"
+        },
+        {
+          "language": "java",
+          "code": "public int[] findMode(TreeNode root) { TreeNode pre = null; Stack<TreeNode> stack = new Stack<>(); List<Integer> result = new ArrayList<>(); int maxCount = 0; int count = 0; TreeNode cur = root; while (cur != null || !stack.isEmpty()) { if (cur != null) { stack.push(cur); cur =cur.left; }else { cur = stack.pop(); if (pre == null || cur.val != pre.val) { count = 1; }else { count++; } if (count > maxCount) { maxCount = count; result.clear(); result.add(cur.val); }else if (count == maxCount) { result.add(cur.val); } pre = cur; cur = cur.right; }} return result.stream().mapToInt(Integer::intValue).toArray();}",
+          "description": "Java版本迭代法求解二叉搜索树中的众数"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict class Solution: def searchBST(self, cur, freq_map): if cur is None: return freq_map[cur.val] += 1 self.searchBST(cur.left, freq_map) self.searchBST(cur.right, freq_map) def findMode(self, root): freq_map = defaultdict(int) result = [] if root is None: return result self.searchBST(root, freq_map) max_freq = max(freq_map.values()) for key, freq in freq_map.items(): if freq == max_freq: result.append(key) return result",
+          "description": "Python版本递归法（一）利用字典统计频率求解二叉搜索树中的众数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.maxCount = 0 self.count = 0 self.pre = None self.result = [] def searchBST(self, cur): if cur is None: return self.searchBST(cur.left) if self.pre is None: self.count = 1 elif self.pre.val == cur.val: self.count += 1 else: self.count = 1 self.pre = cur if self.count == self.maxCount: self.result.append(cur.val) if self.count > self.maxCount: self.maxCount = self.count self.result = [cur.val] self.searchBST(cur.right) return def findMode(self, root): self.count = 0 self.maxCount = 0 self.pre = None self.result = [] self.searchBST(root) return self.result",
+          "description": "Python版本递归法（二）利用二叉搜索树性质求解众数"
+        },
+        {
+          "language": "python",
+          "code": "def findMode(self, root): st = [] cur = root pre = None maxCount = 0 count = 0 result = [] while cur is not None or st: if cur is not None: st.append(cur) cur = cur.left else: cur = st.pop() if pre is None: count = 1 elif pre.val == cur.val: count += 1 else: count = 1 if count == maxCount: result.append(cur.val) if count > maxCount: maxCount = count result = [cur.val] pre = cur cur = cur.right return result",
+          "description": "Python版本迭代法求解二叉搜索树中的众数"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "递归法",
+      "text": "#如果不是二叉搜索树",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "void searchBST(TreeNode* cur, unordered_map<int, int>& map) { if (cur == NULL) return ; map[cur->val]++; searchBST(cur->left, map); searchBST(cur->right, map); return ; } bool static cmp (const pair<int, int>& a, const pair<int, int>& b) { return a.second > b.second; } vector<int> findMode(TreeNode* root) { unordered_map<int, int> map; vector<int> result; if (root == NULL) return result; searchBST(root, map); vector<pair<int, int>> vec(map.begin(), map.end()); sort(vec.begin(), vec.end(), cmp); result.push_back(vec[0].first); for (int i = 1; i < vec.size(); i++) { if (vec[i].second == vec[0].second) result.push_back(vec[i].first); else break; } return result; }",
+          "description": "C++代码，用于在非二叉搜索树中查找众数。"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution { private: int maxCount = 0; int count = 0; TreeNode* pre = NULL; vector<int> result; void searchBST(TreeNode* cur) { if (cur == NULL) return ; searchBST(cur->left); if (pre == NULL) { count = 1; } else if (pre->val == cur->val) { count++; } else { count = 1; } pre = cur; if (count == maxCount) { result.push_back(cur->val); } if (count > maxCount) { maxCount = count; result.clear(); result.push_back(cur->val); } searchBST(cur->right); return ; } public: vector<int> findMode(TreeNode* root) { count = 0; maxCount = 0; pre = NULL; result.clear(); searchBST(root); return result; } };",
+          "description": "C++代码，用于在二叉搜索树中查找众数。"
+        },
+        {
+          "language": "java",
+          "code": "public int[] findMode(TreeNode root) { Map<Integer, Integer> map = new HashMap<>(); List<Integer> list = new ArrayList<>(); if (root == null) return list.stream().mapToInt(Integer::intValue).toArray(); searchBST(root, map); List<Map.Entry<Integer, Integer>> mapList = map.entrySet().stream() .sorted((c1, c2) -> c2.getValue().compareTo(c1.getValue())) .collect(Collectors.toList()); list.add(mapList.get(0).getKey()); for (int i = 1; i < mapList.size(); i++) { if (mapList.get(i).getValue() == mapList.get(i - 1).getValue()) { list.add(mapList.get(i).getKey()); } else { break; } } return list.stream().mapToInt(Integer::intValue).toArray(); } void searchBST(TreeNode curr, Map<Integer, Integer> map) { if (curr == null) return; map.put(curr.val, map.getOrDefault(curr.val, 0) + 1); searchBST(curr.left, map); searchBST(curr.right, map); }",
+          "description": "Java代码，用于在非二叉搜索树中查找众数。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { ArrayList<Integer> resList; int maxCount; int count; TreeNode pre; public int[] findMode(TreeNode root) { resList = new ArrayList<>(); maxCount = 0; count = 0; pre = null; findMode1(root); int[] res = new int[resList.size()]; for (int i = 0; i < resList.size(); i++) { res[i] = resList.get(i); } return res; } public void findMode1(TreeNode root) { if (root == null) { return; } findMode1(root.left); int rootValue = root.val; if (pre == null || rootValue != pre.val) { count = 1; } else { count++; } if (count > maxCount) { resList.clear(); resList.add(rootValue); maxCount = count; } else if (count == maxCount) { resList.add(rootValue); } pre = root; findMode1(root.right); } }",
+          "description": "Java代码，利用二叉搜索树特性不使用额外空间查找众数。"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict class Solution: def searchBST(self, cur, freq_map): if cur is None: return freq_map[cur.val] += 1 self.searchBST(cur.left, freq_map) self.searchBST(cur.right, freq_map) def findMode(self, root): freq_map = defaultdict(int) result = [] if root is None: return result self.searchBST(root, freq_map) max_freq = max(freq_map.values()) for key, freq in freq_map.items(): if freq == max_freq: result.append(key) return result",
+          "description": "Python代码，用于在非二叉搜索树中查找众数。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.maxCount = 0 self.count = 0 self.pre = None self.result = [] def searchBST(self, cur): if cur is None: return self.searchBST(cur.left) if self.pre is None: self.count = 1 elif self.pre.val == cur.val: self.count += 1 else: self.count = 1 self.pre = cur if self.count == self.maxCount: self.result.append(cur.val) if self.count > self.maxCount: self.maxCount = self.count self.result = [cur.val] self.searchBST(cur.right) return def findMode(self, root): self.count = 0 self.maxCount = 0 self.pre = None self.result = [] self.searchBST(root) return self.result",
+          "description": "Python代码，利用二叉搜索树性质查找众数。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "如果不是二叉搜索树",
+      "text": "如果不是二叉搜索树，最直观的方法一定是把这个树都遍历了，用map统计频率，把频率排个序，最后取前面高频的元素的集合。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "C++",
+          "code": "void searchBST(TreeNode* cur, unordered_map<int, int>& map) { if (cur == NULL) return ; map[cur->val]++; searchBST(cur->left, map); searchBST(cur->right, map); return ; } bool static cmp (const pair<int, int>& a, const pair<int, int>& b) { return a.second > b.second; } vector<int> findMode(TreeNode* root) { unordered_map<int, int> map; vector<int> result; if (root == NULL) return result; searchBST(root, map); vector<pair<int, int>> vec(map.begin(), map.end()); sort(vec.begin(), vec.end(), cmp); result.push_back(vec[0].first); for (int i = 1; i < vec.size(); i++) { if (vec[i].second == vec[0].second) result.push_back(vec[i].first); else break; } return result; }",
+          "description": "C++代码实现，使用map统计频率并排序找出众数。"
+        },
+        {
+          "language": "C++",
+          "code": "int maxCount = 0; int count = 0; TreeNode* pre = NULL; vector<int> result; void searchBST(TreeNode* cur) { if (cur == NULL) return ; searchBST(cur->left); if (pre == NULL) { count = 1; } else if (pre->val == cur->val) { count++; } else { count = 1; } pre = cur; if (count == maxCount) { result.push_back(cur->val); } if (count > maxCount) { maxCount = count; result.clear(); result.push_back(cur->val); } searchBST(cur->right); return ; } vector<int> findMode(TreeNode* root) { count = 0; maxCount = 0; pre = NULL; result.clear(); searchBST(root); return result; }",
+          "description": "C++代码实现，利用二叉搜索树的中序遍历特性找众数。"
+        },
+        {
+          "language": "Java",
+          "code": "public int[] findMode(TreeNode root) { Map<Integer, Integer> map = new HashMap<>(); List<Integer> list = new ArrayList<>(); if (root == null) return list.stream().mapToInt(Integer::intValue).toArray(); searchBST(root, map); List<Map.Entry<Integer, Integer>> mapList = map.entrySet().stream().sorted((c1, c2) -> c2.getValue().compareTo(c1.getValue())).collect(Collectors.toList()); list.add(mapList.get(0).getKey()); for (int i = 1; i < mapList.size(); i++) { if (mapList.get(i).getValue() == mapList.get(i - 1).getValue()) { list.add(mapList.get(i).getKey()); } else { break; } } return list.stream().mapToInt(Integer::intValue).toArray(); } void searchBST(TreeNode curr, Map<Integer, Integer> map) { if (curr == null) return; map.put(curr.val, map.getOrDefault(curr.val, 0) + 1); searchBST(curr.left, map); searchBST(curr.right, map); }",
+          "description": "Java代码实现，使用HashMap统计频率并排序找出众数。"
+        },
+        {
+          "language": "Java",
+          "code": "ArrayList<Integer> resList; int maxCount; int count; TreeNode pre; public int[] findMode(TreeNode root) { resList = new ArrayList<>(); maxCount = 0; count = 0; pre = null; findMode1(root); int[] res = new int[resList.size()]; for (int i = 0; i < resList.size(); i++) { res[i] = resList.get(i); } return res; } public void findMode1(TreeNode root) { if (root == null) { return; } findMode1(root.left); int rootValue = root.val; if (pre == null || rootValue != pre.val) { count = 1; } else { count++; } if (count > maxCount) { resList.clear(); resList.add(rootValue); maxCount = count; } else if (count == maxCount) { resList.add(rootValue); } pre = root; findMode1(root.right); }",
+          "description": "Java代码实现，利用二叉搜索树的中序遍历特性找众数。"
+        },
+        {
+          "language": "Python",
+          "code": "from collections import defaultdict def searchBST(self, cur, freq_map): if cur is None: return freq_map[cur.val] += 1 self.searchBST(cur.left, freq_map) self.searchBST(cur.right, freq_map) def findMode(self, root): freq_map = defaultdict(int) result = [] if root is None: return result self.searchBST(root, freq_map) max_freq = max(freq_map.values()) for key, freq in freq_map.items(): if freq == max_freq: result.append(key) return result",
+          "description": "Python代码实现，使用字典统计频率并找出众数。"
+        },
+        {
+          "language": "Python",
+          "code": "def __init__(self): self.maxCount = 0 self.count = 0 self.pre = None self.result = [] def searchBST(self, cur): if cur is None: return self.searchBST(cur.left) if self.pre is None: self.count = 1 elif self.pre.val == cur.val: self.count += 1 else: self.count = 1 self.pre = cur if self.count == self.maxCount: self.result.append(cur.val) if self.count > self.maxCount: self.maxCount = self.count self.result = [cur.val] self.searchBST(cur.right) return def findMode(self, root): self.count = 0 self.maxCount = 0 self.pre = None self.result = [] self.searchBST(root) return self.result",
+          "description": "Python代码实现，利用二叉搜索树的中序遍历特性找众数。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "是二叉搜索树",
+      "text": "既然是搜索树，它中序遍历就是有序的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "void searchBST(TreeNode* cur, unordered_map<int, int>& map) { if (cur == NULL) return ; map[cur->val]++; searchBST(cur->left, map); searchBST(cur->right, map); return ; } bool static cmp (const pair<int, int>& a, const pair<int, int>& b) { return a.second > b.second; } vector<int> findMode(TreeNode* root) { unordered_map<int, int> map; vector<int> result; if (root == NULL) return result; searchBST(root, map); vector<pair<int, int>> vec(map.begin(), map.end()); sort(vec.begin(), vec.end(), cmp); result.push_back(vec[0].first); for (int i = 1; i < vec.size(); i++) { if (vec[i].second == vec[0].second) result.push_back(vec[i].first); else break; } return result; }",
+          "description": "使用map统计频率，排序后取最高频率的元素"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution { private: int maxCount = 0; int count = 0; TreeNode* pre = NULL; vector<int> result; void searchBST(TreeNode* cur) { if (cur == NULL) return ; searchBST(cur->left); if (pre == NULL) { count = 1; } else if (pre->val == cur->val) { count++; } else { count = 1; } pre = cur; if (count == maxCount) { result.push_back(cur->val); } if (count > maxCount) { maxCount = count; result.clear(); result.push_back(cur->val); } searchBST(cur->right); return ; } public: vector<int> findMode(TreeNode* root) { count = 0; maxCount = 0; pre = NULL; result.clear(); searchBST(root); return result; } };",
+          "description": "利用二叉搜索树中序遍历特性，一次遍历求众数"
+        },
+        {
+          "language": "cpp",
+          "code": "vector<int> findMode(TreeNode* root) { stack<TreeNode*> st; TreeNode* cur = root; TreeNode* pre = NULL; int maxCount = 0; int count = 0; vector<int> result; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->left; } else { cur = st.top(); st.pop(); if (pre == NULL) { count = 1; } else if (pre->val == cur->val) { count++; } else { count = 1; } if (count == maxCount) { result.push_back(cur->val); } if (count > maxCount) { maxCount = count; result.clear(); result.push_back(cur->val); } pre = cur; cur = cur->right; } } return result; }",
+          "description": "迭代法实现中序遍历求众数"
+        },
+        {
+          "language": "java",
+          "code": "public int[] findMode(TreeNode root) { Map<Integer, Integer> map = new HashMap<>(); List<Integer> list = new ArrayList<>(); if (root == null) return list.stream().mapToInt(Integer::intValue).toArray(); searchBST(root, map); List<Map.Entry<Integer, Integer>> mapList = map.entrySet().stream().sorted((c1, c2) -> c2.getValue().compareTo(c1.getValue())).collect(Collectors.toList()); list.add(mapList.get(0).getKey()); for (int i = 1; i < mapList.size(); i++) { if (mapList.get(i).getValue() == mapList.get(i - 1).getValue()) { list.add(mapList.get(i).getKey()); } else { break; } } return list.stream().mapToInt(Integer::intValue).toArray(); } void searchBST(TreeNode curr, Map<Integer, Integer> map) { if (curr == null) return; map.put(curr.val, map.getOrDefault(curr.val, 0) + 1); searchBST(curr.left, map); searchBST(curr.right, map); }",
+          "description": "Java版本暴力法求众数"
+        },
+        {
+          "language": "java",
+          "code": "ArrayList<Integer> resList; int maxCount; int count; TreeNode pre; public int[] findMode(TreeNode root) { resList = new ArrayList<>(); maxCount = 0; count = 0; pre = null; findMode1(root); int[] res = new int[resList.size()]; for (int i = 0; i < resList.size(); i++) { res[i] = resList.get(i); } return res; } public void findMode1(TreeNode root) { if (root == null) { return; } findMode1(root.left); int rootValue = root.val; if (pre == null || rootValue != pre.val) { count = 1; } else { count++; } if (count > maxCount) { resList.clear(); resList.add(rootValue); maxCount = count; } else if (count == maxCount) { resList.add(rootValue); } pre = root; findMode1(root.right); }",
+          "description": "Java版本利用二叉搜索树特性求众数"
+        },
+        {
+          "language": "java",
+          "code": "public int[] findMode(TreeNode root) { TreeNode pre = null; Stack<TreeNode> stack = new Stack<>(); List<Integer> result = new ArrayList<>(); int maxCount = 0; int count = 0; TreeNode cur = root; while (cur != null || !stack.isEmpty()) { if (cur != null) { stack.push(cur); cur = cur.left; } else { cur = stack.pop(); if (pre == null || cur.val != pre.val) { count = 1; } else { count++; } if (count > maxCount) { maxCount = count; result.clear(); result.add(cur.val); } else if (count == maxCount) { result.add(cur.val); } pre = cur; cur = cur.right; } } return result.stream().mapToInt(Integer::intValue).toArray(); }",
+          "description": "Java版本迭代法求众数"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict class Solution: def searchBST(self, cur, freq_map): if cur is None: return freq_map[cur.val] += 1 self.searchBST(cur.left, freq_map) self.searchBST(cur.right, freq_map) def findMode(self, root): freq_map = defaultdict(int) result = [] if root is None: return result self.searchBST(root, freq_map) max_freq = max(freq_map.values()) for key, freq in freq_map.items(): if freq == max_freq: result.append(key) return result",
+          "description": "Python版本利用字典统计频率求众数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.maxCount = 0 self.count = 0 self.pre = None self.result = [] def searchBST(self, cur): if cur is None: return self.searchBST(cur.left) if self.pre is None: self.count = 1 elif self.pre.val == cur.val: self.count += 1 else: self.count = 1 self.pre = cur if self.count == self.maxCount: self.result.append(cur.val) if self.count > self.maxCount: self.maxCount = self.count self.result = [cur.val] self.searchBST(cur.right) return def findMode(self, root): self.count = 0 self.maxCount = 0 self.pre = None self.result = [] self.searchBST(root) return self.result",
+          "description": "Python版本利用二叉搜索树性质求众数"
+        },
+        {
+          "language": "python",
+          "code": "def findMode(self, root): st = [] cur = root pre = None maxCount = 0 count = 0 result = [] while cur is not None or st: if cur is not None: st.append(cur) cur = cur.left else: cur = st.pop() if pre is None: count = 1 elif pre.val == cur.val: count += 1 else: count = 1 if count == maxCount: result.append(cur.val) if count > maxCount: maxCount = count result = [cur.val] pre = cur cur = cur.right return result",
+          "description": "Python版本迭代法求众数"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "迭代法",
+      "text": "只要把中序遍历转成迭代，中间节点的处理逻辑完全一样。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "void searchBST(TreeNode* cur, unordered_map<int, int>& map) { if (cur == NULL) return ; map[cur->val]++; searchBST(cur->left, map); searchBST(cur->right, map); return ; } bool static cmp (const pair<int, int>& a, const pair<int, int>& b) { return a.second > b.second; } vector<int> findMode(TreeNode* root) { unordered_map<int, int> map; vector<int> result; if (root == NULL) return result; searchBST(root, map); vector<pair<int, int>> vec(map.begin(), map.end()); sort(vec.begin(), vec.end(), cmp); result.push_back(vec[0].first); for (int i = 1; i < vec.size(); i++) { if (vec[i].second == vec[0].second) result.push_back(vec[i].first); else break; } return result; }",
+          "description": "使用哈希表统计频率并排序找出众数"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution { private: int maxCount = 0; int count = 0; TreeNode* pre = NULL; vector<int> result; void searchBST(TreeNode* cur) { if (cur == NULL) return ; searchBST(cur->left); if (pre == NULL) { count = 1; } else if (pre->val == cur->val) { count++; } else { count = 1; } pre = cur; if (count == maxCount) { result.push_back(cur->val); } if (count > maxCount) { maxCount = count; result.clear(); result.push_back(cur->val); } searchBST(cur->right); return ; } public: vector<int> findMode(TreeNode* root) { count = 0; maxCount = 0; pre = NULL; result.clear(); searchBST(root); return result; } };",
+          "description": "利用二叉搜索树的中序遍历特性，一次遍历找到众数"
+        },
+        {
+          "language": "cpp",
+          "code": "vector<int> findMode(TreeNode* root) { stack<TreeNode*> st; TreeNode* cur = root; TreeNode* pre = NULL; int maxCount = 0; int count = 0; vector<int> result; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->left; } else { cur = st.top(); st.pop(); if (pre == NULL) { count = 1; } else if (pre->val == cur->val) { count++; } else { count = 1; } if (count == maxCount) { result.push_back(cur->val); } if (count > maxCount) { maxCount = count; result.clear(); result.push_back(cur->val); } pre = cur; cur = cur->right; } } return result; }",
+          "description": "迭代法实现中序遍历，同时找出众数"
+        },
+        {
+          "language": "java",
+          "code": "public int[] findMode(TreeNode root) { Map<Integer, Integer> map = new HashMap<>(); List<Integer> list = new ArrayList<>(); if (root == null) return list.stream().mapToInt(Integer::intValue).toArray(); searchBST(root, map); List<Map.Entry<Integer, Integer>> mapList = map.entrySet().stream().sorted((c1, c2) -> c2.getValue().compareTo(c1.getValue())).collect(Collectors.toList()); list.add(mapList.get(0).getKey()); for (int i = 1; i < mapList.size(); i++) { if (mapList.get(i).getValue() == mapList.get(i - 1).getValue()) { list.add(mapList.get(i).getKey()); } else { break; } } return list.stream().mapToInt(Integer::intValue).toArray(); } void searchBST(TreeNode curr, Map<Integer, Integer> map) { if (curr == null) return; map.put(curr.val, map.getOrDefault(curr.val, 0) + 1); searchBST(curr.left, map); searchBST(curr.right, map); }",
+          "description": "Java实现，使用哈希表统计频率并排序找出众数"
+        },
+        {
+          "language": "java",
+          "code": "ArrayList<Integer> resList; int maxCount; int count; TreeNode pre; public int[] findMode(TreeNode root) { resList = new ArrayList<>(); maxCount = 0; count = 0; pre = null; findMode1(root); int[] res = new int[resList.size()]; for (int i = 0; i < resList.size(); i++) { res[i] = resList.get(i); } return res; } public void findMode1(TreeNode root) { if (root == null) { return; } findMode1(root.left); int rootValue = root.val; if (pre == null || rootValue != pre.val) { count = 1; } else { count++; } if (count > maxCount) { resList.clear(); resList.add(rootValue); maxCount = count; } else if (count == maxCount) { resList.add(rootValue); } pre = root; findMode1(root.right); }",
+          "description": "Java递归法实现，利用二叉搜索树特性一次遍历找到众数"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict class Solution: def searchBST(self, cur, freq_map): if cur is None: return freq_map[cur.val] += 1 self.searchBST(cur.left, freq_map) self.searchBST(cur.right, freq_map) def findMode(self, root): freq_map = defaultdict(int) result = [] if root is None: return result self.searchBST(root, freq_map) max_freq = max(freq_map.values()) for key, freq in freq_map.items(): if freq == max_freq: result.append(key) return result",
+          "description": "Python递归法实现，使用字典统计频率并找出众数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.maxCount = 0 self.count = 0 self.pre = None self.result = [] def searchBST(self, cur): if cur is None: return self.searchBST(cur.left) if self.pre is None: self.count = 1 elif self.pre.val == cur.val: self.count += 1 else: self.count = 1 self.pre = cur if self.count == self.maxCount: self.result.append(cur.val) if self.count > self.maxCount: self.maxCount = self.count self.result = [cur.val] self.searchBST(cur.right) return def findMode(self, root): self.count = 0 self.maxCount = 0 self.pre = None self.result = [] self.searchBST(root) return self.result",
+          "description": "Python递归法实现，利用二叉搜索树特性一次遍历找到众数"
+        },
+        {
+          "language": "python",
+          "code": "def findMode(self, root): st = [] cur = root pre = None maxCount = 0 count = 0 result = [] while cur is not None or st: if cur is not None: st.append(cur) cur = cur.left else: cur = st.pop() if pre is None: count = 1 elif pre.val == cur.val: count += 1 else: count = 1 if count == maxCount: result.append(cur.val) if count > maxCount: maxCount = count result = [cur.val] pre = cur cur = cur.right return result",
+          "description": "Python迭代法实现，中序遍历的同时找出众数"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "本题在递归法中，我给出了如果是普通二叉树，应该怎么求众数。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "void searchBST(TreeNode* cur, unordered_map<int, int>& map) { if (cur == NULL) return ; map[cur->val]++; searchBST(cur->left, map); searchBST(cur->right, map); return ; } bool static cmp (const pair<int, int>& a, const pair<int, int>& b) { return a.second > b.second; } vector<int> findMode(TreeNode* root) { unordered_map<int, int> map; vector<int> result; if (root == NULL) return result; searchBST(root, map); vector<pair<int, int>> vec(map.begin(), map.end()); sort(vec.begin(), vec.end(), cmp); result.push_back(vec[0].first); for (int i = 1; i < vec.size(); i++) { if (vec[i].second == vec[0].second) result.push_back(vec[i].first); else break; } return result; }",
+          "description": "使用map统计频率并排序，获取出现频率最高的元素"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution { private: int maxCount = 0; int count = 0; TreeNode* pre = NULL; vector<int> result; void searchBST(TreeNode* cur) { if (cur == NULL) return ; searchBST(cur->left); if (pre == NULL) { count = 1; } else if (pre->val == cur->val) { count++; } else { count = 1; } pre = cur; if (count == maxCount) { result.push_back(cur->val); } if (count > maxCount) { maxCount = count; result.clear(); result.push_back(cur->val); } searchBST(cur->right); return ; } public: vector<int> findMode(TreeNode* root) { count = 0; maxCount = 0; pre = NULL; result.clear(); searchBST(root); return result; } };",
+          "description": "中序遍历二叉搜索树，并记录出现频率最高的元素"
+        },
+        {
+          "language": "cpp",
+          "code": "vector<int> findMode(TreeNode* root) { stack<TreeNode*> st; TreeNode* cur = root; TreeNode* pre = NULL; int maxCount = 0; int count = 0; vector<int> result; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->left; } else { cur = st.top(); st.pop(); if (pre == NULL) { count = 1; } else if (pre->val == cur->val) { count++; } else { count = 1; } if (count == maxCount) { result.push_back(cur->val); } if (count > maxCount) { maxCount = count; result.clear(); result.push_back(cur->val); } pre = cur; cur = cur->right; } } return result; }",
+          "description": "迭代法实现中序遍历二叉搜索树，并找到众数"
+        },
+        {
+          "language": "java",
+          "code": "public int[] findMode(TreeNode root) { Map<Integer, Integer> map = new HashMap<>(); List<Integer> list = new ArrayList<>(); if (root == null) return list.stream().mapToInt(Integer::intValue).toArray(); searchBST(root, map); List<Map.Entry<Integer, Integer>> mapList = map.entrySet().stream().sorted((c1, c2) -> c2.getValue().compareTo(c1.getValue())).collect(Collectors.toList()); list.add(mapList.get(0).getKey()); for (int i = 1; i < mapList.size(); i++) { if (mapList.get(i).getValue() == mapList.get(i - 1).getValue()) { list.add(mapList.get(i).getKey()); } else { break; } } return list.stream().mapToInt(Integer::intValue).toArray(); } void searchBST(TreeNode curr, Map<Integer, Integer> map) { if (curr == null) return; map.put(curr.val, map.getOrDefault(curr.val, 0) + 1); searchBST(curr.left, map); searchBST(curr.right, map); }",
+          "description": "Java版本的暴力法求解二叉树众数"
+        },
+        {
+          "language": "java",
+          "code": "public int[] findMode(TreeNode root) { resList = new ArrayList<>(); maxCount = 0; count = 0; pre = null; findMode1(root); int[] res = new int[resList.size()]; for (int i = 0; i < resList.size(); i++) { res[i] = resList.get(i); } return res; } public void findMode1(TreeNode root) { if (root == null) { return; } findMode1(root.left); int rootValue = root.val; if (pre == null || rootValue != pre.val) { count = 1; } else { count++; } if (count > maxCount) { resList.clear(); resList.add(rootValue); maxCount = count; } else if (count == maxCount) { resList.add(rootValue); } pre = root; findMode1(root.right); }",
+          "description": "Java版本利用二叉搜索树特性求解众数"
+        },
+        {
+          "language": "java",
+          "code": "public int[] findMode(TreeNode root) { TreeNode pre = null; Stack<TreeNode> stack = new Stack<>(); List<Integer> result = new ArrayList<>(); int maxCount = 0; int count = 0; TreeNode cur = root; while (cur != null || !stack.isEmpty()) { if (cur != null) { stack.push(cur); cur =cur.left; }else { cur = stack.pop(); if (pre == null || cur.val != pre.val) { count = 1; }else { count++; } if (count > maxCount) { maxCount = count; result.clear(); result.add(cur.val); }else if (count == maxCount) { result.add(cur.val); } pre = cur; cur = cur.right; } } return result.stream().mapToInt(Integer::intValue).toArray(); }",
+          "description": "Java版本迭代法求解二叉搜索树众数"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict class Solution: def searchBST(self, cur, freq_map): if cur is None: return freq_map[cur.val] += 1 self.searchBST(cur.left, freq_map) self.searchBST(cur.right, freq_map) def findMode(self, root): freq_map = defaultdict(int) result = [] if root is None: return result self.searchBST(root, freq_map) max_freq = max(freq_map.values()) for key, freq in freq_map.items(): if freq == max_freq: result.append(key) return result",
+          "description": "Python版本递归法利用字典求解二叉树众数"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.maxCount = 0 self.count = 0 self.pre = None self.result = [] def searchBST(self, cur): if cur is None: return self.searchBST(cur.left) if self.pre is None: self.count = 1 elif self.pre.val == cur.val: self.count += 1 else: self.count = 1 self.pre = cur if self.count == self.maxCount: self.result.append(cur.val) if self.count > self.maxCount: self.maxCount = self.count self.result = [cur.val] self.searchBST(cur.right) return def findMode(self, root): self.count = 0 self.maxCount = 0 self.pre = None self.result = [] self.searchBST(root) return self.result",
+          "description": "Python版本递归法利用二叉搜索树性质求解众数"
+        },
+        {
+          "language": "python",
+          "code": "def findMode(self, root): st = [] cur = root pre = None maxCount = 0 count = 0 result = [] while cur is not None or st: if cur is not None: st.append(cur) cur = cur.left else: cur = st.pop() if pre is None: count = 1 elif pre.val == cur.val: count += 1 else: count = 1 if count == maxCount: result.append(cur.val) if count > maxCount: maxCount = count result = [cur.val] pre = cur cur = cur.right return result",
+          "description": "Python版本迭代法求解二叉搜索树众数"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "void searchBST(TreeNode* cur, unordered_map<int, int>& map) { if (cur == NULL) return ; map[cur->val]++; searchBST(cur->left, map); searchBST(cur->right, map); return ;}",
+          "description": "前序遍历统计频率"
+        },
+        {
+          "language": "cpp",
+          "code": "bool static cmp (const pair<int, int>& a, const pair<int, int>& b) {return a.second > b.second;}",
+          "description": "比较函数，按频率降序排列"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: void searchBST(TreeNode* cur, unordered_map<int, int>& map) {...} bool static cmp (const pair<int, int>& a, const pair<int, int>& b) {...} public: vector<int> findMode(TreeNode* root) {...}};",
+          "description": "整体C++代码实现"
+        },
+        {
+          "language": "cpp",
+          "code": "void searchBST(TreeNode* cur) {if (cur == NULL) return ; searchBST(cur->left); searchBST(cur->right); return ;}",
+          "description": "中序遍历模板"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {private: int maxCount = 0; int count = 0; TreeNode* pre = NULL; vector<int> result; void searchBST(TreeNode* cur) {...} public: vector<int> findMode(TreeNode* root) {...}};",
+          "description": "二叉搜索树的众数（递归法）"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: vector<int> findMode(TreeNode* root) {...}};",
+          "description": "二叉搜索树的众数（迭代法）"
+        },
+        {
+          "language": "java",
+          "code": "public int[] findMode(TreeNode root) {...}",
+          "description": "暴力法求众数"
+        },
+        {
+          "language": "java",
+          "code": "public int[] findMode(TreeNode root) {...}",
+          "description": "利用二叉搜索树特性求众数"
+        },
+        {
+          "language": "java",
+          "code": "public int[] findMode(TreeNode root) {...}",
+          "description": "迭代法求众数"
+        },
+        {
+          "language": "java",
+          "code": "public int[] findMode(TreeNode root) {...}",
+          "description": "统一迭代法求众数"
+        },
+        {
+          "language": "python",
+          "code": "def searchBST(self, cur, freq_map):... def findMode(self, root):...",
+          "description": "递归法利用字典求众数"
+        },
+        {
+          "language": "python",
+          "code": "def __init__(self):... def searchBST(self, cur):... def findMode(self, root):...",
+          "description": "递归法利用二叉搜索树性质求众数"
+        },
+        {
+          "language": "python",
+          "code": "def findMode(self, root):...",
+          "description": "迭代法求众数"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java",
+      "text": "暴力法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "void searchBST(TreeNode* cur, unordered_map<int, int>& map) { if (cur == NULL) return ; map[cur->val]++; searchBST(cur->left, map); searchBST(cur->right, map); return ;}",
+          "description": "前序遍历统计元素频率"
+        },
+        {
+          "language": "cpp",
+          "code": "bool static cmp (const pair<int, int>& a, const pair<int, int>& b) { return a.second > b.second; }",
+          "description": "自定义排序函数，按频率从大到小排序"
+        },
+        {
+          "language": "cpp",
+          "code": "vector<pair<int, int>> vec(map.begin(), map.end()); sort(vec.begin(), vec.end(), cmp); result.push_back(vec[0].first); for (int i = 1; i < vec.size(); i++) { if (vec[i].second == vec[0].second) result.push_back(vec[i].first); else break; }",
+          "description": "将map转换为vector并排序，取高频元素"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution { private: void searchBST(TreeNode* cur, unordered_map<int, int>& map) { if (cur == NULL) return ; map[cur->val]++; searchBST(cur->left, map); searchBST(cur->right, map); return ;} bool static cmp (const pair<int, int>& a, const pair<int, int>& b) { return a.second > b.second; } public: vector<int> findMode(TreeNode* root) { unordered_map<int, int> map; vector<int> result; if (root == NULL) return result; searchBST(root, map); vector<pair<int, int>> vec(map.begin(), map.end()); sort(vec.begin(), vec.end(), cmp); result.push_back(vec[0].first); for (int i = 1; i < vec.size(); i++) { if (vec[i].second == vec[0].second) result.push_back(vec[i].first); else break; } return result; }};",
+          "description": "完整C++代码实现"
+        },
+        {
+          "language": "cpp",
+          "code": "void searchBST(TreeNode* cur) { if (cur == NULL) return ; searchBST(cur->left); if (pre == NULL) { count = 1; } else if (pre->val == cur->val) { count++; } else { count = 1; } pre = cur; if (count == maxCount) { result.push_back(cur->val); } if (count > maxCount) { maxCount = count; result.clear(); result.push_back(cur->val); } searchBST(cur->right); return ;}",
+          "description": "中序遍历处理节点"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution { private: int maxCount = 0; int count = 0; TreeNode* pre = NULL; vector<int> result; void searchBST(TreeNode* cur) { if (cur == NULL) return ; searchBST(cur->left); if (pre == NULL) { count = 1; } else if (pre->val == cur->val) { count++; } else { count = 1; } pre = cur; if (count == maxCount) { result.push_back(cur->val); } if (count > maxCount) { maxCount = count; result.clear(); result.push_back(cur->val); } searchBST(cur->right); return ;} public: vector<int> findMode(TreeNode* root) { count = 0; maxCount = 0; pre = NULL; result.clear(); searchBST(root); return result; }};",
+          "description": "利用二叉搜索树性质的完整C++代码"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution { public: vector<int> findMode(TreeNode* root) { stack<TreeNode*> st; TreeNode* cur = root; TreeNode* pre = NULL; int maxCount = 0; int count = 0; vector<int> result; while (cur != NULL || !st.empty()) { if (cur != NULL) { st.push(cur); cur = cur->left; } else { cur = st.top(); st.pop(); if (pre == NULL) { count = 1; } else if (pre->val == cur->val) { count++; } else { count = 1; } if (count == maxCount) { result.push_back(cur->val); } if (count > maxCount) { maxCount = count; result.clear(); result.push_back(cur->val); } pre = cur; cur = cur->right; } } return result; }};",
+          "description": "迭代法实现"
+        },
+        {
+          "language": "java",
+          "code": "public int[] findMode(TreeNode root) { Map<Integer, Integer> map = new HashMap<>(); List<Integer> list = new ArrayList<>(); if (root == null) return list.stream().mapToInt(Integer::intValue).toArray(); searchBST(root, map); List<Map.Entry<Integer, Integer>> mapList = map.entrySet().stream().sorted((c1, c2) -> c2.getValue().compareTo(c1.getValue())).collect(Collectors.toList()); list.add(mapList.get(0).getKey()); for (int i = 1; i < mapList.size(); i++) { if (mapList.get(i).getValue() == mapList.get(i - 1).getValue()) { list.add(mapList.get(i).getKey()); } else { break; } } return list.stream().mapToInt(Integer::intValue).toArray(); } void searchBST(TreeNode curr, Map<Integer, Integer> map) { if (curr == null) return; map.put(curr.val, map.getOrDefault(curr.val, 0) + 1); searchBST(curr.left, map); searchBST(curr.right, map); }",
+          "description": "Java暴力法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { ArrayList<Integer> resList; int maxCount; int count; TreeNode pre; public int[] findMode(TreeNode root) { resList = new ArrayList<>(); maxCount = 0; count = 0; pre = null; findMode1(root); int[] res = new int[resList.size()]; for (int i = 0; i < resList.size(); i++) { res[i] = resList.get(i); } return res; } public void findMode1(TreeNode root) { if (root == null) return; findMode1(root.left); int rootValue = root.val; if (pre == null || rootValue != pre.val) { count = 1; } else { count++; } if (count > maxCount) { resList.clear(); resList.add(rootValue); maxCount = count; } else if (count == maxCount) { resList.add(rootValue); } pre = root; findMode1(root.right); }}",
+          "description": "Java中序遍历不使用额外空间"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int[] findMode(TreeNode root) { TreeNode pre = null; Stack<TreeNode> stack = new Stack<>(); List<Integer> result = new ArrayList<>(); int maxCount = 0; int count = 0; TreeNode cur = root; while (cur != null || !stack.isEmpty()) { if (cur != null) { stack.push(cur); cur =cur.left; }else { cur = stack.pop(); if (pre == null || cur.val != pre.val) { count = 1; }else { count++; } if (count > maxCount) { maxCount = count; result.clear(); result.add(cur.val); }else if (count == maxCount) { result.add(cur.val); } pre = cur; cur = cur.right; } } return result.stream().mapToInt(Integer::intValue).toArray(); }}",
+          "description": "Java迭代法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution { public int[] findMode(TreeNode root) { int count = 0; int maxCount = 0; TreeNode pre = null; LinkedList<Integer> res = new LinkedList<>(); Stack<TreeNode> stack = new Stack<>(); if(root != null) stack.add(root); while(!stack.isEmpty()){ TreeNode curr = stack.peek(); if(curr != null){ stack.pop(); if(curr.right != null) stack.add(curr.right); stack.add(curr); stack.add(null); if(curr.left != null) stack.add(curr.left); }else{ stack.pop(); TreeNode temp = stack.pop(); if(pre == null) count = 1; else if(pre != null && pre.val == temp.val) count++; else count = 1; pre = temp; if(count == maxCount) res.add(temp.val); if(count > maxCount){ maxCount = count; res.clear(); res.add(temp.val); } } } int[] result = new int[res.size()]; int i = 0; for (int x : res){ result[i] = x; i++; } return result; }}",
+          "description": "Java统一迭代法"
+        },
+        {
+          "language": "python",
+          "code": "def searchBST(self, cur, freq_map): if cur is None: return freq_map[cur.val] += 1 self.searchBST(cur.left, freq_map) self.searchBST(cur.right, freq_map) def findMode(self, root): from collections import defaultdict freq_map = defaultdict(int) result = [] if root is None: return result self.searchBST(root, freq_map) max_freq = max(freq_map.values()) for key, freq in freq_map.items(): if freq == max_freq: result.append(key) return result",
+          "description": "Python递归法利用字典"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.maxCount = 0 self.count = 0 self.pre = None self.result = [] def searchBST(self, cur): if cur is None: return self.searchBST(cur.left) if self.pre is None: self.count = 1 elif self.pre.val == cur.val: self.count += 1 else: self.count = 1 self.pre = cur if self.count == self.maxCount: self.result.append(cur.val) if self.count > self.maxCount: self.maxCount = self.count self.result = [cur.val] self.searchBST(cur.right) return def findMode(self, root): self.count = 0 self.maxCount = 0 self.pre = None self.result = [] self.searchBST(root) return self.result",
+          "description": "Python递归法利用二叉搜索树性质"
+        },
+        {
+          "language": "python",
+          "code": "def findMode(self, root): st = [] cur = root pre = None maxCount = 0 count = 0 result = [] while cur is not None or st: if cur is not None: st.append(cur) cur = cur.left else: cur = st.pop() if pre is None: count = 1 elif pre.val == cur.val: count += 1 else: count = 1 if count == maxCount: result.append(cur.val) if count > maxCount: maxCount = count result = [cur.val] pre = cur cur = cur.right return result",
+          "description": "Python迭代法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python",
+      "text": "递归法（版本一）利用字典",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "void searchBST(TreeNode* cur, unordered_map<int, int>& map) { if (cur == NULL) return ; map[cur->val]++; searchBST(cur->left, map); searchBST(cur->right, map); return ; } bool static cmp (const pair<int, int>& a, const pair<int, int>& b) { return a.second > b.second; } vector<int> findMode(TreeNode* root) { unordered_map<int, int> map; vector<int> result; if (root == NULL) return result; searchBST(root, map); vector<pair<int, int>> vec(map.begin(), map.end()); sort(vec.begin(), vec.end(), cmp); result.push_back(vec[0].first); for (int i = 1; i < vec.size(); i++) { if (vec[i].second == vec[0].second) result.push_back(vec[i].first); else break; } return result; }",
+          "description": "C++代码，使用递归方法遍历二叉树并找到出现频率最高的元素。"
+        },
+        {
+          "language": "cpp",
+          "code": "int maxCount = 0; int count = 0; TreeNode* pre = NULL; vector<int> result; void searchBST(TreeNode* cur) { if (cur == NULL) return ; searchBST(cur->left); if (pre == NULL) { count = 1; } else if (pre->val == cur->val) { count++; } else { count = 1; } pre = cur; if (count == maxCount) { result.push_back(cur->val); } if (count > maxCount) { maxCount = count; result.clear(); result.push_back(cur->val); } searchBST(cur->right); return ; } vector<int> findMode(TreeNode* root) { count = 0; maxCount = 0; pre = NULL; result.clear(); searchBST(root); return result; }",
+          "description": "C++代码，利用二叉搜索树的性质进行中序遍历来找到众数。"
+        },
+        {
+          "language": "java",
+          "code": "public int[] findMode(TreeNode root) { Map<Integer, Integer> map = new HashMap<>(); List<Integer> list = new ArrayList<>(); if (root == null) return list.stream().mapToInt(Integer::intValue).toArray(); searchBST(root, map); List<Map.Entry<Integer, Integer>> mapList = map.entrySet().stream().sorted((c1, c2) -> c2.getValue().compareTo(c1.getValue())).collect(Collectors.toList()); list.add(mapList.get(0).getKey()); for (int i = 1; i < mapList.size(); i++) { if (mapList.get(i).getValue() == mapList.get(i - 1).getValue()) { list.add(mapList.get(i).getKey()); } else { break; } } return list.stream().mapToInt(Integer::intValue).toArray(); } void searchBST(TreeNode curr, Map<Integer, Integer> map) { if (curr == null) return; map.put(curr.val, map.getOrDefault(curr.val, 0) + 1); searchBST(curr.left, map); searchBST(curr.right, map); }",
+          "description": "Java代码，采用暴力法通过遍历整棵树来计算每个节点值的频率。"
+        },
+        {
+          "language": "java",
+          "code": "ArrayList<Integer> resList; int maxCount; int count; TreeNode pre; public int[] findMode(TreeNode root) { resList = new ArrayList<>(); maxCount = 0; count = 0; pre = null; findMode1(root); int[] res = new int[resList.size()]; for (int i = 0; i < resList.size(); i++) { res[i] = resList.get(i); } return res; } public void findMode1(TreeNode root) { if (root == null) { return; } findMode1(root.left); int rootValue = root.val; if (pre == null || rootValue != pre.val) { count = 1; } else { count++; } if (count > maxCount) { resList.clear(); resList.add(rootValue); maxCount = count; } else if (count == maxCount) { resList.add(rootValue); } pre = root; findMode1(root.right); }",
+          "description": "Java代码，不使用额外的空间，直接利用二叉搜索树的特性进行中序遍历以找到众数。"
+        },
+        {
+          "language": "java",
+          "code": "public int[] findMode(TreeNode root) { TreeNode pre = null; Stack<TreeNode> stack = new Stack<>(); List<Integer> result = new ArrayList<>(); int maxCount = 0; int count = 0; TreeNode cur = root; while (cur != null || !stack.isEmpty()) { if (cur != null) { stack.push(cur); cur =cur.left; }else { cur = stack.pop(); if (pre == null || cur.val != pre.val) { count = 1; }else { count++; } if (count > maxCount) { maxCount = count; result.clear(); result.add(cur.val); }else if (count == maxCount) { result.add(cur.val); } pre = cur; cur = cur.right; } } return result.stream().mapToInt(Integer::intValue).toArray(); }",
+          "description": "Java代码，迭代方式实现中序遍历来寻找二叉搜索树中的众数。"
+        },
+        {
+          "language": "python",
+          "code": "from collections import defaultdict class Solution: def searchBST(self, cur, freq_map): if cur is None: return freq_map[cur.val] += 1 self.searchBST(cur.left, freq_map) self.searchBST(cur.right, freq_map) def findMode(self, root): freq_map = defaultdict(int) result = [] if root is None: return result self.searchBST(root, freq_map) max_freq = max(freq_map.values()) for key, freq in freq_map.items(): if freq == max_freq: result.append(key) return result",
+          "description": "Python代码，使用递归和字典统计每个节点值出现的频率，然后找出频率最高的值。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def __init__(self): self.maxCount = 0 self.count = 0 self.pre = None self.result = [] def searchBST(self, cur): if cur is None: return self.searchBST(cur.left) if self.pre is None: self.count = 1 elif self.pre.val == cur.val: self.count += 1 else: self.count = 1 self.pre = cur if self.count == self.maxCount: self.result.append(cur.val) if self.count > self.maxCount: self.maxCount = self.count self.result = [cur.val] self.searchBST(cur.right) return def findMode(self, root): self.count = 0 self.maxCount = 0 self.pre = None self.result = [] self.searchBST(root) return self.result",
+          "description": "Python代码，使用递归方式结合二叉搜索树的特性来找到所有众数。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def findMode(self, root): st = [] cur = root pre = None maxCount = 0 count = 0 result = [] while cur is not None or st: if cur is not None: st.append(cur) cur = cur.left else: cur = st.pop() if pre is None: count = 1 elif pre.val == cur.val: count += 1 else: count = 1 if count == maxCount: result.append(cur.val) if count > maxCount: maxCount = count result = [cur.val] pre = cur cur = cur.right return result",
+          "description": "Python代码，迭代方式实现中序遍历以找到二叉搜索树中的众数。"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": null,
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "void searchBST(TreeNode* cur, unordered_map<int, int>& map) { if (cur == NULL) return ; map[cur->val]++; searchBST(cur->left, map); searchBST(cur->right, map); return ; } bool static cmp (const pair<int, int>& a, const pair<int, int>& b) { return a.second > b.second; } vector<int> findMode(TreeNode* root) { unordered_map<int, int> map; vector<int> result; if (root == NULL) return result; searchBST(root, map); vector<pair<int, int>> vec(map.begin(), map.end()); sort(vec.begin(), vec.end(), cmp); result.push_back(vec[0].first); for (int i = 1; i < vec.size(); i++) { if (vec[i].second == vec[0].second) result.push_back(vec[i].first); else break; } return result; }",
+      "description": "C++实现的通过map统计频率并排序找出二叉搜索树中的众数"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution { private: int maxCount = 0; int count = 0; TreeNode* pre = NULL; vector<int> result; void searchBST(TreeNode* cur) { if (cur == NULL) return ; searchBST(cur->left); if (pre == NULL) { count = 1; } else if (pre->val == cur->val) { count++; } else { count = 1; } pre = cur; if (count == maxCount) { result.push_back(cur->val); } if (count > maxCount) { maxCount = count; result.clear(); result.push_back(cur->val); } searchBST(cur->right); return ; } public: vector<int> findMode(TreeNode* root) { count = 0; maxCount = 0; pre = NULL; result.clear(); searchBST(root); return result; } };",
+      "description": "C++实现的利用二叉搜索树性质一次遍历找出众数"
+    },
+    {
+      "language": "java",
+      "code": "public int[] findMode(TreeNode root) { Map<Integer, Integer> map = new HashMap<>(); List<Integer> list = new ArrayList<>(); if (root == null) return list.stream().mapToInt(Integer::intValue).toArray(); searchBST(root, map); List<Map.Entry<Integer, Integer>> mapList = map.entrySet().stream().sorted((c1, c2) -> c2.getValue().compareTo(c1.getValue())).collect(Collectors.toList()); list.add(mapList.get(0).getKey()); for (int i = 1; i < mapList.size(); i++) { if (mapList.get(i).getValue() == mapList.get(i - 1).getValue()) { list.add(mapList.get(i).getKey()); } else { break; } } return list.stream().mapToInt(Integer::intValue).toArray(); } void searchBST(TreeNode curr, Map<Integer, Integer> map) { if (curr == null) return; map.put(curr.val, map.getOrDefault(curr.val, 0) + 1); searchBST(curr.left, map); searchBST(curr.right, map); }",
+      "description": "Java实现的通过map统计频率并排序找出二叉搜索树中的众数"
+    },
+    {
+      "language": "java",
+      "code": "public int[] findMode(TreeNode root) { resList = new ArrayList<>(); maxCount = 0; count = 0; pre = null; findMode1(root); int[] res = new int[resList.size()]; for (int i = 0; i < resList.size(); i++) { res[i] = resList.get(i); } return res; } public void findMode1(TreeNode root) { if (root == null) { return; } findMode1(root.left); int rootValue = root.val; if (pre == null || rootValue != pre.val) { count = 1; } else { count++; } if (count > maxCount) { resList.clear(); resList.add(rootValue); maxCount = count; } else if (count == maxCount) { resList.add(rootValue); } pre = root; findMode1(root.right); }",
+      "description": "Java实现的利用二叉搜索树性质一次遍历找出众数"
+    },
+    {
+      "language": "python",
+      "code": "def searchBST(self, cur, freq_map): if cur is None: return freq_map[cur.val] += 1 self.searchBST(cur.left, freq_map) self.searchBST(cur.right, freq_map) def findMode(self, root): freq_map = defaultdict(int) result = [] if root is None: return result self.searchBST(root, freq_map) max_freq = max(freq_map.values()) for key, freq in freq_map.items(): if freq == max_freq: result.append(key) return result",
+      "description": "Python实现的通过字典统计频率并找出二叉搜索树中的众数"
+    },
+    {
+      "language": "python",
+      "code": "def __init__(self): self.maxCount = 0 self.count = 0 self.pre = None self.result = [] def searchBST(self, cur): if cur is None: return self.searchBST(cur.left) if self.pre is None: self.count = 1 elif self.pre.val == cur.val: self.count += 1 else: self.count = 1 self.pre = cur if self.count == self.maxCount: self.result.append(cur.val) if self.count > self.maxCount: self.maxCount = self.count self.result = [cur.val] self.searchBST(cur.right) return def findMode(self, root): self.count = 0 self.maxCount = 0 self.pre = None self.result = [] self.searchBST(root) return self.result",
+      "description": "Python实现的利用二叉搜索树性质一次遍历找出众数"
+    }
+  ],
+  "common_mistakes": [
+    "忘记初始化pre指针为NULL，导致首个节点无法正确处理。",
+    "在更新最大频率时未清空之前的结果集，导致最终结果包含无效元素。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20201014221532206.png",
+      "description": "该图片展示了一个简单的二叉树结构，根节点为1，右子节点为2，右子节点的左子节点也为2。",
+      "context": "该图片展示了一个给定的二叉搜索树示例，用于说明题目中寻找众数的问题背景。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210204152758889.png",
+      "description": "这张图片展示了二叉树的中序遍历过程及其输出结果（1 2 3 4 5 6），红色箭头表示遍历路径。",
+      "context": "该图展示了二叉搜索树的结构，用于说明其中序遍历结果为有序序列的特点。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20201014221532206.png",
+      "description": "GIF展示了在二叉搜索树中遍历节点并统计每个值出现频率的过程。",
+      "context": "该GIF动画展示了给定BST [1,null,2,2]的例子，帮助理解如何找到树中的所有众数。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210204152758889.png",
+      "description": "GIF展示了二叉搜索树中序遍历的过程，体现了节点按照从小到大的顺序被访问。",
+      "context": "该GIF动画展示了二叉搜索树进行中序遍历的过程，强调了其结果的有序性。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\二叉树\\二叉搜索树中的众数.txt",
+  "extracted_at": "2025-07-19T15:44:47.174989",
+  "raw_content": "二叉搜索树中的众数\n力扣题目链接(https://leetcode.cn/problems/find-mode-in-binary-search-tree/)\n\n给定一个有相同值的二叉搜索树（BST），找出 BST 中的所有众数（出现频率最高的元素）。\n\n假定 BST 有如下定义：\n\n结点左子树中所含结点的值小于等于当前结点的值\n结点右子树中所含结点的值大于等于当前结点的值\n左子树和右子树都是二叉搜索树\n例如：\n\n给定 BST [1,null,2,2],\n\nhttps://file1.kamacoder.com/i/algo/20201014221532206.png\n\n返回[2].\n\n提示：如果众数超过1个，不需考虑输出顺序\n\n进阶：你可以不使用额外的空间吗？（假设由递归产生的隐式调用栈的开销不被计算在内）\n\n\n#思路\n这道题目呢，递归法我从两个维度来讲。\n\n首先如果不是二叉搜索树的话，应该怎么解题，是二叉搜索树，又应该如何解题，两种方式做一个比较，可以加深大家对二叉树的理解。\n\n#递归法\n#如果不是二叉搜索树\n如果不是二叉搜索树，最直观的方法一定是把这个树都遍历了，用map统计频率，把频率排个序，最后取前面高频的元素的集合。\n\n具体步骤如下：\n\n这个树都遍历了，用map统计频率\n至于用前中后序哪种遍历也不重要，因为就是要全遍历一遍，怎么个遍历法都行，层序遍历都没毛病！\n\n这里采用前序遍历，代码如下：\n\n// map<int, int> key:元素，value:出现频率\nvoid searchBST(TreeNode* cur, unordered_map<int, int>& map) { // 前序遍历\n    if (cur == NULL) return ;\n    map[cur->val]++; // 统计元素频率\n    searchBST(cur->left, map);\n    searchBST(cur->right, map);\n    return ;\n}\n把统计的出来的出现频率（即map中的value）排个序\n有的同学可能可以想直接对map中的value排序，还真做不到，C++中如果使用std::map或者std::multimap可以对key排序，但不能对value排序。\n\n所以要把map转化数组即vector，再进行排序，当然vector里面放的也是pair<int, int>类型的数据，第一个int为元素，第二个int为出现频率。\n\n代码如下：\n\nbool static cmp (const pair<int, int>& a, const pair<int, int>& b) {\n    return a.second > b.second; // 按照频率从大到小排序\n}\n\nvector<pair<int, int>> vec(map.begin(), map.end());\nsort(vec.begin(), vec.end(), cmp); // 给频率排个序\n取前面高频的元素\n此时数组vector中已经是存放着按照频率排好序的pair，那么把前面高频的元素取出来就可以了。\n\n代码如下：\n\nresult.push_back(vec[0].first);\nfor (int i = 1; i < vec.size(); i++) {\n    // 取最高的放到result数组中\n    if (vec[i].second == vec[0].second) result.push_back(vec[i].first);\n    else break;\n}\nreturn result;\n整体C++代码如下：\n\nclass Solution {\nprivate:\n\nvoid searchBST(TreeNode* cur, unordered_map<int, int>& map) { // 前序遍历\n    if (cur == NULL) return ;\n    map[cur->val]++; // 统计元素频率\n    searchBST(cur->left, map);\n    searchBST(cur->right, map);\n    return ;\n}\nbool static cmp (const pair<int, int>& a, const pair<int, int>& b) {\n    return a.second > b.second;\n}\npublic:\n    vector<int> findMode(TreeNode* root) {\n        unordered_map<int, int> map; // key:元素，value:出现频率\n        vector<int> result;\n        if (root == NULL) return result;\n        searchBST(root, map);\n        vector<pair<int, int>> vec(map.begin(), map.end());\n        sort(vec.begin(), vec.end(), cmp); // 给频率排个序\n        result.push_back(vec[0].first);\n        for (int i = 1; i < vec.size(); i++) {\n            // 取最高的放到result数组中\n            if (vec[i].second == vec[0].second) result.push_back(vec[i].first);\n            else break;\n        }\n        return result;\n    }\n};\n所以如果本题没有说是二叉搜索树的话，那么就按照上面的思路写！\n\n#是二叉搜索树\n既然是搜索树，它中序遍历就是有序的。\n\n如图：\n\nhttps://file1.kamacoder.com/i/algo/20210204152758889.png\n\n中序遍历代码如下：\n\nvoid searchBST(TreeNode* cur) {\n    if (cur == NULL) return ;\n    searchBST(cur->left);       // 左\n    （处理节点）                // 中\n    searchBST(cur->right);      // 右\n    return ;\n}\n遍历有序数组的元素出现频率，从头遍历，那么一定是相邻两个元素作比较，然后就把出现频率最高的元素输出就可以了。\n\n关键是在有序数组上的话，好搞，在树上怎么搞呢？\n\n这就考察对树的操作了。\n\n在二叉树：搜索树的最小绝对差 (https://programmercarl.com/0530.%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E7%BB%9D%E5%AF%B9%E5%B7%AE.html)中我们就使用了pre指针和cur指针的技巧，这次又用上了。\n\n弄一个指针指向前一个节点，这样每次cur（当前节点）才能和pre（前一个节点）作比较。\n\n而且初始化的时候pre = NULL，这样当pre为NULL时候，我们就知道这是比较的第一个元素。\n\n代码如下：\n\nif (pre == NULL) { // 第一个节点\n    count = 1; // 频率为1\n} else if (pre->val == cur->val) { // 与前一个节点数值相同\n    count++;\n} else { // 与前一个节点数值不同\n    count = 1;\n}\npre = cur; // 更新上一个节点\n此时又有问题了，因为要求最大频率的元素集合（注意是集合，不是一个元素，可以有多个众数），如果是数组上大家一般怎么办？\n\n应该是先遍历一遍数组，找出最大频率（maxCount），然后再重新遍历一遍数组把出现频率为maxCount的元素放进集合。（因为众数有多个）\n\n这种方式遍历了两遍数组。\n\n那么我们遍历两遍二叉搜索树，把众数集合算出来也是可以的。\n\n但这里其实只需要遍历一次就可以找到所有的众数。\n\n那么如何只遍历一遍呢？\n\n如果 频率count 等于 maxCount（最大频率），当然要把这个元素加入到结果集中（以下代码为result数组），代码如下：\n\nif (count == maxCount) { // 如果和最大值相同，放进result中\n    result.push_back(cur->val);\n}\n是不是感觉这里有问题，result怎么能轻易就把元素放进去了呢，万一，这个maxCount此时还不是真正最大频率呢。\n\n所以下面要做如下操作：\n\n频率count 大于 maxCount的时候，不仅要更新maxCount，而且要清空结果集（以下代码为result数组），因为结果集之前的元素都失效了。\n\nif (count > maxCount) { // 如果计数大于最大值\n    maxCount = count;   // 更新最大频率\n    result.clear();     // 很关键的一步，不要忘记清空result，之前result里的元素都失效了\n    result.push_back(cur->val);\n}\n关键代码都讲完了，完整代码如下：（只需要遍历一遍二叉搜索树，就求出了众数的集合）\n\nclass Solution {\nprivate:\n    int maxCount = 0; // 最大频率\n    int count = 0; // 统计频率\n    TreeNode* pre = NULL;\n    vector<int> result;\n    void searchBST(TreeNode* cur) {\n        if (cur == NULL) return ;\n\n        searchBST(cur->left);       // 左\n                                    // 中\n        if (pre == NULL) { // 第一个节点\n            count = 1;\n        } else if (pre->val == cur->val) { // 与前一个节点数值相同\n            count++;\n        } else { // 与前一个节点数值不同\n            count = 1;\n        }\n        pre = cur; // 更新上一个节点\n\n        if (count == maxCount) { // 如果和最大值相同，放进result中\n            result.push_back(cur->val);\n        }\n\n        if (count > maxCount) { // 如果计数大于最大值频率\n            maxCount = count;   // 更新最大频率\n            result.clear();     // 很关键的一步，不要忘记清空result，之前result里的元素都失效了\n            result.push_back(cur->val);\n        }\n\n        searchBST(cur->right);      // 右\n        return ;\n    }\n\npublic:\n    vector<int> findMode(TreeNode* root) {\n        count = 0;\n        maxCount = 0;\n        pre = NULL; // 记录前一个节点\n        result.clear();\n\n        searchBST(root);\n        return result;\n    }\n};\n#迭代法\n只要把中序遍历转成迭代，中间节点的处理逻辑完全一样。\n\n二叉树前中后序转迭代，传送门：\n\n二叉树：前中后序迭代法(https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E8%BF%AD%E4%BB%A3%E9%81%8D%E5%8E%86.html)\n二叉树：前中后序统一风格的迭代方式(https://programmercarl.com/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E7%BB%9F%E4%B8%80%E8%BF%AD%E4%BB%A3%E6%B3%95.html)\n下面我给出其中的一种中序遍历的迭代法，其中间处理逻辑一点都没有变（我从递归法直接粘过来的代码，连注释都没改）\n\n代码如下：\n\nclass Solution {\npublic:\n    vector<int> findMode(TreeNode* root) {\n        stack<TreeNode*> st;\n        TreeNode* cur = root;\n        TreeNode* pre = NULL;\n        int maxCount = 0; // 最大频率\n        int count = 0; // 统计频率\n        vector<int> result;\n        while (cur != NULL || !st.empty()) {\n            if (cur != NULL) { // 指针来访问节点，访问到最底层\n                st.push(cur); // 将访问的节点放进栈\n                cur = cur->left;                // 左\n            } else {\n                cur = st.top();\n                st.pop();                       // 中\n                if (pre == NULL) { // 第一个节点\n                    count = 1;\n                } else if (pre->val == cur->val) { // 与前一个节点数值相同\n                    count++;\n                } else { // 与前一个节点数值不同\n                    count = 1;\n                }\n                if (count == maxCount) { // 如果和最大值相同，放进result中\n                    result.push_back(cur->val);\n                }\n\n                if (count > maxCount) { // 如果计数大于最大值频率\n                    maxCount = count;   // 更新最大频率\n                    result.clear();     // 很关键的一步，不要忘记清空result，之前result里的元素都失效了\n                    result.push_back(cur->val);\n                }\n                pre = cur;\n                cur = cur->right;               // 右\n            }\n        }\n        return result;\n    }\n};\n#总结\n本题在递归法中，我给出了如果是普通二叉树，应该怎么求众数。\n\n知道了普通二叉树的做法时候，我再进一步给出二叉搜索树又应该怎么求众数，这样鲜明的对比，相信会对二叉树又有更深层次的理解了。\n\n在递归遍历二叉搜索树的过程中，我还介绍了一个统计最高出现频率元素集合的技巧， 要不然就要遍历两次二叉搜索树才能把这个最高出现频率元素的集合求出来。\n\n为什么没有这个技巧一定要遍历两次呢？ 因为要求的是集合，会有多个众数，如果规定只有一个众数，那么就遍历一次稳稳的了。\n\n最后我依然给出对应的迭代法，其实就是迭代法中序遍历的模板加上递归法中中间节点的处理逻辑，分分钟就可以写出来，中间逻辑的代码我都是从递归法中直接粘过来的。\n\n求二叉搜索树中的众数其实是一道简单题，但大家可以发现我写了这么一大篇幅的文章来讲解，主要是为了尽量从各个角度对本题进剖析，帮助大家更快更深入理解二叉树。\n\n需要强调的是 leetcode上的耗时统计是非常不准确的，看个大概就行，一样的代码耗时可以差百分之50以上，所以leetcode的耗时统计别太当回事，知道理论上的效率优劣就行了。\n\n#其他语言版本\n#Java\n暴力法\n\nclass Solution {\n\tpublic int[] findMode(TreeNode root) {\n\t\tMap<Integer, Integer> map = new HashMap<>();\n\t\tList<Integer> list = new ArrayList<>();\n\t\tif (root == null) return list.stream().mapToInt(Integer::intValue).toArray();\n\t\t// 获得频率 Map\n\t\tsearchBST(root, map);\n\t\tList<Map.Entry<Integer, Integer>> mapList = map.entrySet().stream()\n\t\t\t\t.sorted((c1, c2) -> c2.getValue().compareTo(c1.getValue()))\n\t\t\t\t.collect(Collectors.toList());\n\t\tlist.add(mapList.get(0).getKey());\n\t\t// 把频率最高的加入 list\n\t\tfor (int i = 1; i < mapList.size(); i++) {\n\t\t\tif (mapList.get(i).getValue() == mapList.get(i - 1).getValue()) {\n\t\t\t\tlist.add(mapList.get(i).getKey());\n\t\t\t} else {\n\t\t\t\tbreak;\n\t\t\t}\n\t\t}\n\t\treturn list.stream().mapToInt(Integer::intValue).toArray();\n\t}\n\n\tvoid searchBST(TreeNode curr, Map<Integer, Integer> map) {\n\t\tif (curr == null) return;\n\t\tmap.put(curr.val, map.getOrDefault(curr.val, 0) + 1);\n\t\tsearchBST(curr.left, map);\n\t\tsearchBST(curr.right, map);\n\t}\n\n}\n中序遍历-不使用额外空间，利用二叉搜索树特性\n\nclass Solution {\n    ArrayList<Integer> resList;\n    int maxCount;\n    int count;\n    TreeNode pre;\n\n    public int[] findMode(TreeNode root) {\n        resList = new ArrayList<>();\n        maxCount = 0;\n        count = 0;\n        pre = null;\n        findMode1(root);\n        int[] res = new int[resList.size()];\n        for (int i = 0; i < resList.size(); i++) {\n            res[i] = resList.get(i);\n        }\n        return res;\n    }\n\n    public void findMode1(TreeNode root) {\n        if (root == null) {\n            return;\n        }\n        findMode1(root.left);\n\n        int rootValue = root.val;\n        // 计数\n        if (pre == null || rootValue != pre.val) {\n            count = 1;\n        } else {\n            count++;\n        }\n        // 更新结果以及maxCount\n        if (count > maxCount) {\n            resList.clear();\n            resList.add(rootValue);\n            maxCount = count;\n        } else if (count == maxCount) {\n            resList.add(rootValue);\n        }\n        pre = root;\n\n        findMode1(root.right);\n    }\n}\n迭代法\n\nclass Solution {\n    public int[] findMode(TreeNode root) {\n        TreeNode pre = null;\n        Stack<TreeNode> stack = new Stack<>();\n        List<Integer> result = new ArrayList<>();\n        int maxCount = 0;\n        int count = 0;\n        TreeNode cur = root;\n        while (cur != null || !stack.isEmpty()) {\n            if (cur != null) {\n                stack.push(cur);\n                cur =cur.left;\n            }else {\n                cur = stack.pop();\n                // 计数\n                if (pre == null || cur.val != pre.val) {\n                    count = 1;\n                }else {\n                    count++;\n                }\n                // 更新结果\n                if (count > maxCount) {\n                    maxCount = count;\n                    result.clear();\n                    result.add(cur.val);\n                }else if (count == maxCount) {\n                    result.add(cur.val);\n                }\n                pre = cur;\n                cur = cur.right;\n            }\n        }\n        return result.stream().mapToInt(Integer::intValue).toArray();\n    }\n}\n统一迭代法\n\nclass Solution {\n    public int[] findMode(TreeNode root) {\n        int count = 0;\n        int maxCount = 0;\n        TreeNode pre = null;\n        LinkedList<Integer> res = new LinkedList<>();\n        Stack<TreeNode> stack = new Stack<>();\n\n        if(root != null)\n            stack.add(root);\n        \n        while(!stack.isEmpty()){\n            TreeNode curr = stack.peek();\n            if(curr != null){\n                stack.pop();\n                if(curr.right != null)\n                    stack.add(curr.right);\n                stack.add(curr);\n                stack.add(null);\n                if(curr.left != null)\n                    stack.add(curr.left);\n            }else{\n                stack.pop();\n                TreeNode temp = stack.pop();\n                if(pre == null)\n                    count = 1;\n                else if(pre != null && pre.val == temp.val)\n                    count++;\n                else\n                    count = 1;\n                pre = temp;\n                if(count == maxCount)\n                    res.add(temp.val);\n                if(count > maxCount){\n                    maxCount = count;\n                    res.clear();\n                    res.add(temp.val);\n                }\n            }\n        }\n        int[] result = new int[res.size()];\n        int i = 0;\n        for (int x : res){\n            result[i] = x;\n            i++;\n        }\n        return result;    \n    }\n}\n#Python\n递归法（版本一）利用字典\n\n# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nfrom collections import defaultdict\n\nclass Solution:\n    def searchBST(self, cur, freq_map):\n        if cur is None:\n            return\n        freq_map[cur.val] += 1  # 统计元素频率\n        self.searchBST(cur.left, freq_map)\n        self.searchBST(cur.right, freq_map)\n\n    def findMode(self, root):\n        freq_map = defaultdict(int)  # key:元素，value:出现频率\n        result = []\n        if root is None:\n            return result\n        self.searchBST(root, freq_map)\n        max_freq = max(freq_map.values())\n        for key, freq in freq_map.items():\n            if freq == max_freq:\n                result.append(key)\n        return result\n\n递归法（版本二）利用二叉搜索树性质\n\nclass Solution:\n    def __init__(self):\n        self.maxCount = 0  # 最大频率\n        self.count = 0  # 统计频率\n        self.pre = None\n        self.result = []\n\n    def searchBST(self, cur):\n        if cur is None:\n            return\n\n        self.searchBST(cur.left)  # 左\n        # 中\n        if self.pre is None:  # 第一个节点\n            self.count = 1\n        elif self.pre.val == cur.val:  # 与前一个节点数值相同\n            self.count += 1\n        else:  # 与前一个节点数值不同\n            self.count = 1\n        self.pre = cur  # 更新上一个节点\n\n        if self.count == self.maxCount:  # 如果与最大值频率相同，放进result中\n            self.result.append(cur.val)\n\n        if self.count > self.maxCount:  # 如果计数大于最大值频率\n            self.maxCount = self.count  # 更新最大频率\n            self.result = [cur.val]  # 很关键的一步，不要忘记清空result，之前result里的元素都失效了\n\n        self.searchBST(cur.right)  # 右\n        return\n\n    def findMode(self, root):\n        self.count = 0\n        self.maxCount = 0\n        self.pre = None  # 记录前一个节点\n        self.result = []\n\n        self.searchBST(root)\n        return self.result\n迭代法\n\nclass Solution:\n    def findMode(self, root):\n        st = []\n        cur = root\n        pre = None\n        maxCount = 0  # 最大频率\n        count = 0  # 统计频率\n        result = []\n\n        while cur is not None or st:\n            if cur is not None:  # 指针来访问节点，访问到最底层\n                st.append(cur)  # 将访问的节点放进栈\n                cur = cur.left  # 左\n            else:\n                cur = st.pop()\n                if pre is None:  # 第一个节点\n                    count = 1\n                elif pre.val == cur.val:  # 与前一个节点数值相同\n                    count += 1\n                else:  # 与前一个节点数值不同\n                    count = 1\n\n                if count == maxCount:  # 如果和最大值相同，放进result中\n                    result.append(cur.val)\n\n                if count > maxCount:  # 如果计数大于最大值频率\n                    maxCount = count  # 更新最大频率\n                    result = [cur.val]  # 很关键的一步，不要忘记清空result，之前result里的元素都失效了\n\n                pre = cur\n                cur = cur.right  # 右\n\n        return result"
+}

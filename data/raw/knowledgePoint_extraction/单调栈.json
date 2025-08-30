@@ -1,0 +1,45 @@
+{
+  "id": "TQ102",
+  "name": "单调栈",
+  "alias": [],
+  "type": "technique",
+  "description": "单调栈是一种满足单调性的栈结构，通常用于维护一个整数的单调递增或递减序列。",
+  "key_concepts": [
+    "单调性",
+    "栈"
+  ],
+  "applications": [
+    "POJ3250 Bad Hair Day",
+    "RMQ 问题"
+  ],
+  "created_at": "2025-07-19T12:58:09Z",
+  "updated_at": "2025-07-19T12:58:09Z",
+  "source_files": [
+    "单调栈_wiki.txt"
+  ],
+  "spacy_entities": {
+    "COMPLEXITY": [
+      "O(n)"
+    ],
+    "SPECIFIC_ALGORITHM": [
+      "二分查找"
+    ],
+    "DATA_STRUCTURE": [
+      "队列",
+      "栈"
+    ],
+    "TECHNIQUE": [
+      "单调队列",
+      "单调栈",
+      "单调递增栈"
+    ],
+    "CORE_CONCEPT": [
+      "空间复杂度",
+      "自顶向下",
+      "时间复杂度"
+    ],
+    "PROBLEM_TYPE": [
+      "RMQ 问题"
+    ]
+  }
+}

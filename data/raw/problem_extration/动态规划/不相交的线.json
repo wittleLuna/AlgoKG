@@ -1,0 +1,207 @@
+{
+  "id": "AP_8062d534",
+  "title": "不相交的线",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/uncrossed-lines/",
+  "description": "的顺序写下 nums1 和 nums2 中的整数。\n\n现在，可以绘制一些连接两个数字 nums1[i] 和 nums2[j] 的直线，这些直线需要同时满足：\n\nnums1[i] == nums2[j]\n且绘制的直线不与任何其他连线（非水平线）相交。\n请注意，连线即使在端点也不能相交：每个数字只能属于一条连线。\n\n以这种方法绘制线条，并返回可以绘制的最大连线数。\nhttps://file1.kamacoder.com/i/algo/2021032116363533.png\n\n\n\n#思路\n相信不少录友看到这道题目都没啥思路，我们来逐步分析一下。\n\n绘制一些连接两个数字 nums1[i] 和 nums2[j] 的直线，只要 nums1[i] == nums2[j]，且直线不能相交！\n\n直线不能相交，这就是说明在字符串nums1中 找到一个与字符串nums2相同的子序列，且这个子序列不能改变相对顺序，只要相对顺序不改变，连接相同数字的直线就不会相交。\n\n拿",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "动态规划"
+  ],
+  "data_structure_tags": [
+    "数组",
+    "二维数组"
+  ],
+  "technique_tags": [
+    "动态规划转移方程"
+  ],
+  "difficulty": null,
+  "solution_approach": "本题通过寻找两个数组（或可视为字符串）之间的最长公共子序列来确定可以绘制的最大不相交连线数。这个问题可以通过动态规划解决，其中dp[i][j]表示nums1前i个元素与nums2前j个元素间最长公共子序列的长度。",
+  "key_insights": [
+    {
+      "content": "将问题转换为求两个数组/字符串间的最长公共子序列(LCS)的问题，因为只有当nums1中的元素与nums2中相同位置的元素相等时，才能画出一条线，并且这些线不能交叉，这正符合LCS的定义。"
+    },
+    {
+      "content": "采用一个二维数组dp来存储到目前为止找到的最长公共子序列长度，这样可以有效地利用之前计算的结果来快速获取当前状态下的最优解。"
+    },
+    {
+      "content": "如果两个数组中的元素相等，则dp[i][j]等于dp[i-1][j-1]+1；否则，dp[i][j]取dp[i-1][j]和dp[i][j-1]中的最大值。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "相信不少录友看到这道题目都没啥思路，我们来逐步分析一下。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxUncrossedLines(vector<int>& nums1, vector<int>& nums2) {vector<vector<int>> dp(nums1.size() + 1, vector<int>(nums2.size() + 1, 0)); for (int i = 1; i <= nums1.size(); i++) {for (int j = 1; j <= nums2.size(); j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;} else {dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);}}} return dp[nums1.size()][nums2.size()];}};",
+          "description": "C++实现的最长公共子序列算法，用于计算不相交线的最大数量。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxUncrossedLines(int[] nums1, int[] nums2) {int len1 = nums1.length; int len2 = nums2.length; int[][] dp = new int[len1 + 1][len2 + 1]; for (int i = 1; i <= len1; i++) {for (int j = 1; j <= len2; j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;} else {dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);}}} return dp[len1][len2];}}",
+          "description": "Java实现的最长公共子序列算法，用于计算不相交线的最大数量。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxUncrossedLines(self, nums1: List[int], nums2: List[int]) -> int: dp = [[0] * (len(nums2)+1) for _ in range(len(nums1)+1)] for i in range(1, len(nums1)+1): for j in range(1, len(nums2)+1): if nums1[i-1] == nums2[j-1]: dp[i][j] = dp[i-1][j-1] + 1 else: dp[i][j] = max(dp[i-1][j], dp[i][j-1]) return dp[-1][-1]",
+          "description": "Python实现的最长公共子序列算法，用于计算不相交线的最大数量。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "总结",
+      "text": "看到代码大家也可以发现其实就是求两个字符串的最长公共子序列，但如果没有做过1143.最长公共子序列 (opens new window)，本题其实还有很有难度的。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxUncrossedLines(vector<int>& nums1, vector<int>& nums2) {vector<vector<int>> dp(nums1.size() + 1, vector<int>(nums2.size() + 1, 0)); for (int i = 1; i <= nums1.size(); i++) {for (int j = 1; j <= nums2.size(); j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;} else {dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);}}} return dp[nums1.size()][nums2.size()];}};",
+          "description": "C++实现，使用动态规划求解最长不相交线数量。"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxUncrossedLines(int[] nums1, int[] nums2) {int len1 = nums1.length; int len2 = nums2.length; int[][] dp = new int[len1 + 1][len2 + 1]; for (int i = 1; i <= len1; i++) {for (int j = 1; j <= len2; j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;} else {dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);}}} return dp[len1][len2];}}",
+          "description": "Java实现，使用动态规划求解最长不相交线数量。"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxUncrossedLines(self, nums1: List[int], nums2: List[int]) -> int: dp = [[0] * (len(nums2)+1) for _ in range(len(nums1)+1)] for i in range(1, len(nums1)+1): for j in range(1, len(nums2)+1): if nums1[i-1] == nums2[j-1]: dp[i][j] = dp[i-1][j-1] + 1 else: dp[i][j] = max(dp[i-1][j], dp[i][j-1]) return dp[-1][-1]",
+          "description": "Python实现，使用动态规划求解最长不相交线数量。"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int maxUncrossedLines(int[] nums1, int[] nums2) {\n        int len1 = nums1.length;\n        int len2 = nums2.length;\n        int[][] dp = new int[len1 + 1][len2 + 1];\n\n        for (int i = 1; i <= len1; i++) {\n            for (int j = 1; j <= len2; j++) {\n                if (nums1[i - 1] == nums2[j - 1]) {\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                } else {\n                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);\n                }\n            }\n        }\n\n        return dp[len1][len2];\n    }\n}",
+          "description": null
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {\npublic:\n    int maxUncrossedLines(vector<int>& nums1, vector<int>& nums2) {\n        vector<vector<int>> dp(nums1.size() + 1, vector<int>(nums2.size() + 1, 0));\n        for (int i = 1; i <= nums1.size(); i++) {\n            for (int j = 1; j <= nums2.size(); j++) {\n                if (nums1[i - 1] == nums2[j - 1]) {\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                } else {\n                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);\n                }\n            }\n        }\n        return dp[nums1.size()][nums2.size()];\n    }\n};",
+          "description": null
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def maxUncrossedLines(self, nums1: List[int], nums2: List[int]) -> int:\n        dp = [[0] * (len(nums2)+1) for _ in range(len(nums1)+1)]\n        for i in range(1, len(nums1)+1):\n            for j in range(1, len(nums2)+1):\n                if nums1[i-1] == nums2[j-1]:\n                    dp[i][j] = dp[i-1][j-1] + 1\n                else:\n                    dp[i][j] = max(dp[i-1][j], dp[i][j-1])\n        return dp[-1][-1]",
+          "description": null
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "class Solution {",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxUncrossedLines(vector<int>& nums1, vector<int>& nums2) {vector<vector<int>> dp(nums1.size() + 1, vector<int>(nums2.size() + 1, 0)); for (int i = 1; i <= nums1.size(); i++) {for (int j = 1; j <= nums2.size(); j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;} else {dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);}}}return dp[nums1.size()][nums2.size()];}};",
+          "description": "C++实现的最长不相交线问题"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxUncrossedLines(int[] nums1, int[] nums2) {int len1 = nums1.length;int len2 = nums2.length;int[][] dp = new int[len1 + 1][len2 + 1];for (int i = 1; i <= len1; i++) {for (int j = 1; j <= len2; j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;} else {dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);}}}return dp[len1][len2];}}",
+          "description": "Java实现的最长不相交线问题"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxUncrossedLines(self, nums1: List[int], nums2: List[int]) -> int: dp = [[0] * (len(nums2)+1) for _ in range(len(nums1)+1)] for i in range(1, len(nums1)+1): for j in range(1, len(nums2)+1): if nums1[i-1] == nums2[j-1]: dp[i][j] = dp[i-1][j-1] + 1 else: dp[i][j] = max(dp[i-1][j], dp[i][j-1]) return dp[-1][-1]",
+          "description": "Python实现的最长不相交线问题"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "class Solution:",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int maxUncrossedLines(vector<int>& nums1, vector<int>& nums2) {vector<vector<int>> dp(nums1.size() + 1, vector<int>(nums2.size() + 1, 0)); for (int i = 1; i <= nums1.size(); i++) {for (int j = 1; j <= nums2.size(); j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;} else {dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);}}} return dp[nums1.size()][nums2.size()];}};",
+          "description": "C++实现的解决方案"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int maxUncrossedLines(int[] nums1, int[] nums2) {int len1 = nums1.length;int len2 = nums2.length;int[][] dp = new int[len1 + 1][len2 + 1];for (int i = 1; i <= len1; i++) {for (int j = 1; j <= len2; j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;} else {dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);}}}return dp[len1][len2];}}",
+          "description": "Java实现的解决方案"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def maxUncrossedLines(self, nums1: List[int], nums2: List[int]) -> int: dp = [[0] * (len(nums2)+1) for _ in range(len(nums1)+1)] for i in range(1, len(nums1)+1): for j in range(1, len(nums2)+1): if nums1[i-1] == nums2[j-1]: dp[i][j] = dp[i-1][j-1] + 1 else: dp[i][j] = max(dp[i-1][j], dp[i][j-1]) return dp[-1][-1]",
+          "description": "Python实现的解决方案"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n * m)",
+    "space_complexity": "O(n * m)",
+    "explanation": null
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int maxUncrossedLines(vector<int>& nums1, vector<int>& nums2) {vector<vector<int>> dp(nums1.size() + 1, vector<int>(nums2.size() + 1, 0)); for (int i = 1; i <= nums1.size(); i++) {for (int j = 1; j <= nums2.size(); j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;} else {dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);}}} return dp[nums1.size()][nums2.size()];}};",
+      "description": "C++实现的最长非相交线算法"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int maxUncrossedLines(int[] nums1, int[] nums2) {int len1 = nums1.length; int len2 = nums2.length; int[][] dp = new int[len1 + 1][len2 + 1]; for (int i = 1; i <= len1; i++) {for (int j = 1; j <= len2; j++) {if (nums1[i - 1] == nums2[j - 1]) {dp[i][j] = dp[i - 1][j - 1] + 1;} else {dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);}}} return dp[len1][len2];}}",
+      "description": "Java实现的最长非相交线算法"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def maxUncrossedLines(self, nums1: List[int], nums2: List[int]) -> int: dp = [[0] * (len(nums2)+1) for _ in range(len(nums1)+1)] for i in range(1, len(nums1)+1): for j in range(1, len(nums2)+1): if nums1[i-1] == nums2[j-1]: dp[i][j] = dp[i-1][j-1] + 1 else: dp[i][j] = max(dp[i-1][j], dp[i][j-1]) return dp[-1][-1]",
+      "description": "Python实现的最长非相交线算法"
+    }
+  ],
+  "common_mistakes": [
+    "没有意识到该问题是典型的最长公共子序列变种，从而可能尝试更复杂的解决方案。",
+    "在实现过程中忽略了边界条件处理，比如当一个数组为空时的情况。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/2021032116363533.png",
+      "description": "图片链接: https://file1.kamacoder.com/i/algo/2021032116363533.png",
+      "context": "该图片展示了如何根据给定规则在两个整数序列之间绘制不相交的连线，以帮助理解题目要求和解决方案。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210914145158.png",
+      "description": "该图展示了一个包含重复节点值（1和4）的无向图，可用于分析图的连通性和节点重复性问题。",
+      "context": "该图片展示了当尝试从nums1=[1,4,2]和nums2=[1,2,4]中直接连线相同数字时可能出现的相交情况，用来解释为何需要找到两数组间最长非相交连线数即求解最长公共子序列。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/2021032116363533.png",
+      "description": "GIF展示了如何在两个数组之间绘制不相交的连线，以找出并连接相同的元素。",
+      "context": "GIF动画展示了如何根据给定规则在两个整数序列之间绘制最大数量的不相交连线。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210914145158.png",
+      "description": "GIF展示了如何通过连接两个数组中相等的元素来找到最长公共子序列的过程，同时避免了连线相交的情况。",
+      "context": "GIF动画展示了当尝试连接两个数组中相等元素时，如果这些连线相交，则违反了题目要求的非交叉条件。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\动态规划\\不相交的线.txt",
+  "extracted_at": "2025-07-20T15:00:01.221451",
+  "raw_content": "不相交的线\n力扣题目链接(https://leetcode.cn/problems/uncrossed-lines/)\n\n在两条独立的水平线上按给定的顺序写下 nums1 和 nums2 中的整数。\n\n现在，可以绘制一些连接两个数字 nums1[i] 和 nums2[j] 的直线，这些直线需要同时满足：\n\nnums1[i] == nums2[j]\n且绘制的直线不与任何其他连线（非水平线）相交。\n请注意，连线即使在端点也不能相交：每个数字只能属于一条连线。\n\n以这种方法绘制线条，并返回可以绘制的最大连线数。\nhttps://file1.kamacoder.com/i/algo/2021032116363533.png\n\n\n\n#思路\n相信不少录友看到这道题目都没啥思路，我们来逐步分析一下。\n\n绘制一些连接两个数字 nums1[i] 和 nums2[j] 的直线，只要 nums1[i] == nums2[j]，且直线不能相交！\n\n直线不能相交，这就是说明在字符串nums1中 找到一个与字符串nums2相同的子序列，且这个子序列不能改变相对顺序，只要相对顺序不改变，连接相同数字的直线就不会相交。\n\n拿示例一nums1 = [1,4,2], nums2 = [1,2,4]为例，相交情况如图：\n\nhttps://file1.kamacoder.com/i/algo/20210914145158.png\n\n其实也就是说nums1和nums2的最长公共子序列是[1,4]，长度为2。 这个公共子序列指的是相对顺序不变（即数字4在字符串nums1中数字1的后面，那么数字4也应该在字符串nums2数字1的后面）\n\n这么分析完之后，大家可以发现：本题说是求绘制的最大连线数，其实就是求两个字符串的最长公共子序列的长度！\n\n那么本题就和我们刚刚讲过的这道题目动态规划：1143.最长公共子序列 (opens new window)就是一样一样的了。\n\n一样到什么程度呢？ 把字符串名字改一下，其他代码都不用改，直接copy过来就行了。\n\n其实本题就是求最长公共子序列的长度，介于我们刚刚讲过动态规划：1143.最长公共子序列 (https://programmercarl.com/1143.%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97.html)，所以本题我就不再做动规五部曲分析了。\n\n如果大家有点遗忘了最长公共子序列，就再看一下这篇：动态规划：1143.最长公共子序列(https://programmercarl.com/1143.%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97.html)\n\n本题代码如下：\n\nclass Solution {\npublic:\n    int maxUncrossedLines(vector<int>& nums1, vector<int>& nums2) {\n        vector<vector<int>> dp(nums1.size() + 1, vector<int>(nums2.size() + 1, 0));\n        for (int i = 1; i <= nums1.size(); i++) {\n            for (int j = 1; j <= nums2.size(); j++) {\n                if (nums1[i - 1] == nums2[j - 1]) {\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                } else {\n                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);\n                }\n            }\n        }\n        return dp[nums1.size()][nums2.size()];\n    }\n};\n时间复杂度: O(n * m)\n空间复杂度: O(n * m)\n#总结\n看到代码大家也可以发现其实就是求两个字符串的最长公共子序列，但如果没有做过1143.最长公共子序列 (opens new window)，本题其实还有很有难度的。\n\n这是Carl为什么要先讲1143.最长公共子序列 (https://programmercarl.com/1143.%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97.html)再讲本题，大家会发现一个正确的刷题顺序对算法学习是非常重要的！\n\n这也是Carl做了很多题目（包括ACM和力扣）才总结出来的规律，大家仔细体会一下哈。\n\n#其他语言版本\n#Java：\n  class Solution {\n    public int maxUncrossedLines(int[] nums1, int[] nums2) {\n        int len1 = nums1.length;\n        int len2 = nums2.length;\n        int[][] dp = new int[len1 + 1][len2 + 1];\n\n        for (int i = 1; i <= len1; i++) {\n            for (int j = 1; j <= len2; j++) {\n                if (nums1[i - 1] == nums2[j - 1]) {\n                    dp[i][j] = dp[i - 1][j - 1] + 1;\n                } else {\n                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);\n                }\n            }\n        }\n\n        return dp[len1][len2];\n    }\n}\n#Python：\nclass Solution:\n    def maxUncrossedLines(self, nums1: List[int], nums2: List[int]) -> int:\n        dp = [[0] * (len(nums2)+1) for _ in range(len(nums1)+1)]\n        for i in range(1, len(nums1)+1):\n            for j in range(1, len(nums2)+1):\n                if nums1[i-1] == nums2[j-1]:\n                    dp[i][j] = dp[i-1][j-1] + 1\n                else:\n                    dp[i][j] = max(dp[i-1][j], dp[i][j-1])\n        return dp[-1][-1]"
+}

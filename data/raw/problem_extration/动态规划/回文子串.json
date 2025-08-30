@@ -1,0 +1,503 @@
+{
+  "id": "AP_7cbdd0aa",
+  "title": "回文子串",
+  "alternative_titles": [],
+  "platform": "leetcode",
+  "url": "https://leetcode.cn/problems/palindromic-substrings/",
+  "description": "一个字符串，你的任务是计算这个字符串中有多少个回文子串。\n\n具有不同开始位置或结束位置的子串，即使是由相同的字符组成，也会被视作不同的子串。",
+  "examples": [],
+  "constraints": [],
+  "algorithm_tags": [
+    "动态规划",
+    "双指针"
+  ],
+  "data_structure_tags": [
+    "二维数组",
+    "字符串"
+  ],
+  "technique_tags": [
+    "递归关系",
+    "优化遍历",
+    "中心扩展"
+  ],
+  "difficulty": null,
+  "solution_approach": "使用动态规划或双指针法来解决回文子串计数问题。对于动态规划方法，定义一个二维布尔数组dp[i][j]表示字符串s在区间[i, j]内是否为回文子串，并基于此构建递归关系以计算所有可能的回文子串数量；对于双指针法，则通过选取每个字符（或每对相邻字符）作为中心点，向两边扩展判断是否构成回文。",
+  "key_insights": [
+    {
+      "content": "通过分析子串与其子部分的关系（如s[i]与s[j]相等时，依赖于子串s[i+1, j-1]的状态），可以有效地利用已知结果来推断未知情况，从而减少不必要的重复计算。"
+    },
+    {
+      "content": "为了确保每次计算dp[i][j]时所依赖的dp[i+1][j-1]已经被正确计算过，需要采取从下到上、从左至右的遍历方式。"
+    },
+    {
+      "content": "双指针法中，选择单个字符或两个连续字符作为回文串的中心点进行左右扩展，能够简化寻找回文串的过程且节省空间复杂度。"
+    }
+  ],
+  "step_by_step_explanation": [
+    {
+      "name": "思路",
+      "text": "#暴力解法",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int countSubstrings(string s) {vector<vector<bool>> dp(s.size(), vector<bool>(s.size(), false)); int result = 0; for (int i = s.size() - 1; i >= 0; i--) {  for (int j = i; j < s.size(); j++) {if (s[i] == s[j]) {if (j - i <= 1) {result++; dp[i][j] = true;} else if (dp[i + 1][j - 1]) {result++; dp[i][j] = true;}}}}} return result;}};",
+          "description": "C++动态规划解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int countSubstrings(string s) {vector<vector<bool>> dp(s.size(), vector<bool>(s.size(), false)); int result = 0; for (int i = s.size() - 1; i >= 0; i--) {for (int j = i; j < s.size(); j++) {if (s[i] == s[j] && (j - i <= 1 || dp[i + 1][j - 1])) {result++; dp[i][j] = true;}}}} return result;}};",
+          "description": "C++简化版动态规划解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int countSubstrings(string s) {int result = 0; for (int i = 0; i < s.size(); i++) {result += extend(s, i, i, s.size()); result += extend(s, i, i + 1, s.size());} return result;} int extend(const string& s, int i, int j, int n) {int res = 0; while (i >= 0 && j < n && s[i] == s[j]) {i--; j++; res++;} return res;}};",
+          "description": "C++双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int countSubstrings(String s) {char[] chars = s.toCharArray(); int len = chars.length; boolean[][] dp = new boolean[len][len]; int result = 0; for (int i = len - 1; i >= 0; i--) {for (int j = i; j < len; j++) {if (chars[i] == chars[j]) {if (j - i <= 1) {result++; dp[i][j] = true;} else if (dp[i + 1][j - 1]) {result++; dp[i][j] = true;}}}}} return result;}}",
+          "description": "Java动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int countSubstrings(String s) {boolean[][] dp = new boolean[s.length()][s.length()]; int res = 0; for (int i = s.length() - 1; i >= 0; i--) {for (int j = i; j < s.length(); j++) {if (s.charAt(i) == s.charAt(j) && (j - i <= 1 || dp[i + 1][j - 1])) {res++; dp[i][j] = true;}}}} return res;}}",
+          "description": "Java简化版动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int countSubstrings(String s) {int len, ans = 0; if (s == null || (len = s.length()) < 1) return 0; for (int i = 0; i < 2 * len - 1; i++) {int left = i / 2, right = left + i % 2; while (left >= 0 && right < len && s.charAt(left) == s.charAt(right)) {ans++; left--; right++;}}} return ans;}}",
+          "description": "Java中心扩散法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countSubstrings(self, s: str) -> int: dp = [[False] * len(s) for _ in range(len(s))] result = 0 for i in range(len(s)-1, -1, -1): for j in range(i, len(s)): if s[i] == s[j]: if j - i <= 1: result += 1 dp[i][j] = True elif dp[i+1][j-1]: result += 1 dp[i][j] = True return result",
+          "description": "Python动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countSubstrings(self, s: str) -> int: dp = [[False] * len(s) for _ in range(len(s))] result = 0 for i in range(len(s)-1, -1, -1): for j in range(i, len(s)): if s[i] == s[j] and (j - i <= 1 or dp[i+1][j-1]): result += 1 dp[i][j] = True return result",
+          "description": "Python简化版动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countSubstrings(self, s: str) -> int: result = 0 for i in range(len(s)): result += self.extend(s, i, i, len(s)) result += self.extend(s, i, i+1, len(s)) return result def extend(self, s, i, j, n): res = 0 while i >= 0 and j < n and s[i] == s[j]: i -= 1 j += 1 res += 1 return res",
+          "description": "Python双指针法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "暴力解法",
+      "text": "两层for循环，遍历区间起始位置和终止位置，然后还需要一层遍历判断这个区间是不是回文。所以时间复杂度：O(n^3)",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int countSubstrings(string s) {vector<vector<bool>> dp(s.size(), vector<bool>(s.size(), false));int result = 0;for (int i = s.size() - 1; i >= 0; i--) { for (int j = i; j < s.size(); j++) {if (s[i] == s[j]) {if (j - i <= 1) {result++;dp[i][j] = true;} else if (dp[i + 1][j - 1]) {result++;dp[i][j] = true;}}}}}return result;}};",
+          "description": "C++动态规划解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int countSubstrings(string s) {vector<vector<bool>> dp(s.size(), vector<bool>(s.size(), false));int result = 0;for (int i = s.size() - 1; i >= 0; i--) { for (int j = i; j < s.size(); j++) {if (s[i] == s[j] && (j - i <= 1 || dp[i + 1][j - 1])) {result++;dp[i][j] = true;}}}}return result;}};",
+          "description": "C++简洁版动态规划解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int countSubstrings(string s) {int result = 0;for (int i = 0; i < s.size(); i++) {result += extend(s, i, i, s.size());result += extend(s, i, i + 1, s.size());}}return result;}};int extend(const string& s, int i, int j, int n) {int res = 0;while (i >= 0 && j < n && s[i] == s[j]) {i--;j++;res++;}return res;}",
+          "description": "C++双指针解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int countSubstrings(String s) {char[] chars = s.toCharArray();int len = chars.length;boolean[][] dp = new boolean[len][len];int result = 0;for (int i = len - 1; i >= 0; i--) { for (int j = i; j < len; j++) {if (chars[i] == chars[j]) {if (j - i <= 1) {result++;dp[i][j] = true;} else if (dp[i + 1][j - 1]) {result++;dp[i][j] = true;}}}}}return result;}}",
+          "description": "Java动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int countSubstrings(String s) {boolean[][] dp = new boolean[s.length()][s.length()];int res = 0;for (int i = s.length() - 1; i >= 0; i--) { for (int j = i; j < s.length(); j++) {if (s.charAt(i) == s.charAt(j) && (j - i <= 1 || dp[i + 1][j - 1])) {res++;dp[i][j] = true;}}}}return res;}}",
+          "description": "Java简洁版动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int countSubstrings(String s) {int len, ans = 0;if (s == null || (len = s.length()) < 1) return 0;for (int i = 0; i < 2 * len - 1; i++) {int left = i / 2, right = left + i % 2;while (left >= 0 && right < len && s.charAt(left) == s.charAt(right)) {ans++;left--;right++;}}}return ans;}}",
+          "description": "Java中心扩散法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countSubstrings(self, s: str) -> int: dp = [[False] * len(s) for _ in range(len(s))] result = 0 for i in range(len(s)-1, -1, -1): for j in range(i, len(s)): if s[i] == s[j]: if j - i <= 1: result += 1 dp[i][j] = True elif dp[i+1][j-1]: result += 1 dp[i][j] = True return result",
+          "description": "Python动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countSubstrings(self, s: str) -> int: dp = [[False] * len(s) for _ in range(len(s))] result = 0 for i in range(len(s)-1, -1, -1): for j in range(i, len(s)): if s[i] == s[j] and (j - i <= 1 or dp[i+1][j-1]): result += 1 dp[i][j] = True return result",
+          "description": "Python简洁版动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countSubstrings(self, s: str) -> int: result = 0 for i in range(len(s)): result += self.extend(s, i, i, len(s)) result += self.extend(s, i, i+1, len(s)) return result def extend(self, s, i, j, n): res = 0 while i >= 0 and j < n and s[i] == s[j]: i -= 1 j += 1 res += 1 return res",
+          "description": "Python双指针解法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "动态规划",
+      "text": "动规五部曲：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int countSubstrings(string s) {vector<vector<bool>> dp(s.size(), vector<bool>(s.size(), false));int result = 0;for (int i = s.size() - 1; i >= 0; i--) {for (int j = i; j < s.size(); j++) {if (s[i] == s[j]) {if (j - i <= 1) {result++;dp[i][j] = true;} else if (dp[i + 1][j - 1]) {result++;dp[i][j] = true;}}}}} return result;}};",
+          "description": "C++ 动态规划解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int countSubstrings(string s) {vector<vector<bool>> dp(s.size(), vector<bool>(s.size(), false));int result = 0;for (int i = s.size() - 1; i >= 0; i--) {for (int j = i; j < s.size(); j++) {if (s[i] == s[j] && (j - i <= 1 || dp[i + 1][j - 1])) {result++;dp[i][j] = true;}}}} return result;}};",
+          "description": "C++ 动态规划简洁版"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int countSubstrings(string s) {int result = 0;for (int i = 0; i < s.size(); i++) {result += extend(s, i, i, s.size());result += extend(s, i, i + 1, s.size());}} return result;int extend(const string& s, int i, int j, int n) {int res = 0;while (i >= 0 && j < n && s[i] == s[j]) {i--;j++;res++;}} return res;}};",
+          "description": "C++ 双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int countSubstrings(String s) {char[] chars = s.toCharArray();int len = chars.length;boolean[][] dp = new boolean[len][len];int result = 0;for (int i = len - 1; i >= 0; i--) {for (int j = i; j < len; j++) {if (chars[i] == chars[j]) {if (j - i <= 1) {result++;dp[i][j] = true;} else if (dp[i + 1][j - 1]) {result++;dp[i][j] = true;}}}}return result;}}",
+          "description": "Java 动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int countSubstrings(String s) {boolean[][] dp = new boolean[s.length()][s.length()];int res = 0;for (int i = s.length() - 1; i >= 0; i--) {for (int j = i; j < s.length(); j++) {if (s.charAt(i) == s.charAt(j) && (j - i <= 1 || dp[i + 1][j - 1])) {res++;dp[i][j] = true;}}}}return res;}}",
+          "description": "Java 动态规划简洁版"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int countSubstrings(String s) {int len, ans = 0;if (s == null || (len = s.length()) < 1) return 0;for (int i = 0; i < 2 * len - 1; i++) {int left = i / 2, right = left + i % 2;while (left >= 0 && right < len && s.charAt(left) == s.charAt(right)) {ans++;left--;right++;}}return ans;}}",
+          "description": "Java 中心扩散法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countSubstrings(self, s: str) -> int: dp = [[False] * len(s) for _ in range(len(s))] result = 0 for i in range(len(s)-1, -1, -1): for j in range(i, len(s)): if s[i] == s[j]: if j - i <= 1: result += 1 dp[i][j] = True elif dp[i+1][j-1]: result += 1 dp[i][j] = True return result",
+          "description": "Python 动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countSubstrings(self, s: str) -> int: dp = [[False] * len(s) for _ in range(len(s))] result = 0 for i in range(len(s)-1, -1, -1): for j in range(i, len(s)): if s[i] == s[j] and (j - i <= 1 or dp[i+1][j-1]): result += 1 dp[i][j] = True return result",
+          "description": "Python 动态规划简洁版"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countSubstrings(self, s: str) -> int: result = 0 for i in range(len(s)): result += self.extend(s, i, i, len(s)) result += self.extend(s, i, i+1, len(s)) return result def extend(self, s, i, j, n): res = 0 while i >= 0 and j < n and s[i] == s[j]: i -= 1 j += 1 res += 1 return res",
+          "description": "Python 双指针法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "双指针法",
+      "text": "动态规划的空间复杂度是偏高的，我们再看一下双指针法。",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int countSubstrings(string s) {vector<vector<bool>> dp(s.size(), vector<bool>(s.size(), false)); int result = 0; for (int i = s.size() - 1; i >= 0; i--) {  for (int j = i; j < s.size(); j++) {if (s[i] == s[j]) {if (j - i <= 1) {result++;dp[i][j] = true;} else if (dp[i + 1][j - 1]) {result++;dp[i][j] = true;}}}}return result;}};",
+          "description": "C++动态规划解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int countSubstrings(string s) {vector<vector<bool>> dp(s.size(), vector<bool>(s.size(), false)); int result = 0; for (int i = s.size() - 1; i >= 0; i--) {for (int j = i; j < s.size(); j++) {if (s[i] == s[j] && (j - i <= 1 || dp[i + 1][j - 1])) {result++;dp[i][j] = true;}}}}return result;}};",
+          "description": "C++动态规划简洁版"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int countSubstrings(string s) {int result = 0; for (int i = 0; i < s.size(); i++) {result += extend(s, i, i, s.size()); result += extend(s, i, i + 1, s.size());} return result;} int extend(const string& s, int i, int j, int n) {int res = 0; while (i >= 0 && j < n && s[i] == s[j]) {i--;j++;res++;} return res;}};",
+          "description": "C++双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int countSubstrings(String s) {char[] chars = s.toCharArray(); int len = chars.length; boolean[][] dp = new boolean[len][len]; int result = 0; for (int i = len - 1; i >= 0; i--) {for (int j = i; j < len; j++) {if (chars[i] == chars[j]) {if (j - i <= 1) {result++;dp[i][j] = true;} else if (dp[i + 1][j - 1]) {result++;dp[i][j] = true;}}}}} return result;}}",
+          "description": "Java动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int countSubstrings(String s) {boolean[][] dp = new boolean[s.length()][s.length()];int res = 0;for (int i = s.length() - 1; i >= 0; i--) {for (int j = i; j < s.length(); j++) {if (s.charAt(i) == s.charAt(j) && (j - i <= 1 || dp[i + 1][j - 1])) {res++;dp[i][j] = true;}}}}return res;}}",
+          "description": "Java动态规划简洁版"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int countSubstrings(String s) {int len, ans = 0;if (s == null || (len = s.length()) < 1) return 0;for (int i = 0; i < 2 * len - 1; i++) {int left = i / 2, right = left + i % 2;while (left >= 0 && right < len && s.charAt(left) == s.charAt(right)) {ans++;left--;right++;}}return ans;}}",
+          "description": "Java中心扩散法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countSubstrings(self, s: str) -> int: dp = [[False] * len(s) for _ in range(len(s))] result = 0 for i in range(len(s)-1, -1, -1): for j in range(i, len(s)): if s[i] == s[j]: if j - i <= 1: result += 1 dp[i][j] = True elif dp[i+1][j-1]: result += 1 dp[i][j] = True return result",
+          "description": "Python动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countSubstrings(self, s: str) -> int: dp = [[False] * len(s) for _ in range(len(s))] result = 0 for i in range(len(s)-1, -1, -1): for j in range(i, len(s)): if s[i] == s[j] and (j - i <= 1 or dp[i+1][j-1]): result += 1 dp[i][j] = True return result",
+          "description": "Python动态规划简洁版"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countSubstrings(self, s: str) -> int: result = 0 for i in range(len(s)): result += self.extend(s, i, i, len(s)) result += self.extend(s, i, i+1, len(s)) return result def extend(self, s, i, j, n): res = 0 while i >= 0 and j < n and s[i] == s[j]: i -= 1 j += 1 res += 1 return res",
+          "description": "Python双指针法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "其他语言版本",
+      "text": "#Java：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int countSubstrings(String s) {\n        char[] chars = s.toCharArray();\n        int len = chars.length;\n        boolean[][] dp = new boolean[len][len];\n        int result = 0;\n        for (int i = len - 1; i >= 0; i--) {\n            for (int j = i; j < len; j++) {\n                if (chars[i] == chars[j]) {\n                    if (j - i <= 1) { // 情况一 和 情况二\n                        result++;\n                        dp[i][j] = true;\n                    } else if (dp[i + 1][j - 1]) { //情况三\n                        result++;\n                        dp[i][j] = true;\n                    }\n                }\n            }\n        }\n        return result;\n    }\n}",
+          "description": "Java动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int countSubstrings(String s) {\n        boolean[][] dp = new boolean[s.length()][s.length()];\n        int res = 0;\n        for (int i = s.length() - 1; i >= 0; i--) {\n            for (int j = i; j < s.length(); j++) {\n                if (s.charAt(i) == s.charAt(j) && (j - i <= 1 || dp[i + 1][j - 1])) {\n                    res++;\n                    dp[i][j] = true;\n                }\n            }\n        }\n        return res;\n    }\n}",
+          "description": "Java动态规划简洁版"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public int countSubstrings(String s) {\n        int len, ans = 0;\n        if (s == null || (len = s.length()) < 1) return 0;\n        for (int i = 0; i < 2 * len - 1; i++) {\n            int left = i / 2, right = left + i % 2;\n            while (left >= 0 && right < len && s.charAt(left) == s.charAt(right)) {\n                ans++;\n                left--;\n                right++;\n            }\n        }\n        return ans;\n    }\n}",
+          "description": "Java中心扩散法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {\n    public String longestPalindrome(String s) {\n        int finalStart = 0, finalEnd = 0, finalLen = 0;\n        char[] chars = s.toCharArray();\n        int len = chars.length;\n        boolean[][] dp = new boolean[len][len];\n        for (int i = len - 1; i >= 0; i--) {\n            for (int j = i; j < len; j++) {\n                if (chars[i] == chars[j] && (j - i <= 1 || dp[i + 1][j - 1]))\n                    dp[i][j] = true;\n                if (dp[i][j] && j - i + 1 > finalLen) {\n                    finalLen = j - i + 1;\n                    finalStart = i;\n                    finalEnd = j;\n                }\n            }\n        }\n        return s.substring(finalStart, finalEnd + 1);\n    }\n}",
+          "description": "Java最长回文子串"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def countSubstrings(self, s: str) -> int:\n        dp = [[False] * len(s) for _ in range(len(s))]\n        result = 0\n        for i in range(len(s)-1, -1, -1):\n            for j in range(i, len(s)):\n                if s[i] == s[j]:\n                    if j - i <= 1: \n                        result += 1\n                        dp[i][j] = True\n                    elif dp[i+1][j-1]: \n                        result += 1\n                        dp[i][j] = True\n        return result",
+          "description": "Python动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def countSubstrings(self, s: str) -> int:\n        dp = [[False] * len(s) for _ in range(len(s))]\n        result = 0\n        for i in range(len(s)-1, -1, -1):\n            for j in range(i, len(s)):\n                if s[i] == s[j] and (j - i <= 1 or dp[i+1][j-1]): \n                    result += 1\n                    dp[i][j] = True\n        return result",
+          "description": "Python动态规划简洁版"
+        },
+        {
+          "language": "python",
+          "code": "class Solution:\n    def countSubstrings(self, s: str) -> int:\n        result = 0\n        for i in range(len(s)):\n            result += self.extend(s, i, i, len(s))\n            result += self.extend(s, i, i+1, len(s))\n        return result\n    def extend(self, s, i, j, n):\n        res = 0\n        while i >= 0 and j < n and s[i] == s[j]:\n            i -= 1\n            j += 1\n            res += 1\n        return res",
+          "description": "Python双指针法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Java：",
+      "text": "动态规划：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int countSubstrings(string s) {vector<vector<bool>> dp(s.size(), vector<bool>(s.size(), false));int result = 0;for (int i = s.size() - 1; i >= 0; i--) { for (int j = i; j < s.size(); j++) { if (s[i] == s[j]) { if (j - i <= 1) { result++; dp[i][j] = true; } else if (dp[i + 1][j - 1]) { result++; dp[i][j] = true; } } } }return result;}};",
+          "description": "C++ 动态规划解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int countSubstrings(string s) {vector<vector<bool>> dp(s.size(), vector<bool>(s.size(), false));int result = 0;for (int i = s.size() - 1; i >= 0; i--) { for (int j = i; j < s.size(); j++) { if (s[i] == s[j] && (j - i <= 1 || dp[i + 1][j - 1])) { result++; dp[i][j] = true; } } }return result;}};",
+          "description": "C++ 动态规划简洁版"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int countSubstrings(string s) {int result = 0;for (int i = 0; i < s.size(); i++) { result += extend(s, i, i, s.size()); result += extend(s, i, i + 1, s.size()); }return result;}int extend(const string& s, int i, int j, int n) { int res = 0; while (i >= 0 && j < n && s[i] == s[j]) { i--; j++; res++; } return res;}};",
+          "description": "C++ 双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int countSubstrings(String s) {char[] chars = s.toCharArray();int len = chars.length;boolean[][] dp = new boolean[len][len];int result = 0;for (int i = len - 1; i >= 0; i--) { for (int j = i; j < len; j++) { if (chars[i] == chars[j]) { if (j - i <= 1) { result++; dp[i][j] = true; } else if (dp[i + 1][j - 1]) { result++; dp[i][j] = true; } } } }return result;}}",
+          "description": "Java 动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int countSubstrings(String s) {boolean[][] dp = new boolean[s.length()][s.length()];int res = 0;for (int i = s.length() - 1; i >= 0; i--) { for (int j = i; j < s.length(); j++) { if (s.charAt(i) == s.charAt(j) && (j - i <= 1 || dp[i + 1][j - 1])) { res++; dp[i][j] = true; } } }return res;}}",
+          "description": "Java 动态规划简洁版"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int countSubstrings(String s) {int len, ans = 0;if (s == null || (len = s.length()) < 1) return 0;for (int i = 0; i < 2 * len - 1; i++) { int left = i / 2, right = left + i % 2; while (left >= 0 && right < len && s.charAt(left) == s.charAt(right)) { ans++; left--; right++; } }return ans;}}",
+          "description": "Java 中心扩散法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countSubstrings(self, s: str) -> int: dp = [[False] * len(s) for _ in range(len(s))] result = 0 for i in range(len(s)-1, -1, -1): for j in range(i, len(s)): if s[i] == s[j]: if j - i <= 1: result += 1 dp[i][j] = True elif dp[i+1][j-1]: result += 1 dp[i][j] = True return result",
+          "description": "Python 动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countSubstrings(self, s: str) -> int: dp = [[False] * len(s) for _ in range(len(s))] result = 0 for i in range(len(s)-1, -1, -1): for j in range(i, len(s)): if s[i] == s[j] and (j - i <= 1 or dp[i+1][j-1]): result += 1 dp[i][j] = True return result",
+          "description": "Python 动态规划简洁版"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countSubstrings(self, s: str) -> int: result = 0 for i in range(len(s)): result += self.extend(s, i, i, len(s)) result += self.extend(s, i, i+1, len(s)) return result def extend(self, s, i, j, n): res = 0 while i >= 0 and j < n and s[i] == s[j]: i -= 1 j += 1 res += 1 return res",
+          "description": "Python 双指针法"
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "name": "Python：",
+      "text": "动态规划：",
+      "resources": [],
+      "code_snippets": [
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int countSubstrings(string s) {vector<vector<bool>> dp(s.size(), vector<bool>(s.size(), false)); int result = 0; for (int i = s.size() - 1; i >= 0; i--) {  for (int j = i; j < s.size(); j++) {if (s[i] == s[j]) {if (j - i <= 1) {result++;dp[i][j] = true;} else if (dp[i + 1][j - 1]) {result++;dp[i][j] = true;}}}}return result;}};",
+          "description": "动态规划解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int countSubstrings(string s) {vector<vector<bool>> dp(s.size(), vector<bool>(s.size(), false)); int result = 0; for (int i = s.size() - 1; i >= 0; i--) {for (int j = i; j < s.size(); j++) {if (s[i] == s[j] && (j - i <= 1 || dp[i + 1][j - 1])) {result++;dp[i][j] = true;}}}} return result;}};",
+          "description": "简洁版动态规划解法"
+        },
+        {
+          "language": "cpp",
+          "code": "class Solution {public: int countSubstrings(string s) {int result = 0; for (int i = 0; i < s.size(); i++) {result += extend(s, i, i, s.size()); result += extend(s, i, i + 1, s.size());} return result;} int extend(const string& s, int i, int j, int n) {int res = 0; while (i >= 0 && j < n && s[i] == s[j]) {i--;j++;res++;} return res;}};",
+          "description": "双指针法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int countSubstrings(String s) {char[] chars = s.toCharArray(); int len = chars.length; boolean[][] dp = new boolean[len][len]; int result = 0; for (int i = len - 1; i >= 0; i--) {for (int j = i; j < len; j++) {if (chars[i] == chars[j]) {if (j - i <= 1) {result++;dp[i][j] = true;} else if (dp[i + 1][j - 1]) {result++;dp[i][j] = true;}}}}} return result;}}",
+          "description": "Java动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int countSubstrings(String s) {boolean[][] dp = new boolean[s.length()][s.length()];int res = 0; for (int i = s.length() - 1; i >= 0; i--) {for (int j = i; j < s.length(); j++) {if (s.charAt(i) == s.charAt(j) && (j - i <= 1 || dp[i + 1][j - 1])) {res++;dp[i][j] = true;}}}} return res;}}",
+          "description": "Java简洁版动态规划解法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public int countSubstrings(String s) {int len, ans = 0;if (s == null || (len = s.length()) < 1) return 0;for (int i = 0; i < 2 * len - 1; i++) {int left = i / 2, right = left + i % 2;while (left >= 0 && right < len && s.charAt(left) == s.charAt(right)) {ans++;left--;right++;}}return ans;}}",
+          "description": "Java中心扩散法"
+        },
+        {
+          "language": "java",
+          "code": "class Solution {public String longestPalindrome(String s) {int finalStart = 0; int finalEnd = 0;int finalLen = 0;char[] chars = s.toCharArray();int len = chars.length;boolean[][] dp = new boolean[len][len];for (int i = len - 1; i >= 0; i--) {for (int j = i; j < len; j++) {if (chars[i] == chars[j] && (j - i <= 1 || dp[i + 1][j - 1])) dp[i][j] = true;if (dp[i][j] && j - i + 1 > finalLen) {finalLen = j - i + 1;finalStart = i;finalEnd = j;}}}return s.substring(finalStart, finalEnd + 1);}}",
+          "description": "Java最长回文子串"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countSubstrings(self, s: str) -> int: dp = [[False] * len(s) for _ in range(len(s))] result = 0 for i in range(len(s)-1, -1, -1): for j in range(i, len(s)): if s[i] == s[j]: if j - i <= 1: result += 1 dp[i][j] = True elif dp[i+1][j-1]: result += 1 dp[i][j] = True return result",
+          "description": "Python动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countSubstrings(self, s: str) -> int: dp = [[False] * len(s) for _ in range(len(s))] result = 0 for i in range(len(s)-1, -1, -1): for j in range(i, len(s)): if s[i] == s[j] and (j - i <= 1 or dp[i+1][j-1]): result += 1 dp[i][j] = True return result",
+          "description": "Python简洁版动态规划解法"
+        },
+        {
+          "language": "python",
+          "code": "class Solution: def countSubstrings(self, s: str) -> int: result = 0 for i in range(len(s)): result += self.extend(s, i, i, len(s)) result += self.extend(s, i, i+1, len(s)) return result def extend(self, s, i, j, n): res = 0 while i >= 0 and j < n and s[i] == s[j]: i -= 1 j += 1 res += 1 return res",
+          "description": "Python双指针法"
+        }
+      ],
+      "subsections": []
+    }
+  ],
+  "complexity_analysis": {
+    "time_complexity": "O(n^3)",
+    "space_complexity": "O(n^2)",
+    "explanation": "在定义dp数组的时候 很自然就会想题目求什么，我们就如何定义dp数组。"
+  },
+  "code_solutions": [
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int countSubstrings(string s) {vector<vector<bool>> dp(s.size(), vector<bool>(s.size(), false));int result = 0;for (int i = s.size() - 1; i >= 0; i--) {for (int j = i; j < s.size(); j++) {if (s[i] == s[j]) {if (j - i <= 1) {result++;dp[i][j] = true;} else if (dp[i + 1][j - 1]) {result++;dp[i][j] = true;}}}}} return result;}};",
+      "description": "使用动态规划方法计算回文子串数量"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int countSubstrings(string s) {vector<vector<bool>> dp(s.size(), vector<bool>(s.size(), false));int result = 0;for (int i = s.size() - 1; i >= 0; i--) {for (int j = i; j < s.size(); j++) {if (s[i] == s[j] && (j - i <= 1 || dp[i + 1][j - 1])) {result++;dp[i][j] = true;}}}} return result;}};",
+      "description": "简洁版动态规划方法计算回文子串数量"
+    },
+    {
+      "language": "cpp",
+      "code": "class Solution {public: int countSubstrings(string s) {int result = 0;for (int i = 0; i < s.size(); i++) {result += extend(s, i, i, s.size());result += extend(s, i, i + 1, s.size());}} return result;int extend(const string& s, int i, int j, int n) {int res = 0;while (i >= 0 && j < n && s[i] == s[j]) {i--;j++;res++;}} return res;}};",
+      "description": "双指针法计算回文子串数量"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int countSubstrings(String s) {char[] chars = s.toCharArray();int len = chars.length;boolean[][] dp = new boolean[len][len];int result = 0;for (int i = len - 1; i >= 0; i--) {for (int j = i; j < len; j++) {if (chars[i] == chars[j]) {if (j - i <= 1) {result++;dp[i][j] = true;} else if (dp[i + 1][j - 1]) {result++;dp[i][j] = true;}}}}} return result;}}",
+      "description": "Java实现的动态规划方法计算回文子串数量"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int countSubstrings(String s) {boolean[][] dp = new boolean[s.length()][s.length()];int res = 0;for (int i = s.length() - 1; i >= 0; i--) {for (int j = i; j < s.length(); j++) {if (s.charAt(i) == s.charAt(j) && (j - i <= 1 || dp[i + 1][j - 1])) {res++;dp[i][j] = true;}}}} return res;}}",
+      "description": "Java实现的简洁版动态规划方法计算回文子串数量"
+    },
+    {
+      "language": "java",
+      "code": "class Solution {public int countSubstrings(String s) {int len, ans = 0;if (s == null || (len = s.length()) < 1) return 0;for (int i = 0; i < 2 * len - 1; i++) {int left = i / 2, right = left + i % 2;while (left >= 0 && right < len && s.charAt(left) == s.charAt(right)) {ans++;left--;right++;}}} return ans;}}",
+      "description": "Java实现的中心扩散法计算回文子串数量"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def countSubstrings(self, s: str) -> int: dp = [[False] * len(s) for _ in range(len(s))] result = 0 for i in range(len(s)-1, -1, -1): for j in range(i, len(s)): if s[i] == s[j]: if j - i <= 1: result += 1 dp[i][j] = True elif dp[i+1][j-1]: result += 1 dp[i][j] = True return result",
+      "description": "Python实现的动态规划方法计算回文子串数量"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def countSubstrings(self, s: str) -> int: dp = [[False] * len(s) for _ in range(len(s))] result = 0 for i in range(len(s)-1, -1, -1): for j in range(i, len(s)): if s[i] == s[j] and (j - i <= 1 or dp[i+1][j-1]): result += 1 dp[i][j] = True return result",
+      "description": "Python实现的简洁版动态规划方法计算回文子串数量"
+    },
+    {
+      "language": "python",
+      "code": "class Solution: def countSubstrings(self, s: str) -> int: result = 0 for i in range(len(s)): result += self.extend(s, i, i, len(s)) result += self.extend(s, i, i+1, len(s)) return result def extend(self, s, i, j, n): res = 0 while i >= 0 and j < n and s[i] == s[j]: i -= 1 j += 1 res += 1 return res",
+      "description": "Python实现的双指针法计算回文子串数量"
+    }
+  ],
+  "common_mistakes": [
+    "忽略初始化dp数组为false的重要性。",
+    "选择不恰当的遍历方向导致逻辑错误或性能下降。"
+  ],
+  "similar_problems": [],
+  "follow_up_questions": [],
+  "all_resources": [
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20230102170752.png",
+      "description": "这张图片展示了字符串 \"cbabc\" 的双指针算法过程，用于查找或处理子字符串，其中 `i` 和 `j` 分别指向字符串的起始和结束位置。",
+      "context": "该图展示了如何通过已知较短子串的回文性质来判断更长子串是否为回文，从而帮助理解定义动态规划数组时应考虑的递归关系。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210121171032473-20230310132134822.jpg",
+      "description": "这张图片展示了动态规划中的状态转移关系，具体为 `dp[i][j]` 和 `dp[i+1][j-1]` 的位置关系。",
+      "context": "该图展示了dp[i][j]与dp[i + 1][j - 1]之间的位置关系，帮助理解为何需要特定的遍历顺序来确保计算准确性。"
+    },
+    {
+      "type": "image",
+      "content": "https://file1.kamacoder.com/i/algo/20210121171059951-20230310132153163.jpg",
+      "description": "这张图片展示了动态规划（DP）算法中二维数组 `dp[i][j]` 的状态转移过程，箭头指示了当前状态值（1）如何从左上角的前一个状态（1）继承而来。",
+      "context": "该图片展示了当输入字符串为\"aaa\"时，动态规划数组dp[i][j]的状态，其中共有6个true值，表明存在6个回文子串。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20230102170752.png",
+      "description": "GIF展示了通过动态规划方法判断字符串中不同子串是否为回文的过程。",
+      "context": "GIF动画展示了如何通过检查子串两端字符是否相等来判断整个子串是否为回文，从而帮助理解回文串的递归性质。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210121171032473-20230310132134822.jpg",
+      "description": "GIF展示了动态规划算法中从下到上、从左到右遍历二维数组dp的过程，以确保每个状态都基于已计算的结果进行更新。",
+      "context": "GIF动画展示了dp[i][j]与其依赖的dp[i + 1][j - 1]之间的相对位置关系，帮助理解为何需要从下到上、从左到右遍历以确保每个状态都是基于已知结果计算的。"
+    },
+    {
+      "type": "gif",
+      "content": "https://file1.kamacoder.com/i/algo/20210121171059951-20230310132153163.jpg",
+      "description": "GIF展示了字符串\"aaa\"中填充动态规划数组dp的过程，用于识别所有的回文子串。",
+      "context": "GIF动画展示了如何通过动态规划填充dp数组来识别字符串\"aaa\"中的所有回文子串。"
+    }
+  ],
+  "source_file": "F:\\My_project\\programmercarl_articles\\problems\\动态规划\\回文子串.txt",
+  "extracted_at": "2025-07-20T17:24:31.183647",
+  "raw_content": "回文子串\n力扣题目链接(https://leetcode.cn/problems/palindromic-substrings/)\n\n给定一个字符串，你的任务是计算这个字符串中有多少个回文子串。\n\n具有不同开始位置或结束位置的子串，即使是由相同的字符组成，也会被视作不同的子串。\n\n示例 1：\n\n输入：\"abc\"\n输出：3\n解释：三个回文子串: \"a\", \"b\", \"c\"\n示例 2：\n\n输入：\"aaa\"\n输出：6\n解释：6个回文子串: \"a\", \"a\", \"a\", \"aa\", \"aa\", \"aaa\"\n提示：输入的字符串长度不会超过 1000 。\n\n\n\n#思路\n#暴力解法\n两层for循环，遍历区间起始位置和终止位置，然后还需要一层遍历判断这个区间是不是回文。所以时间复杂度：O(n^3)\n\n#动态规划\n动规五部曲：\n\n确定dp数组（dp table）以及下标的含义\n如果大家做了很多这种子序列相关的题目，在定义dp数组的时候 很自然就会想题目求什么，我们就如何定义dp数组。\n\n绝大多数题目确实是这样，不过本题如果我们定义，dp[i] 为 下标i结尾的字符串有 dp[i]个回文串的话，我们会发现很难找到递归关系。\n\ndp[i] 和 dp[i-1] ，dp[i + 1] 看上去都没啥关系。\n\n所以我们要看回文串的性质。 如图：\n\nhttps://file1.kamacoder.com/i/algo/20230102170752.png\n\n我们在判断字符串S是否是回文，那么如果我们知道 s[1]，s[2]，s[3] 这个子串是回文的，那么只需要比较 s[0]和s[4]这两个元素是否相同，如果相同的话，这个字符串s 就是回文串。\n\n那么此时我们是不是能找到一种递归关系，也就是判断一个子字符串（字符串下标范围[i,j]）是否回文，依赖于，子字符串（下标范围[i + 1, j - 1]）） 是否是回文。\n\n所以为了明确这种递归关系，我们的dp数组是要定义成一位二维dp数组。\n\n布尔类型的dp[i][j]：表示区间范围[i,j] （注意是左闭右闭）的子串是否是回文子串，如果是dp[i][j]为true，否则为false。\n\n确定递推公式\n在确定递推公式时，就要分析如下几种情况。\n\n整体上是两种，就是s[i]与s[j]相等，s[i]与s[j]不相等这两种。\n\n当s[i]与s[j]不相等，那没啥好说的了，dp[i][j]一定是false。\n\n当s[i]与s[j]相等时，这就复杂一些了，有如下三种情况\n\n情况一：下标i 与 j相同，同一个字符例如a，当然是回文子串\n情况二：下标i 与 j相差为1，例如aa，也是回文子串\n情况三：下标：i 与 j相差大于1的时候，例如cabac，此时s[i]与s[j]已经相同了，我们看i到j区间是不是回文子串就看aba是不是回文就可以了，那么aba的区间就是 i+1 与 j-1区间，这个区间是不是回文就看dp[i + 1][j - 1]是否为true。\n以上三种情况分析完了，那么递归公式如下：\n\nif (s[i] == s[j]) {\n    if (j - i <= 1) { // 情况一 和 情况二\n        result++;\n        dp[i][j] = true;\n    } else if (dp[i + 1][j - 1]) { // 情况三\n        result++;\n        dp[i][j] = true;\n    }\n}\nresult就是统计回文子串的数量。\n\n注意这里我没有列出当s[i]与s[j]不相等的时候，因为在下面dp[i][j]初始化的时候，就初始为false。\n\ndp数组如何初始化\ndp[i][j]可以初始化为true么？ 当然不行，怎能刚开始就全都匹配上了。\n\n所以dp[i][j]初始化为false。\n\n确定遍历顺序\n遍历顺序可就有点讲究了。\n\n首先从递推公式中可以看出，情况三是根据dp[i + 1][j - 1]是否为true，在对dp[i][j]进行赋值true的。\n\ndp[i + 1][j - 1] 在 dp[i][j]的左下角，如图：\n\nhttps://file1.kamacoder.com/i/algo/20210121171032473-20230310132134822.jpg\n\n如果这矩阵是从上到下，从左到右遍历，那么会用到没有计算过的dp[i + 1][j - 1]，也就是根据不确定是不是回文的区间[i+1,j-1]，来判断了[i,j]是不是回文，那结果一定是不对的。\n\n所以一定要从下到上，从左到右遍历，这样保证dp[i + 1][j - 1]都是经过计算的。\n\n有的代码实现是优先遍历列，然后遍历行，其实也是一个道理，都是为了保证dp[i + 1][j - 1]都是经过计算的。\n\n代码如下：\n\nfor (int i = s.size() - 1; i >= 0; i--) {  // 注意遍历顺序\n    for (int j = i; j < s.size(); j++) {\n        if (s[i] == s[j]) {\n            if (j - i <= 1) { // 情况一 和 情况二\n                result++;\n                dp[i][j] = true;\n            } else if (dp[i + 1][j - 1]) { // 情况三\n                result++;\n                dp[i][j] = true;\n            }\n        }\n    }\n}\n举例推导dp数组\n举例，输入：\"aaa\"，dp[i][j]状态如下：\n\n647.回文子串1\nhttps://file1.kamacoder.com/i/algo/20210121171059951-20230310132153163.jpg\n图中有6个true，所以就是有6个回文子串。\n\n注意因为dp[i][j]的定义，所以j一定是大于等于i的，那么在填充dp[i][j]的时候一定是只填充右上半部分。\n\n以上分析完毕，C++代码如下：\n\nclass Solution {\npublic:\n    int countSubstrings(string s) {\n        vector<vector<bool>> dp(s.size(), vector<bool>(s.size(), false));\n        int result = 0;\n        for (int i = s.size() - 1; i >= 0; i--) {  // 注意遍历顺序\n            for (int j = i; j < s.size(); j++) {\n                if (s[i] == s[j]) {\n                    if (j - i <= 1) { // 情况一 和 情况二\n                        result++;\n                        dp[i][j] = true;\n                    } else if (dp[i + 1][j - 1]) { // 情况三\n                        result++;\n                        dp[i][j] = true;\n                    }\n                }\n            }\n        }\n        return result;\n    }\n};\n以上代码是为了凸显情况一二三，当然是可以简洁一下的，如下：\n\nclass Solution {\npublic:\n    int countSubstrings(string s) {\n        vector<vector<bool>> dp(s.size(), vector<bool>(s.size(), false));\n        int result = 0;\n        for (int i = s.size() - 1; i >= 0; i--) {\n            for (int j = i; j < s.size(); j++) {\n                if (s[i] == s[j] && (j - i <= 1 || dp[i + 1][j - 1])) {\n                    result++;\n                    dp[i][j] = true;\n                }\n            }\n        }\n        return result;\n    }\n};\n时间复杂度：O(n^2)\n空间复杂度：O(n^2)\n#双指针法\n动态规划的空间复杂度是偏高的，我们再看一下双指针法。\n\n首先确定回文串，就是找中心然后向两边扩散看是不是对称的就可以了。\n\n在遍历中心点的时候，要注意中心点有两种情况。\n\n一个元素可以作为中心点，两个元素也可以作为中心点。\n\n那么有人同学问了，三个元素还可以做中心点呢。其实三个元素就可以由一个元素左右添加元素得到，四个元素则可以由两个元素左右添加元素得到。\n\n所以我们在计算的时候，要注意一个元素为中心点和两个元素为中心点的情况。\n\n这两种情况可以放在一起计算，但分别计算思路更清晰，我倾向于分别计算，代码如下：\n\nclass Solution {\npublic:\n    int countSubstrings(string s) {\n        int result = 0;\n        for (int i = 0; i < s.size(); i++) {\n            result += extend(s, i, i, s.size()); // 以i为中心\n            result += extend(s, i, i + 1, s.size()); // 以i和i+1为中心\n        }\n        return result;\n    }\n    int extend(const string& s, int i, int j, int n) {\n        int res = 0;\n        while (i >= 0 && j < n && s[i] == s[j]) {\n            i--;\n            j++;\n            res++;\n        }\n        return res;\n    }\n};\n时间复杂度：O(n^2)\n空间复杂度：O(1)\n#其他语言版本\n#Java：\n动态规划：\n\nclass Solution {\n    public int countSubstrings(String s) {\n        char[] chars = s.toCharArray();\n        int len = chars.length;\n        boolean[][] dp = new boolean[len][len];\n        int result = 0;\n        for (int i = len - 1; i >= 0; i--) {\n            for (int j = i; j < len; j++) {\n                if (chars[i] == chars[j]) {\n                    if (j - i <= 1) { // 情况一 和 情况二\n                        result++;\n                        dp[i][j] = true;\n                    } else if (dp[i + 1][j - 1]) { //情况三\n                        result++;\n                        dp[i][j] = true;\n                    }\n                }\n            }\n        }\n        return result;\n    }\n}\n\n动态规划：简洁版\n\nclass Solution {\n    public int countSubstrings(String s) {\n        boolean[][] dp = new boolean[s.length()][s.length()];\n        \n        int res = 0;\n        for (int i = s.length() - 1; i >= 0; i--) {\n            for (int j = i; j < s.length(); j++) {\n                if (s.charAt(i) == s.charAt(j) && (j - i <= 1 || dp[i + 1][j - 1])) {\n                    res++;\n                    dp[i][j] = true;\n                }\n            }\n        }\n        return res;\n    }\n}\n中心扩散法：\n\nclass Solution {\n    public int countSubstrings(String s) {\n        int len, ans = 0;\n        if (s == null || (len = s.length()) < 1) return 0;\n        //总共有2 * len - 1个中心点\n        for (int i = 0; i < 2 * len - 1; i++) {\n            //通过遍历每个回文中心，向两边扩散，并判断是否回文字串\n            //有两种情况，left == right，right = left + 1，这两种回文中心是不一样的\n            int left = i / 2, right = left + i % 2;\n            while (left >= 0 && right < len && s.charAt(left) == s.charAt(right)) {\n                //如果当前是一个回文串，则记录数量\n                ans++;\n                left--;\n                right++;\n            }\n        }\n        return ans;\n    }\n}\nLeetCode 5. Longest Palindromic Substring(LeetCode 647. 同一題的思路改一下、加一點，就能通過LeetCode 5)\n\nclass Solution {\n    public String longestPalindrome(String s) {\n        //題目要求要return 最長的回文連續子串，故需要記錄當前最長的連續回文子串長度、最終起點、最終終點。\n        int finalStart = 0; \n        int finalEnd = 0;\n        int finalLen = 0;\n\n        char[] chars = s.toCharArray();\n        int len = chars.length;\n\n        boolean[][] dp = new boolean[len][len];\n        for (int i = len - 1; i >= 0; i--) {\n            for (int j = i; j < len; j++) {\n                if (chars[i] == chars[j] && (j - i <= 1 || dp[i + 1][j - 1]))\n                        dp[i][j] = true;\n                //和LeetCode 647，差別就在這個if statement。\n                //如果當前[i, j]範圍內的substring是回文子串(dp[i][j]) 且(&&) 長度大於當前要記錄的最終長度(j - i + 1 > finalLen)\n                //我們就更新 當前最長的連續回文子串長度、最終起點、最終終點\n                if (dp[i][j] && j - i + 1 > finalLen) {\n                    finalLen = j - i + 1;\n                    finalStart = i;\n                    finalEnd = j;\n                }\n            }\n        }\n        //String.substring這個method的用法是[起點, 終點)，包含起點，不包含終點（左閉右開區間），故終點 + 1。\n        return s.substring(finalStart, finalEnd + 1);\n    }\n}\n#Python：\n动态规划：\n\nclass Solution:\n    def countSubstrings(self, s: str) -> int:\n        dp = [[False] * len(s) for _ in range(len(s))]\n        result = 0\n        for i in range(len(s)-1, -1, -1): #注意遍历顺序\n            for j in range(i, len(s)):\n                if s[i] == s[j]:\n                    if j - i <= 1: #情况一 和 情况二\n                        result += 1\n                        dp[i][j] = True\n                    elif dp[i+1][j-1]: #情况三\n                        result += 1\n                        dp[i][j] = True\n        return result\n动态规划：简洁版\n\nclass Solution:\n    def countSubstrings(self, s: str) -> int:\n        dp = [[False] * len(s) for _ in range(len(s))]\n        result = 0\n        for i in range(len(s)-1, -1, -1): #注意遍历顺序\n            for j in range(i, len(s)):\n                if s[i] == s[j] and (j - i <= 1 or dp[i+1][j-1]): \n                    result += 1\n                    dp[i][j] = True\n        return result\n双指针法：\n\nclass Solution:\n    def countSubstrings(self, s: str) -> int:\n        result = 0\n        for i in range(len(s)):\n            result += self.extend(s, i, i, len(s)) #以i为中心\n            result += self.extend(s, i, i+1, len(s)) #以i和i+1为中心\n        return result\n    \n    def extend(self, s, i, j, n):\n        res = 0\n        while i >= 0 and j < n and s[i] == s[j]:\n            i -= 1\n            j += 1\n            res += 1\n        return res"
+}

@@ -1,0 +1,73 @@
+{
+  "id": "SA327",
+  "name": "Floyd算法",
+  "alias": [
+    "Floyd"
+  ],
+  "type": "specific_algorithm",
+  "description": "Floyd算法是一种用于解决多源最短路径问题的经典算法，适用于带权图中的所有顶点对之间的最短路径计算。该算法可以处理任何类型的图，包括有向图和无向图，并且边的权重可以为正或负，但不能存在负环。",
+  "key_concepts": [
+    "动态规划",
+    "最短路径",
+    "迭代",
+    "路径"
+  ],
+  "applications": [
+    "图论",
+    "网络路由",
+    "交通规划"
+  ],
+  "created_at": "2025-07-19T12:35:07Z",
+  "updated_at": "2025-07-19T12:54:02Z",
+  "source_files": [
+    "Floyd_kama.txt",
+    "Floyd_wiki.txt"
+  ],
+  "spacy_entities": {
+    "COMPLEXITY": [
+      "O(n²)",
+      "O(n³)",
+      "O(n^2)",
+      "O(n^3)",
+      "O(N^3)"
+    ],
+    "ALGORITHM_PARADIGM": [
+      "动态规划",
+      "动规",
+      "递归",
+      "dp"
+    ],
+    "SPECIFIC_ALGORITHM": [
+      "Floyd算法",
+      "Floyd",
+      "floyd"
+    ],
+    "DATA_STRUCTURE": [
+      "堆",
+      "队列",
+      "数组",
+      "集合",
+      "图",
+      "二维数组",
+      "String",
+      "有向图",
+      "无向图"
+    ],
+    "CORE_CONCEPT": [
+      "递归",
+      "动态规划",
+      "初始化",
+      "空间复杂度",
+      "遍历顺序",
+      "时间复杂度",
+      "最短路径",
+      "状态转移",
+      "路径",
+      "迭代"
+    ],
+    "PROBLEM_TYPE": [
+      "多源最短路径问题",
+      "最短路径问题"
+    ]
+  }
+}

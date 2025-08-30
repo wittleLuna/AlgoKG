@@ -1,0 +1,338 @@
+N皇后
+力扣题目链接(https://leetcode.cn/problems/n-queens/)
+
+n 皇后问题 研究的是如何将 n 个皇后放置在 n×n 的棋盘上，并且使皇后彼此之间不能相互攻击。
+
+给你一个整数 n ，返回所有不同的 n 皇后问题 的解决方案。
+
+每一种解法包含一个不同的 n 皇后问题 的棋子放置方案，该方案中 'Q' 和 '.' 分别代表了皇后和空位。
+
+示例 1：
+
+https://file1.kamacoder.com/i/algo/20211020232201.png
+
+输入：n = 4
+输出：[[".Q..","...Q","Q...","..Q."],["..Q.","Q...","...Q",".Q.."]]
+解释：如上图所示，4 皇后问题存在两个不同的解法。
+示例 2：
+
+输入：n = 1
+输出：[["Q"]]
+
+#思路
+都知道n皇后问题是回溯算法解决的经典问题，但是用回溯解决多了组合、切割、子集、排列问题之后，遇到这种二维矩阵还会有点不知所措。
+
+首先来看一下皇后们的约束条件：
+
+不能同行
+不能同列
+不能同斜线
+确定完约束条件，来看看究竟要怎么去搜索皇后们的位置，其实搜索皇后的位置，可以抽象为一棵树。
+
+下面我用一个 3 * 3 的棋盘，将搜索过程抽象为一棵树，如图：
+
+https://file1.kamacoder.com/i/algo/20210130182532303.jpg
+
+从图中，可以看出，二维矩阵中矩阵的高就是这棵树的高度，矩阵的宽就是树形结构中每一个节点的宽度。
+
+那么我们用皇后们的约束条件，来回溯搜索这棵树，只要搜索到了树的叶子节点，说明就找到了皇后们的合理位置了。
+
+#回溯三部曲
+按照我总结的如下回溯模板，我们来依次分析：
+
+void backtracking(参数) {
+    if (终止条件) {
+        存放结果;
+        return;
+    }
+    for (选择：本层集合中元素（树中节点孩子的数量就是集合的大小）) {
+        处理节点;
+        backtracking(路径，选择列表); // 递归
+        回溯，撤销处理结果
+    }
+}
+递归函数参数
+我依然是定义全局变量二维数组result来记录最终结果。
+
+参数n是棋盘的大小，然后用row来记录当前遍历到棋盘的第几层了。
+
+代码如下：
+
+vector<vector<string>> result;
+void backtracking(int n, int row, vector<string>& chessboard) {
+递归终止条件
+在如下树形结构中： https://file1.kamacoder.com/i/algo/20210130182532303-20230310122134167.jpg
+
+可以看出，当递归到棋盘最底层（也就是叶子节点）的时候，就可以收集结果并返回了。
+
+代码如下：
+
+if (row == n) {
+    result.push_back(chessboard);
+    return;
+}
+单层搜索的逻辑
+递归深度就是row控制棋盘的行，每一层里for循环的col控制棋盘的列，一行一列，确定了放置皇后的位置。
+
+每次都是要从新的一行的起始位置开始搜，所以都是从0开始。
+
+代码如下：
+
+for (int col = 0; col < n; col++) {
+    if (isValid(row, col, chessboard, n)) { // 验证合法就可以放
+        chessboard[row][col] = 'Q'; // 放置皇后
+        backtracking(n, row + 1, chessboard);
+        chessboard[row][col] = '.'; // 回溯，撤销皇后
+    }
+}
+验证棋盘是否合法
+按照如下标准去重：
+
+不能同行
+不能同列
+不能同斜线 （45度和135度角）
+代码如下：
+
+bool isValid(int row, int col, vector<string>& chessboard, int n) {
+    // 检查列
+    for (int i = 0; i < row; i++) { // 这是一个剪枝
+        if (chessboard[i][col] == 'Q') {
+            return false;
+        }
+    }
+    // 检查 45度角是否有皇后
+    for (int i = row - 1, j = col - 1; i >=0 && j >= 0; i--, j--) {
+        if (chessboard[i][j] == 'Q') {
+            return false;
+        }
+    }
+    // 检查 135度角是否有皇后
+    for(int i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++) {
+        if (chessboard[i][j] == 'Q') {
+            return false;
+        }
+    }
+    return true;
+}
+在这份代码中，细心的同学可以发现为什么没有在同行进行检查呢？
+
+因为在单层搜索的过程中，每一层递归，只会选for循环（也就是同一行）里的一个元素，所以不用去重了。
+
+那么按照这个模板不难写出如下C++代码：
+
+class Solution {
+private:
+vector<vector<string>> result;
+// n 为输入的棋盘大小
+// row 是当前递归到棋盘的第几行了
+void backtracking(int n, int row, vector<string>& chessboard) {
+    if (row == n) {
+        result.push_back(chessboard);
+        return;
+    }
+    for (int col = 0; col < n; col++) {
+        if (isValid(row, col, chessboard, n)) { // 验证合法就可以放
+            chessboard[row][col] = 'Q'; // 放置皇后
+            backtracking(n, row + 1, chessboard);
+            chessboard[row][col] = '.'; // 回溯，撤销皇后
+        }
+    }
+}
+bool isValid(int row, int col, vector<string>& chessboard, int n) {
+    // 检查列
+    for (int i = 0; i < row; i++) { // 这是一个剪枝
+        if (chessboard[i][col] == 'Q') {
+            return false;
+        }
+    }
+    // 检查 45度角是否有皇后
+    for (int i = row - 1, j = col - 1; i >=0 && j >= 0; i--, j--) {
+        if (chessboard[i][j] == 'Q') {
+            return false;
+        }
+    }
+    // 检查 135度角是否有皇后
+    for(int i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++) {
+        if (chessboard[i][j] == 'Q') {
+            return false;
+        }
+    }
+    return true;
+}
+public:
+    vector<vector<string>> solveNQueens(int n) {
+        result.clear();
+        std::vector<std::string> chessboard(n, std::string(n, '.'));
+        backtracking(n, 0, chessboard);
+        return result;
+    }
+};
+时间复杂度: O(n!)
+空间复杂度: O(n)
+可以看出，除了验证棋盘合法性的代码，省下来部分就是按照回溯法模板来的。
+
+#总结
+本题是我们解决棋盘问题的第一道题目。
+
+如果从来没有接触过N皇后问题的同学看着这样的题会感觉无从下手，可能知道要用回溯法，但也不知道该怎么去搜。
+
+这里我明确给出了棋盘的宽度就是for循环的长度，递归的深度就是棋盘的高度，这样就可以套进回溯法的模板里了。
+
+大家可以在仔细体会体会！
+
+#其他语言补充
+#Java
+class Solution {
+    List<List<String>> res = new ArrayList<>();
+
+    public List<List<String>> solveNQueens(int n) {
+        char[][] chessboard = new char[n][n];
+        for (char[] c : chessboard) {
+            Arrays.fill(c, '.');
+        }
+        backTrack(n, 0, chessboard);
+        return res;
+    }
+
+
+    public void backTrack(int n, int row, char[][] chessboard) {
+        if (row == n) {
+            res.add(Array2List(chessboard));
+            return;
+        }
+
+        for (int col = 0;col < n; ++col) {
+            if (isValid (row, col, n, chessboard)) {
+                chessboard[row][col] = 'Q';
+                backTrack(n, row+1, chessboard);
+                chessboard[row][col] = '.';
+            }
+        }
+
+    }
+
+
+    public List Array2List(char[][] chessboard) {
+        List<String> list = new ArrayList<>();
+
+        for (char[] c : chessboard) {
+            list.add(String.copyValueOf(c));
+        }
+        return list;
+    }
+
+
+    public boolean isValid(int row, int col, int n, char[][] chessboard) {
+        // 检查列
+        for (int i=0; i<row; ++i) { // 相当于剪枝
+            if (chessboard[i][col] == 'Q') {
+                return false;
+            }
+        }
+
+        // 检查45度对角线
+        for (int i=row-1, j=col-1; i>=0 && j>=0; i--, j--) {
+            if (chessboard[i][j] == 'Q') {
+                return false;
+            }
+        }
+
+        // 检查135度对角线
+        for (int i=row-1, j=col+1; i>=0 && j<=n-1; i--, j++) {
+            if (chessboard[i][j] == 'Q') {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+// 方法2：使用boolean数组表示已经占用的直(斜)线
+class Solution {
+    List<List<String>> res = new ArrayList<>();
+    boolean[] usedCol, usedDiag45, usedDiag135;    // boolean数组中的每个元素代表一条直(斜)线
+    public List<List<String>> solveNQueens(int n) {
+        usedCol = new boolean[n];                  // 列方向的直线条数为 n
+        usedDiag45 = new boolean[2 * n - 1];       // 45°方向的斜线条数为 2 * n - 1
+        usedDiag135 = new boolean[2 * n - 1];      // 135°方向的斜线条数为 2 * n - 1
+		//用于收集结果, 元素的index表示棋盘的row，元素的value代表棋盘的column
+        int[] board = new int[n];
+        backTracking(board, n, 0);
+        return res;
+    }
+    private void backTracking(int[] board, int n, int row) {
+        if (row == n) {
+            //收集结果
+            List<String> temp = new ArrayList<>();
+            for (int i : board) {
+                char[] str = new char[n];
+                Arrays.fill(str, '.');
+                str[i] = 'Q';
+                temp.add(new String(str));
+            }
+            res.add(temp);
+            return;
+        }
+
+        for (int col = 0; col < n; col++) {
+            if (usedCol[col] | usedDiag45[row + col] | usedDiag135[row - col + n - 1]) {
+                continue;
+            }
+            board[row] = col;
+			// 标记该列出现过
+            usedCol[col] = true;
+			// 同一45°斜线上元素的row + col为定值, 且各不相同
+            usedDiag45[row + col] = true;
+			// 同一135°斜线上元素row - col为定值, 且各不相同
+			// row - col 值有正有负, 加 n - 1 是为了对齐零点
+            usedDiag135[row - col + n - 1] = true;
+            // 递归
+            backTracking(board, n, row + 1);
+            usedCol[col] = false;
+            usedDiag45[row + col] = false;
+            usedDiag135[row - col + n - 1] = false;
+        }
+    }
+}
+#Python
+class Solution:
+    def solveNQueens(self, n: int) -> List[List[str]]:
+        result = []  # 存储最终结果的二维字符串数组
+
+        chessboard = ['.' * n for _ in range(n)]  # 初始化棋盘
+        self.backtracking(n, 0, chessboard, result)  # 回溯求解
+        return [[''.join(row) for row in solution] for solution in result]  # 返回结果集
+
+    def backtracking(self, n: int, row: int, chessboard: List[str], result: List[List[str]]) -> None:
+        if row == n:
+            result.append(chessboard[:])  # 棋盘填满，将当前解加入结果集
+            return
+
+        for col in range(n):
+            if self.isValid(row, col, chessboard):
+                chessboard[row] = chessboard[row][:col] + 'Q' + chessboard[row][col+1:]  # 放置皇后
+                self.backtracking(n, row + 1, chessboard, result)  # 递归到下一行
+                chessboard[row] = chessboard[row][:col] + '.' + chessboard[row][col+1:]  # 回溯，撤销当前位置的皇后
+
+    def isValid(self, row: int, col: int, chessboard: List[str]) -> bool:
+        # 检查列
+        for i in range(row):
+            if chessboard[i][col] == 'Q':
+                return False  # 当前列已经存在皇后，不合法
+
+        # 检查 45 度角是否有皇后
+        i, j = row - 1, col - 1
+        while i >= 0 and j >= 0:
+            if chessboard[i][j] == 'Q':
+                return False  # 左上方向已经存在皇后，不合法
+            i -= 1
+            j -= 1
+
+        # 检查 135 度角是否有皇后
+        i, j = row - 1, col + 1
+        while i >= 0 and j < len(chessboard):
+            if chessboard[i][j] == 'Q':
+                return False  # 右上方向已经存在皇后，不合法
+            i -= 1
+            j += 1
+
+        return True  # 当前位置合法
